@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈 버스 01 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #D81C2F; /* 급행버스 Red */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3rem; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; text-decoration: none; }
+        .wiki-btn:hover { background: #f0f0f0; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-link.external { color: #008000; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 400px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.5rem; font-weight: 900; }
+        .infobox-subtitle { background-color: #fff; color: #000; padding: 5px; text-align: center; font-weight: bold; border-bottom: 1px solid #eee; }
+        .infobox table { width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: #f9f9f9; color: var(--wiki-main); width: 100px; text-align: center; padding: 8px; border-bottom: 1px solid #eee; font-weight: bold; }
+        .infobox td { padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
+
+        /* 노선도 탭 */
+        .route-tabs { display: flex; border-bottom: 2px solid var(--wiki-main); margin-top: 20px; }
+        .route-tab { padding: 10px 20px; cursor: pointer; font-weight: bold; color: #777; border: 1px solid #ccc; border-bottom: none; border-radius: 8px 8px 0 0; background: #f9f9f9; margin-right: 4px; }
+        .route-tab.active { background: var(--wiki-main); color: white; border-color: var(--wiki-main); }
+        .route-content { display: none; padding: 20px; border: 1px solid #ccc; border-top: none; background: #fff; }
+        .route-content.active { display: block; }
+
+        /* 정류장 리스트 */
+        .stop-list { position: relative; padding-left: 20px; margin-top: 10px; border-left: 4px solid var(--wiki-main); }
+        .stop-item { margin-bottom: 8px; position: relative; font-size: 0.95rem; }
+        .stop-item::before { content: "●"; color: var(--wiki-main); position: absolute; left: -26px; font-size: 1.2rem; background: white; }
+        .stop-item.major { font-weight: bold; color: #000; }
+        .stop-item.subway::after { content: "🚇"; font-size: 0.8rem; margin-left: 5px; }
+
+        /* 각주 호버보드 */
+        #footnote-tooltip { position: fixed; background: white; border: 1px solid #333; padding: 8px 12px; border-radius: 4px; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); font-size: 0.85rem; max-width: 300px; z-index: 20000; display: none; pointer-events: none; line-height: 1.4; }
+        .namu-note { font-size: 0.8em; vertical-align: super; color: #0055AA; cursor: pointer; font-weight: bold; }
+
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+
+        /* Footer */
+        .wiki-footer { margin-top: 60px; padding: 20px; border-top: 1px solid #ccc; font-size: 0.8rem; color: #555; line-height: 1.8; clear: both; }
+        .wiki-footer ul { list-style: none; padding: 0; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div id="footnote-tooltip"></div>
+
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="location.href='discussion.html'" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">토론</button>
+            <button onclick="location.href='edit.html'" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">편집</button>
+            <button onclick="location.href='history.html'" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">역사</button>
+            <button onclick="location.href='index.html'" class="bg-[#555588] p-1.5 px-3 rounded text-sm hover:bg-[#444477] font-bold transition-colors ml-2">메인으로</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">효빈 버스 01 / 01-1</div>
+            <div class="flex gap-2 mb-1">
+                <a href="discussion.html" class="wiki-btn">토론</a>
+                <a href="edit.html" class="wiki-btn">편집</a>
+                <a href="history.html" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+        <div class="bg-gray-100 p-2 text-sm border mb-4">
+            <span class="font-bold text-[#D81C2F]">분류:</span> 
+            <a href="효빈광역시_시내버스.html" class="wiki-link">효빈광역시 시내버스</a> | 
+            <a href="급행버스.html" class="wiki-link">급행버스</a> |
+            <a href="청엽여객.html" class="wiki-link">청엽여객</a>
+        </div>
+
+        <!-- 인포박스 -->
+        <aside class="infobox">
+            <div class="infobox-title">효빈 급행 01</div>
+            <div class="infobox-subtitle">Hyobin Express Bus 01</div>
+            
+            <div class="p-2 text-center bg-white">
+                <img src="이미지/효빈급행버스.png" alt="01번 버스" onerror="this.src='https://via.placeholder.com/380x200/D81C2F/FFFFFF?text=Express+01';">
+                <div class="text-xs text-gray-500 mt-1">청엽여객 소속 급행 01번 차량</div>
+            </div>
+
+            <table>
+                <tr><th>운행지역</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> (창전구 ↔ 중구)</td></tr>
+                <tr><th>운행거리</th><td>약 28.5km</td></tr>
+                <tr><th>운수회사</th><td><a href="청엽여객.html" class="wiki-link">청엽여객</a></td></tr>
+                <tr><th>기점</th><td><a href="팔조역.html" class="wiki-link">팔조역</a> (01번)<br><a href="내항역.html" class="wiki-link">내항역</a> (01-1번)</td></tr>
+                <tr><th>종점</th><td><a href="내항역.html" class="wiki-link">내항역</a> (01번)<br><a href="팔조역.html" class="wiki-link">팔조역</a> (01-1번)</td></tr>
+                <tr><th>배차간격</th><td>평일 8~10분<br>주말 12~15분</td></tr>
+                <tr><th>첫차시각</th><td>05:30 (기점 기준)</td></tr>
+                <tr><th>막차시각</th><td>22:50 (기점 기준)</td></tr>
+                <tr><th>인가대수</th><td>18대</td></tr>
+            </table>
+        </aside>
+
+        <!-- 목차 -->
+        <div class="toc h-fit">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">역사</a></li>
+                <li>3. <a href="#s-3" class="wiki-link">특징</a></li>
+                <li>4. <a href="#s-4" class="wiki-link">노선 정보</a></li>
+            </ul>
+        </div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <p><a href="효빈광역시.html" class="wiki-link">효빈광역시</a>의 <a href="급행버스.html" class="wiki-link">급행버스</a> 노선. 왕복 운행 거리는 약 57km이다.</p>
+        <p>효빈시 동남부의 교육/주거 중심지인 <strong><a href="창전구.html" class="wiki-link">창전구</a>(팔조동)</strong>와 구도심이자 항만 거점인 <strong><a href="중구(효빈).html" class="wiki-link">중구</a>(내항)</strong>를 최단 거리로 연결하는 핵심 간선망 역할을 수행한다.</p>
+
+        <h2 id="s-2">2. 역사</h2>
+        <ul class="list-disc pl-5 space-y-1">
+            <li><strong>2009년 10월 15일:</strong> 준공영제 시행 및 노선 대개편 때 신설되었다. 당시에는 좌석버스 505번이었으나, 두청운수 파산 이후 <a href="청엽여객.html" class="wiki-link">청엽여객</a>이 인수하며 급행 노선으로 승격되었다.</li>
+            <li><strong>2015년 8월 1일:</strong> 효빈시 급행버스 브랜드화 정책에 따라 노선 번호가 <strong>급행1(01)</strong>번으로 변경되었다. 동시에 역방향 노선은 <strong>01-1</strong>번으로 분리 표기되기 시작했다.</li>
+            <li><strong>2024년 3월:</strong> 러브 라이브 니지가사키 콜라보레이션의 일환으로 '세츠나 래핑 버스'가 01번 노선에 투입되어 화제가 되었다.<span class="namu-note" data-content="해당 래핑 차량은 팬들 사이에서 '다이스키 버스'로 불린다.">[1]</span></li>
+        </ul>
+
+        <h2 id="s-3">3. 특징</h2>
+        <ul class="list-disc pl-5 space-y-1">
+            <li>창전구의 대단지 아파트(팔조동, 쌍엽동) 주민들의 도심 출퇴근 수요를 전담한다.</li>
+            <li><a href="중앙로역(효빈).html" class="wiki-link">중앙로역</a>, <a href="중구청역.html" class="wiki-link">중구청역</a> 등 1호선 주요 역사를 경유하여 지하철 환승 연계가 매우 뛰어나다.</li>
+            <li>종점인 <strong>내항역</strong> 인근에는 '우이문화촌'과 '효빈항 역사거리'가 있어 주말에는 관광객 수요도 상당하다.</li>
+            <li><strong>01번(정방향)</strong>은 팔조역 출발 내항역 행, <strong>01-1번(역방향)</strong>은 내항역 출발 팔조역 행이다.</li>
+        </ul>
+
+        <h2 id="s-4">4. 노선 정보</h2>
+        
+        <!-- 탭 메뉴 -->
+        <div class="route-tabs">
+            <div class="route-tab active" onclick="openTab('tab-01')">01번 (팔조 → 내항)</div>
+            <div class="route-tab" onclick="openTab('tab-01-1')">01-1번 (내항 → 팔조)</div>
+        </div>
+
+        <!-- 01번 탭 내용 (정방향: 팔조 -> 내항) -->
+        <div id="tab-01" class="route-content active">
+            <p class="mb-4 text-sm text-gray-600">※ 창전구 팔조동에서 출발하여 중구 내항동으로 가는 하행 노선입니다.</p>
+            <div class="stop-list">
+                <div class="stop-item major">팔조역 (기점) <span class="text-xs bg-[#FFCC11] text-black px-1 rounded">3호선</span></div>
+                <div class="stop-item">팔조동주민센터</div>
+                <div class="stop-item">팔조초등학교</div>
+                <div class="stop-item">쌍엽세라스아파트</div>
+                <div class="stop-item major">쌍엽역 <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span></div>
+                <div class="stop-item">유류초등학교</div>
+                <div class="stop-item major">창전역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span></div>
+                <div class="stop-item major">유류역 <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span></div>
+                <div class="stop-item">칠심3동주민센터</div>
+                <div class="stop-item major">남우택역 <span class="text-xs bg-[#EE0022] text-white px-1 rounded">5호선</span></div>
+                <div class="stop-item">코스트코 효빈점</div>
+                <div class="stop-item">우택동주민센터</div>
+                <div class="stop-item">우택덕현아파트</div>
+                <div class="stop-item">나공중학교</div>
+                <div class="stop-item major">동덕현역 <span class="text-xs bg-[#FF5522] text-white px-1 rounded">4호선</span> <span class="text-xs bg-[#EE0022] text-white px-1 rounded">5호선</span></div>
+                <div class="stop-item major">전덕역 <span class="text-xs bg-[#881188] text-white px-1 rounded">6호선</span> <span class="text-xs bg-[#6677CC] text-white px-1 rounded">빈효선</span></div>
+                <div class="stop-item">덕현3차아파트</div>
+                <div class="stop-item major">효빈역(남부광장) <span class="text-xs bg-[#6677CC] text-white px-1 rounded">빈효선</span> <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span></div>
+                <div class="stop-item major">신덕역 <span class="text-xs bg-[#FF5522] text-white px-1 rounded">4호선</span> <span class="text-xs bg-[#6677CC] text-white px-1 rounded">빈효선</span></div>
+                <div class="stop-item">신덕초등학교</div>
+                <div class="stop-item major">도람역 <span class="text-xs bg-[#FF8899] text-white px-1 rounded">7호선</span></div>
+                <div class="stop-item">효빈대병원 중구분관</div>
+                <div class="stop-item major">중구청역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span> <span class="text-xs bg-[#FF8899] text-white px-1 rounded">7호선</span></div>
+                <div class="stop-item major">중앙로역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span> <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span> <span class="text-xs bg-[#FF8899] text-white px-1 rounded">7호선</span></div>
+                <div class="stop-item">중부경찰서</div>
+                <div class="stop-item">우이문화촌</div>
+                <div class="stop-item">다판고등학교</div>
+                <div class="stop-item">내항초등학교</div>
+                <div class="stop-item major">내항역 (종점) <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span> <span class="text-xs bg-[#FF8899] text-white px-1 rounded">7호선</span></div>
+            </div>
+        </div>
+
+        <!-- 01-1번 탭 내용 (역방향: 내항 -> 팔조) -->
+        <div id="tab-01-1" class="route-content">
+            <p class="mb-4 text-sm text-gray-600">※ 중구 내항동에서 출발하여 창전구 팔조동으로 가는 상행 노선입니다.</p>
+            <div class="stop-list">
+                <div class="stop-item major">내항역 (기점) <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span> <span class="text-xs bg-[#FF8899] text-white px-1 rounded">7호선</span></div>
+                <div class="stop-item">내항초등학교</div>
+                <div class="stop-item">다판고등학교</div>
+                <div class="stop-item">우이문화촌</div>
+                <div class="stop-item">중부경찰서</div>
+                <div class="stop-item major">중앙로역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span> <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span> <span class="text-xs bg-[#FF8899] text-white px-1 rounded">7호선</span></div>
+                <div class="stop-item major">중구청역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span> <span class="text-xs bg-[#FF8899] text-white px-1 rounded">7호선</span></div>
+                <div class="stop-item">효빈대병원 중구분관</div>
+                <div class="stop-item major">도람역 <span class="text-xs bg-[#FF8899] text-white px-1 rounded">7호선</span></div>
+                <div class="stop-item">신덕초등학교</div>
+                <div class="stop-item major">신덕역 <span class="text-xs bg-[#FF5522] text-white px-1 rounded">4호선</span> <span class="text-xs bg-[#6677CC] text-white px-1 rounded">빈효선</span></div>
+                <div class="stop-item major">효빈역(남부광장) <span class="text-xs bg-[#6677CC] text-white px-1 rounded">빈효선</span> <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span></div>
+                <div class="stop-item">덕현3차아파트</div>
+                <div class="stop-item major">전덕역 <span class="text-xs bg-[#881188] text-white px-1 rounded">6호선</span> <span class="text-xs bg-[#6677CC] text-white px-1 rounded">빈효선</span></div>
+                <div class="stop-item major">동덕현역 <span class="text-xs bg-[#FF5522] text-white px-1 rounded">4호선</span> <span class="text-xs bg-[#EE0022] text-white px-1 rounded">5호선</span></div>
+                <div class="stop-item">나공중학교</div>
+                <div class="stop-item">우택덕현아파트</div>
+                <div class="stop-item">우택동주민센터</div>
+                <div class="stop-item">코스트코 효빈점</div>
+                <div class="stop-item major">남우택역 <span class="text-xs bg-[#EE0022] text-white px-1 rounded">5호선</span></div>
+                <div class="stop-item">칠심3동주민센터</div>
+                <div class="stop-item major">유류역 <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span></div>
+                <div class="stop-item major">창전역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span></div>
+                <div class="stop-item">유류초등학교</div>
+                <div class="stop-item major">쌍엽역 <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span></div>
+                <div class="stop-item">쌍엽세라스아파트</div>
+                <div class="stop-item">팔조초등학교</div>
+                <div class="stop-item">팔조동주민센터</div>
+                <div class="stop-item major">팔조역 (종점) <span class="text-xs bg-[#FFCC11] text-black px-1 rounded">3호선</span></div>
+            </div>
+        </div>
+
+        <footer class="wiki-footer">
+            <p class="font-bold mb-2">이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)</p>
+            <p class="mb-4">기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <ul class="text-xs text-gray-500">
+                <li>효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</li>
+                <li>효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.</li>
+            </ul>
+        </footer>
+    </div>
+
+    <script>
+        // 탭 전환 함수
+        function openTab(tabId) {
+            // 모든 탭 내용 숨기기
+            document.querySelectorAll('.route-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            // 모든 탭 버튼 비활성화
+            document.querySelectorAll('.route-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 선택된 탭 활성화
+            document.getElementById(tabId).classList.add('active');
+            // 클릭된 버튼 스타일 변경 (이벤트 타겟 찾기)
+            const clickedTab = Array.from(document.querySelectorAll('.route-tab')).find(el => el.getAttribute('onclick').includes(tabId));
+            if(clickedTab) clickedTab.classList.add('active');
+        }
+
+        // 각주 호버보드 기능
+        const tooltip = document.getElementById('footnote-tooltip');
+        const notes = document.querySelectorAll('.namu-note');
+
+        notes.forEach(note => {
+            note.addEventListener('mouseenter', (e) => {
+                const content = e.target.getAttribute('data-content');
+                if (content) {
+                    tooltip.innerText = content;
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = e.clientX + 10 + 'px';
+                    tooltip.style.top = e.clientY + 10 + 'px';
+                }
+            });
+            note.addEventListener('mousemove', (e) => {
+                tooltip.style.left = e.clientX + 10 + 'px';
+                tooltip.style.top = e.clientY + 10 + 'px';
+            });
+            note.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
