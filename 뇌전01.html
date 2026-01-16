@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈 버스 뇌전01 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #A664A0; /* 마을버스 Violet */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3rem; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; text-decoration: none; }
+        .wiki-btn:hover { background: #f0f0f0; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-link.external { color: #008000; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 400px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.5rem; font-weight: 900; }
+        .infobox-subtitle { background-color: #fff; color: #000; padding: 5px; text-align: center; font-weight: bold; border-bottom: 1px solid #eee; }
+        .infobox table { width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: #fdf2ff; color: var(--wiki-main); width: 100px; text-align: center; padding: 8px; border-bottom: 1px solid #eee; font-weight: bold; }
+        .infobox td { padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
+
+        /* 노선도 탭 */
+        .route-tabs { display: flex; border-bottom: 2px solid var(--wiki-main); margin-top: 20px; }
+        .route-tab { padding: 10px 20px; cursor: pointer; font-weight: bold; color: #777; border: 1px solid #ccc; border-bottom: none; border-radius: 8px 8px 0 0; background: #f9f9f9; margin-right: 4px; }
+        .route-tab.active { background: var(--wiki-main); color: white; border-color: var(--wiki-main); }
+        .route-content { display: none; padding: 20px; border: 1px solid #ccc; border-top: none; background: #fff; }
+        .route-content.active { display: block; }
+
+        /* 정류장 리스트 */
+        .stop-list { position: relative; padding-left: 20px; margin-top: 10px; border-left: 4px solid var(--wiki-main); }
+        .stop-item { margin-bottom: 8px; position: relative; font-size: 0.95rem; }
+        .stop-item::before { content: "●"; color: var(--wiki-main); position: absolute; left: -26px; font-size: 1.2rem; background: white; border: 2px solid #ccc; border-radius: 50%; }
+        .stop-item.major { font-weight: bold; color: #000; }
+        .stop-item.subway::after { content: "🚇"; font-size: 0.8rem; margin-left: 5px; }
+
+        /* 나무위키 드립용 */
+        del { color: #999; text-decoration: line-through; }
+        .namu-note { font-size: 0.8em; vertical-align: super; color: #0055AA; cursor: pointer; font-weight: bold; }
+        .namu-quote { border-left: 4px solid var(--wiki-main); background-color: #fdf2ff; padding: 15px; margin: 10px 0; font-size: 1rem; line-height: 1.5; }
+        
+        #footnote-tooltip { position: fixed; background: white; border: 1px solid #333; padding: 8px 12px; border-radius: 4px; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); font-size: 0.85rem; max-width: 300px; z-index: 20000; display: none; pointer-events: none; line-height: 1.4; }
+
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+
+        /* Footer */
+        .wiki-footer { margin-top: 60px; padding: 20px; border-top: 1px solid #ccc; font-size: 0.8rem; color: #555; line-height: 1.8; clear: both; }
+        .wiki-footer ul { list-style: none; padding: 0; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div id="footnote-tooltip"></div>
+
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="location.href='discussion.html'" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">토론</button>
+            <button onclick="location.href='edit.html'" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">편집</button>
+            <button onclick="location.href='history.html'" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">역사</button>
+            <button onclick="location.href='index.html'" class="bg-[#555588] p-1.5 px-3 rounded text-sm hover:bg-[#444477] font-bold transition-colors ml-2">메인으로</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">효빈 버스 뇌전01</div>
+            <div class="flex gap-2 mb-1">
+                <a href="discussion.html" class="wiki-btn">토론</a>
+                <a href="edit.html" class="wiki-btn">편집</a>
+                <a href="history.html" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+        <div class="bg-gray-100 p-2 text-sm border mb-4">
+            <span class="font-bold text-[#A664A0]">분류:</span> 
+            <a href="효빈광역시_시내버스.html" class="wiki-link">효빈광역시 시내버스</a> | 
+            <a href="마을버스.html" class="wiki-link">마을버스</a> |
+            <a href="칠양여객.html" class="wiki-link">칠양여객</a> |
+            <a href="https://namu.wiki/w/인터넷 밈" target="_blank" class="wiki-link external">인터넷 밈</a>
+        </div>
+
+        <!-- 인포박스 -->
+        <aside class="infobox">
+            <div class="infobox-title">효빈 마을 뇌전01</div>
+            <div class="infobox-subtitle">Hyobin Village Bus Noejeon 01</div>
+            
+            <div class="p-2 text-center bg-white">
+                <img src="이미지/효빈마을버스.png" alt="뇌전01번 버스" onerror="this.src='https://via.placeholder.com/380x200/A664A0/FFFFFF?text=Noejeon+01';">
+                <div class="text-xs text-gray-500 mt-1">칠양여객 소속 뇌전01번 차량</div>
+            </div>
+
+            <table>
+                <tr><th>운행지역</th><td><a href="안천구.html" class="wiki-link">안천구</a> 뇌전동 일대<br>(하가, 상가, 팔월, 세익, 치장)</td></tr>
+                <tr><th>운행거리</th><td>약 7.5km</td></tr>
+                <tr><th>운수회사</th><td><a href="칠양여객.html" class="wiki-link">칠양여객</a></td></tr>
+                <tr><th>기점</th><td><a href="하가동.html" class="wiki-link">뇌전동사무소</a></td></tr>
+                <tr><th>종점</th><td><a href="하가동.html" class="wiki-link">뇌전동사무소</a> (순환)</td></tr>
+                <tr><th>배차간격</th><td>15~20분</td></tr>
+                <tr><th>첫차시각</th><td>06:15</td></tr>
+                <tr><th>막차시각</th><td>22:30</td></tr>
+                <tr><th>인가대수</th><td>4대</td></tr>
+            </table>
+        </aside>
+
+        <!-- 목차 -->
+        <div class="toc h-fit">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">역사</a></li>
+                <li>3. <a href="#s-3" class="wiki-link">특징</a></li>
+                <li>4. <a href="#s-4" class="wiki-link">노선 정보</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">여담</a></li>
+            </ul>
+        </div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <p><a href="효빈광역시.html" class="wiki-link">효빈광역시</a>의 <a href="마을버스.html" class="wiki-link">마을버스</a> 노선. <strong><a href="안천구.html" class="wiki-link">안천구</a> 뇌전동</strong> 일대의 공업단지(뇌전공단)와 배후 주거지인 하가동, 상가동, 팔월동, 세익동, 치장동을 순환하는 생활 밀착형 노선이다.</p>
+        <p>대형 버스가 진입하기 어려운 복잡한 골목길과 공단 내부 도로를 연결하며, 주민들과 공단 근로자들의 출퇴근 및 등하교를 책임진다. 고유 색상은 바이올렛(#A664A0)이다.</p>
+
+        <h2 id="s-2">2. 역사</h2>
+        <ul class="list-disc pl-5 space-y-1">
+            <li><strong>2009년 10월 15일:</strong> 준공영제 시행과 함께 기존 뇌전공단 셔틀버스를 마을버스로 개편하여 신설되었다.</li>
+            <li><strong>2015년 8월 1일:</strong> 마을버스 번호 체계 통일로 <strong>뇌전01</strong>번이라는 번호를 부여받았다.</li>
+        </ul>
+
+        <h2 id="s-3">3. 특징</h2>
+        <ul class="list-disc pl-5 space-y-1">
+            <li><strong>골목대장:</strong> 하가동, 상가동의 좁은 주택가 골목길을 <strong>카운티</strong>(소형 버스)가 능숙하게 빠져나간다. 출퇴근 시간대에는 꽤 혼잡하다.</li>
+            <li><strong>공단 연결:</strong> 뇌전공단 내부를 경유하여 근로자들의 수요가 많다.</li>
+            <li><strong>뇌전01번(시계방향)</strong>은 동사무소→팔월동→세익동→치장동 방향으로, <strong>뇌전01-1번(반시계방향)</strong>은 동사무소→치장동→세익동→팔월동 방향으로 운행한다.</li>
+        </ul>
+
+        <h2 id="s-4">4. 노선 정보</h2>
+        
+        <!-- 탭 메뉴 -->
+        <div class="route-tabs">
+            <div class="route-tab active" onclick="openTab('tab-01')">뇌전01 (팔월동행)</div>
+            <div class="route-tab" onclick="openTab('tab-01-1')">뇌전01-1 (치장동행)</div>
+        </div>
+
+        <!-- 01번 탭 내용 -->
+        <div id="tab-01" class="route-content active">
+            <p class="mb-4 text-sm text-gray-600">※ 뇌전동사무소를 기점으로 팔월동 → 세익동 → 치장동 → 뇌전공단 순으로 순환합니다.</p>
+            <div class="stop-list">
+                <div class="stop-item major">뇌전동사무소 (기점)</div>
+                <div class="stop-item major">하가역 <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span> <span class="text-xs bg-[#FF5522] text-white px-1 rounded">4호선</span></div>
+                <div class="stop-item">하가초등학교</div>
+                <div class="stop-item">상가동 입구</div>
+                <div class="stop-item">팔월동 마을회관</div>
+                <div class="stop-item">팔월시장</div>
+                <div class="stop-item">세익동 경로당</div>
+                <div class="stop-item">세익아파트</div>
+                <div class="stop-item">치장동 입구</div>
+                <div class="stop-item">치장동 상가</div>
+                <div class="stop-item">뇌전공업단지</div>
+                <div class="stop-item major">뇌전역 <span class="text-xs bg-[#FF5522] text-white px-1 rounded">4호선</span></div>
+                <div class="stop-item major">수포역 <span class="text-xs bg-[#6677CC] text-white px-1 rounded">빈효선</span></div>
+                <div class="stop-item major">뇌전동사무소 (종점)</div>
+            </div>
+        </div>
+
+        <!-- 01-1번 탭 내용 -->
+        <div id="tab-01-1" class="route-content">
+            <p class="mb-4 text-sm text-gray-600">※ 뇌전동사무소를 기점으로 뇌전공단 → 치장동 → 세익동 → 팔월동 순으로 순환합니다.</p>
+            <div class="stop-list">
+                <div class="stop-item major">뇌전동사무소 (기점)</div>
+                <div class="stop-item major">수포역 <span class="text-xs bg-[#6677CC] text-white px-1 rounded">빈효선</span></div>
+                <div class="stop-item major">뇌전역 <span class="text-xs bg-[#FF5522] text-white px-1 rounded">4호선</span></div>
+                <div class="stop-item">뇌전공업단지</div>
+                <div class="stop-item">치장동 상가</div>
+                <div class="stop-item">치장동 입구</div>
+                <div class="stop-item">세익아파트</div>
+                <div class="stop-item">세익동 경로당</div>
+                <div class="stop-item">팔월시장</div>
+                <div class="stop-item">팔월동 마을회관</div>
+                <div class="stop-item">상가동 입구</div>
+                <div class="stop-item">하가초등학교</div>
+                <div class="stop-item major">하가역 <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span> <span class="text-xs bg-[#FF5522] text-white px-1 rounded">4호선</span></div>
+                <div class="stop-item major">뇌전동사무소 (종점)</div>
+            </div>
+        </div>
+
+        <h2 id="s-5">5. 여담</h2>
+        <h3 id="s-5-1">5.1. "잠결에 산책하는 카나타?"</h3>
+        <p>효빈시 마을버스의 상징색인 <strong>보라색(#A664A0)</strong>은 <a href="https://namu.wiki/w/코노에 카나타" target="_blank" class="wiki-link external">코노에 카나타</a>의 이미지 컬러다. 뇌전01번은 좁고 복잡한 뇌전동 골목길을 천천히, 그리고 조심스럽게 운행하는데, 이 모습이 마치 <strong>"잠이 덜 깬 카나타가 비몽사몽간에 동네 산책을 하는 것 같다"</strong>는 드립이 있다.</p>
+        
+        <div class="namu-quote">
+            <strong>"이 버스는... 마치 카나타 짱이 꿈속에서 운전하는 느낌이네요."</strong><br>
+            - <span class="text-xs text-gray-500">뇌전동 골목길을 덜컹거리며 지나던 승객의 후기</span>
+        </div>
+
+        <h3 id="s-5-2">5.2. 공단의 자장가</h3>
+        <p>야근을 마치고 뇌전01번에 탑승한 공단 근로자들은 버스의 느긋한 속도와 덜컹거림에 금세 곯아떨어지기 일쑤다. 팬들은 이를 보고 <strong>"역시 카나타 버스답게 수면 마법을 걸어준다"</strong>며, 이 노선이야말로 진정한 <strong>'힐링(수면) 버스'</strong>라고 칭송한다. <del>종점까지 자다가 다시 공장으로 돌아가는 비극도 종종 발생한다.</del></p>
+
+        <footer class="wiki-footer">
+            <p class="font-bold mb-2">이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)</p>
+            <p class="mb-4">기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <ul class="text-xs text-gray-500">
+                <li>효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</li>
+                <li>효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.</li>
+            </ul>
+        </footer>
+    </div>
+
+    <script>
+        // 탭 전환 함수
+        function openTab(tabId) {
+            document.querySelectorAll('.route-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.route-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            const clickedTab = Array.from(document.querySelectorAll('.route-tab')).find(el => el.getAttribute('onclick').includes(tabId));
+            if(clickedTab) clickedTab.classList.add('active');
+        }
+
+        // 각주 호버보드 기능
+        const tooltip = document.getElementById('footnote-tooltip');
+        const notes = document.querySelectorAll('.namu-note');
+
+        notes.forEach(note => {
+            note.addEventListener('mouseenter', (e) => {
+                const content = e.target.getAttribute('data-content');
+                if (content) {
+                    tooltip.innerText = content;
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = e.clientX + 10 + 'px';
+                    tooltip.style.top = e.clientY + 10 + 'px';
+                }
+            });
+            note.addEventListener('mousemove', (e) => {
+                tooltip.style.left = e.clientX + 10 + 'px';
+                tooltip.style.top = e.clientY + 10 + 'px';
+            });
+            note.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
