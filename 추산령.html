@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>추산령 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* [테마 컬러] 더불어민주당 파란색 */
+            --wiki-main: #004EA2; 
+            
+            /* [고정] 상단 내비게이션 바 색상 */
+            --wiki-nav-bg: #7777aa;
+
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #004EA2;
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.15rem; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 (프로필용) */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 450px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.3rem; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: var(--wiki-main); color: #fff; width: 100px; padding: 6px 8px; border: 1px solid var(--wiki-border); text-align: center; vertical-align: middle; font-weight: bold; }
+        .infobox td { padding: 6px 8px; border: 1px solid var(--wiki-border); vertical-align: middle; }
+
+        /* 데이터 테이블 */
+        .data-table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; font-size: 0.95rem; }
+        .data-table th, .data-table td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; }
+        .data-table th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; text-align: center; }
+        .data-table tr:nth-child(even) { background-color: #fdfdfd; }
+
+        /* 선거 상세 표 스타일 */
+        .election-table { width: 100%; border-collapse: collapse; font-size: 0.9em; margin-bottom: 20px; text-align: center; }
+        .election-table th, .election-table td { border: 1px solid #ccc; padding: 6px 4px; }
+        .election-table th { background-color: #eee; font-weight: bold; }
+        .bg-win { background-color: #fff3cd; font-weight: bold; }
+
+        /* 정당별 배경색 */
+        .bg-minju { background-color: #004EA2 !important; color: white !important; }
+        .bg-ppp { background-color: #E61E2B !important; color: white !important; }
+        .bg-ufp { background-color: #EF426F !important; color: white !important; } /* 미래통합당 */
+        .bg-ind { background-color: #999999 !important; color: white !important; }
+        .bg-ref { background-color: #FF7F00 !important; color: white !important; } /* 개혁신당 */
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* [특수 스타일] 나무위키 느낌 요소 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+        del { color: #ccc; text-decoration: line-through; } /* 취소선 드립용 */
+        .wiki-gray { color: #888; font-size: 0.9em; } /* 괄호 속 혼잣말용 */
+        
+        /* 정당 뱃지 스타일 */
+        .party-badge { 
+            display: inline-block; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            color: white; 
+            font-weight: bold; 
+            font-size: 0.9em; 
+            text-decoration: none; 
+            line-height: 1.2;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .party-badge.text-black { color: #333; text-shadow: none; }
+        
+        /* 정당 라벨 스타일 */
+        .party-label { display: inline-block; padding: 2px 6px; border-radius: 3px; background: #004EA2; color: white; font-size: 0.9em; font-weight: bold; text-decoration: none; }
+
+        /* 각주 스타일 */
+        .wiki-fn-link { color: var(--wiki-link); font-size: 0.8em; vertical-align: super; text-decoration: none; font-weight: bold; cursor: pointer; margin-left: 2px; }
+        .wiki-fn-link:hover { text-decoration: underline; }
+        
+        /* 각주 툴팁 (호버보드) */
+        #wiki-tooltip { 
+            display: none; 
+            position: absolute; 
+            background: white; 
+            border: 1px solid #999; 
+            padding: 10px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+            max-width: 350px; 
+            z-index: 9999; 
+            font-size: 0.85rem; 
+            border-radius: 4px; 
+            line-height: 1.4; 
+            color: #333;
+            pointer-events: none;
+        }
+
+        /* 하단 네비 박스 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+
+        /* 푸터 저작권 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; }
+        .wiki-footer strong { color: #333; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+    </style>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-tooltip"></div>
+
+    <!-- 상단 내비게이션 바 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav-bg);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='hyobin_city.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="효빈위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a href="추산령.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">토론</a>
+                <a href="추산령.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">편집</a>
+                <a href="추산령.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">추산령</div>
+            <div class="flex gap-2 mb-1">
+                <a href="추산령.html" class="wiki-btn">토론</a>
+                <a href="추산령.html" class="wiki-btn">편집</a>
+                <a href="추산령.html" class="wiki-btn">역사</a>
+                <button class="wiki-btn" onclick="alert('즐겨찾기에 추가되었습니다.')">☆ 즐겨찾기</button>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold" style="color: var(--wiki-main);">분류:</span> 
+            <a href="효빈광역시의_국회의원.html" class="wiki-link">효빈광역시의 국회의원</a> | 
+            <a href="더불어민주당_국회의원.html" class="wiki-link">더불어민주당 국회의원</a> | 
+            <a href="추계_추씨.html" class="wiki-link">추계 추씨</a> | 
+            <a href="효빈대학교_출신.html" class="wiki-link">효빈대학교 출신</a>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">생애</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">정치 활동</a>
+                        <ul>
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">제21대 국회의원 선거</a></li>
+                            <li>3.2. <a href="#s-3-2" class="wiki-link">제22대 국회의원 선거</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">논란 및 사건 사고</a>
+                        <ul>
+                            <li>4.1. <a href="#s-4-1" class="wiki-link">윤재훈 토론회 사건</a></li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5" class="wiki-link">어록</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">선거 이력</a>
+                        <ul>
+                            <li>6.1. <a href="#s-6-1" class="wiki-link">상세 개표 결과</a></li>
+                        </ul>
+                    </li>
+                    <li>7. <a href="#s-7" class="wiki-link">여담</a></li>
+                    <li>8. <a href="#s-footnote" class="wiki-link">각주</a></li>
+                </ul>
+            </div>
+
+            <!-- 프로필 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="infobox-title">추산령<br><span class="text-sm font-normal">秋山嶺 | Chu San-ryeong</span></div>
+                <div class="p-4 bg-white text-center border-b">
+                    <!-- 이미지 경로 설정: 남성 정치인 이미지 -->
+                    <img src="이미지/추산령.png" alt="추산령 프로필" class="w-full max-w-[200px] mx-auto border border-gray-300 shadow-sm mb-2" onerror="this.src='https://via.placeholder.com/200x250?text=No+Image';">
+                </div>
+                <table>
+                    <tr><th>출생</th><td>1974년 9월 28일 (51세)<br>덕빈북도 효빈시 남구 창전동<br>(현 <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="창전구.html" class="wiki-link">창전구</a> 창전동)<a href="#fn-1" id="rfn-1" class="wiki-fn-link" data-content="출생 당시 행정구역.">[1]</a></td></tr>
+                    <tr><th>거주지</th><td>효빈광역시 창전구 창전중앙로</td></tr>
+                    <tr><th>본관</th><td><a href="https://namu.wiki/w/추계%20추씨" target="_blank" class="wiki-link">추계 추씨</a></td></tr>
+                    <tr><th>학력</th><td>창전고등학교 (졸업)<br><a href="효빈대학교.html" class="wiki-link">효빈대학교</a> (철학 / 학사)<br><a href="효빈대학교.html" class="wiki-link">효빈대학교</a> 행정대학원 (행정학 / 석사)</td></tr>
+                    <tr><th>병역</th><td><a href="https://namu.wiki/w/대한민국%20육군" target="_blank" class="wiki-link">대한민국 육군</a> 병장 만기전역</td></tr>
+                    <tr><th>소속 정당</th><td><a href="https://namu.wiki/w/더불어민주당" target="_blank" class="party-label">더불어민주당</a></td></tr>
+                    <tr><th>지역구</th><td>효빈 <a href="창전구.html" class="wiki-link">창전구 갑</a></td></tr>
+                    <tr><th>의원 선수</th><td><strong>2</strong> (21, 22)</td></tr>
+                    <tr><th>현직</th><td><a href="https://namu.wiki/w/제22대%20국회의원" target="_blank" class="wiki-link">제22대 국회의원</a><br>국회 보건복지위원회 위원장</td></tr>
+                    <tr><th>약력</th><td>효빈시의회 의원 (3선)<br>효빈시의회 부의장<br>더불어민주당 효빈시당 부위원장<br>제21·22대 국회의원 (효빈 창전갑)</td></tr>
+                    <tr><th>별명</th><td><strong>창전의 대부</strong>, 품격의 추산령, 갓산령</td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <blockquote>
+            <strong>"정치는 오물이 아닌, 삶을 닦는 일이다."</strong><br>
+            <strong>효빈시 창전갑의 절대적인 지지를 받는 '창전의 대부'.</strong>
+        </blockquote>
+        <p><a href="https://namu.wiki/w/대한민국" target="_blank" class="wiki-link">대한민국</a>의 <a href="https://namu.wiki/w/정치인" target="_blank" class="wiki-link">정치인</a>. 제21·22대 <a href="https://namu.wiki/w/국회의원" target="_blank" class="wiki-link">국회의원</a>(효빈 <a href="창전구.html" class="wiki-link">창전갑</a>)이다.</p>
+        <p>효빈시 창전동 토박이로, 시의원 3선을 거쳐 국회에 입성한 풀뿌리 정치인이다. 보수 정당에게는 <del>감히 넘볼 수 없는</del> '통곡의 벽'이자 '무덤'으로 불리는 효빈 창전갑 지역구에서 압도적인 장악력을 보여주고 있다. 특히 2024년 제22대 총선에서 상대 후보였던 <a href="윤재훈.html" class="wiki-link">윤재훈</a>의 온갖 막말과 추태에도 품격을 잃지 않고 대응하여 **85.09%**라는 경이로운 득표율로 당선되었다. <span class="wiki-gray">(상대 후보가 워낙 폐급이라 선거 운동을 안 해도 이겼을 거라는 평이 지배적이다.)</span></p>
+
+        <!-- 2. 생애 -->
+        <h2 id="s-2" class="anchor-offset">2. 생애</h2>
+        <p>1974년 덕빈북도 효빈시 남구 창전동(현 <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="창전구.html" class="wiki-link">창전구</a> 창전동)에서 태어났다. 창전시장이 형성되던 초기부터 부모님을 도와 시장통에서 자랐으며, 덕분에 창전동 골목 구석구석을 꿰뚫고 있다. <span class="wiki-gray">(시장에서 길 잃은 강아지 주인도 찾아줄 정도라고 한다.)</span></p>
+        <p>창전고등학교를 졸업하고 <a href="효빈대학교.html" class="wiki-link">효빈대학교</a> 철학과에 진학했다. 대학 시절 인문학적 소양을 쌓으며 지역 사회 문제에 깊은 관심을 갖게 되었고, 졸업 후 지역 복지관 운영위원 등으로 활동하며 소외 계층을 돕는 활동을 해왔다. 이후 1990년대 후반부터 정당 활동을 시작, 기초의원부터 차근차근 밟아 올라온 입지전적인 인물이다.</p>
+
+        <!-- 3. 정치 활동 -->
+        <h2 id="s-3" class="anchor-offset">3. 정치 활동</h2>
+
+        <h3 id="s-3-1">3.1. 제21대 국회의원 선거</h3>
+        <p>효빈 창전갑은 전통적으로 민주당 강세 지역이었으나, 추산령 후보의 탄탄한 지역 기반 덕분에 선거 운동이 필요 없을 정도였다는 후문이 있다. 당시 <a href="https://namu.wiki/w/미래통합당" target="_blank" class="wiki-link">미래통합당</a>은 '색수통' 후보를 공천했으나, 이름값부터 밀리는 바람에 74.15%p라는 압도적인 격차로 <del>학살</del>당선되었다.</p>
+
+        <h3 id="s-3-2">3.2. 제22대 국회의원 선거</h3>
+        <blockquote><strong>"이것은 선거가 아니라 재난이다."</strong><br>-- <a href="윤재훈.html" class="wiki-link">윤재훈</a>의 공천 소식을 들은 후 보좌관에게 한 말.</blockquote>
+        <p>2024년 총선에서 <a href="https://namu.wiki/w/국민의힘" target="_blank" class="wiki-link">국민의힘</a>이 창전갑 지역구를 사실상 포기하고, 트러블 메이커인 <a href="윤재훈.html" class="wiki-link">윤재훈</a>을 공천하면서 전국적인 관심 지역구가 되었다. 윤재훈은 선거 기간 내내 <a href="박효빈.html" class="wiki-link">박효빈</a> 시장에 대한 흑색선전과 시민들을 향한 "오타쿠 비하" 발언을 쏟아내며 난동을 부렸다.</p>
+        <p>추산령은 이에 대응하지 않고 묵묵히 정책 선거를 이어갔으며, 심지어 "창전 시장 상인분들께 죄송하다. 이런 후보와 함께 이름을 올리게 되어 제 얼굴이 다 화끈거린다"며 대신 사과를 하고 다니기도 했다. <span class="wiki-gray">(대인배도 이런 대인배가 없다.)</span></p>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>결과</strong>: <strong>85.09%(압승)</strong>. 2위인 무소속 주현진(10.11%)과도 압도적인 격차였으며, <a href="윤재훈.html" class="wiki-link">윤재훈</a>은 2.20%를 득표하여 선거비 전액을 날리고 <del>장렬하게</del> 파산했다.</li>
+            <li>이 선거 결과로 추산령은 '품격 있는 정치인'의 대명사가 되었고, 창전갑 시민들은 '정치적 쓰레기'를 투표로 분리수거했다는 호평을 받았다.</li>
+        </ul>
+
+        <!-- 4. 논란 및 사건 사고 -->
+        <h2 id="s-4" class="anchor-offset">4. 논란 및 사건 사고</h2>
+        <h3 id="s-4-1">4.1. 윤재훈 토론회 사건</h3>
+        <p>22대 총선 TV 토론회에서 <a href="윤재훈.html" class="wiki-link">윤재훈</a>이 정책 질의는커녕 "당신도 박효빈이랑 한패지? 내가 필리핀에서 무슨 일을 당했는지 알아?!"라며 고함을 지르자, 추산령은 당황하지 않고 <strong>"윤 후보님, 지금은 지역구 복지 정책을 논하는 자리입니다. 진정하시고 물 좀 드십시오."</strong>라고 점잖게 타이르며 그를 제압했다.</p>
+        <p>이 장면은 '품격의 차이'라는 제목으로 유튜브 조회수 500만 회를 기록하며 화제가 되었다. 토론회 직후, 윤재훈이 마이크가 꺼진 줄 알고 욕설을 내뱉자 사회자를 향해 "방송 중단까지 검토해야 하는 것 아닙니까"라며 단호하게 대처하기도 했다. <del>윤재훈은 이 사건으로 '물 좀 드십시오'좌가 되었다.</del></p>
+
+        <!-- 5. 어록 -->
+        <h2 id="s-5" class="anchor-offset">5. 어록</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li>"정치는 오물이 아닌, 삶을 닦는 일이다." (22대 총선 출마 선언문 중)</li>
+            <li>"상대 후보가 누구든 제 할 일을 할 뿐입니다만... 다만 걱정되는군요. 창전 시장 상인들이 그 사람의 고성방가를 견뎌야 할 텐데 말입니다." (윤재훈 공천 소식 직후)</li>
+            <li>"시민들은 자신을 혐오하는 사람에게 표를 주지 않습니다." (윤재훈의 오타쿠 비하 발언을 전해 듣고)</li>
+            <li>"오늘 창전의 소금은 혐오를 씻어내는 정화의 소금이었다." (22대 총선 당선 소감)</li>
+        </ul>
+
+        <!-- 6. 선거 이력 -->
+        <h2 id="s-6" class="anchor-offset">6. 선거 이력</h2>
+        <table class="data-table text-center">
+            <thead>
+                <tr>
+                    <th>대수</th><th>선거구</th><th>정당</th><th>득표수</th><th>득표율</th><th>비고</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>제1회 지선</td><td>창전동 선거구</td><td><span class="party-badge" style="background-color: #00A569">민주당</span></td><td>-</td><td>-</td><td>시의원 당선</td>
+                </tr>
+                <tr>
+                    <td>제2회 지선</td><td>창전동 선거구</td><td><span class="party-badge" style="background-color: #00A569">새정치국민회의</span></td><td>-</td><td>-</td><td>시의원 당선</td>
+                </tr>
+                <tr>
+                    <td>제3회 지선</td><td>창전동 선거구</td><td><span class="party-badge" style="background-color: #00A569">새천년민주당</span></td><td>-</td><td>-</td><td>시의원 당선</td>
+                </tr>
+                <tr>
+                    <td>제21대 총선</td><td>효빈 창전갑</td><td><a href="https://namu.wiki/w/더불어민주당" target="_blank" class="wiki-link"><span class="party-badge" style="background-color: #004EA2">더불어민주당</span></a></td><td>84,531</td><td>84.19%</td><td><strong>당선</strong></td>
+                </tr>
+                <tr class="font-bold bg-yellow-50">
+                    <td>제22대 총선</td><td>효빈 창전갑</td><td><span class="party-badge" style="background-color: #004EA2">더불어민주당</span></td><td>86,320</td><td>85.09%</td><td><strong>당선 (압승)</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 id="s-6-1">6.1. 상세 개표 결과</h3>
+        
+        <h4 class="mt-4 mb-2 font-bold text-gray-700">제21대 국회의원 선거 (효빈 창전갑)</h4>
+        <table class="election-table">
+            <thead>
+                <tr>
+                    <th>구분</th>
+                    <th class="bg-minju">더불어민주당<br>추산령</th>
+                    <th class="bg-ufp">미래통합당<br>색수통</th>
+                    <th class="bg-ind">무소속<br>주현진</th>
+                    <th>비고</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="bg-gray-50 font-bold">
+                    <td>합계</td>
+                    <td class="bg-win">84.19% (84,531)</td>
+                    <td>10.04% (10,081)</td>
+                    <td>5.77% (5,793)</td>
+                    <td>추산령 당선</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4 class="mt-6 mb-2 font-bold text-gray-700">제22대 국회의원 선거 (효빈 창전갑)</h4>
+        <table class="election-table">
+            <thead>
+                <tr>
+                    <th>구분</th>
+                    <th class="bg-minju">더불어민주당<br>추산령</th>
+                    <th class="bg-ind">무소속<br>주현진</th>
+                    <th class="bg-ref">개혁신당<br>안원욱</th>
+                    <th class="bg-ppp">국민의힘<br>윤재훈</th>
+                    <th>비고</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="bg-gray-50 font-bold">
+                    <td>합계</td>
+                    <td class="bg-win">85.09% (86,320)</td>
+                    <td>10.11% (10,256)</td>
+                    <td>2.60% (2,638)</td>
+                    <td>2.20% (2,232)</td>
+                    <td>추산령 압승<br>윤재훈 파산<a href="#fn-2" id="rfn-2" class="wiki-fn-link" data-content="선거비용 보전 한 푼도 못 받았다.">[2]</a></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 7. 여담 -->
+        <h2 id="s-7" class="anchor-offset">7. 여담</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong><a href="박효빈.html" class="wiki-link">박효빈</a>과의 관계</strong>: 박효빈 시장을 '우리 시장님'이라 부르며 매우 아낀다. 박 시장이 어릴 적 겪은 따돌림과 상처를 알고 있기에, 그가 훌륭한 리더로 성장한 것을 대견해하며 정책적으로 적극 지원한다. 박효빈 시장 역시 추 의원을 '아버지 같은 선배님'으로 모신다고.</li>
+            <li><strong>오타쿠 문화 존중</strong>: 본인은 철학과 출신으로 서브컬처 문화를 잘 모르지만, 시민들이 향유하는 문화를 존중해야 한다는 확고한 철학을 가지고 있다. <del>사실 본인도 숨겨진 덕후라는 소문이...</del> 윤재훈이 시민들을 '정신병자' 취급했을 때 가장 먼저 분노한 사람 중 하나다.</li>
+            <li><strong><a href="https://namu.wiki/w/케이온!" target="_blank" class="wiki-link">케이온!</a> <a href="https://namu.wiki/w/아키야마%20미오" target="_blank" class="wiki-link">아키야마 미오</a> 팬</strong>: 뜬금없지만 일본 애니메이션 케이온!의 등장인물 아키야마 미오(秋山 澪)의 팬(오시)이라고 한다. 이유는 자신의 성씨인 <strong>추산(秋山)</strong>과 한자가 같기 때문이라고.<span class="wiki-gray">(...)</span> <del>성공한 덕후</del> 덕분에 지역구 내 젊은 오타쿠 층에게 묘한 친근감을 얻고 있다. 선거 사무소에 미오 피규어가 있다는 목격담도 있다.</li>
+            <li><strong>시장통 국밥 마니아</strong>: 평소 창전시장 내 순대국밥집에서 식사하는 모습이 자주 목격된다. 보좌관들 없이 혼자 가서 상인들과 막걸리 한 잔 기울이며 민원을 듣는 것이 취미라고 한다.</li>
+        </ul>
+
+        <!-- 8. 각주 -->
+        <h2 id="s-footnote" class="anchor-offset">8. 각주</h2>
+        <div class="toc text-sm p-4 w-full">
+            <ol class="list-decimal pl-4 space-y-2">
+                 <li id="fn-1">출생 당시 행정구역. <a href="#rfn-1" class="wiki-link">↑</a></li>
+                 <li id="fn-2">선거비용 보전 한 푼도 못 받았다. <a href="#rfn-2" class="wiki-link">↑</a></li>
+            </ol>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <div class="nav-box shadow-sm mt-10">
+            <div class="nav-box-header">[ 관련 인물 둘러보기 ]</div>
+            <div class="nav-box-content leading-loose text-sm">
+                <a href="박효빈.html" class="wiki-link">박효빈</a> · 
+                <a href="윤재훈.html" class="wiki-link">윤재훈</a> · 
+                <a href="김성민.html" class="wiki-link">김성민</a> · 
+                <a href="고정민.html" class="wiki-link">고정민</a> · 
+                <a href="신원임.html" class="wiki-link">신원임</a>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                location.href = `search.html?q=${encodeURIComponent(query)}`;
+            } else {
+                showMsg('검색어를 입력해주세요.');
+            }
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                if(this.classList.contains('wiki-fn-link')) return;
+
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 각주 호버보드(툴팁) 기능
+        const tooltip = document.getElementById('wiki-tooltip');
+        document.querySelectorAll('.wiki-fn-link').forEach(link => {
+            link.addEventListener('mouseenter', (e) => {
+                const content = link.getAttribute('data-content');
+                if(content) {
+                    tooltip.innerHTML = content;
+                    tooltip.style.display = 'block';
+                }
+            });
+
+            link.addEventListener('mousemove', (e) => {
+                tooltip.style.left = (e.pageX + 15) + 'px';
+                tooltip.style.top = (e.pageY + 15) + 'px';
+            });
+
+            link.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
