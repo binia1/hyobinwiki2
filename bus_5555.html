@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈 버스 5555 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #FF5800; /* 좌석버스 Orange (Ai Color) */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3rem; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; text-decoration: none; }
+        .wiki-btn:hover { background: #f0f0f0; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 400px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.5rem; font-weight: 900; }
+        .infobox-subtitle { background-color: #fff; color: #000; padding: 5px; text-align: center; font-weight: bold; border-bottom: 1px solid #eee; }
+        .infobox table { width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: #fff7ed; color: var(--wiki-main); width: 100px; text-align: center; padding: 8px; border-bottom: 1px solid #eee; font-weight: bold; }
+        .infobox td { padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
+
+        /* 노선도 탭 */
+        .route-tabs { display: flex; border-bottom: 2px solid var(--wiki-main); margin-top: 20px; }
+        .route-tab { padding: 10px 20px; cursor: pointer; font-weight: bold; color: #777; border: 1px solid #ccc; border-bottom: none; border-radius: 8px 8px 0 0; background: #f9f9f9; margin-right: 4px; }
+        .route-tab.active { background: var(--wiki-main); color: white; border-color: var(--wiki-main); }
+        .route-content { display: none; padding: 20px; border: 1px solid #ccc; border-top: none; background: #fff; }
+        .route-content.active { display: block; }
+
+        /* 정류장 리스트 */
+        .stop-list { position: relative; padding-left: 20px; margin-top: 10px; border-left: 4px solid var(--wiki-main); }
+        .stop-item { margin-bottom: 8px; position: relative; font-size: 0.95rem; }
+        .stop-item::before { content: "●"; color: var(--wiki-main); position: absolute; left: -26px; font-size: 1.2rem; background: white; border: 2px solid #ccc; border-radius: 50%; }
+        .stop-item.major { font-weight: bold; color: #000; }
+        .stop-item.subway::after { content: "🚇"; font-size: 0.8rem; margin-left: 5px; }
+
+        /* 나무위키 드립용 */
+        del { color: #999; text-decoration: line-through; }
+        .namu-note { font-size: 0.8em; vertical-align: super; color: #0055AA; cursor: pointer; font-weight: bold; }
+        .namu-quote { border-left: 4px solid var(--wiki-main); background-color: #fff7ed; padding: 15px; margin: 10px 0; font-size: 1rem; line-height: 1.5; }
+        .warning-box { border: 2px solid #d9534f; padding: 15px; background: #fdf7f7; color: #d9534f; font-weight: bold; margin-bottom: 20px; text-align: center; border-radius: 4px; }
+
+        #footnote-tooltip { position: fixed; background: white; border: 1px solid #333; padding: 8px 12px; border-radius: 4px; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); font-size: 0.85rem; max-width: 300px; z-index: 20000; display: none; pointer-events: none; line-height: 1.4; }
+
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+
+        /* Footer 구분선 및 스타일 */
+        .wiki-footer { margin-top: 80px; padding: 30px 0; border-top: 2px solid #eee; font-size: 0.85rem; color: #666; clear: both; }
+        .wiki-footer-inner { max-width: 1200px; margin: 0 auto; }
+        .license-box { background: #f8f9fa; padding: 15px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div id="footnote-tooltip"></div>
+
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="location.href='discussion.html'" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">토론</button>
+            <button onclick="location.href='edit.html'" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">편집</button>
+            <button onclick="location.href='history.html'" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">역사</button>
+            <button onclick="location.href='index.html'" class="bg-[#555588] p-1.5 px-3 rounded text-sm hover:bg-[#444477] font-bold transition-colors ml-2">메인으로</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">효빈 버스 5555 / 5555R</div>
+            <div class="flex gap-2 mb-1">
+                <a href="discussion.html" class="wiki-btn">토론</a>
+                <a href="edit.html" class="wiki-btn">편집</a>
+                <a href="history.html" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+        <div class="warning-box">
+            ⚠ 본 노선은 빈효선 광역전철 안정화에 따라 광정면 축소 혹은 폐지 및 천주시 방면 신설이 예정되어 있습니다.
+        </div>
+
+        <div class="bg-gray-100 p-2 text-sm border mb-4">
+            <span class="font-bold text-[#FF5800]">분류:</span> 
+            <a href="효빈광역시_시내버스.html" class="wiki-link">효빈광역시 시내버스</a> | 
+            <a href="좌석버스.html" class="wiki-link">좌석버스</a> |
+            <a href="청엽여객.html" class="wiki-link">청엽여객</a> |
+            <a href="https://namu.wiki/w/인터넷 밈" target="_blank" class="wiki-link external">인터넷 밈</a>
+        </div>
+
+        <!-- 인포박스 -->
+        <aside class="infobox">
+            <div class="infobox-title">효빈 좌석 5555</div>
+            <div class="infobox-subtitle">Hyobin Seat Bus 5555</div>
+            
+            <div class="p-2 text-center bg-white">
+                <img src="이미지/효빈좌석버스.png" alt="5555번 버스" onerror="this.src='https://via.placeholder.com/380x200/FF5800/FFFFFF?text=Seat+5555';">
+                <div class="text-xs text-gray-500 mt-1">청엽여객 소속 좌석 5555번 차량</div>
+            </div>
+
+            <table>
+                <tr><th>운행지역</th><td><a href="약산시.html" class="wiki-link">약산시</a> 홍하면 ↔ <a href="안천구.html" class="wiki-link">안천구</a> 이자동</td></tr>
+                <tr><th>운행거리</th><td>약 31.8km</td></tr>
+                <tr><th>운수회사</th><td><a href="청엽여객.html" class="wiki-link">청엽여객</a></td></tr>
+                <tr><th>기점</th><td><a href="약산시.html" class="wiki-link">홍하면사무소</a> (5555)<br><a href="이자동.html" class="wiki-link">이자공원역</a> (5555R)</td></tr>
+                <tr><th>종점</th><td><a href="이자동.html" class="wiki-link">이자공원역</a> (5555)<br><a href="약산시.html" class="wiki-link">홍하면사무소</a> (5555R)</td></tr>
+                <tr><th>배차간격</th><td>평일 25~35분<br>주말 40~50분</td></tr>
+                <tr><th>첫차시각</th><td>05:10 (기점 기준)</td></tr>
+                <tr><th>막차시각</th><td>23:36 (평일) / 23:31 (주말)</td></tr>
+                <tr><th>인가대수</th><td>8대</td></tr>
+            </table>
+        </aside>
+
+        <!-- 목차 -->
+        <div class="toc h-fit">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">역사 및 폐지 예정</a></li>
+                <li>3. <a href="#s-3" class="wiki-link">특징</a></li>
+                <li>4. <a href="#s-4" class="wiki-link">노선 정보</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">여담: 성지순례와 밈</a></li>
+            </ul>
+        </div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <p><a href="효빈광역시.html" class="wiki-link">효빈광역시</a>의 <a href="좌석버스.html" class="wiki-link">좌석버스</a> 노선. 약산시 최북단 오지인 <strong>홍하면</strong>과 안천구의 <strong>이자공원역</strong>을 연결한다.</p>
+        <p>광역버스 5000번(카린 버스)이 성가면 일대를 훑고 지나간다면, 5555번은 더 북쪽인 <strong>홍하면 니지리(尼池里)</strong> 주민들의 이동권을 책임지는 노선이다. 고유 색상은 오렌지(#FF5800)를 사용하며, 미야시타 아이의 에너지 넘치는 이미지를 상징한다.</p>
+
+        <h2 id="s-2">2. 역사 및 폐지 예정</h2>
+        <ul class="list-disc pl-5 space-y-1">
+            <li><strong>2009년 10월:</strong> 홍하면 주민들의 안천구 접근성 강화를 위해 555번 좌석버스로 신설.</li>
+            <li><strong>2015년 8월 1일:</strong> 좌석버스 체계 개편으로 <strong>좌석5555(5555)</strong>번으로 개편.</li>
+            <li><strong>2019년 5월:</strong> 빈효선 <strong><a href="홍하역.html" class="wiki-link">홍하역</a></strong> 개통으로 인해 수요가 급감, 현재는 감차 운행 중이다.</li>
+            <li><strong>향후 계획:</strong> 노선 효율화를 위해 기점을 광정면으로 축소하거나, 아예 천주시 청선읍 방면 노선으로 재편 후 현재의 5555번은 폐지될 예정이다.</li>
+        </ul>
+
+        <h2 id="s-3">3. 특징</h2>
+        <ul class="list-disc pl-5 space-y-1">
+            <li><strong>DiverDiva 시스템:</strong> 광역 5000번(카린)과 세트로 묶이지만, 5555번은 더 깊숙한 산골 마을(홍하면)까지 들어가는 '아이(Ai)의 포용력'을 보여준다.</li>
+            <li><strong>철도 연계의 한계:</strong> 홍하역이 마을 중심가와 다소 떨어져 있어 여전히 버스에 의존하는 노인 인구 수요가 존재한다.</li>
+            <li><strong>시한부 노선:</strong> 효빈시의 '버스 다이어트' 정책의 1순위 타겟으로 지목되어 있어, 버스 동호인들 사이에서는 '사라지기 전에 타야 할 노선'으로 꼽힌다.</li>
+        </ul>
+
+        <h2 id="s-4">4. 노선 정보</h2>
+        
+        <div class="route-tabs">
+            <div class="route-tab active" onclick="openTab('tab-5555')">5555번 (이자행)</div>
+            <div class="route-tab" onclick="openTab('tab-5555r')">5555R (홍하행)</div>
+        </div>
+
+        <div id="tab-5555" class="route-content active">
+            <p class="mb-4 text-sm text-gray-600">※ 약산시 홍하면사무소에서 출발하여 안천구 이자공원역으로 가는 하행 노선입니다.</p>
+            <div class="stop-list">
+                <div class="stop-item major">홍하면사무소 (기점)</div>
+                <div class="stop-item major">홍하역 <span class="text-xs bg-[#6677CC] text-white px-1 rounded">빈효선</span></div>
+                <div class="stop-item">홍하산</div>
+                <div class="stop-item">광정면사무소</div>
+                <div class="stop-item">하수구동</div>
+                <div class="stop-item">북천동</div>
+                <div class="stop-item">염원동</div>
+                <div class="stop-item">고곡동</div>
+                <div class="stop-item">대염동</div>
+                <div class="stop-item">해로산업지구</div>
+                <div class="stop-item">우목면사무소</div>
+                <div class="stop-item">이자병원</div>
+                <div class="stop-item major">이자공원역 (종점) <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span> <span class="text-xs bg-[#FF5522] text-white px-1 rounded">4호선</span></div>
+            </div>
+        </div>
+
+        <div id="tab-5555r" class="route-content">
+            <p class="mb-4 text-sm text-gray-600">※ 안천구 이자공원역에서 출발하여 약산시 홍하면사무소로 가는 상행(역방향) 노선입니다.</p>
+            <div class="stop-list">
+                <div class="stop-item major">이자공원역 (기점)</div>
+                <div class="stop-item">이자병원</div>
+                <div class="stop-item">우목면사무소</div>
+                <div class="stop-item">해로산업지구</div>
+                <div class="stop-item">대염동</div>
+                <div class="stop-item">고곡동</div>
+                <div class="stop-item">염원동</div>
+                <div class="stop-item">북천동</div>
+                <div class="stop-item">하수구동</div>
+                <div class="stop-item">광정면사무소</div>
+                <div class="stop-item">홍하산</div>
+                <div class="stop-item major">홍하역 <span class="text-xs bg-[#6677CC] text-white px-1 rounded">빈효선</span></div>
+                <div class="stop-item major">홍하면사무소 (종점)</div>
+            </div>
+        </div>
+
+        <h2 id="s-5">5. 여담: 성지순례와 밈</h2>
+        <h3 id="s-5-1">5.1. 홍하면 니지리(尼池里)와 무지개, 그리고 '니지'동</h3>
+        <p>홍하면의 중심지인 <strong>니지리(尼池里)</strong>는 한자를 풀이하면 '비구니(尼)의 연못(池) 마을'이라는 다소 투박한 뜻을 가지고 있다. 그러나 이 지역은 주변의 가파른 산세와 습한 기후 덕분에 비가 그친 뒤 <strong>무지개가 매우 크고 선명하게 뜨는 지역</strong>으로 유명하다.</p>
+        
+        <p>이 때문에 발음이 <strong>'니지(Niji - 무지개)'</strong>와 같다는 점에 착안하여, <a href="https://namu.wiki/w/이지치 니지카" target="_blank" class="wiki-link external">이지치 니지카</a>(봇치 더 록!) 팬들과 <strong><a href="https://namu.wiki/w/러브 라이브! 니지가사키 학원 스쿨 아이돌 동호회" target="_blank" class="wiki-link external">니지가사키 학원 스쿨 아이돌 동호회</a></strong>(니지동) 팬들에게 동시에 주목받는 진귀한 성지가 되었다.</p>
+        
+        <div class="namu-quote">
+            <strong>"아이(Ai) 버스를 타고 니지(Niji) 마을에 가서 무지개를 봅니다!"</strong><br>
+            - <span class="text-xs text-gray-500">홍하역에서 버스를 기다리는 어느 니지동 팬의 수첩 낙서</span>
+        </div>
+
+        <p>팬들은 미야시타 아이의 상징색인 주황색 버스(5555번)를 타고 '니지'리로 향하는 이 코스를 <strong>'아이(Ai)가 무지개(Niji)를 보러 가는 길'</strong>이라 부르며 성지순례를 즐긴다. 특히 니지리 마을 회관 근처 정자에서 바라보는 무지개 뷰는 니지가사키의 청량한 분위기와 완벽하게 어우러진다는 평이다. <del>한자는 비구니지만 풍경은 스쿨 아이돌이다.</del></p>
+
+        <h3 id="s-5-2">5.2. 아이 없는 아이 버스?</h3>
+        <p>다른 좌석버스들처럼 5555번 역시 미야시타 아이의 이름과 발음이 같은 <strong>아이동(啞異洞)</strong>은 가지 않는다. 팬들은 이를 보고 <strong>"아이(Ai)는 성격이 좋아서 니지카와 니지동 친구들(니지리)을 챙겨주느라 자기 집(아이동)은 안 가는 거다"</strong>라는 훈훈한(?) 해석을 내놓기도 한다. <del>물론 실제로는 길치 콤비인 카린(4000번)을 따라가다 보니 여기까지 밀려왔다는 게 정설이다.</del></p>
+
+        <!-- Footer 영역 (본문과 명확히 분리) -->
+        <footer class="wiki-footer">
+            <div class="wiki-footer-inner">
+                <div class="license-box">
+                    <p class="font-bold mb-1">이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)</p>
+                    <p>기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+                </div>
+                
+                <ul class="text-xs text-gray-500 space-y-1">
+                    <li>● 효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</li>
+                    <li>● 효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.</li>
+                    <li>● 본 문서는 효빈광역시의 가상 교통망 설정을 기반으로 작성된 창작물입니다.</li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function openTab(tabId) {
+            document.querySelectorAll('.route-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.route-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            const clickedTab = Array.from(document.querySelectorAll('.route-tab')).find(el => el.getAttribute('onclick').includes(tabId));
+            if(clickedTab) clickedTab.classList.add('active');
+        }
+
+        const tooltip = document.getElementById('footnote-tooltip');
+        const notes = document.querySelectorAll('.namu-note');
+
+        notes.forEach(note => {
+            note.addEventListener('mouseenter', (e) => {
+                const content = e.target.getAttribute('data-content');
+                if (content) {
+                    tooltip.innerText = content;
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = e.clientX + 10 + 'px';
+                    tooltip.style.top = e.clientY + 10 + 'px';
+                }
+            });
+            note.addEventListener('mousemove', (e) => {
+                tooltip.style.left = e.clientX + 10 + 'px';
+                tooltip.style.top = e.clientY + 10 + 'px';
+            });
+            note.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
