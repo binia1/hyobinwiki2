@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미소하 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #EE0022; /* 5호선 빨간색 */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #EE0022;
+            --wiki-table-header-text: #ffffff;
+            --wiki-alert-border: #a2a9b1;
+            --wiki-alert-bg: #f8f9fa;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+
+        /* 위키 요소 */
+        del { color: #7f7f7f; text-decoration: line-through; cursor: help; }
+        .wiki-drip { color: #aaa; font-size: 0.85em; }
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+
+        /* 테이블 스타일 */
+        table.wiki-table-custom { border-collapse: collapse !important; width: 100%; margin: 15px 0; border: 1px solid #ddd !important; font-size: 0.9rem; }
+        table.wiki-table-custom th, table.wiki-table-custom td { border: 1px solid #ddd !important; padding: 6px 10px; vertical-align: middle; }
+        table.wiki-table-custom th { background-color: var(--wiki-table-header); color: white; font-weight: bold; text-align: center; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 380px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.3rem; font-weight: bold; }
+        .infobox-image { text-align: center; padding: 10px; border-bottom: 1px solid #ddd; background: white; }
+        .infobox table { border: none !important; margin: 0 !important; width: 100% !important; }
+        .infobox th { background-color: var(--wiki-gray-bg); text-align: center; padding: 8px 5px; border: 1px solid #ddd; width: 30%; font-weight: bold; vertical-align: middle;}
+        .infobox td { padding: 8px 5px; border: 1px solid #ddd; text-align: left; vertical-align: middle;}
+
+        /* 상단 버튼 */
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; }
+
+        /* 각주 & 호버보드 */
+        .footnote-ref { color: var(--wiki-link); font-size: 0.8em; vertical-align: super; cursor: pointer; text-decoration: none; font-weight: bold; }
+        .footnotes-area { margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px; font-size: 0.85rem; color: #555; }
+        
+        /* 각주 툴팁 (호버보드) */
+        #footnote-tooltip {
+            position: fixed;
+            display: none;
+            background-color: #fff;
+            border: 1px solid #999;
+            padding: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            z-index: 9999; 
+            max-width: 400px;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            line-height: 1.4;
+            pointer-events: none; 
+        }
+
+        /* 굿즈 카드 */
+        .goods-card { transition: transform 0.2s; border: 1px solid #eee; border-radius: 8px; overflow: hidden; text-align: center; background: white; }
+        .goods-card:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .goods-card img { width: 100%; height: 200px; object-fit: contain; background-color: #f8f9fa; padding: 10px; }
+        .goods-card-info { padding: 15px; text-align: left; border-top: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+    <!-- 각주 툴팁 컨테이너 -->
+    <div id="footnote-tooltip"></div>
+
+    <!-- 상단 내비게이션 -->
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" placeholder="검색" class="p-1 px-4 rounded text-black text-sm">
+            <button class="bg-[#555588] p-1 px-3 rounded text-sm font-bold">검색</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <!-- 문서 제목 -->
+        <div class="title-area">
+            <div class="txt-lvl-1">미소하</div>
+            <div class="flex gap-2 mb-1">
+                <button class="wiki-btn">토론</button>
+                <button class="wiki-btn">편집</button>
+                <button class="wiki-btn">역사</button>
+            </div>
+        </div>
+
+        <div class="category-box border border-[#ccc]">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="효빈메트로 캐릭터사업.html" class="wiki-link">효빈메트로/캐릭터사업</a> | 
+            <a href="5호선.html" class="wiki-link">효빈 도시철도 5호선</a> | 
+            <a href="#" class="wiki-link">대학생 캐릭터</a>
+        </div>
+
+        <!-- 인포박스 -->
+        <aside class="infobox">
+            <div class="infobox-title">미소하<br><span class="text-sm font-normal">Mi Soha | 微笑夏</span></div>
+            <div class="infobox-image">
+                <img src="images/char_5_basic.png" alt="미소하 공식 일러스트" style="width:100%; height:auto;" onerror="this.src='https://placehold.co/300x400/EE0022/FFFFFF?text=Mi+Soha'">
+                <div class="text-xs text-gray-500 mt-1">효빈교통공사 5호선 공식 마스코트</div>
+            </div>
+            <table>
+                <tr><th>나이</th><td>20세 (2005년생)</td></tr>
+                <tr><th>소속</th><td><a href="효빈대학교.html" class="wiki-link">효빈대학교</a> 사회과학대학<br>사회복지정책학과 1학년 (재학)</td></tr>
+                <tr><th>신장</th><td>163cm</td></tr>
+                <tr><th>출신지</th><td>효빈광역시 서구 당선동</td></tr>
+                <tr><th>학력</th><td>성내초등학교 (졸업)<br>사복중학교 (졸업)<br>복지여자고등학교 (졸업)<br><a href="효빈대학교.html" class="wiki-link">효빈대학교</a> (사회복지정책학 / 재학)</td></tr>
+                <tr><th>가족 관계</th><td>부모님 (아버지: 구 두청운수 버스기사)</td></tr>
+                <tr><th>MBTI</th><td>INFJ (선의의 옹호자)</td></tr>
+                <tr><th>별명</th><td>천사표, 기계덕후, 괴물 신인</td></tr>
+                <tr><th>성우</th><td>쿠노 미사키</td></tr>
+            </table>
+        </aside>
+
+        <!-- 목차 -->
+        <div class="toc">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">상세 설정</a>
+                    <ul>
+                        <li>2.1. <a href="#s-2-1" class="wiki-link">성격 및 특징</a></li>
+                        <li>2.2. <a href="#s-2-2" class="wiki-link">학력 및 능력</a></li>
+                        <li>2.3. <a href="#s-2-3" class="wiki-link">정치 성향</a></li>
+                    </ul>
+                </li>
+                <li>3. <a href="#s-3" class="wiki-link">인간 관계</a></li>
+                <li>4. <a href="#s-4" class="wiki-link">관련 굿즈</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">여담</a></li>
+            </ul>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1">1. 개요</h2>
+        <div class="p-4 bg-red-50 border-l-4 border-red-500 text-red-900 mb-6 font-bold italic">
+            "이동권은 시혜가 아니라 권리예요. (방긋)"
+        </div>
+        <p>
+            <a href="효빈권 광역전철.html" class="wiki-link">효빈권 광역전철</a> <a href="5호선.html" class="wiki-link">5호선</a>을 상징하는 마스코트 캐릭터. 2011년에 데뷔했다. 신분은 효빈대학교 1학년생으로, 박효빈 시장의 직속 대학 후배이다.
+        </p>
+        <p>
+            5호선의 상징색인 빨간색 포인트가 들어간 의상을 입고 있다. 겉보기엔 상냥하고 온화한 '천사표' 여대생이지만, 실제로는 철도 시설과 모터음, 그리고 사회복지 정책을 무서운 수준으로 깊게 파고드는 <strong>'하드코어 덕후'</strong>이다.
+        </p>
+
+        <!-- 2. 상세 설정 -->
+        <h2 id="s-2">2. 상세 설정</h2>
+
+        <h3 id="s-2-1">2.1. 성격 및 특징</h3>
+        <p>
+            <strong>"천사표 얼굴로 팩트를 꽂는 외유내강"</strong> 타입이다. 항상 웃는 얼굴로 상냥하게 말하지만, 교통 약자의 이동권이나 배리어 프리(Barrier-free) 시설에 문제가 보이면 날카롭게 지적하고 개선안까지 즉석에서 내놓는 분석력을 가졌다.
+        </p>
+        <p>
+            철도 동호인으로서의 면모도 강하다. 특히 <strong>기계음 분석</strong>에 탁월하여, 전동차 구동음만 듣고 인버터 소자의 노후화 정도를 파악할 수 있다는 설정이 있다. 평소에는 다소곳하지만 기계 이야기나 정책 토론이 시작되면 눈빛이 변한다.
+        </p>
+
+        <h3 id="s-2-2">2.2. 학력 및 능력</h3>
+        <p>
+            효빈시 내에서 엘리트 코스를 밟았다. 효빈대학교(S등급 국립) 사회과학대학에 진학하기 위해 고교 시절 내내 최상위권 성적을 유지했다.
+            특히 <strong>사회탐구 영역은 고정 1등급</strong>이었으며, 이공계 과목인 <strong>과학탐구(물리)에서도 1등급</strong>을 받는 기염을 토했다. 이는 복지 정책을 연구하기 위해서는 기술적 이해(교통 수단, 보조 공학 등)가 필수적이라는 본인의 신념 때문이다. 말 그대로 문·이과 통합형 인재.
+        </p>
+
+        <h3 id="s-2-3">2.3. 정치 성향</h3>
+        <p>
+            <strong>對 윤대환: 극도로 부정적.</strong><br>
+            윤대환 전 시장 재임 시절, 두청운수 해산 사건 등으로 인해 버스 기사였던 아버지가 실직하고 가세가 기울었던 아픈 과거가 있다. 또한 당시 장애인 이동권 보장이 후퇴하고 복지 예산이 삭감되었던 시기를 '암흑기'로 기억하며 강한 반감을 가지고 있다.
+        </p>
+        <p>
+            <strong>對 박효빈: 진심으로 존경.</strong><br>
+            자신의 대학 동문이자 학과 선배인 박효빈 시장을 롤모델로 삼고 있다. 박 시장이 추진한 이동권 보장 정책과 교통 복지 강화 정책에 깊이 공감하며, 그를 <strong>"복지와 철도를 모두 이해하는 유일한 리더"</strong>로 평가한다. 각종 철도복지 개선사업 현장에서 박 시장을 마주치면 긴장하면서도 존경의 눈빛을 보낸다.
+        </p>
+
+        <!-- 3. 인간 관계 -->
+        <h2 id="s-3">3. 인간 관계</h2>
+        <ul class="list-disc pl-5">
+            <li>
+                <strong><a href="임세하.html" class="wiki-link">임세하</a> (7호선), <a href="전노아.html" class="wiki-link">전노아</a> (빈효선):</strong> 2005년생 동갑내기 친구들. 일명 <strong>'05년생 트리오'</strong> 또는 '황금 세대'로 불린다. 셋이 모이면 미소하가 브레인 역할을 맡는다.
+            </li>
+            <li>
+                <strong><a href="고나미.html" class="wiki-link">고나미</a> (1호선):</strong> 미소하가 기계적인 전문 용어를 섞어가며 이야기할 때, 유일하게 그 말을 전부 알아듣고 대화가 통하는 상대다. 고나미 역시 미소하의 분석력을 높이 산다.
+            </li>
+            <li>
+                <strong>효빈대 카르텔:</strong> 고나미(선배), 하루빈(선배), 임세하(동기)와 함께 효빈대학교 라인을 형성하고 있다. 그중에서도 가장 '학구적'인 포지션이다.
+            </li>
+        </ul>
+
+        <!-- 4. 관련 굿즈 -->
+        <h2 id="s-4">4. 관련 굿즈</h2>
+        <p>주로 <a href="소조역.html" class="wiki-link">소조역점</a>(5호선)과 본점에서 구할 수 있다. 빨간색 테마와 문구류 굿즈가 인기다.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+            <div class="goods-card cursor-pointer" onclick="alert('상품 상세 페이지로 이동합니다.')">
+                <img src="images/35.jpg" alt="1/7 스케일 피규어">
+                <div class="goods-card-info">
+                    <div class="text-sm font-bold text-gray-800 mb-1">[SEGA] 5호선 미소하 1/7 스케일 피규어</div>
+                    <div class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 inline-block rounded">교통복지 천재 Ver.</div>
+                    <div class="text-lg font-black text-red-600 mt-2">53,000원</div>
+                </div>
+            </div>
+            <div class="goods-card cursor-pointer" onclick="alert('상품 상세 페이지로 이동합니다.')">
+                <img src="images/36.jpg" alt="넨도로이드">
+                <div class="goods-card-info">
+                    <div class="text-sm font-bold text-gray-800 mb-1">넨도로이드 미소하</div>
+                    <div class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 inline-block rounded">복지관 안내도 파츠</div>
+                    <div class="text-lg font-black text-red-600 mt-2">45,000원</div>
+                </div>
+            </div>
+            <div class="goods-card cursor-pointer" onclick="alert('상품 상세 페이지로 이동합니다.')">
+                <img src="images/5.jpg" alt="분석 노트 세트">
+                <div class="goods-card-info">
+                    <div class="text-sm font-bold text-gray-800 mb-1">미소하의 '브레인' 분석 노트 세트</div>
+                    <div class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 inline-block rounded">모눈 노트 3권</div>
+                    <div class="text-lg font-black text-red-600 mt-2">8,000원</div>
+                </div>
+            </div>
+            <div class="goods-card cursor-pointer" onclick="alert('상품 상세 페이지로 이동합니다.')">
+                <img src="images/11.jpg" alt="모찌 쿠션">
+                <div class="goods-card-info">
+                    <div class="text-sm font-bold text-gray-800 mb-1">5호선 전동차 모찌 쿠션 (출시 예정)</div>
+                    <div class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 inline-block rounded">AGT 열차 디자인</div>
+                    <div class="text-lg font-black text-red-600 mt-2">25,000원</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 여담 -->
+        <h2 id="s-5">5. 여담</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li>
+                쉬는 날에는 휠체어를 탄 장애인 친구와 함께 효빈시 지하철의 환승 동선과 엘리베이터 위치를 점검하러 다닌다. (이것을 '데이트'라고 부른다.)
+            </li>
+            <li>
+                아버지가 과거 두청운수 소속 버스 기사였으나, 회사의 부조리에 맞서다 해고당하고 이후 두청운수가 해산되면서 명예를 회복한 사연이 있다. 이 때문에 미소하는 '정의로운 대중교통'에 대한 신념이 매우 확고하다.
+            </li>
+            <li>
+                5호선이 무인 운전 경전철(AGT)이다 보니, 운전실이 따로 없어 승객들과 가장 가까이서 만나는 캐릭터이기도 하다. 맨 앞자리에 앉아 풍경을 보며 정책 아이디어를 구상하는 모습이 목격된다.
+            </li>
+        </ul>
+
+        <!-- 하단 각주 영역 -->
+        <div class="footnotes-area">
+            <h3 style="margin-top:0; font-size:1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px;">각주</h3>
+            <div id="fn-voice" class="footnote-content">[1] 아직 공식 성우가 공개되지 않았다.</div>
+        </div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-400 text-xs pb-10">
+            <p>이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)</p>
+            <p>기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            <br>
+            <p>효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</p>
+            <p>효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.</p>
+        </footer>
+    </div>
+
+    <script>
+        // 각주 호버보드 (툴팁) 기능
+        document.addEventListener('DOMContentLoaded', () => {
+            const refs = document.querySelectorAll('.footnote-ref a');
+            const tooltip = document.getElementById('footnote-tooltip');
+
+            refs.forEach(ref => {
+                ref.addEventListener('mouseenter', (e) => {
+                    e.preventDefault(); 
+                    const targetId = ref.getAttribute('href').substring(1); 
+                    const targetContent = document.querySelector(`.footnote-content[id="${targetId}"]`);
+                    
+                    if (targetContent) {
+                        tooltip.innerHTML = targetContent.innerHTML;
+                        tooltip.style.display = 'block';
+                        moveTooltip(e);
+                    }
+                });
+
+                ref.addEventListener('mousemove', (e) => {
+                    moveTooltip(e);
+                });
+
+                ref.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+            });
+
+            function moveTooltip(e) {
+                const x = e.clientX + 15;
+                const y = e.clientY + 15;
+                
+                const tooltipRect = tooltip.getBoundingClientRect();
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+
+                let finalX = x;
+                let finalY = y;
+
+                if (x + tooltipRect.width > windowWidth) {
+                    finalX = x - tooltipRect.width - 20;
+                }
+                if (y + tooltipRect.height > windowHeight) {
+                    finalY = y - tooltipRect.height - 20;
+                }
+
+                tooltip.style.left = finalX + 'px';
+                tooltip.style.top = finalY + 'px';
+            }
+        });
+    </script>
+</body>
+</html>
