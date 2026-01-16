@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈광역시청 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* [테마 컬러 설정] 시청/행정 테마 */
+            --wiki-main: #00498c; 
+            --wiki-nav-bg: #7777aa; /* 상단 네비게이션 배경색 */
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #00498c;
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
+        /* h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); } */
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.15rem; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-link.not-found { color: #d64937; } /* 문서 없음 스타일 */
+        
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 450px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.2rem; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: var(--wiki-main); color: white; width: 100px; padding: 5px 8px; border: 1px solid var(--wiki-main); text-align: center; font-weight: bold; }
+        .infobox td { padding: 5px 8px; border: 1px solid #ddd; text-align: center; }
+        .infobox .merged-row { background-color: #fff; text-align: center; padding: 10px; }
+
+        /* 데이터 테이블 */
+        .data-table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; font-size: 0.9rem; }
+        .data-table th, .data-table td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; }
+        .data-table th { background-color: #f2f2f2; color: #000; font-weight: bold; text-align: center; }
+
+        /* 정당 배지 스타일 */
+        .party-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.8rem; white-space: nowrap; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* 인용 및 특수효과 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: normal; }
+        del { color: #ccc; text-decoration: line-through; }
+        .wiki-gray { color: #888; font-size: 0.9em; }
+
+        /* 하단 네비 박스 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+
+        /* 푸터 저작권 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; }
+        .wiki-footer strong { color: #333; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+        
+        /* 각주 스타일 */
+        sup a { color: var(--wiki-link); text-decoration: none; font-weight: normal; }
+        sup a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav-bg);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <!-- 검색 기능 구현 -->
+                <input type="text" id="searchInput" placeholder="효빈위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <!-- 상단 메뉴 링크 -->
+                <a href="효빈광역시청.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">토론</a>
+                <a href="효빈광역시청.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">편집</a>
+                <a href="효빈광역시청.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">역사</a>
+                <a href="효빈광역시청.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">즐겨찾기</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <!-- [템플릿] 문서 제목 -->
+            <div class="txt-lvl-1">효빈광역시청</div>
+            <div class="flex gap-2 mb-1">
+                <!-- 제목 옆 버튼 링크 -->
+                <a href="효빈광역시청.html" class="wiki-btn">토론</a>
+                <a href="효빈광역시청.html" class="wiki-btn">편집</a>
+                <a href="효빈광역시청.html" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold text-[#00498c]" style="color: var(--wiki-main);">분류:</span> 
+            <a href="효빈광역시청.html" class="wiki-link">효빈광역시청</a> | 
+            <a href="고송지구.html" class="wiki-link">고송지구</a> | 
+            <a href="효빈광역시_소재_관공서.html" class="wiki-link">효빈광역시 소재 관공서</a> | 
+            <a href="광역자치단체_청사.html" class="wiki-link">광역자치단체 청사</a> | 
+            <a href="북구(효빈).html" class="wiki-link">북구(효빈)의 건축물</a> | 
+            <a href="산곡건설.html" class="wiki-link">산곡건설</a> | 
+            <a href="2003년_완공.html" class="wiki-link">2003년 완공</a>
+        </div>
+        
+        <div style="text-align: right; font-size: 0.8rem; margin-bottom: 10px;">
+             [include(<a href="틀_공직.html" class="wiki-link">틀:공직</a>)]
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a>
+                        <ul>
+                            <li>1.1. <a href="#s-1-1" class="wiki-link">마스코트 캐릭터 "한바다"</a></li>
+                        </ul>
+                    </li>
+                    <li>2. <a href="#s-2" class="wiki-link">연혁</a>
+                        <ul>
+                            <li>2.1. <a href="#s-2-1" class="wiki-link">고송동 현 청사</a></li>
+                            <li>2.2. <a href="#s-2-2" class="wiki-link">옛 시청</a></li>
+                            <li>2.3. <a href="#s-2-3" class="wiki-link">민선 4기: 암흑기의 도래와 "잃어버린 10년" (2006 ~ 2007)</a></li>
+                            <li>2.4. <a href="#s-2-4" class="wiki-link">민선 5기 ~ 7기: 박현만 시정의 '대재건' (2008 ~ 2022)</a></li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3" class="wiki-link">역대 시장</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">조직</a>
+                        <ul>
+                            <li>4.1. <a href="#s-4-1" class="wiki-link">인재 양성 프로그램: '블루 버드 멘토단'</a></li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5" class="wiki-link">소속기관</a>
+                        <ul>
+                            <li>5.1. <a href="#s-5-1" class="wiki-link">자치구/군</a></li>
+                            <li>5.2. <a href="#s-5-2" class="wiki-link">산하 기관</a></li>
+                            <li>5.3. <a href="#s-5-3" class="wiki-link">유관 단체</a></li>
+                        </ul>
+                    </li>
+                    <li>6. <a href="#s-6" class="wiki-link">이용 가능한 대중교통</a>
+                        <ul>
+                            <li>6.1. <a href="#s-6-1" class="wiki-link">버스</a></li>
+                            <li>6.2. <a href="#s-6-2" class="wiki-link">도시철도</a></li>
+                            <li>6.3. <a href="#s-6-3" class="wiki-link">효빈광역시 시티투어버스 (Hyobin City Tour)</a></li>
+                            <li>6.4. <a href="#s-6-4" class="wiki-link">성지순례 교통망</a></li>
+                        </ul>
+                    </li>
+                    <li>7. <a href="#s-7" class="wiki-link">여담</a>
+                         <ul>
+                            <li>7.1. <a href="#s-7-1" class="wiki-link">사건 사고: 혐오와의 전쟁</a></li>
+                            <li>7.2. <a href="#s-7-2" class="wiki-link">L-Project (문화 교정)</a></li>
+                         </ul>
+                    </li>
+                    <li>8. <a href="#s-8" class="wiki-link">주요 행사</a></li>
+                    <li>9. <a href="#s-9" class="wiki-link">청사 시설</a></li>
+                    <li>10. <a href="#s-10" class="wiki-link">비판 및 논란</a>
+                        <ul>
+                            <li>10.1. <a href="#s-10-1" class="wiki-link">"세금 낭비" 주장</a></li>
+                            <li>10.2. <a href="#s-10-2" class="wiki-link">입사 경쟁률 과열</a></li>
+                            <li>10.3. <a href="#s-10-3" class="wiki-link">흑역사: 공포의 갈매기 "돈불라"</a></li>
+                        </ul>
+                    </li>
+                    <li>11. <a href="#s-11" class="wiki-link">관련 문서</a></li>
+                    <li>12. <a href="#s-12" class="wiki-link">둘러보기</a></li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="merged-row" style="padding: 0;">
+                    <img src="이미지/효빈광역시_로고.svg" alt="효빈광역시 로고" style="width: 200px; margin: 10px auto;">
+                </div>
+                <div class="infobox-title" style="border-bottom: 2px solid #fff;">
+                    효빈광역시청<br>
+                    <span style="font-size: 0.9rem; font-weight: normal;">孝彬廣域市廳<br>Hyobin City Hall</span>
+                </div>
+                <div class="merged-row" style="background-color: var(--wiki-main); color: white; font-weight: bold;">슬로건</div>
+                <div class="merged-row">
+                    <strong>모두의 밝은 미래<br>함께 하는 효빈광역시</strong>
+                </div>
+                <table>
+                    <tr><th>주소</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구(효빈).html" class="wiki-link">북구</a> 효빈로 79 (고송동 79-3)</td></tr>
+                    <tr><th>국가</th><td><a href="https://namu.wiki/w/대한민국" class="wiki-link">대한민국</a></td></tr>
+                    <tr><th>광역시도</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></td></tr>
+                    <tr><th>직원 수</th><td>2,057명<sup><a href="#fn-1" id="rfn-1">[1]</a></sup></td></tr>
+                    <tr><th>예산</th><td>14조 8,535억 원<sup><a href="#fn-2" id="rfn-2">[2]</a></sup></td></tr>
+                    <tr><th>광역시장</th><td><img src="이미지/더불어민주당_로고.svg" style="width: 20px; display: inline; vertical-align: middle;"> <a href="박효빈.html" class="wiki-link">박효빈</a> (초선)</td></tr>
+                    <tr><th>부시장</th><td>고성진 (행정복지)<br>우진현 (경제문화)</td></tr>
+                    <tr><th>웹사이트</th><td><a href="http://www.hyobin.go.kr" class="wiki-link"><img src="이미지/홈페이지_아이콘.svg" style="width: 20px; display: inline;"></a></td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <p><a href="효빈광역시.html" class="wiki-link">효빈광역시</a>의 행정을 총괄하는 기관이자 그 기관이 입주한 건물. 본관은 26층까지 있으며, 시장실은 9층에 있다.</p>
+        <p><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구(효빈).html" class="wiki-link">북구</a> 효빈로 79(고송동) 소재. 現 청사는 2003년 12월에 완공된 건물이다. <a href="효빈광역시의회.html" class="wiki-link">효빈광역시의회</a>와 쌍둥이 건물로 붙어 있어서, 효빈시내 표지판에는 '시청·시의회'로 표시된다.</p>
+        <p>과거 청사는 <a href="중구(효빈).html" class="wiki-link">중구</a> 중보로 <a href="구시청앞역.html" class="wiki-link">구시청앞역</a> 근처에 있었으나, 2004년 1월 고송동으로 이전하였다. 구 청사는 현재 보존되어 2026년 리모델링 후 타 기관 청사로 쓰일 예정이다. 청사 이전과 동시에 <a href="효빈_도시철도_2호선.html" class="wiki-link">효빈 도시철도 2호선</a> 고송역도 <strong>시청역</strong>으로 개명되었다.<sup><a href="#fn-3" id="rfn-3">[3]</a></sup></p>
+        <p>옆에 시의회가 있다. 또한 인근에 효빈선거관리위원회, <a href="효빈도시공사.html" class="wiki-link">효빈광역시도시공사</a>, 노동청, 통계청, <a href="효빈문화공사.html" class="wiki-link">효빈문화공사</a>, 효빈덕북우정청, <a href="효빈광역시상수도사업본부.html" class="wiki-link">효빈광역시 상수도사업본부</a> 등이 있어서 효빈의 행정 및 상업 중심지라고 할 수 있다. <a href="효빈_도시철도.html" class="wiki-link">도시철도</a> 2, 6호선 <a href="시청역(효빈).html" class="wiki-link">시청역</a>이 지하도를 통해 시청과 연결돼 있어서 약간 걷긴 해야 하지만 비 오는 날에도 편하게 갈 수 있어 청사 접근성이 매우 좋은 편이다.</p>
+        <p>겉보기에는 평범한 <a href="광역자치단체.html" class="wiki-link">광역자치단체</a>의 청사처럼 보이지만, 대한민국, 아니 <strong>전 세계에서 가장 독특한 행정 문화를 가진 관공서</strong>로 평가받는다. <a href="박효빈.html" class="wiki-link">박효빈</a> 시장 취임 이후 <strong>서브컬처와 행정의 결합</strong>이라는 전례 없는 실험이 성공을 거두며, 시청 자체가 하나의 <strong>거대한 성지(聖地)</strong>로 변모했다. <br>
+        청사 내부에서는 점심시간마다 <a href="애니메이션.html" class="wiki-link">애니메이션</a> OST가 흘러나오며, 시장실에는 역대급 <a href="피규어.html" class="wiki-link">피규어</a> 컬렉션이 전시되어 있는 등 일반적인 <a href="공무원.html" class="wiki-link">공무원</a> 조직의 통념을 완전히 깨부순 곳이다.</p>
+        <p>덕분에 매년 <a href="https://namu.wiki/w/행정안전부" class="wiki-link">행정안전부</a> 주관 '지자체 혁신 평가'에서 <strong>업무 효율성</strong>과 '조직 문화' 부문 1위를 놓치지 않고 있다.</p>
+
+        <h3 id="s-1-1">1.1. 마스코트 캐릭터 "한바다"</h3>
+        <div style="text-align: center; margin: 20px 0;">
+            <img src="이미지/효빈마스코트_한바다.png" alt="효빈마스코트 한바다" style="width: 200px; border: 1px solid #ddd; padding: 5px;">
+            <div style="margin-top: 5px; font-weight: bold;">효빈광역시청 마스코트 "한바다"</div>
+        </div>
+        <p>현재의 귀여운 파란 <a href="후드티.html" class="wiki-link">후드티</a> 요정 모습을 하고 있다. (과거 <a href="https://namu.wiki/w/흑역사" class="wiki-link">흑역사</a> 시절 마스코트는 후술)</p>
+
+        <!-- 2. 연혁 -->
+        <h2 id="s-2" class="anchor-offset">2. 연혁</h2>
+
+        <h3 id="s-2-1">2.1. 고송동 현 청사</h3>
+        <ul class="list-disc pl-5">
+            <li>2003년 12월: 현 청사 완공</li>
+            <li>2004년 1월: 시청사 이전 (중구 → 북구 고송동)</li>
+        </ul>
+
+        <h3 id="s-2-2">2.2. 옛 시청</h3>
+        <p><a href="https://namu.wiki/w/일제강점기" class="wiki-link">일제강점기</a> 시기인 1931년에 효빈부청사로 건설된 건물. 중구 중보로 2에 위치했다. 효빈의 확장이 지속되면서 행정 수요를 감당하기 어려워져 이전하게 되었다.</p>
+
+        <h3 id="s-2-3">2.3. 민선 4기: 암흑기의 도래와 "잃어버린 10년" (2006 ~ 2007)</h3>
+        <p><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> 역사상 가장 치욕스럽고 고통스러웠던 시기로, 시민들은 이 시기를 <strong>"윤대환의 난(亂)"</strong> 혹은 <strong>"두청강점기"</strong>라고 부른다. 단 1년 4개월의 짧은 재임 기간이었지만, 그가 남긴 상흔은 컸다.</p>
+        
+        <h4>행정 붕괴와 암흑기</h4>
+        <ul class="list-disc pl-5">
+            <li><strong>3표의 비극</strong>: 2006년 <a href="지방선거.html" class="wiki-link">지방선거</a>에서 보수 후보 <a href="윤대환.html" class="wiki-link">윤대환</a>이 진보 표 분산으로 2위를 단 <strong>3표 차</strong>로 누르고 당선되는 이변 발생.</li>
+            <li><strong>철도 파괴와 버스 독점</strong>: 윤대환은 일가 기업인 <strong><a href="두청운수.html" class="wiki-link">두청운수</a></strong>의 이익을 위해 5, 6호선 공사를 중단시키고 7호선을 폐지하려 했다. 시민들은 살인적인 요금(타 도시의 5배)을 내며 플라스틱 좌석 버스를 타야 했다.</li>
+            <li><strong>비서관 청부 테러</strong>: 비자금 장부를 폭로하려던 비서관 A씨를 <a href="조폭.html" class="wiki-link">조폭</a>을 동원해 테러한 사건. A씨는 중상을 입고도 비리를 폭로했고, 이는 윤대환 <a href="탄핵.html" class="wiki-link">탄핵</a>의 결정적 계기가 되었다.</li>
+        </ul>
+
+        <h4>문화적 쇄국과 혐오의 씨앗</h4>
+        <p>윤대환은 "<a href="만화.html" class="wiki-link">만화</a>는 정신을 썩게 한다"며 모든 문화 행사를 축소했다. 이러한 아버지의 폭력성은 아들 <a href="윤재훈.html" class="wiki-link">윤재훈</a>에게 그대로 답습되어, 훗날 <strong>HAF 난동 사건</strong>의 원인이 된다.</p>
+
+        <h3 id="s-2-4">2.4. 민선 5기 ~ 7기: 박현만 시정의 '대재건' (2008 ~ 2022)</h3>
+        <ul class="list-disc pl-5">
+            <li><strong>도시 정상화</strong>: 2008년 <a href="보궐선거.html" class="wiki-link">보궐선거</a>로 당선된 <a href="박현만.html" class="wiki-link">박현만</a>(일명 '갓현만') 시장은 취임 즉시 <a href="두청운수.html" class="wiki-link">두청운수</a> 면허를 취소하고 철도 공사를 재개했다.</li>
+            <li><strong>광역 교통망 확충</strong>: 인근 <a href="천주시.html" class="wiki-link">천주시</a>, <a href="약산시.html" class="wiki-link">약산시</a>와의 관계 회복 및 <a href="환승.html" class="wiki-link">환승</a> 할인 도입.</li>
+        </ul>
+
+        <!-- 3. 역대 시장 (New Section) -->
+        <h2 id="s-3" class="anchor-offset">3. 역대 시장</h2>
+        <table class="data-table" style="text-align: center;">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">대수</th>
+                    <th style="width: 22%;">정당</th>
+                    <th style="width: 15%;">이름</th>
+                    <th style="width: 25%;">임기</th>
+                    <th>비고</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1대</td>
+                    <td><span class="party-badge" style="background-color: #E61E2B;">민주당</span></td>
+                    <td><a href="환산채.html" class="wiki-link">환산채</a></td>
+                    <td>1995.7.1 ~ 1998.6.30</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>2대</td>
+                    <td><span class="party-badge" style="background-color: #009D68;">새정치국민회의</span></td>
+                    <td><a href="박현만.html" class="wiki-link">박현만</a></td>
+                    <td>1998.7.1 ~ 2002.6.30</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>3대</td>
+                    <td><span class="party-badge" style="background-color: #009D68;">새천년민주당</span></td>
+                    <td><a href="박현만.html" class="wiki-link">박현만</a></td>
+                    <td>2002.7.1 ~ 2006.6.30</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>4대</td>
+                    <td><span class="party-badge" style="background-color: #00AEEF;">한나라당</span></td>
+                    <td><a href="윤대환.html" class="wiki-link">윤대환</a></td>
+                    <td>2006.7.1 ~ 2007.11.30</td>
+                    <td style="text-align: left; font-size: 0.85rem;">공직선거법 위반으로 인한 당선무효<br>(뇌물수수 및 강요 협박죄, 선거범죄 및 살인미수, 폭행죄, 금품살포죄 및 모욕죄 등)</td>
+                </tr>
+                <tr>
+                    <td>5대</td>
+                    <td><span class="party-badge" style="background-color: #009D68;">통합민주당</span></td>
+                    <td><a href="박현만.html" class="wiki-link">박현만</a></td>
+                    <td>2008.6.4 ~ 2010.6.30</td>
+                    <td>2008년 상반기 재보궐 선거</td>
+                </tr>
+                <tr>
+                    <td>6대</td>
+                    <td><span class="party-badge" style="background-color: #009D68;">민주당</span></td>
+                    <td><a href="박현만.html" class="wiki-link">박현만</a></td>
+                    <td>2010.7.1 ~ 2014.6.30</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>7대</td>
+                    <td><span class="party-badge" style="background-color: #004EA2;">새정치민주연합</span></td>
+                    <td><a href="김성민.html" class="wiki-link">김성민</a></td>
+                    <td>2014.7.1 ~ 2018.6.30</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>8대</td>
+                    <td><span class="party-badge" style="background-color: #004EA2;">더불어민주당</span></td>
+                    <td><a href="김성민.html" class="wiki-link">김성민</a></td>
+                    <td>2018.7.1 ~ 2022.6.30</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>9대</td>
+                    <td><span class="party-badge" style="background-color: #004EA2;">더불어민주당</span></td>
+                    <td><a href="박효빈.html" class="wiki-link">박효빈</a></td>
+                    <td>2022.7.1 ~ 2026.6.30(예정)</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 4. 조직 (Renumbered) -->
+        <h2 id="s-4" class="anchor-offset">4. 조직</h2>
+        <p><a href="행정부시장.html" class="wiki-link">행정부시장</a>은 <a href="https://namu.wiki/w/행정안전부" class="wiki-link">행정안전부</a> 파견, <a href="미래혁신부시장.html" class="wiki-link">미래혁신부시장</a>은 주로 시장 인맥이나 내부 승진으로 채워진다.</p>
+
+        <ul class="list-disc pl-5">
+            <li><strong><a href="효빈광역시장.html" class="wiki-link">효빈광역시장</a></strong> (차관급): 선출직 지방정무직.
+                <ul class="pl-5" style="list-style-type: circle;">
+                    <li>대변인 (3급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li>홍보담당관 / 공보담당관 (4급)</li>
+                            <li><strong>뉴미디어담당관</strong> (4급): 일반임기제 가능. 시청 <a href="유튜브.html" class="wiki-link">유튜브</a>와 <a href="SNS.html" class="wiki-link">SNS</a> 담당.</li>
+                            <li>정책수석보좌관 / 정무기획보좌관 (전문임기제 가급)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li><strong>행정부시장</strong> (고공단 가급, 국가직)
+                <ul class="pl-5" style="list-style-type: circle;">
+                    <li>기획조정실 (고공단 나급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li>재정혁신담당관 / 예산담당관 / 세정정책담당관 / 세정운영담당관 / 회계재산담당관 / 기획관 / 기획담당관 / 조직담당관 / 법무담당관 / 정보화담당관 / 규제혁신추진단</li>
+                        </ul>
+                    </li>
+                    <li>시민안전실 (2~3급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li>안전정책과 / 사회재난과 / 자연재난과 / 원자력안전과</li>
+                            <li><strong>특별사법경찰과 (문화안전팀)</strong>: 굿즈 훼손, 성지 테러, 코스어 도촬 등 서브컬처 범죄 전담 수사.
+                                <ul class="pl-5">
+                                    <li>장비: 순찰차에 <strong><a href="네소베리.html" class="wiki-link">네소베리</a></strong>(누운 인형)가 부착되어 있다.</li>
+                                    <li><strong>문화안전순찰대</strong>: 산하 비공식 조직으로 <a href="효빈여객.html" class="wiki-link">효빈여객</a> 직원들이 주로 활동하며 물리적(?) 제압을 담당한다.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>도시균형발전실 (2~3급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li>도시균형개발과 / 창조도시과 / 도시정비과 / 건설행정과 / <strong>걷기좋은효빈추진단</strong></li>
+                        </ul>
+                    </li>
+                    <li>도시계획국 (3급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li>도시계획과 / 시설계획과 / 도로계획과 / 기술심사과 / 토지정보과</li>
+                        </ul>
+                    </li>
+                    <li>건축주택국 (3급)
+                         <ul class="pl-5" style="list-style-type: square;">
+                            <li>총괄건축기획과 / 건축정책과 / 주택정책과 / 도시디자인과</li>
+                         </ul>
+                    </li>
+                    <li>교통국 (3급)
+                         <ul class="pl-5" style="list-style-type: square;">
+                            <li>공공교통정책과 / 물류정책과 / 도시철도과 / 버스운영과 / 택시운수과</li>
+                         </ul>
+                    </li>
+                    <li>문화체육국 (3급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li>문화예술과 / 문화유산과</li>
+                            <li><strong>영상콘텐츠산업과</strong>: 사실상 효빈시의 <strong>전략기획실</strong>. L-Project, HAF, 성지순례 코스 개발 총괄.
+                                <ul class="pl-5">
+                                    <li><strong>성지관리팀</strong>: 관내 <a href="https://namu.wiki/w/러브%20라이브!" class="wiki-link">러브라이브</a>, <a href="https://namu.wiki/w/BanG%20Dream!" class="wiki-link">뱅드림</a> 성지 관리. <a href="JLPT.html" class="wiki-link">JLPT</a> N2 및 덕력 테스트 필수.</li>
+                                    <li><strong>국제교류과 (일본팀)</strong>: <a href="https://namu.wiki/w/누마즈" class="wiki-link">누마즈</a>, <a href="https://namu.wiki/w/오다이바" class="wiki-link">오다이바</a> 등과의 자매결연 전담. 출장 시 '핫피'를 챙겨간다고 한다.</li>
+                                </ul>
+                            </li>
+                            <li><strong>애니메이션산업과</strong>: 박효빈 시장 역점 사업 부서. 채용 시 덕력을 중요하게 평가함.</li>
+                            <li>행사진흥과 / 체육진흥과</li>
+                        </ul>
+                    </li>
+                    <li>사회복지국 (3급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li>복지정책과 / 장애인복지과 / 노인복지과</li>
+                        </ul>
+                    </li>
+                    <li>여성가족국 (3급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li>여성가족과 / 출산보육과 / 아동청소년과</li>
+                        </ul>
+                    </li>
+                    <li>시민건강국 (3급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li>건강정책과 / 보건위생과 / 시민방역추진단 / 코로나19예방접종추진단</li>
+                        </ul>
+                    </li>
+                    <li>행정자치국 (3급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li>총무과 / 자치분권과 / 인사과 / 협치행정과 / 통합민원과</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li><strong>미래혁신부시장</strong> (1급 상당)
+                <ul class="pl-5" style="list-style-type: circle;">
+                    <li>민생노동정책관 (2급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                             <li>인권노동정책담당관 / 소상공인지원담당관 / 사회적경제담당관</li>
+                        </ul>
+                    </li>
+                    <li>디지털경제혁신실 (2급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li>경제일자리과 / 투자유치과 / 미래기술혁신과 / 인공지능소프트웨어과 / 금융블록체인과 / 빅데이터통계과</li>
+                        </ul>
+                    </li>
+                    <li>산업통상국 (3급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li>제조혁신과 / 미래에너지산업과 / 첨단의료산업과 / 산업입지과 / 외교통상과 / 남북협력기획단</li>
+                        </ul>
+                    </li>
+                    <li>청년산학국 (3급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li>청년정책과 / 지산학협력과 / 창업벤처과 / 교육협력과</li>
+                        </ul>
+                    </li>
+                    <li>관광마이스산업국 (3급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li>관광진흥과 / 마이스산업과 / 해양레저관광과</li>
+                        </ul>
+                    </li>
+                    <li>녹색환경정책실 (2~3급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                             <li>환경정책과 / 기후대기과 / 자원순환과 / 공원운영과 / 산림녹지과</li>
+                        </ul>
+                    </li>
+                    <li>물정책국 (3급)
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li>맑은물정책과 / 하천관리과 / 생활수질개선과</li>
+                        </ul>
+                    </li>
+                    <li>해양농수산국 (3급)
+                         <ul class="pl-5" style="list-style-type: square;">
+                            <li>해양수도정책과 / 해운항만과 / 수산정책과 / 수산진흥과 / 농축산유통과</li>
+                         </ul>
+                    </li>
+                    <li><strong>홍보담당관실</strong>
+                        <ul class="pl-5" style="list-style-type: square;">
+                            <li><strong>글로벌 모니터링 팀</strong>: 일본 현지 성우 <a href="라디오.html" class="wiki-link">라디오</a> 반응 실시간 번역 공유.</li>
+                            <li><strong>뉴미디어팀</strong>: 시장님의 <a href="https://namu.wiki/w/제로투%20댄스" class="wiki-link">제로투 댄스</a>, <a href="https://namu.wiki/w/갤럭시%20포즈" class="wiki-link">갤럭시 포즈</a> 숏폼 영상 제작.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3 id="s-4-1">4.1. 인재 양성 프로그램: '블루 버드 멘토단'</h3>
+        <p><a href="박효빈.html" class="wiki-link">박효빈</a> 시장이 신설한 청년 시정 참여 프로그램. 선발 기준이 <strong>특정 분야에 대한 깊은 열정(오타쿠 기질)</strong>이다. '탕쿠쿠 홀더 폭행 사건'의 피해자이자 사건을 공론화한 이 주무관이 1기 출신이다.</p>
+
+        <!-- 5. 소속기관 (Renumbered) -->
+        <h2 id="s-5" class="anchor-offset">5. 소속기관</h2>
+        <h3 id="s-5-1">5.1. 자치구/군</h3>
+        <p><a href="중구(효빈).html" class="wiki-link">중구청</a>, <a href="동구(효빈).html" class="wiki-link">동구청</a>, <a href="서구(효빈).html" class="wiki-link">서구청</a>, <a href="남구(효빈).html" class="wiki-link">남구청</a>, <a href="북구(효빈).html" class="wiki-link">북구청</a></p>
+        <p><a href="청엽구청.html" class="wiki-link">청엽구청</a>, <a href="안천구청.html" class="wiki-link">안천구청</a>, <a href="창전구청.html" class="wiki-link">창전구청</a>, <a href="탄성군청.html" class="wiki-link">탄성군청</a></p>
+
+        <h3 id="s-5-2">5.2. 산하 기관</h3>
+        <ul class="list-disc pl-5">
+            <li><strong>지방공기업</strong>: <a href="효빈광역시상수도사업본부.html" class="wiki-link">효빈광역시상수도사업본부</a>, <a href="효빈광역시하수도사업본부.html" class="wiki-link">효빈광역시하수도사업본부</a>
+                <ul class="pl-5" style="list-style-type: square;">
+                    <li><a href="효빈관광공사.html" class="wiki-link">효빈관광공사</a></li>
+                    <li><a href="효빈교통공사.html" class="wiki-link">효빈교통공사</a>: 전신은 교통부 산하. 캐릭터 사업팀이 철도 운영보다 수익이 높다는 소문이 있다.</li>
+                    <li><a href="효빈도시공사.html" class="wiki-link">효빈도시공사</a>: 도시재생지원센터 흡수.</li>
+                    <li><a href="효빈시설공단.html" class="wiki-link">효빈시설공단</a>: 스포원 흡수합병.</li>
+                    <li><a href="효빈환경공단.html" class="wiki-link">효빈환경공단</a></li>
+                </ul>
+            </li>
+            <li><strong><a href="효빈문화공단.html" class="wiki-link">효빈문화공단</a></strong>
+                <ul class="pl-5" style="list-style-type: square;">
+                    <li>겉으로는 평범한 문화 재단이나, 산하에 <strong>특수 목적 굿즈 생산 공장</strong>을 운영 중.</li>
+                    <li><strong>특별 교정 센터 (The Factory)</strong>: L-Project의 일환으로 혐오 범죄자를 수용하여 24시간 애니메이션을 시청하며 굿즈를 생산하게 하는 <strong>심리적 교정 노동</strong> 시설.
+                        <ul class="pl-5">
+                            <li>주요 수감자: <a href="윤재훈.html" class="wiki-link">윤재훈</a>(전 시장 아들), A씨(엠마 빵 테러범).</li>
+                            <li>윤재훈은 하루 종일 <a href="https://namu.wiki/w/타카미%20치카" class="wiki-link">타카미 치카</a> 인형 눈을 붙이거나 귤 박스를 포장하며 BGM으로 '키세키'를 무한 청취 중이다. "만마루가 무서워!"라고 발작한다고 함.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li><strong>지방출연기관</strong>: 효빈경제진흥원, 효빈글로벌도시재단, 효빈디자인재단, 효빈연구원, 효빈광역시사회서비스원, 효빈신용보증재단, 효빈성평등가족과평생교육진흥원, 효빈의료원, 효빈정보산업진흥원, 효빈테크노파크, 효빈산업과학혁신원, 효빈문화회관</li>
+            <li><strong>지방출자기관</strong>: (주)HSCO</li>
+        </ul>
+
+        <h3 id="s-5-3">5.3. 유관 단체</h3>
+        <ul class="list-disc pl-5">
+            <li>효빈약산천주경제자유구역청</li>
+            <li>효빈광역시사회적경제지원센터</li>
+            <li>효빈사회적경제네트워크</li>
+            <li>효빈광역시체육회</li>
+        </ul>
+
+        <!-- 6. 교통편 (Renumbered) -->
+        <h2 id="s-6" class="anchor-offset">6. 이용 가능한 대중교통</h2>
+        <h3 id="s-6-1">6.1. 버스</h3>
+        <ul class="list-disc pl-5">
+            <li><strong>순방향</strong>: 25, 123, 232, 291, 522, 3000, 6000, 6666, A01</li>
+            <li><strong>역방향</strong>: 52, 213, 322, 821, 252, 3000R, 6000R, 6666R, A01R</li>
+        </ul>
+
+        <h3 id="s-6-2">6.2. 도시철도</h3>
+        <ul class="list-disc pl-5">
+            <li><a href="효빈_도시철도_2호선.html" class="wiki-link">효빈 도시철도 2호선</a>, <a href="효빈_도시철도_6호선.html" class="wiki-link">효빈 도시철도 6호선</a> <strong><a href="시청역(효빈).html" class="wiki-link">시청역</a></strong> (지하 연결)</li>
+        </ul>
+
+        <h3 id="s-6-3">6.3. 효빈광역시 시티투어버스 (Hyobin City Tour)</h3>
+        <blockquote>"이 버스는 효빈역을 출발하여 누마즈... 아, 아니 남구 해안도로로 향합니다. <strong>요우소로!</strong>" <br> <span class="wiki-gray">-- T03 노선 안내방송 (CV. <a href="https://namu.wiki/w/사이토%20슈카" class="wiki-link">사이토 슈카</a>)</span></blockquote>
+        <p>전국 유일 <strong>지자체 공식 <a href="이타샤.html" class="wiki-link">이타샤(Itasha)</a> 버스</strong>. 슬로건은 <strong>"Dream on the Bus"</strong>. 수익금 전액은 <strong>청소년 교통비 무료화</strong> 재원으로 사용된다.</p>
+        <ul class="list-disc pl-5">
+            <li><strong>운영</strong>: 시청 기획, 시내버스 'Big 5' 업체(소진, 청엽, 칠채, 입석, 송덕) 컨소시엄 운영.</li>
+            <li><strong>노선(T-Code)</strong>: T01~T09. 덕후들은 μ's와 Aqours 멤버 수인 9명에서 따왔다고 추측한다.</li>
+            <li><strong>차량</strong>: 30대 중 15대가 공식 애니메이션 래핑 차량.
+                <ul class="pl-5" style="list-style-type: square;">
+                    <li><strong>러브라이브 선샤인 호</strong>: T03(남구 해안도로) 투입.</li>
+                    <li><strong>뱅드림 로젤리아 호</strong>: T09(야경) 투입. 차내 조명 보라색, BGM 'FIRE BIRD'.</li>
+                </ul>
+            </li>
+            <li><strong>T10 노선 (MyGO!!!!! 에디션)</strong>: 일명 <strong>타키 짱의 잔소리 버스</strong>. <a href="https://namu.wiki/w/시이나%20타키" class="wiki-link">시이나 타키</a>가 래핑되어 있으며, 안내방송(CV. <a href="https://namu.wiki/w/하야시%20코코" class="wiki-link">하야시 코코</a>)으로 승객을 혼낸다(?).
+                <ul class="pl-5">
+                    <li>"하아? 벌써 출발 시간이야. 빨리 타.", "손잡이 잡아. 넘어지면 나만 고생이니까." 등.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3 id="s-6-4">6.4. 성지순례 교통망</h3>
+        <ul class="list-disc pl-5">
+            <li><strong>보몽역</strong>(1호선): <a href="https://namu.wiki/w/우에하라%20아유무" class="wiki-link">우에하라 아유무</a> 성지(步夢 - 꿈을 향해 걷다). 포토존 존재.</li>
+            <li><strong>리사역</strong>: 엠마 베르데 빵집(맛있는 찰떡) 위치. A씨가 테러하려다 참교육당한 곳. '캐릭터 베이커리 거리' 조성.</li>
+            <li><strong>사능역</strong>(3호선): <a href="https://namu.wiki/w/야마부키%20사아야" class="wiki-link">야마부키 사아야</a> 성지. 생일마다 축하 방송 송출.</li>
+            <li><strong>도변역 & 요우역</strong>: <a href="https://namu.wiki/w/와타나베%20요우" class="wiki-link">와타나베 요우</a> 성지. 요우소로 동상 건립 추진 중.</li>
+        </ul>
+
+        <!-- 7. 여담 (Renumbered) -->
+        <h2 id="s-7" class="anchor-offset">7. 여담</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>세상에서 가장 유쾌한 행정기관</strong>: 시장 <a href="박효빈.html" class="wiki-link">박효빈</a>부터가 희대의 <a href="성덕.html" class="wiki-link">성덕</a>이라 시청 전체가 서브컬처에 절여져 있다. 외부에서는 세금 낭비라 오해하지만, 실제로는 덕후 친화 정책으로 재정 자립도 1위를 찍는 기적의 행정을 보여준다.</li>
+            <li><strong>시장 집무실</strong>: 한쪽 벽은 도시 계획도, 반대쪽은 <a href="https://namu.wiki/w/러브%20라이브!" class="wiki-link">러브라이브</a>, <a href="https://namu.wiki/w/BanG%20Dream!" class="wiki-link">뱅드림</a> 피규어와 성우 사인으로 도배되어 있다. 시장 명패에는 <strong>"요우소로(Yousoro)!"</strong>가 적혀있다. 결재 도장 찍을 때 "전속 전진!"을 외친다고 한다.</li>
+            <li><strong>재정 상태</strong>: HAF와 굿즈 공장 수익으로 돈이 넘쳐나서 대학 등록금 전액 지원 등 비현실적 복지가 실현되고 있다.</li>
+            <li><strong>업무 효율</strong>: "빨리 일 끝내고 성우님 라디오 들어야 한다"는 일념으로 4시 퇴근의 전설을 썼다.</li>
+        </ul>
+
+        <h3 id="s-7-1">7.1. 사건 사고: 혐오와의 전쟁</h3>
+        <ul class="list-disc pl-5">
+            <li><strong>탕쿠쿠 홀더 폭행 사건</strong>: 2023년 김 모 팀장이 부하 직원의 <a href="https://namu.wiki/w/탕쿠쿠" class="wiki-link">탕쿠쿠</a> 파일을 찢으며 "필리핀 촌놈"이라 비하한 사건. 나비효과로 필리핀 <a href="https://namu.wiki/w/케손시티" class="wiki-link">케손시티</a>와 자매결연을 맺고 대박이 났다.</li>
+            <li><strong>윤재훈의 몰락</strong>: 2022년 TV 토론회에서 박효빈에게 패드립을 쳤다가 "당신은 악마입니까?"라는 일갈을 듣고 낙선. 이후 필리핀에서 "내가 한국의 왕이다"라고 난동 부리다 추방당해 현재 굿즈 공장에서 인형 눈을 붙이고 있다.</li>
+            <li><strong>야마부키 사아야 대첩</strong>: HAF 행사장에서 윤재훈과 A씨가 <a href="https://namu.wiki/w/오오하시%20아야카" class="wiki-link">오오하시 아야카</a> 성우에게 욕설을 했다가, 한국어 패치된 성우에게 경멸당하고 시민들에게 참교육당한 사건.</li>
+            <li><strong>니지동 등신대 테러 미수</strong>: 등신대에 오물을 투척하려던 일당을 팬들이 "메카쿠시테(눈 가려)!"를 외치며 막아낸 사건.</li>
+        </ul>
+
+        <h3 id="s-7-2">7.2. L-Project (문화 교정)</h3>
+        <ul class="list-disc pl-5">
+            <li><strong>성공 사례</strong>: 최 씨(전직 비리 검사 → Aqours 입덕 후 갱생), 김 기자(기레기 → Roselia 입덕 후 참된 기자).</li>
+            <li><strong>실패 사례</strong>: <a href="윤재훈.html" class="wiki-link">윤재훈</a>. 갱생 불가 판정받고 무기한 굿즈 생산 노동 중.</li>
+        </ul>
+
+        <!-- 8. 주요 행사 (Renumbered) -->
+        <h2 id="s-8" class="anchor-offset">8. 주요 행사</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>HAF (효빈 애니메이션 페스티벌)</strong>: 매년 여름 개최. 도시철도망 전체를 행사장으로 쓰는 도심형 축제. 경제 효과 수조 원.</li>
+        </ul>
+
+        <!-- 9. 청사 시설 (Renumbered) -->
+        <h2 id="s-9" class="anchor-offset">9. 청사 시설</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>1층 로비 (Hall of Fame)</strong>: 성우 핸드프린팅 존, 방탄유리 보관.</li>
+            <li><strong>구내식당 (효빈 식당)</strong>: 매주 수요일 '세계관 데이'. 야마부키 베이커리 빵, 누마즈 덮밥 등 제공. 혼밥존에 스마트폰 거치대 완비.</li>
+            <li><strong>방송 시스템</strong>: 시보가 <a href="스쿨%20아이돌.html" class="wiki-link">스쿨 아이돌</a> 목소리다. (09시 오하요소로, 18시 Start!! True dreams)</li>
+        </ul>
+
+        <!-- 10. 비판 및 논란 (Renumbered) -->
+        <h2 id="s-10" class="anchor-offset">10. 비판 및 논란</h2>
+        <h3 id="s-10-1">10.1. "세금 낭비" 주장</h3>
+        <p>윤재훈 잔존 세력이 주장하나, 재정 공시(수익이 지출의 50배) 한 방에 논파당한다. 시민들은 "응~ 재정 자립도 1위~"라며 무시한다.</p>
+
+        <h3 id="s-10-2">10.2. 입사 경쟁률 과열</h3>
+        <p>'덕후들의 꿈의 직장'으로 소문나 경쟁률이 500:1을 돌파했다. 지역 인재 할당제로 진정시키는 중.</p>
+
+        <h3 id="s-10-3">10.3. 흑역사: 공포의 갈매기 "돈불라"</h3>
+        <blockquote>"엄마! 저 새가 나 쳐다봐! 무서워!"</blockquote>
+        <p>민선 4기 <a href="윤대환.html" class="wiki-link">윤대환</a> 시절의 마스코트. 돈(Money)을 불리라(Blow)는 뜻이었으나, 시민들은 <strong>"돈 내놔라"</strong>로 해석했다.</p>
+        <ul class="list-disc pl-5">
+            <li><strong>디자인</strong>: 퀭하고 충혈된 눈, 탁한 노란색의 뾰족한 부리. 한 손에는 '뇌물 주머니' 같은 동전 주머니를 들고 있었다.</li>
+            <li><strong>용도</strong>: 주로 세금 고지서, 쓰레기 봉투, <a href="두청운수.html" class="wiki-link">두청운수</a> 버스 시트에 인쇄되어 시민들에게 공포와 불쾌감을 주었다.</li>
+            <li><strong>최후</strong>: <a href="박현만.html" class="wiki-link">박현만</a> 시장 취임 후 전량 폐기/소각되었다. 역사관에 봉인된 인형 하나가 남아있다.</li>
+        </ul>
+
+        <!-- 11. 관련 문서 (Renumbered) -->
+        <h2 id="s-11" class="anchor-offset">11. 관련 문서</h2>
+        <ul class="list-disc pl-5">
+            <li><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></li>
+            <li><a href="박효빈.html" class="wiki-link">박효빈</a></li>
+            <li><a href="윤재훈.html" class="wiki-link">윤재훈</a></li>
+            <li><a href="두청운수.html" class="wiki-link">두청운수</a></li>
+            <li><a href="이타샤.html" class="wiki-link">이타샤</a></li>
+            <li><a href="https://namu.wiki/w/러브%20라이브!" class="wiki-link">러브 라이브!</a></li>
+            <li><a href="https://namu.wiki/w/BanG%20Dream!" class="wiki-link">BanG Dream!</a></li>
+        </ul>
+
+        <!-- 12. 둘러보기 (Renumbered) -->
+        <h2 id="s-12" class="anchor-offset">12. 둘러보기</h2>
+        <div class="nav-box shadow-sm mt-10">
+            <div class="nav-box-header">[효빈광역시의 행정구역]</div>
+            <div class="nav-box-content leading-loose text-sm">
+                <a href="중구(효빈).html" class="wiki-link">중구</a> · 
+                <a href="동구(효빈).html" class="wiki-link">동구</a> · 
+                <a href="서구(효빈).html" class="wiki-link">서구</a> · 
+                <a href="남구(효빈).html" class="wiki-link">남구</a> · 
+                <a href="북구(효빈).html" class="wiki-link">북구</a> · 
+                <a href="청엽구.html" class="wiki-link">청엽구</a> · 
+                <a href="안천구.html" class="wiki-link">안천구</a> · 
+                <a href="창전구.html" class="wiki-link">창전구</a> · 
+                <a href="탄성군.html" class="wiki-link">탄성군</a>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 10px;">
+            <div style="font-size: 0.8rem; color: #555;">
+                <ol>
+                    <li id="fn-1">[1] 2025년 기준 <a href="#rfn-1">^</a></li>
+                    <li id="fn-2">[2] 2023년 본예산 기준 <a href="#rfn-2">^</a></li>
+                    <li id="fn-3">[3] 과거 이름이었던 고송역은 2016년 6호선 개통 후 고송지구 중앙에 생긴 역에 적용되었다. 안내방송에서는 구 역명을 언급하지 않는다. <a href="#rfn-3">^</a></li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 검색 기능 핸들러
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                location.href = `search.html?q=${encodeURIComponent(query)}`;
+            } else {
+                showMsg('검색어를 입력해주세요.');
+            }
+        }
+
+        // 메시지 박스 표시 함수
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        // 목차 스무스 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, 
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 존재하지 않는 로컬 링크 처리
+        document.querySelectorAll('a.wiki-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // pass
+            });
+        });
+    </script>
+</body>
+</html>
