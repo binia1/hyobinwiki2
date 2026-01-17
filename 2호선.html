@@ -332,12 +332,52 @@
             line-height: 1.5;
             border-top: 1px solid #ccc;
         }
+        
+        /* 각주 툴팁 스타일 */
+        .footnote-tooltip {
+            position: absolute;
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 0.85rem;
+            max-width: 300px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+            line-height: 1.5;
+            pointer-events: none; /* 툴팁이 마우스 이벤트를 방해하지 않도록 함 */
+        }
+        
+        .footnote-tooltip::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 20px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: #ccc transparent transparent transparent;
+        }
+        
+        .footnote-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 21px; /* border 두께만큼 조정 */
+            border-width: 5px;
+            border-style: solid;
+            border-color: #fff transparent transparent transparent;
+            margin-top: -1px;
+        }
         /* ------------------------------------------------ */
     </style>
 </head>
 <body>
 
     <div id="wiki-msg-box"></div>
+    <!-- 각주 툴팁 컨테이너 추가 -->
+    <div id="footnote-tooltip-container" class="footnote-tooltip"></div>
 
     <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
         <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='hyobin_city.html'">
@@ -733,7 +773,7 @@
                 <tr><td>11</td><td><a href="칠심역.html" class="wiki-link">칠심</a></td><td>23,232</td><td>8,479,680</td><td>36</td><td><a href="어간항역.html" class="wiki-link">어간항</a></td><td>7,922</td><td>2,891,530</td></tr>
                 <tr><td>12</td><td><a href="중앙로역.html" class="wiki-link">중앙로</a></td><td>22,322</td><td>8,147,530</td><td>37</td><td><a href="엽천역.html" class="wiki-link">엽천</a></td><td>7,912</td><td>2,887,880</td></tr>
                 <tr><td>13</td><td><a href="사복역.html" class="wiki-link">사복</a></td><td>20,422</td><td>7,454,030</td><td>38</td><td><a href="어간수산시장역.html" class="wiki-link">어간수산시장</a></td><td>7,382</td><td>2,694,430</td></tr>
-                <tr><td>14</td><td><a href="북효빈역.html" class="wiki-link">북효빈역</a></td><td>20,322</td><td>7,417,530</td><td>39</td><td><a href="채산역.html" class="wiki-link">채산</a></td><td>7,292</td><td>2,661,580</td></tr>
+                <tr><td>14</td><td><a href="북효빈역.html" class="wiki-link">북효빈</a></td><td>20,322</td><td>7,417,530</td><td>39</td><td><a href="채산역.html" class="wiki-link">채산</a></td><td>7,292</td><td>2,661,580</td></tr>
                 <tr><td>15</td><td><a href="신흥역.html" class="wiki-link">신흥</a></td><td>20,128</td><td>7,346,720</td><td>40</td><td><a href="칠천역.html" class="wiki-link">칠천</a></td><td>7,263</td><td>2,650,995</td></tr>
                 <tr><td>16</td><td><a href="우전역.html" class="wiki-link">우전</a></td><td>20,049</td><td>7,317,885</td><td>41</td><td><a href="입선역.html" class="wiki-link">입선</a></td><td>6,822</td><td>2,490,030</td></tr>
                 <tr><td>17</td><td><a href="동곡역.html" class="wiki-link">동곡</a></td><td>19,127</td><td>6,981,355</td><td>42</td><td><a href="흑택역.html" class="wiki-link">흑택</a></td><td>6,263</td><td>2,285,995</td></tr>
@@ -779,6 +819,7 @@
                 </tbody>
             </table>
         </div>
+
 
         <div class="wiki-footnotes" id="s-13">
             <h2 id="s-13"><b>13. 각주</b></h2>
@@ -827,6 +868,44 @@
             box.innerText = text; box.style.display = 'block';
             setTimeout(() => { box.style.display = 'none'; }, 2000);
         }
+
+        /* 각주 툴팁 구현 */
+        document.addEventListener('DOMContentLoaded', () => {
+            const tooltip = document.getElementById('footnote-tooltip-container');
+            const supLinks = document.querySelectorAll('sup a');
+
+            supLinks.forEach(link => {
+                link.addEventListener('mouseenter', (e) => {
+                    const href = link.getAttribute('href'); // 예: #fn1
+                    if (href && href.startsWith('#fn')) {
+                        const targetId = href.substring(1); // fn1
+                        const targetElement = document.getElementById(targetId);
+                        
+                        if (targetElement) {
+                            // [이동] 링크 텍스트 제거하고 순수 내용만 추출
+                            let text = targetElement.innerHTML;
+                            // back-link 제거
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = text;
+                            const backLink = tempDiv.querySelector('.back-link');
+                            if (backLink) backLink.remove();
+                            
+                            tooltip.innerHTML = tempDiv.innerHTML;
+                            tooltip.style.display = 'block';
+                            
+                            // 위치 조정
+                            const rect = link.getBoundingClientRect();
+                            tooltip.style.left = (rect.left + window.scrollX - 20) + 'px';
+                            tooltip.style.top = (rect.top + window.scrollY - tooltip.offsetHeight - 10) + 'px';
+                        }
+                    }
+                });
+
+                link.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+            });
+        });
     </script>
 </body>
 </html>
