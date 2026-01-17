@@ -197,6 +197,45 @@
             line-height: 1.5;
             border-top: 1px solid #ccc;
         }
+        
+        /* 각주 툴팁 스타일 */
+        .footnote-tooltip {
+            position: absolute;
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 0.85rem;
+            max-width: 300px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+            line-height: 1.5;
+            pointer-events: none; /* 툴팁이 마우스 이벤트를 방해하지 않도록 함 */
+        }
+        
+        .footnote-tooltip::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 20px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: #ccc transparent transparent transparent;
+        }
+        
+        .footnote-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 21px; /* border 두께만큼 조정 */
+            border-width: 5px;
+            border-style: solid;
+            border-color: #fff transparent transparent transparent;
+            margin-top: -1px;
+        }
+        
         /* ------------------------------------------------ */
 
     </style>
@@ -204,6 +243,7 @@
 <body>
 
     <div id="wiki-msg-box"></div>
+    <div id="footnote-tooltip-container" class="footnote-tooltip"></div>
 
     <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
         <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='hyobin_city.html'">
@@ -693,19 +733,75 @@
             <p><a href="효빈위키.html" class="wiki-link">효빈위키</a>는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.</p>
         </div>
 
-        <!-- 하단 노선도 틀 삽입 -->
-        <!-- 삭제된 노선도 틀 (이제 본문 상단 분류 아래에 위치함) -->
-
+        <div class="nav-box shadow-sm mt-10">
+            <div class="nav-box-header">효빈 도시철도 주요 노선 정보</div>
+            <div class="nav-box-content font-bold text-xs">
+                <a href="1호선.html" class="flex items-center gap-1"><div class="station-ring line-1">1</div><span class="wiki-link" style="color:var(--wiki-line-1)">1호선</span></a>
+                <a href="2호선.html" class="flex items-center gap-1"><div class="station-ring line-2">2</div><span class="wiki-link" style="color:var(--wiki-line-2)">2호선</span></a>
+                <a href="3호선.html" class="flex items-center gap-1"><div class="station-ring line-3">3</div><span class="wiki-link" style="color:var(--wiki-line-3)">3호선</span></a>
+                <a href="4호선.html" class="flex items-center gap-1"><div class="station-ring line-4">4</div><span class="wiki-link" style="color:var(--wiki-line-4)">4호선</span></a>
+                <a href="5호선.html" class="flex items-center gap-1"><div class="station-ring line-5">5</div><span class="wiki-link" style="color:var(--wiki-line-5)">5호선</span></a>
+                <a href="6호선.html" class="flex items-center gap-1"><div class="station-ring line-6">6</div><span class="wiki-link" style="color:var(--wiki-line-6)">6호선</span></a>
+                <a href="7호선.html" class="flex items-center gap-1"><div class="station-rect line-7">7</div><span class="wiki-link" style="color:var(--wiki-line-7)">7호선</span></a>
+                <a href="8호선.html" class="flex items-center gap-1"><div class="station-ring line-8">8</div><span class="wiki-link" style="color:var(--wiki-line-8)">8호선</span></a>
+                <a href="빈효광역선.html" class="flex items-center gap-1"><div class="station-ring ring-bin-custom">빈</div><span class="wiki-link" style="color:var(--wiki-line-bin)">빈효광역선</span></a>
+            </div>
+        </div>
     </div>
 
     <script>
-        // 파일 업로드 관련 스크립트 제거 (triggerUpload 등)
-        
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                location.href = `search.html?q=${encodeURIComponent(query)}`;
+            } else {
+                alert('검색어를 입력해주세요.');
+            }
+        }
+
         function showMsg(text) {
             const box = document.getElementById('wiki-msg-box');
             box.innerText = text; box.style.display = 'block';
             setTimeout(() => { box.style.display = 'none'; }, 2000);
         }
+
+        /* 각주 툴팁 구현 */
+        document.addEventListener('DOMContentLoaded', () => {
+            const tooltip = document.getElementById('footnote-tooltip-container');
+            const supLinks = document.querySelectorAll('sup a');
+
+            supLinks.forEach(link => {
+                link.addEventListener('mouseenter', (e) => {
+                    const href = link.getAttribute('href'); // 예: #fn1
+                    if (href && href.startsWith('#fn')) {
+                        const targetId = href.substring(1); // fn1
+                        const targetElement = document.getElementById(targetId);
+                        
+                        if (targetElement) {
+                            // [이동] 링크 텍스트 제거하고 순수 내용만 추출
+                            let text = targetElement.innerHTML;
+                            // back-link 제거
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = text;
+                            const backLink = tempDiv.querySelector('.back-link');
+                            if (backLink) backLink.remove();
+                            
+                            tooltip.innerHTML = tempDiv.innerHTML;
+                            tooltip.style.display = 'block';
+                            
+                            // 위치 조정
+                            const rect = link.getBoundingClientRect();
+                            tooltip.style.left = (rect.left + window.scrollX - 20) + 'px';
+                            tooltip.style.top = (rect.top + window.scrollY - tooltip.offsetHeight - 10) + 'px';
+                        }
+                    }
+                });
+
+                link.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+            });
+        });
     </script>
 </body>
 </html>
