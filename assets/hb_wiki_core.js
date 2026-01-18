@@ -1,9 +1,15 @@
 /* HyobinWiki Core Search (aliases + autocomplete)
-   - Works on static HTML (no server required)
-   - Requires: wiki_index.js (optional but recommended)
-   Usage on every page:
+   - Static HTML friendly (no server required)
+   - Requires: assets/wiki_index.js (recommended)
+   Usage on every page (place near </body>):
      <script src="assets/wiki_index.js"></script>
      <script src="assets/hb_wiki_core.js"></script>
+
+   Features:
+   - Alias/redirect (동일한 단어1~4)
+   - '_' and spaces treated the same
+   - Partial search suggestions + modal results
+   - Case-insensitive ".html" input handling (internal search only)
 */
 
 (function(){
@@ -11,9 +17,16 @@
 
   // ---------- utils ----------
   function norm(s){ return (s||"").toString().trim(); }
+
+  // normalize user query (internal): treat ".HTML" == ".html"
+  function stripHtmlExt(s){
+    s = norm(s);
+    return s.replace(/\.html$/i, ""); // only at end
+  }
+
   // '_' and spaces are treated the same
   function toKey(s){
-    return norm(s)
+    return stripHtmlExt(s)
       .replace(/_/g, " ")
       .replace(/\s+/g, " ")
       .trim()
@@ -31,6 +44,12 @@
       return (href||"").replace(/^.*\//, "").replace(/\.html.*$/i, "");
     }
   }
+  function ensureHtmlExtLower(s){
+    s = norm(s);
+    if(!s) return s;
+    if(/\.html$/i.test(s)) return s.replace(/\.html$/i, ".html");
+    return s + ".html";
+  }
 
   // ---------- page index ----------
   function collectWikiLinksFallback(){
@@ -38,11 +57,12 @@
     const seen = new Set();
     const list = [];
     a.forEach(el=>{
-      const href = el.getAttribute("href") || "";
-      if(/^https?:\/\//i.test(href)) return;
-      if(href.startsWith("#")) return;
-      if(!/\.html(\?|#|$)/i.test(href)) return;
+      const hrefRaw = el.getAttribute("href") || "";
+      if(/^https?:\/\//i.test(hrefRaw)) return;
+      if(hrefRaw.startsWith("#")) return;
+      if(!/\.html(\?|#|$)/i.test(hrefRaw)) return;
 
+      const href = hrefRaw.replace(/\.html(\?|#|$)/i, ".html$1"); // normalize
       const base = hrefBaseName(href);
       const titleText = norm(el.textContent);
       const title = titleText || base.replace(/_/g," ").trim();
@@ -56,12 +76,10 @@
   }
 
   const PAGES = Array.isArray(window.HB_WIKI_PAGES) && window.HB_WIKI_PAGES.length
-    ? window.HB_WIKI_PAGES
+    ? window.HB_WIKI_PAGES.map(p=>({ title: p.title, href: ensureHtmlExtLower(p.href.replace(/\.html$/i,"")) })) // normalize
     : collectWikiLinksFallback();
 
   // ---------- aliases ----------
-  // You can also add ad-hoc aliases in any page before this script loads:
-  //   window.HB_WIKI_ALIASES = { "line1": "1호선.html", ... }
   const RAW_ALIASES = window.HB_WIKI_ALIASES || {};
 
   // normalized alias maps for fast lookup
@@ -70,15 +88,16 @@
 
   function addAlias(alias, href){
     const a = norm(alias);
-    const h = norm(href);
+    let h = norm(href);
     if(!a || !h) return;
+    h = ensureHtmlExtLower(h.replace(/\.html$/i,""));
     ALIAS_KEY_MAP[toKey(a)] = h;
     ALIAS_COMPACT_MAP[toCompactKey(a)] = h;
   }
 
   Object.keys(RAW_ALIASES).forEach(k=> addAlias(k, RAW_ALIASES[k]));
 
-  // also add titles as aliases, so "파일명/표기변형"에 강해짐
+  // also add titles as aliases
   PAGES.forEach(p=>{
     addAlias(p.title, p.href);
     const base = hrefBaseName(p.href);
@@ -213,7 +232,6 @@
       return;
     }
 
-    // alias hit shown first if exists
     const aliasHref = resolveAlias(query);
     if(aliasHref){
       mkRow(`↪ 별칭: ${query}`, ()=>{
@@ -309,8 +327,17 @@
 
   // ---------- main search ----------
   window.handleSearch = function(inputId){
+
+    // ✅ allow handleSearch() with no args on legacy pages
+    if(!inputId){
+      if(document.getElementById("searchInput")) inputId = "searchInput";
+      else if(document.getElementById("headerSearchInput")) inputId = "headerSearchInput";
+      else if(document.getElementById("mainSearchInput")) inputId = "mainSearchInput";
+    }
+
     const input = document.getElementById(inputId);
     if(!input) return;
+
     const qRaw = norm(input.value);
     if(!qRaw) return;
 
@@ -352,8 +379,8 @@
     pushRecent(qRaw);
 
     if(matches.length===0){
-      // fallback: turn spaces into underscores for filename style
-      const file = qRaw.replace(/\s+/g, "_");
+      // fallback: turn spaces into underscores for filename style (extension forced lowercase)
+      const file = stripHtmlExt(qRaw).replace(/\s+/g, "_");
       location.href = `${encodeURIComponent(file)}.html`;
       return;
     }
@@ -390,5 +417,6 @@
   // auto-attach to common ids (safe on any page)
   attachAutocomplete("headerSearchInput", "hb-header-search-wrap");
   attachAutocomplete("mainSearchInput", "hb-main-search-wrap");
+  attachAutocomplete("searchInput"); // station/legacy pages
 
 })();
