@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이만구 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* [테마 컬러] 범죄자, 악역 테마의 짙은 적색 (#8B0000) 적용 */
+            --wiki-main: #8B0000; 
+            
+            /* [고정] 상단 내비게이션 바 색상 */
+            --wiki-nav-bg: #7777AA;
+
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.15rem; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 (프로필용) */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 400px; font-size: 0.85rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.2rem; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: var(--wiki-main); color: #fff; width: 100px; padding: 5px 8px; border: 1px solid var(--wiki-border); text-align: center; vertical-align: middle; }
+        .infobox td { padding: 5px 8px; border: 1px solid var(--wiki-border); vertical-align: middle; }
+
+        /* 데이터 테이블 */
+        .data-table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; font-size: 0.9rem; }
+        .data-table th, .data-table td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; }
+        .data-table th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; text-align: center; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* [특수 스타일] 나무위키 느낌 요소 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+        del { color: #ccc; text-decoration: line-through; } /* 취소선 드립용 */
+        .wiki-gray { color: #888; font-size: 0.9em; } /* 괄호 속 혼잣말용 */
+
+        /* 사건/강조 박스 */
+        .incident-box { border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .incident-box.red { border-color: #fecaca; background-color: #fef2f2; }
+        .incident-box.yellow { border-color: #fef08a; background-color: #fefce8; }
+        .incident-box.green { border-color: #bbf7d0; background-color: #f0fdf4; }
+        .incident-box.blue { border-color: #bfdbfe; background-color: #eff6ff; }
+
+        /* 스크립트/어록 박스 */
+        .script-box { background: #fdfdfd; border: 1px solid #ddd; padding: 20px; border-radius: 8px; font-family: 'Malgun Gothic', sans-serif; margin-bottom: 20px; }
+        .script-header { font-weight: bold; font-size: 1.1rem; border-bottom: 2px solid var(--wiki-main); margin-bottom: 15px; padding-bottom: 5px; }
+        .speaker { font-weight: bold; color: #d32f2f; margin-right: 8px; }
+
+        /* 하단 네비 박스 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+
+        /* 푸터 저작권 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; }
+        .wiki-footer strong { color: #333; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+    </style>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+
+    <!-- 상단 내비게이션 바: 위키 공식 컬러 #7777AA 고정 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav-bg);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='hyobin_city.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="효빈위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a href="이만구.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">토론</a>
+                <a href="이만구.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">편집</a>
+                <a href="이만구.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <!-- [템플릿] 인물 이름 -->
+            <div class="txt-lvl-1">이만구</div>
+            <div class="flex gap-2 mb-1">
+                <a href="이만구.html" class="wiki-btn">토론</a>
+                <a href="이만구.html" class="wiki-btn">편집</a>
+                <a href="이만구.html" class="wiki-btn">역사</a>
+                <a href="#" class="wiki-btn">★ 즐겨찾기</a>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold" style="color: var(--wiki-main);">분류:</span> 
+            <a href="효빈광역시_인물.html" class="wiki-link">효빈광역시의 인물</a> | 
+            <a href="범죄자.html" class="wiki-link">범죄자</a> | 
+            <a href="고판대학교.html" class="wiki-link">고판대학교</a> | 
+            <a href="사기꾼.html" class="wiki-link">사기꾼</a> | 
+            <a href="만악의_근원.html" class="wiki-link">만악의 근원</a>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">생애</a>
+                        <ul>
+                            <li>2.1. <a href="#s-2-1" class="wiki-link">고판대 입성: 악의 씨앗</a></li>
+                            <li>2.2. <a href="#s-2-2" class="wiki-link">윤대환과의 만남: 악마의 계약</a></li>
+                            <li>2.3. <a href="#s-2-3" class="wiki-link">악명 높은 강의: "1억 만들기 과제"</a></li>
+                            <li>2.4. <a href="#s-2-4" class="wiki-link">몰락: 제자의 배신</a></li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3" class="wiki-link">출소 이후: 비참한 말로</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">어록</a></li>
+                </ul>
+            </div>
+
+            <!-- 프로필 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="infobox-title">
+                    <span style="font-size:1.5rem;">이만구</span><br>
+                    <span class="text-sm font-normal">Lee Man-gu</span>
+                </div>
+                <div class="p-0 bg-white text-center border-b">
+                    <!-- 사진 -->
+                    <img src="이미지/이만구.png" alt="이만구 머그샷" class="w-full object-cover" onerror="this.src='https://via.placeholder.com/200x250?text=No+Image';">
+                </div>
+                <table>
+                    <tr>
+                        <th>이명</th>
+                        <td>
+                            <strong>이 모 교수</strong><br>
+                            <a href="고판대학교.html" class="wiki-link">고판대</a>의 메피스토<br>
+                            <a href="윤대환.html" class="wiki-link">윤대환</a>의 설계자
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>출생</th>
+                        <td>1960년 6월 6일 (65세)</td>
+                    </tr>
+                    <tr>
+                        <th>출신</th>
+                        <td><a href="고판대학교.html" class="wiki-link">고판대학교</a> <span class="wiki-gray">(교수 임용 전 학력 위조 의혹 있음)</span></td>
+                    </tr>
+                    <tr>
+                        <th>직업</th>
+                        <td>
+                            전 <a href="고판대학교.html" class="wiki-link">고판대학교</a> 인터넷비즈니스과 학과장<br>
+                            전 학교법인 고판학원 기획실장
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>죄명</th>
+                        <td>
+                            <a href="특정경제범죄가중처벌법.html" class="wiki-link">특정경제범죄가중처벌법</a> 위반(횡령, 배임), <a href="사기.html" class="wiki-link">사기</a>, 사문서위조, 강요죄 등
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>형량</th>
+                        <td>징역 5년 (2017~2022, 만기 출소)</td>
+                    </tr>
+                    <tr>
+                        <th>관련 인물</th>
+                        <td>
+                            <strong><a href="윤대환.html" class="wiki-link">윤대환</a></strong> (제자 겸 공범)<br>
+                            <strong><a href="D_주무관.html" class="wiki-link">D 주무관</a></strong> (제자였으나 내부고발자)<br>
+                            학생 A, B <span class="wiki-gray">(타락시킨 제자들)</span>
+                        </td>
+                    </tr>
+                </table>
+            </aside>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <blockquote>
+            <strong>"윤리(Ethics)? 그건 가난한 자들이 부자들을 질투해서 만든 족쇄일 뿐이야."</strong><br><br>
+            <strong>"법을 지키는 건 하수다. 법을 이용하는 게 중수고, 법을 사는 게 고수지."</strong>
+        </blockquote>
+        <p>전 <a href="고판대학교.html" class="wiki-link">고판대학교</a> 인터넷비즈니스과 학과장이자 재단 실세.</p>
+        <p><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> 역사상 최악의 시장인 <strong><a href="윤대환.html" class="wiki-link">윤대환</a></strong>을 배출하고, 수많은 학생을 범죄의 길로 이끈 <strong>'교육계의 암적 존재'</strong>다.</p>
+        <p>단순히 돈을 횡령한 비리 교수가 아니다. 그는 자신만의 뒤틀린 철학인 <strong>'비윤리적 효율성'</strong>을 학생들에게 설파하여, 멀쩡한 청년들을 <a href="사기꾼.html" class="wiki-link">사기꾼</a>, 다단계 판매원, 브로커로 개조시킨 <strong>사상범</strong>에 가깝다. <a href="고판대학교.html" class="wiki-link">고판대학교</a>가 '범죄자 양성소'라는 오명을 쓰게 만든 장본인이다.</p>
+
+        <!-- 2. 생애 -->
+        <h2 id="s-2" class="anchor-offset">2. 생애</h2>
+
+        <h3 id="s-2-1">2.1. 고판대 입성: 악의 씨앗</h3>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>정체불명의 과거</strong>: 1990년대 중반, <a href="고판대학교.html" class="wiki-link">고판대학교</a>에 부임했다. 그의 박사 학위 논문은 표절을 넘어 '복사 붙여넣기' 수준이었으나, 당시 재단 이사장에게 거액의 뒷돈을 주고 채용되었다는 소문이 파다했다. <span class="wiki-gray">(돈으로 산 교수직이라는 게 학계의 정설이다.)</span></li>
+            <li><strong>학과의 사유화</strong>: 그는 '인터넷비즈니스과'를 신설한 뒤, 커리큘럼을 자신의 돈벌이 수단으로 개조했다.
+                <ul class="list-circle pl-5 mt-2 space-y-1">
+                    <li><strong>전공 필수</strong>: &lt;인맥 관리론&gt; <span class="wiki-gray">(실상은 뇌물 전달법)</span></li>
+                    <li><strong>전공 선택</strong>: &lt;비즈니스 협상&gt; <span class="wiki-gray">(실상은 사기 화술 및 가스라이팅)</span></li>
+                    <li><strong>현장 실습</strong>: 자신이 운영하는 유령 회사의 다단계 물품 포장 및 판매. <del>노동 착취의 현장</del></li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3 id="s-2-2">2.2. 윤대환과의 만남: 악마의 계약</h3>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>유령 학생 윤대환</strong>: 버스 회사 사장 아들인 <a href="윤대환.html" class="wiki-link">윤대환</a>이 학위가 필요해 입학하자, 이만구는 그를 전담 관리했다.
+                <ul class="list-circle pl-5 mt-2 space-y-1">
+                    <li><a href="윤대환.html" class="wiki-link">윤대환</a>이 출석하지 않아도 A+를 줬고, 시험 답안지는 조교를 시켜 대신 작성하게 했다.</li>
+                </ul>
+            </li>
+            <li><strong>킹메이커</strong>: <a href="윤대환.html" class="wiki-link">윤대환</a>이 효빈시장 선거에 출마했을 때, 이만구는 <a href="고판대학교.html" class="wiki-link">고판대</a> 학생들을 '자원봉사자'라는 명목으로 강제 동원해 불법 선거 운동을 지휘했다. <a href="윤대환.html" class="wiki-link">윤대환</a>이 당선되자 그는 <strong>"시장의 스승"</strong>이라 불리며 시정에도 깊숙이 개입했다. <a href="고판대학교.html" class="wiki-link">고판대</a>가 시청 보조금을 싹쓸이한 것도 그의 설계였다.</li>
+        </ul>
+
+        <h3 id="s-2-3">2.3. 악명 높은 강의: "1억 만들기 과제"</h3>
+        <p>그는 매 학기 첫 수업 때 칠판에 <strong>"1억"</strong>이라고 쓴 뒤 다음과 같은 과제를 냈다.</p>
+        <blockquote style="background-color: #ffebeb; border-color: #8B0000;">
+            "이번 학기 동안 1억 원을 만들어 와라. 방법은 묻지 않는다."<br>
+            "알바를 해서 정직하게 벌었다? <strong>F다.</strong> 시간이 아까우니까."<br>
+            "부모님 돈을 훔치거나, 남을 속여서 가져왔다? <strong>A+다.</strong> 그게 능력이다."
+        </blockquote>
+        <ul class="list-disc pl-5 space-y-2">
+            <li>실제로 <a href="보이스피싱.html" class="wiki-link">보이스피싱</a> 조직의 현금 수거책 역할을 하거나, 중고나라 사기를 쳐서 돈을 벌어온 학생들을 칭찬했다. <span class="wiki-gray">(이게 학교냐 범죄 소굴이냐)</span></li>
+            <li>반면, 편의점 알바를 하며 정직하게 과제를 수행한 학생(훗날의 <strong><a href="D_주무관.html" class="wiki-link">D 주무관</a></strong>)에게는 <strong>"너 같은 놈들은 평생 개미처럼 살다 죽을 거다"</strong>라며 모욕을 주었다.</li>
+        </ul>
+
+        <h3 id="s-2-4">2.4. 몰락: 제자의 배신</h3>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>내부고발자 양성(?)</strong>: 그는 <a href="D_주무관.html" class="wiki-link">D 주무관</a>(당시 학생)을 자신의 후계자로 점찍었다. D가 장부를 꼼꼼하게 정리하고, 자신의 횡령 내역을 기가 막히게 은폐<span class="wiki-gray">(하는 척)</span>했기 때문이다.</li>
+            <li><strong>뒤통수</strong>: 2016년, 이만구는 D에게 자신의 비자금 장부 관리를 맡겼다. 하지만 D는 그동안 모아온 증거 자료(녹취록, 이중 장부, 차명 계좌)를 들고 교육부와 검찰로 향했다.</li>
+            <li><strong>체포</strong>: 강의실에서 학생들에게 "이번에 새로 나온 건강보조식품<span class="wiki-gray">(가짜 약)</span>을 팔아오라"고 지시하던 중, 들이닥친 검찰 수사관들에게 긴급 체포되었다. 끌려가면서도 그는 D를 노려보며 <strong>"내가 너한테 가르친 기술로 나를 찌르다니, 역시 내 제자답구나!"</strong>라고 광소(狂笑)했다.</li>
+        </ul>
+
+        <!-- 3. 출소 이후 -->
+        <h2 id="s-3" class="anchor-offset">3. 출소 이후: 비참한 말로</h2>
+        <p>2022년 만기 출소했으나, 세상은 변해 있었다. <a href="윤대환.html" class="wiki-link">윤대환</a>은 몰락했고, 효빈시는 <strong><a href="박효빈.html" class="wiki-link">박효빈</a></strong>이라는 '덕후 시장'이 다스리고 있었으며, <a href="고판대학교.html" class="wiki-link">고판대</a>는 흔적도 없이 사라져 아파트가 되어 있었다.</p>
+
+        <ul class="list-disc pl-5 space-y-2 mt-4">
+            <li><strong>효빈시청 난입 사건</strong>:
+                <ul class="list-circle pl-5 mt-2 space-y-1">
+                    <li>갈 곳이 없어진 이만구는 옛 제자인 <strong><a href="D_주무관.html" class="wiki-link">D 주무관</a></strong>을 찾아가 "내가 감옥에 있는 동안 내 돈을 불려놨겠지?"라며 뻔뻔하게 돈을 요구했다.</li>
+                    <li><a href="D_주무관.html" class="wiki-link">D 주무관</a>은 차갑게 웃으며 <strong>"교수님, 그 돈은 국고로 환수되었습니다. 그리고 여기는 시청입니다. 잡상인은 출입 금지입니다."</strong>라며 청원경찰을 불렀다.</li>
+                    <li>끌려나가면서 "내가 <a href="윤대환.html" class="wiki-link">윤대환</a>의 스승이야! 이깟 만화 포스터<span class="wiki-gray">(누마즈 자매결연 패널)</span>나 붙이는 시청이 제정신이냐!"라고 고함을 질렀으나, 지나가던 시민들에게 "저 사람 뉴스에 나왔던 그 사기꾼 교수 아니냐"며 손가락질만 당했다.</li>
+                </ul>
+            </li>
+            <li><strong>현재</strong>:
+                <ul class="list-circle pl-5 mt-2 space-y-1">
+                    <li>현재는 <a href="효빈광역시.html" class="wiki-link">효빈시</a> 외곽의 <strong><a href="대찬대학교.html" class="wiki-link">대찬대학교</a></strong> 근처 허름한 사무실에서 '입시 컨설팅' 간판을 걸고 있다. 하지만 실상은 외국인 유학생들을 상대로 취업 비자 사기를 치거나, 다단계 코인을 파는 잡범으로 전락했다. <del>사람은 절대 안 변한다.</del></li>
+                    <li>최근 <strong>학생 A</strong>(편의점 알바)가 일하는 편의점에 들러 외상을 달라고 했다가, 학생 A에게 <strong>"교수님, 외상은 비효율적입니다. 돈 없으면 나가세요."</strong>라는 말을 듣고 쫓겨났다고 한다. <span class="wiki-gray">(자업자득)</span></li>
+                </ul>
+            </li>
+        </ul>
+
+        <!-- 4. 어록 -->
+        <h2 id="s-4" class="anchor-offset">4. 어록</h2>
+        <div class="script-box">
+            <div class="script-header">이만구의 헛소리 모음</div>
+            <p class="mb-4">
+                <span class="speaker">이만구:</span> "정직? 그건 보험사가 만든 상술이야. 인생에 보험은 없어. 사기(Scam)만 있을 뿐이지."<br>
+                <span class="wiki-gray text-sm">(신입생 오리엔테이션에서)</span>
+            </p>
+            <p class="mb-4">
+                <span class="speaker">이만구:</span> "야, 대환아. 버스 요금 500원 올린다고 누가 뭐라 하겠냐? 개돼지들은 짖다가 조용해져. 그냥 올려."<br>
+                <span class="wiki-gray text-sm">(시장실 밀실 회동 녹취록 中)</span>
+            </p>
+            <p class="mb-4">
+                <span class="speaker">이만구:</span> "학생 B야, 너는 재능이 있어. 그 해킹 기술, 국가를 위해 쓰지 말고 너 자신을 위해 써라. 시청 전산망 한 번 뚫어볼래?"<br>
+                <span class="wiki-gray text-sm">(학생 B를 범죄로 유도하며)</span>
+            </p>
+            <p class="mb-4">
+                <span class="speaker">이만구:</span> "내가 틀린 게 아니야! 시대가 나를 따라오지 못한 거야! 효율성! 그게 전부라고!"<br>
+                <span class="wiki-gray text-sm">(검찰에 체포되면서 남긴 마지막 발언)</span>
+            </p>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <div class="nav-box shadow-sm mt-10">
+            <div class="nav-box-header">[관련 인물 둘러보기]</div>
+            <div class="nav-box-content leading-loose text-sm">
+                <a href="윤대환.html" class="wiki-link">윤대환</a> · 
+                <a href="D_주무관.html" class="wiki-link">D 주무관</a> · 
+                <a href="박효빈.html" class="wiki-link">박효빈</a> · 
+                <a href="학생A.html" class="wiki-link">학생 A</a>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                // 실제 검색 기능 대신 알림창 띄우거나 이동
+                // location.href = `search.html?q=${encodeURIComponent(query)}`;
+                showMsg(`'${query}' 문서를 찾을 수 없습니다.`);
+            } else {
+                showMsg('검색어를 입력해주세요.');
+            }
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        document.querySelectorAll('a.wiki-link').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                // 외부 링크(http)가 아닌 내부 html 링크에 대해 처리
+                const href = this.getAttribute('href');
+                if (href && !href.startsWith('http') && !href.startsWith('#')) {
+                    // 문서가 실제로 존재하는지 체크할 수 없으므로(클라이언트 사이드), 
+                    // 에러 핸들링은 브라우저 기본 동작에 맡기거나, 
+                    // 여기서는 시뮬레이션을 위해 "문서 없음" 처리를 할 수도 있음.
+                    // 요구사항: "없으면 문서를 찾을수 없다는 메시지를 띄워줘" -> 이는 파일 존재 여부를 JS로 알기 어려우므로
+                    // fetch로 head 요청을 보내거나 해야 함. 하지만 로컬 파일 시스템(file://)에서는 CORS 문제 발생 가능.
+                    // 따라서 일단 이동을 시도하도록 둠. 
+                    // (만약 단일 페이지 앱(SPA)라면 라우터에서 처리하겠지만, 여기선 개별 HTML 파일이므로)
+                }
+            });
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
