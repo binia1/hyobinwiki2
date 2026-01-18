@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고판대학교 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* 문서 테마 컬러: 폐교 블랙 */
+            --wiki-main: #000000; 
+            --wiki-sub: #333333;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #000000;
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.15rem; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 스타일 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 450px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-header { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.4rem; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: #f0f0f0; color: var(--wiki-main); width: 100px; padding: 6px 10px; border: 1px solid var(--wiki-border); text-align: center; font-weight: bold; vertical-align: middle; }
+        .infobox td { padding: 6px 10px; border: 1px solid var(--wiki-border); vertical-align: middle; }
+        
+        /* 테이블 스타일 */
+        .wiki-table { border-collapse: collapse; width: 100%; margin: 10px 0; border: 1px solid #ccc; }
+        .wiki-table th { background-color: var(--wiki-main); color: white; padding: 8px; border: 1px solid #ccc; text-align: center; font-weight: bold; }
+        .wiki-table td { padding: 8px; border: 1px solid #ccc; background: white; }
+        .wiki-table-center { text-align: center; }
+        .wiki-table-sub { background-color: #f5f9fa; font-weight: bold; text-align: center; color: #555; width: 60px; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* 기타 요소 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+        del { color: #ccc; text-decoration: line-through; }
+        .wiki-gray { color: #888; font-size: 0.9em; }
+        
+        /* 폴딩(접기/펼치기) 구현 */
+        details { border: 1px solid #aaa; border-radius: 4px; padding: 0; margin-bottom: 10px; background: white; }
+        summary { font-weight: bold; padding: 0.5em; cursor: pointer; background-color: #eee; list-style: none; display: flex; justify-content: center; align-items: center; }
+        summary:after { content: " [ 펼치기 · 접기 ]"; font-size: 0.8em; margin-left: 5px; color: #555; }
+        details[open] { padding: 0; }
+        details[open] summary { border-bottom: 1px solid #aaa; }
+
+        /* 하단 네비게이션 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+        
+        /* 푸터 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+        
+        /* 폐교 템플릿 스타일 */
+        .closed-school-box {
+            border: 2px solid #555;
+            background-color: #e2e2e2;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+
+    <!-- 상단 네비게이션 (검색창 바) - 색상 #7777AA 고정 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: #7777AA;">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="goToLink('효빈위키_대문.html')">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a onclick="goToLink('토론.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">토론</a>
+                <a onclick="goToLink('편집.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">편집</a>
+                <a onclick="goToLink('역사.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1" style="text-decoration: line-through; text-decoration-color: red;">고판대학교</div>
+            <div class="flex gap-2 mb-1">
+                <a onclick="goToLink('고판대학교.html')" class="wiki-btn">문서</a>
+                <a onclick="goToLink('토론.html')" class="wiki-btn">토론</a>
+                <a onclick="goToLink('편집.html')" class="wiki-btn">편집</a>
+                <a onclick="goToLink('역사.html')" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold" style="color: var(--wiki-main);">분류:</span> 
+            <a onclick="goToLink('대한민국의_폐교된_대학교.html')" class="wiki-link">대한민국의 폐교된 대학교</a> | 
+            <a onclick="goToLink('전문대학.html')" class="wiki-link">전문대학</a> |
+            <a onclick="goToLink('효빈광역시의_대학교.html')" class="wiki-link">효빈광역시의 대학교</a> |
+            <a onclick="goToLink('고판대학교.html')" class="wiki-link">고판대학교</a> |
+            <a onclick="goToLink('사학비리.html')" class="wiki-link">사학비리</a> |
+            <a onclick="goToLink('2017년_폐교.html')" class="wiki-link">2017년 폐교</a>
+        </div>
+
+        <!-- 폐교 알림 틀 -->
+        <div class="closed-school-box">
+            ※ 이 대학교는 2017년 2월 28일부로 폐교되었습니다. <del>속이 다 시원하다</del>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="infobox-header">
+                    고판대학교<br>
+                    <span class="text-sm font-normal">Gopan University</span>
+                </div>
+                <div class="p-4 bg-white text-center border-b">
+                    <!-- 로고 -->
+                    <div class="w-full flex justify-center py-4">
+                        <img src="고판대학교_로고_폐교.png" alt="고판대학교 로고" style="width: 150px; display: inline-block; filter: grayscale(100%); opacity: 0.7;" onerror="this.src='https://via.placeholder.com/150?text=GOPAN(Closed)';">
+                    </div>
+                </div>
+                <table>
+                    <tr><th>폐교일</th><td>2017년 2월 28일</td></tr>
+                    <tr><th>분류</th><td><a onclick="goToLink('사립대학.html')" class="wiki-link">사립대학</a> (전문대학)<br><del>범죄자 양성소</del></td></tr>
+                    <tr><th>재단</th><td>학교법인 고판학원 (해산)</td></tr>
+                    <tr><th>주소</th><td><a onclick="goToLink('효빈광역시.html')" class="wiki-link">효빈광역시</a> <a onclick="goToLink('서구_효빈광역시.html')" class="wiki-link">서구</a> 청덕로 283 (<a onclick="goToLink('청덕동.html')" class="wiki-link">청덕동</a>)<br><span class="text-xs text-red-600 font-bold">* 철거됨 (아파트 재개발 예정)</span></td></tr>
+                    <tr><th>주요 동문</th><td><strong><a onclick="goToLink('윤대환.html')" class="wiki-link">윤대환</a></strong> <del>(흑역사)</del></td></tr>
+                    <tr><th>비고</th><td><strong>교육부 선정 재정지원제한대학</strong><br>(2010~2016)<br><span class="text-xs text-gray-500">사실상 영구제명</span></td></tr>
+                </table>
+            </aside>
+
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1 w-full lg:w-auto">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">역사: 타락의 연대기</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">학과 구성: 사기(Fraud)의 백화점</a>
+                        <ul>
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">허상 계열</a></li>
+                            <li>3.2. <a href="#s-3-2" class="wiki-link">다단계 계열</a></li>
+                            <li>3.3. <a href="#s-3-3" class="wiki-link">유령 계열</a></li>
+                            <li>3.4. <a href="#s-3-4" class="wiki-link">졸업장 계열</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">주요 사건 및 인물</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">폐교 이후</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">여담</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <blockquote>
+            <strong>"대학이라 쓰고 <del>'졸업장 위조 공장'</del> '범죄자 양성소'라 읽는다."</strong><br>
+            <strong>"효빈시의 수치, <a onclick="goToLink('윤대환.html')" class="wiki-link">윤대환</a>을 낳은 괴물."</strong><br>
+            <span class="text-sm">-- 효빈시민연대 성명서 中</span>
+        </blockquote>
+
+        <p><a onclick="goToLink('효빈광역시.html')" class="wiki-link">효빈광역시</a> <a onclick="goToLink('서구_효빈광역시.html')" class="wiki-link">서구</a> 청덕동에 위치했던 <del>사기</del> 사립 <a onclick="goToLink('전문대학.html')" class="wiki-link">전문대학</a>.</p>
+        <p>1989년 개교 이래 정상적인 고등교육 기관으로서의 기능은 거의 수행하지 않았으며, 재단의 <strong>졸업장 장사, 국고 횡령, 다단계 판매 알선</strong> 등 온갖 범죄의 온상으로 악명을 떨쳤다.</p>
+        <p>지역 내에서는 학교의 이름(高版)을 비꼬아 <strong>"고통판(苦痛版)"</strong>, <strong>"개판대"</strong> 등으로 불렸으며, 특히 효빈시 역사상 최악의 시장으로 손꼽히는 <strong><a onclick="goToLink('윤대환.html')" class="wiki-link">윤대환</a></strong>이 이 학교 출신이라는 점, 그리고 그가 시장 재임 시절 보여준 무능하고 비윤리적인 행정 철학의 뿌리가 바로 이곳이라는 점이 밝혀지면서 효빈시의 <strong>'공공의 적'</strong>으로 낙인찍혔다.</p>
+        <p>결국 2017년 교육부의 강제 폐쇄 명령에 따라 폐교되었으며, 현재는 그 흔적조차 찾기 힘들게 철거되었다. <del>풍악을 울려라!</del> 하지만 이 학교가 배출한 '비윤리적 인재'들이 사회 곳곳에서 일으킨 파장은 여전히 현재진행형이다.</p>
+        
+        <!-- 2. 역사 -->
+        <h2 id="s-2" class="anchor-offset">2. 역사: 타락의 연대기</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>1989년:</strong> 학교법인 고판학원 설립 및 고판전문대학 개교. 초기부터 설립자의 친인척이 이사장, 총장, 행정실장을 독식하는 족벌 경영 체제였다. <del>가족오락관</del></li>
+            <li><strong>1990년대 중반:</strong> 소위 <strong>'이 모 교수'</strong>로 불리는 인물이 부임하면서 학교의 성격이 변질되었다. 그는 "윤리는 비효율적이다. 로비와 편법이 진짜 능력이다"라는 <del>개소리</del> 기괴한 교육 철학을 설파하며, 학교를 <strong>로비스트 및 사기꾼 양성소</strong>로 만들기 시작했다.</li>
+            <li><strong>2006년:</strong> 동문인 <strong><a onclick="goToLink('윤대환.html')" class="wiki-link">윤대환</a></strong>이 효빈광역시장에 당선되자, 학교 측은 이를 대대적으로 홍보하며 시청으로부터 각종 보조금을 부당 수령했다. 이 시기 고판대는 '시장의 모교'라는 뒷배를 믿고 무소불위의 비리를 저질렀다.</li>
+            <li><strong>2010년:</strong> 교육부 대학구조개혁평가에서 최하위 등급을 받으며 <strong>재정지원제한대학</strong>으로 지정되었다. 그러나 학교 측은 반성은커녕 "정부가 실무형 인재를 몰라본다"며 적반하장으로 나왔다. (...)</li>
+            <li><strong>2016년:</strong> 교육부 특별 감사 결과, <strong>출석부 조작(유령 학생), 교비 횡령, 불법 다단계 판매 강요</strong> 등 총 30여 건의 중대 비리가 적발되었다.</li>
+            <li><strong>2017년 2월 28일:</strong> 학교 폐쇄 명령 집행. <strong>최종 폐교.</strong> <del>Justice Rains From Above!</del></li>
+        </ul>
+
+        <!-- 3. 학과 구성 -->
+        <h2 id="s-3" class="anchor-offset">3. 학과 구성: 사기(Fraud)의 백화점</h2>
+        <p>폐교 직전 고판대학교의 학과들은 '교육'이라는 이름으로 포장된 <strong>범죄 모의 집단</strong>에 가까웠다.</p>
+        
+        <h3 id="s-3-1">3.1. 허상 계열 (존재하지 않는 것을 파는 학과)</h3>
+        <p>실습 기자재를 살 예산을 전부 횡령하여, 말 그대로 '허상'만 가르친 학과들이다.</p>
+        <ul class="list-disc pl-5">
+            <li><strong><a onclick="goToLink('보석감정딜러과.html')" class="wiki-link">보석감정딜러과</a>:</strong> <strong>"보석 없는 보석과."</strong>
+                <ul class="list-disc pl-5">
+                    <li>고가 장비인 현미경이나 굴절계는커녕, 실습용 원석조차 없었다. 교수들은 <strong>"마음의 눈으로 보면 보인다"</strong>는 <del>개</del> 헛소리를 하며 책에 있는 사진만 보고 감정하는 법을 가르쳤다.</li>
+                    <li>교재에는 다이아몬드 감정법 대신 <strong>"가품을 진품처럼 보이게 하는 화술"</strong>, <strong>"고객의 심리를 조종해 큐빅을 비싸게 파는 법"</strong> 같은 사기 기술이 적혀 있었다.</li>
+                    <li>졸업생 <strong>학생 A</strong>가 이 가르침을 믿고 면접을 봤다가 처참하게 털린 일화가 유명하다. (후술)</li>
+                </ul>
+            </li>
+            <li><strong><a onclick="goToLink('모델이벤트과.html')" class="wiki-link">모델이벤트과</a>:</strong> 학과장이 자신이 "연예계 마당발"이라며 학생들을 현혹했으나, 경찰 조회 결과 <strong>사기 전과 7범</strong>으로 밝혀졌다. 수업은 없고, 지역 마트 오픈 행사나 나이트클럽 호객 행위 등 교수의 지인이 운영하는 업장에 학생들을 <strong>'이벤트 실습'</strong>이라는 명목으로 강제 동원했다. <del>이게 학교냐 인력사무소냐</del></li>
+            <li><strong><a onclick="goToLink('인터넷비즈니스과.html')" class="wiki-link">인터넷비즈니스과</a>:</strong> <strong>"2016년에 윈도우 98을 쓰는 곳."</strong>
+                <ul class="list-disc pl-5">
+                    <li>'최첨단 IT 교육'을 표방했으나, 실습실 컴퓨터는 10년도 더 된 <strong>펜티엄 4</strong>급 고철이었고 운영체제는 <strong>Windows XP</strong>나 98이었다. 그나마도 절반은 전원이 켜지지 않았다.</li>
+                    <li>이곳 출신인 <strong>학생 B</strong>가 여기서 배운 해킹(?) 기술로 시청 전산망에 접속하려다 실패하고 문화재 훼손을 시도했다. (후술)</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3 id="s-3-2">3.2. 다단계 계열 (학생을 착취하는 학과)</h3>
+        <p>학생을 교육생이 아닌 '하위 판매원'으로 취급한 악질적인 학과들이다.</p>
+        <ul class="list-disc pl-5">
+            <li><strong><a onclick="goToLink('한방자원개발과.html')" class="wiki-link">한방자원개발과</a>:</strong> 학과장이 개발했다는(식약처 인증 없음) 정체불명의 <strong>'만병통치 건강보조식품'</strong>을 학생들에게 강매했다. 성적 평가 기준이 <strong>"이번 학기에 몇 박스를 팔았는가"</strong>였다. <del>피라미드 구조의 완성</del></li>
+            <li><strong><a onclick="goToLink('피부미용과.html')" class="wiki-link">피부미용과</a>:</strong> 실습 재료비 명목으로 다이소에서 천 원이면 살 수 있는 싸구려 화장품을 <strong>"프랑스 최고급 에스테틱 전용"</strong>이라 속여 30만 원에 강제 판매했다.</li>
+        </ul>
+
+        <h3 id="s-3-3">3.3. 유령 계열 (국고 횡령용 학과)</h3>
+        <ul class="list-disc pl-5">
+            <li><strong><a onclick="goToLink('경찰행정법무과.html')" class="wiki-link">경찰행정법무과</a>:</strong> <strong>창과 이래 경찰 합격자 0명.</strong> <del>전설의 0퍼센트</del> 강의실에 가보면 불이 꺼져 있고 먼지만 쌓여 있었다. 교수는 "진짜 공부는 고시원에서 하는 거다"라며 수업을 하지 않았다.</li>
+            <li><strong><a onclick="goToLink('생활체육과.html')" class="wiki-link">생활체육과</a>:</strong> 유도부, 태권도부 등을 운영한다고 홍보했으나, 선수 명단에 있는 학생들은 대부분 <strong>명의를 도용당한 유령 학생</strong>들이었다.</li>
+        </ul>
+
+        <h3 id="s-3-4">3.4. 졸업장 계열 (윤대환의 요람)</h3>
+        <ul class="list-disc pl-5">
+            <li><strong><a onclick="goToLink('교양학부.html')" class="wiki-link">교양학부</a>:</strong> <strong>"전공 불문, 묻지마 졸업."</strong>
+                <ul class="list-disc pl-5">
+                    <li><strong><a onclick="goToLink('윤대환.html')" class="wiki-link">윤대환</a></strong> 전 시장이 졸업한 곳으로 추정된다.</li>
+                    <li><strong>"출석 안 해도 F 안 줌"</strong>이 학과의 비공식 슬로건이었다. 바쁜 사업가나 지역 유지들이 학력 세탁용으로 등록만 해두고 졸업장을 받아가는 곳이었다.</li>
+                    <li>윤대환이 재학 시절(사실상 유령 학생 시절), 교수가 출석을 부르자 조교가 <strong>"윤대환 학생은 지금 시내버스 노선 점검 현장(사실은 사장실)에 파견 나가 있습니다!"</strong>라고 둘러댔다는 일화는 전설로 남아 있다.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <!-- 4. 주요 사건 및 인물 -->
+        <h2 id="s-4" class="anchor-offset">4. 주요 사건 및 인물</h2>
+        
+        <details class="mb-4">
+            <summary class="font-bold cursor-pointer bg-gray-200 p-2 rounded">1. 윤대환 (제4대 효빈광역시장)</summary>
+            <div class="p-2 border bg-white">
+                <p><strong>"고판대의 가르침대로 시정을 운영하다 효빈시를 말아먹은 인물."</strong></p>
+                <ul class="list-disc pl-5">
+                    <li>그는 고판대에서 <strong>'비윤리적 효율성'</strong>을 배웠다. 즉, "절차와 원칙을 무시하고 이익만 챙기면 그게 능력이다"라는 사고방식이다. <del>범죄학 개론 실사판</del></li>
+                    <li>이는 그가 시장이 된 후 <strong><a onclick="goToLink('두청운수.html')" class="wiki-link">두청운수</a></strong> 버스 요금 인상, 도시철도 예산 전용, 측근 비리 등의 막장 행정을 펼치는 사상적 기반이 되었다.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="mb-4">
+            <summary class="font-bold cursor-pointer bg-gray-200 p-2 rounded">2. 학생 A의 면접 참사 (보석감정딜러과)</summary>
+            <div class="p-2 border bg-white">
+                <ul class="list-disc pl-5">
+                    <li><strong>사건 개요:</strong> 폐교 후, 졸업생 A씨는 <strong>이 모 교수</strong>에게 배운 "로비와 화술로 가치를 조작하라"는 가르침을 믿고 명품 보석 업체 면접을 보러 갔다.</li>
+                    <li><strong>상대:</strong> 하필 면접관이 업계에서 가장 깐깐하기로 소문난 <strong>한 부장</strong>이었으며, 그는 <strong><a onclick="goToLink('러브_라이브!_선샤인!!.html')" class="wiki-link">러브 라이브! 선샤인!!</a></strong>의 <strong><a onclick="goToLink('쿠로사와_다이아.html')" class="wiki-link">쿠로사와 다이아</a></strong>와 <strong><a onclick="goToLink('쿠로사와_루비.html')" class="wiki-link">쿠로사와 루비</a></strong>를 숭배하는 '성공한 덕후'였다. <del>운도 지지리도 없다</del></li>
+                    <li><strong>전개:</strong>
+                        <ul class="list-disc pl-5">
+                            <li>A씨: "보석의 가치는 마케팅과 로비로 결정됩니다. 저는 큐빅도 다이아로 팔 수 있는 '시장 가치'를 창출하겠습니다."</li>
+                            <li>한 부장: (격분하며) <strong>"당신의 사고방식은 우리 회사의 '전통과 기품(다이아)'에 대한 모독입니다! 보석 감정은 정직과 명예입니다!"</strong> <del>뿌뿌데쓰와!</del></li>
+                        </ul>
+                    </li>
+                    <li><strong>결말:</strong> 한 부장은 <strong>"루비의 순수함도, 다이아의 완벽함도 모르는 자"</strong>라며 A씨를 쫓아냈다. A씨는 현재 효빈 트램 공사 현장 앞 편의점에서 알바를 하며 "이젠 공짜 버스(윤대환 시절)도 못 탄다"고 한탄하고 있다.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details>
+            <summary class="font-bold cursor-pointer bg-gray-200 p-2 rounded">3. 학생 B의 문화재 훼손 미수 (인터넷비즈니스과)</summary>
+            <div class="p-2 border bg-white">
+                <ul class="list-disc pl-5">
+                    <li><strong>사건 개요:</strong> 학생 B씨는 학교에서 배운 얄팍한 상술로 복지지원금을 부정 수급하려다, <strong><a onclick="goToLink('박효빈.html')" class="wiki-link">박효빈</a></strong> 시장이 도입한 'AI 복지 감사 시스템'에 적발되어 벌금형을 받았다.</li>
+                    <li><strong>전개:</strong> 앙심을 품은 B씨는 시청 로비에 전시된 <strong>'효빈-누마즈 자매결연 기념 패널(러브라이브 선샤인)'</strong>을 훼손하려 시청에 난입했다. <del>목숨이 아깝지 않은가?</del></li>
+                    <li><strong>결말:</strong> 패널을 부수려던 순간, 시청 직원 3명(각각 <strong><a onclick="goToLink('츠시마_요시코.html')" class="wiki-link">요시코</a>, <a onclick="goToLink('오하라_마리.html')" class="wiki-link">마리</a>, <a onclick="goToLink('쿠니키다_하나마루.html')" class="wiki-link">하나마루</a></strong> 팬)에게 제압당했다. B씨는 현행범으로 체포되었으며, 경찰 조사에서 "고판대에서는 이렇게 하면 된다고 했다"고 진술해 담당 형사를 어이없게 만들었다.</li>
+                </ul>
+            </div>
+        </details>
+
+        <!-- 5. 폐교 이후 -->
+        <h2 id="s-5" class="anchor-offset">5. 폐교 이후: 엇갈린 운명</h2>
+        <p>고판대학교가 역사 속으로 사라진 후, 그 터에는 효빈시의 새로운 랜드마크가 들어서고 있다.</p>
+        <ul class="list-disc pl-5">
+            <li><strong>부지 재개발:</strong> 흉물스럽던 캠퍼스 건물은 모두 철거되었고, 그 자리에는 대규모 브랜드 아파트 단지가 건설 중이다. 서구 주민들은 "동네의 암세포가 제거되었다"며 축제 분위기다.</li>
+            <li><strong>졸업생들의 말로:</strong>
+                <ul class="list-disc pl-5">
+                    <li><strong>몰락한 자들:</strong> 이 모 교수의 '쓰레기 철학'을 맹신했던 학생들(A, B 등)은 전과자가 되거나 사회 밑바닥을 전전하고 있다.</li>
+                    <li><strong>구원받은 자들:</strong> 반면, 학교의 부패함에 치를 떨며 스스로 공부했거나, 박효빈 시장의 <strong>'고판대 피해자 구제 프로그램'</strong>에 참여해 기술을 배운 학생들은 새로운 삶을 살고 있다.</li>
+                    <li><strong>D 주무관:</strong> 고판대 출신이지만 학교의 비리를 내부 고발하고 탈출한 인물. 현재 효빈시청 사회복지과에서 박효빈 시장의 신임을 받으며 <strong>"윤대환이 망쳐놓은 복지 시스템 복구"</strong>의 최선봉에 서 있다.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <!-- 6. 여담 -->
+        <h2 id="s-6" class="anchor-offset">6. 여담</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>보석감정의 전설:</strong> 보석감정딜러과 졸업생 A씨가 면접을 본 회사의 부장이 하필이면 <a onclick="goToLink('러브_라이브!_선샤인!!.html')" class="wiki-link">러브 라이브! 선샤인!!</a>의 <strong><a onclick="goToLink('쿠로사와_다이아.html')" class="wiki-link">쿠로사와 다이아</a></strong> 오시(팬)여서, "다이아몬드의 가치도 모르는 자"라며 참교육을 당했다는 일화가 전설처럼 내려온다.</li>
+            <li><strong>코사카 호노카와의 관계:</strong> 교명인 '고판(高版)'이 <a onclick="goToLink('러브_라이브!.html')" class="wiki-link">러브 라이브!</a>의 주인공 <strong><a onclick="goToLink('코사카_호노카.html')" class="wiki-link">코사카 호노카</a></strong>(高坂 穂乃果)의 성씨와 한자가 일부 겹쳐서(高) 한때 밈이 될 뻔했다. 하지만 팬들이 이 학교의 막장 행각과 비리 실태를 알게 된 후, <strong>"감히 호노카 대장의 명예를 더럽힐 수 없다"</strong>며 철저히 무시하고 손절했다는 슬픈 전설이 있다. <del>호노카는 빵을 좋아하지만, 고판대는 돈을 좋아한다.</del></li>
+            <li><strong>입시 비리:</strong> 폐교 감사 당시, 입학처 창고에서 합격자 명단이 적힌 장부가 발견되었는데, 성적이 아니라 <strong>'기부금 액수'</strong> 순서대로 정렬되어 있었다고 한다. <del>자본주의의 정점</del></li>
+            <li><strong>윤대환 지우기:</strong> 보통 정치인이 배출되면 모교에서 자랑스러워하지만, 고판대 재단 측에서도 폐교 직전에는 "윤대환 때문에 학교 이미지가 망했다"며 그를 손절하려 했다. (물론 이미 늦었다.)</li>
+            <li><strong>폐교 감사 에피소드:</strong> 교육부 감사관들이 학교에 들이닥쳤을 때, 보석감정과 실습실 금고를 열어보니 보석은 없고 <strong>윤대환의 선거 포스터</strong> 뭉치와 <strong>유통기한 지난 건강보조식품</strong>만 가득했다고 한다.</li>
+            <li><strong>효빈시의 반면교사:</strong> 현재 효빈시의 모든 대학(특히 하위권 D등급 대학들)은 <strong>"고판대처럼 되지 말자"</strong>를 생존의 제1원칙으로 삼고 있다.</li>
+        </ul>
+
+        <!-- 하단 네비게이션 -->
+        <div class="nav-box shadow-sm mt-10">
+            <div class="nav-box-header">고판대학교 관련 문서</div>
+            <div class="nav-box-content leading-loose text-sm">
+                <a onclick="goToLink('대한민국의_폐교된_대학교.html')" class="wiki-link">대한민국의 폐교된 대학교</a> · 
+                <a onclick="goToLink('재정지원제한대학.html')" class="wiki-link">재정지원제한대학</a> · 
+                <a onclick="goToLink('사학비리.html')" class="wiki-link">사학비리</a> · 
+                <a onclick="goToLink('윤대환.html')" class="wiki-link">윤대환</a>
+            </div>
+        </div>
+
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2">
+                이 문서는 <strong>효빈위키</strong>의 문서입니다. <br>
+                기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.
+            </p>
+            <p class="mt-4 text-xs text-gray-500">
+                이 문서의 내용은 사실과 다를 수 있으며, 법적 효력을 갖지 않습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 검색 기능 핸들러
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(query)}`, '_blank');
+            } else {
+                showMsg('검색어를 입력해주세요.');
+            }
+        }
+
+        // 메시지 박스 표시 함수
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        // 링크 이동 핸들러
+        async function goToLink(filename) {
+            if (filename.startsWith('#')) return;
+
+            const namuKeywords = ['대한민국', '폐교', '사학비리', '윤대환'];
+            const pureName = filename.replace('.html', '').replace(/_/g, ' ');
+            
+            if (namuKeywords.includes(pureName) || filename.includes('namu.wiki')) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(pureName)}`, '_blank');
+                return;
+            }
+
+            try {
+                location.href = filename;
+            } catch (e) {
+                showMsg('문서를 찾을 수 없습니다.');
+            }
+        }
+        
+        // 목차 및 내부 링크 스무스 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (!targetId || targetId === '#') return;
+
+                e.preventDefault();
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, 
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
