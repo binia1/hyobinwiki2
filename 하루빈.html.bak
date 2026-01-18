@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>하루빈 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #00CCAA; /* 2호선 초록색 */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #00CCAA;
+            --wiki-table-header-text: #ffffff;
+            --wiki-alert-border: #a2a9b1;
+            --wiki-alert-bg: #f8f9fa;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+
+        /* 위키 요소 */
+        del { color: #7f7f7f; text-decoration: line-through; cursor: help; }
+        .wiki-drip { color: #aaa; font-size: 0.85em; }
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+
+        /* 테이블 스타일 */
+        table.wiki-table-custom { border-collapse: collapse !important; width: 100%; margin: 15px 0; border: 1px solid #ddd !important; font-size: 0.9rem; }
+        table.wiki-table-custom th, table.wiki-table-custom td { border: 1px solid #ddd !important; padding: 6px 10px; vertical-align: middle; }
+        table.wiki-table-custom th { background-color: var(--wiki-table-header); color: white; font-weight: bold; text-align: center; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 380px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.3rem; font-weight: bold; }
+        .infobox-image { text-align: center; padding: 10px; border-bottom: 1px solid #ddd; background: white; }
+        .infobox table { border: none !important; margin: 0 !important; width: 100% !important; }
+        .infobox th { background-color: var(--wiki-gray-bg); text-align: center; padding: 8px 5px; border: 1px solid #ddd; width: 30%; font-weight: bold; vertical-align: middle;}
+        .infobox td { padding: 8px 5px; border: 1px solid #ddd; text-align: left; vertical-align: middle;}
+
+        /* 상단 버튼 */
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; }
+
+        /* 각주 & 호버보드 */
+        .footnote-ref { color: var(--wiki-link); font-size: 0.8em; vertical-align: super; cursor: pointer; text-decoration: none; font-weight: bold; }
+        .footnotes-area { margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px; font-size: 0.85rem; color: #555; }
+        
+        /* 각주 툴팁 (호버보드) */
+        #footnote-tooltip {
+            position: fixed;
+            display: none;
+            background-color: #fff;
+            border: 1px solid #999;
+            padding: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            z-index: 9999; 
+            max-width: 400px;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            line-height: 1.4;
+            pointer-events: none; 
+        }
+
+        /* 굿즈 카드 */
+        .goods-card { transition: transform 0.2s; border: 1px solid #eee; border-radius: 8px; overflow: hidden; text-align: center; background: white; }
+        .goods-card:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .goods-card img { width: 100%; height: 200px; object-fit: contain; background-color: #f8f9fa; padding: 10px; }
+        .goods-card-info { padding: 15px; text-align: left; border-top: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+    <!-- 각주 툴팁 컨테이너 -->
+    <div id="footnote-tooltip"></div>
+
+    <!-- 상단 내비게이션 -->
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" placeholder="검색" class="p-1 px-4 rounded text-black text-sm">
+            <button class="bg-[#555588] p-1 px-3 rounded text-sm font-bold">검색</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <!-- 문서 제목 -->
+        <div class="title-area">
+            <div class="txt-lvl-1">하루빈</div>
+            <div class="flex gap-2 mb-1">
+                <button class="wiki-btn">토론</button>
+                <button class="wiki-btn">편집</button>
+                <button class="wiki-btn">역사</button>
+            </div>
+        </div>
+
+        <div class="category-box border border-[#ccc]">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="효빈메트로 캐릭터사업.html" class="wiki-link">효빈메트로/캐릭터사업</a> | 
+            <a href="2호선.html" class="wiki-link">효빈 도시철도 2호선</a> | 
+            <a href="#" class="wiki-link">역무원 캐릭터</a>
+        </div>
+
+        <!-- 인포박스 -->
+        <aside class="infobox">
+            <div class="infobox-title">하루빈<br><span class="text-sm font-normal">Ha Rubin | 夏累彬</span></div>
+            <div class="infobox-image">
+                <img src="images/char_2_basic.png" alt="하루빈 공식 일러스트" style="width:100%; height:auto;" onerror="this.src='https://placehold.co/300x400/00CCAA/FFFFFF?text=Ha+Rubin'">
+                <div class="text-xs text-gray-500 mt-1">효빈교통공사 2호선 공식 마스코트</div>
+            </div>
+            <table>
+                <tr><th>나이</th><td>24세 (2001년생)</td></tr>
+                <tr><th>소속</th><td><a href="효빈교통공사.html" class="wiki-link">효빈교통공사</a> 역무본부<br>2호선 역무원 (사원)</td></tr>
+                <tr><th>신장</th><td>162cm</td></tr>
+                <tr><th>출신지</th><td>효빈광역시 북구 고송동</td></tr>
+                <tr><th>학력</th><td>고송초등학교 (졸업)<br>소요중학교 (졸업)<br>효빈종합고등학교 (졸업)<br><a href="효빈대학교.html" class="wiki-link">효빈대학교</a> (철도운영시스템공학 / 학사)</td></tr>
+                <tr><th>가족 관계</th><td>부모님, 여동생</td></tr>
+                <tr><th>MBTI</th><td>ESFP (자유로운 영혼의 연예인)</td></tr>
+                <tr><th>별명</th><td>처세술 만렙, 월급루팡(자칭), 인싸</td></tr>
+                <tr><th>성우</th><td>일본판: <a href="https://namu.wiki/w/%EC%9A%B0%EC%B9%98%EB%8B%A4%20%EB%A7%88%EC%95%BC" class="wiki-link" target="_blank" rel="noopener">우치다 마아야</a><br>한국판: <a href="https://namu.wiki/w/%EA%B9%80%EC%84%A0%ED%98%9C(%EC%84%B1%EC%9A%B0)" class="wiki-link" target="_blank" rel="noopener">김선혜</a> <span class="footnote-ref"><a href="#fn-voice">[1]</a></span></td></tr>
+            </table>
+        </aside>
+
+        <!-- 목차 -->
+        <div class="toc">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">상세 설정</a>
+                    <ul>
+                        <li>2.1. <a href="#s-2-1" class="wiki-link">성격 및 특징</a></li>
+                        <li>2.2. <a href="#s-2-2" class="wiki-link">학력 및 능력</a></li>
+                        <li>2.3. <a href="#s-2-3" class="wiki-link">정치 성향</a></li>
+                    </ul>
+                </li>
+                <li>3. <a href="#s-3" class="wiki-link">인간 관계</a></li>
+                <li>4. <a href="#s-4" class="wiki-link">관련 굿즈</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">여담</a></li>
+            </ul>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1">1. 개요</h2>
+        <div class="p-4 bg-teal-50 border-l-4 border-teal-500 text-teal-900 mb-6 font-bold italic">
+            "고객님~ 문에 기대시면 위험해요! (방긋)"
+        </div>
+        <p>
+            <a href="효빈권 광역전철.html" class="wiki-link">효빈권 광역전철</a> <a href="2호선.html" class="wiki-link">2호선</a>을 상징하는 마스코트 캐릭터. 2004년에 데뷔했다. 직업은 역무원이며, 주로 혼잡도가 높은 <a href="어간중앙역.html" class="wiki-link">어간중앙역</a>이나 대학가 인근 역에서 근무한다.
+        </p>
+        <p>
+            효빈메트로 캐릭터 인기 투표에서 항상 상위권을 유지하는 간판스타이다. 밝고 명랑한 '인싸' 성격으로 묘사되지만, 그 이면에는 칼퇴를 갈망하는 지극히 현실적인 직장인의 애환이 담겨 있어 2030 세대의 큰 공감을 얻고 있다.
+        </p>
+
+        <!-- 2. 상세 설정 -->
+        <h2 id="s-2">2. 상세 설정</h2>
+
+        <h3 id="s-2-1">2.1. 성격 및 특징</h3>
+        <p>
+            <strong>"웃으면서 뼈 때리는 처세술 만렙"</strong>으로 통한다. 친화력이 매우 좋아 진상 취객도 웃으면서 돌려보내는 능력을 가졌다. 선배인 <a href="고나미.html" class="wiki-link">고나미</a>가 규정 위반을 지적하며 혼을 내도 "선배님, 오늘 점심은 제가 쏠게요!"라며 능글맞게 넘기는 성격이다.
+        </p>
+        <p>
+            하지만 속마음은 누구보다 현실적이다. 거창한 사명감보다는 '내 월급'과 '워라밸'을 최우선으로 여긴다. 표정 파츠 중 '영혼이 가출한 표정'이 있는 것도 이러한 설정을 반영한 것이다. 사진 찍는 것을 좋아해 동료들의 인생샷을 남겨주는 '찍사' 역할도 도맡아 한다.
+        </p>
+
+        <h3 id="s-2-2">2.2. 학력 및 능력</h3>
+        <p>
+            고송초-소요중-효빈종합고를 거쳐 효빈대학교에 진학했다. 학창 시절 성적은 극단적이었다. <strong>국어와 사회탐구는 1~2등급</strong>을 찍을 정도로 말솜씨와 눈치가 빨랐고, <strong>영어(2등급)</strong> 실력도 좋아 외국인 안내도 능숙하다.
+        </p>
+        <p>
+            그러나 <strong>수학은 4~5등급</strong>으로 유일한 약점이었다. 복잡한 계산이나 기계적인 원리 이해에는 약한 편이다. 대신 특유의 면접 스킬과 생활기록부 관리로 효빈대학교 교통대학 철도운영시스템공학과에 합격했다. 소위 말하는 '문과 감성 공대생'이다.
+        </p>
+
+        <h3 id="s-2-3">2.3. 정치 성향</h3>
+        <p>
+            <strong>철저한 생계형 지지자.</strong><br>
+            거창한 이념보다는 <strong>"누가 내 월급과 복지를 보장해 주는가?"</strong>가 기준이다.
+        </p>
+        <p>
+            <strong>對 윤대환: 싫어함.</strong><br>
+            윤대환 전 시장 시절 인력 감축으로 인해 선배들이 고생했던 이야기를 전해 들었고, 실제로 업무 강도가 헬게이트가 될 뻔했기에 본능적으로 거부감을 가진다. "일 더 시키는데 월급 안 주는 상사" 이미지로 인식한다.
+        </p>
+        <p>
+            <strong>對 박효빈: 지지함.</strong><br>
+            현 박효빈 시장이 안전 인력을 대폭 충원해주고, 굿즈 사업 수익을 직원 복지로 돌려주는 정책을 펼치면서 워라밸이 개선되었기 때문에 강력한 지지자가 되었다. (금융 치료의 효과)
+        </p>
+
+        <!-- 3. 인간 관계 -->
+        <h2 id="s-3">3. 인간 관계</h2>
+        <ul class="list-disc pl-5">
+            <li>
+                <strong><a href="고나미.html" class="wiki-link">고나미</a> (1호선 기관사):</strong> 같은 대학 직속 선배이자 직장 상사. 고나미의 FM 잔소리를 한 귀로 듣고 한 귀로 흘리는 스킬을 시전하지만, 결정적인 순간에는 고나미를 깍듯이 모신다.
+            </li>
+            <li>
+                <strong><a href="라세나.html" class="wiki-link">라세나</a> (6호선):</strong> 고3 수험생인 라세나를 친동생처럼 챙긴다. 보건대 셔틀버스를 타러 가는 라세나를 보면 간식을 쥐어주기도 한다.
+            </li>
+            <li>
+                <strong><a href="미소하.html" class="wiki-link">미소하</a> (5호선):</strong> 같은 학교 후배지만 성향은 정반대다. 미소하가 정책과 이론에 집중한다면, 하루빈은 현장과 실무(그리고 요령)에 집중한다. 은근한 라이벌 의식이 있으면서도 친하다.
+            </li>
+            <li>
+                <strong>효빈대 카르텔:</strong> 고나미, 미소하, 임세하와 함께 효빈대 출신 파벌에 속해 있다.
+            </li>
+        </ul>
+
+        <!-- 4. 관련 굿즈 -->
+        <h2 id="s-4">4. 관련 굿즈</h2>
+        <p>주로 <a href="고송교차로역.html" class="wiki-link">고송교차로역점</a>(2호선)과 본점에서 구할 수 있다. 민트색(초록색) 테마의 굿즈가 많다.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+            <div class="goods-card cursor-pointer" onclick="alert('상품 상세 페이지로 이동합니다.')">
+                <img src="images/26.jpg" alt="1/7 스케일 피규어">
+                <div class="goods-card-info">
+                    <div class="text-sm font-bold text-gray-800 mb-1">[SEGA] 2호선 하루빈 1/7 스케일 피규어</div>
+                    <div class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 inline-block rounded">S-FIRE 콜라보</div>
+                    <div class="text-lg font-black text-teal-600 mt-2">75,900원</div>
+                </div>
+            </div>
+            <div class="goods-card cursor-pointer" onclick="alert('상품 상세 페이지로 이동합니다.')">
+                <img src="images/29.jpg" alt="넨도로이드">
+                <div class="goods-card-info">
+                    <div class="text-sm font-bold text-gray-800 mb-1">넨도로이드 하루빈</div>
+                    <div class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 inline-block rounded">'영혼 가출' 표정 포함</div>
+                    <div class="text-lg font-black text-teal-600 mt-2">45,000원</div>
+                </div>
+            </div>
+            <div class="goods-card cursor-pointer" onclick="alert('상품 상세 페이지로 이동합니다.')">
+                <img src="images/2.jpg" alt="사원증 홀더">
+                <div class="goods-card-info">
+                    <div class="text-sm font-bold text-gray-800 mb-1">하루빈의 '처세술 만렙' 사원증 홀더</div>
+                    <div class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 inline-block rounded">민트색 목걸이 줄</div>
+                    <div class="text-lg font-black text-teal-600 mt-2">12,000원</div>
+                </div>
+            </div>
+            <div class="goods-card cursor-pointer" onclick="alert('상품 상세 페이지로 이동합니다.')">
+                <img src="images/11.jpg" alt="모찌 쿠션">
+                <div class="goods-card-info">
+                    <div class="text-sm font-bold text-gray-800 mb-1">2호선 전동차 모찌 쿠션</div>
+                    <div class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 inline-block rounded">안고 자면 꿀잠</div>
+                    <div class="text-lg font-black text-teal-600 mt-2">25,000원</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 여담 -->
+        <h2 id="s-5">5. 여담</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li>
+                민트초코를 좋아한다는 설정이 있다. 이는 2호선의 노선색(초록색)과 일치하기 때문.
+            </li>
+            <li>
+                퇴근 후에는 맛집 탐방을 다니거나 인스타그램에 감성 사진을 올리는 것이 취미다.
+            </li>
+            <li>
+                <a href="효빈 애니메이션 페스티벌.html" class="wiki-link">HAF</a> 기간에는 코스프레한 승객들과 함께 사진을 찍어주며 축제 분위기를 주도한다.
+            </li>
+            <li>
+                안내방송 성우가 밝고 명랑한 톤이라, 출근길 직장인들에게 힘이 된다는 호평이 많다.
+            </li>
+        </ul>
+
+        <!-- 하단 각주 영역 -->
+        <div class="footnotes-area">
+            <h3 style="margin-top:0; font-size:1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px;">각주</h3>
+            <div id="fn-voice" class="footnote-content">[1] 공식 성우. 일본판: <a href="https://namu.wiki/w/%EC%9A%B0%EC%B9%98%EB%8B%A4%20%EB%A7%88%EC%95%BC" class="wiki-link" target="_blank" rel="noopener">우치다 마아야</a> / 한국판: <a href="https://namu.wiki/w/%EA%B9%80%EC%84%A0%ED%98%9C(%EC%84%B1%EC%9A%B0)" class="wiki-link" target="_blank" rel="noopener">김선혜</a>.</div>
+        </div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-400 text-xs pb-10">
+            <p>이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)</p>
+            <p>기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            <br>
+            <p>효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</p>
+            <p>효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.</p>
+        </footer>
+    </div>
+
+    <script>
+        // 각주 호버보드 (툴팁) 기능
+        document.addEventListener('DOMContentLoaded', () => {
+            const refs = document.querySelectorAll('.footnote-ref a');
+            const tooltip = document.getElementById('footnote-tooltip');
+
+            refs.forEach(ref => {
+                ref.addEventListener('mouseenter', (e) => {
+                    e.preventDefault(); 
+                    const targetId = ref.getAttribute('href').substring(1); 
+                    const targetContent = document.querySelector(`.footnote-content[id="${targetId}"]`);
+                    
+                    if (targetContent) {
+                        tooltip.innerHTML = targetContent.innerHTML;
+                        tooltip.style.display = 'block';
+                        moveTooltip(e);
+                    }
+                });
+
+                ref.addEventListener('mousemove', (e) => {
+                    moveTooltip(e);
+                });
+
+                ref.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+            });
+
+            function moveTooltip(e) {
+                const x = e.clientX + 15;
+                const y = e.clientY + 15;
+                
+                const tooltipRect = tooltip.getBoundingClientRect();
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+
+                let finalX = x;
+                let finalY = y;
+
+                if (x + tooltipRect.width > windowWidth) {
+                    finalX = x - tooltipRect.width - 20;
+                }
+                if (y + tooltipRect.height > windowHeight) {
+                    finalY = y - tooltipRect.height - 20;
+                }
+
+                tooltip.style.left = finalX + 'px';
+                tooltip.style.top = finalY + 'px';
+            }
+        });
+    </script>
+</body>
+</html>

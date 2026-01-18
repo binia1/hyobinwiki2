@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>중수동 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        :root { 
+            /* [규칙 1] 상단바 및 검색창 배경색 */
+            --wiki-nav: #7777AA; 
+            
+            /* [규칙 2] 모든 헤더 및 항목열 배경색 (기본 이미지 컬러) */
+            --wiki-header: #5D75A0;
+            
+            /* 중수동 테마 (법원의 권위 - 딥 네이비) */
+            --wiki-main: #003366; 
+            --wiki-point: #002244; 
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            
+            /* 노선 색상 */
+            --line-1: #0077DD;
+            --line-2: #00ccaa;
+            --line-6: #881188; /* 6호선 보라색 */
+            
+            /* 카스미 퍼스널 컬러 */
+            --kasumi-color: #E7D600;
+            
+            /* 정당 색상 */
+            --party-minju: #004EA2;
+            --party-gukhim: #E61E2B;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-nav: #9999CC;
+            --wiki-header: #4A5D80;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; margin: 0; }
+        .wiki-container { max-width: 1152px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); display: flex; flex-direction: column; }
+
+        /* [표 스타일] 모든 th와 항목 td에 #5D75A0 강제 적용 */
+        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: fixed !important; }
+        th { background-color: var(--wiki-header) !important; color: #ffffff !important; font-weight: bold; border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        td { border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        
+        /* 항목열(왼쪽 라벨열) 배경색 #5D75A0 적용 */
+        .item-label { background-color: var(--wiki-header) !important; color: #ffffff !important; font-weight: bold; width: 120px; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 2px solid var(--wiki-header); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-header); }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: var(--wiki-header); border-left: 4px solid var(--wiki-header); padding-left: 12px; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-header); background-color: var(--wiki-gray-bg); width: 100%; max-width: 360px; font-size: 0.82rem; margin-bottom: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-top-label { background-color: var(--wiki-header); color: #fff; padding: 5px; text-align: center; font-weight: bold; }
+        .infobox-title-row { display: flex; border-bottom: 1px solid var(--wiki-border); background: #fff; color: #000; align-items: center; }
+        [data-theme='dark'] .infobox-title-row { background: #2d2f34; color: #fff; }
+        .infobox-logo { width: 90px; height: 90px; border-right: 1px solid var(--wiki-border); display: flex; align-items: center; justify-content: center; padding: 0; background: #fff; overflow: hidden; }
+        .infobox-name { flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 5px; }
+        
+        /* 인포박스 내부 항목열 th 배경색 적용 */
+        .infobox th { background-color: var(--wiki-header) !important; color: #ffffff !important; width: 100px; text-align: left; padding: 5px 8px; font-size: 0.75rem; }
+        .infobox td { padding: 5px 8px; text-align: left; }
+        .infobox-sub-header th { background-color: #4a5d80 !important; text-align: center; font-weight: bold; padding: 4px; font-size: 0.8rem; }
+
+        /* 네비게이션바 및 상단바 */
+        nav { background-color: var(--wiki-nav) !important; }
+        .nav-box { border: 1px solid var(--wiki-header); margin-bottom: 15px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; clear: both; }
+        .nav-box-header { background-color: var(--wiki-header); color: #fff; padding: 8px 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; }
+        .nav-table th { background-color: var(--wiki-header) !important; color: #fff !important; border: 1px solid white !important; }
+        .nav-table td { background-color: var(--wiki-gray-bg); border: 1px solid white !important; }
+
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn.active { background-color: var(--wiki-header); color: white !important; font-weight: bold; }
+
+        /* 정당 뱃지 */
+        .badge-minju { background-color: var(--party-minju); color: white; padding: 2px 5px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block; vertical-align: middle; margin-right: 3px; }
+        .badge-gukhim { background-color: var(--party-gukhim); color: white; padding: 2px 5px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block; vertical-align: middle; margin-right: 3px; }
+
+        /* 카스미 밈 박스 */
+        .kasumi-box {
+            border: 2px solid var(--kasumi-color);
+            background-color: #fffde7;
+            color: #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .kasumi-box::before { content: "👑"; position: absolute; top: -10px; left: 10px; font-size: 20px; background: #fff; padding: 0 5px; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        
+        /* 방송 대본 스타일 */
+        .script-box { background-color: #f0f0f0; border-left: 4px solid #333; padding: 10px; margin: 10px 0; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap; }
+    </style>
+</head>
+<body data-theme="light">
+    <div id="wiki-msg-box"></div>
+
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">중수동</h1>
+            <div class="wiki-btn-group shadow-sm mb-4">
+                <a href="#" class="wiki-tool-btn">토론</a>
+                <a href="#" class="wiki-tool-btn active">편집</a>
+                <a href="#" class="wiki-tool-btn">역사</a>
+                <div class="px-3 py-1 text-[11px] cursor-pointer hover:bg-gray-100" onclick="showMsg('즐겨찾기에 추가됨')">★</div>
+            </div>
+        </div>
+
+        <div class="category-box bg-white border p-2 mb-4 text-xs">
+            <span class="font-bold text-[#5D75A0]">분류:</span> 
+            <a href="북구.html" class="wiki-link">북구(효빈광역시)</a> | 
+            <a href="https://namu.wiki/w/법정동" class="wiki-link" target="_blank">법정동</a> |
+            <a href="#" class="wiki-link">나카스 카스미</a> | 
+            <a href="#" class="wiki-link">박효빈</a>
+        </div>
+
+        <!-- 상위 행정구역 내비게이션 -->
+        <div class="nav-box rounded overflow-hidden shadow-sm">
+            <div class="nav-box-header" onclick="toggleNav('guNav', 'guLabel')">
+                <span class="flex items-center">
+                    <img src="이미지/북구.png" alt="북구" style="height: 1.2em; width: auto; margin-right: 5px; background:white; border-radius:50%;" onerror="this.style.display='none'">
+                    <span>효빈광역시 북구의 행정구역</span>
+                </span>
+                <span id="guLabel" class="text-[10px] bg-white/20 px-2 py-0.5 rounded nav-toggle-btn">[접기]</span>
+            </div>
+            <div id="guNav" class="nav-box-body">
+                <table class="nav-table text-xs text-center">
+                    <tr>
+                        <th>행정동</th>
+                        <td>
+                            <div class="flex flex-wrap justify-center gap-1 text-[0.85rem] leading-relaxed p-1">
+                                <a href="고송동.html" class="wiki-link">고송동</a> · 
+                                <span class="font-bold text-[#003366] underline decoration-2">중수동</span> · 
+                                <a href="채산동.html" class="wiki-link">채산동</a> · 
+                                <a href="입희동.html" class="wiki-link">입희동</a> · 
+                                <a href="청능동.html" class="wiki-link">청능동</a> · 
+                                <a href="사능동.html" class="wiki-link">사능동</a> · 
+                                <a href="남전동.html" class="wiki-link">남전동</a> · 
+                                <a href="소조동.html" class="wiki-link">소조동</a> · 
+                                <a href="포산동.html" class="wiki-link">포산동</a> · 
+                                <a href="청능동.html" class="wiki-link">청능동</a> · 
+                                <a href="천왕사동.html" class="wiki-link">천왕사동</a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4 flex-grow">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 md:order-1 w-full md:w-auto bg-[#f9f9f9] border border-gray-300 p-4 rounded">
+                <div class="text-center font-bold border-bottom border-gray-300 mb-2 pb-1">목차</div>
+                <ul class="text-sm list-none p-0 m-0">
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">역사</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">행정 구역 및 시설</a>
+                        <ul>
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">행정동별 특징</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">핵심 구역: 법조·행정 타운</a>
+                        <ul>
+                            <li>4.1. <a href="#s-4-1" class="wiki-link">북구청과 관공서</a></li>
+                            <li>4.2. <a href="#s-4-2" class="wiki-link">효빈고등법원 및 검찰청</a></li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5" class="wiki-link">교통 현황</a>
+                        <ul>
+                            <li>5.1. <a href="#s-5-1" class="wiki-link">도시철도</a></li>
+                        </ul>
+                    </li>
+                    <li>6. <a href="#s-6" class="wiki-link">서브컬처: 카스밍 랜드</a>
+                        <ul>
+                            <li>6.1. <a href="#s-6-1" class="wiki-link">중수역 깽판 미수 사건 (야마부키 사아야 대첩 전초전)</a></li>
+                            <li>6.2. <a href="#s-6-2" class="wiki-link">박효빈 시장의 '골든 로드' 프로젝트</a></li>
+                            <li>6.3. <a href="#s-6-3" class="wiki-link">오물 투척 미수 사건과 참교육</a></li>
+                            <li>6.4. <a href="#s-6-4" class="wiki-link">A씨의 인권위 제소와 최후</a></li>
+                            <li>6.5. <a href="#s-6-5" class="wiki-link">'중수청' 개청과 세계관 대통합</a></li>
+                        </ul>
+                    </li>
+                    <li>7. <a href="#s-7" class="wiki-link">미디어 반응</a></li>
+                    <li>8. <a href="#s-8" class="wiki-link">정치</a></li>
+                    <li>9. <a href="#s-9" class="wiki-link">여담</a></li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
+                <div class="infobox-top-label">효빈광역시 북구의 법정동</div>
+                <div class="infobox-title-row">
+                    <div class="infobox-logo">
+                        <img src="이미지/북구.png" alt="북구 로고" onerror="this.parentNode.innerHTML='<span class=\'text-[10px] text-gray-400 font-bold\'>북구(효빈)<br>LOGO</span>'">
+                    </div>
+                    <div class="infobox-name">
+                        <div class="text-xl font-bold">중수동</div>
+                        <div class="text-[10px] opacity-70 uppercase">Jungsu-dong / 中須洞</div>
+                    </div>
+                </div>
+                <table>
+                    <tr><th class="item-label">광역자치단체</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></td></tr>
+                    <tr><th class="item-label">기초자치단체</th><td><a href="북구.html" class="wiki-link">북구</a></td></tr>
+                    <tr>
+                        <th class="item-label">관할 행정동</th>
+                        <td class="text-xs">
+                            중수1동, 중수2동<br>중수3동, 중수4동
+                        </td>
+                    </tr>
+                    <tr><th class="item-label">인구</th><td><strong>131,058명</strong> <span class="text-[0.6rem] text-gray-500">(2025년 기준)</span></td></tr>
+                    <tr><th class="item-label">인구 순위</th><td>북구 4위</td></tr>
+                    <tr>
+                        <th class="item-label">국회의원</th>
+                        <td>
+                            <strong>을</strong>: <span class="badge-minju">더불어민주당</span> <a href="원성준.html" class="wiki-link">원성준</a> (1동)<br>
+                            <strong>병</strong>: <span class="badge-minju">더불어민주당</span> <a href="이찬대.html" class="wiki-link">이찬대</a> (2~4동)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="item-label">주요 시설</th>
+                        <td class="text-xs">
+                            <strong>북구청</strong>, 효빈북부경찰서<br>
+                            <span class="text-gray-500">[사법]</span> <strong>효빈고등법원</strong><br>
+                            <span class="text-gray-500">[기소]</span> <strong>효빈고등공소청</strong><br>
+                            <span class="text-gray-500">[수사]</span> <strong style="color:#E61E2B;">효빈중대범죄수사청</strong>
+                            <div class="text-[9px] text-red-600 font-bold mt-1">(구 효빈고등검찰청)</div>
+                        </td>
+                    </tr>
+                </table>
+            </aside>
+        </div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <p><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구.html" class="wiki-link">북구</a>의 핵심 법정동. <strong>북구청</strong>과 더불어 <strong>효빈고등법원·효빈고등공소청·효빈중수청</strong>이 위치한 명실상부한 <strong>효빈시 사법 및 행정의 중심지</strong>이다.</p>
+        <p>인구 13만 명의 거대 동으로, 현재 <strong><a href="박효빈.html" class="wiki-link">박효빈</a> 효빈광역시장의 사저</strong>(자택)가 위치해 있어 '효빈 정치의 1번지'로도 불린다. 고위 법조인과 공무원, 의료인들이 다수 거주하여 치안과 주거 환경이 북구 내에서도 최상위권에 속한다. </p>
+        <p>최근에는 지명의 한자(中須)가 <a href="https://namu.wiki/w/러브라이브!%20니지가사키%20학원%20스쿨%20아이돌%20동호회" class="wiki-link" target="_blank">니지동</a>의 인기 캐릭터 <strong><a href="#" class="wiki-link" style="color:#d4c300;">나카스 카스미</a></strong>(中須)와 같다는 점이 알려지며, '정의로운 카스밍' 밈과 함께 전 세계 서브컬처 팬들의 성지인 <strong>'카스밍 랜드'</strong>로 급부상했다.</p>
+
+        <h2 id="s-2">2. 역사</h2>
+        <p>1973년 효빈군 중수면 중수리 지역이 효빈시로 편입되며 동으로 승격되었다. 초기에는 농촌 지역이었으나, 1980년대 북구청 이전과 1990년대 법원·검찰청 개청으로 비약적인 발전을 이루었다.</p>
+        <p>2000년대 이후에는 지하철 개통과 함께 대규모 재건축이 이루어져 북구의 랜드마크 주거지로 자리 잡았다.</p>
+
+        <h2 id="s-3">3. 행정 구역 및 시설</h2>
+        <p>중수동은 인구와 면적이 방대하여 4개의 행정동으로 분동되어 관리되고 있다.</p>
+        <table class="data-table text-center my-4 w-full text-sm">
+            <thead>
+                <tr>
+                    <th class="w-[15%]">행정동</th>
+                    <th class="w-[15%]">인구</th>
+                    <th class="w-[30%]">주요 특징</th>
+                    <th class="w-[40%]">관할 구역 및 시설</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 중수1동 -->
+                <tr class="bg-blue-50">
+                    <td class="item-label">중수1동</td>
+                    <td>30,258명</td>
+                    <td><strong>행정 중심지</strong></td>
+                    <td class="text-xs text-left px-1">
+                        <strong>북구청</strong>, 효빈북부경찰서, 북구보건소<br>
+                        <a href="북구청역.html" class="wiki-link" style="color:var(--line-1);">●</a><a href="북구청역.html" class="wiki-link" style="color:var(--line-6);">●</a> 북구청역 역세권
+                    </td>
+                </tr>
+                <!-- 중수2동 -->
+                <tr>
+                    <td class="item-label">중수2동</td>
+                    <td>26,785명</td>
+                    <td>주거지역</td>
+                    <td class="text-xs text-left px-1">중수중학교, 중수초등학교, 대규모 아파트 단지</td>
+                </tr>
+                <!-- 중수3동 -->
+                <tr class="bg-gray-100">
+                    <td class="item-label">중수3동</td>
+                    <td>33,325명</td>
+                    <td><strong>효빈 법조타운</strong></td>
+                    <td class="text-xs text-left px-1">
+                        <strong>효빈고등법원</strong>, <strong>효빈중수청</strong>, <strong>효빈고등공소청</strong><br>
+                        <a href="중수역.html" class="wiki-link" style="color:var(--line-2);">●</a><a href="중수역.html" class="wiki-link" style="color:var(--line-6);">●</a> 중수역, <a href="등기역.html" class="wiki-link" style="color:var(--line-1);">●</a> 등기역<br>
+                        변호사/법무사 사무실 밀집 구역
+                    </td>
+                </tr>
+                <!-- 중수4동 -->
+                <tr class="bg-yellow-50">
+                    <td class="item-label">중수4동</td>
+                    <td>40,690명</td>
+                    <td><strong>VIP 거주지</strong></td>
+                    <td class="text-xs text-left px-1">
+                        <strong>박효빈 시장 사저</strong>, 중수근린공원<br>
+                        프리미엄 주상복합 및 고급 빌라촌
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="s-4">4. 핵심 구역: 법조·행정 타운</h2>
+        <h3 id="s-4-1" class="text-lg font-bold mt-4 mb-2">4.1. 북구청과 관공서</h3>
+        <p>중수1동 **<a href="북구청역.html" class="wiki-link">북구청역</a>** 인근은 북구 행정의 심장부다. 북구청사를 중심으로 보건소, 경찰서, 우체국 등 주요 관공서가 도보 5분 거리에 집결해 있어 원스톱 행정 처리가 가능하다.</p>
+
+        <h3 id="s-4-2" class="text-lg font-bold mt-4 mb-2">4.2. 효빈고등법원 및 검찰청</h3>
+        <p>중수3동 **<a href="중수역.html" class="wiki-link">중수역</a>**과 **<a href="등기역.html" class="wiki-link">등기역</a>** 사이에는 웅장한 유리궁전 형태의 **효빈고등법원**과 **효빈고등공소청·중대범죄수사청** 청사가 마주 보고 있다. 효빈시뿐만 아니라 인근 덕북도의 사법 기능까지 관할하는 광역 법조 단지다.</p>
+
+        <h2 id="s-5">5. 교통 현황</h2>
+        <ul class="list-disc pl-5 mt-2">
+            <li><strong><a href="중수역.html" class="wiki-link">중수역</a></strong> (<span style="color:var(--line-2)">●</span> 2호선, <span style="color:var(--line-6)">●</span> 6호선): 법조타운 방문객과 주변 상권 이용객으로 일평균 이용객이 북구 상위권에 랭크된다.</li>
+            <li><strong><a href="북구청역.html" class="wiki-link">북구청역</a></strong> (<span style="color:var(--line-1)">●</span> 1호선, <span style="color:var(--line-6)">●</span> 6호선): 북구청 접근성이 뛰어나며 1호선과 6호선의 환승 수요가 많다.</li>
+            <li><strong><a href="등기역.html" class="wiki-link">등기역</a></strong> (<span style="color:var(--line-1)">●</span> 1호선): 법원 등기국 인근에 위치한다.</li>
+        </ul>
+
+        <h2 id="s-6">6. 서브컬처: 카스밍 랜드</h2>
+        <div class="kasumi-box">
+            <div class="flex flex-col gap-2">
+                <div class="font-bold text-lg text-[#003366] border-b border-gray-300 pb-1 mb-1">
+                    👑 중수(中須)역의 '흑막' 카스미
+                </div>
+                <div>
+                    <strong>"당신들, 일본이었으면 사회적으로 완전히 매장(埋葬)이에요. 타인의 행복을 짓밟는 건 범죄입니다."</strong><br>
+                    <span class="text-xs text-gray-600">- 사가라 마유 (나카스 카스미 성우), 중수역에서 혐오자들을 일갈하며</span>
+                </div>
+            </div>
+        </div>
+        
+        <h3 id="s-6-1" class="text-lg font-bold mt-4 mb-2">6.1. 중수역 깽판 미수 사건</h3>
+        <p>202X년, 성우 <strong>사가라 마유</strong>가 효빈시 투어 중 중수역을 방문했을 때, 유치장에서 막 출소한 혐오자들(A씨, <a href="윤재훈.html" class="wiki-link">윤재훈</a>)이 난동을 부리려다 제압당한 사건이다.</p>
+        <p>이들은 "시장 놈의 관저가 일본 캐릭터 성씨를 딴 동네에 있는 게 매국이다"라며 습격을 모의했으나, 에타에 예고글을 올리는 멍청한 짓을 저질러 현장에서 잠복 경찰에게 제압당했다. 소란을 목격한 사가라 마유는 평소의 귀여운 모습과 달리 싸늘하게 정색하며 **"매장(埋葬)"** 드립을 날려 '현실판 흑막 카스미'로 추앙받았다.</p>
+
+        <h3 id="s-6-2" class="text-lg font-bold mt-4 mb-2">6.2. 박효빈 시장의 '골든 로드' 프로젝트</h3>
+        <p>사가라 마유가 "시장님도 카스밍에게 지배당했군요, 이웃사촌!"이라고 농담을 던지자, **박효빈** 시장은 그날 밤새 잠을 이루지 못하고 **'중수동 골든 로드'** 정책을 입안했다.</p>
+        <ul class="list-disc pl-5">
+            <li><strong>주요 내용:</strong> 노후 가로등을 스마트 LED로 교체하고, 보도블록을 대리석 질감으로 전면 교체하여 '걷고 싶은 거리'를 조성했다.</li>
+            <li><strong>명분과 실리:</strong> 표면적으로는 '안전한 귀갓길'이었으나, 실상은 사가라 마유가 다시 방문했을 때 '런웨이'를 걷게 해주겠다는 덕심의 발로였다.</li>
+        </ul>
+
+        <h3 id="s-6-3" class="text-lg font-bold mt-4 mb-2">6.3. 오물 투척 미수 사건과 참교육</h3>
+        <p>윤재훈과 A씨는 완공된 '골든 로드'가 "일본 여자를 위한 길"이라며 분노하여, 새벽에 검은 페인트와 오물을 투척하려 했다. 그러나 박 시장이 설치한 **스마트 폴(Smart Pole)**의 자동 감지 조명이 그들을 비추며 경고 방송을 내보냈고, 놀란 두 사람은 오물을 스스로 뒤집어쓴 채 주민들에게 발각되었다.</p>
+        <p>격분한 건물주와 상인들은 "내 집값 떨어뜨리면 죽는다"며 몽둥이를 들고 쫓아왔고, 결국 그들은 경찰에게 제발 잡아가 달라고 애원하는 추태를 보였다.</p>
+
+        <h3 id="s-6-4" class="text-lg font-bold mt-4 mb-2">6.4. A씨의 인권위 제소와 최후</h3>
+        <p>A씨는 유치장에서 "스마트 폴 조명이 내 초상권을 침해했다"며 인권위에 진정을 넣었으나, 인권위는 "범죄 현장 채증은 적법하다"며 기각했다. 오히려 이 사실이 알려지며 건물주에게 무고죄 고소까지 당해 징역형과 막대한 배상금 크리를 맞고 사회적으로 매장당했다.</p>
+
+        <!-- 6.5 섹션: 중수청과 카스밍의 결합 -->
+        <h3 id="s-6-5" class="text-lg font-bold mt-6 mb-3 text-[#003366] border-l-4 border-[#003366] pl-3">
+            6.5. '중수(中搜)청' 개청과 세계관 대통합
+        </h3>
+
+        <div class="bg-blue-50 border border-blue-200 p-3 rounded mb-4 text-sm">
+            <strong>💡 요약:</strong> 현실의 사법 개혁으로 탄생한 <strong>'중대범죄수사청(약칭 중수청)'</strong>이 우연의 일치로 <strong>'중수동'</strong>에 들어서면서, 이 지역은 행정구역명(中須)과 관청명(中搜)이 발음만 같은 <strong>'중수 유니버스'</strong>가 되어버렸다.
+        </div>
+
+        <p>2026년, 검찰청법 개정안 시행으로 기존의 <strong>효빈고등검찰청</strong>이 수사권과 기소권으로 분리되었다. 이에 따라 기소 업무를 전담하는 <strong>'효빈고등공소청'</strong>과 중대 범죄 수사를 전담하는 <strong>'효빈중대범죄수사청(약칭 중수청)'</strong>이 중수3동 법조타운에 나란히 간판을 내걸게 되었다.</p>
+
+        <h4 class="font-bold text-md mt-4 mb-2">① 나카스 카스미의 '공권력 장악' 드립</h4>
+        <p>기관의 약칭이 하필 <strong>'중수(中搜)청'</strong>으로 결정되자, 서브컬처 팬들은 "이것은 예견된 미래였다"며 경악했다. 동네 이름인 '중수(中須, 나카스)'와 발음이 같다는 점을 이용해, <strong>"나카스 카스미가 드디어 사법 권력까지 손에 넣었다"</strong>는 드립이 폭발한 것.</p>
+
+        <div class="kasumi-box mb-4">
+            <div class="flex items-center gap-3 border-b border-[#E7D600] pb-2 mb-2">
+                <span class="text-2xl">🕵️‍♀️</span>
+                <span class="font-bold text-lg text-[#333]">초대 중수청장 '나카스 카스미' (???)</span>
+            </div>
+            <div class="text-sm space-y-2">
+                <p><strong>"귀여움으로 심판...이 아니라, 법대로 쳐넣어 버리겠어요!"</strong></p>
+                <ul class="list-disc pl-4 text-xs text-gray-700">
+                    <li><strong>별명:</strong> KBI (Kasuming Bureau of Investigation) 국장</li>
+                    <li><strong>수사 기법:</strong> 하라구로(속이 검음) 특성을 살린 <strong>함정 수사</strong>와 <strong>압박 심문</strong>의 대가.</li>
+                    <li><strong>특이 사항:</strong> 중수청 유치장 급식으로 매일 '코페빵'만 나온다는 괴담이 돎.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h4 class="font-bold text-md mt-4 mb-2">② 박효빈 시장의 소름 돋는 선견지명?</h4>
+        <p>개청식 당일, 박효빈 시장이 중수청 현판식에 참석하자 인터넷 커뮤니티에서는 과거 박 시장의 발언들이 재조명되었다.</p>
+        <ul class="list-disc pl-5 text-sm space-y-1 mb-4">
+            <li>과거 중수동 재개발 당시, 박 시장이 법원 옆 부지를 <strong>"매우 '중대'한 곳이니 비워두라"</strong>고 지시했던 일화가 발굴됨.</li>
+            <li>네티즌들은 "시장은 이미 몇 년 전부터 검수완박과 중수청 설립을 예측하고, '중수동'에 '중수청'을 유치해 <strong>라임을 맞출 계획</strong>을 세웠던 것"이라며 그를 '효빈의 제갈량'으로 추앙하기 시작했다.</li>
+        </ul>
+
+        <h4 class="font-bold text-md mt-4 mb-2">③ 미디어 및 여론 반응</h4>
+        <div class="script-box">
+[커뮤니티 베스트 댓글 모음]
+
+- ㅇㅇ(118.235): "와 미친 ㅋㅋㅋ 중수동에 중수청 ㅋㅋㅋㅋ 작명 센스 실화냐?"
+- 럽폭도: "이제 범죄 저지르면 카스밍한테 취조 당하는 거임? 당장 은행 털러 간다."
+- ㄴ 현직경찰: "ㄴㄴ 중수청은 '중대 범죄'만 다룸. 님 같은 잡범은 파출소 가서 훈방임."
+- 효빈시민: "솔직히 청사 로고 노란색인 거 보고 행안부 담당자도 러브라이브 보는 줄 알았다."
+- 뉴스속보: "사가라 마유(성우), 중수청 명예 수사관 위촉... '범죄 없는 세상을 만들게요(물리)'"
+        </div>
+
+        <p>실제로 효빈중대범죄수사청(중수청)은 이러한 밈을 의식했는지, <strong>"친근한 수사기관"</strong>을 표방하며 노란색 마스코트를 발표했다가 "누가 봐도 카스미 파쿠리 아니냐"는 의혹을 사기도 했다.</p>
+
+        <h2 id="s-7">7. 미디어 반응</h2>
+        <div class="script-box">
+[라디오 '니지가사키 학원 ~효빈시 출장판~']
+마유치: "그때 효빈대 학생분들이 인간 벽을 만들어서 지켜주셨어요! 감동!"
+카오링: "시장님이 사건 직후에 90도 사과하시는데, 알고 보니 시즈쿠&카스미 오시라고..."
+마유치: "범인들, 경찰 오기 전에 학생들한테 팩트로 뼈 맞고 순살 됐대요. (웃음)"
+        </div>
+        <p>이 사건은 일본 성우계에서도 화제가 되어, "효빈시는 덕후들의 에덴동산"이라는 인식을 심어주었다.</p>
+
+        <h2 id="s-8">8. 정치</h2>
+        <ul class="list-disc pl-5 mb-4">
+            <li><strong>북구 을 (<span class="badge-minju">더불어민주당</span> 원성준):</strong> 중수1동 (북구청 소재지)</li>
+            <li><strong>북구 병 (<span class="badge-minju">더불어민주당</span> 이찬대):</strong> 중수2~4동 (법원, 시장 사저)</li>
+        </ul>
+
+        <h2 id="s-9">9. 여담</h2>
+        <ul class="list-disc pl-5 space-y-2 text-sm">
+            <li>박효빈 시장은 관저 대신 중수동 자택에서 출퇴근하며, 아침마다 빵집에서 빵을 사는 '서민 코스프레(?)'가 아닌 진짜 생활인의 모습을 보여준다.</li>
+            <li>효빈고등법원의 웅장한 외관 때문에 외지인들이 시청으로 착각하곤 한다.</li>
+            <li>중수동 카페 거리에서는 '카스밍 빵(소보로)'이 불티나게 팔린다.</li>
+        </ul>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-500 text-xs pb-10 leading-relaxed">
+            <div class="font-bold text-lg mb-3">HyobinWiki</div>
+            <div class="mb-4">
+                <span class="font-bold">크리에이티브 커먼즈 라이선스</span><br>
+                이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다.<br>
+                기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.
+            </div>
+            <div>
+                효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+                효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+        function toggleNav(id, labelId) {
+            const content = document.getElementById(id);
+            const label = document.getElementById(labelId);
+            if (content.style.maxHeight === '0px') {
+                content.style.maxHeight = '2000px';
+                label.innerText = '[접기]';
+            } else {
+                content.style.maxHeight = '0px';
+                label.innerText = '[펼치기]';
+            }
+        }
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
+            document.getElementById('guNav').style.maxHeight = '0px';
+        };
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                location.href = this.value.trim() + ".html";
+            }
+        });
+    </script>
+</body>
+</html>

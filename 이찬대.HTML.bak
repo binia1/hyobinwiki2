@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이찬대 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* [테마 컬러 설정] 더불어민주당 파란색 */
+            --wiki-main: #004EA2; 
+            --wiki-nav-bg: #7777aa;
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #004EA2;
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.15rem; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 (프로필용) */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 450px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.3rem; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: var(--wiki-main); color: #fff; width: 100px; padding: 6px 8px; border: 1px solid var(--wiki-border); text-align: center; vertical-align: middle; font-weight: bold; }
+        .infobox td { padding: 6px 8px; border: 1px solid var(--wiki-border); vertical-align: middle; }
+
+        /* 데이터 테이블 */
+        .data-table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; font-size: 0.95rem; }
+        .data-table th, .data-table td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; }
+        .data-table th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; text-align: center; }
+        .data-table tr:nth-child(even) { background-color: #fdfdfd; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* [특수 스타일] 나무위키 느낌 요소 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+        del { color: #ccc; text-decoration: line-through; } /* 취소선 드립용 */
+        .wiki-gray { color: #888; font-size: 0.9em; } /* 괄호 속 혼잣말용 */
+        
+        /* 정당 뱃지 스타일 */
+        .party-badge { 
+            display: inline-block; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            color: white; 
+            font-weight: bold; 
+            font-size: 0.9em; 
+            text-decoration: none; 
+            line-height: 1.2;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .party-badge.text-black { color: #333; text-shadow: none; } /* 노란색 배경용 */
+        
+        /* 정당 라벨 스타일 (인포박스용) */
+        .party-label { display: inline-block; padding: 2px 6px; border-radius: 3px; background: #004EA2; color: white; font-size: 0.9em; font-weight: bold; text-decoration: none; }
+
+        /* 각주 스타일 */
+        .wiki-fn-link { color: var(--wiki-link); font-size: 0.8em; vertical-align: super; text-decoration: none; font-weight: bold; cursor: pointer; margin-left: 2px; }
+        .wiki-fn-link:hover { text-decoration: underline; }
+        
+        /* 각주 툴팁 (호버보드) */
+        #wiki-tooltip { 
+            display: none; 
+            position: absolute; 
+            background: white; 
+            border: 1px solid #999; 
+            padding: 10px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+            max-width: 350px; 
+            z-index: 9999; 
+            font-size: 0.85rem; 
+            border-radius: 4px; 
+            line-height: 1.4; 
+            color: #333;
+            pointer-events: none; /* 툴팁이 마우스 가리지 않게 */
+        }
+
+        /* 하단 네비 박스 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+
+        /* 푸터 저작권 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; }
+        .wiki-footer strong { color: #333; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+    </style>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-tooltip"></div>
+
+    <!-- 상단 내비게이션 바 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav-bg);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="효빈위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a href="lee_chan_dae.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">토론</a>
+                <a href="lee_chan_dae.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">편집</a>
+                <a href="lee_chan_dae.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">이찬대</div>
+            <div class="flex gap-2 mb-1">
+                <a href="lee_chan_dae.html" class="wiki-btn">토론</a>
+                <a href="lee_chan_dae.html" class="wiki-btn">편집</a>
+                <a href="lee_chan_dae.html" class="wiki-btn">역사</a>
+                <button class="wiki-btn" onclick="alert('즐겨찾기에 추가되었습니다.')">☆ 즐겨찾기</button>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold" style="color: var(--wiki-main);">분류:</span> 
+            <a href="효빈광역시의_국회의원.html" class="wiki-link">효빈광역시의 국회의원</a> | 
+            <a href="https://namu.wiki/w/더불어민주당" target="_blank" class="wiki-link">더불어민주당 국회의원</a> | 
+            <a href="https://namu.wiki/w/전주%20이씨" target="_blank" class="wiki-link">전주 이씨</a> | 
+            <a href="분류_사회복지사.html" class="wiki-link">사회복지사 출신</a> |
+            <a href="분류_영입인재.html" class="wiki-link">정당 영입인재</a>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">생애</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">정치 활동</a>
+                        <ul>
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">혜성처럼 등장한 구원투수 (18대 총선)</a></li>
+                            <li>3.2. <a href="#s-3-2" class="wiki-link">반란과 시련의 야인 생활 (19~20대)</a></li>
+                            <li>3.3. <a href="#s-3-3" class="wiki-link">북구 병의 맹주로 부활 (21대~)</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">여담</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">소속 정당</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">선거 이력</a></li>
+                    <li>7. <a href="#s-7" class="wiki-link">둘러보기</a></li>
+                    <li>8. <a href="#s-footnote" class="wiki-link">각주</a></li>
+                </ul>
+            </div>
+
+            <!-- 프로필 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="infobox-title">이찬대<br><span class="text-sm font-normal">李贊垈 | Lee Chan-dae</span></div>
+                <div class="p-4 bg-white text-center border-b">
+                    <div class="w-full h-[250px] bg-gray-200 flex items-center justify-center text-gray-500 border border-gray-300 shadow-sm mb-2 mx-auto">
+                        이미지 준비중
+                    </div>
+                </div>
+                <table>
+                    <tr><th>출생</th><td>1967년 11월 3일 (56세)<br>덕빈북도 탄성군 중수면 평전리<br>(현 <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구(효빈).html" class="wiki-link">북구</a> 평전동)</td></tr>
+                    <tr><th>거주지</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구(효빈).html" class="wiki-link">북구</a> 중수동 단독주택</td></tr>
+                    <tr><th>본관</th><td><a href="https://namu.wiki/w/전주%20이씨" target="_blank" class="wiki-link">전주 이씨</a></td></tr>
+                    <tr><th>현직</th><td><a href="https://namu.wiki/w/제22대%20국회의원" target="_blank" class="wiki-link">제22대 국회의원</a> (효빈 북구 병)<br>국회 환경노동위원회 간사</td></tr>
+                    <tr><th>학력</th><td>서신고등학교 (졸업)<br>효빈대학교 사회복지학대학 (사회복지정책학 / 학사)</td></tr>
+                    <tr><th>병역</th><td><a href="https://namu.wiki/w/대한민국%20육군" target="_blank" class="wiki-link">대한민국 육군</a> 병장 만기전역</td></tr>
+                    <tr><th>종교</th><td><a href="https://namu.wiki/w/천주교" target="_blank" class="wiki-link">천주교</a> (세례명: 스테파노)</td></tr>
+                    <tr><th>가족</th><td>배우자, 슬하 1남 2녀</td></tr>
+                    <tr><th>소속 정당</th><td><a href="https://namu.wiki/w/더불어민주당" target="_blank" class="party-label">더불어민주당</a></td></tr>
+                    <tr><th>지역구</th><td>효빈 <a href="북구_병(효빈).html" class="wiki-link">북구 병</a></td></tr>
+                    <tr><th>의원 선수</th><td><strong>3선</strong> (18, 21, 22)</td></tr>
+                    <tr><th>약력</th><td class="text-left">
+                        입선동 종합사회복지관 관장 (전)<br>
+                        통합민주당 사회복지특별위원장<br>
+                        제18대 국회의원 (효빈 북구 갑)<br>
+                        새정치민주연합 효빈시당 부위원장<br>
+                        제21대 국회의원 (효빈 북구 병)<br>
+                        더불어민주당 원내부대표<br>
+                        제22대 국회의원 (효빈 북구 병)<br>
+                        더불어민주당 효빈시당 정책위원장
+                    </td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <blockquote>
+            <strong>"복지 전문가에서 효빈 북구의 수호자로."</strong><br>
+            <strong>"탈당과 낙선의 시련을 딛고 일어선 <del>좀비</del> 오뚝이 정치인."</strong>
+        </blockquote>
+        <p><a href="https://namu.wiki/w/대한민국" target="_blank" class="wiki-link">대한민국</a>의 <a href="https://namu.wiki/w/정치인" target="_blank" class="wiki-link">정치인</a>. 현재 <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구_병(효빈).html" class="wiki-link">북구 병</a> 국회의원이며, 소속 정당은 <a href="https://namu.wiki/w/더불어민주당" target="_blank" class="wiki-link">더불어민주당</a>이다.</p>
+        <p>사회복지 현장에서 잔뼈가 굵은 전문가 출신으로, 2008년 <a href="https://namu.wiki/w/통합민주당" target="_blank" class="wiki-link">통합민주당</a>의 인재 영입 케이스로 정계에 입문했다. 첫 선거인 18대 총선에서 당선되며 화려하게 데뷔했으나, 이후 공천 불복과 탈당, 낙선을 거듭하며 <del>정치 낭인</del> 야인 생활을 겪기도 했다. 그러나 북구의 인구 폭증으로 신설된 **'북구 병'** 선거구에서 21대 총선 때 80%가 넘는 압도적인 득표율로 화려하게 부활, 현재는 3선 중진으로서 입지를 굳건히 하고 있다.</p>
+
+        <!-- 2. 생애 -->
+        <h2 id="s-2" class="anchor-offset">2. 생애</h2>
+        <p>1967년 덕빈북도 탄성군 중수면(현 효빈 북구 평전동)에서 태어났다. 효빈대학교 사회복지학과를 졸업하고 입선동 종합사회복지관 관장으로 재직하며 지역 사회 복지 향상에 힘썼다. 정치와는 거리가 먼 삶을 살았으나, 그의 현장 경험을 높이 산 통합민주당의 러브콜을 받고 정계에 발을 들이게 된다.</p>
+
+        <!-- 3. 정치 활동 -->
+        <h2 id="s-3" class="anchor-offset">3. 정치 활동</h2>
+
+        <h3 id="s-3-1">3.1. 혜성처럼 등장한 구원투수 (18대 총선)</h3>
+        <p>2008년 제18대 총선을 앞두고, 북구 갑의 맹주였던 <a href="조상현.html" class="wiki-link">조상현</a> 의원이 갑작스러운 지병 악화로 불출마를 선언하는 비상사태가 발생했다. 이에 통합민주당은 사회복지 전문가인 이찬대를 대체 카드로 긴급 수혈, 북구 갑에 전략공천했다.</p>
+        <p>당시 전국적으로는 '뉴타운 광풍'과 함께 한나라당의 기세가 하늘을 찔렀으나, 효빈시 상황은 정반대였다. 당시 시장이었던 **<a href="윤대환.html" class="wiki-link">윤대환</a>(한나라당)**이 전차 폐지 시도, 버스 노선 사유화 등 온갖 기행과 비리를 저지르며 민심을 잃었기 때문이다. 이 덕분에 정치 신인 이찬대는 별다른 선거 운동 없이도(...) **58.61%**라는 높은 득표율로 당선되었다. 당시 한나라당 박언수 후보는 **8.90%**라는, 보수 정당 역사에 남을 처참한 성적표를 받아들고 4위로 침몰했다.</p>
+
+        <h3 id="s-3-2">3.2. 반란과 시련의 야인 생활 (19~20대)</h3>
+        <p>그러나 2012년 제19대 총선을 앞두고 건강을 회복한 '원조 주인' 조상현 의원이 복귀하면서 상황이 꼬였다. 당이 조상현을 다시 공천하자, 현역 프리미엄을 믿었던 이찬대는 이에 **불복**하여 2012년 2월 탈당, 무소속으로 북구 갑에 출마하는 초강수를 뒀다. 하지만 '지역구의 황제' 조상현의 벽은 높았고, 20.44%를 득표하며 더블 스코어 이상의 차이로 낙선했다.</p>
+        <p>낙선 후에는 정치판을 떠나 본업인 사회복지계로 돌아가 얌전히 지내는가 싶더니... 2016년 <a href="https://namu.wiki/w/안철수" target="_blank" class="wiki-link">안철수</a> 바람이 불자 **<a href="https://namu.wiki/w/국민의당" target="_blank" class="wiki-link">국민의당</a>**에 홀라당 입당하며 복귀했다. 제20대 총선에서 국민의당 후보로 북구 갑에 재도전, 조상현 의원과 리턴매치를 벌였다. 녹색 돌풍 등에 업혀 35.04%까지 득표하며 맹추격했으나, 41.69%를 얻은 조상현에게 6%p 차이로 또다시 석패했다. <del>조상현 담당 일진이 될 뻔했다.</del></p>
+
+        <h3 id="s-3-3">3.3. 북구 병의 맹주로 부활 (21대~)</h3>
+        <p>국민의당이 바른정당과 합당하여 바른미래당이 창당되기 직전, "보수와의 야합은 내 사전에 없다"며 탈당했다. 이후 민주당으로 복당하여 납작 엎드려 지내던 중, 북구의 인구 폭증으로 인해 **<a href="북구_병(효빈).html" class="wiki-link">북구 병</a>** 선거구가 신설되는 행운이 찾아왔다!</p>
+        <p>2020년 제21대 총선에서 더불어민주당 후보로 신설된 북구 병에 출마했다. 결과는 **84.69%**라는, 효빈시 역대급 득표율을 기록하며 12년 만에 금배지를 다시 달았다. 미래통합당 유줄리 후보는 11.32%에 그치며 명함도 못 내밀었다. 오랜 야인 생활 끝에, 이제는 어엿한 3선 중진으로서 조상현의 그늘을 벗어나 자신만의 아성을 구축했다는 평가를 받는다.</p>
+        <p>2024년 제22대 총선에서도 지역구 관리를 얼마나 잘했는지 득표율이 더 올라 **86.69%**를 찍었다. 국민의힘 유줄리 후보는 9.94%를 기록, 한 자릿수 득표율의 수모를 겪으며 확인사살 당했다.</p>
+
+        <!-- 4. 여담 -->
+        <h2 id="s-4" class="anchor-offset">4. 여담</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>조상현과의 애증</strong>: 같은 당 선후배였다가, 공천 경쟁자, 본선 맞라이벌을 거쳐 다시 한 솥밥을 먹는 식구가 된 기묘한 관계다. 북구 병이 분구되면서 조상현과 영역이 겹치지 않게 되어 서로 윈윈하게 되었다. 사석에서는 다시 형님 동생 하는 사이라고.</li>
+            <li><strong>사회복지계의 마당발</strong>: 국회 내에서도 손꼽히는 사회복지 전문가다. 의정 활동의 대부분을 보건복지위와 환경노동위에서 보냈으며, 지역구 내 복지관 행사란 행사는 다 찾아다니는 것으로 유명하다.</li>
+            <li><strong>멘탈갑</strong>: 현역 의원 공천 탈락 -> 무소속 출마 낙선 -> 당적 변경 후 낙선이라는, 정치인으로서는 치명적인 테크트리를 탔음에도 포기하지 않고 기어이 재기한 불굴의 의지 소유자다.</li>
+        </ul>
+
+        <!-- 5. 소속 정당 -->
+        <h2 id="s-5" class="anchor-offset">5. 소속 정당</h2>
+        <table class="data-table text-center">
+            <thead>
+                <tr>
+                    <th style="width: 30%;">소속 정당</th>
+                    <th style="width: 30%;">기간</th>
+                    <th style="width: 40%;">비고</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="party-badge" style="background-color: #DCDCDC; color: black; border: 1px solid #ccc;">무소속</span></td>
+                    <td>2008</td>
+                    <td>정계 입문 전</td>
+                </tr>
+                <tr>
+                    <td><span class="party-badge" style="background-color: #419639;">통합민주당</span></td>
+                    <td>2008</td>
+                    <td>입당 (영입인재)</td>
+                </tr>
+                <tr>
+                    <td><span class="party-badge" style="background-color: #00A550;">민주당</span></td>
+                    <td>2008 ~ 2011</td>
+                    <td>당명 변경</td>
+                </tr>
+                <tr>
+                    <td><span class="party-badge text-black" style="background-color: #FFCC00;">민주통합당</span></td>
+                    <td>2011 ~ 2012</td>
+                    <td>합당</td>
+                </tr>
+                <tr>
+                    <td><span class="party-badge text-black" style="background-color: #DCDCDC; border: 1px solid #999;">무소속</span></td>
+                    <td>2012 ~ 2016</td>
+                    <td>탈당 (공천 불복)</td>
+                </tr>
+                <tr>
+                    <td><span class="party-badge" style="background-color: #006241;">국민의당</span></td>
+                    <td>2016 ~ 2018</td>
+                    <td>입당</td>
+                </tr>
+                <tr>
+                    <td><span class="party-badge text-black" style="background-color: #DCDCDC; border: 1px solid #999;">무소속</span></td>
+                    <td>2018</td>
+                    <td>탈당</td>
+                </tr>
+                <tr>
+                    <td><span class="party-badge" style="background-color: #004EA2;">더불어민주당</span></td>
+                    <td>2018 ~ 현재</td>
+                    <td>복당</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 6. 선거 이력 -->
+        <h2 id="s-6" class="anchor-offset">6. 선거 이력</h2>
+        <table class="data-table text-center">
+            <thead>
+                <tr>
+                    <th>연도</th>
+                    <th>선거</th>
+                    <th>선거구</th>
+                    <th>소속 정당</th>
+                    <th>득표수</th>
+                    <th>득표율</th>
+                    <th>순위</th>
+                    <th>당락</th>
+                    <th>비고</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2008</td>
+                    <td>제18대 국회의원 선거</td>
+                    <td>효빈 북구 갑</td>
+                    <td><span class="party-badge" style="background-color: #419639;">통합민주당</span></td>
+                    <td>69,227</td>
+                    <td>58.61%</td>
+                    <td>1위</td>
+                    <td>당선</td>
+                    <td>초선</td>
+                </tr>
+                <tr>
+                    <td>2012</td>
+                    <td>제19대 국회의원 선거</td>
+                    <td>효빈 북구 갑</td>
+                    <td><span class="party-badge text-black" style="background-color: #DCDCDC; border: 1px solid #999;">무소속</span></td>
+                    <td>21,998</td>
+                    <td>20.44%</td>
+                    <td>2위</td>
+                    <td>낙선</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>2016</td>
+                    <td>제20대 국회의원 선거</td>
+                    <td>효빈 북구 갑</td>
+                    <td><span class="party-badge" style="background-color: #006241;">국민의당</span></td>
+                    <td>38,342</td>
+                    <td>35.04%</td>
+                    <td>2위</td>
+                    <td>낙선</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>2020</td>
+                    <td>제21대 국회의원 선거</td>
+                    <td>효빈 북구 병</td>
+                    <td><span class="party-badge" style="background-color: #004EA2">더불어민주당</span></td>
+                    <td>81,497</td>
+                    <td>84.69%</td>
+                    <td>1위</td>
+                    <td>당선</td>
+                    <td>재선</td>
+                </tr>
+                <tr>
+                    <td>2024</td>
+                    <td>제22대 국회의원 선거</td>
+                    <td>효빈 북구 병</td>
+                    <td><span class="party-badge" style="background-color: #004EA2">더불어민주당</span></td>
+                    <td>85,409</td>
+                    <td>86.69%</td>
+                    <td>1위</td>
+                    <td>당선</td>
+                    <td>3선</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- 22대 총선 상세 결과 -->
+        <h3 id="s-6-1" class="anchor-offset">6.1. 제22대 국회의원 선거 상세 결과</h3>
+        <table class="data-table text-center" style="font-size: 0.9em;">
+            <tr style="background-color: #eee;">
+                <th>지역구</th>
+                <th style="background-color: #004EA2; color: white;">더불어민주당<br>이찬대</th>
+                <th style="background-color: #E61E2B; color: white;">국민의힘<br>유줄리</th>
+                <th style="background-color: #45BABD; color: white;">새로운미래<br>추하다</th>
+                <th>격차 (1위/2위)</th>
+            </tr>
+            <tr>
+                <td>효빈 북구 병</td>
+                <td style="color: #004EA2; font-weight: bold;">86.69%<br>(85,409표)</td>
+                <td>9.94%<br>(9,793표)</td>
+                <td>3.37%<br>(3,320표)</td>
+                <td>76.75%p</td>
+            </tr>
+        </table>
+
+        <!-- 7. 둘러보기 -->
+        <h2 id="s-7" class="anchor-offset">7. 둘러보기</h2>
+        <div class="nav-box shadow-sm mt-10">
+            <div class="nav-box-header">효빈광역시의 국회의원</div>
+            <div class="nav-box-content leading-loose text-sm">
+                <a href="김성민.html" class="wiki-link">김성민</a> (중·동) · 
+                <a href="지선진.html" class="wiki-link">지선진</a> (서구) · 
+                <a href="고정민.html" class="wiki-link">고정민</a> (남 갑) · 
+                <a href="신원임.html" class="wiki-link">신원임</a> (남 을) · 
+                <a href="조상현.html" class="wiki-link">조상현</a> (북 갑) · 
+                <a href="원성준.html" class="wiki-link">원성준</a> (북 을) · 
+                <a href="이찬대.html" class="wiki-link">이찬대</a> (북 병) · 
+                <a href="고선규.html" class="wiki-link">고선규</a> (안천 갑) · 
+                <a href="신진영.html" class="wiki-link">신진영</a> (안천 을) · 
+                <a href="신수인.html" class="wiki-link">신수인</a> (청엽 갑) · 
+                <a href="소판권.html" class="wiki-link">소판권</a> (청엽 을) · 
+                <a href="추산령.html" class="wiki-link">추산령</a> (창전 갑) · 
+                <a href="노상현.html" class="wiki-link">노상현</a> (창전 을) · 
+                <a href="박청권.html" class="wiki-link">박청권</a> (탄성)
+            </div>
+        </div>
+
+        <!-- 8. 각주 -->
+        <h2 id="s-footnote" class="anchor-offset">8. 각주</h2>
+        <div class="toc text-sm p-4 w-full">
+            <ol class="list-decimal pl-4 space-y-2">
+                 <!-- 각주 없음 -->
+            </ol>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                location.href = `search.html?q=${encodeURIComponent(query)}`;
+            } else {
+                alert('검색어를 입력해주세요.');
+            }
+        }
+        
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                if(this.classList.contains('wiki-fn-link')) return;
+
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 각주 호버보드(툴팁) 기능
+        const tooltip = document.getElementById('wiki-tooltip');
+        document.querySelectorAll('.wiki-fn-link').forEach(link => {
+            link.addEventListener('mouseenter', (e) => {
+                const content = link.getAttribute('data-content');
+                if(content) {
+                    tooltip.innerHTML = content;
+                    tooltip.style.display = 'block';
+                }
+            });
+
+            link.addEventListener('mousemove', (e) => {
+                tooltip.style.left = (e.pageX + 15) + 'px';
+                tooltip.style.top = (e.pageY + 15) + 'px';
+            });
+
+            link.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

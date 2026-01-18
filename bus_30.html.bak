@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈 버스 30 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #E7D600; /* 순환버스 Yellow */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3rem; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: #d4a000; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; text-decoration: none; }
+        .wiki-btn:hover { background: #f0f0f0; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-link.external { color: #008000; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 400px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: #000; padding: 10px; text-align: center; font-size: 1.5rem; font-weight: 900; }
+        .infobox-subtitle { background-color: #fff; color: #000; padding: 5px; text-align: center; font-weight: bold; border-bottom: 1px solid #eee; }
+        .infobox table { width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: #fffde7; color: #555; width: 100px; text-align: center; padding: 8px; border-bottom: 1px solid #eee; font-weight: bold; }
+        .infobox td { padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
+
+        /* 노선도 탭 */
+        .route-tabs { display: flex; border-bottom: 2px solid var(--wiki-main); margin-top: 20px; }
+        .route-tab { padding: 10px 20px; cursor: pointer; font-weight: bold; color: #777; border: 1px solid #ccc; border-bottom: none; border-radius: 8px 8px 0 0; background: #f9f9f9; margin-right: 4px; }
+        .route-tab.active { background: var(--wiki-main); color: #000; border-color: var(--wiki-main); }
+        .route-content { display: none; padding: 20px; border: 1px solid #ccc; border-top: none; background: #fff; }
+        .route-content.active { display: block; }
+
+        /* 정류장 리스트 */
+        .stop-list { position: relative; padding-left: 20px; margin-top: 10px; border-left: 4px solid var(--wiki-main); }
+        .stop-item { margin-bottom: 8px; position: relative; font-size: 0.95rem; }
+        .stop-item::before { content: "●"; color: var(--wiki-main); position: absolute; left: -26px; font-size: 1.2rem; background: white; border: 2px solid #ccc; border-radius: 50%; }
+        .stop-item.major { font-weight: bold; color: #000; }
+        .stop-item.subway::after { content: "🚇"; font-size: 0.8rem; margin-left: 5px; }
+
+        /* 각주 호버보드 */
+        #footnote-tooltip { position: fixed; background: white; border: 1px solid #333; padding: 8px 12px; border-radius: 4px; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); font-size: 0.85rem; max-width: 300px; z-index: 20000; display: none; pointer-events: none; line-height: 1.4; }
+        .namu-note { font-size: 0.8em; vertical-align: super; color: #0055AA; cursor: pointer; font-weight: bold; }
+        del { color: #999; text-decoration: line-through; }
+        .namu-quote { border-left: 4px solid var(--wiki-main); background-color: #ffffee; padding: 10px; margin: 10px 0; font-size: 0.95rem; }
+
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+
+        /* Footer */
+        .wiki-footer { margin-top: 60px; padding: 20px; border-top: 1px solid #ccc; font-size: 0.8rem; color: #555; line-height: 1.8; clear: both; }
+        .wiki-footer ul { list-style: none; padding: 0; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div id="footnote-tooltip"></div>
+
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="location.href='discussion.html'" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">토론</button>
+            <button onclick="location.href='edit.html'" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">편집</button>
+            <button onclick="location.href='history.html'" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">역사</button>
+            <button onclick="location.href='index.html'" class="bg-[#555588] p-1.5 px-3 rounded text-sm hover:bg-[#444477] font-bold transition-colors ml-2">메인으로</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">효빈 버스 30 / 30-1</div>
+            <div class="flex gap-2 mb-1">
+                <a href="discussion.html" class="wiki-btn">토론</a>
+                <a href="edit.html" class="wiki-btn">편집</a>
+                <a href="history.html" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+        <div class="bg-gray-100 p-2 text-sm border mb-4">
+            <span class="font-bold text-[#d4a000]">분류:</span> 
+            <a href="효빈광역시_시내버스.html" class="wiki-link">효빈광역시 시내버스</a> | 
+            <a href="순환버스.html" class="wiki-link">순환버스</a> |
+            <a href="소진여객.html" class="wiki-link">소진여객</a> |
+            <a href="https://namu.wiki/w/인터넷 밈" target="_blank" class="wiki-link external">인터넷 밈</a>
+        </div>
+
+        <!-- 인포박스 -->
+        <aside class="infobox">
+            <div class="infobox-title">효빈 순환 30</div>
+            <div class="infobox-subtitle">Hyobin Circular Bus 30</div>
+            
+            <div class="p-2 text-center bg-white">
+                <img src="이미지/효빈순환버스.png" alt="30번 버스" onerror="this.src='https://via.placeholder.com/380x200/E7D600/000000?text=Circular+30';">
+                <div class="text-xs text-gray-500 mt-1">소진여객 소속 순환 30번 차량</div>
+            </div>
+
+            <table>
+                <tr><th>운행지역</th><td><a href="북구(효빈).html" class="wiki-link">북구</a> 전역 (중수, 오내, 채산)</td></tr>
+                <tr><th>운행거리</th><td>약 16.5km</td></tr>
+                <tr><th>운수회사</th><td><a href="소진여객.html" class="wiki-link">소진여객</a></td></tr>
+                <tr><th>기점</th><td><a href="중수동.html" class="wiki-link">중수역</a></td></tr>
+                <tr><th>종점</th><td><a href="중수동.html" class="wiki-link">중수역</a> (순환)</td></tr>
+                <tr><th>배차간격</th><td>평일 9~11분<br>주말 13~16분</td></tr>
+                <tr><th>첫차시각</th><td>05:30</td></tr>
+                <tr><th>막차시각</th><td>22:50</td></tr>
+                <tr><th>인가대수</th><td>11대</td></tr>
+            </table>
+        </aside>
+
+        <!-- 목차 -->
+        <div class="toc h-fit">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">역사</a></li>
+                <li>3. <a href="#s-3" class="wiki-link">특징</a></li>
+                <li>4. <a href="#s-4" class="wiki-link">노선 정보</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">여담</a></li>
+            </ul>
+        </div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <p><a href="효빈광역시.html" class="wiki-link">효빈광역시</a>의 <a href="순환버스.html" class="wiki-link">순환버스</a> 노선. <strong><a href="북구(효빈).html" class="wiki-link">북구</a></strong>의 행정 및 법조 타운인 <strong>중수지구</strong>와 주거 중심인 <strong>전천지구</strong>를 순환한다.</p>
+        <p><a href="중수역.html" class="wiki-link">중수역</a>을 기점으로 하여 포산, 등기, 채산, 전천중앙, 오내 등 북구의 핵심 주거 및 상업 지역을 연결하는 알짜배기 노선이다. 특히 2호선과 6호선의 환승역인 중수역을 중심으로 돌아가기 때문에 북구 주민들의 환승 셔틀 역할을 톡톡히 하고 있다.</p>
+
+        <h2 id="s-2">2. 역사</h2>
+        <ul class="list-disc pl-5 space-y-1">
+            <li><strong>2015년 8월 1일:</strong> 순환버스 체계 개편과 함께 북구 중수권역 순환 노선인 30번으로 신설되었다.</li>
+            <li><strong>2019년 3월:</strong> 전천중앙역 일대 재개발 입주에 맞춰 오내동 및 전천동 경유 구간이 일부 조정되었다.</li>
+        </ul>
+
+        <h2 id="s-3">3. 특징</h2>
+        <ul class="list-disc pl-5 space-y-1">
+            <li>효빈고등법원, 북부경찰서, 북구청, 국가기록원 등 주요 관공서가 밀집된 지역을 통과하여 평일 낮 시간대에도 이용객이 꾸준하다.</li>
+            <li>중수여고, 서신고, 전천고 등 학교 통학 수요도 많아 아침 시간에는 매우 혼잡하다.</li>
+            <li><strong>30번(정방향)</strong>은 서도→포산→등기→채산 방향으로, <strong>30-1번(역방향)</strong>은 오내→전천→채산→등기 방향으로 운행한다.</li>
+        </ul>
+
+        <h2 id="s-4">4. 노선 정보</h2>
+        
+        <!-- 탭 메뉴 -->
+        <div class="route-tabs">
+            <div class="route-tab active" onclick="openTab('tab-30')">30번 (포산 방향)</div>
+            <div class="route-tab" onclick="openTab('tab-30-1')">30-1번 (오내 방향)</div>
+        </div>
+
+        <!-- 30번 탭 내용 -->
+        <div id="tab-30" class="route-content active">
+            <p class="mb-4 text-sm text-gray-600">※ 중수역을 기점으로 서도 → 포산 → 등기 → 채산 → 전천 → 오내 순으로 순환합니다.</p>
+            <div class="stop-list">
+                <div class="stop-item major">중수역 (기점) <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span> <span class="text-xs bg-[#881188] text-white px-1 rounded">6호선</span></div>
+                <div class="stop-item">중수오거리</div>
+                <div class="stop-item">북부경찰서입구</div>
+                <div class="stop-item">평안명대사거리</div>
+                <div class="stop-item">산고동사무소</div>
+                <div class="stop-item major">서도역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span></div>
+                <div class="stop-item">서문마을</div>
+                <div class="stop-item">기산공업</div>
+                <div class="stop-item">포산에리아파트</div>
+                <div class="stop-item major">포산역 <span class="text-xs bg-[#881188] text-white px-1 rounded">6호선</span></div>
+                <div class="stop-item">포산우미린</div>
+                <div class="stop-item">포산 루이스빌</div>
+                <div class="stop-item">빌리브 중수아파트</div>
+                <div class="stop-item">중수 세영리첼 1차</div>
+                <div class="stop-item">중수 세영리첼 2차</div>
+                <div class="stop-item">중수상업지구</div>
+                <div class="stop-item">중수농협</div>
+                <div class="stop-item">중수두산위브아파트</div>
+                <div class="stop-item">중수여고</div>
+                <div class="stop-item">이지더원 중수아파트</div>
+                <div class="stop-item">등기초등학교</div>
+                <div class="stop-item">중수 힐스테이트 아파트</div>
+                <div class="stop-item">중수2동행정복지센터</div>
+                <div class="stop-item major">등기역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span></div>
+                <div class="stop-item">북구구영아파트</div>
+                <div class="stop-item">삼선사거리</div>
+                <div class="stop-item">중수래미안2차</div>
+                <div class="stop-item major">채산역 <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span></div>
+                <div class="stop-item">국가기록원 효빈센터</div>
+                <div class="stop-item">채산동사무소</div>
+                <div class="stop-item">채산중학교</div>
+                <div class="stop-item">채산 식품산단 북부</div>
+                <div class="stop-item">남산사거리</div>
+                <div class="stop-item">남전신협</div>
+                <div class="stop-item">남전공업사</div>
+                <div class="stop-item">우구사</div>
+                <div class="stop-item">남전사거리</div>
+                <div class="stop-item">사녹중</div>
+                <div class="stop-item">서신고</div>
+                <div class="stop-item">전천고</div>
+                <div class="stop-item">덕현마래마을</div>
+                <div class="stop-item">효빈정보고</div>
+                <div class="stop-item">상방사거리</div>
+                <div class="stop-item">우곡마을</div>
+                <div class="stop-item major">전천중앙역 <span class="text-xs bg-[#EE0022] text-white px-1 rounded">5호선</span> <span class="text-xs bg-[#881188] text-white px-1 rounded">6호선</span></div>
+                <div class="stop-item">전천중앙역 스타리아 아파트</div>
+                <div class="stop-item">오내동사거리</div>
+                <div class="stop-item">오내주공2단지</div>
+                <div class="stop-item">소옥삼거리</div>
+                <div class="stop-item">오내주공1단지</div>
+                <div class="stop-item">오내센트럴시티아파트1차</div>
+                <div class="stop-item">소창고</div>
+                <div class="stop-item major">오내역 <span class="text-xs bg-[#881188] text-white px-1 rounded">6호선</span></div>
+                <div class="stop-item">중수애버그린아파트</div>
+                <div class="stop-item">중수앵판아파트</div>
+                <div class="stop-item">효빈고등법원입구</div>
+                <div class="stop-item major">중수역 (종점) <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span> <span class="text-xs bg-[#881188] text-white px-1 rounded">6호선</span></div>
+            </div>
+        </div>
+
+        <!-- 30-1번 탭 내용 -->
+        <div id="tab-30-1" class="route-content">
+            <p class="mb-4 text-sm text-gray-600">※ 중수역을 기점으로 반시계 방향(오내 → 전천 → 채산 → 등기 → 포산)으로 순환합니다.</p>
+            <div class="stop-list">
+                <div class="stop-item major">중수역 (기점) <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span> <span class="text-xs bg-[#881188] text-white px-1 rounded">6호선</span></div>
+                <div class="stop-item">효빈고등법원입구</div>
+                <div class="stop-item">중수앵판아파트</div>
+                <div class="stop-item">중수애버그린아파트</div>
+                <div class="stop-item major">오내역 <span class="text-xs bg-[#881188] text-white px-1 rounded">6호선</span></div>
+                <div class="stop-item">소창고</div>
+                <div class="stop-item">오내센트럴시티아파트1차</div>
+                <div class="stop-item">오내주공1단지</div>
+                <div class="stop-item">소옥삼거리</div>
+                <div class="stop-item">오내주공2단지</div>
+                <div class="stop-item">오내동사거리</div>
+                <div class="stop-item">전천중앙역 스타리아 아파트</div>
+                <div class="stop-item major">전천중앙역 <span class="text-xs bg-[#EE0022] text-white px-1 rounded">5호선</span> <span class="text-xs bg-[#881188] text-white px-1 rounded">6호선</span></div>
+                <div class="stop-item">우곡마을</div>
+                <div class="stop-item">상방사거리</div>
+                <div class="stop-item">효빈정보고</div>
+                <div class="stop-item">덕현마래마을</div>
+                <div class="stop-item">전천고</div>
+                <div class="stop-item">서신고</div>
+                <div class="stop-item">사녹중</div>
+                <div class="stop-item">남전사거리</div>
+                <div class="stop-item">우구사</div>
+                <div class="stop-item">남전공업사</div>
+                <div class="stop-item">남전신협</div>
+                <div class="stop-item">남산사거리</div>
+                <div class="stop-item">채산 식품산단 북부</div>
+                <div class="stop-item">채산중학교</div>
+                <div class="stop-item">채산동사무소</div>
+                <div class="stop-item">국가기록원 효빈센터</div>
+                <div class="stop-item major">채산역 <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span></div>
+                <div class="stop-item">중수래미안2차</div>
+                <div class="stop-item">삼선사거리</div>
+                <div class="stop-item">북구구영아파트</div>
+                <div class="stop-item major">등기역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span></div>
+                <div class="stop-item">중수2동행정복지센터</div>
+                <div class="stop-item">중수 힐스테이트 아파트</div>
+                <div class="stop-item">등기초등학교</div>
+                <div class="stop-item">이지더원 중수아파트</div>
+                <div class="stop-item">중수여고</div>
+                <div class="stop-item">중수두산위브아파트</div>
+                <div class="stop-item">중수농협</div>
+                <div class="stop-item">중수상업지구</div>
+                <div class="stop-item">중수 세영리첼 2차</div>
+                <div class="stop-item">중수 세영리첼 1차</div>
+                <div class="stop-item">빌리브 중수아파트</div>
+                <div class="stop-item">포산 루이스빌</div>
+                <div class="stop-item">포산우미린</div>
+                <div class="stop-item major">포산역 <span class="text-xs bg-[#881188] text-white px-1 rounded">6호선</span></div>
+                <div class="stop-item">포산에리아파트</div>
+                <div class="stop-item">기산공업</div>
+                <div class="stop-item">서문마을</div>
+                <div class="stop-item major">서도역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span></div>
+                <div class="stop-item">산고동사무소</div>
+                <div class="stop-item">평안명대사거리</div>
+                <div class="stop-item">북부경찰서입구</div>
+                <div class="stop-item">중수오거리</div>
+                <div class="stop-item major">중수역 (종점) <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span> <span class="text-xs bg-[#881188] text-white px-1 rounded">6호선</span></div>
+            </div>
+        </div>
+
+        <h2 id="s-5">5. 여담</h2>
+        <h3 id="s-5-1">5.1. 나카스 카스미의 영지, '나카스(中須)'를 달리다</h3>
+        <p>순환버스 30번의 기점인 <strong><a href="중수역.html" class="wiki-link">중수역(中須驛)</a></strong>은 행정구역명인 '중수동(中須洞)'에서 유래했는데, 이 한자 <strong>'中須(나카스)'</strong>가 <a href="https://namu.wiki/w/러브 라이브! 니지가사키 학원 스쿨 아이돌 동호회" target="_blank" class="wiki-link external">니지가사키 학원 스쿨 아이돌 동호회</a>의 인기 멤버 <strong><a href="https://namu.wiki/w/나카스 카스미" target="_blank" class="wiki-link external">나카스 카스미</a></strong>의 성씨와 완벽하게 일치한다.</p>
+        
+        <div class="namu-quote">
+            <strong>"이 노란색 버스... 혹시 카스밍을 위한 전용 리무진인가요?!"</strong><br>
+            - <span class="text-xs text-gray-500">중수역을 방문한 어느 러브라이버의 감탄사(...)</span>
+        </div>
+
+        <p>더욱 기막힌 우연은 순환버스의 고유 색상인 <span style="color:#d4a000; font-weight:bold;">파스텔 옐로우(#E7D600)</span>가 카스미의 이미지 컬러와 똑같다는 점이다. 덕분에 30번 버스는 팬들 사이에서 <strong>'나카스 영지 순례 버스'</strong> 혹은 <strong>'카스밍 셔틀'</strong>로 불리며 신성시(?)되고 있다.</p>
+
+        <h3 id="s-5-2">5.2. 다이아몬드 워크와 카스밍 빔</h3>
+        <p>중수역 일대는 <strong><a href="#" class="wiki-link">다이아몬드 워크(골든 로드)</a></strong>라는 특화 거리가 조성되어 있다. 보도블록이 노란색과 흰색의 체크무늬(카스미의 의상 패턴 연상)로 포장되어 있어, <a href="박효빈.html" class="wiki-link">박효빈 시장</a>(관저가 이 근처다)의 '덕심'이 행정에 반영된 게 아니냐는 의혹을 사고 있다.</p>
+        <p>202X년에는 이 거리에 오물을 투척하려던 혐오자 A씨와 윤재훈이 설치된 스마트 보안등(일명 <strong>카스밍 빔</strong>)의 강렬한 조명과 경고 방송에 놀라 자멸(...)하고 경찰에 체포되는 사건이 있었다. 이들은 평소 30번 버스를 타고 도주로를 파악하려 했으나, 정작 사건 당일에는 30번 버스 기사님의 신고로 덜미가 잡혔다는 후문이다.</p>
+
+        <h3 id="s-5-3">5.3. 사가라 마유의 방문</h3>
+        <p>카스미의 성우 <strong>사가라 마유</strong>가 효빈시를 방문했을 때, 이 버스를 보고 "나카스(中須) 역에 노란 버스라니, 이건 운명이에요!"라며 기뻐했다고 한다. 당시 난동을 부리려던 혐오자들에게 <strong>"일본이었으면 사회적으로 매장(埋葬)이에요"</strong>라고 일침을 가한 사건은 전설로 남아있다.</p>
+
+        <footer class="wiki-footer">
+            <p class="font-bold mb-2">이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)</p>
+            <p class="mb-4">기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <ul class="text-xs text-gray-500">
+                <li>효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</li>
+                <li>효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.</li>
+            </ul>
+        </footer>
+    </div>
+
+    <script>
+        // 탭 전환 함수
+        function openTab(tabId) {
+            document.querySelectorAll('.route-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.route-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            const clickedTab = Array.from(document.querySelectorAll('.route-tab')).find(el => el.getAttribute('onclick').includes(tabId));
+            if(clickedTab) clickedTab.classList.add('active');
+        }
+
+        // 각주 호버보드 기능
+        const tooltip = document.getElementById('footnote-tooltip');
+        const notes = document.querySelectorAll('.namu-note');
+
+        notes.forEach(note => {
+            note.addEventListener('mouseenter', (e) => {
+                const content = e.target.getAttribute('data-content');
+                if (content) {
+                    tooltip.innerText = content;
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = e.clientX + 10 + 'px';
+                    tooltip.style.top = e.clientY + 10 + 'px';
+                }
+            });
+            note.addEventListener('mousemove', (e) => {
+                tooltip.style.left = e.clientX + 10 + 'px';
+                tooltip.style.top = e.clientY + 10 + 'px';
+            });
+            note.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
