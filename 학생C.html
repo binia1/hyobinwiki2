@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학생 C - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* [테마 컬러] 사기꾼, 황금만능주의 테마의 골드 (#FFD700) 적용 */
+            --wiki-main: #FFD700; 
+            
+            /* [고정] 상단 내비게이션 바 색상 */
+            --wiki-nav-bg: #7777AA;
+
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            
+            /* 헤더 배경이 밝은 골드색이므로 텍스트는 검은색으로 설정 */
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #000000; 
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: #d4af37; /* 가독성을 위해 조금 어두운 골드색 사용 */ clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: #d4af37; }
+        h4 { font-size: 1.15rem; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 (프로필용) */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 400px; font-size: 0.85rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: black; padding: 10px; text-align: center; font-size: 1.2rem; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: var(--wiki-main); color: #000; width: 100px; padding: 5px 8px; border: 1px solid var(--wiki-border); text-align: center; vertical-align: middle; }
+        .infobox td { padding: 5px 8px; border: 1px solid var(--wiki-border); vertical-align: middle; }
+
+        /* 데이터 테이블 */
+        .data-table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; font-size: 0.9rem; }
+        .data-table th, .data-table td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; }
+        .data-table th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; text-align: center; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* [특수 스타일] 나무위키 느낌 요소 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+        del { color: #ccc; text-decoration: line-through; } /* 취소선 드립용 */
+        .wiki-gray { color: #888; font-size: 0.9em; } /* 괄호 속 혼잣말용 */
+
+        /* 사건/강조 박스 */
+        .incident-box { border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .incident-box.red { border-color: #fecaca; background-color: #fef2f2; }
+        .incident-box.yellow { border-color: #fef08a; background-color: #fefce8; }
+        .incident-box.green { border-color: #bbf7d0; background-color: #f0fdf4; }
+        .incident-box.blue { border-color: #bfdbfe; background-color: #eff6ff; }
+
+        /* 스크립트/어록 박스 */
+        .script-box { background: #fdfdfd; border: 1px solid #ddd; padding: 20px; border-radius: 8px; font-family: 'Malgun Gothic', sans-serif; margin-bottom: 20px; }
+        .script-header { font-weight: bold; font-size: 1.1rem; border-bottom: 2px solid var(--wiki-main); margin-bottom: 15px; padding-bottom: 5px; }
+        .speaker { font-weight: bold; color: #373a3c; margin-right: 8px; }
+
+        /* 하단 네비 박스 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: black; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+
+        /* 푸터 저작권 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; }
+        .wiki-footer strong { color: #333; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+    </style>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+
+    <!-- 상단 내비게이션 바 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav-bg);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='hyobin_city.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="효빈위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a href="학생C.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">토론</a>
+                <a href="학생C.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">편집</a>
+                <a href="학생C.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <!-- [템플릿] 인물 이름 -->
+            <div class="txt-lvl-1">학생 C</div>
+            <div class="flex gap-2 mb-1">
+                <a href="학생C.html" class="wiki-btn">토론</a>
+                <a href="학생C.html" class="wiki-btn">편집</a>
+                <a href="학생C.html" class="wiki-btn">역사</a>
+                <a href="#" class="wiki-btn">★ 즐겨찾기</a>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold" style="color: #d4af37;">분류:</span> 
+            <a href="고판대학교.html" class="wiki-link">고판대학교/졸업생</a> | 
+            <a href="경제사범.html" class="wiki-link">경제사범</a> | 
+            <a href="사기꾼.html" class="wiki-link">사기꾼</a> | 
+            <a href="지명수배자.html" class="wiki-link">지명수배자</a> | 
+            <a href="해외도피사범.html" class="wiki-link">해외도피사범</a>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">생애</a>
+                        <ul>
+                            <li>2.1. <a href="#s-2-1" class="wiki-link">고판대학교: "교수 위에 학생"</a></li>
+                            <li>2.2. <a href="#s-2-2" class="wiki-link">H-Coin 사태: "효빈의 미래를 팝니다"</a></li>
+                            <li>2.3. <a href="#s-2-3" class="wiki-link">NFT 사기 미수 (feat. 덕후들의 분노)</a></li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3" class="wiki-link">현재: 도주와 추격</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">체포 및 송환: "작전명: 완벽한 루징(Losing)"</a>
+                        <ul>
+                            <li>4.1. <a href="#s-4-1" class="wiki-link">D 주무관의 '말려 죽이기'</a></li>
+                            <li>4.2. <a href="#s-4-2" class="wiki-link">미끼 투척: "마지막 동아줄"</a></li>
+                            <li>4.3. <a href="#s-4-3" class="wiki-link">검거 순간</a></li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5" class="wiki-link">재판 및 수감: "고판대 동창회"</a>
+                        <ul>
+                            <li>5.1. <a href="#s-5-1" class="wiki-link">입국 현장 (인천공항)</a></li>
+                            <li>5.2. <a href="#s-5-2" class="wiki-link">판결</a></li>
+                            <li>5.3. <a href="#s-5-3" class="wiki-link">슬기로운(?) 감빵생활</a></li>
+                        </ul>
+                    </li>
+                    <li>6. <a href="#s-6" class="wiki-link">어록</a></li>
+                    <li>7. <a href="#s-7" class="wiki-link">평가</a></li>
+                    <li>8. <a href="#s-8" class="wiki-link">여담</a></li>
+                    <li>9. <a href="#s-9" class="wiki-link">관련 문서</a></li>
+                </ul>
+            </div>
+
+            <!-- 프로필 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="infobox-title">
+                    <span style="font-size:1.5rem;">학생 C</span><br>
+                    <span class="text-sm font-normal">Student C</span>
+                </div>
+                <div class="p-0 bg-white text-center border-b">
+                    <!-- 사진 -->
+                    <img src="이미지/학생C.png" alt="학생 C 선글라스 착용" class="w-full object-cover" onerror="this.src='https://via.placeholder.com/200x250?text=No+Image';">
+                </div>
+                <table>
+                    <tr>
+                        <th>본명</th>
+                        <td><strong>최모씨</strong> (가명: 최회장, 닥터 C)</td>
+                    </tr>
+                    <tr>
+                        <th>출생</th>
+                        <td>1994년생 (추정)<br>(<a href="덕빈남도.html" class="wiki-link">덕빈남도</a> <a href="비천시.html" class="wiki-link">비천시</a> 비천동)</td>
+                    </tr>
+                    <tr>
+                        <th>학력</th>
+                        <td><a href="고판대학교.html" class="wiki-link">고판대학교</a><br>(금융부동산투기과 / 전문학사) <span class="wiki-gray">[* 학교 커리큘럼을 뛰어넘어 교수들을 상대로 다단계 영업을 했다는 전설이 있다.]</span></td>
+                    </tr>
+                    <tr>
+                        <th>직업</th>
+                        <td>전 H-Coin 대표<br>현 인터폴 적색수배자</td>
+                    </tr>
+                    <tr>
+                        <th>혐의</th>
+                        <td>특정경제범죄 가중처벌 등에 관한 법률 위반(사기), 유사수신행위</td>
+                    </tr>
+                    <tr>
+                        <th>피해액</th>
+                        <td>약 <strong>500억 원</strong> (추산)</td>
+                    </tr>
+                    <tr>
+                        <th>관련 인물</th>
+                        <td>
+                            <strong><a href="이만구.html" class="wiki-link">이 모 교수</a></strong> (스승이자 공범)<br>
+                            <strong><a href="D_주무관.html" class="wiki-link">D 주무관</a></strong> (유일한 천적)<br>
+                            <strong><a href="윤대환.html" class="wiki-link">윤대환</a></strong> (비자금 세탁 의혹)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>별명</th>
+                        <td>
+                            <strong><a href="고판대학교.html" class="wiki-link">고판대</a>의 전설</strong><br>
+                            <a href="효빈광역시.html" class="wiki-link">효빈</a>의 조희팔<br>
+                            <a href="https://namu.wiki/w/폰지%20사기" target="_blank" class="wiki-link">폰지 사기</a>의 신성
+                        </td>
+                    </tr>
+                </table>
+            </aside>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <blockquote>
+            <strong>"돈은 버는 게 아니야. 남의 지갑에서 내 지갑으로 '이동'시키는 거지."</strong><br><br>
+            <strong>"고판대가 낳은 최악의 괴물."</strong> - <a href="D_주무관.html" class="wiki-link">D 주무관</a>
+        </blockquote>
+        <p>폐교된 <strong><a href="고판대학교.html" class="wiki-link">고판대학교</a></strong> 금융부동산투기과 졸업생.</p>
+        <p><a href="학생A.html" class="wiki-link">학생 A</a>나 <a href="학생B.html" class="wiki-link">학생 B</a>와는 차원이 다른 <strong>'진짜 거물'</strong>이다. <a href="고판대학교.html" class="wiki-link">고판대학교</a>의 비윤리적 교육을 완벽하게 흡수하여, <strong>사람의 욕망을 조종하는 화술</strong>과 <strong>법망을 피해 가는 설계 능력</strong>을 갖췄다.</p>
+        <p><a href="효빈광역시.html" class="wiki-link">효빈시</a>와 <a href="서진시.html" class="wiki-link">서진시</a>의 노인들, 그리고 일확천금을 노리는 청년들을 대상으로 대규모 <strong>가상화폐(코인) 사기</strong>를 저지른 뒤, 현재 동남아시아의 한 국가로 도주하여 호화로운 생활을 즐기고 있다.</p>
+
+        <!-- 2. 생애 -->
+        <h2 id="s-2" class="anchor-offset">2. 생애</h2>
+
+        <h3 id="s-2-1">2.1. 고판대학교: "교수 위에 학생"</h3>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>총학생회장 출신</strong>: 재학 시절 총학생회장을 맡으며, 학교 축제 예산을 빼돌려 주식 투자를 했다가 수익을 내서 다시 채워 넣는<span class="wiki-gray">(...)</span> 기행을 벌였다.</li>
+            <li><strong><a href="이만구.html" class="wiki-link">이만구</a> 교수의 파트너</strong>: 교수가 사기 이론을 가르치면, 학생 C는 "교수님, 그 수법은 90년대 식이라 걸립니다. 요즘은 이렇게 해야죠."라며 <strong>신종 다단계 기법</strong>을 역으로 강의했다. 졸업할 때 교수들이 그에게 "존경한다"고 했을 정도.</li>
+        </ul>
+
+        <h3 id="s-2-2">2.2. H-Coin 사태: "효빈의 미래를 팝니다"</h3>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>설계</strong>: <a href="박효빈.html" class="wiki-link">박효빈</a> 시장 취임 후 <a href="효빈광역시.html" class="wiki-link">효빈시</a>가 발전하자, 그는 <strong>"효빈시가 공식 인증한 지역 화폐 코인"</strong>이라는 가짜 암호화폐 <strong>'H-Coin'</strong>을 만들었다.</li>
+            <li><strong>타겟</strong>:
+                <ul class="list-circle pl-5 mt-2 space-y-1">
+                    <li><strong><a href="서진시.html" class="wiki-link">서진시</a></strong>: 정보가 느린 서진시 노인들에게 접근해 "<a href="윤대환.html" class="wiki-link">윤대환</a> 전 시장님이 뒤를 봐주는 사업이다"라고 속여 노후 자금을 뜯어냈다.</li>
+                    <li><strong><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></strong>: 청년들에게는 "지하철 8호선 요금을 이 코인으로 내면 50% 할인된다"는 헛소문을 퍼뜨려 투자를 유도했다.</li>
+                </ul>
+            </li>
+            <li><strong>결과</strong>: 상장 직전, 그는 투자금 500억 원을 들고 잠적했다. (일명 '<a href="https://namu.wiki/w/러그풀" target="_blank" class="wiki-link">러그풀</a>' 사건)</li>
+        </ul>
+
+        <h3 id="s-2-3">2.3. NFT 사기 미수 (feat. 덕후들의 분노)</h3>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>무리수</strong>: 도주 자금을 더 모으기 위해, 그는 <strong>"효빈시 공식 마스코트 & <a href="https://namu.wiki/w/러브%20라이브!" target="_blank" class="wiki-link">러브라이브</a> 콜라보 <a href="https://namu.wiki/w/NFT" target="_blank" class="wiki-link">NFT</a>"</strong>를 발행하겠다고 발표했다. 물론 저작권 협의는 전혀 없었다.</li>
+            <li><strong>역풍</strong>: 이 소식을 들은 <strong><a href="박효빈.html" class="wiki-link">박효빈</a></strong> 시장이 극대노하여 <strong>"저놈은 경제 사범이기 전에 저작권법 위반 사범이다! 지구 끝까지 쫓아가라!"</strong>고 특별 지시를 내렸고, 전 세계 <a href="러브라이버.html" class="wiki-link">러브라이버</a>들이 그의 전자지갑 주소를 추적하기 시작했다. 이 사건 때문에 꼬리가 밟혀 서둘러 출국해야 했다.</li>
+        </ul>
+
+        <!-- 3. 현재: 도주와 추격 -->
+        <h2 id="s-3" class="anchor-offset">3. 현재: 도주와 추격</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>해외 도피</strong>: 현재 치안이 불안정한 동남아 A국가의 호화 리조트에 체류 중인 것으로 알려졌다. SNS에 와인을 마시는 사진을 올리며 <strong>"효빈시는 춥지? 여긴 따뜻하네~"</strong>라고 조롱 글을 남겨 시민들의 공분을 샀다.</li>
+            <li><strong><a href="D_주무관.html" class="wiki-link">D 주무관</a>과의 두뇌 싸움</strong>:
+                <ul class="list-circle pl-5 mt-2 space-y-1">
+                    <li>유일하게 그를 위협하는 인물이 동기인 <strong><a href="D_주무관.html" class="wiki-link">D 주무관</a></strong>이다.</li>
+                    <li><a href="D_주무관.html" class="wiki-link">D 주무관</a>은 학생 C가 빼돌린 자금의 흐름을 <strong>블록체인 분석</strong>으로 끝까지 추적하여, 그가 해외에서 자금을 인출할 때마다 해당 계좌를 동결시키고 있다.</li>
+                    <li>학생 C는 최근 측근에게 <strong>"경찰은 안 무서운데, D 그 녀석은 진짜 무섭다. 내 비밀번호 패턴을 다 알고 있어..."</strong>라고 토로했다고 한다.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <!-- 4. 체포 및 송환 -->
+        <h2 id="s-4" class="anchor-offset">4. 체포 및 송환: "작전명: 완벽한 루징(Losing)"</h2>
+        <blockquote>
+            <strong>"넌 변수가 아니라 상수야. 내 계산 안에서만 움직이거든."</strong><br>
+            - <a href="D_주무관.html" class="wiki-link">D 주무관</a>, 검거 직전 학생 C에게 보낸 메시지
+        </blockquote>
+
+        <h3 id="s-4-1">4.1. D 주무관의 '말려 죽이기'</h3>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>자금줄 차단</strong>: <a href="D_주무관.html" class="wiki-link">D 주무관</a>은 학생 C가 은신 중인 동남아 국가의 현지 은행 시스템 취약점을 파악했다. 인터폴과의 공조가 늦어지자, D는 직접 화이트 해커 그룹(자칭 '효빈시 사이버 의용군')을 조직해 C의 가상화폐 전자지갑을 <strong>실시간으로 동결</strong>시켰다.</li>
+            <li><strong>생활고</strong>: 수백억 원을 가지고 있었지만, 출금 비밀번호가 막히고 현지 환전상들도 거래를 거부하자 학생 C는 순식간에 <strong>'돈 많은 거지'</strong> 신세가 되었다. 리조트 숙박비를 못 내 쫓겨나고, 길거리 쌀국수도 외상으로 먹어야 했다.</li>
+        </ul>
+
+        <h3 id="s-4-2">4.2. 미끼 투척: "마지막 동아줄"</h3>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>함정 수사</strong>: <a href="D_주무관.html" class="wiki-link">D 주무관</a>은 다급해진 C에게 <strong>"<a href="윤대환.html" class="wiki-link">윤대환</a> 전 시장의 비자금 관리인"</strong>을 사칭한 브로커(실제로는 잠입 경찰)를 접근시켰다.</li>
+            <li><strong>접선</strong>: "현금 10억을 세탁해 줄 테니 만나자"는 제안에 학생 C는 의심 없이 낚였다. 그는 꼬질꼬질한 티셔츠 차림으로 접선 장소인 낡은 PC방에 나타났다.</li>
+        </ul>
+
+        <h3 id="s-4-3">4.3. 검거 순간</h3>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>PC방 습격</strong>: 그가 브로커에게 USB(가짜 비자금 장부)를 건네려는 순간, 현지 경찰 특공대가 들이닥쳤다.</li>
+            <li><strong>최후의 발악</strong>: C는 "나 효빈시 명예 시민이야! <a href="윤대환.html" class="wiki-link">윤대환</a> 시장한테 전화해!"라고 헛소리를 지르며 노트북을 부수려 했으나, 제압당했다.</li>
+            <li><strong>노트북 확보</strong>: <a href="D_주무관.html" class="wiki-link">D 주무관</a>은 원격으로 그의 노트북 웹캠을 켜고 이 모든 상황을 지켜보고 있었다. 모니터 화면에 <a href="D_주무관.html" class="wiki-link">D 주무관</a>의 메시지가 떴다.
+                <blockquote style="margin-top: 5px; margin-bottom: 5px;">
+                    <strong>"게임 오버. 고판대 수석 졸업 축하한다, 동기야."</strong>
+                </blockquote>
+            </li>
+        </ul>
+
+        <!-- 5. 재판 및 수감 -->
+        <h2 id="s-5" class="anchor-offset">5. 재판 및 수감: "고판대 동창회"</h2>
+
+        <h3 id="s-5-1">5.1. 입국 현장 (인천공항)</h3>
+        <p>그가 인천공항을 통해 송환되던 날, 입국장은 아수라장이 되었다.</p>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong><a href="서진시.html" class="wiki-link">서진시</a> 피해자들</strong>: 서진시 노인회 회원 200명이 전세 버스를 타고 올라와 <strong>"내 노후 자금 내놔라!"</strong>며 썩은 계란과 밀가루를 투척했다.</li>
+            <li><strong><a href="효빈광역시.html" class="wiki-link">효빈시</a> 피해자들</strong>: 코인에 물린 청년들이 <strong>"H-Coin 떡상한다며!"</strong>라고 울부짖으며 달려들었다.</li>
+            <li><strong><a href="러브라이버.html" class="wiki-link">러브라이버</a>들</strong>: 저작권 무단 도용에 분노한 덕후들이 <strong>"우리 치카 쨩 이미지를 망친 죄를 받아라!"</strong>며 울트라 오렌지(UO) 형광봉을 흔들며 시위했다.</li>
+        </ul>
+
+        <h3 id="s-5-2">5.2. 판결</h3>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>징역 25년</strong>: 재판부는 "불특정 다수를 상대로 한 악질적인 사기이며, 피해 회복이 전혀 되지 않았고 도주 우려가 있다"며 중형을 선고했다.</li>
+            <li><strong>은닉 재산 몰수</strong>: <a href="D_주무관.html" class="wiki-link">D 주무관</a>이 찾아낸 450억 원 상당의 코인이 전량 몰수되어 피해자들에게 일부 환수되었다.</li>
+        </ul>
+
+        <h3 id="s-5-3">5.3. 슬기로운(?) 감빵생활</h3>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>운명의 재회</strong>: 그가 수감된 효빈구치소 305호 감방에는 이미 낯익은 얼굴들이 있었다.
+                <ul class="list-circle pl-5 mt-2 space-y-1">
+                    <li><strong>방장</strong>: <strong><a href="이만구.html" class="wiki-link">이 모 교수</a></strong> (사기학 개론 강의 중)</li>
+                    <li><strong>군기반장</strong>: <strong><a href="학생B.html" class="wiki-link">학생 B</a></strong> (설거지 담당)</li>
+                    <li><strong>신입</strong>: <strong>학생 C</strong> (변기 청소 당첨)</li>
+                    <li>(<a href="학생A.html" class="wiki-link">학생 A</a>는 편의점 알바 중이라 감옥엔 없지만, 면회 와서 깐족거린다고 한다.)</li>
+                </ul>
+            </li>
+            <li><strong><a href="고판대학교.html" class="wiki-link">고판대</a> 동창회</strong>: 이들은 감방 안에서 <strong>"제1회 고판대 교도소 동문회"</strong>를 결성했다. 이 교수는 "야, C야. 네가 실패한 건 '비효율적'으로 튀었기 때문이야."라고 훈수를 두다가, 빡친 학생 C에게 식판으로 맞았다고 전해진다.</li>
+        </ul>
+
+        <!-- 6. 어록 -->
+        <h2 id="s-6" class="anchor-offset">6. 어록</h2>
+        <div class="script-box">
+            <div class="script-header">학생 C의 사기 멘트</div>
+            <p class="mb-4">
+                <span class="speaker">학생 C:</span> "여러분! <a href="윤대환.html" class="wiki-link">윤대환</a> 시장님 때 버스비 비싸셨죠? 이 코인만 사면 평생 버스가 공짜입니다!"<br>
+                <span class="wiki-gray text-sm">(<a href="서진시.html" class="wiki-link">서진시</a> 마을회관 사업 설명회에서)</span>
+            </p>
+            <p class="mb-4">
+                <span class="speaker">학생 C:</span> "사기라니요? 저는 '꿈'을 팔았을 뿐입니다. 꿈이 깨진 건 구매자들의 책임이죠."<br>
+                <span class="wiki-gray text-sm">(도주 직전 인터뷰에서)</span>
+            </p>
+            <p class="mb-4">
+                <span class="speaker">학생 C:</span> "야, D! 너 나랑 손잡으면 <a href="효빈광역시.html" class="wiki-link">효빈시</a> 예산의 절반을 벌 수 있어! 공무원 월급 받고 일하는 거 안 지겹냐?"<br>
+                <span class="wiki-gray text-sm">(<a href="D_주무관.html" class="wiki-link">D 주무관</a>에게 보낸 텔레그램 메시지)</span>
+            </p>
+        </div>
+
+        <!-- 7. 평가 -->
+        <h2 id="s-7" class="anchor-offset">7. 평가</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>악마의 재능</strong>: <a href="학생A.html" class="wiki-link">학생 A</a>가 '무능', <a href="학생B.html" class="wiki-link">학생 B</a>가 '어설픔'이라면, 학생 C는 <strong>'유능함이 악의로 쓰일 때 얼마나 위험한가'</strong>를 보여주는 사례다.</li>
+            <li><strong><a href="고판대학교.html" class="wiki-link">고판대</a>의 완성</strong>: <a href="고판대학교.html" class="wiki-link">고판대학교</a>가 추구했던 "비윤리적 부의 축적"을 실현한 유일한 인물이다. 물론 그 대가로 평생 쫓기는 신세가 되었다.</li>
+            <li><strong><a href="윤대환.html" class="wiki-link">윤대환</a>의 그림자</strong>: 수사 과정에서 그가 빼돌린 돈의 일부가 <strong><a href="윤대환.html" class="wiki-link">윤대환</a></strong>의 차명 계좌로 흘러 들어간 정황이 포착되었다. <a href="윤대환.html" class="wiki-link">윤대환</a>이 <a href="서진시.html" class="wiki-link">서진시</a>에서 쫓겨날 때 선거 자금을 대준 '전주(錢主)'가 바로 학생 C였다는 의혹이 있다.</li>
+        </ul>
+
+        <!-- 8. 여담 -->
+        <h2 id="s-8" class="anchor-offset">8. 여담</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong><a href="D_주무관.html" class="wiki-link">D 주무관</a>의 포상</strong>: 이 검거 작전의 공로로 <a href="D_주무관.html" class="wiki-link">D 주무관</a>은 <strong>'이달의 우수 공무원'</strong> 표창과 함께 <a href="박효빈.html" class="wiki-link">박효빈</a> 시장에게 <strong>"<a href="https://namu.wiki/w/히로마치%20나나미" target="_blank" class="wiki-link">나나미</a> 쨩 한정판 피규어"</strong>를 선물 받았다.</li>
+            <li><strong><a href="윤대환.html" class="wiki-link">윤대환</a>의 꼬리 자르기</strong>: 학생 C가 잡히자 <strong><a href="윤대환.html" class="wiki-link">윤대환</a></strong>은 귀신같이 선을 그으며 "일면식도 없는 사기꾼이다. 내 이름을 팔고 다닌 것"이라며 고소했다. 하지만 학생 C가 옥중 서신으로 <strong>"비자금 장부 사본, <a href="D_주무관.html" class="wiki-link">D 주무관</a>한테 보냈다"</strong>고 협박하자 바로 고소를 취하했다.</li>
+            <li><strong>넷플릭스화</strong>: 이 사건은 훗날 <a href="https://namu.wiki/w/넷플릭스" target="_blank" class="wiki-link">넷플릭스</a> 다큐멘터리 <strong>&lt;나는 신이 아니다: 코인왕의 몰락&gt;</strong>으로 제작되어 효빈시민들의 필수 시청 영상이 되었다.</li>
+        </ul>
+
+        <!-- 9. 관련 문서 -->
+        <h2 id="s-9" class="anchor-offset">9. 관련 문서</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><a href="https://namu.wiki/w/권선징악" target="_blank" class="wiki-link">권선징악</a></li>
+            <li><a href="고판대학교.html" class="wiki-link">고판대학교</a> (교도소 분교 개교)</li>
+            <li><a href="D_주무관.html" class="wiki-link">D 주무관</a> (검거 일등 공신)</li>
+            <li><a href="윤대환.html" class="wiki-link">윤대환</a> (공범 의혹)</li>
+        </ul>
+
+        <!-- 하단 네비게이션 -->
+        <div class="nav-box shadow-sm mt-10">
+            <div class="nav-box-header">[관련 인물 둘러보기]</div>
+            <div class="nav-box-content leading-loose text-sm">
+                <a href="D_주무관.html" class="wiki-link">D 주무관</a> · 
+                <a href="이만구.html" class="wiki-link">이만구</a> · 
+                <a href="학생A.html" class="wiki-link">학생 A</a> · 
+                <a href="학생B.html" class="wiki-link">학생 B</a>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                // 실제 검색 기능 대신 알림창 띄우거나 이동
+                showMsg(`'${query}' 문서를 찾을 수 없습니다.`);
+            } else {
+                showMsg('검색어를 입력해주세요.');
+            }
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        document.querySelectorAll('a.wiki-link').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                // 외부 링크(http)가 아닌 내부 html 링크에 대해 처리
+                const href = this.getAttribute('href');
+                if (href && !href.startsWith('http') && !href.startsWith('#')) {
+                    // 문서 존재 여부 확인 로직은 서버 없이 불가하므로 생략하거나 시뮬레이션
+                }
+            });
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
