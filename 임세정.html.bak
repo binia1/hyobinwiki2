@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>임세정 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #FF8899; /* 7호선 분홍색 */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #FF8899;
+            --wiki-table-header-text: #ffffff;
+            --wiki-alert-border: #a2a9b1;
+            --wiki-alert-bg: #f8f9fa;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+
+        /* 위키 요소 */
+        del { color: #7f7f7f; text-decoration: line-through; cursor: help; }
+        .wiki-drip { color: #aaa; font-size: 0.85em; }
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+
+        /* 테이블 스타일 */
+        table.wiki-table-custom { border-collapse: collapse !important; width: 100%; margin: 15px 0; border: 1px solid #ddd !important; font-size: 0.9rem; }
+        table.wiki-table-custom th, table.wiki-table-custom td { border: 1px solid #ddd !important; padding: 6px 10px; vertical-align: middle; }
+        table.wiki-table-custom th { background-color: var(--wiki-table-header); color: white; font-weight: bold; text-align: center; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 380px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.3rem; font-weight: bold; }
+        .infobox-image { text-align: center; padding: 10px; border-bottom: 1px solid #ddd; background: white; }
+        .infobox table { border: none !important; margin: 0 !important; width: 100% !important; }
+        .infobox th { background-color: var(--wiki-gray-bg); text-align: center; padding: 8px 5px; border: 1px solid #ddd; width: 30%; font-weight: bold; vertical-align: middle;}
+        .infobox td { padding: 8px 5px; border: 1px solid #ddd; text-align: left; vertical-align: middle;}
+
+        /* 상단 버튼 */
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; }
+
+        /* 각주 & 호버보드 */
+        .footnote-ref { color: var(--wiki-link); font-size: 0.8em; vertical-align: super; cursor: pointer; text-decoration: none; font-weight: bold; }
+        .footnotes-area { margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px; font-size: 0.85rem; color: #555; }
+        
+        /* 각주 툴팁 (호버보드) */
+        #footnote-tooltip {
+            position: fixed;
+            display: none;
+            background-color: #fff;
+            border: 1px solid #999;
+            padding: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            z-index: 9999; 
+            max-width: 400px;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            line-height: 1.4;
+            pointer-events: none; 
+        }
+
+        /* 굿즈 카드 */
+        .goods-card { transition: transform 0.2s; border: 1px solid #eee; border-radius: 8px; overflow: hidden; text-align: center; background: white; }
+        .goods-card:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .goods-card img { width: 100%; height: 200px; object-fit: contain; background-color: #f8f9fa; padding: 10px; }
+        .goods-card-info { padding: 15px; text-align: left; border-top: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+    <!-- 각주 툴팁 컨테이너 -->
+    <div id="footnote-tooltip"></div>
+
+    <!-- 상단 내비게이션 -->
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" placeholder="검색" class="p-1 px-4 rounded text-black text-sm">
+            <button class="bg-[#555588] p-1 px-3 rounded text-sm font-bold">검색</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <!-- 문서 제목 -->
+        <div class="title-area">
+            <div class="txt-lvl-1">임세정</div>
+            <div class="flex gap-2 mb-1">
+                <button class="wiki-btn">토론</button>
+                <button class="wiki-btn">편집</button>
+                <button class="wiki-btn">역사</button>
+            </div>
+        </div>
+
+        <div class="category-box border border-[#ccc]">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="효빈메트로 캐릭터사업.html" class="wiki-link">효빈메트로/캐릭터사업</a> | 
+            <a href="7호선.html" class="wiki-link">효빈 도시철도 7호선</a> | 
+            <a href="#" class="wiki-link">역무원 캐릭터</a>
+        </div>
+
+        <!-- 인포박스 -->
+        <aside class="infobox">
+            <div class="infobox-title">임세정<br><span class="text-sm font-normal">Im Sejeong | 林洗正</span></div>
+            <div class="infobox-image">
+                <img src="images/char_7a_basic.png" alt="임세정 공식 일러스트" style="width:100%; height:auto;" onerror="this.src='https://placehold.co/300x400/FF8899/FFFFFF?text=Im+Sejeong'">
+                <div class="text-xs text-gray-500 mt-1">효빈교통공사 7호선 공식 마스코트 (언니)</div>
+            </div>
+            <table>
+                <tr><th>나이</th><td>30세 (1995년생)</td></tr>
+                <tr><th>소속</th><td><a href="효빈교통공사.html" class="wiki-link">효빈교통공사</a> 역무본부<br>7호선(트램) 역무원 (대리)</td></tr>
+                <tr><th>신장</th><td>167cm</td></tr>
+                <tr><th>출신지</th><td>효빈광역시 중구 중보로</td></tr>
+                <tr><th>학력</th><td>효빈초등학교 (졸업)<br>내조중학교 (졸업)<br>다판고등학교 (졸업)<br>효빈과학대학교 (철도운영과 / 전문학사)</td></tr>
+                <tr><th>가족 관계</th><td>부모님, 여동생(임세하)</td></tr>
+                <tr><th>MBTI</th><td>ESTJ (엄격한 관리자)</td></tr>
+                <tr><th>별명</th><td>전차 언니, 억척 가장, 생존왕</td></tr>
+                <tr><th>성우</th><td>일본판: <a class="wiki-link" href="https://namu.wiki/w/%EC%8A%A4%EC%A6%88%ED%82%A4%20%EC%95%84%EC%9D%B4%EB%82%98" target="_blank" rel="noopener noreferrer">스즈키 아이나</a><br>한국판: <a class="wiki-link" href="https://namu.wiki/w/%EC%9C%A4%EB%AF%B8%EB%82%98" target="_blank" rel="noopener noreferrer">윤미나</a></td></tr>
+            </table>
+        </aside>
+
+        <!-- 목차 -->
+        <div class="toc">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">상세 설정</a>
+                    <ul>
+                        <li>2.1. <a href="#s-2-1" class="wiki-link">성격 및 특징</a></li>
+                        <li>2.2. <a href="#s-2-2" class="wiki-link">학력 및 능력</a></li>
+                        <li>2.3. <a href="#s-2-3" class="wiki-link">정치 성향</a></li>
+                    </ul>
+                </li>
+                <li>3. <a href="#s-3" class="wiki-link">인간 관계</a></li>
+                <li>4. <a href="#s-4" class="wiki-link">관련 굿즈</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">여담</a></li>
+            </ul>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1">1. 개요</h2>
+        <div class="p-4 bg-pink-50 border-l-4 border-pink-400 text-pink-900 mb-6 font-bold italic">
+            "이 전차는 내 청춘이자, 우리 가족의 밥줄이야. 함부로 없애라 마라 하지 마!"
+        </div>
+        <p>
+            <a href="효빈권 광역전철.html" class="wiki-link">효빈권 광역전철</a> <a href="7호선.html" class="wiki-link">7호선</a>(노면전차/트램)을 상징하는 마스코트 캐릭터 중 언니. 회주공업이 운영하던 사철 시절부터 마스코트로 활약해온 근본 있는 캐릭터다. 직업은 역무원이며, 현재 대리 직급을 달고 있다.
+        </p>
+        <p>
+            7호선의 상징색인 분홍색 제복을 입고 있다. 2011년 7호선이 효빈교통공사로 인수 및 공영화되면서 동생 <a href="임세하.html" class="wiki-link">임세하</a>와 함께 리뉴얼되었다. 윤대환 전 시장의 트램 폐지 시도에 맞서 싸우며 노선을 지켜낸 역사가 캐릭터 설정에 깊게 반영되어 있다.
+        </p>
+
+        <!-- 2. 상세 설정 -->
+        <h2 id="s-2">2. 상세 설정</h2>
+
+        <h3 id="s-2-1">2.1. 성격 및 특징</h3>
+        <p>
+            <strong>"생존형 리더"</strong>이자 <strong>"억척스러운 K-장녀"</strong>. 
+            부모님이 일찍 은퇴하시고 10살 터울의 늦둥이 동생 임세하를 사실상 혼자 키우다시피 했다. 생활력이 매우 강하며, 위기 상황에서 물러서지 않고 정면 돌파하는 강인함을 지녔다.
+        </p>
+        <p>
+            트램 폐지 논란 당시, 노조와 함께 거리로 나가 서명 운동을 주도했던 전력이 있다. 이 때문에 사내에서는 그녀를 '투사'로 기억하는 사람들이 많다. 평소에는 털털하고 시원시원한 성격이지만, 동생 임세하에게만큼은 잔소리꾼 엄마 같은 모습을 보인다.
+        </p>
+
+        <h3 id="s-2-2">2.2. 학력 및 능력</h3>
+        <p>
+            효빈초-내조중-다판고를 졸업하고 <strong>효빈과학대학교(전문대) 철도운영과</strong>를 나왔다. 4년제 대학을 나온 다른 캐릭터들(고나미, 하루빈 등)에 비해 학벌은 낮지만, 현장에서 구른 짬밥(경력)과 실무 능력은 타의 추종을 불허한다.
+        </p>
+        <p>
+            회주공업 시절부터 근무했기에 구형 전차부터 신형 무가선 트램까지 모든 차량의 역사를 꿰뚫고 있다. 웬만한 차량 고장은 소리만 듣고도 어디가 문제인지 파악할 수 있을 정도다.
+        </p>
+
+        <h3 id="s-2-3">2.3. 정치 성향</h3>
+        <p>
+            <strong>對 윤대환: 적대적(생존의 위협).</strong><br>
+            윤대환 전 시장은 그녀에게 있어 <strong>'직장을 없애고 가족의 밥줄을 끊으려 했던 원수'</strong>다. 윤 시장이 "도로 교통 흐름을 방해하는 흉물 전차를 걷어내겠다"라고 했을 때, 가장 앞장서서 반대 시위를 했다.
+        </p>
+        <p>
+            <strong>對 박효빈: 신뢰 및 지지.</strong><br>
+            박효빈 시장은 트램을 없애는 대신 최신형 저상 트램으로 교체하고, '친환경 도심 교통 수단'으로 브랜드화하여 7호선을 부활시켰다. 임세정에게 박효빈은 단순한 시장이 아니라 <strong>'구원자'</strong>나 다름없다.
+        </p>
+
+        <!-- 3. 인간 관계 -->
+        <h2 id="s-3">3. 인간 관계</h2>
+        <ul class="list-disc pl-5">
+            <li>
+                <strong><a href="임세하.html" class="wiki-link">임세하</a> (동생):</strong> 눈에 넣어도 안 아픈(하지만 말은 안 듣는) 동생. 공대생이 된 동생이 기계 덕질하느라 학점을 말아먹었을 때 등짝 스매싱을 날렸지만, 밤새 과제하는 동생을 위해 야식을 챙겨주는 츤데레 언니.
+            </li>
+            <li>
+                <strong><a href="고나미.html" class="wiki-link">고나미</a> (1호선 기관사):</strong> 나이는 임세정이 4살 더 많지만, 직급 체계상 고나미(대리급 대우)와 비슷하거나 미묘하다. 하지만 고나미가 임세정의 경력을 존중하여 "언니"라고 부르며 따르기 때문에 사이가 좋다. 둘 다 사내 '고인물' 라인이다.
+            </li>
+            <li>
+                <strong>효빈대 카르텔 멤버들:</strong> <a href="하루빈.html" class="wiki-link">하루빈</a>, <a href="미소하.html" class="wiki-link">미소하</a> 등 대졸 공채 출신 후배들과도 잘 지낸다. 특히 미소하와는 같은 05년생인 동생(세하) 이야기를 하며 학부모(?) 상담을 하곤 한다.
+            </li>
+        </ul>
+
+        <!-- 4. 관련 굿즈 -->
+        <h2 id="s-4">4. 관련 굿즈</h2>
+        <p>주로 <a href="중앙로1가역.html" class="wiki-link">중앙로1가역점</a>(7호선 로드샵)과 내항역점에서 구할 수 있다. 임자매 세트 상품이 인기가 많다.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+            <div class="goods-card cursor-pointer" onclick="alert('상품 상세 페이지로 이동합니다.')">
+                <img src="images/39_1.jpg" alt="1/7 스케일 피규어">
+                <div class="goods-card-info">
+                    <div class="text-sm font-bold text-gray-800 mb-1">[SEGA] 7호선 임세정 1/7 스케일 피규어</div>
+                    <div class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 inline-block rounded">활기찬 출근길 Ver.</div>
+                    <div class="text-lg font-black text-pink-600 mt-2">75,900원</div>
+                </div>
+            </div>
+            <div class="goods-card cursor-pointer" onclick="alert('상품 상세 페이지로 이동합니다.')">
+                <img src="images/30_1.jpg" alt="넨도로이드">
+                <div class="goods-card-info">
+                    <div class="text-sm font-bold text-gray-800 mb-1">넨도로이드 임세정</div>
+                    <div class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 inline-block rounded">확성기 & 도시락 파츠</div>
+                    <div class="text-lg font-black text-pink-600 mt-2">45,000원</div>
+                </div>
+            </div>
+            <div class="goods-card cursor-pointer" onclick="alert('상품 상세 페이지로 이동합니다.')">
+                <img src="images/7.jpg" alt="트램 다이캐스트">
+                <div class="goods-card-info">
+                    <div class="text-sm font-bold text-gray-800 mb-1">임자매의 7호선 무가선 트램 다이캐스트</div>
+                    <div class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 inline-block rounded">정교한 디테일</div>
+                    <div class="text-lg font-black text-pink-600 mt-2">35,000원</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 여담 -->
+        <h2 id="s-5">5. 여담</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li>
+                요리 실력이 수준급이다. 동생 임세하의 도시락을 매일 챙겨주는데, 그 퀄리티가 높아 동기들 사이에서 부러움을 산다. 넨도로이드 굿즈에 도시락 파츠가 들어간 것도 이 때문이다.
+            </li>
+            <li>
+                과거 전차 폐지 반대 시위 때 확성기를 들고 연설하던 사진이 효빈시 역사박물관에 전시되어 있다. 본인은 부끄러워하지만 팬들에게는 '전설의 짤'로 통한다.
+            </li>
+            <li>
+                <a href="효빈 애니메이션 페스티벌.html" class="wiki-link">HAF</a> 기간에는 7호선 트램이 애니메이션 래핑 열차로 운행되는데, 이때 특별 안내방송을 임세정(성우)이 직접 맡는다.
+            </li>
+        </ul>
+
+        <!-- 하단 각주 영역 -->
+        <div class="footnotes-area">
+            <h3 style="margin-top:0; font-size:1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px;">각주</h3>
+            <div id="fn-voice" class="footnote-content">[1] 일본판 성우: 스즈키 아이나 / 한국판 성우: 윤미나</div>
+        </div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-400 text-xs pb-10">
+            <p>이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)</p>
+            <p>기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            <br>
+            <p>효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</p>
+            <p>효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.</p>
+        </footer>
+    </div>
+
+    <script>
+        // 각주 호버보드 (툴팁) 기능
+        document.addEventListener('DOMContentLoaded', () => {
+            const refs = document.querySelectorAll('.footnote-ref a');
+            const tooltip = document.getElementById('footnote-tooltip');
+
+            refs.forEach(ref => {
+                ref.addEventListener('mouseenter', (e) => {
+                    e.preventDefault(); 
+                    const targetId = ref.getAttribute('href').substring(1); 
+                    const targetContent = document.querySelector(`.footnote-content[id="${targetId}"]`);
+                    
+                    if (targetContent) {
+                        tooltip.innerHTML = targetContent.innerHTML;
+                        tooltip.style.display = 'block';
+                        moveTooltip(e);
+                    }
+                });
+
+                ref.addEventListener('mousemove', (e) => {
+                    moveTooltip(e);
+                });
+
+                ref.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+            });
+
+            function moveTooltip(e) {
+                const x = e.clientX + 15;
+                const y = e.clientY + 15;
+                
+                const tooltipRect = tooltip.getBoundingClientRect();
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+
+                let finalX = x;
+                let finalY = y;
+
+                if (x + tooltipRect.width > windowWidth) {
+                    finalX = x - tooltipRect.width - 20;
+                }
+                if (y + tooltipRect.height > windowHeight) {
+                    finalY = y - tooltipRect.height - 20;
+                }
+
+                tooltip.style.left = finalX + 'px';
+                tooltip.style.top = finalY + 'px';
+            }
+        });
+    </script>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+</body>
+</html>

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈 버스 123 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff;
+            --wiki-link: #0055AA;
+            --highlight-color: #ffeb3b; 
+            
+            /* 버스 색상 규정 */
+            --bus-trunk: #01B7ED;
+            --bus-circular: #E7D600;
+            --bus-branch: #37B484;
+            --bus-wide: #485EC6;
+            --bus-seat: #FF5800;
+            --bus-village: #A664A0;
+            --bus-airport: #84C36E;
+            --bus-tour: #7777AA;
+            --bus-express: #D81C2F;
+            
+            /* 지하철 노선 색상 */
+            --line-1: #0077DD;
+            --line-2: #00CCAA;
+            --line-3: #FFCC11;
+            --line-4: #FF5522;
+            --line-5: #EE0022;
+            --line-6: #881188;
+            --line-7: #FF8899;
+            --line-8: #9856FF;
+            --line-binhyo: #6677CC;
+
+            /* 현재 선택된 노선 색상 (지선버스) */
+            --route-color: var(--bus-branch);
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background: #fff; color: #373a3c; word-break: keep-all; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid #ccc; border-right: 1px solid #ccc; min-height: 100vh; }
+        
+        /* 제목 스타일 */
+        .txt-lvl-1 { font-size: 3rem; font-weight: 900; margin-bottom: 0; line-height: 1.2; color: #000 !important; }
+        .txt-lvl-1 span { color: #000 !important; }
+
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+        
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; text-decoration: none; display: inline-flex; align-items: center; cursor: pointer; }
+        .wiki-btn:hover { background: #f0f0f0; }
+
+        /* 분류 박스 */
+        .classification-box {
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            padding: 8px 12px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #555;
+            border-radius: 4px;
+        }
+        .classification-box a {
+            color: var(--wiki-link);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* 위키 인포박스 */
+        .wiki-infobox {
+            width: 350px;
+            float: right;
+            margin: 0 0 20px 20px;
+            border: 1px solid #ccc;
+            background: #fcfcfc;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .infobox-header {
+            background-color: var(--route-color);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: 900;
+            font-size: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            transition: background-color 0.3s;
+        }
+        .infobox-subheader {
+            background-color: #f0f0f0;
+            padding: 5px;
+            text-align: center;
+            font-weight: bold;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.85rem;
+        }
+        .infobox-table { width: 100%; border-collapse: collapse; }
+        .infobox-table th { background-color: #f9f9f9; border: 1px solid #ddd; padding: 6px 10px; width: 100px; text-align: left; font-weight: bold; color: #555; }
+        .infobox-table td { border: 1px solid #ddd; padding: 6px 10px; }
+
+        /* 지하철 뱃지 스타일 */
+        .subway-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-right: 3px;
+            text-decoration: none;
+            vertical-align: middle;
+            line-height: 1;
+        }
+        .subway-badge-rect {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-right: 4px;
+            margin-bottom: 2px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        
+        .line-1 { background-color: var(--line-1); }
+        .line-2 { background-color: var(--line-2); }
+        .line-3 { background-color: var(--line-3); color: black !important; }
+        .line-4 { background-color: var(--line-4); }
+        .line-5 { background-color: var(--line-5); }
+        .line-6 { background-color: var(--line-6); }
+        .line-7 { background-color: var(--line-7); }
+        .line-8 { background-color: var(--line-8); }
+        .line-binhyo { background-color: var(--line-binhyo); font-size: 0.6rem; width: auto; padding: 0 4px; border-radius: 10px; }
+
+        /* 버스 이미지 테이블 */
+        .bus-photo-table {
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+            margin: 10px 0 20px 0;
+            clear: left;
+        }
+        .bus-photo-table td { border: 1px solid #ccc; padding: 5px; text-align: center; background: #fff; }
+        .bus-photo-table img { width: 100%; height: auto; display: block; max-height: 400px; object-fit: cover; margin: 0 auto; }
+        .photo-caption { font-size: 0.85rem; color: #666; background-color: #f9f9f9 !important; font-weight: bold; padding: 8px !important; }
+
+        /* 나무위키 스타일 상세 노선 정보 표 */
+        .namu-route-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            border: 2px solid var(--route-color);
+            line-height: 1.5;
+        }
+        .namu-route-table td {
+            border: 1px solid #ccc;
+            padding: 6px 10px;
+        }
+        .namu-header {
+            background-color: var(--route-color);
+            color: white;
+            font-weight: 900;
+            font-size: 1.1rem;
+            padding: 8px;
+            border-bottom: 2px solid #ccc;
+        }
+        .namu-label {
+            background-color: #f5f5f5;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            width: 100px;
+        }
+        .namu-label-sm {
+            background-color: #f9f9f9;
+            text-align: center;
+            font-weight: bold;
+            color: #555;
+            width: 60px;
+        }
+        .namu-content {
+            background-color: #fff;
+        }
+        
+        /* 시간표 테이블 */
+        .timetable { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; text-align: center; }
+        .timetable th { background-color: #eee; border: 1px solid #ccc; padding: 5px; }
+        .timetable td { border: 1px solid #ccc; padding: 5px; }
+        .timetable tr:nth-child(even) { background-color: #fcfcfc; }
+
+        /* 정류장 리스트 */
+        .stop-list { position: relative; padding-left: 20px; margin-top: 20px; border-left: 4px solid var(--route-color); transition: border-left 0.3s; }
+        .stop-item { margin-bottom: 10px; position: relative; font-size: 0.95rem; line-height: 1.6; }
+        .stop-item::before { content: "●"; color: var(--route-color); position: absolute; left: -26px; font-size: 1.2rem; background: white; transition: color 0.3s; }
+        .stop-item.turn::before { content: "↺"; font-size: 1.4rem; left: -27px; font-weight: bold; }
+        .stop-item.start, .stop-item.end { font-weight: bold; font-size: 1rem; }
+        .stop-item a { color: #333; text-decoration: none; transition: color 0.2s; }
+        .stop-item a:hover { color: var(--wiki-link); text-decoration: underline; }
+        
+        .badges-area { display: inline-flex; gap: 2px; margin-right: 6px; vertical-align: middle; }
+
+        /* 각주 및 호버보드 */
+        .footnote-ref { color: var(--wiki-link); text-decoration: none; font-size: 0.75em; vertical-align: super; cursor: pointer; margin-left: 2px; font-weight: bold; }
+        .hoverboard { position: absolute; background: white; border: 1px solid #999; box-shadow: 0 4px 10px rgba(0,0,0,0.2); padding: 10px; font-size: 0.85rem; z-index: 9999; max-width: 350px; display: none; border-radius: 4px; line-height: 1.4; color: #333; }
+
+        .wiki-footer { margin-top: 3rem; border-top: 1px solid var(--wiki-border); padding-top: 1.5rem; text-align: center; color: #666; font-size: 0.85rem; padding-bottom: 2rem; clear: both; }
+        
+        /* 목차 */
+        .toc { display: inline-block; min-width: 250px; border: 1px solid #ccc; background: #f9f9f9; padding: 15px; border-radius: 4px; margin-bottom: 20px; clear: left; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid #ccc; margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        
+        /* 소제목 */
+        h2 { 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            border-bottom: 2px solid #ccc; 
+            margin-top: 2rem; 
+            padding-bottom: 5px; 
+            color: #000; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            clear: left; 
+        }
+        h2::before { content: ""; width: 5px; height: 1.5rem; background: #000; display: inline-block; }
+
+        /* 탭 버튼 스타일 */
+        .tab-btn {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-right: 5px;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            color: #555;
+        }
+        .tab-btn.active {
+            background-color: var(--route-color);
+            color: white;
+            border-color: var(--route-color);
+        }
+        .tab-container {
+            border-bottom: 2px solid var(--route-color);
+            margin-bottom: 20px;
+        }
+
+        mark.highlight { background-color: var(--highlight-color); color: black; padding: 2px 0; border-radius: 2px; }
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+    </style>
+</head>
+<body>
+    <div id="wiki-msg-box"></div>
+    <div id="hoverboard" class="hoverboard"></div>
+
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="font-bold text-xl cursor-pointer flex items-center gap-2" onclick="location.href='#'">
+            HyobinWiki <span class="text-xs font-normal opacity-70">| 노선 상세</span>
+        </div>
+        <div class="flex items-center gap-2">
+             <div class="flex items-center gap-2 text-left mr-2">
+                <input type="text" id="searchInput" placeholder="문서 내 검색" class="p-1.5 px-3 rounded text-black text-sm w-48 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) { handleSearch(); }">
+                <button onclick="handleSearch()" class="bg-[#555588] p-1.5 px-3 rounded text-sm hover:bg-[#444477] font-bold transition-colors">검색</button>
+            </div>
+            <button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded">메인으로</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container">
+        <div class="title-area">
+            <div class="txt-lvl-1">효빈 버스 <span id="route-num">123</span></div>
+            <div class="flex items-end gap-2 mb-1">
+                <select id="routeSelector" onchange="alert('구현 예정입니다.')" class="border p-1 text-xs rounded text-gray-500 cursor-pointer">
+                    <option value="123" selected>지선(123)</option>
+                </select>
+                <a href="#" class="wiki-btn">토론</a>
+                <a href="#" class="wiki-btn">편집</a>
+                <a href="#" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+        <div id="wiki-context-area">
+            
+            <div class="classification-box">
+                분류: <a href="#">효빈광역시의 시내버스</a> | <a href="#" id="class-link">효빈광역시 지선버스</a>
+            </div>
+
+            <div class="wiki-infobox">
+                <div class="infobox-header" id="info-header">효빈 버스 123</div>
+                <div class="infobox-subheader" id="info-subheader">효빈광역시 지선버스</div>
+                <table class="infobox-table">
+                    <tr><th>기점</th><td id="info-start"></td></tr>
+                    <tr><th>종점</th><td id="info-end"></td></tr>
+                    <tr><th>운수사</th><td id="info-operator">입포여객</td></tr>
+                    <tr><th>배차간격</th><td id="info-interval">20분</td></tr>
+                    <tr><th>연계 철도역</th><td id="info-subway"></td></tr>
+                </table>
+            </div>
+
+            <p class="mb-4">
+                <b>효빈 버스 <span id="route-text">123</span></b>은 <a href="#" class="wiki-link">효빈광역시</a> 중구 장원동과 북구 진희동(모리초)을 연결하는 지선버스 노선이다.
+            </p>
+
+            <div class="toc">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#info" class="wiki-link">노선 정보</a></li>
+                    <li>2. <a href="#overview" class="wiki-link">개요</a></li>
+                    <li>3. <a href="#stops" class="wiki-link">정류장 목록</a></li>
+                    <li>4. <a href="#features" class="wiki-link">특징</a></li>
+                    <li>5. <a href="#timetable" class="wiki-link">시간표</a></li>
+                    <li>6. <a href="#trivia" class="wiki-link">여담</a></li>
+                </ul>
+            </div>
+
+            <h2 id="info">1. 노선 정보</h2>
+
+            <table class="bus-photo-table">
+                <tr><td><img src="images/123.png" alt="버스 이미지" id="bus-image" onerror="this.src='https://via.placeholder.com/600x400?text=Bus+Image';"></td></tr>
+                <tr><td class="photo-caption" id="bus-image-caption">123번 버스 운행 모습</td></tr>
+            </table>
+
+            <table class="namu-route-table">
+                <thead>
+                    <tr><td colspan="6" class="namu-header"><span style="font-size:1.2rem;">🚌</span> 효빈 버스 <span id="tbl-num">123</span></td></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="namu-label">기점</td><td colspan="2" class="namu-content" id="tbl-start">장원역</td>
+                        <td class="namu-label">종점</td><td colspan="2" class="namu-content" id="tbl-end">모리초</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2" class="namu-label">종점행</td><td class="namu-label-sm">첫차</td><td class="namu-content" id="tbl-first-end"></td>
+                        <td rowspan="2" class="namu-label">기점행</td><td class="namu-label-sm">첫차</td><td class="namu-content" id="tbl-first-start"></td>
+                    </tr>
+                    <tr>
+                        <td class="namu-label-sm">막차</td><td class="namu-content" id="tbl-last-end"></td><td class="namu-label-sm">막차</td><td class="namu-content" id="tbl-last-start"></td>
+                    </tr>
+                    <tr><td class="namu-label">배차간격</td><td colspan="5" class="namu-content" id="tbl-interval"></td></tr>
+                    <tr>
+                        <td class="namu-label">운수사명</td><td colspan="2" class="namu-content" id="tbl-operator">입포여객</td>
+                        <td class="namu-label">인가대수</td><td colspan="2" class="namu-content" id="tbl-auth-count"></td>
+                    </tr>
+                    <tr><td class="namu-label">노선</td><td colspan="5" class="namu-content" id="tbl-path"></td></tr>
+                    <tr><td colspan="6" class="namu-content" style="font-size:0.85rem; color:#666;">* <b>볼드체</b>로 표시된 구간은 양방향 모두 정차하기 때문에 행선지를 확인하고 탑승해야 한다.</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="overview">2. 개요</h2>
+            <p id="desc-text">효빈광역시 중구 장원동과 북구 진희동 모리초등학교를 연결하는 지선버스 노선이다. 213번은 이 노선의 역순 노선이다.</p>
+
+            <h2 id="stops">3. 정류장 목록</h2>
+            
+            <!-- 탭 버튼 -->
+            <div class="tab-container">
+                <button class="tab-btn active" onclick="switchRoute('123')">123번 (하행)</button>
+                <button class="tab-btn" onclick="switchRoute('213')">213번 (상행)</button>
+            </div>
+
+            <div class="stop-list" id="stop-list-container"></div>
+            
+            <h2 id="features">4. 특징</h2>
+            <ul class="list-disc pl-5 mt-2 space-y-2">
+                <li>중구의 장원역과 북구의 주요 지역을 잇는 지선 노선이다.</li>
+                <li><b>역방향 노선</b>: 번호 체계가 대칭(123 ↔ 213)으로 이루어져 있어, 역방향 노선은 <a href="javascript:switchRoute('213')" class="wiki-link">213번</a>이다.</li>
+                <li>배차간격은 약 20분이다.</li>
+            </ul>
+
+            <h2 id="timetable">5. 시간표</h2>
+            <p class="mb-2 text-sm text-gray-500">※ 교통 상황에 따라 오차가 발생할 수 있습니다.</p>
+            <table class="timetable">
+                <thead><tr><th>회차</th><th>기점 출발</th><th>회차지 출발</th></tr></thead>
+                <tbody id="timetable-body"></tbody>
+            </table>
+
+            <h2 id="trivia">6. 여담</h2>
+            <ul class="list-disc pl-5 mt-2 space-y-2">
+                <li>지선버스의 고유 도색 색상(<span style="color:#37B484; font-weight:bold;">● Jade Green</span>)이 <a href="#" class="wiki-link">러브 라이브! 니지가사키 학원 스쿨 아이돌 동호회</a>의 멤버 <b><a href="#" class="wiki-link">미후네 시오리코</a></b>의 이미지 컬러와 매우 흡사하여 '시오리코 버스'라고도 불린다.<sup id="ref-1"><a href="#fn-1" class="footnote-ref">[1]</a></sup></li>
+            </ul>
+            
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc; font-size: 0.85rem; color: #555;">
+                <div class="footnote-item" id="fn-1"><a href="#ref-1" class="wiki-link">[1]</a> 실제로 색상 코드가 미묘하게 비슷하다는 분석글이 커뮤니티에 올라온 적이 있다.</div>
+            </div>
+        </div>
+        
+        <footer class="wiki-footer">
+            <p class="font-bold mb-2">이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)</p>
+            <p class="mb-4">기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            <ul class="text-xs text-gray-500">
+                <li>효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</li>
+            </ul>
+        </footer>
+    </div>
+
+    <script>
+        const REGION_CONFIG = { 'Jung': { name: '중구', baseInterval: 12, variation: 5 } };
+
+        // 123번 데이터 (하드코딩)
+        // 123번: 장원 -> 시청(모리초) (제공된 데이터의 역순)
+        // 원본 데이터(213): 2.6 시청 3 청능 5 소조 7 사능동1가 7 사능복지관 1.7 내조 빈.4 신덕 빈.1.4 장원
+        const routeData123 = {
+            num: '123',
+            start: '장원역',
+            end: '모리초',
+            operator: '입포여객',
+            region: 'Jung',
+            desc: '중구 장원역과 북구 모리초(시청)를 연결하는 지선버스 노선.',
+            stops: [
+                { name: '장원역', lines: ['binhyo', '1', '4'] }, 
+                { name: '신덕', lines: ['binhyo', '4'] },
+                { name: '내조', lines: ['1', '7'] },
+                { name: '사능복지관', lines: ['7'] },
+                { name: '사능동1가', lines: ['7'] },
+                { name: '소조', lines: ['5'] },
+                { name: '청능', lines: ['3'] },
+                { name: '시청', lines: ['2', '6'] }
+            ]
+        };
+
+        // 213번 데이터 (123번의 역순)
+        const routeData213 = {
+            num: '213',
+            start: '모리초',
+            end: '장원역',
+            operator: '입포여객',
+            region: 'Jung',
+            desc: '123번의 역방향 노선으로, 북구 모리초에서 중구 장원역으로 운행한다.',
+            stops: [...routeData123.stops].reverse()
+        };
+
+        // 현재 선택된 노선 데이터
+        let currentRoute = routeData123;
+
+        function switchRoute(routeNum) {
+            if (routeNum === '123') {
+                currentRoute = routeData123;
+            } else {
+                currentRoute = routeData213;
+            }
+
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(btn => {
+                if (btn.innerText.includes(routeNum)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            renderPage();
+        }
+
+        function renderPage() {
+            document.getElementById('route-num').innerText = currentRoute.num;
+            document.getElementById('route-text').innerText = currentRoute.num;
+            document.getElementById('info-header').innerText = `효빈 버스 ${currentRoute.num}`;
+            document.getElementById('tbl-num').innerText = currentRoute.num;
+
+            document.getElementById('info-start').innerText = currentRoute.start;
+            document.getElementById('info-end').innerText = currentRoute.end;
+            document.getElementById('tbl-start').innerText = currentRoute.start;
+            document.getElementById('tbl-end').innerText = currentRoute.end;
+
+            const pathStr = currentRoute.stops.map(s => s.name).join(' - ');
+            document.getElementById('tbl-path').innerText = pathStr;
+
+            // 뱃지
+            const subContainer = document.getElementById('info-subway');
+            subContainer.innerHTML = '';
+            const uniqueSubways = new Set();
+            
+            currentRoute.stops.forEach(s => {
+                s.lines.forEach(line => uniqueSubways.add(`${line}-${s.name}`));
+            });
+
+            if (uniqueSubways.size > 0) {
+                const sortedSubs = Array.from(uniqueSubways).sort((a, b) => {
+                    const lineA = a.split('-')[0];
+                    const lineB = b.split('-')[0];
+                    if(lineA === 'binhyo') return -1;
+                    if(lineB === 'binhyo') return 1;
+                    return parseInt(lineA) - parseInt(lineB);
+                });
+
+                sortedSubs.forEach(item => {
+                    const [line, station] = item.split('-');
+                    const badge = document.createElement('a');
+                    badge.href = `${station}.html`; 
+                    badge.className = `subway-badge-rect line-${line}`;
+                    
+                    let lineName = line === 'binhyo' ? '빈효' : line;
+                    badge.innerHTML = `<span style="border-right:1px solid rgba(255,255,255,0.4); padding-right:4px; margin-right:4px;">${lineName}</span>${station.replace('역', '')}`;
+                    subContainer.appendChild(badge);
+                });
+            } else {
+                subContainer.innerHTML = '<span style="color:#999;">없음</span>';
+            }
+
+            // 시간표
+            const minStart = 285; // 04:45
+            const maxStart = 335; // 05:35
+            const startMins = Math.floor(Math.random() * (maxStart - minStart + 1)) + minStart;
+            
+            const startH = Math.floor(startMins / 60);
+            const startM = startMins % 60;
+            const startTimeStr = `0${startH}:${startM < 10 ? '0'+startM : startM}`;
+            
+            document.getElementById('tbl-first-start').innerText = startTimeStr;
+            document.getElementById('tbl-first-end').innerText = startTimeStr;
+
+            const endMins = startMins + (17 * 60) + Math.floor(Math.random()*60);
+            const endH = Math.floor(endMins / 60) % 24;
+            const endM = endMins % 60;
+            const endTimeStr = `${endH < 10 ? '0'+endH : endH}:${endM < 10 ? '0'+endM : endM}`;
+            
+            document.getElementById('tbl-last-start').innerText = endTimeStr;
+            document.getElementById('tbl-last-end').innerText = endTimeStr;
+
+            const calculatedInterval = 20; 
+            const weekendInterval = 28; 
+            
+            const intervalStr = `평일 ${calculatedInterval}분 / 주말 ${weekendInterval}분`;
+            document.getElementById('info-interval').innerText = `${calculatedInterval}분`;
+            document.getElementById('tbl-interval').innerText = intervalStr;
+
+            const roundTripTime = 85 + Math.floor(Math.random() * 30);
+            const authCount = Math.ceil(roundTripTime / calculatedInterval) + 1;
+            document.getElementById('tbl-auth-count').innerText = `${authCount}대`;
+
+            // 정류장
+            const stopContainer = document.getElementById('stop-list-container');
+            stopContainer.innerHTML = ''; 
+            
+            currentRoute.stops.forEach((stopObj, index) => {
+                const div = document.createElement('div');
+                div.className = 'stop-item';
+                
+                let badgesHtml = '';
+                if(stopObj.lines.length > 0) {
+                    badgesHtml += '<span class="badges-area">';
+                    stopObj.lines.forEach(line => {
+                         let lineSymbol = line === 'binhyo' ? '빈' : line;
+                         badgesHtml += `<span class="subway-badge line-${line}">${lineSymbol}</span>`;
+                    });
+                    badgesHtml += '</span>';
+                }
+
+                const linkUrl = `${stopObj.name}.html`;
+                const linkHtml = `<a href="${linkUrl}">${stopObj.name}</a>`;
+
+                let content = badgesHtml + linkHtml;
+
+                if(index === 0) {
+                    div.innerHTML = `${content} (기점)`;
+                    div.classList.add('start');
+                } else if(index === currentRoute.stops.length - 1) {
+                    div.innerHTML = `${content} (종점)`;
+                    div.classList.add('end');
+                } else {
+                    div.innerHTML = content;
+                }
+                stopContainer.appendChild(div);
+            });
+
+            // 시간표 테이블
+            const timetableBody = document.getElementById('timetable-body');
+            timetableBody.innerHTML = ''; 
+            
+            let currentMins = startMins;
+            let tripCount = 1;
+            
+            while (currentMins <= endMins) {
+                const rH = Math.floor(currentMins / 60) % 24;
+                const rM = currentMins % 60;
+                const timeStr = `0${rH}`.slice(-2) + ':' + `0${rM}`.slice(-2);
+                
+                const oneWayMins = Math.floor(roundTripTime / 2);
+                let backStartMins = currentMins + oneWayMins;
+                const bH = Math.floor(backStartMins / 60) % 24;
+                const bM = backStartMins % 60;
+                const backTimeStr = `0${bH}`.slice(-2) + ':' + `0${bM}`.slice(-2);
+
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${tripCount}회</td><td>${timeStr}</td><td>${backTimeStr}</td>`;
+                timetableBody.appendChild(row);
+                
+                currentMins += calculatedInterval;
+                tripCount++;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderPage();
+        });
+
+        // 검색
+        function handleSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const query = searchInput.value.trim();
+            const contextArea = document.getElementById('wiki-context-area');
+            const marks = contextArea.querySelectorAll('mark.highlight');
+            marks.forEach(mark => {
+                const text = document.createTextNode(mark.textContent);
+                mark.parentNode.replaceChild(text, mark);
+            });
+            contextArea.normalize();
+
+            if (!query) { showMsg('검색어를 입력해주세요.'); return; }
+            
+            let foundCount = 0;
+            let firstMatch = null;
+            function highlightText(node) {
+                if (node.nodeType === 3) { 
+                    const text = node.nodeValue;
+                    if (!text.trim()) return;
+                    const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+                    if (regex.test(text)) {
+                        foundCount++;
+                        const span = document.createElement('span');
+                        span.innerHTML = text.replace(regex, '<mark class="highlight">$1</mark>');
+                        const fragment = document.createDocumentFragment();
+                        while (span.firstChild) {
+                            const child = span.firstChild;
+                            if (child.nodeName === 'MARK' && !firstMatch) firstMatch = child;
+                            fragment.appendChild(child);
+                        }
+                        node.parentNode.replaceChild(fragment, node);
+                    }
+                } else if (node.nodeType === 1 && node.nodeName !== 'SCRIPT' && node.nodeName !== 'STYLE' && node.nodeName !== 'MARK') {
+                    Array.from(node.childNodes).forEach(child => highlightText(child));
+                }
+            }
+            highlightText(contextArea);
+
+            if (foundCount > 0) {
+                showMsg(`총 ${foundCount}건의 검색 결과가 있습니다.`);
+                if (firstMatch) {
+                    firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstMatch.style.backgroundColor = '#ff9800'; 
+                    setTimeout(() => firstMatch.style.backgroundColor = '', 2000);
+                }
+            } else {
+                showMsg(`"${query}"에 대한 검색 결과가 없습니다.`);
+            }
+        }
+        function escapeRegExp(string) { return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2500);
+        }
+    </script>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+</body>
+</html>

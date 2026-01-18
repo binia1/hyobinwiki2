@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>치고대학교 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* 문서 테마 컬러: 치고 미귤 (Chigo Mandarin) */
+            --wiki-main: #FF8833; 
+            --wiki-sub: #CC6D29;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #FF8833;
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.15rem; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 스타일 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 450px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-header { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.4rem; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: #fff4e6; color: var(--wiki-main); width: 100px; padding: 6px 10px; border: 1px solid var(--wiki-border); text-align: center; font-weight: bold; vertical-align: middle; }
+        .infobox td { padding: 6px 10px; border: 1px solid var(--wiki-border); vertical-align: middle; }
+        
+        /* 테이블 스타일 */
+        .wiki-table { border-collapse: collapse; width: 100%; margin: 10px 0; border: 1px solid #ccc; }
+        .wiki-table th { background-color: var(--wiki-main); color: white; padding: 8px; border: 1px solid #ccc; text-align: center; font-weight: bold; }
+        .wiki-table td { padding: 8px; border: 1px solid #ccc; background: white; }
+        .wiki-table-center { text-align: center; }
+        .wiki-table-sub { background-color: #f5f9fa; font-weight: bold; text-align: center; color: #555; width: 60px; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* 기타 요소 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+        del { color: #ccc; text-decoration: line-through; }
+        .wiki-gray { color: #888; font-size: 0.9em; }
+        
+        /* 폴딩(접기/펼치기) 구현 */
+        details { border: 1px solid #aaa; border-radius: 4px; padding: 0; margin-bottom: 10px; background: white; }
+        summary { font-weight: bold; padding: 0.5em; cursor: pointer; background-color: #eee; list-style: none; display: flex; justify-content: center; align-items: center; }
+        summary:after { content: " [ 펼치기 · 접기 ]"; font-size: 0.8em; margin-left: 5px; color: #555; }
+        details[open] { padding: 0; }
+        details[open] summary { border-bottom: 1px solid #aaa; }
+
+        /* 하단 네비게이션 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+        
+        /* 푸터 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+        
+        /* 상단 그라데이션 박스 */
+        .gradient-box {
+            background-image: linear-gradient(to right, #FF8833, #CC6D29, #CC6D29, #FF8833);
+            color: white; padding: 20px; text-align: center; border-radius: 5px; margin-bottom: 0px;
+        }
+
+        /* 지하철 노선 아이콘 스타일 */
+        .subway-icon {
+            display: inline-flex; justify-content: center; align-items: center;
+            width: 20px; height: 20px; border-radius: 50%;
+            color: white; font-weight: bold; font-size: 0.75rem;
+            margin-right: 4px;
+        }
+        .subway-line-4 { background-color: #FF5522; color: white; }
+
+        /* 각주 스타일 */
+        .wiki-fn { font-size: 0.8em; vertical-align: super; color: var(--wiki-link); text-decoration: none; font-weight: bold; cursor: help; margin-left: 1px; }
+        .wiki-fn:hover { text-decoration: underline; }
+        .wiki-fn-content-box { border-top: 1px solid #ccc; margin-top: 40px; padding-top: 10px; font-size: 0.9rem; }
+        .wiki-fn-item { margin-bottom: 6px; }
+        .wiki-fn-back { color: var(--wiki-link); text-decoration: none; margin-right: 5px; font-weight: bold; }
+        
+        /* 각주 툴팁 (호버보드) */
+        #wiki-fn-tooltip {
+            position: fixed;
+            display: none;
+            background: #fff;
+            border: 1px solid var(--wiki-main);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            max-width: 350px;
+            z-index: 100000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: 6px;
+            pointer-events: none;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        /* 내비게이션 테이블 강조 스타일 */
+        .nav-highlight {
+            font-weight: 900;
+            background-color: #ffe0b2; /* 연한 귤색 배경 */
+            border-radius: 4px;
+            padding: 2px 6px;
+            color: #e65100;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-fn-tooltip"></div>
+
+    <!-- 상단 네비게이션 (검색창 바) - 색상 #7777AA 고정 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: #7777AA;">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="goToLink('효빈위키_대문.html')">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a onclick="goToLink('토론.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">토론</a>
+                <a onclick="goToLink('편집.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">편집</a>
+                <a onclick="goToLink('역사.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">치고대학교</div>
+            <div class="flex gap-2 mb-1">
+                <a onclick="goToLink('치고대학교.html')" class="wiki-btn">문서</a>
+                <a onclick="goToLink('토론.html')" class="wiki-btn">토론</a>
+                <a onclick="goToLink('편집.html')" class="wiki-btn">편집</a>
+                <a onclick="goToLink('역사.html')" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold" style="color: var(--wiki-main);">분류:</span> 
+            <a onclick="goToLink('효빈시의_대학교.html')" class="wiki-link">효빈광역시의 대학교</a> | 
+            <a onclick="goToLink('전문대학.html')" class="wiki-link">전문대학</a> |
+            <a onclick="goToLink('1990년_개교.html')" class="wiki-link">1990년 개교</a> |
+            <a onclick="goToLink('치고대학교.html')" class="wiki-link">치고대학교</a> |
+            <a onclick="goToLink('효빈광역시_대학_폐교_위기.html')" class="wiki-link">효빈광역시 대학/폐교 위기</a> |
+            <a onclick="goToLink('재정지원제한대학.html')" class="wiki-link">재정지원제한대학</a>
+        </div>
+
+        <!-- 상단 관련 학교/협의회 템플릿 (효빈광역시의 전문대학) -->
+        <div class="mb-5">
+            <div style="border: 2px solid #3344aa; border-radius: 4px; overflow: hidden; margin-bottom: 20px;">
+                <table class="wiki-table" style="margin: 0; width: 100%; border: none;">
+                    <tr>
+                        <th colspan="3" style="background-color: #3344aa; color: white; padding: 8px; text-align: center;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="flex:1;"></span>
+                                <span style="flex:2;"><a onclick="goToLink('효빈시의_대학교.html')" style="color: white; text-decoration: none; cursor: pointer;">효빈광역시의 전문대학</a></span>
+                                <span style="flex:1; text-align: right; font-size: 0.8em; font-weight: normal;"><a style="color: #ddd; cursor: pointer; text-decoration: none;">[편집]</a></span>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td rowspan="6" class="wiki-table-sub">전문</td>
+                        <td class="wiki-table-center" style="background-color: #f9f9f9; font-weight: bold;">ㅎ</td>
+                        <td>
+                            <a onclick="goToLink('효빈보건대학교.html')" class="wiki-link">효빈보건대학교</a> · 
+                            <a onclick="goToLink('해총대학교.html')" class="wiki-link">해총대학교</a> ·
+                            <a onclick="goToLink('효빈과학대학교.html')" class="wiki-link">효빈과학대학교</a> ·
+                            <a onclick="goToLink('효빈예술대학교.html')" class="wiki-link">효빈예술대학교</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="wiki-table-center" style="background-color: #f9f9f9; font-weight: bold;">ㅊ</td>
+                        <td>
+                            <a onclick="goToLink('치고대학교.html')" class="wiki-link nav-highlight">치고대학교</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="wiki-table-center" style="background-color: #f9f9f9; font-weight: bold;">ㄷ</td>
+                        <td>
+                            <a onclick="goToLink('대찬대학교.html')" class="wiki-link">대찬대학교</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="wiki-table-center" style="background-color: #f9f9f9; font-weight: bold;">ㅅ</td>
+                        <td>
+                            <a onclick="goToLink('선자대학교.html')" class="wiki-link">선자대학교</a> · 
+                            <a onclick="goToLink('삽곡대학교.html')" class="wiki-link">삽곡대학교</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="wiki-table-center" style="background-color: #f9f9f9; font-weight: bold;">ㅇ</td>
+                        <td>
+                            <a onclick="goToLink('안신대학교.html')" class="wiki-link">안신대학교</a> · 
+                            <a onclick="goToLink('안월대학교.html')" class="wiki-link">안월대학교</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="wiki-table-sub">기능</td>
+                        <td class="wiki-table-center" style="background-color: #f9f9f9; font-weight: bold;">ㅎ</td>
+                        <td>
+                            <a onclick="goToLink('한국폴리텍VIII대학_효빈캠퍼스.html')" class="wiki-link">한국폴리텍VIII대학(효빈캠퍼스)</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="gradient-box">
+                <!-- 학교 로고/심볼 이미지 -->
+                <img src="치고대학교_UI.png" alt="치고대학교 로고" style="width: 200px; display: inline-block;" onerror="this.src='https://via.placeholder.com/200x80?text=CHIGO+Logo';">
+            </div>
+            
+            <details>
+                <summary></summary>
+                <div class="p-2 border border-t-0 bg-white">
+                    <table class="wiki-table" style="margin: 0; width: 100%;">
+                        <tr>
+                            <td colspan="4" class="text-center font-bold text-white" style="background-color: #FF8833;">대학 정보</td>
+                        </tr>
+                        <tr>
+                            <td class="wiki-table-center"><a onclick="goToLink('치고대학교_역사.html')" class="wiki-link text-[#FF8833]">역사</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('치고대학교_상징.html')" class="wiki-link text-[#FF8833]">상징</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('치고대학교_학과.html')" class="wiki-link text-[#FF8833]">학과</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('치고대학교_운동부.html')" class="wiki-link text-[#FF8833]">운동부</a></td>
+                        </tr>
+                        <tr>
+                            <td class="wiki-table-center"><a onclick="goToLink('치고대학교_캠퍼스.html')" class="wiki-link text-[#FF8833]">캠퍼스</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('치고대학교_총학생회.html')" class="wiki-link text-[#FF8833]">총학생회</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('치고대학교_언론.html')" class="wiki-link text-[#FF8833]">학내 언론</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('치고대학교_교류대학.html')" class="wiki-link text-[#FF8833]">교류 대학</a></td>
+                        </tr>
+                         <tr>
+                            <td colspan="4" class="text-center font-bold text-white" style="background-color: #FF8833;">기타 정보</td>
+                        </tr>
+                        <tr>
+                            <td class="wiki-table-center"><a onclick="goToLink('치고대학교_출신인물.html')" class="wiki-link text-[#FF8833]">출신 인물</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('치고대학교_주변상권.html')" class="wiki-link text-[#FF8833]">주변 상권</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('치고대학교_입시.html')" class="wiki-link text-[#FF8833]">입시</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('치고대학교_사건사고.html')" class="wiki-link text-[#FF8833]">사건 사고</a></td>
+                        </tr>
+                    </table>
+                </div>
+            </details>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="infobox-header">
+                    치고대학교<br>
+                    <span class="text-sm font-normal">Chigo College</span>
+                </div>
+                <div class="p-4 bg-white text-center border-b">
+                    <!-- 엠블럼 이미지 -->
+                    <div class="w-full flex justify-center py-4">
+                        <img src="치고대학교_UI.png" alt="치고대학교 UI" class="w-48" onerror="this.src='https://via.placeholder.com/150?text=CHIGO';">
+                    </div>
+                </div>
+                <table>
+                    <tr><th>교훈</th><td>불굴, 도전, 승리</td></tr>
+                    <tr><th>슬로건</th><td>포기하지 않아! 꿈을 향해 치고 나가라!</td></tr>
+                    <tr><th>교색</th><td>
+                         <span style="display:inline-block; width:15px; height:15px; background:#FF8833; border:1px solid #ccc; vertical-align:middle;"></span> 치고 미귤 (#FF8833)
+                    </td></tr>
+                    <tr><th>국가</th><td><a onclick="goToLink('대한민국.html')" class="wiki-link">대한민국</a></td></tr>
+                    <tr><th>분류</th><td><a onclick="goToLink('전문대학.html')" class="wiki-link">전문대학</a> (2/3년제)</td></tr>
+                    <tr><th>법인</th><td>학교법인 치고학원</td></tr>
+                    <tr><th>설립</th><td>1990년 3월 5일</td></tr>
+                    <tr><th>총장</th><td>제4대 <a onclick="goToLink('연옥선.html')" class="wiki-link">연옥선</a></td></tr>
+                    <tr><th>주소</th><td><a onclick="goToLink('효빈광역시.html')" class="wiki-link">효빈광역시</a> <a onclick="goToLink('탄성군.html')" class="wiki-link">탄성군</a> <a onclick="goToLink('도변읍.html')" class="wiki-link">도변읍</a> 요우로 285 (<a onclick="goToLink('요우리.html')" class="wiki-link">요우리</a>)<a href="#fn-1" id="rfn-1" class="wiki-fn">[1]</a></td></tr>
+                    <tr><th>재적생</th><td>1,200명 <span class="text-xs text-gray-500">(2025년)</span></td></tr>
+                    <tr><th>웹사이트</th><td><a href="https://www.chigo.ac.kr" target="_blank" class="wiki-link">공식 홈페이지</a></td></tr>
+                </table>
+                <div class="w-full bg-[#eee] text-center p-2 font-bold cursor-pointer hover:bg-[#ddd]" onclick="alert('지도 기능 준비중')">
+                    [ 지도 펼치기 ]
+                </div>
+            </aside>
+
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1 w-full lg:w-auto">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">역사 및 현황</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">학과 구성</a>
+                        <ul>
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">체육·경호계열</a></li>
+                            <li>3.2. <a href="#s-3-2" class="wiki-link">성인·복지계열</a></li>
+                            <li>3.3. <a href="#s-3-3" class="wiki-link">공공·안전계열</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">캠퍼스 및 교통</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">여담 (치카 밈)</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">각주</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <blockquote>
+            <strong>"학교가 망해가는데 귤이 넘어가냐?"</strong><br>
+            <span class="text-sm">-- 학교 대나무숲 베스트 게시글</span>
+        </blockquote>
+
+        <p><a onclick="goToLink('효빈광역시.html')" class="wiki-link">효빈광역시</a> <a onclick="goToLink('탄성군.html')" class="wiki-link">탄성군</a> <a onclick="goToLink('도변읍.html')" class="wiki-link">도변읍</a> 요우리에 위치한 사립 <a onclick="goToLink('전문대학.html')" class="wiki-link">전문대학</a>.</p>
+        <p>1990년 개교했으나, 잦은 <strong>사학비리</strong>와 신입생 충원율 미달로 인해 매년 교육부의 <strong><a onclick="goToLink('재정지원제한대학.html')" class="wiki-link">재정지원제한대학</a>(부실대학)</strong> 명단에 단골로 이름을 올리는, 그야말로 <strong>"망해가는 대학"</strong>의 표본이다.</p>
+        <p>교명인 <strong>치고(千古)</strong>는 '천고의 세월을 견디라'는 뜻이지만, 발음이 <a onclick="goToLink('러브_라이브!_선샤인!!.html')" class="wiki-link">러브 라이브! 선샤인!!</a>의 주인공 <strong><a onclick="goToLink('타카미_치카.html')" class="wiki-link">타카미 치카</a></strong>와 비슷해서 서브컬처 팬들에게는 <strong>"치카 대학"</strong> 혹은 <strong>"귤 대학"</strong>으로 불린다. 바로 옆에 있는 <strong><a onclick="goToLink('효빈예술대학교.html')" class="wiki-link">효빈예술대학교</a></strong>(요우)와 함께 '치카-요우 라인'을 형성하고 있지만, 학교 사정은 효빈예대에 비해 처참하기 그지없다.</p>
+        
+        <!-- 2. 역사 및 현황 -->
+        <h2 id="s-2" class="anchor-offset">2. 역사 및 현황</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>개교와 비리:</strong> 1990년 개교 당시에는 평범한 전문대였으나, 재단의 횡령과 채용 비리가 잇달아 터지면서 이미지가 나락으로 갔다. 연옥선 총장이 취임하여 수습하려 했으나, 이미 떠난 학생들의 마음을 돌리기엔 역부족이었다.</li>
+            <li><strong>운동부 원툴:</strong> 일반 학생 충원이 안 되자, <strong>운동부(축구, 야구)</strong>를 창단하여 운동선수들로 정원을 채우는 전략을 쓰고 있다. 캠퍼스에 가면 유니폼 입은 떡대들만 보인다는 소문이 있다.</li>
+            <li><strong>만학도 유치:</strong> 그나마 남은 정원은 주말반이나 야간반을 개설해 지역 어르신(만학도)들로 채우고 있다. 사실상 <strong>'체육관 겸 노인대학'</strong>이나 다름없는 상태.</li>
+        </ul>
+
+        <!-- 3. 학과 구성 -->
+        <h2 id="s-3" class="anchor-offset">3. 학과 구성</h2>
+        <p>학과 구성을 보면 "이게 대학인가 학원인가" 싶을 정도로 열악하다. 강의실보다 운동장이나 외부 시설 의존도가 높다.</p>
+        
+        <table class="wiki-table" style="margin-bottom: 20px;">
+             <tr>
+                <td colspan="3" class="wiki-table-center" style="background-color: #FF8833; color: white; font-size: 1.2rem;"><strong>치고대학교 학과 구성</strong></td>
+            </tr>
+            <tr style="background-color: #f0f0f0;">
+                <td width="20%" class="wiki-table-center font-bold">계열</td>
+                <td width="25%" class="wiki-table-center font-bold">학과</td>
+                <td width="55%" class="wiki-table-center font-bold">세부전공 및 비고</td>
+            </tr>
+            <tr id="s-3-1">
+                <td rowspan="6" class="wiki-table-center"><strong>체육·경호계열</strong><br>(학교의 본체)</td>
+                <td class="wiki-table-center"><a onclick="goToLink('축구전공.html')" class="wiki-link">축구전공</a></td>
+                <td>정원 100명 중 99명이 축구부 선수다. 수업은 거의 안 하고 하루 종일 운동장에서 공만 찬다. U-리그 성적은 의외로 나쁘지 않다고.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('야구전공.html')" class="wiki-link">야구전공</a></td>
+                <td>고교 때 프로 지명을 받지 못한 선수들이 '마지막 기회'를 노리고 온다. 학교 야구장이 좁아서 외야 펜스가 비정상적으로 짧다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('경호보안과.html')" class="wiki-link">경호보안과</a></td>
+                <td>유도/태권도 단증 취득 후 지역 나이트클럽 가드나 용역 업체로 취업한다. 군기가 매우 세다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('골프산업과.html')" class="wiki-link">골프산업과</a></td>
+                <td><strong>학교에 골프 연습장이 없다.</strong>(...) 인근 CC로 실습을 나가는데, 말이 실습이지 사실상 캐디 보조 알바를 뛰는 것이다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('당구전공.html')" class="wiki-link">당구전공</a></td>
+                <td>강의실 하나에 당구대 5개 놓고 수업한다. 졸업 후 당구장 창업이나 레슨 프로를 목표로 한다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('격투기지도과.html')" class="wiki-link">격투기지도과</a></td>
+                <td>이종격투기 및 킥복싱. 낡은 체육관에 링 하나 덩그러니 놓고 스파링을 뜬다.</td>
+            </tr>
+
+            <tr id="s-3-2">
+                <td rowspan="3" class="wiki-table-center"><strong>성인·복지계열</strong><br>(학교의 돈줄)</td>
+                <td class="wiki-table-center"><a onclick="goToLink('사회복지상담과.html')" class="wiki-link">사회복지상담과</a></td>
+                <td>(주말반) 직장인 및 주부 대상. "출석만 하면 졸업장 준다"는 소문이 있어 졸업장 따기 가장 쉬운 곳으로 통한다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('약용식물과.html')" class="wiki-link">약용식물과</a></td>
+                <td>(만학도) 강의실 수업보다 학교 뒷산(도변읍 야산)에서 <strong>약초 캐기</strong> 실습을 더 많이 한다. 실습실에 학생들이 담근 담금주(뱀술, 인삼주)가 가득하다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('실버케어경영과.html')" class="wiki-link">실버케어경영과</a></td>
+                <td>요양보호사 자격증 과정. 실습은 학교 재단이 운영하는 요양원에서 해결하는데, 사실상 공짜 노동력 제공이라는 비판이 있다.</td>
+            </tr>
+
+            <tr id="s-3-3">
+                <td rowspan="2" class="wiki-table-center"><strong>공공·안전계열</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('부사관과.html')" class="wiki-link">부사관과</a></td>
+                <td>"졸업하면 바로 하사 임관!"을 슬로건으로 내건다. 강의보다는 연병장 구보와 체력 단련 위주다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('소방안전관리과.html')" class="wiki-link">소방안전관리과</a></td>
+                <td>소방 공무원은 현실적으로 어렵고, 주로 아파트나 빌딩 방재실 관리직으로 취업한다.</td>
+            </tr>
+        </table>
+
+        <!-- 4. 캠퍼스 및 교통 -->
+        <h2 id="s-4" class="anchor-offset">4. 캠퍼스 및 교통</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>위치:</strong> <a onclick="goToLink('효빈예술대학교.html')" class="wiki-link">효빈예술대학교</a> 바로 옆, 더 깊은 산속에 있다. 효빈예대 건물이 보이면 "아, 저기는 천국(요우)이고 여기는 지옥(치고)이구나"라고 느끼게 된다고.</li>
+            <li><strong>시설:</strong> 건물이 낡아서 비가 오면 물이 새기도 한다. 매점도 제대로 운영되지 않아 옆 학교(효빈예대) 매점을 이용한다. 효빈예대 학생들이 "외부인 출입 금지"를 외치지만, 치고대 운동부 형님들의 포스에 눌려 묵인해준다.</li>
+            <li><strong>교통:</strong> <span class="subway-icon subway-line-4">4</span> <a onclick="goToLink('효빈_도시철도_4호선.html')" class="wiki-link">효빈 도시철도 4호선</a> <strong><a onclick="goToLink('요우역.html')" class="wiki-link">요우역</a></strong>에서 내려서 효빈예대 셔틀버스를 얻어타거나(...), 걸어서 등산해야 한다. 치고대 자체 셔틀버스는 잦은 고장으로 운행하지 않을 때가 많다.</li>
+        </ul>
+
+        <!-- 5. 여담 -->
+        <h2 id="s-5" class="anchor-offset">5. 여담 (치카 밈)</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>귤(Mikan):</strong> 학교 상징색이 주황색이라 가을 운동회 때 단체복을 입으면 <strong>'귤 상자'</strong>가 쏟아진 것 같다.
+                <ul class="list-disc pl-5">
+                    <li>옆 학교(효빈예대)가 '요우(You)' 대학이라, 두 학교가 붙어 있는 것을 두고 <strong>"치카요우(Chika-You) 커플링"</strong>이라고 부른다.</li>
+                    <li>하지만 시설 차이가 너무 나서 "금수저 요우와 흙수저 치카"라는 슬픈 드립이 나온다.</li>
+                </ul>
+            </li>
+            <li><strong>"학교를 폐교에서 구하라!":</strong> <a onclick="goToLink('러브_라이브!.html')" class="wiki-link">러브 라이브!</a> 시리즈의 전통적인 클리셰인 <strong>"폐교 위기"</strong>가 이 학교엔 <strong>리얼한 현실</strong>이다.
+                <ul class="list-disc pl-5">
+                    <li>학생들은 "우리도 스쿨 아이돌을 만들어서 학교를 구해야 하는 거 아니냐"고 농담하지만, 현실은 운동부 형님들의 땀 냄새뿐이다.</li>
+                </ul>
+            </li>
+            <li><strong>연옥선 총장:</strong> 비리 사학의 중심에 있는 인물. 학생들은 총장실 방향으로 침도 안 뱉는다고 한다. (침 뱉을 가치도 없어서)</li>
+        </ul>
+
+        <!-- 6. 각주 -->
+        <h2 id="s-6" class="anchor-offset">6. 각주</h2>
+        <div class="wiki-fn-content-box">
+            <div class="wiki-fn-item" id="fn-1">
+                <a href="#rfn-1" class="wiki-fn-back">[1]</a> <a onclick="goToLink('효빈예술대학교.html')" class="wiki-link">효빈예술대학교</a> 바로 옆에 붙어 있다.
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <div class="nav-box shadow-sm mt-10">
+            <div class="nav-box-header">치고대학교 관련 문서</div>
+            <div class="nav-box-content leading-loose text-sm">
+                <a onclick="goToLink('치고대학교.html')" class="wiki-link">치고대학교</a> · 
+                <a onclick="goToLink('치고대학교_운동부.html')" class="wiki-link">운동부</a> · 
+                <a onclick="goToLink('치고대학교_총학생회.html')" class="wiki-link">총학생회</a> · 
+                <a onclick="goToLink('학교법인_치고학원.html')" class="wiki-link">치고학원</a> ·
+                <a onclick="goToLink('재정지원제한대학.html')" class="wiki-link">재정지원제한대학</a>
+            </div>
+        </div>
+
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2">
+                이 문서는 <strong>효빈위키</strong>의 문서입니다. <br>
+                기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.
+            </p>
+            <p class="mt-4 text-xs text-gray-500">
+                이 문서의 내용은 사실과 다를 수 있으며, 법적 효력을 갖지 않습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 검색 기능 핸들러
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(query)}`, '_blank');
+            } else {
+                showMsg('검색어를 입력해주세요.');
+            }
+        }
+
+        // 메시지 박스 표시 함수
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        // 링크 이동 핸들러
+        async function goToLink(filename) {
+            if (filename.startsWith('#')) return;
+
+            const namuKeywords = ['대한민국', '전문대학', '운동부', '사회복지'];
+            const pureName = filename.replace('.html', '').replace(/_/g, ' ');
+            
+            if (namuKeywords.includes(pureName) || filename.includes('namu.wiki')) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(pureName)}`, '_blank');
+                return;
+            }
+
+            try {
+                location.href = filename;
+            } catch (e) {
+                showMsg('문서를 찾을 수 없습니다.');
+            }
+        }
+        
+        // 목차 및 내부 링크 스무스 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (!targetId || targetId === '#') return;
+
+                e.preventDefault();
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, 
+                        behavior: 'smooth'
+                    });
+                    
+                    targetElement.style.transition = 'background 0.5s';
+                    targetElement.style.backgroundColor = '#ffe0b2'; // 연한 주황색 하이라이트
+                    setTimeout(() => { targetElement.style.backgroundColor = 'transparent'; }, 1500);
+                }
+            });
+        });
+
+        // --- 각주 툴팁 호버보드 로직 ---
+        const tooltip = document.getElementById('wiki-fn-tooltip');
+        const footnotes = document.querySelectorAll('.wiki-fn');
+
+        footnotes.forEach(fn => {
+            fn.addEventListener('mouseenter', (e) => {
+                const targetId = fn.getAttribute('href').substring(1); 
+                const contentEl = document.getElementById(targetId);
+                
+                if (contentEl) {
+                    tooltip.innerHTML = contentEl.innerHTML;
+                    const backLink = tooltip.querySelector('.wiki-fn-back');
+                    if(backLink) {
+                        backLink.style.display = 'none'; 
+                    }
+                    tooltip.style.display = 'block';
+                }
+            });
+
+            fn.addEventListener('mousemove', (e) => {
+                const x = e.clientX + 15;
+                const y = e.clientY + 15;
+                
+                const tooltipRect = tooltip.getBoundingClientRect();
+                let finalX = x;
+                let finalY = y;
+
+                if (x + tooltipRect.width > window.innerWidth) {
+                    finalX = e.clientX - tooltipRect.width - 10;
+                }
+                if (y + tooltipRect.height > window.innerHeight) {
+                    finalY = e.clientY - tooltipRect.height - 10;
+                }
+
+                tooltip.style.left = finalX + 'px';
+                tooltip.style.top = finalY + 'px';
+            });
+
+            fn.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+</body>
+</html>

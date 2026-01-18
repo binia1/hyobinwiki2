@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>빈주시 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        /* 1. 전역 스타일 및 변수 */
+        :root { 
+            --wiki-fixed: #7777AA; 
+            
+            /* [변동] 빈주시 퍼스널 컬러 (도청 소재지의 권위: 짙은 남색) */
+            --wiki-main: #1A237E; 
+            
+            /* [변동] 포인트 컬러 */
+            --wiki-point: #304FFE;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-fixed: #9999CC;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+            --wiki-table-header-text: #000000;
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            word-break: keep-all; 
+            margin: 0; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .wiki-container { 
+            max-width: 1152px; 
+            margin: 0 auto; 
+            padding: 20px 40px; 
+            border-left: 1px solid var(--wiki-border); 
+            border-right: 1px solid var(--wiki-border); 
+            min-height: 100vh; 
+            background-color: var(--wiki-bg);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 2. 표(Table) 스타일 */
+        table { 
+            border-collapse: collapse !important; 
+            width: 100% !important; 
+            margin: 15px 0; 
+            border: 1px solid var(--wiki-border) !important; 
+            table-layout: fixed !important; 
+        }
+
+        th, td { 
+            border: 1px solid var(--wiki-border) !important; 
+            padding: 8px 6px; 
+            text-align: center; 
+            vertical-align: middle; 
+            font-size: 0.9rem;
+        }
+
+        th { 
+            background-color: var(--wiki-table-header); 
+            color: var(--wiki-table-header-text); 
+            font-weight: bold; 
+            text-shadow: none;
+        }
+
+        /* 3. 이미지 및 정렬 */
+        .center-flex {
+            display: flex !important;
+            justify-content: center !important; 
+            align-items: center !important;      
+            gap: 10px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* 4. 제목 및 텍스트 */
+        h1 { font-size: 2.6rem; font-weight: 700; margin-bottom: 1.5rem; border-bottom: 2px solid var(--wiki-main); padding-bottom: 10px; }
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; color: var(--wiki-point); border-left: 4px solid var(--wiki-main); padding-left: 12px; }
+        h4 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; padding-left: 10px; border-left: 3px solid #ccc; }
+
+        /* 5. 인포박스 */
+        .infobox { 
+            border: 1px solid var(--wiki-main); 
+            background-color: var(--wiki-gray-bg); 
+            width: 100%; max-width: 360px; 
+            font-size: 0.82rem; 
+            margin-bottom: 20px; 
+            float: right; 
+            margin-left: 20px; 
+            border-radius: 4px; 
+            overflow: hidden; 
+        }
+        .infobox-top-label { background-color: var(--wiki-main); color: #fff; padding: 5px; text-align: center; font-weight: bold; }
+        .infobox-title-row { display: flex; border-bottom: 1px solid var(--wiki-border); background: #fff; color: #000; align-items: center; }
+        [data-theme='dark'] .infobox-title-row { background: #2d2f34; color: #fff; }
+        .infobox-logo { width: 90px; height: 90px; border-right: 1px solid var(--wiki-border); display: flex; align-items: center; justify-content: center; padding: 0; background: #fff; overflow: hidden; }
+        .infobox-logo img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
+        .infobox-name { flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 5px; }
+        .infobox th { background: var(--wiki-main); color: #fff; width: 100px; text-align: left; padding: 5px 8px; font-size: 0.75rem; }
+        .infobox td { padding: 5px 8px; text-align: left; }
+
+/* 6. 제목(Headings) 스타일 설정: 크기를 키우고 여백을 조정했습니다 */
+h1 {
+    font-size: 2.5rem !important; /* 가장 큰 제목 (문서명 등) */
+    font-weight: 700 !important; /* 볼드체 적용 */
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+h2 {
+    font-size: 1.85rem !important; /* 대단원 제목 (1., 2. 등) */
+    font-weight: 700 !important; /* 볼드체 적용 */
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--wiki-border);
+    padding-bottom: 0.3rem;
+}
+
+h3 {
+    font-size: 1.45rem !important; /* 소단원 제목 (1.1., 1.2. 등) */
+    font-weight: 700 !important; /* 볼드체 적용 */
+    margin-top: 1.8rem;
+    margin-bottom: 0.8rem;
+}
+
+
+
+        /* 6. 내비게이션 바 */
+        .nav-box { border: 1px solid var(--wiki-main); margin-bottom: 15px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; clear: both; }
+        .nav-box-header { background-color: var(--wiki-main); color: #fff; padding: 8px 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; }
+        .nav-toggle-btn { position: absolute; right: 12px; font-size: 10px; background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px; }
+        
+        .nav-table { width: 100%; border-collapse: collapse; text-align: center; }
+        .nav-table th { background-color: var(--wiki-main) !important; color: #fff !important; width: 100px; font-weight: bold; border: 1px solid white !important; }
+        .nav-table td { background-color: var(--wiki-gray-bg); border: 1px solid white !important; }
+        [data-theme='dark'] .nav-table td { background-color: #2d2f34; border: 1px solid #444 !important; }
+        [data-theme='dark'] .nav-table th { border: 1px solid #444 !important; }
+
+        .admin-item { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px; cursor: pointer; min-width: 60px; color: var(--wiki-text); text-decoration: none; }
+        .admin-item:hover { background: rgba(0,0,0,0.05); }
+        .admin-logo-space { width: 32px; height: 32px; background: #fff; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 3px; object-fit: contain; }
+        
+        /* 학교 목록 테이블 스타일 */
+        .school-table { width: 100%; border-collapse: collapse; background: #fff; }
+        [data-theme='dark'] .school-table { background: #2d2f34; }
+        .school-table td { border: 1px solid var(--wiki-border); padding: 8px; text-align: center; width: 20%; font-size: 0.85rem; }
+        
+        /* 남/여 학교 구분 색상 */
+        .bg-boy { background-color: #e3f2fd !important; } 
+        .bg-girl { background-color: #ffebee !important; } 
+        [data-theme='dark'] .bg-boy { background-color: #1e3a8a !important; color: #fff; }
+        [data-theme='dark'] .bg-girl { background-color: #881337 !important; color: #fff; }
+
+        /* 뱃지 */
+        .wiki-badge { display: inline-block; padding: 2px 6px; border-radius: 3px; color: white; font-weight: bold; font-size: 0.7rem; margin-right: 3px; vertical-align: middle; }
+        .badge-minju { background-color: #004ea2; }
+        .badge-gukhim { background-color: #e61e2b; }
+        .badge-jinbo { background-color: #d6001c; }
+        .badge-independent { background-color: #999999; }
+        .badge-prog-edu { background-color: #79D2CC; }
+
+        /* 알림 메시지 */
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        
+        .category-box { background: #fff; border: 1px solid var(--wiki-border); padding: 5px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        [data-theme='dark'] .category-box { background: #2d2f34; border-color: #444; }
+        
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc .lvl-2 { padding-left: 15px; }
+        .toc .lvl-3 { padding-left: 30px; }
+
+        /* 위키 도구 버튼 */
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        [data-theme='dark'] .wiki-btn-group { background: #2d2f34; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn:hover { background-color: #eee; }
+        .wiki-tool-btn.active { background-color: var(--wiki-main); color: white !important; font-weight: bold; }
+        
+        /* 각주 호버보드(툴팁) */
+        #wiki-footnote-tooltip { 
+            position: absolute; display: none; background: var(--wiki-gray-bg); border: 2px solid var(--wiki-main); 
+            padding: 12px; font-size: 0.85rem; max-width: 320px; z-index: 100000; 
+            box-shadow: 4px 4px 20px rgba(0,0,0,0.3); border-radius: 8px; pointer-events: none; color: var(--wiki-text);
+        }
+
+        /* [신규] 하위 행정구역 표 스타일 (나무위키 스타일) */
+        .admin-dong-table { width: 100%; border-collapse: collapse; background: #fff; table-layout: fixed; }
+        [data-theme='dark'] .admin-dong-table { background: #2d2f34; }
+        .admin-dong-table td, .admin-dong-table th { border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.9rem; text-align: center; vertical-align: middle; }
+        /* 포인트 컬러로 헤더 지정 */
+        .admin-dong-table th { background-color: var(--wiki-point); color: white; font-weight: bold; }
+        /* 행정동 열 강조 */
+        .admin-dong-table td.admin-name-cell { font-weight: bold; background-color: #f9f9f9; color: var(--wiki-point); }
+        [data-theme='dark'] .admin-dong-table td.admin-name-cell { background-color: #383b40; color: #DDBBFF; }
+        /* 법정동 분할 셀 스타일 */
+        .legal-dong-cell { text-align: center; padding: 5px; }
+    </style>
+</head>
+<body data-theme="light">
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-footnote-tooltip"></div>
+
+    <!-- 상단바: 검색기능이 있는 부분 (고정 색상 사용) -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-fixed);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 또는 번호 검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">빈주시</h1>
+            <!-- 툴박스 링크화 -->
+            <div class="wiki-btn-group shadow-sm mb-4">
+                <a href="#" class="wiki-tool-btn">토론</a>
+                <a href="#" class="wiki-tool-btn active">편집</a>
+                <a href="#" class="wiki-tool-btn">역사</a>
+                <div class="wiki-tool-btn" onclick="showMsg('즐겨찾기에 추가됨')">★</div>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="category_빈주시.html" class="wiki-link">빈주시</a> | 
+            <a href="category_basic_admin.html" class="wiki-link">덕빈북도의 기초자치단체</a> | 
+            <a href="category_1949.html" class="wiki-link">1949년 설치된 행정구역</a>
+        </div>
+
+        <!-- 2. 도 행정구역 내비게이션 -->
+        <div class="nav-box rounded overflow-hidden shadow-sm" style="border-color: var(--wiki-fixed);">
+            <div class="nav-box-header" style="background-color: var(--wiki-fixed);" onclick="toggleNav('guNav', 'guLabel')">
+                <span class="flex items-center">
+                    <img src="images/덕빈북도.png" alt="🏙️" style="height: 1.2em; width: auto; margin-right: 5px;" onerror="this.outerHTML='🏙️'">
+                    <span>덕빈북도의 행정구역</span>
+                </span>
+                <span id="guLabel" class="text-[10px] bg-white/20 px-2 py-0.5 rounded nav-toggle-btn">[접기]</span>
+            </div>
+            <div id="guNav" class="nav-box-body">
+                <table class="nav-table text-xs">
+                    <tr>
+                        <th style="background-color: var(--wiki-fixed) !important;">시(市)</th>
+                        <td>
+                            <div class="flex flex-wrap justify-center gap-2">
+                                <a href="강주시.html" class="admin-item"><img src="images/logo_gangju.png" class="admin-logo-space" alt="강주" onerror="this.src='images/logo_placeholder.png'">강주시</a>
+                                <a href="계성시.html" class="admin-item"><img src="images/logo_gyeseong.png" class="admin-logo-space" alt="계성" onerror="this.src='images/logo_placeholder.png'">계성시</a>
+                                <a href="군천시.html" class="admin-item"><img src="images/logo_guncheon.png" class="admin-logo-space" alt="군천" onerror="this.src='images/logo_placeholder.png'">군천시</a>
+                                <a href="서진시.html" class="admin-item"><img src="images/logo_seojin.png" class="admin-logo-space" alt="서진" onerror="this.src='images/logo_placeholder.png'">서진시</a>
+                                <a href="서해시.html" class="admin-item"><img src="images/logo_seohae.png" class="admin-logo-space" alt="서해" onerror="this.src='images/logo_placeholder.png'">서해시</a>
+                                <a href="약산시.html" class="admin-item"><img src="images/logo_yaksan.png" class="admin-logo-space" alt="약산" onerror="this.src='images/logo_placeholder.png'">약산시</a>
+                                <a href="전산시.html" class="admin-item"><img src="images/logo_jeonsan.png" class="admin-logo-space" alt="전산" onerror="this.src='images/logo_placeholder.png'">전산시</a>
+                                <a href="천주시.html" class="admin-item"><img src="images/logo_cheonju.png" class="admin-logo-space" alt="천주" onerror="this.src='images/logo_placeholder.png'">천주시</a>
+                                <a href="빈주시.html" class="admin-item"><img src="images/logo_binju.png" class="admin-logo-space" alt="빈주" onerror="this.src='images/logo_placeholder.png'"><strong>빈주시</strong></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="background-color: var(--wiki-fixed) !important;">군(郡)</th>
+                        <td>
+                            <div class="flex justify-center flex-wrap gap-2">
+                                <a href="기도군.html" class="admin-item"><img src="images/logo_gido.png" class="admin-logo-space" alt="기도" onerror="this.src='images/logo_placeholder.png'">기도군</a>
+                                <a href="낭원군.html" class="admin-item"><img src="images/logo_nangwon.png" class="admin-logo-space" alt="낭원" onerror="this.src='images/logo_placeholder.png'">낭원군</a>
+                                <a href="덕현군.html" class="admin-item"><img src="images/logo_deokhyeon.png" class="admin-logo-space" alt="덕현" onerror="this.src='images/logo_placeholder.png'">덕현군</a>
+                                <a href="모제군.html" class="admin-item"><img src="images/logo_moje.png" class="admin-logo-space" alt="모제" onerror="this.src='images/logo_placeholder.png'">모제군</a>
+                                <a href="반양군.html" class="admin-item"><img src="images/logo_banyang.png" class="admin-logo-space" alt="반양" onerror="this.src='images/logo_placeholder.png'">반양군</a>
+                                <a href="상안군.html" class="admin-item"><img src="images/logo_sangan.png" class="admin-logo-space" alt="상안" onerror="this.src='images/logo_placeholder.png'">상안군</a>
+                                <a href="선곡군.html" class="admin-item"><img src="images/logo_seongok.png" class="admin-logo-space" alt="선곡" onerror="this.src='images/logo_placeholder.png'">선곡군</a>
+                                <a href="저천군.html" class="admin-item"><img src="images/logo_jeocheon.png" class="admin-logo-space" alt="저천" onerror="this.src='images/logo_placeholder.png'">저천군</a>
+                                <a href="치원군.html" class="admin-item"><img src="images/logo_chiwon.png" class="admin-logo-space" alt="치원" onerror="this.src='images/logo_placeholder.png'">치원군</a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- 3. 해당 시/군 행정구역 내비게이션 -->
+        <div class="nav-box rounded overflow-hidden shadow-sm">
+            <div class="nav-box-header" onclick="toggleNav('dongNav', 'dongLabel')">
+                <span class="flex items-center">
+                    <img src="images/빈주시.png" alt="📂" style="height: 1.2em; width: auto; margin-right: 5px;" onerror="this.outerHTML='📂'">
+                    <span>덕빈북도 빈주시의 행정구역</span>
+                </span>
+                <span id="dongLabel" class="text-[10px] bg-white/20 px-2 py-0.5 rounded nav-toggle-btn">[접기]</span>
+            </div>
+            <div id="dongNav" class="nav-box-body">
+                <table class="nav-table text-xs text-center">
+                    <tr>
+                        <th>일반구</th>
+                        <td><a href="가원구.html" class="wiki-link">가원구</a></td>
+                        <td><a href="빈성구.html" class="wiki-link">빈성구</a></td>
+                        <td><a href="장기구.html" class="wiki-link">장기구</a></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4 flex-grow">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 md:order-1">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">상징</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">외국어 표기</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">역사</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">지리</a>
+                        <ul class="lvl-2">
+                            <li>5.1. <a href="#s-5-1" class="wiki-link">자연지리</a></li>
+                            <li>5.2. <a href="#s-5-2" class="wiki-link">기후</a></li>
+                            <li>5.3. <a href="#s-5-3" class="wiki-link">도시구조</a></li>
+                            <li>5.4. <a href="#s-5-4" class="wiki-link">인구</a></li>
+                        </ul>
+                    </li>
+                    <li>6. <a href="#s-6" class="wiki-link">교통</a></li>
+                    <li>7. <a href="#s-7" class="wiki-link">지방공기업</a></li>
+                    <li>8. <a href="#s-8" class="wiki-link">관공서</a></li>
+                    <li>9. <a href="#s-9" class="wiki-link">경제</a></li>
+                    <li>10. <a href="#s-10" class="wiki-link">관광</a></li>
+                    <li>11. <a href="#s-11" class="wiki-link">생활문화</a></li>
+                    <li>12. <a href="#s-12" class="wiki-link">정치</a></li>
+                    <li>13. <a href="#s-13" class="wiki-link">군사</a></li>
+                    <li>14. <a href="#s-14" class="wiki-link">하위 행정구역</a></li>
+                    <li>15. <a href="#s-15" class="wiki-link">기타</a></li>
+                    <li>16. <a href="#s-16" class="wiki-link">자매결연도시 및 우호도시</a></li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
+                <div class="infobox-top-label">빈주시 개요</div>
+                <div class="infobox-title-row">
+                    <!-- 로고 이미지 적용 -->
+                    <div class="infobox-logo">
+                        <img src="images/logo_binju.png" alt="로고" onerror="this.style.display='none'; this.parentNode.innerHTML='<span class=\'text-[10px] text-gray-400 font-bold\'>빈주시<br>LOGO</span>'">
+                    </div>
+                    <div class="infobox-name">
+                        <div class="text-xl font-bold">빈주시</div>
+                        <div class="text-[9px] opacity-70 uppercase tracking-tighter">Binju City / 彬州市</div>
+                        <div class="text-[10px] text-gray-500 mt-1 font-bold">"시민이 행복한 더 큰 빈주"</div>
+                    </div>
+                </div>
+                <table>
+                    <tr><th>시청 소재지</th><td><a href="빈성구.html" class="wiki-link">빈성구</a> 동신동 282</td></tr>
+                    <tr><th>광역자치단체</th><td><a href="덕빈북도.html" class="wiki-link">덕빈북도</a></td></tr>
+                    <tr><th>하위 행정 구역</th><td>3구 3읍 8면 31행정동 79법정동</td></tr>
+                    <tr><th>면적</th><td>529.54㎢</td></tr>
+                    <tr><th>인구</th><td>837,340명 (2025년)</td></tr>
+                    <tr><th>인구 밀도</th><td>1,581.2명/㎢</td></tr>
+                    <tr><th>시장</th><td><span class="wiki-badge badge-minju">민주</span> <strong><a href="이재성.html" class="wiki-link">이재성</a></strong> (초선)</td></tr>
+                    <tr><th>도의원</th><td><span class="wiki-badge badge-minju">민주</span> 14석 (총 14석)</td></tr>
+                    <tr><th>시의원</th><td><span class="wiki-badge badge-minju">민주</span> 38석<br><span class="wiki-badge badge-gukhim">국힘</span> 4석<br>(총 42석)</td></tr>
+                    <tr><th>국회의원</th><td>갑: <span class="wiki-badge badge-minju">민주</span> <a href="박현언.html" class="wiki-link">박현언</a><br>을: <span class="wiki-badge badge-minju">민주</span> <a href="고한선.html" class="wiki-link">고한선</a><br>병: <span class="wiki-badge badge-minju">민주</span> <a href="유상미.html" class="wiki-link">유상미</a><br>정: <span class="wiki-badge badge-minju">민주</span> <a href="박신언.html" class="wiki-link">박신언</a></td></tr>
+                    <tr><th>상징</th><td>시화: 개나리<br>시목: 소나무<br>시조: 까치</td></tr>
+                    <tr><th>지역 번호</th><td>078</td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <p>대한민국 <strong><a href="덕빈북도.html" class="wiki-link">덕빈북도</a></strong>의 도청 소재지이자 최대 도시이다. 덕빈북도의 중앙부에 위치하며, 정치, 경제, 문화, 교통의 중심지 역할을 하고 있다. 인구는 약 83만 명으로, 도내에서 유이하게 구(區)가 설치된 특례시급 대도시이다. 동쪽으로는 <a href="반양군.html" class="wiki-link">반양군</a>, 서쪽으로는 <a href="모제군.html" class="wiki-link">모제군</a>, 북쪽으로는 <a href="군천시.html" class="wiki-link">군천시</a>, <a href="전산시.html" class="wiki-link">전산시</a>, 남쪽으로는 <a href="강주시.html" class="wiki-link">강주시</a>, <a href="저천군.html" class="wiki-link">저천군</a>과 접하고 있다. 과거 덕빈도 시절부터 행정의 중심지였으며, 현재도 <a href="덕빈북도청.html" class="wiki-link">덕빈북도청</a>, <a href="덕빈북도의회.html" class="wiki-link">덕빈북도의회</a> 등 주요 관공서가 밀집해 있다. <del>이름만 보면 왠지 술이 생각난다.</del></p>
+        
+        <h2 id="s-2">2. 상징</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>시화(市花): <a href="개나리.html" class="wiki-link">개나리</a></strong> - 희망과 번영을 상징한다.</li>
+            <li><strong>시목(市木): <a href="소나무.html" class="wiki-link">소나무</a></strong> - 변함없는 기상을 나타낸다.</li>
+            <li><strong>시조(市鳥): <a href="까치.html" class="wiki-link">까치</a></strong> - 반가운 소식과 손님을 의미한다.</li>
+            <li><strong>슬로건:</strong> "시민이 행복한 더 큰 빈주"</li>
+        </ul>
+
+        <h2 id="s-3">3. 외국어 표기</h2>
+        <table class="data-table text-center w-auto">
+            <tr><th class="w-32">언어</th><th>표기</th></tr>
+            <tr><td>영어</td><td>Binju-si</td></tr>
+            <tr><td>한자</td><td>彬州市</td></tr>
+            <tr><td>일본어</td><td>ビンジュ市</td></tr>
+            <tr><td>중국어</td><td>彬州市</td></tr>
+        </table>
+
+        <h2 id="s-4">4. 역사</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>삼국시대 ~ 조선시대:</strong> 고대부터 이 지역의 중심지였으며, '빈주목'이 설치되어 인근 고을을 관할했다.</li>
+            <li><strong>1883년:</strong> 계미군란(빈주전역의 군인의 난)과 계미홍수로 인한 도 관아 파괴로 인해 대체지로서 일시적으로 일본인들이 거주하기 시작한 <a href="효빈.html" class="wiki-link">효빈</a> 지역에 도청이 들어서게 되었다.</li>
+            <li><strong>1928년:</strong> 빈주시내에 <a href="빈효선.html" class="wiki-link">빈효선</a> 열차가 개통하면서 빈주역이 빈주면 영정3정목(현 관동3가)에 들어섰다.</li>
+            <li><strong>1929년:</strong> 빈주역에 <a href="덕빈선.html" class="wiki-link">덕빈선</a> 열차가 개통하였다.</li>
+            <li><strong>1935년:</strong> 빈주면이 빈주읍으로 승격되었다.</li>
+            <li><strong>1945년:</strong> 빈주읍이 <strong>빈주부</strong>로 승격되었고, 잔여지역은 <strong>빈성군</strong>이 되었다.</li>
+            <li><strong>1949년:</strong> 빈주부가 <strong>빈주시</strong>로 개칭되었다.</li>
+            <li><strong>1953년:</strong> 효빈시에 있던 도청이 파괴되어 원 도청 소재지인 빈주시로 도청을 복귀하였다.</li>
+            <li><strong>1960년:</strong> 장기면 일부(월삼리, 동습리, 칠정리, 서나리, 동원리)와 동태면 일부(황태리, 명태리)를 편입하였다.</li>
+            <li><strong>1967년:</strong> <a href="빈주역.html" class="wiki-link">빈주역</a>이 관동3가에서 늑골동(현위치)로 이동하였고, <a href="상빈선.html" class="wiki-link">상빈선</a>이 개통하였다.</li>
+            <li><strong>1973년:</strong> 천조면 천내리, 아논리, 차랑리 및 동면 문내리, 문외리, 여연리, 사민리를 편입하였다.</li>
+            <li><strong>1979년:</strong> 장기면 미천리, 산중리, 장기리를 편입하였다.</li>
+            <li><strong>1983년:</strong> 북면 전체를 편입하였다. 동시에 빈성군 송원면이 송원읍으로 승격하였다.</li>
+            <li><strong>1986년:</strong> 장기면 잔여지역을 편입하였다.</li>
+            <li><strong>1989년:</strong> 빈주역에 <a href="강빈선.html" class="wiki-link">강빈선</a>이 개통하였다.</li>
+            <li><strong>1995년:</strong> 도농복합시 설치에 따라 인근 <strong>빈성군(彬城郡)</strong>과 통합하여 현재의 도농복합형 빈주시가 출범하였다.</li>
+            <li><strong>1998년:</strong> 빈주시가 구(區)제도를 실시하면서 2구를 분구하였다(<a href="빈성구.html" class="wiki-link">빈성구</a>, <a href="가원구.html" class="wiki-link">가원구</a>). 동시에 오택면이 오택읍으로 승격하였다.</li>
+            <li><strong>2008년:</strong> 빈성구가 빈성구와 <a href="장기구.html" class="wiki-link">장기구</a>로 분구되었다.(3구 체제)</li>
+            <li><strong>2014년:</strong> 빈주역에 <a href="빈효고속선.html" class="wiki-link">빈효고속선</a>(KTX/SRT)이 개통되었다.</li>
+            <li><strong>2015년:</strong> 노후화된 중앙동 도청에서 <a href="천조면.html" class="wiki-link">천조면</a> 증림리의 신 청사로 이전하였다.</li>
+            <li><strong>2017년:</strong> 천조면이 <a href="천조읍.html" class="wiki-link">천조읍</a>으로 승격하였다.</li>
+        </ul>
+
+        <h2 id="s-5">5. 지리</h2>
+        <h3 id="s-5-1">5.1. 자연지리</h3>
+        <p>빈주시의 동부는 산악 지형이 일부 존재하나, 시가지가 형성된 중서부는 대체로 평탄한 분지 및 평야 지형이다. 도심을 관통하는 하천을 중심으로 시가지가 발달했다.</p>
+        
+        <h3 id="s-5-2">5.2. 기후</h3>
+        <p>남부 내륙 분지형 기후와 서해안성 기후가 혼재되어 나타난다. 연평균 기온은 13~14℃ 내외이다.</p>
+
+        <h3 id="s-5-3">5.3. 도시구조</h3>
+        <ul class="list-disc pl-5">
+            <li><strong>원도심 (<a href="빈성구.html" class="wiki-link">빈성구</a>):</strong> 과거 빈주목 관아와 빈주읍성이 있던 역사적 중심지로, 전통 시장과 상권이 발달해 있다.</li>
+            <li><strong>행정중심 (<a href="가원구.html" class="wiki-link">가원구</a>):</strong> 덕빈북도청과 빈주시청, 빈주역이 위치한 현재의 행정/교통 중심지이다.</li>
+            <li><strong>신도심 (<a href="장기구.html" class="wiki-link">장기구</a>):</strong> 대규모 택지 개발과 산업단지가 조성된 지역으로, 인구가 가장 많고 젊은 층의 비중이 높다.</li>
+        </ul>
+        
+        <h3 id="s-5-4">5.4. 인구</h3>
+        <p>2025년 기준 <strong>837,340명</strong>으로 덕빈북도 인구의 약 24%가 거주한다.</p>
+        <table class="data-table text-center w-full">
+            <thead>
+                <tr><th>행정구</th><th>인구 (명)</th><th>비고</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><a href="가원구.html" class="wiki-link">가원구</a></td><td>298,557</td><td>도청 소재지</td></tr>
+                <tr><td><a href="빈성구.html" class="wiki-link">빈성구</a></td><td>204,438</td><td>원도심</td></tr>
+                <tr><td><a href="장기구.html" class="wiki-link">장기구</a></td><td>334,345</td><td>최대 인구구(區)</td></tr>
+                <tr class="font-bold bg-gray-100"><td>계</td><td>837,340</td><td></td></tr>
+            </tbody>
+        </table>
+
+        <h2 id="s-6">6. 교통</h2>
+        <p>덕빈북도의 <strong>제1 교통 허브</strong>이다.</p>
+        <ul class="list-disc pl-5">
+            <li><strong>철도:</strong> <a href="가원구.html" class="wiki-link">가원구</a>에 위치한 <strong><a href="빈주역.html" class="wiki-link">빈주역</a></strong>은 경빈선, 덕빈선, 강빈선, 상빈선 등 주요 간선·지선 철도와 <strong><a href="빈효고속선.html" class="wiki-link">빈효고속선</a>(KTX/SRT)</strong>이 정차하는 핵심 역이다.</li>
+            <li><strong>도시철도:</strong> <strong><a href="빈주도시철도1호선.html" class="wiki-link">빈주 도시철도 1호선</a></strong>이 운행 중이며 빈주역 중심으로 도심을 관통한다. <a href="빈주권광역철도.html" class="wiki-link">빈주권 광역철도</a>를 통해 <a href="효빈광역시.html" class="wiki-link">효빈광역시</a>, <a href="천주시.html" class="wiki-link">천주시</a>, <a href="강주시.html" class="wiki-link">강주시</a> 등과 연결된다. 2025년 12월 30일에는 빈주 2호선 경전철이 개통될 예정이다.</li>
+            <li><strong>도로:</strong> <a href="빈효고속도로.html" class="wiki-link">빈효고속도로</a>, <a href="서해안고속도로.html" class="wiki-link">서해안고속도로</a> 등과 연결되는 IC가 시 외곽에 위치해 있다. 국도 1번, 17번 국도 등이 시내를 통과하여 도내 각지로 연결된다.</li>
+        </ul>
+
+        <h2 id="s-7">7. 지방공기업</h2>
+        <ul class="list-disc pl-5">
+            <li><a href="빈주도시공사.html" class="wiki-link">빈주도시공사</a></li>
+            <li>빈주시시설관리공단</li>
+        </ul>
+
+        <h2 id="s-8">8. 관공서</h2>
+        <ul class="list-disc pl-5">
+            <li><strong><a href="덕빈북도청.html" class="wiki-link">덕빈북도청</a></strong> (가원구 천조읍)</li>
+            <li><a href="덕빈북도의회.html" class="wiki-link">덕빈북도의회</a></li>
+            <li><a href="덕빈북도교육청.html" class="wiki-link">덕빈북도교육청</a></li>
+            <li><a href="덕빈북도경찰청.html" class="wiki-link">덕빈북도경찰청</a></li>
+            <li><strong><a href="빈주시청.html" class="wiki-link">빈주시청</a></strong> (가원구 중앙동)</li>
+            <li><a href="가원구청.html" class="wiki-link">가원구청</a>, <a href="빈성구청.html" class="wiki-link">빈성구청</a>, <a href="장기구청.html" class="wiki-link">장기구청</a></li>
+        </ul>
+
+        <h2 id="s-9">9. 경제</h2>
+        <h3 class="font-bold mt-4 mb-2">9.1. 산업</h3>
+        <p>장기구와 가원구 외곽을 중심으로 <strong>첨단산업단지</strong>와 <strong>물류단지</strong>가 조성되어 있다. 특히 <strong><a href="지미테크노밸리.html" class="wiki-link">지미 테크노밸리</a></strong> (가원구 지미동) 등이 지역 경제를 견인한다.</p>
+        
+        <h3 class="font-bold mt-4 mb-2">9.2. 상권</h3>
+        <p><a href="가원구.html" class="wiki-link">가원구</a> <a href="중앙동.html" class="wiki-link">중앙동</a>은 빈주역과 시청을 잇는 전통적인 중심 상권이며, <a href="장기구.html" class="wiki-link">장기구</a> 장기지구는 대형 마트와 아울렛, 영화관 등이 밀집한 신흥 상권이다.</p>
+
+        <h3 class="font-bold mt-4 mb-2">9.3. 금융</h3>
+        <p>덕빈북도의 제1 금융 중심지로, 주요 시중은행의 도 본부와 지역 은행 본점이 위치해 있다.</p>
+
+        <h2 id="s-10">10. 관광</h2>
+        <ul class="list-disc pl-5">
+            <li><strong><a href="빈주읍성.html" class="wiki-link">빈주읍성</a> (빈성구):</strong> 복원된 성곽과 역사문화거리.</li>
+            <li><strong><a href="덕빈중앙공원.html" class="wiki-link">덕빈중앙공원</a>:</strong> 도심 속 대규모 녹지 공간.</li>
+            <li><strong>축제:</strong> 매년 가을 <strong>빈주 국제 탈춤 페스티벌</strong>과 도화인 장미를 테마로 한 <strong>덕빈 장미 축제</strong>가 열린다.</li>
+            <li><strong>전시장:</strong> <a href="빈주컨벤션센터.html" class="wiki-link">빈주컨벤션센터 (BCC)</a></li>
+        </ul>
+
+        <h2 id="s-11">11. 생활문화</h2>
+        
+        <h3 id="s-11-1">11.1. 주거환경</h3>
+        <p><a href="장기구.html" class="wiki-link">장기구</a>의 <strong><a href="월삼동.html" class="wiki-link">월삼동</a></strong>, <strong><a href="장기동.html" class="wiki-link">장기동</a></strong> 일대에 대규모 아파트 단지가 조성되어 있어 주거 선호도가 높다. <a href="가원구.html" class="wiki-link">가원구</a>의 <strong><a href="천남동.html" class="wiki-link">천남동</a></strong> 일대도 신흥 주거지로 각광받고 있다.</p>
+
+        <h3 id="s-11-2">11.2. 교육</h3>
+        <p>각 구별 문서 참조. 대학교로는 <strong><a href="덕북대학교.html" class="wiki-link">덕북대학교</a></strong>, <a href="빈주대학교.html" class="wiki-link">빈주대학교</a> 등이 있으며, 고등학교는 <a href="빈주고등학교.html" class="wiki-link">빈주고등학교</a>, <a href="빈주여자고등학교.html" class="wiki-link">빈주여자고등학교</a> 등 명문고가 다수 위치한다.</p>
+
+        <h3 id="s-11-3">11.3. 문화시설</h3>
+        <ul class="list-disc pl-5">
+            <li><a href="빈주문화예술회관.html" class="wiki-link">빈주문화예술회관</a></li>
+            <li><a href="국립빈주박물관.html" class="wiki-link">국립빈주박물관</a></li>
+        </ul>
+
+        <h3 id="s-11-4">11.4. 음식</h3>
+        <p>전통적인 한식 문화가 발달해 있으며, '빈주 비빔밥'과 '빈주 콩나물국밥' 등이 유명하다.</p>
+
+        <h3 id="s-11-5">11.5. 의료기관</h3>
+        <ul class="list-disc pl-5">
+            <li><strong><a href="빈주대학교병원.html" class="wiki-link">빈주대학교병원</a></strong> (상급종합병원)</li>
+            <li><a href="덕빈의료원.html" class="wiki-link">덕빈의료원</a></li>
+        </ul>
+
+        <h3 id="s-11-6">11.6. 스포츠</h3>
+        <p><strong><a href="빈주종합운동장.html" class="wiki-link">빈주종합운동장</a></strong>에서 각종 도민 체육대회가 개최된다. <del>야구단이 생기길 기원하고 있다.</del></p>
+
+        <h2 id="s-12">12. 정치</h2>
+        <p><strong><span class="text-[#004ea2]">더불어민주당</span>의 절대 텃밭</strong>이다. 제22대 총선에서 4개 선거구 모두 민주당이 70% 중후반대의 압도적인 득표율로 석권했다.</p>
+        <table class="data-table text-center w-full">
+            <thead>
+                <tr><th>선거구</th><th>관할 구역</th><th>국회의원</th><th>정당</th><th>비고</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>빈주시 갑</td><td>가원구 일부</td><td><a href="박현언.html" class="wiki-link">박현언</a></td><td><span class="wiki-badge badge-minju">민주</span></td><td>득표율 73.97%</td></tr>
+                <tr><td>빈주시 을</td><td>빈성구, 장기구 일부</td><td><a href="고한선.html" class="wiki-link">고한선</a></td><td><span class="wiki-badge badge-minju">민주</span></td><td>득표율 76.04%</td></tr>
+                <tr><td>빈주시 병</td><td>빈성구, 가원구 일부</td><td><a href="유상미.html" class="wiki-link">유상미</a></td><td><span class="wiki-badge badge-minju">민주</span></td><td>득표율 68.25%</td></tr>
+                <tr><td>빈주시 정</td><td>장기구 (장기동 등)</td><td><a href="박신언.html" class="wiki-link">박신언</a></td><td><span class="wiki-badge badge-minju">민주</span></td><td>득표율 76.72%</td></tr>
+            </tbody>
+        </table>
+        <p class="text-sm text-gray-500 mt-2">* 자세한 읍면동별 현황은 각 구 문서 참조</p>
+
+        <h2 id="s-13">13. 군사</h2>
+        <p>덕빈북도의 내륙 방어를 담당하는 지역 방위 사단 사령부가 인근에 위치해 있으며, 빈주역을 통한 군수 물자 수송의 요충지이다.</p>
+
+        <h2 id="s-14">14. 하위 행정구역</h2>
+        <p>빈주시는 <strong>3개 구(Gu)</strong>와 그 산하의 <strong>43개 읍·면·동</strong>으로 구성되어 있다.</p>
+        
+        <h3 class="font-bold text-lg mt-4 mb-2 border-l-4 pl-2 border-[#1A237E]">14.1. <a href="가원구.html" class="wiki-link text-[#1A237E]">가원구 (Gawon-gu)</a></h3>
+        <p>인구 <strong>298,557명</strong>. 옛 빈주 구도심과 신도심이 있는 도청이 위치한 행정 중심지.</p>
+        <ul class="list-disc pl-5 text-sm">
+            <li><strong>행정동:</strong> <a href="천조읍.html" class="wiki-link">천조읍</a>(도청), <a href="중앙동.html" class="wiki-link">중앙동</a>, <a href="상만동.html" class="wiki-link">상만1~3동</a>, <a href="천남동.html" class="wiki-link">천남1~3동</a>, <a href="주전동.html" class="wiki-link">주전1~2동</a>, <a href="수옥동.html" class="wiki-link">수옥동</a>, <a href="아천동.html" class="wiki-link">아천동</a>, <a href="풍은동.html" class="wiki-link">풍은동</a>, <a href="동태면.html" class="wiki-link">동태면</a>, <a href="육미면.html" class="wiki-link">육미면</a>, <a href="현권면.html" class="wiki-link">현권면</a></li>
+        </ul>
+
+        <h3 class="font-bold text-lg mt-4 mb-2 border-l-4 pl-2 border-[#D4AF37]">14.2. <a href="빈성구.html" class="wiki-link text-[#D4AF37]">빈성구 (Binseong-gu)</a></h3>
+        <p>인구 <strong>204,438명</strong>. 역사와 전통이 있는 원도심.</p>
+        <ul class="list-disc pl-5 text-sm">
+            <li><strong>행정동:</strong> <a href="동신동.html" class="wiki-link">동신동</a>(시청), <a href="이은동.html" class="wiki-link">이은동</a>, <a href="고전면.html" class="wiki-link">고전면</a>, <a href="지산동.html" class="wiki-link">지산동</a>, <a href="여사동.html" class="wiki-link">여사동</a>, <a href="동습동.html" class="wiki-link">동습동</a>, <a href="차당동.html" class="wiki-link">차당동</a>, <a href="남면.html" class="wiki-link">남면</a>, <a href="동면.html" class="wiki-link">동면</a></li>
+        </ul>
+
+        <h3 class="font-bold text-lg mt-4 mb-2 border-l-4 pl-2 border-[#7B1FA2]">14.3. <a href="장기구.html" class="wiki-link text-[#7B1FA2]">장기구 (Janggi-gu)</a></h3>
+        <p>인구 <strong>334,345명</strong>. 최대 인구 밀집 지역이자 신도시.</p>
+        <ul class="list-disc pl-5 text-sm">
+            <li><strong>행정동:</strong> <a href="장기동.html" class="wiki-link">장기1~5동</a>, <a href="월삼동.html" class="wiki-link">월삼1~3동</a>, <a href="송원읍.html" class="wiki-link">송원읍</a>, <a href="오택읍.html" class="wiki-link">오택읍</a>, <a href="대정동.html" class="wiki-link">대정동</a>, <a href="시능동.html" class="wiki-link">시능동</a>, <a href="미천동.html" class="wiki-link">미천동</a>, <a href="황명동.html" class="wiki-link">황명동</a>, <a href="서면.html" class="wiki-link">서면</a>, <a href="노동면.html" class="wiki-link">노동면</a></li>
+        </ul>
+
+        <h2 id="s-15">15. 기타</h2>
+        <p>도내에서 가장 인구가 많고 인프라가 집중되어 있어 '빈주 공화국'이라는 우스갯소리가 있다. 지역 내 소지역주의가 옅은 편이나, 구도심(<a href="빈성구.html" class="wiki-link">빈성구</a>)과 신도심(<a href="장기구.html" class="wiki-link">장기구</a>) 간의 개발 격차 문제가 종종 거론된다.</p>
+
+        <h2 id="s-16">16. 자매결연도시 및 우호도시</h2>
+        <h3 class="font-bold mt-4 mb-2">16.1. 자매결연도시</h3>
+        <ul class="list-disc pl-5">
+            <li>서울특별시 <strong><a href="종로구.html" class="wiki-link">종로구</a></strong></li>
+            <li>경기도 <strong><a href="수원시.html" class="wiki-link">수원시</a></strong></li>
+            <li>경상남도 <strong><a href="창원시.html" class="wiki-link">창원시</a></strong></li>
+            <li>중국 장쑤성 <strong>쑤저우시</strong></li>
+            <li>일본 이시카와현 <strong>가나자와시</strong></li>
+        </ul>
+        <h3 class="font-bold mt-4 mb-2">16.2. 우호도시</h3>
+        <ul class="list-disc pl-5">
+            <li>베트남 <strong>다낭</strong></li>
+        </ul>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-500 text-xs pb-10 leading-relaxed">
+            <p class="mb-4">
+                이 저작물은 <strong>CC BY-NC-SA 2.0 KR</strong>에 따라 이용할 수 있다. <br>
+                (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+                기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖는다.
+            </p>
+            <p>
+                효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있다.<br>
+                효빈위키는 위키위키이다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+
+        function toggleNav(id, labelId) {
+            const content = document.getElementById(id);
+            const label = document.getElementById(labelId);
+            if (content.style.maxHeight === '0px') {
+                content.style.maxHeight = '2000px';
+                label.innerText = '[접기]';
+            } else {
+                content.style.maxHeight = '0px';
+                label.innerText = '[펼치기]';
+            }
+            isNavOpen[id] = !isNavOpen[id];
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        function handleSearchFromNav(title) {
+            if (!title) return;
+            let targetFile = title + ".html";
+            window.location.href = targetFile;
+        }
+
+        let isNavOpen = { natNav: true, guNav: true, dongNav: true };
+
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
+        };
+
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') handleSearchFromNav(this.value.trim());
+        });
+    </script>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+</body>
+</html>

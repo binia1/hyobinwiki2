@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈과학기술원 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* 문서 테마 컬러: HIST 딥 블루 */
+            --wiki-main: #004488; 
+            --wiki-sub: #003366;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #004488;
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.15rem; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 스타일 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 450px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-header { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.4rem; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: #f0f4f8; color: var(--wiki-main); width: 100px; padding: 6px 10px; border: 1px solid var(--wiki-border); text-align: center; font-weight: bold; vertical-align: middle; }
+        .infobox td { padding: 6px 10px; border: 1px solid var(--wiki-border); vertical-align: middle; }
+        
+        /* 테이블 스타일 */
+        .wiki-table { border-collapse: collapse; width: 100%; margin: 10px 0; border: 1px solid #ccc; }
+        .wiki-table th { background-color: var(--wiki-main); color: white; padding: 8px; border: 1px solid #ccc; text-align: center; font-weight: bold; }
+        .wiki-table td { padding: 8px; border: 1px solid #ccc; background: white; }
+        .wiki-table-center { text-align: center; }
+        .wiki-table-sub { background-color: #f0f4f8; font-weight: bold; text-align: center; color: var(--wiki-main); }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* 기타 요소 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+        del { color: #ccc; text-decoration: line-through; }
+        .wiki-gray { color: #888; font-size: 0.9em; }
+        
+        /* 폴딩(접기/펼치기) 구현 */
+        details { border: 1px solid #aaa; border-radius: 4px; padding: 0; margin-bottom: 10px; background: white; }
+        summary { font-weight: bold; padding: 0.5em; cursor: pointer; background-color: #eee; list-style: none; display: flex; justify-content: center; align-items: center; }
+        summary:after { content: " [ 펼치기 · 접기 ]"; font-size: 0.8em; margin-left: 5px; color: #555; }
+        details[open] { padding: 0; }
+        details[open] summary { border-bottom: 1px solid #aaa; }
+
+        /* 하단 네비게이션 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+        
+        /* 푸터 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+        
+        /* 상단 그라데이션 박스 */
+        .gradient-box {
+            background-image: linear-gradient(to right, #004488, #003366, #003366, #004488);
+            color: white; padding: 20px; text-align: center; border-radius: 5px; margin-bottom: 0px;
+        }
+
+        /* 지하철 노선 아이콘 스타일 */
+        .subway-line-5 {
+            display: inline-flex; justify-content: center; align-items: center;
+            width: 20px; height: 20px; border-radius: 50%;
+            background-color: #EE0022; color: white; font-weight: bold; font-size: 0.75rem;
+            margin-right: 4px;
+        }
+
+        /* 각주 스타일 */
+        .wiki-fn { font-size: 0.8em; vertical-align: super; color: var(--wiki-link); text-decoration: none; font-weight: bold; cursor: help; margin-left: 1px; }
+        .wiki-fn:hover { text-decoration: underline; }
+        .wiki-fn-content-box { border-top: 1px solid #ccc; margin-top: 40px; padding-top: 10px; font-size: 0.9rem; }
+        .wiki-fn-item { margin-bottom: 6px; }
+        .wiki-fn-back { color: var(--wiki-link); text-decoration: none; margin-right: 5px; font-weight: bold; }
+        
+        /* 각주 툴팁 (호버보드) */
+        #wiki-fn-tooltip {
+            position: fixed;
+            display: none;
+            background: #fff;
+            border: 1px solid var(--wiki-main);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            max-width: 350px;
+            z-index: 100000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: 6px;
+            pointer-events: none;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        /* 둘러보기 틀 스타일 */
+        .nav-template { width: 100%; border: 2px solid var(--wiki-main); border-radius: 4px; overflow: hidden; margin-bottom: 20px; clear: both; font-size: 0.9rem; }
+        .nav-template-header { background-color: var(--wiki-main); color: white; padding: 8px 12px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .nav-template-content { background-color: #fff; }
+        .nav-template-table { width: 100%; border-collapse: collapse; }
+        .nav-template-table th { background-color: #e6f2ee; color: #333; border: 1px solid #ddd; padding: 6px 10px; text-align: center; font-weight: bold; width: 100px; }
+        .nav-template-table td { border: 1px solid #ddd; padding: 6px 10px; }
+        .nav-template-sub-th { background-color: #f5f9fa; font-weight: bold; text-align: center; width: 40px; color: #555; }
+        .nav-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .nav-item { color: #333; text-decoration: none; }
+        .nav-item:hover { text-decoration: underline; color: var(--wiki-link); }
+        .nav-current { font-weight: 900; color: white; background-color: var(--wiki-main); padding: 2px 6px; border-radius: 4px; }
+        .nav-current:hover { color: white; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-fn-tooltip"></div>
+
+    <!-- 상단 네비게이션 (검색창 바) - 색상 #7777AA 고정 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: #7777AA;">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="goToLink('효빈위키_대문.html')">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a onclick="goToLink('토론.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">토론</a>
+                <a onclick="goToLink('편집.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">편집</a>
+                <a onclick="goToLink('역사.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">효빈과학기술원</div>
+            <div class="flex gap-2 mb-1">
+                <a onclick="goToLink('효빈과학기술원.html')" class="wiki-btn">문서</a>
+                <a onclick="goToLink('토론.html')" class="wiki-btn">토론</a>
+                <a onclick="goToLink('편집.html')" class="wiki-btn">편집</a>
+                <a onclick="goToLink('역사.html')" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold" style="color: var(--wiki-main);">분류:</span> 
+            <a onclick="goToLink('효빈시의_대학교.html')" class="wiki-link">효빈광역시의 대학교</a> | 
+            <a onclick="goToLink('과학기술원.html')" class="wiki-link">과학기술원</a> |
+            <a onclick="goToLink('1977년_개교.html')" class="wiki-link">1977년 개교</a> |
+            <a onclick="goToLink('효빈과학기술원.html')" class="wiki-link">효빈과학기술원</a> |
+            <a onclick="goToLink('효빈광역시_대학_S등급.html')" class="wiki-link">효빈광역시 대학/S등급</a>
+        </div>
+
+        <!-- 상단 관련 학교/협의회 템플릿 (효빈광역시 대학교 현황) -->
+        <div class="mb-5">
+            <div class="nav-template">
+                <div class="nav-template-header">
+                    <span style="flex:1;"></span>
+                    <span style="flex:2; text-align: center;"><a onclick="goToLink('효빈시의_대학교.html')" style="color: white; text-decoration: none; cursor: pointer;">효빈광역시 대학교 현황</a></span>
+                    <span style="flex:1; text-align: right; font-size: 0.8em; font-weight: normal;"><a style="color: #ddd; cursor: pointer; text-decoration: none;">[편집]</a></span>
+                </div>
+                <div class="nav-template-content">
+                    <table class="nav-template-table">
+                        <tr>
+                            <th rowspan="1">국립</th>
+                            <td class="nav-template-sub-th">ㅎ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('효빈대학교.html')" class="nav-item">효빈대학교</a>
+                                    <a onclick="goToLink('효빈과학기술원.html')" class="nav-item nav-current">효빈과학기술원(HIST)</a>
+                                    <a onclick="goToLink('효빈교육대학교.html')" class="nav-item">효빈교육대학교</a>
+                                    <a onclick="goToLink('효빈해양대학교.html')" class="nav-item">효빈해양대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th rowspan="8">사립</th>
+                            <td class="nav-template-sub-th">ㄱ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('광연대학교.html')" class="nav-item">광연대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㄷ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('동구대학교.html')" class="nav-item">동구대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td class="nav-template-sub-th">ㅂ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('중촌대학교.html')" class="nav-item">중촌대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅅ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('삼선대학교.html')" class="nav-item">삼선대학교</a>
+                                    <a onclick="goToLink('성택대학교.html')" class="nav-item">성택대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅇ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('엽월대학교.html')" class="nav-item">엽월대학교</a>
+                                    <a onclick="goToLink('옥선대학교.html')" class="nav-item">옥선대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td class="nav-template-sub-th">ㅊ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('청엽국제학교_대학부.html')" class="nav-item">청엽국제학교 대학부</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅍ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('평안명대학교.html')" class="nav-item">평안명대학교</a>
+                                    <a onclick="goToLink('평천대학교.html')" class="nav-item">평천대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅎ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('해천대학교.html')" class="nav-item">해천대학교</a>
+                                    <a onclick="goToLink('효빈복지대학교.html')" class="nav-item">효빈복지대학교</a>
+                                    <a onclick="goToLink('효빈외국어대학교.html')" class="nav-item">효빈외국어대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>원격대학</th>
+                            <td class="nav-template-sub-th">ㅇ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('한국방송통신대학교.html')" class="nav-item">한국방송통신대학교 효빈·덕북지역대학</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="gradient-box">
+                <!-- 학교 로고/심볼 이미지 -->
+                <img src="HIST_UI.png" alt="HIST 로고" style="width: 200px; display: inline-block;" onerror="this.src='https://via.placeholder.com/200x80?text=HIST+Logo';">
+            </div>
+            
+            <details>
+                <summary></summary>
+                <div class="p-2 border border-t-0 bg-white">
+                    <table class="wiki-table" style="margin: 0; width: 100%;">
+                        <tr>
+                            <td colspan="4" class="text-center font-bold text-white" style="background-color: #004488;">대학 정보</td>
+                        </tr>
+                        <tr>
+                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_역사.html')" class="wiki-link text-[#004488]">역사</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_상징.html')" class="wiki-link text-[#004488]">상징</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_학부.html')" class="wiki-link text-[#004488]">학부</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_대학원.html')" class="wiki-link text-[#004488]">대학원</a></td>
+                        </tr>
+                        <tr>
+                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_캠퍼스.html')" class="wiki-link text-[#004488]">캠퍼스</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_총학생회.html')" class="wiki-link text-[#004488]">총학생회</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_연구소.html')" class="wiki-link text-[#004488]">부설 연구소</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_입시.html')" class="wiki-link text-[#004488]">입시</a></td>
+                        </tr>
+                    </table>
+                </div>
+            </details>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="infobox-header">
+                    효빈과학기술원<br>
+                    <span class="text-sm font-normal">Hyobin Institute of Science and Technology</span>
+                </div>
+                <div class="p-4 bg-white text-center border-b">
+                    <!-- 엠블럼 이미지 -->
+                    <div class="w-full flex justify-center py-4">
+                        <img src="HIST_UI.png" alt="HIST UI" class="w-48" onerror="this.src='https://via.placeholder.com/150?text=HIST';">
+                    </div>
+                </div>
+                <table>
+                    <tr><th>교훈</th><td>창의(Creativity), 도전(Challenge), 배려(Caring)</td></tr>
+                    <tr><th>슬로건</th><td>세상을 바꾸는 질문, 미래를 여는 해답</td></tr>
+                    <tr><th>교색</th><td>
+                         <span style="display:inline-block; width:15px; height:15px; background:#004488; border:1px solid #ccc; vertical-align:middle;"></span> HIST 딥 블루 (#004488)
+                    </td></tr>
+                    <tr><th>국가</th><td><a onclick="goToLink('대한민국.html')" class="wiki-link">대한민국</a></td></tr>
+                    <tr><th>분류</th><td><a onclick="goToLink('과학기술원.html')" class="wiki-link">과학기술원</a> (특별법법인)</td></tr>
+                    <tr><th>설립</th><td>1977년 5월 7일 <span class="text-xs font-bold text-red-500">(49주년)</span></td></tr>
+                    <tr><th>총장</th><td>제12대 <a onclick="goToLink('유영태.html')" class="wiki-link">유영태</a></td></tr>
+                    <tr><th>주소</th><td><a onclick="goToLink('효빈광역시.html')" class="wiki-link">효빈광역시</a> <a onclick="goToLink('서구_효빈광역시.html')" class="wiki-link">서구</a> 과학로 391 (<a onclick="goToLink('과진동.html')" class="wiki-link">과진동</a>)<a href="#fn-1" id="rfn-1" class="wiki-fn">[1]</a></td></tr>
+                    <tr><th>재적생</th><td>
+                        <strong>학부:</strong> 3,800명<br>
+                        <strong>대학원:</strong> 6,500명 <span class="text-xs text-gray-500">(2025년)</span>
+                    </td></tr>
+                    <tr><th>웹사이트</th><td><a href="https://www.hist.ac.kr" target="_blank" class="wiki-link">공식 홈페이지</a></td></tr>
+                </table>
+                <div class="w-full bg-[#eee] text-center p-2 font-bold cursor-pointer hover:bg-[#ddd]" onclick="alert('지도 기능 준비중')">
+                    [ 지도 펼치기 ]
+                </div>
+            </aside>
+
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1 w-full lg:w-auto">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">특징</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">학과 구성</a>
+                        <ul>
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">자연과학대학</a></li>
+                            <li>3.2. <a href="#s-3-2" class="wiki-link">생명과학기술대학</a></li>
+                            <li>3.3. <a href="#s-3-3" class="wiki-link">공과대학</a></li>
+                            <li>3.4. <a href="#s-3-4" class="wiki-link">정보융합대학</a></li>
+                            <li>3.5. <a href="#s-3-5" class="wiki-link">융합기초학부</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">캠퍼스 및 교통</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">여담</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">각주</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <blockquote>
+            <strong>"효빈의 미래, 나아가 인류의 내일을 설계하는 곳."</strong>
+        </blockquote>
+
+        <p><a onclick="goToLink('효빈광역시.html')" class="wiki-link">효빈광역시</a> <a onclick="goToLink('서구_효빈광역시.html')" class="wiki-link">서구</a> <a onclick="goToLink('과진동.html')" class="wiki-link">과진동</a>에 위치한 이공계 연구중심대학(과학기술원).</p>
+        <p>1977년 설립된 이래 대한민국 과학 기술 발전을 이끌어온 산실이자, <strong>효빈광역시 내 부동의 S등급(최상위권)</strong> 대학이다.</p>
+        <p><a onclick="goToLink('효빈대학교.html')" class="wiki-link">효빈대학교</a>(국립)와 함께 지역을 대표하는 양대 교육 기관이지만, 성격은 판이하다. 효빈대가 종합적인 학문을 다루는 거함이라면, HIST는 이공계 분야에 특화된 <strong>'엘리트 특수부대'</strong>에 가깝다. 특히 최근에는 효빈시의 역점 사업인 <strong>'무가선 트램'</strong>과 <strong>'자율주행 시스템'</strong>의 원천 기술을 이곳에서 개발하고 있어 시(市)와의 협력이 매우 긴밀하다.</p>
+        
+        <!-- 2. 특징 -->
+        <h2 id="s-2" class="anchor-offset">2. 특징</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>S등급 (Top Tier):</strong> 효빈시 내에서 입결, 연구 실적, 아웃풋 모든 면에서 최상위권이다. <a onclick="goToLink('KAIST.html')" class="wiki-link">KAIST</a>, <a onclick="goToLink('POSTECH.html')" class="wiki-link">POSTECH</a> 등과 어깨를 나란히 하는 명문 과기원이다.</li>
+            <li><strong>무학과 제도:</strong> 1학년은 전원 '새내기과정학부' 소속으로 입학하여, 2학년 진급 시 성적 제한 없이 자유롭게 전공을 선택할 수 있다.</li>
+            <li><strong>연구 중심:</strong> 학부생보다 대학원생 비율이 훨씬 높으며, 학부생들도 2~3학년 때부터 랩(Lab)실에 들어가 연구에 참여하는 문화(URP)가 정착되어 있다.</li>
+            <li><strong>과진 과학 타운:</strong> 학교가 위치한 서구 과진동 일대는 HIST를 중심으로 정부출연연구소, 기업 R&D 센터가 밀집한 '효빈의 대덕연구단지'로 불린다.</li>
+        </ul>
+
+        <!-- 3. 학과 구성 -->
+        <h2 id="s-3" class="anchor-offset">3. 학과 구성</h2>
+        <p>5개 단과대학(학부) 및 대학원으로 구성되어 있다.</p>
+        
+        <table class="wiki-table" style="margin-bottom: 20px;">
+             <tr>
+                <td colspan="3" class="wiki-table-center" style="background-color: #004488; color: white; font-size: 1.2rem;"><strong>효빈과학기술원 학과 구성</strong></td>
+            </tr>
+            <tr style="background-color: #f0f0f0;">
+                <td width="20%" class="wiki-table-center font-bold">단과대학</td>
+                <td width="25%" class="wiki-table-center font-bold">학과/학부</td>
+                <td width="55%" class="wiki-table-center font-bold">세부전공 및 비고</td>
+            </tr>
+            <tr id="s-3-1">
+                <td rowspan="3" class="wiki-table-center"><strong>자연과학대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('물리학과.html')" class="wiki-link">물리학과</a></td>
+                <td>양자광학, 고체물리, 입자물리 등. 기초 과학의 요람.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('수리과학과.html')" class="wiki-link">수리과학과</a></td>
+                <td>응용해석, 위상수학. 금융수학 및 암호학 분야가 강세다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('화학과.html')" class="wiki-link">화학과</a></td>
+                <td>유기화학, 물리화학, 나노화학.</td>
+            </tr>
+
+            <tr id="s-3-2">
+                <td rowspan="3" class="wiki-table-center"><strong>생명과학기술대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('생명과학과.html')" class="wiki-link">생명과학과</a></td>
+                <td>기초 생명과학 연구. 바이오 메디컬 분야의 혁신 주도.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('바이오및뇌공학과.html')" class="wiki-link">바이오및뇌공학과</a></td>
+                <td>바이오 융합 기술 및 뇌공학(Brain Engineering).</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('의과학대학원.html')" class="wiki-link">의과학대학원</a></td>
+                <td><strong>[특화]</strong> <a onclick="goToLink('효빈대학교_의과대학.html')" class="wiki-link">효빈대학교 의과대학</a>과 공동 연구를 진행하며, 의사과학자(MD-PhD)를 양성한다.</td>
+            </tr>
+
+            <tr id="s-3-3">
+                <td rowspan="6" class="wiki-table-center"><strong>공과대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('기계공학과.html')" class="wiki-link">기계공학과</a></td>
+                <td>전통 기계공학부터 로보틱스까지. HIST의 심장.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('항공우주공학과.html')" class="wiki-link">항공우주공학과</a></td>
+                <td>한국형 발사체 및 위성 기술 연구.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('전기및전자공학부.html')" class="wiki-link">전기및전자공학부</a></td>
+                <td>전기, 전자, 제어, 통신. 반도체 회로 설계의 메카.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('건설및환경공학과.html')" class="wiki-link">건설및환경공학과</a></td>
+                <td>스마트 시티 인프라 및 환경 공학.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('신소재공학과.html')" class="wiki-link">신소재공학과</a></td>
+                <td>차세대 배터리 및 첨단 소재 개발.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('생명화학공학과.html')" class="wiki-link">생명화학공학과</a></td>
+                <td>화공과 생명공학의 융합.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('원자력및양자공학과.html')" class="wiki-link">원자력및양자공학과</a></td>
+                <td>소형모듈원자로(SMR) 및 양자 컴퓨팅 기술.</td>
+            </tr>
+
+            <tr id="s-3-4">
+                <td rowspan="5" class="wiki-table-center"><strong>정보융합대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('전산학부.html')" class="wiki-link">전산학부</a></td>
+                <td>소프트웨어, 정보보호, 시스템 네트워크. '코딩 괴물'들의 서식지.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('인공지능학과.html')" class="wiki-link">인공지능학과</a></td>
+                <td>AI 이론 심화 및 산업 응용. 4차 산업혁명의 최전선.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('시스템반도체공학과.html')" class="wiki-link">시스템반도체공학과</a></td>
+                <td>반도체 설계(Fabless) 및 공정 기술.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('미래모빌리티학과.html')" class="wiki-link">미래모빌리티학과</a></td>
+                <td><strong>[효빈시 특화]</strong> 효빈시의 상징인 <strong>'무가선 저상 트램'</strong> 기술과 자율주행차 시스템을 중점적으로 연구한다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('산업디자인학과.html')" class="wiki-link">산업디자인학과</a></td>
+                <td>공학적 설계와 예술을 결합한 제품/UX 디자인. 세계 3대 디자인 어워드 단골 수상 학과.</td>
+            </tr>
+
+            <tr id="s-3-5">
+                <td rowspan="2" class="wiki-table-center"><strong>융합기초학부</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('새내기과정학부.html')" class="wiki-link">새내기과정학부</a></td>
+                <td>1학년 전원 소속. (무학과)</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('인문사회과학부.html')" class="wiki-link">인문사회과학부</a></td>
+                <td>리더십, 글쓰기, 과학사, 철학 등 소양 교육 담당.</td>
+            </tr>
+        </table>
+
+        <!-- 4. 캠퍼스 및 교통 -->
+        <h2 id="s-4" class="anchor-offset">4. 캠퍼스 및 교통</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>교통의 요지:</strong> <span class="subway-line-5">5</span> <a onclick="goToLink('효빈_도시철도_5호선.html')" class="wiki-link">효빈 도시철도 5호선</a> <strong><a onclick="goToLink('효빈과학기술원역.html')" class="wiki-link">효빈과학기술원역</a></strong>이 학교 정문과 바로 연결된다. 역명 자체가 학교 이름이며, 역 내부도 과학 테마로 꾸며져 있다.</li>
+            <li><strong>평지 캠퍼스:</strong> 넓고 평탄한 부지에 연구동들이 바둑판처럼 정돈되어 있다. 건물 사이를 이동할 때 전동 킥보드나 자전거가 필수다.</li>
+            <li><strong>오리 연못:</strong> 캠퍼스 중앙에 큰 연못(거위가 아니라 오리가 산다)이 있는데, 학교 마스코트인 '히스트(HIST) 덕'이 여기서 유래했다. 학생들은 이 오리를 교수님보다 더 깍듯이 모신다(...)</li>
+        </ul>
+
+        <!-- 5. 여담 -->
+        <h2 id="s-5" class="anchor-offset">5. 여담</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>효빈대와의 관계:</strong> <a onclick="goToLink('효빈대학교.html')" class="wiki-link">효빈대학교</a>와는 선의의 라이벌이자 협력 관계다. 축제 기간에는 '효-히 전(Hyo-Hi War)'이라는 교류전을 하는데, 해킹 대회나 AI 스타크래프트 대결 등 종목이 매우 공대스럽다.</li>
+            <li><strong>괴짜 총장님:</strong> 유영태 총장은 평소에도 실험복을 입고 학생 식당에 출몰하기로 유명하다. "총장님, 밥 좀 사주세요" 하면 쿨하게 법인카드를 긁어주신다는 미담이 있다.</li>
+            <li><strong>트램 덕후들의 성지:</strong> 미래모빌리티학과 연구동 앞에는 차세대 트램의 시제품(프로토타입)이 전시되어 있어, 철도 동호인들이 알음알음 찾아와 사진을 찍고 간다.</li>
+            <li><strong>박효빈 시장의 방문:</strong> 과학 기술에 관심이 많은 <a onclick="goToLink('박효빈.html')" class="wiki-link">박효빈</a> 시장이 자주 방문한다. 특히 모빌리티 연구센터에 와서 트램 기술 브리핑을 듣고 갈 때마다 연구비가 증액된다는 썰이 있다.</li>
+        </ul>
+
+        <!-- 6. 각주 -->
+        <h2 id="s-6" class="anchor-offset">6. 각주</h2>
+        <div class="wiki-fn-content-box">
+            <div class="wiki-fn-item" id="fn-1">
+                <a href="#rfn-1" class="wiki-fn-back">[1]</a> <a onclick="goToLink('효빈_도시철도_5호선.html')" class="wiki-link">효빈 도시철도 5호선</a> <a onclick="goToLink('효빈과학기술원역.html')" class="wiki-link">효빈과학기술원역</a>과 지하로 연결된다.
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <div class="nav-box shadow-sm mt-10">
+            <div class="nav-box-header">효빈과학기술원 관련 문서</div>
+            <div class="nav-box-content leading-loose text-sm">
+                <a onclick="goToLink('효빈과학기술원.html')" class="wiki-link">효빈과학기술원</a> · 
+                <a onclick="goToLink('효빈과학기술원_대학원.html')" class="wiki-link">대학원</a> · 
+                <a onclick="goToLink('효빈과학기술원_총학생회.html')" class="wiki-link">총학생회</a> · 
+                <a onclick="goToLink('효빈과학기술원_연구소.html')" class="wiki-link">부설 연구소</a>
+            </div>
+        </div>
+
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2">
+                이 문서는 <strong>효빈위키</strong>의 문서입니다. <br>
+                기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.
+            </p>
+            <p class="mt-4 text-xs text-gray-500">
+                이 문서의 내용은 사실과 다를 수 있으며, 법적 효력을 갖지 않습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 검색 기능 핸들러
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(query)}`, '_blank');
+            } else {
+                showMsg('검색어를 입력해주세요.');
+            }
+        }
+
+        // 메시지 박스 표시 함수
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        // 링크 이동 핸들러
+        async function goToLink(filename) {
+            if (filename.startsWith('#')) return;
+
+            const namuKeywords = ['대한민국', '국립대학', '사립대학'];
+            const pureName = filename.replace('.html', '').replace(/_/g, ' ');
+            
+            if (namuKeywords.includes(pureName) || filename.includes('namu.wiki')) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(pureName)}`, '_blank');
+                return;
+            }
+
+            try {
+                location.href = filename;
+            } catch (e) {
+                showMsg('문서를 찾을 수 없습니다.');
+            }
+        }
+        
+        // 목차 및 내부 링크 스무스 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (!targetId || targetId === '#') return;
+
+                e.preventDefault();
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, 
+                        behavior: 'smooth'
+                    });
+                    
+                    targetElement.style.transition = 'background 0.5s';
+                    targetElement.style.backgroundColor = '#fff3cd';
+                    setTimeout(() => { targetElement.style.backgroundColor = 'transparent'; }, 1500);
+                }
+            });
+        });
+
+        // --- 각주 툴팁 호버보드 로직 ---
+        const tooltip = document.getElementById('wiki-fn-tooltip');
+        const footnotes = document.querySelectorAll('.wiki-fn');
+
+        footnotes.forEach(fn => {
+            fn.addEventListener('mouseenter', (e) => {
+                const targetId = fn.getAttribute('href').substring(1); 
+                const contentEl = document.getElementById(targetId);
+                
+                if (contentEl) {
+                    tooltip.innerHTML = contentEl.innerHTML;
+                    const backLink = tooltip.querySelector('.wiki-fn-back');
+                    if(backLink) {
+                        backLink.style.display = 'none'; 
+                    }
+                    tooltip.style.display = 'block';
+                }
+            });
+
+            fn.addEventListener('mousemove', (e) => {
+                const x = e.clientX + 15;
+                const y = e.clientY + 15;
+                
+                const tooltipRect = tooltip.getBoundingClientRect();
+                let finalX = x;
+                let finalY = y;
+
+                if (x + tooltipRect.width > window.innerWidth) {
+                    finalX = e.clientX - tooltipRect.width - 10;
+                }
+                if (y + tooltipRect.height > window.innerHeight) {
+                    finalY = e.clientY - tooltipRect.height - 10;
+                }
+
+                tooltip.style.left = finalX + 'px';
+                tooltip.style.top = finalY + 'px';
+            });
+
+            fn.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+</body>
+</html>

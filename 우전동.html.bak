@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우전동 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        /* [핵심 설정] 위키 테마 변수 - 청엽구 테마 */
+        :root { 
+            --wiki-fixed: #7777AA; 
+            --wiki-main: #006699; 
+            --wiki-point: #004EA2; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+            --wiki-tooltip-bg: #ffffff;
+            --wiki-tooltip-border: #aaaaaa;
+            --wiki-tooltip-text: #333333;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-fixed: #9999CC;
+            --wiki-main: #3399CC; 
+            --wiki-point: #66B2FF;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+            --wiki-table-header-text: #ffffff;
+            --wiki-tooltip-bg: #2d2f34;
+            --wiki-tooltip-border: #666666;
+            --wiki-tooltip-text: #eeeeee;
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            margin: 0; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .wiki-container { 
+            max-width: 1152px; 
+            margin: 0 auto; 
+            padding: 20px 40px; 
+            border-left: 1px solid var(--wiki-border); 
+            border-right: 1px solid var(--wiki-border); 
+            min-height: 100vh; 
+            background-color: var(--wiki-bg);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: fixed !important; }
+        th, td { border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        /* 외부 링크 (나무위키 등) 아이콘 표시 */
+        .wiki-link[href^="http"]::after {
+            content: "\f35d"; /* FontAwesome external link icon */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 0.7em;
+            margin-left: 4px;
+            opacity: 0.7;
+        }
+
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 3px solid var(--wiki-main); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ""; display: inline-block; width: 8px; height: 1.8rem; background: var(--wiki-main); margin-right: 5px; }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: var(--wiki-text); border-left: 5px solid var(--wiki-main); padding-left: 12px; display: flex; align-items: center;}
+        
+        .wiki-quote { border-left: 5px solid var(--wiki-main); padding: 10px 15px; background-color: rgba(0, 102, 153, 0.1); margin: 15px 0; font-style: italic; color: var(--wiki-text); }
+
+        .infobox { border: 2px solid var(--wiki-main); background-color: var(--wiki-gray-bg); width: 100%; max-width: 380px; font-size: 0.85rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .infobox-top-label { background-color: var(--wiki-main); color: #fff; padding: 8px; text-align: center; font-weight: bold; font-size: 1.1em; }
+        .infobox-title-row { display: flex; border-bottom: 1px solid var(--wiki-border); background: #fff; color: #000; align-items: center; min-height: 80px; }
+        [data-theme='dark'] .infobox-title-row { background: #2d2f34; color: #fff; }
+        .infobox-logo { width: 100px; height: 100px; border-right: 1px solid var(--wiki-border); display: flex; align-items: center; justify-content: center; padding: 5px; background: #fff; }
+        .infobox-name { flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 10px; }
+        .infobox th { background: var(--wiki-main); color: #fff; width: 110px; text-align: center; padding: 6px 8px; font-weight: bold; border-color: #fff !important; }
+        .infobox td { padding: 6px 10px; text-align: left; }
+        
+        del { color: #999; text-decoration: line-through; }
+        
+        .nav-box { border: 2px solid var(--wiki-main); margin-bottom: 15px; font-size: 0.85rem; border-radius: 6px; overflow: hidden; clear: both; }
+        .nav-box-header { background-color: var(--wiki-main); color: #fff; padding: 8px 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; }
+        .nav-toggle-btn { position: absolute; right: 12px; font-size: 10px; background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px; }
+        .nav-table { width: 100%; border-collapse: collapse; text-align: center; }
+        .nav-table th { background-color: var(--wiki-main) !important; color: #fff !important; width: 100px; font-weight: bold; border: 1px solid white !important; }
+        .nav-table td { background-color: var(--wiki-gray-bg); border: 1px solid white !important; }
+        [data-theme='dark'] .nav-table td { background-color: #2d2f34; border: 1px solid #444 !important; }
+
+        .category-box { background: #fff; border: 1px solid var(--wiki-border); padding: 5px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        [data-theme='dark'] .category-box { background: #2d2f34; border-color: #444; }
+
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc li { margin-bottom: 4px; }
+
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        [data-theme='dark'] .wiki-btn-group { background: #2d2f34; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn.active { background-color: var(--wiki-main); color: white !important; font-weight: bold; }
+        
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+
+        sup.wiki-fn { font-size: 0.75rem; vertical-align: super; font-weight: normal; cursor: pointer; color: var(--wiki-link); }
+        sup.wiki-fn:hover { text-decoration: underline; }
+        
+        .wiki-footnote-area { margin-top: 40px; border-top: 1px solid var(--wiki-border); padding-top: 10px; font-size: 0.85rem; color: var(--wiki-text); }
+        .wiki-footnote-area ol { padding-left: 25px; }
+        .wiki-footnote-area li { margin-bottom: 5px; }
+        .wiki-footnote-area li:target { background-color: rgba(0, 102, 153, 0.2); transition: background-color 0.5s; }
+
+        #wiki-tooltip {
+            position: absolute;
+            display: none;
+            background-color: var(--wiki-tooltip-bg);
+            border: 1px solid var(--wiki-tooltip-border);
+            color: var(--wiki-tooltip-text);
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 9999;
+            max-width: 320px;
+            line-height: 1.4;
+            pointer-events: none;
+        }
+        #wiki-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 20px;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--wiki-tooltip-border) transparent transparent transparent;
+        }
+
+        /* 정당 뱃지 스타일 */
+        .party-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.75em;
+            line-height: 1.2;
+            text-decoration: none !important;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+        .badge-minju { background-color: #004EA2; border: 1px solid #004EA2; }
+        .badge-gukhim { background-color: #E61E2B; border: 1px solid #E61E2B; }
+        .badge-justice { background-color: #FFED00; color: #000 !important; border: 1px solid #e3d200; }
+    </style>
+</head>
+<body data-theme="light">
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-tooltip"></div>
+
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-fixed);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색 (Enter)" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner hover:bg-[#444477] transition">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">우전동</h1>
+            <div class="wiki-btn-group shadow-sm mb-4">
+                <a href="#" class="wiki-tool-btn">토론</a>
+                <a href="#" class="wiki-tool-btn active">편집</a>
+                <a href="#" class="wiki-tool-btn">역사</a>
+                <div class="wiki-tool-btn" onclick="showMsg('★ 즐겨찾기에 추가됨')">★</div>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="청엽구.html" class="wiki-link">청엽구</a> | 
+            <a href="#" class="wiki-link">청엽구의 행정동</a> |
+            <a href="#" class="wiki-link">청엽구의 법정동</a> |
+            <a href="#" class="wiki-link">BanG Dream!/성지순례</a>
+        </div>
+
+        <div class="nav-box rounded overflow-hidden shadow-sm" style="border-color: var(--wiki-main);">
+            <div class="nav-box-header" onclick="toggleNav('guNav', 'guLabel')">
+                <span class="flex items-center">
+                    <span><a href="효빈광역시.html" class="wiki-link text-white">효빈광역시</a> <a href="청엽구.html" class="wiki-link text-white">청엽구</a>의 <a href="#" class="wiki-link text-white">행정구역</a></span>
+                </span>
+                <span id="guLabel" class="text-[10px] bg-white/20 px-2 py-0.5 rounded nav-toggle-btn">[접기]</span>
+            </div>
+            <div id="guNav" class="nav-box-body transition-all duration-300 overflow-hidden" style="max-height: 2000px;">
+                <table class="nav-table text-xs text-center">
+                    <tr>
+                        <th style="width: 80px;">행정동</th>
+                        <td>
+                            <div class="flex flex-wrap justify-center gap-1 text-[0.85rem] leading-relaxed p-1">
+                                <a href="청엽1동.html" class="wiki-link">청엽1동</a> · 
+                                <a href="청엽2동.html" class="wiki-link">청엽2동</a> · 
+                                <a href="청엽3동.html" class="wiki-link">청엽3동</a> · 
+                                <a href="청엽4동.html" class="wiki-link">청엽4동</a> · 
+                                <a href="청엽5동.html" class="wiki-link">청엽5동</a> · 
+                                <a href="청엽6동.html" class="wiki-link">청엽6동</a> · 
+                                <span class="font-bold text-[#004EA2] underline decoration-2">우전1동</span> ·
+                                <span class="font-bold text-[#004EA2] underline decoration-2">우전2동</span> ·
+                                <span class="font-bold text-[#004EA2] underline decoration-2">우전3동</span> ·
+                                <a href="우택동.html" class="wiki-link">우택동</a> ·
+                                <a href="등동.html" class="wiki-link">등동</a> ·
+                                <a href="동리동.html" class="wiki-link">동리동</a> ·
+                                <a href="마잡1동.html" class="wiki-link">마잡1동</a> ·
+                                <a href="마잡2동.html" class="wiki-link">마잡2동</a> ·
+                                <a href="입빈동.html" class="wiki-link">입빈동</a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4 flex-grow">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 md:order-1">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">상세</a>
+                        <ul class="pl-4 text-xs text-gray-500">
+                            <li>2.1. <a href="#s-2-1" class="wiki-link">우전1동</a></li>
+                            <li>2.2. <a href="#s-2-2" class="wiki-link">우전2동</a></li>
+                            <li>2.3. <a href="#s-2-3" class="wiki-link">우전3동</a></li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3" class="wiki-link">성지순례 및 관광 (TMI)</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">교통</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">여담</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">각주</a></li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
+                <div class="infobox-top-label">
+                    <a href="효빈광역시.html" class="wiki-link text-white">효빈광역시</a> <a href="청엽구.html" class="wiki-link text-white">청엽구</a>의 <a href="#" class="wiki-link text-white">행정동</a><br>
+                    <span class="text-xl">우전동</span><br>
+                    <span class="text-xs font-normal opacity-80">Ujeon-dong | 宇田洞</span>
+                </div>
+                <div class="infobox-title-row">
+                    <div class="infobox-logo">
+                        <img src="images/logo_placeholder.png" alt="청엽구 로고" onerror="this.parentNode.innerHTML='<span class=\'text-2xl font-bold text-blue-800\'>청엽</span>'">
+                    </div>
+                    <div class="infobox-name">
+                        <div class="text-xs">상징 문구</div>
+                        <div class="font-bold text-[#006699]">"Rock Spirit이 흐르는<br>교통의 헬게이트"</div>
+                    </div>
+                </div>
+                <table>
+                    <tr><th>광역자치단체</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></td></tr>
+                    <tr><th>기초자치단체</th><td><a href="청엽구.html" class="wiki-link">청엽구</a></td></tr>
+                    <tr><th>행정표준코드</th><td>7918010700</td></tr>
+                    <tr><th>관할 행정동</th><td>우전1~3동</td></tr>
+                    <tr><th>구 행정구역</th><td>청엽면 (1914년)</td></tr>
+                    <tr><th>인구</th><td>99,741명 <span class="text-[0.7rem] text-gray-500">(2025년 기준)</span></td></tr>
+                    <tr>
+                        <th>주요 시설</th>
+                        <td class="text-xs">
+                            <strong><a href="우전역.html" class="wiki-link">우전역</a></strong>, <strong><a href="효빈남부시외버스터미널.html" class="wiki-link">효빈남부시외버스터미널</a></strong>,<br>
+                            우전천 수변공원,<br>
+                            <a href="효빈교통공사.html" class="wiki-link">효빈교통공사</a> 남부본부
+                        </td>
+                    </tr>
+                    <tr><th colspan="2" class="text-center" style="background:#f0f0f0; color:#333; font-weight:bold;">정치 (국회의원)</th></tr>
+                    <tr><th>청엽 갑 (전역)</th><td><a href="https://namu.wiki/w/더불어민주당" class="party-badge badge-minju" target="_blank">더불어민주당</a> <a href="신수인.html" class="wiki-link">신수인</a> (재선)</td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <!-- 본문 내용 -->
+        <h2 id="s-1">1. 개요</h2>
+        <div class="wiki-quote">
+            "Rock Spirit이 흐르는 청엽구 교통의 헬게이트"<br>
+            - <a href="효빈광역시.html" class="wiki-link">효빈</a> 주민들의 평
+        </div>
+        <p>
+            <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="청엽구.html" class="wiki-link">청엽구</a>의 <a href="#" class="wiki-link">법정동</a>.
+            인구 약 <strong>10만 명</strong>. <a href="청엽동.html" class="wiki-link">청엽동</a> 다음가는 <a href="https://namu.wiki/w/콩라인" class="wiki-link" target="_blank">콩라인</a>이지만 체급은 어마무시하다.
+        </p>
+        <p>
+            동네 이름의 유래는 예로부터 이 지역에 밭이 넓게 펼쳐져 있어 붙여진 자연 지명인 <strong>우전(宇田)</strong>에서 따왔다.
+            그런데 하필이면 이 한자가 <a href="https://namu.wiki/w/BanG%20Dream!" class="wiki-link" target="_blank">BanG Dream!</a>의 <strong>우다가와 자매(<a href="https://namu.wiki/w/우다가와%20아코" class="wiki-link" target="_blank">우다가와 아코</a>, <a href="https://namu.wiki/w/우다가와%20토모에" class="wiki-link" target="_blank">우다가와 토모에</a>)</strong>의 성씨(宇田川)와 앞 두 글자가 <strong>우연히</strong> 겹치는 바람에(...),<sup id="ref-1" class="wiki-fn" data-target="fn-1">[1]</sup>
+            졸지에 동네 전체가 <strong>'락(Rock)의 성지'</strong>로 불리게 되었다. <del>조상님들의 큰 그림</del> 덕분에 주말마다 드럼 소리가 끊이지 않아 층간소음 민원 대신 '층간드럼 민원'이 들어온다는 소문이 있다.
+        </p>
+        
+        <h2 id="s-2">2. 상세</h2>
+        <p>행정동은 1, 2, 3동으로 나뉜다.</p>
+
+        <h3 id="s-2-1">2.1. 우전1동</h3>
+        <p>
+            <strong>인구: 45,929명.</strong><br>
+            <strong><a href="효빈남부시외버스터미널.html" class="wiki-link">효빈남부시외버스터미널</a></strong>이 있다. 주말이나 명절만 되면 버스와 택시가 뒤엉켜 <strong>헬게이트</strong>가 열린다. 터미널 주변 학원가는 학생들로 바글바글하다.
+        </p>
+        <p class="text-sm text-gray-600 mt-2">※ 관내 학교: <a href="원남중학교.html" class="wiki-link">원남중</a>, <a href="월언초등학교.html" class="wiki-link">월언초</a>, <a href="신괴초등학교.html" class="wiki-link">신괴초</a>, <a href="팔천중학교.html" class="wiki-link">팔천중</a>, <strong><a href="팔천고등학교.html" class="wiki-link">팔천고등학교</a></strong></p>
+        <ul class="list-disc pl-5 mt-2">
+            <li><strong><a href="팔천고등학교.html" class="wiki-link">팔천고등학교</a></strong>: 청엽구 유일의 <strong><a href="https://namu.wiki/w/자율형%20사립고등학교" class="wiki-link" target="_blank">자사고</a></strong>다. 공부 좀 한다는 애들은 다 여기로 모인다. <del>이름이 8000고가 아니다</del></li>
+        </ul>
+
+        <h3 id="s-2-2">2.2. 우전2동</h3>
+        <p>
+            <strong>인구: 28,009명.</strong><br>
+            <a href="우전천.html" class="wiki-link">우전천</a>을 끼고 있는 평범한 아파트 단지. 1동의 소음에 지친 사람들이 여기로 도망쳐 온다 카더라.
+        </p>
+        <p class="text-sm text-gray-600 mt-2">※ 관내 학교: <a href="우전중학교.html" class="wiki-link">우전중</a>, <strong><a href="우전고등학교.html" class="wiki-link">우전고등학교</a></strong>, <a href="토포초등학교.html" class="wiki-link">토포초</a>, <a href="시곡초등학교.html" class="wiki-link">시곡초</a></p>
+
+        <h3 id="s-2-3">2.3. 우전3동</h3>
+        <p>
+            <strong>인구: 25,803명.</strong><br>
+            <strong><a href="우전역.html" class="wiki-link">우전역</a></strong> 역세권. 역 주변에 드럼 학원, 합주실, 악기상이 널려있다. 길거리에 기타 메고 다니는 중고딩이 흔하게 보인다. <del><a href="https://namu.wiki/w/중2병" class="wiki-link" target="_blank">중2병</a>의 성지</del>
+        </p>
+        <p class="text-sm text-gray-600 mt-2">※ 관내 학교: <a href="승령중학교.html" class="wiki-link">승령중</a>, <strong><a href="승령고등학교.html" class="wiki-link">승령고등학교</a></strong></p>
+
+        <h2 id="s-3">3. 성지순례 및 관광 (TMI)</h2>
+        
+        <h3 class="text-lg font-bold mt-4 mb-2 text-[#006699]">우다가와 자매 성지 (<a href="https://namu.wiki/w/Afterglow" class="wiki-link" target="_blank">Afterglow</a> & <a href="https://namu.wiki/w/Roselia" class="wiki-link" target="_blank">Roselia</a>)</h3>
+        <ul class="list-disc pl-5 mb-4">
+            <li><strong><a href="우전천.html" class="wiki-link">우전천(宇田川)</a></strong>: 하천 이름 한자(<strong>宇田川</strong>)가 우다가와 자매 성씨랑 똑같다. 원래 있던 지명이지만, 이쯤 되면 노리고 지은 게 아니냐는 의혹을 받고 있다.</li>
+            <li><strong>우전 리버사이드 락 페스티벌</strong>: 매년 8월 우전천에서 열리는 락 페스티벌. 피날레는 무조건 <a href="https://namu.wiki/w/Roselia" class="wiki-link" target="_blank">Roselia</a>나 <a href="https://namu.wiki/w/Afterglow" class="wiki-link" target="_blank">Afterglow</a> 카피 밴드가 장식하는 게 국룰이다.</li>
+            <li><strong><a href="우전역.html" class="wiki-link">우전역</a> 드럼 연습실</strong>: 역사 내에 방음 시공된 <strong>'간이 드럼 연습실'</strong>이 있다. <a href="효빈교통공사.html" class="wiki-link">효빈교통공사</a>가 "제발 집에서 치지 말고 여기서 치라"는 뜻으로 만든 공간인데, 예약 경쟁이 수강신청급이다.<sup id="ref-2" class="wiki-fn" data-target="fn-2">[2]</sup></li>
+        </ul>
+
+        <h2 id="s-4">4. 교통</h2>
+        <ul class="list-disc pl-5">
+            <li><strong><a href="효빈_도시철도_1호선.html" class="wiki-link">효빈 도시철도 1호선</a></strong>: <a href="우전역.html" class="wiki-link">우전역</a></li>
+            <li><strong><a href="효빈_도시철도_2호선.html" class="wiki-link">효빈 도시철도 2호선</a></strong>: <a href="우전역.html" class="wiki-link">우전역</a></li>
+            <li><strong>시외버스</strong>: <a href="효빈남부시외버스터미널.html" class="wiki-link">효빈남부시외버스터미널</a> (<a href="효빈_도시철도_3호선.html" class="wiki-link">3호선</a> 터미널역 연계)</li>
+        </ul>
+
+        <h2 id="s-5">5. 여담</h2>
+        <ul class="list-disc pl-5 space-y-2 text-sm">
+            <li>주말마다 드럼 학원 전단지가 아파트 입구에 도배된다. "옆집 드럼 소리보다 더 크게 쳐서 복수하세요!"라는 광고 문구가 압권(...).</li>
+            <li>동네 곳곳에서 <strong>"멋지다!"(カッコイイ!)</strong> 라는 감탄사가 들린다면 십중팔구 <a href="https://namu.wiki/w/우다가와%20아코" class="wiki-link" target="_blank">아코</a> 팬들이다.</li>
+        </ul>
+
+        <h2 id="s-6">6. 각주</h2>
+        <div class="wiki-footnote-area">
+            <ol>
+                <li id="fn-1">그래서인지 자매결연 도시도 도쿄 시부야구(우다가와초가 있는 곳)다. <a href="#ref-1" title="본문으로 이동">↑</a></li>
+                <li id="fn-2">사용료는 무료지만 드럼 스틱은 본인이 가져와야 한다. 파손 시 3대가 멸할 정도로 배상해야 한다고 경고문이 붙어있다. <a href="#ref-2" title="본문으로 이동">↑</a></li>
+            </ol>
+        </div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-500 text-xs pb-10 leading-relaxed">
+            <p class="mb-4">
+                이 저작물은 <strong>CC BY-NC-SA 2.0 KR</strong>에 따라 이용할 수 있습니다.
+            </p>
+            <p>
+                효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+
+        function toggleNav(id, labelId) {
+            const content = document.getElementById(id);
+            const label = document.getElementById(labelId);
+            if (content.style.maxHeight === '0px') {
+                content.style.maxHeight = '2000px';
+                label.innerText = '[접기]';
+            } else {
+                content.style.maxHeight = '0px';
+                label.innerText = '[펼치기]';
+            }
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                document.getElementById('themeBtn').innerText = '라이트모드';
+            }
+            initFootnoteTooltips();
+        };
+        
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                const target = this.value.trim();
+                location.href = target + ".html";
+            }
+        });
+
+        function initFootnoteTooltips() {
+            const footnotes = document.querySelectorAll('.wiki-fn');
+            const tooltip = document.getElementById('wiki-tooltip');
+
+            footnotes.forEach(fn => {
+                fn.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('data-target');
+                    const contentEl = document.getElementById(targetId);
+                    
+                    if (contentEl) {
+                        let text = contentEl.innerHTML;
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = text;
+                        const backLink = tempDiv.querySelector('a:last-child'); 
+                        if(backLink && backLink.innerText.includes('↑')) backLink.remove();
+                        
+                        tooltip.innerHTML = tempDiv.innerHTML;
+                        tooltip.style.display = 'block';
+                        
+                        const rect = this.getBoundingClientRect();
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        
+                        tooltip.style.top = (rect.bottom + scrollTop + 5) + 'px';
+                        tooltip.style.left = rect.left + 'px';
+                    }
+                });
+
+                fn.addEventListener('mouseleave', function() {
+                    tooltip.style.display = 'none';
+                });
+                
+                fn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    const targetEl = document.getElementById(targetId);
+                    if(targetEl) {
+                        targetEl.scrollIntoView({behavior: 'smooth', block: 'center'});
+                        targetEl.style.backgroundColor = "rgba(0, 102, 153, 0.2)";
+                        setTimeout(() => targetEl.style.backgroundColor = "transparent", 1500);
+                    }
+                });
+            });
+        }
+    </script>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+</body>
+</html>

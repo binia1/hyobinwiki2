@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>광연대학교 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* 문서 테마 컬러: 광연 테크 블루 (Tech Blue) */
+            --wiki-main: #0066CC; 
+            --wiki-sub: #0055AA;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #0066CC;
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.15rem; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 스타일 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 450px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-header { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.4rem; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: #f0f4f8; color: var(--wiki-main); width: 100px; padding: 6px 10px; border: 1px solid var(--wiki-border); text-align: center; font-weight: bold; vertical-align: middle; }
+        .infobox td { padding: 6px 10px; border: 1px solid var(--wiki-border); vertical-align: middle; }
+        
+        /* 테이블 스타일 */
+        .wiki-table { border-collapse: collapse; width: 100%; margin: 10px 0; border: 1px solid #ccc; }
+        .wiki-table th { background-color: var(--wiki-main); color: white; padding: 8px; border: 1px solid #ccc; text-align: center; font-weight: bold; }
+        .wiki-table td { padding: 8px; border: 1px solid #ccc; background: white; }
+        .wiki-table-center { text-align: center; }
+        .wiki-table-sub { background-color: #f0f4f8; font-weight: bold; text-align: center; color: var(--wiki-main); }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* 기타 요소 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+        del { color: #ccc; text-decoration: line-through; }
+        .wiki-gray { color: #888; font-size: 0.9em; }
+        
+        /* 폴딩(접기/펼치기) 구현 */
+        details { border: 1px solid #aaa; border-radius: 4px; padding: 0; margin-bottom: 10px; background: white; }
+        summary { font-weight: bold; padding: 0.5em; cursor: pointer; background-color: #eee; list-style: none; display: flex; justify-content: center; align-items: center; }
+        summary:after { content: " [ 펼치기 · 접기 ]"; font-size: 0.8em; margin-left: 5px; color: #555; }
+        details[open] { padding: 0; }
+        details[open] summary { border-bottom: 1px solid #aaa; }
+
+        /* 하단 네비게이션 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+        
+        /* 푸터 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+        
+        /* 상단 그라데이션 박스 */
+        .gradient-box {
+            background-image: linear-gradient(to right, #0066CC, #0055AA, #0055AA, #0066CC);
+            color: white; padding: 20px; text-align: center; border-radius: 5px; margin-bottom: 0px;
+        }
+
+        /* 지하철 노선 아이콘 스타일 */
+        .subway-line-2 {
+            display: inline-flex; justify-content: center; align-items: center;
+            width: 20px; height: 20px; border-radius: 50%;
+            background-color: #00CCAA; color: white; font-weight: bold; font-size: 0.75rem;
+            margin-right: 4px;
+        }
+
+        /* 각주 스타일 */
+        .wiki-fn { font-size: 0.8em; vertical-align: super; color: var(--wiki-link); text-decoration: none; font-weight: bold; cursor: help; margin-left: 1px; }
+        .wiki-fn:hover { text-decoration: underline; }
+        .wiki-fn-content-box { border-top: 1px solid #ccc; margin-top: 40px; padding-top: 10px; font-size: 0.9rem; }
+        .wiki-fn-item { margin-bottom: 6px; }
+        .wiki-fn-back { color: var(--wiki-link); text-decoration: none; margin-right: 5px; font-weight: bold; }
+        
+        /* 각주 툴팁 (호버보드) */
+        #wiki-fn-tooltip {
+            position: fixed;
+            display: none;
+            background: #fff;
+            border: 1px solid var(--wiki-main);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            max-width: 350px;
+            z-index: 100000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: 6px;
+            pointer-events: none;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        /* 둘러보기 틀 스타일 */
+        .nav-template { width: 100%; border: 2px solid var(--wiki-main); border-radius: 4px; overflow: hidden; margin-bottom: 20px; clear: both; font-size: 0.9rem; }
+        .nav-template-header { background-color: var(--wiki-main); color: white; padding: 8px 12px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .nav-template-content { background-color: #fff; }
+        .nav-template-table { width: 100%; border-collapse: collapse; }
+        .nav-template-table th { background-color: #e6f2ee; color: #333; border: 1px solid #ddd; padding: 6px 10px; text-align: center; font-weight: bold; width: 100px; }
+        .nav-template-table td { border: 1px solid #ddd; padding: 6px 10px; }
+        .nav-template-sub-th { background-color: #f5f9fa; font-weight: bold; text-align: center; width: 40px; color: #555; }
+        .nav-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .nav-item { color: #333; text-decoration: none; }
+        .nav-item:hover { text-decoration: underline; color: var(--wiki-link); }
+        .nav-current { font-weight: 900; color: white; background-color: var(--wiki-main); padding: 2px 6px; border-radius: 4px; }
+        .nav-current:hover { color: white; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-fn-tooltip"></div>
+
+    <!-- 상단 네비게이션 (검색창 바) - 색상 #7777AA 고정 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: #7777AA;">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="goToLink('효빈위키_대문.html')">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a onclick="goToLink('토론.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">토론</a>
+                <a onclick="goToLink('편집.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">편집</a>
+                <a onclick="goToLink('역사.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">광연대학교</div>
+            <div class="flex gap-2 mb-1">
+                <a onclick="goToLink('광연대학교.html')" class="wiki-btn">문서</a>
+                <a onclick="goToLink('토론.html')" class="wiki-btn">토론</a>
+                <a onclick="goToLink('편집.html')" class="wiki-btn">편집</a>
+                <a onclick="goToLink('역사.html')" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold" style="color: var(--wiki-main);">분류:</span> 
+            <a onclick="goToLink('효빈시의_대학교.html')" class="wiki-link">효빈광역시의 대학교</a> | 
+            <a onclick="goToLink('사립대학.html')" class="wiki-link">사립대학</a> |
+            <a onclick="goToLink('1971년_개교.html')" class="wiki-link">1971년 개교</a> |
+            <a onclick="goToLink('광연대학교.html')" class="wiki-link">광연대학교</a>
+        </div>
+
+        <!-- 상단 관련 학교/협의회 템플릿 (효빈광역시 대학교 현황) -->
+        <div class="mb-5">
+            <div class="nav-template">
+                <div class="nav-template-header">
+                    <span style="flex:1;"></span>
+                    <span style="flex:2; text-align: center;"><a onclick="goToLink('효빈시의_대학교.html')" style="color: white; text-decoration: none; cursor: pointer;">효빈광역시 대학교 현황</a></span>
+                    <span style="flex:1; text-align: right; font-size: 0.8em; font-weight: normal;"><a style="color: #ddd; cursor: pointer; text-decoration: none;">[편집]</a></span>
+                </div>
+                <div class="nav-template-content">
+                    <table class="nav-template-table">
+                        <tr>
+                            <th rowspan="1">국립</th>
+                            <td class="nav-template-sub-th">ㅎ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('효빈대학교.html')" class="nav-item">효빈대학교</a>
+                                    <a onclick="goToLink('효빈과학기술원.html')" class="nav-item">효빈과학기술원(HIST)</a>
+                                    <a onclick="goToLink('효빈교육대학교.html')" class="nav-item">효빈교육대학교</a>
+                                    <a onclick="goToLink('효빈해양대학교.html')" class="nav-item">효빈해양대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th rowspan="8">사립</th>
+                            <td class="nav-template-sub-th">ㄱ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('광연대학교.html')" class="nav-item nav-current">광연대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㄷ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('동구대학교.html')" class="nav-item">동구대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td class="nav-template-sub-th">ㅂ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('중촌대학교.html')" class="nav-item">중촌대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅅ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('삼선대학교.html')" class="nav-item">삼선대학교</a>
+                                    <a onclick="goToLink('성택대학교.html')" class="nav-item">성택대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅇ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('엽월대학교.html')" class="nav-item">엽월대학교</a>
+                                    <a onclick="goToLink('옥선대학교.html')" class="nav-item">옥선대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td class="nav-template-sub-th">ㅊ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('청엽국제학교_대학부.html')" class="nav-item">청엽국제학교 대학부</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅍ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('평안명대학교.html')" class="nav-item">평안명대학교</a>
+                                    <a onclick="goToLink('평천대학교.html')" class="nav-item">평천대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅎ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('해천대학교.html')" class="nav-item">해천대학교</a>
+                                    <a onclick="goToLink('효빈복지대학교.html')" class="nav-item">효빈복지대학교</a>
+                                    <a onclick="goToLink('효빈외국어대학교.html')" class="nav-item">효빈외국어대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>원격대학</th>
+                            <td class="nav-template-sub-th">ㅇ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('한국방송통신대학교.html')" class="nav-item">한국방송통신대학교 효빈·덕북지역대학</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="gradient-box">
+                <!-- 학교 로고/심볼 이미지 -->
+                <img src="광연대학교_UI.png" alt="광연대학교 로고" style="width: 200px; display: inline-block;" onerror="this.src='https://via.placeholder.com/200x80?text=GWANGYEON+Logo';">
+            </div>
+            
+            <details>
+                <summary></summary>
+                <div class="p-2 border border-t-0 bg-white">
+                    <table class="wiki-table" style="margin: 0; width: 100%;">
+                        <tr>
+                            <td colspan="4" class="text-center font-bold text-white" style="background-color: #0066CC;">대학 정보</td>
+                        </tr>
+                        <tr>
+                            <td class="wiki-table-center"><a onclick="goToLink('광연대학교_역사.html')" class="wiki-link text-[#0066CC]">역사</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('광연대학교_상징.html')" class="wiki-link text-[#0066CC]">상징</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('광연대학교_학부.html')" class="wiki-link text-[#0066CC]">학부</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('광연대학교_대학원.html')" class="wiki-link text-[#0066CC]">대학원</a></td>
+                        </tr>
+                        <tr>
+                            <td class="wiki-table-center"><a onclick="goToLink('광연대학교_캠퍼스.html')" class="wiki-link text-[#0066CC]">캠퍼스</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('광연대학교_총학생회.html')" class="wiki-link text-[#0066CC]">총학생회</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('광연대학교_언론.html')" class="wiki-link text-[#0066CC]">학내 언론</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('광연대학교_교류대학.html')" class="wiki-link text-[#0066CC]">교류 대학</a></td>
+                        </tr>
+                         <tr>
+                            <td colspan="4" class="text-center font-bold text-white" style="background-color: #0066CC;">기타 정보</td>
+                        </tr>
+                        <tr>
+                            <td class="wiki-table-center"><a onclick="goToLink('광연대학교_출신인물.html')" class="wiki-link text-[#0066CC]">출신 인물</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('광연대학교_주변상권.html')" class="wiki-link text-[#0066CC]">주변 상권</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('광연대학교_입시.html')" class="wiki-link text-[#0066CC]">입시</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('광연대학교_사건사고.html')" class="wiki-link text-[#0066CC]">사건 사고</a></td>
+                        </tr>
+                    </table>
+                </div>
+            </details>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="infobox-header">
+                    광연대학교<br>
+                    <span class="text-sm font-normal">Gwangyeon University</span>
+                </div>
+                <div class="p-4 bg-white text-center border-b">
+                    <!-- 엠블럼 이미지 -->
+                    <div class="w-full flex justify-center py-4">
+                        <img src="광연대학교_UI.png" alt="광연대학교 UI" class="w-48" onerror="this.src='https://via.placeholder.com/150?text=GWANGYEON';">
+                    </div>
+                </div>
+                <table>
+                    <tr><th>교훈</th><td>기술보국(技術報國), 창조, 실용</td></tr>
+                    <tr><th>슬로건</th><td>빛나는 기술, 세계를 잇다<br><span class="text-xs font-normal">(Light the Future)</span></td></tr>
+                    <tr><th>교색</th><td>
+                         <span style="display:inline-block; width:15px; height:15px; background:#0066CC; border:1px solid #ccc; vertical-align:middle;"></span> 광연 테크 블루 (#0066CC)
+                    </td></tr>
+                    <tr><th>국가</th><td><a onclick="goToLink('대한민국.html')" class="wiki-link">대한민국</a></td></tr>
+                    <tr><th>분류</th><td><a onclick="goToLink('사립대학.html')" class="wiki-link">사립대학</a> (종합대학)</td></tr>
+                    <tr><th>법인</th><td>학교법인 광연공학원</td></tr>
+                    <tr><th>설립자</th><td>양광연</td></tr>
+                    <tr><th>개교</th><td>1971년 3월 10일</td></tr>
+                    <tr><th>총장</th><td>제9대 <a onclick="goToLink('양연태.html')" class="wiki-link">양연태</a></td></tr>
+                    <tr><th>주소</th><td><a onclick="goToLink('효빈광역시.html')" class="wiki-link">효빈광역시</a> <a onclick="goToLink('탄성군.html')" class="wiki-link">탄성군</a> <a onclick="goToLink('흑택면.html')" class="wiki-link">흑택면</a> 흑택로 421 (흑택리)<a href="#fn-1" id="rfn-1" class="wiki-fn">[1]</a></td></tr>
+                    <tr><th>재적생</th><td>
+                        <strong>학부:</strong> 11,200명<br>
+                        <strong>대학원:</strong> 1,500명 <span class="text-xs text-gray-500">(2025년)</span>
+                    </td></tr>
+                    <tr><th>웹사이트</th><td><a href="https://www.gyu.ac.kr" target="_blank" class="wiki-link">공식 홈페이지</a></td></tr>
+                </table>
+                <div class="w-full bg-[#eee] text-center p-2 font-bold cursor-pointer hover:bg-[#ddd]" onclick="alert('지도 기능 준비중')">
+                    [ 지도 펼치기 ]
+                </div>
+            </aside>
+
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1 w-full lg:w-auto">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">역사</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">캠퍼스 특징</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">학과 구성</a>
+                        <ul>
+                            <li>4.1. <a href="#s-4-1" class="wiki-link">기계·로봇대학</a></li>
+                            <li>4.2. <a href="#s-4-2" class="wiki-link">전자·반도체대학</a></li>
+                            <li>4.3. <a href="#s-4-3" class="wiki-link">정보통신대학</a></li>
+                            <li>4.4. <a href="#s-4-4" class="wiki-link">화학·신소재대학</a></li>
+                            <li>4.5. <a href="#s-4-5" class="wiki-link">건설·안전대학</a></li>
+                            <li>4.6. <a href="#s-4-6" class="wiki-link">SW·AI융합대학</a></li>
+                            <li>4.7. <a href="#s-4-7" class="wiki-link">테크노경영대학</a></li>
+                            <li>4.8. <a href="#s-4-8" class="wiki-link">융합디자인대학</a></li>
+                            <li>4.9. <a href="#s-4-9" class="wiki-link">실용학문학부</a></li>
+                            <li>4.10. <a href="#s-4-10" class="wiki-link">군사학부</a></li>
+                            <li>4.11. <a href="#s-4-11" class="wiki-link">미래융합대학</a></li>
+                            <li>4.12. <a href="#s-4-12" class="wiki-link">사회과학대학</a></li>
+                            <li>4.13. <a href="#s-4-13" class="wiki-link">자연과학대학</a></li>
+                            <li>4.14. <a href="#s-4-14" class="wiki-link">현대미술대학</a></li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5" class="wiki-link">여담</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">출신 인물</a></li>
+                    <li>7. <a href="#s-7" class="wiki-link">주변 환경 및 시설</a></li>
+                    <li>8. <a href="#s-8" class="wiki-link">각주</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <blockquote>
+            <strong>"효빈의 MIT, 탄성의 실리콘밸리."</strong>
+        </blockquote>
+
+        <p><a onclick="goToLink('효빈광역시.html')" class="wiki-link">효빈광역시</a> <a onclick="goToLink('탄성군.html')" class="wiki-link">탄성군</a> <a onclick="goToLink('흑택면.html')" class="wiki-link">흑택면</a> 흑택리에 위치한 4년제 사립 종합대학교.</p>
+        <p>1971년 설립된 이래 <strong>공학(Engineering)</strong> 분야에 올인해온, 자타 공인 <strong>효빈시 최고의 공대 중심 대학</strong>이다.</p>
+        <p>전체 학과의 80% 이상이 공학 계열로 구성되어 있으며, 문과나 예체능조차도 '테크놀로지', '데이터', '산업심리' 등 공학적 요소를 접목한 융합 학과가 대부분이다. 학교 위치가 시골인 흑택면임에도 불구하고, 압도적인 취업률 덕분에 전국에서 공대 지망생들이 몰려든다.</p>
+        <p><strong>공학(Engineering)</strong> 계열에 올인한 <strong>B등급(중위권)</strong> 대학이다. 인문/예체능 계열이 약해 종합 순위는 B등급이지만, 공과대학만큼은 효빈시 내에서 <a onclick="goToLink('삼선대학교.html')" class="wiki-link">삼선대</a>, <a onclick="goToLink('엽월대학교.html')" class="wiki-link">엽월대</a>와 비벼볼 만한 경쟁력을 갖추고 있다. 덕분에 탄성군 및 평전공단 취업률이 압도적으로 높아 남학생들의 선호도가 매우 높다.</p>
+        
+        <!-- 2. 역사 -->
+        <h2 id="s-2" class="anchor-offset">2. 역사</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>1971년:</strong> 광연공업전문학교 개교 (설립자 양광연).</li>
+            <li><strong>1989년:</strong> <strong><a onclick="goToLink('흑택역.html')" class="wiki-link">흑택역</a> 개통</strong>. (광연대 통학 수요 덕분에 허허벌판에 역이 생기는 기적을 만듦)</li>
+            <li><strong>1995년:</strong> 4년제 종합대학 승격, <strong>광연대학교</strong>.</li>
+            <li><strong>2023년:</strong> 교육부 '반도체 특성화 대학' 선정.</li>
+        </ul>
+
+        <!-- 3. 캠퍼스 특징 -->
+        <h2 id="s-3" class="anchor-offset">3. 캠퍼스 특징</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>논밭 한가운데의 하이테크:</strong> 학교 주변은 흑택면의 고즈넉한 한옥 마을과 논밭인데, 정문을 들어서면 갑자기 유리궁전 스타일의 최첨단 연구동들이 나타난다. 이질감이 상당하다.</li>
+            <li><strong>흑택역 셔틀버스:</strong> <a onclick="goToLink('흑택역.html')" class="wiki-link">흑택역</a> 1번 출구 앞은 매일 아침 광연대 셔틀버스를 타려는 학생들로 장사진을 이룬다. 걸어가면 15분 정도 걸리는데, 여름에는 땀 범벅이 되므로 셔틀 전쟁이 치열하다.</li>
+            <li><strong>공대 냄새(?):</strong> 캠퍼스 곳곳에서 납땜 냄새, 기계 돌아가는 소리, 그리고 며칠 씻지 않은 공대생들의 기운(...)이 느껴진다. 밤새 불이 꺼지지 않는 건물이 많다.</li>
+        </ul>
+
+        <!-- 4. 학과 구성 -->
+        <h2 id="s-4" class="anchor-offset">4. 학과 구성</h2>
+        <p>단과대학 명칭부터가 '기계·로봇', '전자·반도체' 등으로 매우 직관적이고 세분화되어 있다.</p>
+        
+        <table class="wiki-table" style="margin-bottom: 20px;">
+             <tr>
+                <td colspan="3" class="wiki-table-center" style="background-color: #0066CC; color: white; font-size: 1.2rem;"><strong>광연대학교 대학 구성</strong></td>
+            </tr>
+            <tr style="background-color: #f0f0f0;">
+                <td width="20%" class="wiki-table-center font-bold">단과대학</td>
+                <td width="25%" class="wiki-table-center font-bold">학과/학부</td>
+                <td width="55%" class="wiki-table-center font-bold">세부전공 및 비고</td>
+            </tr>
+            <tr id="s-4-1">
+                <td rowspan="6" class="wiki-table-center"><strong>기계·로봇대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('기계공학부.html')" class="wiki-link">기계공학부</a> (기계설계)</td>
+                <td><strong>[대형]</strong> 기계 설계, CAD/CATIA 마스터. 취업 깡패.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('기계공학부.html')" class="wiki-link">기계공학부</a> (에너지기계)</td>
+                <td>공조냉동, 플랜트 배관, 열역학.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('로봇메카트로닉스공학과.html')" class="wiki-link">로봇메카트로닉스공학과</a></td>
+                <td><strong>[간판]</strong> 산업용 로봇 제어. 졸업작품으로 로봇 팔을 만든다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('미래자동차공학과.html')" class="wiki-link">미래자동차공학과</a></td>
+                <td>전기차(EV) 모터/배터리, 자율주행 센서.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('정밀금형공학과.html')" class="wiki-link">정밀금형공학과</a></td>
+                <td><strong>[특화]</strong> 뿌리산업(금형). 졸업 전 취업 확정자가 많다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('철도차량시스템학과.html')" class="wiki-link">철도차량시스템학과</a></td>
+                <td>철도 차량 정비. 코레일 기술직 목표.</td>
+            </tr>
+
+            <tr id="s-4-2">
+                <td rowspan="7" class="wiki-table-center"><strong>전자·반도체대학</strong><br>(Semiconductor)</td>
+                <td class="wiki-table-center"><a onclick="goToLink('전자공학과.html')" class="wiki-link">전자공학과</a></td>
+                <td><strong>[대형]</strong> 회로 설계, PCB 아트웍.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('전기공학과.html')" class="wiki-link">전기공학과</a></td>
+                <td>쌍기사(전기기사+공사기사) 취득의 성지. 한전 목표.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('반도체시스템공학과.html')" class="wiki-link">반도체시스템공학과</a></td>
+                <td><strong>[간판]</strong> 교내에 반도체 8대 공정 클린룸이 있다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('디스플레이공학과.html')" class="wiki-link">디스플레이공학과</a></td>
+                <td>OLED 패널 공정 및 구동 회로.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('제어계측공학과.html')" class="wiki-link">제어계측공학과</a></td>
+                <td>스마트 센서 및 PLC 제어.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('임베디드소프트웨어학과.html')" class="wiki-link">임베디드소프트웨어학과</a></td>
+                <td>펌웨어 및 하드웨어 제어 SW.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('광전자공학과.html')" class="wiki-link">광전자공학과</a></td>
+                <td>레이저 광학 및 광통신 소자.</td>
+            </tr>
+
+            <tr id="s-4-3">
+                <td rowspan="3" class="wiki-table-center"><strong>정보통신대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('정보통신공학과.html')" class="wiki-link">정보통신공학과</a></td>
+                <td>유무선 네트워크, 5G/6G 통신.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('전파공학과.html')" class="wiki-link">전파공학과</a></td>
+                <td>안테나 및 레이더 기술. LIG넥스원 등 방산 취업 활발.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('사물인터넷학과.html')" class="wiki-link">사물인터넷(IoT)학과</a></td>
+                <td>스마트홈/시티 센서 네트워크. 아두이노 장인들.</td>
+            </tr>
+
+            <tr id="s-4-4">
+                <td rowspan="6" class="wiki-table-center"><strong>화학·신소재대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('화학공학과.html')" class="wiki-link">화학공학과</a></td>
+                <td><strong>[대형]</strong> 정유/석유화학 플랜트 운전. "전화기"의 화.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('신소재공학과.html')" class="wiki-link">신소재공학과</a> (금속)</td>
+                <td>제철 및 금속 열처리.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('신소재공학과.html')" class="wiki-link">신소재공학과</a> (세라믹)</td>
+                <td>반도체 소재 및 파인 세라믹스.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('배터리공학과.html')" class="wiki-link">배터리공학과</a></td>
+                <td><strong>[신설]</strong> 2차 전지 양극재/음극재. 에코프로 등과 산학협력.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('나노바이오공학과.html')" class="wiki-link">나노바이오공학과</a></td>
+                <td>의료용 소재 및 바이오 센서.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('고분자공학과.html')" class="wiki-link">고분자공학과</a></td>
+                <td>플라스틱/고무/섬유 및 사출 성형.</td>
+            </tr>
+
+            <tr id="s-4-5">
+                <td rowspan="5" class="wiki-table-center"><strong>건설·안전대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('건축공학과.html')" class="wiki-link">건축공학과</a></td>
+                <td>(4년제) 시공 및 공정 관리 중심.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('토목공학과.html')" class="wiki-link">토목공학과</a></td>
+                <td>도로/항만/교량 건설. 토목기사 필수.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('환경공학과.html')" class="wiki-link">환경공학과</a></td>
+                <td>수질/대기 오염 방지 시설.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('산업안전공학과.html')" class="wiki-link">산업안전공학과</a></td>
+                <td><strong>[인기]</strong> 중대재해처벌법 이후 몸값이 폭등했다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('소방방재공학과.html')" class="wiki-link">소방방재공학과</a></td>
+                <td>소방 설비 설계 및 위험물 관리.</td>
+            </tr>
+
+            <tr id="s-4-6">
+                <td rowspan="5" class="wiki-table-center"><strong>SW·AI융합대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('컴퓨터정보공학과.html')" class="wiki-link">컴퓨터정보공학과</a></td>
+                <td>SI/SM 개발자, 서버 관리자.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('인공지능응용학과.html')" class="wiki-link">인공지능응용학과</a></td>
+                <td>제조업 특화 AI (스마트팩토리 불량 검출 등).</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('게임미디어공학과.html')" class="wiki-link">게임미디어공학과</a></td>
+                <td>게임 엔진(Unity) 프로그래밍. 밤샘의 요람.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('정보보안학과.html')" class="wiki-link">정보보안학과</a></td>
+                <td>모의 해킹 및 보안 관제.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('스마트공장융합학과.html')" class="wiki-link">스마트공장융합학과</a></td>
+                <td>(계약학과) 재직자 전형.</td>
+            </tr>
+
+            <tr id="s-4-7">
+                <td rowspan="5" class="wiki-table-center"><strong>테크노경영대학</strong><br>(Management of Tech)</td>
+                <td class="wiki-table-center"><a onclick="goToLink('산업경영공학과.html')" class="wiki-link">산업경영공학과</a></td>
+                <td><strong>[문이과통합]</strong> 생산 관리(QC/QA). 공대의 소금 같은 존재.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('기술경영학과.html')" class="wiki-link">기술경영학과</a> (MOT)</td>
+                <td>이공계 기반 기술 창업 및 R&D 기획.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('글로벌기술영업학과.html')" class="wiki-link">글로벌기술영업학과</a></td>
+                <td><strong>[실무]</strong> B2B 기술 영업. "공학을 아는 영업맨" 양성.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('IT물류시스템학과.html')" class="wiki-link">IT물류시스템학과</a></td>
+                <td>SCM 및 물류 자동화.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('데이터비즈니스학과.html')" class="wiki-link">데이터비즈니스학과</a></td>
+                <td>경영 빅데이터 분석 및 SQL.</td>
+            </tr>
+
+            <tr id="s-4-8">
+                <td rowspan="3" class="wiki-table-center"><strong>융합디자인대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('산업디자인학과.html')" class="wiki-link">산업디자인학과</a></td>
+                <td>제품(Product) 디자인. 공대생과 협업이 많다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('UX/UI디자인학과.html')" class="wiki-link">UX/UI디자인학과</a></td>
+                <td>키오스크 및 앱 인터페이스 디자인.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('디지털콘텐츠학과.html')" class="wiki-link">디지털콘텐츠학과</a></td>
+                <td>3D 애니메이션 및 메타버스 그래픽.</td>
+            </tr>
+
+            <tr id="s-4-9">
+                <td rowspan="4" class="wiki-table-center"><strong>실용학문학부</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('산업영어전공.html')" class="wiki-link">산업영어전공</a></td>
+                <td>매뉴얼 번역 및 테크니컬 라이팅.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('지식재산법무전공.html')" class="wiki-link">지식재산법무전공</a></td>
+                <td>변리사 사무소 및 특허팀 취업.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('공공인재전공.html')" class="wiki-link">공공인재전공</a></td>
+                <td>기술직 공무원 및 공기업 준비.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('기초과학전공.html')" class="wiki-link">기초과학전공</a></td>
+                <td>(신입생 모집X) 공대생들의 물리/수학 셔틀(...) 교수님들.</td>
+            </tr>
+
+            <tr id="s-4-10">
+                <td rowspan="2" class="wiki-table-center"><strong>군사학부</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('국방기술학과.html')" class="wiki-link">국방기술학과</a></td>
+                <td>무기 체계 운용 및 기술 장교.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('사이버국방학과.html')" class="wiki-link">사이버국방학과</a></td>
+                <td>사이버전 대응 및 정보통신 장교.</td>
+            </tr>
+
+            <tr id="s-4-11">
+                <td rowspan="2" class="wiki-table-center"><strong>미래융합대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('평생학습학부.html')" class="wiki-link">평생학습학부</a></td>
+                <td>(성인/재직자) 산업체 위탁 교육.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('메카트로닉스학부.html')" class="wiki-link">메카트로닉스학부</a></td>
+                <td>(성인/재직자) 야간 공학 학위.</td>
+            </tr>
+
+            <tr id="s-4-12">
+                <td rowspan="4" class="wiki-table-center"><strong>사회과학대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('산업심리학과.html')" class="wiki-link">산업심리학과</a></td>
+                <td>인간공학 및 UI/UX 심리. 공대 감성 심리학과.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('디지털미디어학부.html')" class="wiki-link">디지털미디어학부</a></td>
+                <td>테크 기업 홍보 및 데이터 저널리즘.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('도시행정학과.html')" class="wiki-link">도시행정학과</a></td>
+                <td>스마트시티 정책 및 GIS.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('금융부동산학과.html')" class="wiki-link">금융부동산학과</a></td>
+                <td>프롭테크(Prop-tech) 및 기술 금융.</td>
+            </tr>
+
+            <tr id="s-4-13">
+                <td rowspan="4" class="wiki-table-center"><strong>자연과학대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('전자물리학과.html')" class="wiki-link">전자물리학과</a></td>
+                <td>반도체 물성 및 디스플레이 광학.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('수리빅데이터학과.html')" class="wiki-link">수리빅데이터학과</a></td>
+                <td>산업 수학, 암호학, AI 수학.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('응용화학과.html')" class="wiki-link">응용화학과</a></td>
+                <td>정밀 화학 분석 및 소재 화학.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('생명정보학과.html')" class="wiki-link">생명정보학과</a></td>
+                <td>유전체 빅데이터 및 바이오 센서.</td>
+            </tr>
+
+            <tr id="s-4-14">
+                <td rowspan="4" class="wiki-table-center"><strong>현대미술대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('테크놀로지아트학과.html')" class="wiki-link">테크놀로지아트학과</a></td>
+                <td>코딩 예술, 인터랙티브 아트.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('조형예술학과.html')" class="wiki-link">조형예술학과</a></td>
+                <td>키네틱 아트(움직이는 조각), 3D 조형.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('디지털만화영상학과.html')" class="wiki-link">디지털만화영상학과</a></td>
+                <td>웹툰 창작 및 게임 컨셉 아트.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('문화예술경영학과.html')" class="wiki-link">문화예술경영학과</a></td>
+                <td>NFT 아트 비즈니스 및 전시 기획.</td>
+            </tr>
+        </table>
+
+        <!-- 5. 여담 -->
+        <h2 id="s-5" class="anchor-offset">5. 여담</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>공대 아름이?:</strong> 남녀 성비가 8:2 수준으로 남초 현상이 심하다. 벚꽃 피는 봄이면 캠퍼스에 시커먼 남정네들만 가득하다고... 그래도 최근 디자인대, 자연대, 사회대가 생기면서 조금 나아졌다.</li>
+            <li><strong>흑택역의 주인:</strong> <a onclick="goToLink('흑택역.html')" class="wiki-link">흑택역</a>은 사실상 광연대생들이 먹여 살린다. 평소에는 조용하다가 등하교 시간만 되면 1번 출구가 헬게이트로 변한다. 역내 상가들도 대학생 타겟인 저가 커피, 밥버거 등이 많다.</li>
+            <li><strong>쿠로사와 가문과의 관계:</strong> 흑택면 전체가 <a onclick="goToLink('러브_라이브!_선샤인!!.html')" class="wiki-link">러브 라이브! 선샤인!!</a>의 <strong><a onclick="goToLink('쿠로사와_다이아.html')" class="wiki-link">쿠로사와 다이아</a></strong> 성지다 보니, 광연대 학생들도 알게 모르게 영향을 받는다.
+                <ul class="list-disc pl-5">
+                    <li>축제(광연제) 때 <strong>'Aqours'</strong> 노래를 믹싱해서 튼다거나, 기계공학과 학생들이 3D 프린터로 다이아 피규어를 깎는 기행을 벌이기도 한다.</li>
+                    <li>학교 로고 색상(파란색)이 <strong><a onclick="goToLink('마츠우라_카난.html')" class="wiki-link">마츠우라 카난</a></strong> 색이라며, 다이아(빨강)와 커플링을 엮는 러브라이버들도 있다.</li>
+                </ul>
+            </li>
+            <li><strong>취업 깡패:</strong> 효빈시 내에서 "광연대 공대 나왔다"고 하면 취업 걱정은 안 한다는 인식이 있다. 주변 탄성군 공단이나 평전공단으로 취업이 매우 잘 된다.</li>
+        </ul>
+
+        <!-- 6. 출신 인물 -->
+        <h2 id="s-6" class="anchor-offset">6. 출신 인물</h2>
+        <p>학교 특성상 연예인보다는 기술 관료, 정치인, 벤처 창업가 등 실무형 인재가 많이 포진해 있습니다.</p>
+        <ul class="list-disc pl-5">
+            <li><strong><a onclick="goToLink('노상현.html')" class="wiki-link">노상현</a>:</strong> 제19·20·21·22대 국회의원(효빈 창전 을). 공과대학 기계공학과(학사) 졸업생으로, 창전공고를 거쳐 광연대를 졸업한 지역 토박이이자 노동운동가 출신 정치인이다. 제21대, 22대 총선에서 80%가 넘는 경이로운 득표율을 기록하며 '창전의 맹주'로 불린다. 국회 환경노동위원회 위원장을 역임하는 등 노동 분야의 최고 전문가로 꼽힌다.</li>
+            <li><strong>양연태:</strong> 현 광연대학교 제9대 총장. 설립자 양광연의 장남으로, 부친의 '기술보국' 정신을 이어받아 반도체 특성화 사업을 따낸 주역이다.</li>
+        </ul>
+
+        <!-- 7. 주변 환경 및 시설 -->
+        <h2 id="s-7" class="anchor-offset">7. 주변 환경 및 시설</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>광연대 정문 상권:</strong> 흑택면의 평화로운 논밭 사이에 형성된 기묘한 상권. 공대생들의 주식인 돈까스, 제육볶음, 국밥집이 주를 이루며, 밤늦게까지 코딩하는 학생들을 위한 24시간 카페가 성황이다.</li>
+            <li><strong>흑택 한옥마을:</strong> 학교 바로 뒤편에 위치. 공학도들이 설계 스트레스를 받을 때 산책하러 가는 곳이다. 가끔 코스어들이 촬영을 오면 공대생들이 창문 너머로 구경하는 진풍경이 벌어진다.</li>
+            <li><strong>제7공학관 (유리궁전):</strong> 2022년 완공된 반도체·AI 융합동. 외벽 전체가 통유리라 여름에 매우 덥다는 불평이 있지만, 시설만큼은 전국 최상위권이라 타 대학 학생들도 부러워한다.</li>
+        </ul>
+
+        <!-- 8. 각주 -->
+        <h2 id="s-8" class="anchor-offset">8. 각주</h2>
+        <div class="wiki-fn-content-box">
+            <div class="wiki-fn-item" id="fn-1">
+                <a href="#rfn-1" class="wiki-fn-back">[1]</a> <a onclick="goToLink('효빈_도시철도_2호선.html')" class="wiki-link">효빈 도시철도 2호선</a> <a onclick="goToLink('흑택역.html')" class="wiki-link">흑택역</a> 1번 출구에서 셔틀버스 운행 (도보 10분). <span class="subway-line-2">2</span>
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <div class="nav-box shadow-sm mt-10">
+            <div class="nav-box-header">광연대학교 관련 문서</div>
+            <div class="nav-box-content leading-loose text-sm">
+                <a onclick="goToLink('광연대학교.html')" class="wiki-link">광연대학교</a> · 
+                <a onclick="goToLink('광연대학교_대학원.html')" class="wiki-link">대학원</a> · 
+                <a onclick="goToLink('광연대학교_총학생회.html')" class="wiki-link">총학생회</a> · 
+                <a onclick="goToLink('학교법인_광연공학원.html')" class="wiki-link">광연공학원</a>
+            </div>
+        </div>
+
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2">
+                이 문서는 <strong>효빈위키</strong>의 문서입니다. <br>
+                기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.
+            </p>
+            <p class="mt-4 text-xs text-gray-500">
+                이 문서의 내용은 사실과 다를 수 있으며, 법적 효력을 갖지 않습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 검색 기능 핸들러
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(query)}`, '_blank');
+            } else {
+                showMsg('검색어를 입력해주세요.');
+            }
+        }
+
+        // 메시지 박스 표시 함수
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        // 링크 이동 핸들러
+        async function goToLink(filename) {
+            if (filename.startsWith('#')) return;
+
+            const namuKeywords = ['대한민국', '국립대학', '사립대학'];
+            const pureName = filename.replace('.html', '').replace(/_/g, ' ');
+            
+            if (namuKeywords.includes(pureName) || filename.includes('namu.wiki')) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(pureName)}`, '_blank');
+                return;
+            }
+
+            try {
+                location.href = filename;
+            } catch (e) {
+                showMsg('문서를 찾을 수 없습니다.');
+            }
+        }
+        
+        // 목차 및 내부 링크 스무스 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (!targetId || targetId === '#') return;
+
+                e.preventDefault();
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, 
+                        behavior: 'smooth'
+                    });
+                    
+                    targetElement.style.transition = 'background 0.5s';
+                    targetElement.style.backgroundColor = '#fff3cd';
+                    setTimeout(() => { targetElement.style.backgroundColor = 'transparent'; }, 1500);
+                }
+            });
+        });
+
+        // --- 각주 툴팁 호버보드 로직 ---
+        const tooltip = document.getElementById('wiki-fn-tooltip');
+        const footnotes = document.querySelectorAll('.wiki-fn');
+
+        footnotes.forEach(fn => {
+            fn.addEventListener('mouseenter', (e) => {
+                const targetId = fn.getAttribute('href').substring(1); 
+                const contentEl = document.getElementById(targetId);
+                
+                if (contentEl) {
+                    tooltip.innerHTML = contentEl.innerHTML;
+                    const backLink = tooltip.querySelector('.wiki-fn-back');
+                    if(backLink) {
+                        backLink.style.display = 'none'; 
+                    }
+                    tooltip.style.display = 'block';
+                }
+            });
+
+            fn.addEventListener('mousemove', (e) => {
+                const x = e.clientX + 15;
+                const y = e.clientY + 15;
+                
+                const tooltipRect = tooltip.getBoundingClientRect();
+                let finalX = x;
+                let finalY = y;
+
+                if (x + tooltipRect.width > window.innerWidth) {
+                    finalX = e.clientX - tooltipRect.width - 10;
+                }
+                if (y + tooltipRect.height > window.innerHeight) {
+                    finalY = e.clientY - tooltipRect.height - 10;
+                }
+
+                tooltip.style.left = finalX + 'px';
+                tooltip.style.top = finalY + 'px';
+            });
+
+            fn.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+</body>
+</html>
