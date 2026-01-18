@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학생 A - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* [테마 컬러] 몰락한 인물, 회색 (#808080) 적용 */
+            --wiki-main: #808080; 
+            
+            /* [고정] 상단 내비게이션 바 색상 */
+            --wiki-nav-bg: #7777AA;
+
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.15rem; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 (프로필용) */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 400px; font-size: 0.85rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.2rem; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: var(--wiki-main); color: #fff; width: 100px; padding: 5px 8px; border: 1px solid var(--wiki-border); text-align: center; vertical-align: middle; }
+        .infobox td { padding: 5px 8px; border: 1px solid var(--wiki-border); vertical-align: middle; }
+
+        /* 데이터 테이블 */
+        .data-table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; font-size: 0.9rem; }
+        .data-table th, .data-table td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; }
+        .data-table th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; text-align: center; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* [특수 스타일] 나무위키 느낌 요소 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+        del { color: #ccc; text-decoration: line-through; } /* 취소선 드립용 */
+        .wiki-gray { color: #888; font-size: 0.9em; } /* 괄호 속 혼잣말용 */
+
+        /* 사건/강조 박스 */
+        .incident-box { border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .incident-box.red { border-color: #fecaca; background-color: #fef2f2; }
+        .incident-box.yellow { border-color: #fef08a; background-color: #fefce8; }
+        .incident-box.green { border-color: #bbf7d0; background-color: #f0fdf4; }
+        .incident-box.blue { border-color: #bfdbfe; background-color: #eff6ff; }
+
+        /* 스크립트/어록 박스 */
+        .script-box { background: #fdfdfd; border: 1px solid #ddd; padding: 20px; border-radius: 8px; font-family: 'Malgun Gothic', sans-serif; margin-bottom: 20px; }
+        .script-header { font-weight: bold; font-size: 1.1rem; border-bottom: 2px solid var(--wiki-main); margin-bottom: 15px; padding-bottom: 5px; }
+        .speaker { font-weight: bold; color: #373a3c; margin-right: 8px; }
+
+        /* 하단 네비 박스 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+
+        /* 푸터 저작권 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; }
+        .wiki-footer strong { color: #333; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+    </style>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+
+    <!-- 상단 내비게이션 바 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav-bg);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='hyobin_city.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="효빈위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a href="학생A.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">토론</a>
+                <a href="학생A.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">편집</a>
+                <a href="학생A.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <!-- [템플릿] 인물 이름 -->
+            <div class="txt-lvl-1">학생 A</div>
+            <div class="flex gap-2 mb-1">
+                <a href="학생A.html" class="wiki-btn">토론</a>
+                <a href="학생A.html" class="wiki-btn">편집</a>
+                <a href="학생A.html" class="wiki-btn">역사</a>
+                <a href="#" class="wiki-btn">★ 즐겨찾기</a>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold" style="color: var(--wiki-main);">분류:</span> 
+            <a href="고판대학교.html" class="wiki-link">고판대학교/졸업생</a> | 
+            <a href="일반인.html" class="wiki-link">일반인</a> | 
+            <a href="아르바이트생.html" class="wiki-link">아르바이트생</a> | 
+            <a href="몰락한_인물.html" class="wiki-link">몰락한 인물</a> | 
+            <a href="반면교사.html" class="wiki-link">반면교사</a>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">생애</a>
+                        <ul>
+                            <li>2.1. <a href="#s-2-1" class="wiki-link">고판대학교 시절: 잘못된 배움</a></li>
+                            <li>2.2. <a href="#s-2-2" class="wiki-link">운명의 면접: 다이아(Dia)의 심판</a></li>
+                            <li>2.3. <a href="#s-2-3" class="wiki-link">현재: 트램 앞의 편의점 알바</a></li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3" class="wiki-link">어록</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">평가</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">관련 문서</a></li>
+                </ul>
+            </div>
+
+            <!-- 프로필 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="infobox-title">
+                    <span style="font-size:1.5rem;">학생 A</span><br>
+                    <span class="text-sm font-normal">Student A</span>
+                </div>
+                <div class="p-0 bg-white text-center border-b">
+                    <!-- 사진 -->
+                    <img src="이미지/학생A.png" alt="학생 A 실루엣" class="w-full object-cover" onerror="this.src='https://via.placeholder.com/200x250?text=No+Image';">
+                </div>
+                <table>
+                    <tr>
+                        <th>본명</th>
+                        <td><strong>김모군</strong> (가명)</td>
+                    </tr>
+                    <tr>
+                        <th>출생</th>
+                        <td>1996년생 (추정)</td>
+                    </tr>
+                    <tr>
+                        <th>학력</th>
+                        <td><a href="고판대학교.html" class="wiki-link">고판대학교</a><br>(보석감정딜러과 / 전문학사) <span class="wiki-gray">[* 폐교 직전 졸업장을 받았으나, 업계에서는 '위조 학위' 취급을 받는다.]</span></td>
+                    </tr>
+                    <tr>
+                        <th>직업</th>
+                        <td>전 보석 딜러 지망생<br>현 편의점 아르바이트생</td>
+                    </tr>
+                    <tr>
+                        <th>근무지</th>
+                        <td><a href="효빈_도시철도_7호선.html" class="wiki-link">효빈 도시철도 7호선</a> (트램) 정거장 앞 편의점</td>
+                    </tr>
+                    <tr>
+                        <th>관련 인물</th>
+                        <td>
+                            <strong><a href="이만구.html" class="wiki-link">이 모 교수</a></strong> (스승이자 원수)<br>
+                            <strong>한 부장</strong> (면접관, 트라우마)<br>
+                            <strong><a href="윤대환.html" class="wiki-link">윤대환</a></strong> (존경했으나 손절함)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>별명</th>
+                        <td>
+                            <strong>다이아를 모르는 자</strong><br>
+                            고판대의 잔재<br>
+                            큐빅 감별사
+                        </td>
+                    </tr>
+                </table>
+            </aside>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <blockquote>
+            <strong>"교수님 말씀이 맞았어. 세상은 사기꾼이 지배하는 거야... 라고 믿었는데, 왜 나만 망한 거지?"</strong>
+        </blockquote>
+        <p>폐교된 <strong><a href="고판대학교.html" class="wiki-link">고판대학교</a></strong> 보석감정딜러과 졸업생.</p>
+        <p><a href="고판대학교.html" class="wiki-link">고판대학교</a>의 타락한 교육 시스템이 배출한 전형적인 <strong>'괴물(Monster)'</strong>이자, 동시에 그 시스템의 <strong>가장 처참한 피해자</strong>이다.</p>
+        <p>학창 시절 학과장인 <strong><a href="이만구.html" class="wiki-link">이 모 교수</a></strong>의 "윤리는 비효율적이다", "진품이 중요한 게 아니라 진품처럼 보이게 파는 게 능력이다"라는 쓰레기 철학을 맹신했다. 이 가르침을 믿고 사회에 나갔다가, <strong>'진정성'</strong>과 <strong>'덕심'</strong>으로 무장한 면접관(<strong>한 부장</strong>)에게 영혼까지 털리고 몰락했다.</p>
+        <p>현재는 <a href="효빈광역시.html" class="wiki-link">효빈시</a> 서구의 한 편의점에서 아르바이트를 하며 하루하루를 연명하고 있다.</p>
+
+        <!-- 2. 생애 -->
+        <h2 id="s-2" class="anchor-offset">2. 생애</h2>
+
+        <h3 id="s-2-1">2.1. 고판대학교 시절: 잘못된 배움</h3>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>입학</strong>: 원래는 보석 감정사가 되고 싶어 입학했으나, 실습실에는 현미경 하나 없었다. 대신 <strong><a href="이만구.html" class="wiki-link">이 모 교수</a></strong>는 그에게 "손님을 속이는 화술"과 "가품을 진품 가격에 파는 심리 조작법"을 가르쳤다. <span class="wiki-gray">(대학이 아니라 사기 학원이었다.)</span></li>
+            <li><strong>타락</strong>: 처음에는 의구심을 품었으나, 교수가 과제로 내준 '가짜 다이아 팔기'에서 최고 점수(A+)를 받으며 점차 비윤리적인 방식에 중독되었다. 그는 <strong>"정직한 놈은 평생 가난하게 산다"</strong>는 교수의 말을 인생의 진리로 받아들였다.</li>
+            <li><strong>졸업</strong>: 2017년 학교가 폐교되기 직전, 간신히 전문학사 학위를 받았다. 그는 이 졸업장이 자신의 무기가 될 줄 알았다. <del>똥휴지가 될 줄은 몰랐겠지</del></li>
+        </ul>
+
+        <h3 id="s-2-2">2.2. 운명의 면접: 다이아(Dia)의 심판</h3>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>면접 지원</strong>: 졸업 후, 국내 굴지의 명품 보석 회사에 딜러직으로 지원했다. 이력서에는 학교에서 배운 대로 온갖 허위 경력과 과장된 자기소개를 적어냈다.</li>
+            <li><strong>면접관 한 부장</strong>: 면접장에 들어선 그를 맞이한 건, 업계의 전설이자 <strong><a href="https://namu.wiki/w/러브%20라이브!%20선샤인!!" target="_blank" class="wiki-link">러브 라이브! 선샤인!!</a></strong>의 <strong><a href="https://namu.wiki/w/쿠로사와%20다이아" target="_blank" class="wiki-link">쿠로사와 다이아</a></strong> 오시(팬)로 유명한 <strong>한 부장</strong>이었다.</li>
+            <li><strong>충돌</strong>:
+                <ul class="list-circle pl-5 mt-2 space-y-1">
+                    <li><strong>학생 A</strong>: "보석의 가치는 마케팅입니다. 저는 큐빅도 다이아몬드 가격에 팔 수 있는 '효율성'을 배웠습니다. 고객은 어차피 차이를 모릅니다."</li>
+                    <li><strong>한 부장</strong>: (미간을 찌푸리며) <strong>"그것은 <a href="사기.html" class="wiki-link">사기(Scam)</a>입니다. 보석은 '변하지 않는 가치'를 파는 것입니다. 당신의 말은 우리 회사의 사훈인 '뿌부-!<span class="wiki-gray">(틀렸어!)</span>'입니다."</strong></li>
+                </ul>
+            </li>
+            <li><strong>실무 테스트</strong>: 한 부장은 탁자에 큐빅 지르코니아를 올려놓고 <strong>루페(확대경)</strong>를 던져주며 "이게 왜 다이아몬드가 아닌지 증명해보라"고 했다.
+                <ul class="list-circle pl-5 mt-2 space-y-1">
+                    <li>하지만 <a href="고판대학교.html" class="wiki-link">고판대</a>에서 <strong>사진으로만</strong> 보석을 배운 학생 A는 루페를 눈에 대는 법조차 몰랐다. 그는 땀을 뻘뻘 흘리며 "이, 이건 사진이랑 빛깔이 다른데요..."라고 얼버무렸다. <span class="wiki-gray">(현실은 실전이다)</span></li>
+                </ul>
+            </li>
+            <li><strong>결말</strong>: 한 부장은 <strong>"당신은 루비(Ruby)의 순수함도, 다이아(Dia)의 고결함도 모르는 삼류입니다."</strong>라며 그를 쫓아냈다. 이 사건은 업계에 소문이 퍼져 학생 A는 보석 관련 직종에 취업길이 막혔다.</li>
+        </ul>
+
+        <h3 id="s-2-3">2.3. 현재: 트램 앞의 편의점 알바</h3>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>몰락</strong>: 취업에 실패한 그는 결국 생계를 위해 편의점 야간 아르바이트를 시작했다.</li>
+            <li><strong>아이러니</strong>: 그가 일하는 편의점 바로 앞에는 <strong><a href="박효빈.html" class="wiki-link">박효빈</a></strong> 시장이 야심 차게 도입한 <strong><a href="효빈_도시철도_7호선.html" class="wiki-link">효빈 도시철도 7호선</a> (트램)</strong> 정거장이 있다.
+                <ul class="list-circle pl-5 mt-2 space-y-1">
+                    <li>트램이 지나갈 때마다 "땡~ 땡~" 하는 경적 소리가 들리는데, 그는 이 소리를 들을 때마다 <strong>"젠장, <a href="윤대환.html" class="wiki-link">윤대환</a> 시장님 시절엔 버스비라도 쌌지<span class="wiki-gray">(사실 아님)</span>... 이젠 공짜 버스도 없어..."</strong>라고 신세 한탄을 한다.</li>
+                </ul>
+            </li>
+            <li><strong>재회</strong>: 최근 출소한 <strong><a href="이만구.html" class="wiki-link">이 모 교수</a></strong>가 편의점에 들러 외상을 달라고 하자, <strong>"교수님, 외상은 '비효율적'이라 안 됩니다. 돈 없으면 나가세요."</strong>라고 쏘아붙이며 쫓아냈다는 목격담이 있다. <span class="wiki-gray">(청출어람?)</span> 비록 인생은 망쳤지만, 스승의 가르침(?)을 스승에게 되돌려준 셈이다.</li>
+        </ul>
+
+        <!-- 3. 어록 -->
+        <h2 id="s-3" class="anchor-offset">3. 어록</h2>
+        <div class="script-box">
+            <div class="script-header">학생 A의 말말말</div>
+            <p class="mb-4">
+                <span class="speaker">학생 A:</span> "고객님, 이거 1+1 행사 상품인데... 사실 하나 가격에 두 개 주는 척하면서 원가를 녹인 겁니다. 이게 다 상술이에요."<br>
+                <span class="wiki-gray text-sm">(편의점 손님에게 TMI를 방출하며)</span>
+            </p>
+            <p class="mb-4">
+                <span class="speaker">학생 A:</span> "나도 현미경만 있었어도... 아니, 진짜 보석을 한 번만이라도 봤었어도..."<br>
+                <span class="wiki-gray text-sm">(폐점 후 유통기한 지난 삼각김밥을 먹으며)</span>
+            </p>
+            <p class="mb-4">
+                <span class="speaker">학생 A:</span> "다이아몬드? 그거 다 탄소 덩어리잖아! 큐빅이나 다이아나 반짝이면 그만이지!"<br>
+                <span class="wiki-gray text-sm">(면접 탈락 후 술에 취해 길거리에서 고성방가하며)</span>
+            </p>
+        </div>
+
+        <!-- 4. 평가 -->
+        <h2 id="s-4" class="anchor-offset">4. 평가</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>고판대의 피해자</strong>: 그 역시 처음부터 <a href="사기꾼.html" class="wiki-link">사기꾼</a>은 아니었다. 제대로 된 교육을 받았다면 평범한 보석 딜러가 될 수도 있었다. 그런 의미에서 그는 <strong>가장 불쌍한 <a href="고판대학교.html" class="wiki-link">고판대</a>의 희생양</strong>이다.</li>
+            <li><strong>어설픈 악인</strong>: <a href="이만구.html" class="wiki-link">이 모 교수</a>의 악랄함을 닮으려 했으나, 실력이 뒷받침되지 않아 결국 자멸했다. <strong><a href="D_주무관.html" class="wiki-link">D 주무관</a></strong>이 "악의 소굴에서 핀 꽃"이라면, 학생 A는 <strong>"악의 소굴에서 썩어버린 뿌리"</strong>다.</li>
+            <li><strong>반면교사</strong>: 현재 효빈시의 취업 준비생들 사이에서는 <strong>"학생 A처럼 되지 말자"</strong>는 말이 유행어처럼 돈다고 한다.</li>
+        </ul>
+
+        <!-- 5. 관련 문서 -->
+        <h2 id="s-5" class="anchor-offset">5. 관련 문서</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><a href="고판대학교.html" class="wiki-link">고판대학교</a> (모교이자 원흉)</li>
+            <li><a href="윤대환.html" class="wiki-link">윤대환</a> (한때 롤모델)</li>
+            <li><a href="https://namu.wiki/w/쿠로사와%20다이아" target="_blank" class="wiki-link">쿠로사와 다이아</a> (트라우마의 원인)</li>
+            <li><a href="D_주무관.html" class="wiki-link">D 주무관</a> (같은 학교 출신이지만 정반대의 길을 간 동기)</li>
+        </ul>
+
+        <!-- 하단 네비게이션 -->
+        <div class="nav-box shadow-sm mt-10">
+            <div class="nav-box-header">[관련 인물 둘러보기]</div>
+            <div class="nav-box-content leading-loose text-sm">
+                <a href="이만구.html" class="wiki-link">이만구</a> · 
+                <a href="D_주무관.html" class="wiki-link">D 주무관</a> · 
+                <a href="학생B.html" class="wiki-link">학생 B</a> · 
+                <a href="한부장.html" class="wiki-link">한 부장</a>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                // 실제 검색 기능 대신 알림창 띄우거나 이동
+                showMsg(`'${query}' 문서를 찾을 수 없습니다.`);
+            } else {
+                showMsg('검색어를 입력해주세요.');
+            }
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        document.querySelectorAll('a.wiki-link').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                // 외부 링크(http)가 아닌 내부 html 링크에 대해 처리
+                const href = this.getAttribute('href');
+                if (href && !href.startsWith('http') && !href.startsWith('#')) {
+                    // 문서 존재 여부 확인 로직은 서버 없이 불가하므로 생략하거나 시뮬레이션
+                }
+            });
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
