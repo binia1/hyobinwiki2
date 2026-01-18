@@ -414,6 +414,96 @@
     });
   }
 
+  // ---------- link canonicalization (alias-aware) ----------
+  function isInternalHref(href){
+    if(!href) return false;
+    if(/^https?:\/\//i.test(href)) return false;
+    if(href.startsWith("mailto:") || href.startsWith("tel:")) return false;
+    if(href.startsWith("#")) return false;
+    return true;
+  }
+
+  function resolveHrefToTarget(href){
+    if(!isInternalHref(href)) return null;
+
+    // strip query/hash
+    const clean = (href||"").split("#")[0].split("?")[0];
+
+    // only handle html-ish links
+    if(!/\.html$/i.test(clean)) return null;
+
+    const base = hrefBaseName(clean);
+    if(!base) return null;
+
+    const target = resolveAlias(base);
+    if(!target) return null;
+
+    // if target equals current href (after normalizing), don't change
+    const normHref = ensureHtmlExtLower(clean.replace(/\.html$/i,""));
+    const normTarget = ensureHtmlExtLower(target.replace(/\.html$/i,""));
+
+    if(normHref === normTarget) return null;
+    return normTarget;
+  }
+
+  // 1) On page load, if current page is an alias page, redirect to canonical
+  (function canonicalizeCurrent(){
+    try{
+      const path = location.pathname || "";
+      const fileRaw = path.split("/").pop() || "";
+      if(!/\.html$/i.test(fileRaw)) return;
+
+      // normalize current + target by decoded basename keys (prevents refresh loops on URL-encoded paths)
+      const hereBaseKey = toKey(hrefBaseName(fileRaw));
+      const targetHref = resolveAlias(hrefBaseName(fileRaw));
+      if(!targetHref) return;
+
+      const tgtBaseKey = toKey(hrefBaseName(targetHref));
+      if(!hereBaseKey || !tgtBaseKey) return;
+      if(hereBaseKey === tgtBaseKey) return; // already canonical (even if encoded differently)
+
+      location.replace(targetHref);
+    }catch(e){}
+  })();
+
+  // 2) Rewrite all internal <a href="...html"> to canonical targets (better for right-click/copy)
+  function rewriteAllLinks(){
+    try{
+      const links = Array.from(document.querySelectorAll('a[href]'));
+      links.forEach(a=>{
+        const href = a.getAttribute("href");
+        const tgt = resolveHrefToTarget(href);
+        if(tgt) a.setAttribute("href", tgt);
+      });
+    }catch(e){}
+  }
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", rewriteAllLinks);
+  }else{
+    rewriteAllLinks();
+  }
+
+  // 3) Safety net: intercept clicks and reroute if needed
+  document.addEventListener("click", (e)=>{
+    try{
+      // only normal left click without modifiers
+      if(e.defaultPrevented) return;
+      if(e.button !== 0) return;
+      if(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+      const a = e.target && e.target.closest ? e.target.closest("a[href]") : null;
+      if(!a) return;
+
+      const href = a.getAttribute("href");
+      const tgt = resolveHrefToTarget(href);
+      if(!tgt) return;
+
+      e.preventDefault();
+      location.href = tgt;
+    }catch(err){}
+  }, true);
+
+
   // auto-attach to common ids (safe on any page)
   attachAutocomplete("headerSearchInput", "hb-header-search-wrap");
   attachAutocomplete("mainSearchInput", "hb-main-search-wrap");
