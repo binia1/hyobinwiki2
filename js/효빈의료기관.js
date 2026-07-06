@@ -74,7 +74,7 @@ function renderHyobinMedicalTable(containerId) {
                         <tr>
                             <th colspan="2">
                                 <div class="hb-med-header-content">
-                                    <img src="이미지/hyobin1.png" class="hb-med-logo" alt="로고" onerror="this.style.display='none'"/>
+                                    <img src="이미지/hyobin1.webp" class="hb-med-logo" alt="로고" onerror="this.style.display='none'"/>
                                     <span class="hb-med-title">${title}</span>
                                     <span class="hb-toggle-btn" data-target="${tableId}">[접기]</span>
                                 </div>

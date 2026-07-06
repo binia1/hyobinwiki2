@@ -73,21 +73,21 @@
 
                             <td style="font-weight:bold; border: 1px solid #000; width: 30%; background-color:#F9F9F9;">
                                 <div style="display: flex; align-items: center; justify-content: center;">
-                                    <img src="이미지/효빈시_로고.png" alt="효빈광역시" style="height:20px; margin-right:5px; onerror='this.style.display=\`none\`'">
+                                    <img src="이미지/효빈시_로고.webp" alt="효빈광역시" style="height:20px; margin-right:5px; onerror='this.style.display=\`none\`'">
                                     <a href="효빈광역시.html" class="wiki-link">효빈광역시</a>
                                 </div>
                             </td>
 
                             <td style="font-weight:bold; border: 1px solid #000; width: 30%; background-color:#F9F9F9;">
                                 <div style="display: flex; align-items: center; justify-content: center;">
-                                    <img src="이미지/덕북로고.png" alt="덕빈북도" style="height:20px; margin-right:5px; onerror='this.style.display=\`none\`'">
+                                    <img src="이미지/덕북로고.webp" alt="덕빈북도" style="height:20px; margin-right:5px; onerror='this.style.display=\`none\`'">
                                     <a href="덕빈북도.html" class="wiki-link">덕빈북도</a>
                                 </div>
                             </td>
 
                             <td style="font-weight:bold; border: 1px solid #000; width: 30%; background-color:#F9F9F9;">
                                 <div style="display: flex; align-items: center; justify-content: center;">
-                                    <img src="이미지/덕빈남도_로고.png" alt="덕빈남도" style="height:20px; margin-right:5px; onerror='this.style.display=\`none\`'">
+                                    <img src="이미지/덕빈남도_로고.webp" alt="덕빈남도" style="height:20px; margin-right:5px; onerror='this.style.display=\`none\`'">
                                     <a href="덕빈남도.html" class="wiki-link">덕빈남도</a>
                                 </div>
                             </td>

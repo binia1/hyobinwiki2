@@ -162,7 +162,7 @@ function renderHyobinMayorTable(containerId) {
                     <tr>
                         <th colspan="5" class="main-header">
                             <div class="hb-mayor-header-content">
-                                <img src="이미지/hyobin1.png" class="hb-mayor-logo" alt="로고" onerror="this.style.display='none'"/>
+                                <img src="이미지/hyobin1.webp" class="hb-mayor-logo" alt="로고" onerror="this.style.display='none'"/>
                                 <span class="hb-mayor-title">역대 민선 효빈광역시장</span>
                                 <span class="hb-toggle-btn" id="hb-mayor-toggle">[접기]</span>
                             </div>

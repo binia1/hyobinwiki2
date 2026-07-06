@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #7777aa;">
             <div class="wiki-navbox-header" style="background-color: #7777aa;">
                 <div class="header-content">
-                    <img src="이미지/효빈광역시_흰색로고.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/효빈광역시_흰색로고.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">효빈광역시</div>
                         <div class="title-main">효빈광역시 관내 대로</div>
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #BB9955;">
             <div class="wiki-navbox-header" style="background-color: #BB9955;">
                 <div class="header-content">
-                    <img src="이미지/중구_흰색로고.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/중구_흰색로고.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">효빈광역시</div>
                         <div class="title-main">중구 관내 로</div>
@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #FF9922;">
             <div class="wiki-navbox-header" style="background-color: #FF9922;">
                 <div class="header-content">
-                    <img src="이미지/동구_흰색로고.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/동구_흰색로고.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">효빈광역시</div>
                         <div class="title-main">동구 관내 로</div>
@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #00AABB;">
             <div class="wiki-navbox-header" style="background-color: #00AABB;">
                 <div class="header-content">
-                    <img src="이미지/서구_흰색로고.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/서구_흰색로고.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">효빈광역시</div>
                         <div class="title-main">서구 관내 로</div>
@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #DDBBFF;">
             <div class="wiki-navbox-header" style="background-color: #DDBBFF;">
                 <div class="header-content">
-                    <img src="이미지/남구_흰색로고.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/남구_흰색로고.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">효빈광역시</div>
                         <div class="title-main">남구 관내 로</div>
@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #7799CC;">
             <div class="wiki-navbox-header" style="background-color: #7799CC;">
                 <div class="header-content">
-                    <img src="이미지/북구_흰색로고.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/북구_흰색로고.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">효빈광역시</div>
                         <div class="title-main">북구 관내 로</div>
@@ -182,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #006699;">
             <div class="wiki-navbox-header" style="background-color: #006699;">
                 <div class="header-content">
-                    <img src="이미지/청엽구_흰색로고.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/청엽구_흰색로고.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">효빈광역시</div>
                         <div class="title-main">청엽구 관내 로</div>
@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #33AAFF;">
             <div class="wiki-navbox-header" style="background-color: #33AAFF;">
                 <div class="header-content">
-                    <img src="이미지/창전구_흰색로고.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/창전구_흰색로고.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">효빈광역시</div>
                         <div class="title-main">창전구 관내 로</div>
@@ -222,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #AA66DD;">
             <div class="wiki-navbox-header" style="background-color: #AA66DD;">
                 <div class="header-content">
-                    <img src="이미지/안천구_흰색로고.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/안천구_흰색로고.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">효빈광역시</div>
                         <div class="title-main">안천구 관내 로</div>
@@ -242,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #BBFF64;">
             <div class="wiki-navbox-header" style="background-color: #BBFF64;">
                 <div class="header-content">
-                    <img src="이미지/탄성군_흰색로고.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/탄성군_흰색로고.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">효빈광역시</div>
                         <div class="title-main">탄성군 관내 로</div>
@@ -262,7 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #4AD898;">
             <div class="wiki-navbox-header" style="background-color: #4AD898;">
                 <div class="header-content">
-                    <img src="이미지/덕북로고흰색.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/덕북로고흰색.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">덕빈북도</div>
                         <div class="title-main">덕빈북도 관내 대로</div>
@@ -282,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #01B7ED;">
             <div class="wiki-navbox-header" style="background-color: #01B7ED;">
                 <div class="header-content">
-                    <img src="이미지/기도군.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/기도군.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">덕빈북도</div>
                         <div class="title-main">기도군 관내 로</div>
@@ -302,7 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #485EC6;">
             <div class="wiki-navbox-header" style="background-color: #485EC6;">
                 <div class="header-content">
-                    <img src="이미지/낭원군.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/낭원군.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">덕빈북도</div>
                         <div class="title-main">낭원군 관내 로</div>
@@ -322,7 +322,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #FF5800;">
             <div class="wiki-navbox-header" style="background-color: #FF5800;">
                 <div class="header-content">
-                    <img src="이미지/덕현군.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/덕현군.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">덕빈북도</div>
                         <div class="title-main">덕현군 관내 로</div>
@@ -342,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #F8C8C4;">
             <div class="wiki-navbox-header" style="background-color: #F8C8C4;">
                 <div class="header-content">
-                    <img src="이미지/약산시.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/약산시.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">덕빈북도</div>
                         <div class="title-main">약산시 관내 로</div>
@@ -362,7 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #D6D5CA;">
             <div class="wiki-navbox-header" style="background-color: #D6D5CA;">
                 <div class="header-content">
-                    <img src="이미지/선곡군.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/선곡군.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">덕빈북도</div>
                         <div class="title-main">선곡군 관내 로</div>
@@ -382,7 +382,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="wiki-navbox" style="border-color: #8B4993;">
             <div class="wiki-navbox-header" style="background-color: #8B4993;">
                 <div class="header-content">
-                    <img src="이미지/천주시.png" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/천주시.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">덕빈북도</div>
                         <div class="title-main">천주시 관내 로</div>

@@ -30,8 +30,8 @@ async function fixHighways() {
 
         // 찾을 문자열 정규식: 
         // 1. 이미지/고속국도_숫자호선.svg
-        // 2. 이미지/대한민국_고속국도_제숫자호선.png
-        const regex = /이미지\/(고속국도_\d+호선\.svg|대한민국_고속국도_제\d+호선\.png)/g;
+        // 2. 이미지/대한민국_고속국도_제숫자호선.webp
+        const regex = /이미지\/(고속국도_\d+호선\.svg|대한민국_고속국도_제\d+호선\.webp)/g;
 
         for (const file of htmlFiles) {
             const content = await fs.readFile(file, 'utf-8');
@@ -42,7 +42,7 @@ async function fixHighways() {
                 const matchCount = content.match(regex).length;
                 
                 // 일괄 찾아바꾸기
-                const newContent = content.replace(regex, '이미지/대한민국_고속국도.png');
+                const newContent = content.replace(regex, '이미지/대한민국_고속국도.webp');
                 
                 // 파일 덮어쓰기
                 await fs.writeFile(file, newContent, 'utf-8');
@@ -56,8 +56,8 @@ async function fixHighways() {
         if (totalReplaced === 0) {
             console.log('🤷 변경할 고속도로 아이콘이 없습니다.');
         } else {
-            console.log(`\n🎉 작업 완료! 총 ${modifiedFiles}개의 문서에서 ${totalReplaced}개의 아이콘을 '이미지/대한민국_고속국도.png'로 통일했습니다.`);
-            console.log(`👉 잊지 말고 '이미지' 폴더 안에 '대한민국_고속국도.png' 파일을 딱 하나만 넣어두세요!`);
+            console.log(`\n🎉 작업 완료! 총 ${modifiedFiles}개의 문서에서 ${totalReplaced}개의 아이콘을 '이미지/대한민국_고속국도.webp'로 통일했습니다.`);
+            console.log(`👉 잊지 말고 '이미지' 폴더 안에 '대한민국_고속국도.webp' 파일을 딱 하나만 넣어두세요!`);
         }
 
     } catch (error) {

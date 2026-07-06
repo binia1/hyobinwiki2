@@ -3480,7 +3480,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 filename = decodeURIComponent(filename);
                 filenameSpan.innerText = filename;
             } else {
-                filenameSpan.innerText = "알수없는_이미지.png";
+                filenameSpan.innerText = "알수없는_이미지.webp";
             }
             
             let imgAlt = img.getAttribute('alt');
@@ -4065,7 +4065,7 @@ if (!window.__HB_WIKI_CORE_LOADED__) {
                     try { filenameSpan.innerText = decodeURIComponent(rawName); }
                     catch(err) { filenameSpan.innerText = rawName; }
                 } else {
-                    filenameSpan.innerText = "알수없는_이미지.png";
+                    filenameSpan.innerText = "알수없는_이미지.webp";
                 }
                 
                 // 설명(alt) 추출

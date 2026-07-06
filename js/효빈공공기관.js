@@ -124,7 +124,7 @@ function renderHyobinPublicOrg(containerId) {
     const html = `
         <div class="hb-org-frame">
             <div class="hb-org-header">
-                <img class="hb-org-logo" src="이미지/효빈시_로고.png" onerror="this.src='https://placehold.co/20x20?text=LOGO'"/> 
+                <img class="hb-org-logo" src="이미지/효빈시_로고.webp" onerror="this.src='https://placehold.co/20x20?text=LOGO'"/> 
                 <a href="효빈광역시.html">효빈광역시의 지방공공기관</a>
             </div>
             <div class="hb-org-body">

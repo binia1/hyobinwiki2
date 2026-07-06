@@ -5,16 +5,16 @@ export async function seedInitialData(db) {
 
     // --- 1. 이미지 및 스타일 헬퍼 ---
     const IMAGE_MAP = {
-      '효빈광역시': 'https://i.imgur.com/iYcyOlz.png',
-      '남구': 'https://i.imgur.com/GKWRItK.png',
-      '북구': 'https://i.imgur.com/kdSkuVp.png',
-      '동구': 'https://i.imgur.com/WfloDcp.png',
-      '서구': 'https://i.imgur.com/LzHidYM.png',
-      '중구': 'https://i.imgur.com/GOBJzcQ.png',
-      '안천구': 'https://i.imgur.com/7X32Jx0.png',
-      '창전구': 'https://i.imgur.com/D9RghdZ.png',
-      '청엽구': 'https://i.imgur.com/ocwoL8p.png',
-      '탄성군': 'https://i.imgur.com/G7LbZmw.png'
+      '효빈광역시': 'https://i.imgur.com/iYcyOlz.webp',
+      '남구': 'https://i.imgur.com/GKWRItK.webp',
+      '북구': 'https://i.imgur.com/kdSkuVp.webp',
+      '동구': 'https://i.imgur.com/WfloDcp.webp',
+      '서구': 'https://i.imgur.com/LzHidYM.webp',
+      '중구': 'https://i.imgur.com/GOBJzcQ.webp',
+      '안천구': 'https://i.imgur.com/7X32Jx0.webp',
+      '창전구': 'https://i.imgur.com/D9RghdZ.webp',
+      '청엽구': 'https://i.imgur.com/ocwoL8p.webp',
+      '탄성군': 'https://i.imgur.com/G7LbZmw.webp'
     };
 
     const partyColor = {
@@ -103,7 +103,7 @@ export async function seedInitialData(db) {
               <tr>
                   <td colspan="2" style="width: 100%; padding: 5px 10px; border-bottom: 1px solid #ddd; text-align: right; font-weight: bold; color: #373a3c; background-color: #f8f8f8;">
                       <span style="display: inline-flex; align-items: center; gap: 5px;">
-                          <img src="이미지/https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_South_Korea.svg/30px-Flag_of_South_Korea.svg.png" alt="대한민국 국기" style="height: 16px; width: auto;">
+                          <img src="이미지/https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_South_Korea.svg/30px-Flag_of_South_Korea.svg.webp" alt="대한민국 국기" style="height: 16px; width: auto;">
                           대한민국의 광역시
                       </span>
                   </td>
@@ -111,7 +111,7 @@ export async function seedInitialData(db) {
               <tr>
                   <td colspan="2" style="padding: 10px 15px; background-color: white; text-align: center; border-bottom: 1px solid #ddd;">
                       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;">
-                          <img src="이미지/https://i.imgur.com/iYcyOlz.png" alt="효빈광역시 휘장" style="width: 80px; height: 80px; display: block; border-radius: 5px;">
+                          <img src="이미지/https://i.imgur.com/iYcyOlz.webp" alt="효빈광역시 휘장" style="width: 80px; height: 80px; display: block; border-radius: 5px;">
                           <div style="text-align: center;">
                               <div style="font-size: 1.5rem !important; font-weight: bold; color: #373a3c;">효빈광역시</div>
                               <div style="font-size: 1.0rem !important; font-weight: normal; color: #666;">孝彬廣域市<br>Hyobin Metropolitan City</div>
@@ -468,7 +468,7 @@ export async function seedInitialData(db) {
               <table class="wiki-table" style="width: 100%; margin: 0; border: none; background-color: white;">
                   <tr>
                       <td style="width: 120px; text-align: center; border: 1px solid #ddd; padding: 10px; vertical-align: middle;">
-                          <img src="이미지/https://i.imgur.com/iYcyOlz.png" alt="효빈광역시 휘장" style="max-width: 100px; height: auto; display: block; margin: 0 auto; border: 1px solid #ddd; border-radius: 3px; object-fit: contain;">
+                          <img src="이미지/https://i.imgur.com/iYcyOlz.webp" alt="효빈광역시 휘장" style="max-width: 100px; height: auto; display: block; margin: 0 auto; border: 1px solid #ddd; border-radius: 3px; object-fit: contain;">
                       </td>
                       <td style="border: 1px solid #ddd; padding: 10px; vertical-align: top; font-size: 0.95rem;">
                           <p>바다와 3면이 접해있는 항만 도시의 특성을 살려 하부는 푸른 물결 이미지를, 상부는 효빈의 초성 'ㅂ'을 노란색(밝은 미래)으로 형상화했다.</p>

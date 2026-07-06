@@ -221,7 +221,7 @@ function renderHyobinHistorySection(containerId) {
                     <tr>
                         <th colspan="5" class="main-header">
                             <div class="hb-hist-header-content">
-                                <img src="이미지/hyobin1.png" class="hb-hist-logo" alt="로고" onerror="this.style.display='none'"/>
+                                <img src="이미지/hyobin1.webp" class="hb-hist-logo" alt="로고" onerror="this.style.display='none'"/>
                                 <span class="hb-hist-title">${mkLink('효빈광역시', '효빈광역시.html')} 행정구역 변천사</span>
                                 <span class="hb-toggle-btn" data-target="hb-hist-body-1">[접기]</span>
                             </div>
@@ -244,7 +244,7 @@ function renderHyobinHistorySection(containerId) {
                     <tr>
                         <th colspan="2" class="main-header">
                             <div class="hb-hist-header-content">
-                                <img src="이미지/hyobin1.png" class="hb-hist-logo" alt="로고" onerror="this.style.display='none'"/>
+                                <img src="이미지/hyobin1.webp" class="hb-hist-logo" alt="로고" onerror="this.style.display='none'"/>
                                 <span class="hb-hist-title">효빈광역시 연혁</span>
                                 <span class="hb-toggle-btn" data-target="hb-hist-body-2">[접기]</span>
                             </div>

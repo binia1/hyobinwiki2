@@ -111,7 +111,7 @@ function renderHyobinBusList(containerId) {
                         <tr>
                             <th colspan="${data.cols}" style="background-color: ${data.color}; color: ${textColor};">
                                 <div class="hb-bus-header-content">
-                                    <img src="이미지/hyobin1.png" class="hb-bus-logo" alt="로고" onerror="this.style.display='none'"/>
+                                    <img src="이미지/hyobin1.webp" class="hb-bus-logo" alt="로고" onerror="this.style.display='none'"/>
                                     <span class="hb-bus-title">
                                         <a href="${data.link}" style="color: ${textColor}; text-decoration: none;">
                                             ${data.title}

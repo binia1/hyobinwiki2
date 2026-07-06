@@ -62,7 +62,7 @@ function renderHyobinCongress22(containerId) {
                     <tr>
                         <th colspan="4" class="hb-pol-header-cell">
                             <div class="hb-pol-header-content">
-                                <img src="이미지/hyobin1.png" class="hb-pol-logo" alt="로고" onerror="this.style.display='none'"/>
+                                <img src="이미지/hyobin1.webp" class="hb-pol-logo" alt="로고" onerror="this.style.display='none'"/>
                                 <span class="hb-pol-title">효빈광역시 제22대 국회의원</span>
                                 <span class="hb-toggle-btn" id="hb-pol-toggle">[접기]</span>
                             </div>

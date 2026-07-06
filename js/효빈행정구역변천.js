@@ -55,7 +55,7 @@ function renderHyobinAdminHistory(containerId) {
                         <tr>
                             <th colspan="100%" class="main-header">
                                 <div class="hb-adm-header-content">
-                                    <img src="이미지/hyobin1.png" class="hb-adm-logo" alt="로고" onerror="this.style.display='none'"/>
+                                    <img src="이미지/hyobin1.webp" class="hb-adm-logo" alt="로고" onerror="this.style.display='none'"/>
                                     <span class="hb-adm-title">${title}</span>
                                     <span class="hb-toggle-btn" data-target="${id}">[접기]</span>
                                 </div>

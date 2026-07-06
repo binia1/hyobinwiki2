@@ -53,7 +53,7 @@ function renderHyobinTerminalTable(containerId) {
                     <tr>
                         <th colspan="2">
                             <div class="hb-term-header-content">
-                                <img src="이미지/hyobin1.png" class="hb-term-logo" alt="로고" onerror="this.style.display='none'"/>
+                                <img src="이미지/hyobin1.webp" class="hb-term-logo" alt="로고" onerror="this.style.display='none'"/>
                                 <span class="hb-term-title">효빈광역시 관내 버스 터미널 및 정류소</span>
                                 <span class="hb-toggle-btn" id="hb-term-toggle">[접기]</span>
                             </div>

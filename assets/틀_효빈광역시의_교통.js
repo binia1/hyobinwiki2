@@ -120,7 +120,7 @@ document.write(`
         <tr>
             <td colspan="3" class="transport-header">
                 <div style="display:flex; align-items:center; justify-content:center; gap:10px;">
-                    <a href="효빈광역시.html"><img src="이미지/효빈시_로고.png" height="45" style="vertical-align:middle;" onerror="this.src='https://placehold.co/45x45/7777aa/white?text=HYOBIN'"></a>
+                    <a href="효빈광역시.html"><img src="이미지/효빈시_로고.webp" height="45" style="vertical-align:middle;" onerror="this.src='https://placehold.co/45x45/7777aa/white?text=HYOBIN'"></a>
                     <div style="line-height:1.2;">
                         <span style="font-size:1.1em;"><a href="효빈광역시.html" style="color:inherit; text-decoration:none;">효빈광역시</a></span><br>
                         <span style="font-size:1.4em; font-weight:bold;"><a href="효빈광역시_교통.html" style="color:inherit; text-decoration:none;">교통</a></span>
@@ -199,10 +199,10 @@ document.write(`
                 </td>
                 <td class="transport-label"><a href="고속도로.html">고속도로</a></td>
                 <td class="transport-content">
-                    <img src="이미지/대한민국_고속국도.png" height="15" style="vertical-align:middle;"> <a href="효빈빈주고속도로.html">효빈빈주선</a> · 
-                    <img src="이미지/대한민국_고속국도.png" height="15" style="vertical-align:middle;"> <a href="효빈서해고속도로.html">효빈서해선</a> · 
-                    <img src="이미지/대한민국_고속국도.png" height="15" style="vertical-align:middle;"> <a href="덕북고속도로.html">덕북선</a> · 
-                    <img src="이미지/대한민국_고속국도.png" height="15" style="vertical-align:middle;"> <a href="효빈외곽순환고속도로.html">효빈외곽순환선</a>
+                    <img src="이미지/대한민국_고속국도.webp" height="15" style="vertical-align:middle;"> <a href="효빈빈주고속도로.html">효빈빈주선</a> · 
+                    <img src="이미지/대한민국_고속국도.webp" height="15" style="vertical-align:middle;"> <a href="효빈서해고속도로.html">효빈서해선</a> · 
+                    <img src="이미지/대한민국_고속국도.webp" height="15" style="vertical-align:middle;"> <a href="덕북고속도로.html">덕북선</a> · 
+                    <img src="이미지/대한민국_고속국도.webp" height="15" style="vertical-align:middle;"> <a href="효빈외곽순환고속도로.html">효빈외곽순환선</a>
                 </td>
             </tr>
             <tr>
@@ -214,9 +214,9 @@ document.write(`
             <tr>
                 <td class="transport-label"><a href="국도.html">국도</a></td>
                 <td class="transport-content">
-                    <img src="이미지/국도.png" height="15" style="vertical-align:middle;"> <a href="7번_국도.html">7번</a> · 
-                    <img src="이미지/국도.png" height="15" style="vertical-align:middle;"> <a href="14번_국도.html">14번</a> · 
-                    <img src="이미지/국도.png" height="15" style="vertical-align:middle;"> <a href="31번_국도.html">31번</a>
+                    <img src="이미지/국도.webp" height="15" style="vertical-align:middle;"> <a href="7번_국도.html">7번</a> · 
+                    <img src="이미지/국도.webp" height="15" style="vertical-align:middle;"> <a href="14번_국도.html">14번</a> · 
+                    <img src="이미지/국도.webp" height="15" style="vertical-align:middle;"> <a href="31번_국도.html">31번</a>
                 </td>
             </tr>
 

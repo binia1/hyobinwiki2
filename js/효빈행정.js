@@ -23,7 +23,7 @@
         <div class="nav-box rounded overflow-hidden shadow-sm" style="border-color: var(--wiki-fixed);">
             <div class="nav-box-header" style="background-color: var(--wiki-fixed);" onclick="toggleNav('guNav', 'guLabel')">
                 <span class="flex items-center">
-                    <img src="이미지/효빈광역시_흰색로고.png" alt="🏙️" style="height: 3.2em; width: auto; margin-right: 5px;" onerror="this.outerHTML='🏙️'">
+                    <img src="이미지/효빈광역시_흰색로고.webp" alt="🏙️" style="height: 3.2em; width: auto; margin-right: 5px;" onerror="this.outerHTML='🏙️'">
                     <span>효빈광역시의 행정구역</span>
                 </span>
                 <span id="guLabel" class="text-[10px] bg-white/20 px-2 py-0.5 rounded nav-toggle-btn">[접기]</span>
@@ -35,35 +35,35 @@
                         <td>
                             <div class="flex flex-wrap justify-center gap-2">
                                 <a href="중구.html" class="admin-item">
-                                    <img src="이미지/중구.png" class="admin-logo-space" alt="중구">
+                                    <img src="이미지/중구.webp" class="admin-logo-space" alt="중구">
                                     중구
                                 </a>
                                 <a href="동구.html" class="admin-item">
-                                    <img src="이미지/동구.png" class="admin-logo-space" alt="동구">
+                                    <img src="이미지/동구.webp" class="admin-logo-space" alt="동구">
                                     동구
                                 </a>
                                 <a href="서구.html" class="admin-item">
-                                    <img src="이미지/서구.png" class="admin-logo-space" alt="서구">
+                                    <img src="이미지/서구.webp" class="admin-logo-space" alt="서구">
                                     서구
                                 </a>
                                 <a href="남구.html" class="admin-item">
-                                    <img src="이미지/남구.png" class="admin-logo-space" alt="남구">
+                                    <img src="이미지/남구.webp" class="admin-logo-space" alt="남구">
                                     남구
                                 </a>
                                 <a href="북구.html" class="admin-item">
-                                    <img src="이미지/북구.png" class="admin-logo-space" alt="북구">
+                                    <img src="이미지/북구.webp" class="admin-logo-space" alt="북구">
                                     북구
                                 </a>
                                 <a href="청엽구.html" class="admin-item">
-                                    <img src="이미지/청엽구.png" class="admin-logo-space" alt="청엽">
+                                    <img src="이미지/청엽구.webp" class="admin-logo-space" alt="청엽">
                                     청엽구
                                 </a>
                                 <a href="안천구.html" class="admin-item">
-                                    <img src="이미지/안천구.png" class="admin-logo-space" alt="안천">
+                                    <img src="이미지/안천구.webp" class="admin-logo-space" alt="안천">
                                     안천구
                                 </a>
                                 <a href="창전구.html" class="admin-item">
-                                    <img src="이미지/창전구.png" class="admin-logo-space" alt="창전">
+                                    <img src="이미지/창전구.webp" class="admin-logo-space" alt="창전">
                                     창전구
                                 </a>
                             </div>
@@ -74,7 +74,7 @@
                         <td>
                             <div class="flex justify-center">
                                 <a href="탄성군.html" class="admin-item">
-                                    <img src="이미지/탄성군.png" class="admin-logo-space" alt="탄성">
+                                    <img src="이미지/탄성군.webp" class="admin-logo-space" alt="탄성">
                                     탄성군
                                 </a>
                             </div>

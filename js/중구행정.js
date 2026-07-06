@@ -19,7 +19,7 @@
         <div class="nav-box rounded overflow-hidden shadow-sm" style="border: 2px solid var(--wiki-main); margin-bottom: 20px; font-size: 0.85rem; clear: both; background-color: var(--wiki-bg);">
             <div class="nav-box-header" style="background-color: var(--wiki-main); color: #fff; padding: 8px 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative;" onclick="window.toggleNav ? window.toggleNav('${uniqueNavId}', '${uniqueLabelId}') : toggleNav('${uniqueNavId}', '${uniqueLabelId}')">
                 <span class="flex items-center">
-                    <img src="이미지/중구_흰색로고.png" alt="📂" style="height: 1.8em; width: auto; margin-right: 8px;" onerror="this.outerHTML='<span style=\\'font-size: 1.2em; margin-right: 5px;\\'>🏛️</span>'">
+                    <img src="이미지/중구_흰색로고.webp" alt="📂" style="height: 1.8em; width: auto; margin-right: 8px;" onerror="this.outerHTML='<span style=\\'font-size: 1.2em; margin-right: 5px;\\'>🏛️</span>'">
                     <span>효빈광역시 중구의 행정구역</span>
                 </span>
                 <span id="${uniqueLabelId}" class="text-[10px] bg-white/20 px-2 py-0.5 rounded nav-toggle-btn" style="position: absolute; right: 12px;">[접기]</span>

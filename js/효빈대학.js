@@ -84,7 +84,7 @@ function renderHyobinUnivTable(containerId) {
                     <tr>
                         <th colspan="3">
                             <div class="hb-univ-header-content">
-                                <img src="이미지/hyobin1.png" class="hb-univ-logo" alt="로고" onerror="this.style.display='none'"/>
+                                <img src="이미지/hyobin1.webp" class="hb-univ-logo" alt="로고" onerror="this.style.display='none'"/>
                                 <span class="hb-univ-title">효빈광역시의 대학</span>
                                 <span class="hb-toggle-btn" id="hb-univ-toggle">[접기]</span>
                             </div>

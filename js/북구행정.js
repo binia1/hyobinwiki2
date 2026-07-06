@@ -19,7 +19,7 @@
         <div class="nav-box rounded overflow-hidden shadow-sm">
             <div class="nav-box-header" onclick="toggleNav('${uniqueNavId}', '${uniqueLabelId}')">
                 <span class="flex items-center">
-                    <img src="이미지/북구_흰색로고.png" alt="📂" style="height: 3.0em; width: auto; margin-right: 5px;" onerror="this.outerHTML='📂'">
+                    <img src="이미지/북구_흰색로고.webp" alt="📂" style="height: 3.0em; width: auto; margin-right: 5px;" onerror="this.outerHTML='📂'">
                     <span>효빈광역시 북구의 행정구역</span>
                 </span>
                 <span id="${uniqueLabelId}" class="text-[10px] bg-white/20 px-2 py-0.5 rounded nav-toggle-btn">[접기]</span>

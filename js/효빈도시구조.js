@@ -205,7 +205,7 @@ function renderHyobinStructureSection(containerId) {
                     <tr>
                         <th colspan="2" class="main-header">
                             <div class="hb-struc-header-content">
-                                <img src="이미지/hyobin1.png" class="hb-struc-logo" alt="효빈시 로고" onerror="this.style.display='none'"/>
+                                <img src="이미지/hyobin1.webp" class="hb-struc-logo" alt="효빈시 로고" onerror="this.style.display='none'"/>
                                 <span class="hb-struc-title">효빈시의 지역구분</span>
                                 <span class="hb-toggle-btn" id="hb-struc-toggle">[접기]</span>
                             </div>

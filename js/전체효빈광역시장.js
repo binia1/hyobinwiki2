@@ -66,7 +66,7 @@ function renderAllHyobinMayorsNav(containerId) {
                         <td class="hb-nav-header" colspan="2">
                             <div class="hb-nav-header-flex">
                                 <a href="효빈광역시.html">
-                                    <img src="이미지/효빈광역시_흰색로고.png" alt="효빈광역시 휘장" class="hb-nav-symbol" onerror="this.style.display='none'; this.parentElement.innerHTML=''">
+                                    <img src="이미지/효빈광역시_흰색로고.webp" alt="효빈광역시 휘장" class="hb-nav-symbol" onerror="this.style.display='none'; this.parentElement.innerHTML=''">
                                 </a>
                                 <a href="효빈광역시장.html">효빈광역시장</a>
                                 <span class="hb-toggle-btn" id="hb-nav-toggle">[접기]</span>
@@ -114,7 +114,7 @@ function renderAllHyobinMayorsNav(containerId) {
                         <td colspan="2" class="hb-slogan-cell">
                             <div class="hb-slogan-wrap">
                                 <a href="효빈광역시.html">
-                                    <img src="이미지/효빈광역시_시정슬로건.png" alt="효빈광역시 시정슬로건" class="hb-slogan-img" onerror="this.style.display='none'; this.parentElement.innerHTML=''">
+                                    <img src="이미지/효빈광역시_시정슬로건.webp" alt="효빈광역시 시정슬로건" class="hb-slogan-img" onerror="this.style.display='none'; this.parentElement.innerHTML=''">
                                 </a>
                             </div>
                         </td>

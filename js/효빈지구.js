@@ -108,7 +108,7 @@ function renderHyobinNav(container, title, data) {
                     <tr>
                         <th colspan="2" class="main-header">
                             <div class="hb-nav-header-content">
-                                <img src="이미지/효빈시_로고.png" class="hb-nav-logo" alt="로고" onerror="this.style.display='none'"/>
+                                <img src="이미지/효빈시_로고.webp" class="hb-nav-logo" alt="로고" onerror="this.style.display='none'"/>
                                 <span class="hb-nav-title">${title}</span>
                                 <span class="hb-nav-toggle-btn" id="btn-${tableBodyId}">[접기]</span>
                             </div>

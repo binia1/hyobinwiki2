@@ -91,7 +91,7 @@ function renderHyobinBusRegionTable(containerId) {
                     <tr>
                         <th colspan="3" class="main-header">
                             <div class="hb-breg-header-content">
-                                <img src="이미지/hyobin1.png" class="hb-breg-logo" alt="로고" onerror="this.style.display='none'"/>
+                                <img src="이미지/hyobin1.webp" class="hb-breg-logo" alt="로고" onerror="this.style.display='none'"/>
                                 <span class="hb-breg-title">권역 구분</span>
                                 <span class="hb-toggle-btn" id="hb-breg-toggle">[접기]</span>
                             </div>

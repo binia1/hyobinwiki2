@@ -5,7 +5,7 @@
                 <summary class="cursor-pointer list-none text-center p-0 m-0 outline-none">
                     <div class="relative flex items-center justify-center p-3 border-b border-[#1f2e5c]" style="background-color: var(--wiki-bg); background-image: linear-gradient(110deg, #000 15px, transparent 16px, transparent 30px, #000 31px, #000 45px, transparent 46px), linear-gradient(-70deg, #003478 20px, transparent 21px), linear-gradient(-70deg, #c60c30 40px, transparent 41px); background-repeat: no-repeat; background-position: left top, right top, right top;">
                         <span class="font-bold text-lg flex items-center gap-2" style="color: var(--wiki-text);">
-                            <img src="이미지/대한민국_국기.png" class="w-6 border" style="border-color: var(--wiki-border);" alt="태극기"> 
+                            <img src="이미지/대한민국_국기.webp" class="w-6 border" style="border-color: var(--wiki-border);" alt="태극기"> 
                             대한민국 폐지된 행정구역
                         </span>
                     </div>

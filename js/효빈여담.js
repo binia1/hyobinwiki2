@@ -171,7 +171,7 @@ function renderHyobinTriviaSection(containerId) {
                     <tr>
                         <th colspan="6" class="main-header">
                             <div class="hb-trv-header-content">
-                                <img src="이미지/hyobin1.png" class="hb-trv-logo" alt="로고" onerror="this.style.display='none'"/>
+                                <img src="이미지/hyobin1.webp" class="hb-trv-logo" alt="로고" onerror="this.style.display='none'"/>
                                 <span class="hb-trv-title">효빈광역시 지명 유래 및 캐릭터 매칭</span>
                                 <span class="hb-toggle-btn" id="hb-trv-toggle">[접기]</span>
                             </div>

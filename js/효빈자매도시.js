@@ -227,7 +227,7 @@ function renderHyobinSisterCities(containerId) {
             });
         });
 
-        // 지정된 규칙에 따라 이미지 경로를 '이미지/한국어이름.png'로 강제 지정
+        // 지정된 규칙에 따라 이미지 경로를 '이미지/한국어이름.webp'로 강제 지정
         return `
             <div class="hb-sis-wrapper">
                 <table class="hb-sis-table">
@@ -235,7 +235,7 @@ function renderHyobinSisterCities(containerId) {
                         <tr>
                             <th colspan="4" class="main-header">
                                 <div class="hb-sis-header-content">
-                                    <img src="이미지/효빈광역시로고.png" class="hb-sis-logo" alt="로고" onerror="this.style.display='none'"/>
+                                    <img src="이미지/효빈광역시로고.webp" class="hb-sis-logo" alt="로고" onerror="this.style.display='none'"/>
                                     <span class="hb-sis-title">${title}</span>
                                     <span class="hb-toggle-btn" data-target="${id}">접기 ▲</span>
                                 </div>

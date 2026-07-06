@@ -66,7 +66,7 @@ function renderHyobinNationalRail(containerId) {
                     <tr>
                         <th colspan="3" class="main-header">
                             <div class="hb-rail-header-content">
-                                <img src="이미지/hyobin1.png" class="hb-rail-logo" alt="로고" onerror="this.style.display='none'"/>
+                                <img src="이미지/hyobin1.webp" class="hb-rail-logo" alt="로고" onerror="this.style.display='none'"/>
                                 <span class="hb-rail-title">효빈광역시 관내 국가 철도</span>
                                 <span class="hb-toggle-btn" id="hb-rail-toggle">[접기]</span>
                             </div>
