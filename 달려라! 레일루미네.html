@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>달려라! 레일루미네 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/charstyle.css"> <script src="wiki_char.js"></script>  
+    <style>
+        :root {
+            /* 숏폼 애니메이션 전용 테마 색상 */
+            --wiki-line-color: #37B484; /* 효빈 지선버스 도색 색상 차용 */
+            --wiki-table-header-bg: #37B484;
+        }
+
+        /* 기본 위키 스타일 */
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #ffffff; color: #373a3c; line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid #ccc; border-right: 1px solid #ccc; min-height: 100vh; background-color: #ffffff; }
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-line-color); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-line-color); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-line-color); padding-left: 12px; color: var(--wiki-line-color); }
+        h4 { font-size: 1.1rem !important; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; }
+        
+        del { color: #7f7f7f; text-decoration: line-through; cursor: help; }
+        .wiki-drip { color: #aaa; font-size: 0.85em; }
+        .wiki-link { color: #0055AA; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-quote { padding: 15px; background-color: #f0fdf4; border-left: 5px solid var(--wiki-line-color); font-weight: bold; margin-bottom: 20px; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid #ccc; background: #f9f9f9; padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid #ccc; margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+
+        /* 테이블 및 인포박스 */
+        table.wiki-table-custom { border-collapse: collapse !important; width: 100%; margin: 15px 0; border: 1px solid #ddd !important; font-size: 0.9rem; }
+        table.wiki-table-custom th, table.wiki-table-custom td { border: 1px solid #ddd !important; padding: 6px 10px; vertical-align: middle; }
+        table.wiki-table-custom th { background-color: var(--wiki-table-header-bg); color: white; font-weight: bold; text-align: center; }
+        table.wiki-table-custom.char-table th { background-color: #555588; position: sticky; top: 0; z-index: 10;}
+        table.wiki-table-custom.char-table td { text-align: center; }
+        table.wiki-table-custom.char-table td.char-desc { text-align: left; }
+        
+        .infobox { border: 2px solid var(--wiki-line-color); background-color: #fff; width: 100%; max-width: 380px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .infobox-title { background-color: var(--wiki-line-color); color: white; padding: 10px; text-align: center; font-size: 1.3rem !important; font-weight: bold; }
+        .infobox-image { text-align: center; padding: 10px; border-bottom: 1px solid #ddd; background: white; }
+        .infobox table { border: none !important; margin: 0 !important; width: 100% !important; }
+        .infobox th { background-color: #f9f9f9; text-align: center; padding: 8px 5px; border: 1px solid #ddd; width: 35%; font-weight: bold; vertical-align: middle;}
+        .infobox td { padding: 8px 5px; border: 1px solid #ddd; text-align: left; vertical-align: middle;}
+
+        /* 상단 버튼 & 각주 */
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; }
+        .footnote-ref { color: #0055AA; font-size: 0.8em; vertical-align: super; cursor: pointer; text-decoration: none; font-weight: bold; }
+        
+        /* 에피소드 가이드 카드 */
+        .ep-card { border: 1px solid #eee; border-left: 4px solid var(--wiki-line-color); padding: 15px; margin-bottom: 15px; background-color: #fafafa; border-radius: 0 5px 5px 0;}
+        .ep-num { font-weight: 800; color: #333; margin-right: 10px; display: inline-block; width: 50px;}
+        .ep-title { font-weight: 700; font-size: 1.1rem; }
+        .ep-content { margin-top: 10px; font-size: 0.95rem; }
+        .ep-killpoint { background-color: #e8f5e9; padding: 8px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; }
+        
+        /* 둘러보기 틀 (nw-box) */
+        .nw-box { border: 2px solid; margin-bottom: 30px; border-radius: 4px; overflow: hidden; font-size: 0.9rem; background: white; }
+        .nw-box summary { padding: 10px; text-align: center; font-weight: bold; cursor: pointer; display: block; }
+        .nw-tbl { width: 100%; border-collapse: collapse; text-align: center; }
+        .nw-tbl th, .nw-tbl td { border: 1px solid #ccc; padding: 8px; vertical-align: middle; }
+        .nw-link { color: inherit; text-decoration: none; display: block; }
+        .nw-img { width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: block; margin: 0 auto 5px; background-color: #f8f9fa; }
+        
+        /* 뱃지 */
+        .badge-student { background-color: #4CAF50; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-left: 4px; }
+        .badge-worker { background-color: #2196F3; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-left: 4px; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <!-- 각주 툴팁 컨테이너 -->
+    <div id="footnote-tooltip"></div>
+
+    <!-- 상단 내비게이션 -->
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input id="searchInput" type="text" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner" autocomplete="off">
+            <button id="searchBtn" type="button" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner font-bold">검색</button>
+            <button type="button" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner" onclick="document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <!-- 문서 제목 -->
+        <div class="title-area">
+            <div class="txt-lvl-1">달려라! 레일루미네<br><span class="text-3xl">1기</span></div>
+            <div class="flex gap-2 mb-1">
+<button onclick="location.href='토론.html'" style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">토론</button>
+<button onclick="location.href='수정.html'" style="background-color:#0275d8; color:#ffffff; border:1px solid #0275d8 !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">편집</button>
+<button onclick="location.href='역사.html'" style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">역사</button>
+
+            </div>
+        </div>
+
+        <div class="category-box border border-[#ccc] p-3 rounded mb-6">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="효빈철도캐릭터사업.html" class="wiki-link">효빈메트로/캐릭터사업</a> | 
+            <a href="애니메이션.html" class="wiki-link">애니메이션</a> | 
+            <a href="미디어믹스.html" class="wiki-link">미디어 믹스</a> |
+            <a href="스핀오프.html" class="wiki-link">스핀오프</a> |
+            <a href="2021년 4분기 애니메이션.html" class="wiki-link">2021년 4분기 애니메이션</a>
+        </div>
+<details class="nw-box" style="border-color:#555588;" open>
+            <summary style="background-color:#555588; color: white;" class="outline-none">
+                <a href="효빈교통공사 미디어 믹스.html" class="text-white text-lg hover:underline"><span class="font-bold">효빈교통공사 미디어 믹스 (HYOBIN METRO MEDIA MIX)</span></a>
+            </summary>
+            <table class="nw-tbl" style="width: 100%; text-align: center; border-collapse: collapse;">
+                <tr>
+                    <th class="w-[15%] nw-th-col font-bold text-white" style="background-color: #6677CC; border-bottom: 1px solid #ddd;">TV 애니메이션</th>
+                    <td class="text-left pl-3 py-2" style="background-color: #f9f9f9; border-bottom: 1px solid #ddd;">
+                        <a href="철도부!.html" class="nw-link hover:underline">철도부!</a> (1기) · 
+                        <a href="철도부! 2기.html" class="nw-link hover:underline">철도부! (2기)</a> <span style="font-size: 0.8em; color: gray;">(방영 예정)</span> · 
+                        <a href="전노아 애니메이션.html" class="nw-link hover:underline">전노아 주역 시리즈 (제목 미정)</a> <span style="font-size: 0.8em; color: gray;">(제작 예정)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="w-[15%] nw-th-col font-bold text-white" style="background-color: #6677CC; border-bottom: 1px solid #ddd;">숏폼 및 OVA</th>
+                    <td class="text-left pl-3 py-2" style="background-color: #ffffff; border-bottom: 1px solid #ddd;">
+                        <a href="달려라! 레일루미네.html" class="nw-link hover:underline">달려라! 레일루미네</a> (1기) · 
+                        <a href="철덕일기.html" class="nw-link hover:underline">철덕일기</a> · 
+                        <a href="철도부!.html" class="nw-link hover:underline">철도부 OVA: F학점 동맹의 우울</a> · 
+                        <a href="쁘띠 레일루미네.html" class="nw-link hover:underline">쁘띠 레일루미네</a> <span style="font-size: 0.8em; color: gray;">(2026년 2쿨 방영 예정)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="w-[15%] nw-th-col font-bold text-white" style="background-color: #6677CC; border-bottom: 1px solid #ddd;">극장판 애니메이션</th>
+                    <td class="text-left pl-3 py-2" style="background-color: #f9f9f9; border-bottom: 1px solid #ddd;">
+                        <a href="레일루미네_기적의 스탬프 랠리.html" class="nw-link hover:underline">극장판 레일루미네 - 기적의 스탬프 랠리 -</a> <span style="font-size: 0.8em; color: gray;">(2025)</span> · 
+                        <a href="궤도를 넘어서.html" class="nw-link hover:underline">극장판 철도부! &lt;궤도를 넘어서&gt;</a> <span style="font-size: 0.8em; color: gray;">(2027년 개봉 예정)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="w-[15%] nw-th-col font-bold text-white" style="background-color: #885588; border-bottom: 1px solid #ddd;">만화 및 도서</th>
+                    <td class="text-left pl-3 py-2" style="background-color: #ffffff; border-bottom: 1px solid #ddd;">
+                        <a href="철도부! ~매일매일 출발 진행~.html" class="nw-link hover:underline">철도부! ~매일매일 출발 진행~</a> <span style="font-size: 0.8em; color: gray;">(공식 4컷 만화)</span> · 
+                        <a href="레일루미네 코믹 앤솔로지.html" class="nw-link hover:underline">레일루미네 코믹 앤솔로지</a> · 
+                        <a href="다로나의 엑셀 생존기.html" class="nw-link hover:underline">다로나의 엑셀 생존기</a> <span style="font-size: 0.8em; color: gray;">(스핀오프 웹툰)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="w-[15%] nw-th-col font-bold text-white" style="background-color: #338866; border-bottom: 1px solid #ddd;">게임 (Game)</th>
+                    <td class="text-left pl-3 py-2" style="background-color: #f9f9f9; border-bottom: 1px solid #ddd;">
+                        <a href="레일루미네_스마일 페스티벌.html" class="nw-link hover:underline">레일루미네: 스마일 페스티벌</a> <span style="font-size: 0.8em; color: gray;">(리듬 어드벤처 / 모바일)</span> · 
+                        <a href="효빈 철도 시뮬레이터: 덕업일치 에디션.html" class="nw-link hover:underline">효빈 철도 시뮬레이터: 덕업일치 에디션</a> <span style="font-size: 0.8em; color: gray;">(시뮬레이션 / PC)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="w-[15%] nw-th-col font-bold text-white" style="background-color: #DD5555;">라이브 및 행사</th>
+                    <td class="text-left pl-3 py-2" style="background-color: #ffffff;">
+                        <a href="레일루미네 1st Live_Next Station!.html" class="nw-link hover:underline">레일루미네 1st Live: Next Station!</a> · 
+                        <a href="HAF.html" class="nw-link hover:underline">HAF (효빈 애니메이션 페스티벌) 특별 스테이지</a> · 
+                        <a href="철도부! 팬미팅_종점 없는 티켓.html" class="nw-link hover:underline">철도부! 팬미팅: 종점 없는 티켓</a>
+                    </td>
+                </tr>
+            </table>
+        </details>
+        <!-- 효빈교통공사 캐릭터들 둘러보기 틀 -->
+        <details class="nw-box" style="border-color:#555588;" open>
+            <summary style="background-color:#555588; color: white;" class="outline-none">
+                <a href="효빈교통공사.html" class="text-white text-lg hover:underline"><span class="font-bold">효빈교통공사 캐릭터들 (레일루미네)</span></a>
+            </summary>
+            <table class="nw-tbl">
+                <tr>
+                    <th rowspan="4" class="w-[10%] nw-th-col text-[#555588]">등<br>장<br>인<br>물</th>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #0077DD;"><a href="1호선.html" class="nw-link hover:underline">1호선</a></td>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #00CCAA;"><a href="2호선.html" class="nw-link hover:underline">2호선</a></td>
+                    <td class="font-bold text-[#333] w-[18%]" style="background-color: #FFCC11;"><a href="3호선.html" class="nw-link hover:underline">3호선</a></td>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #FF5522;"><a href="4호선.html" class="nw-link hover:underline">4호선</a></td>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #EE0022;"><a href="5호선.html" class="nw-link hover:underline">5호선</a></td>
+                </tr>
+                <tr>
+                    <td><a href="고나미.html" class="nw-link hover:underline"><img src="이미지/고나미.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/0077DD/FFFFFF?text=1'">고나미</a></td>
+                    <td><a href="하루빈.html" class="nw-link hover:underline"><img src="이미지/하루빈.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/00CCAA/FFFFFF?text=2'">하루빈</a></td>
+                    <td><a href="박라미.html" class="nw-link hover:underline"><img src="이미지/박라미.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/FFCC11/333333?text=3'">박라미</a></td>
+                    <td><a href="다로나.html" class="nw-link hover:underline"><img src="이미지/다로나.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/FF5522/FFFFFF?text=4'">다로나</a></td>
+                    <td><a href="미소하.html" class="nw-link hover:underline"><img src="이미지/미소하.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/EE0022/FFFFFF?text=5'">미소하</a></td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-white" style="background-color: #881188;"><a href="6호선.html" class="nw-link hover:underline">6호선</a></td>
+                    <td colspan="2" class="font-bold text-[#333]" style="background-color: #FF8899;"><a href="7호선.html" class="nw-link hover:underline">7호선</a></td>
+                    <td class="font-bold text-white" style="background-color: #9856FF;"><a href="8호선.html" class="nw-link hover:underline">8호선</a></td>
+                    <td class="font-bold text-white" style="background-color: #6677CC;"><a href="빈효광역선.html" class="nw-link hover:underline">빈효선*</a></td>
+
+                </tr>
+                <tr>
+                    <td><a href="라세나.html" class="nw-link hover:underline"><img src="이미지/라세나.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/881188/FFFFFF?text=6'">라세나</a></td>
+                    <td><a href="임세정.html" class="nw-link hover:underline"><img src="이미지/임세정.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/FF8899/333333?text=7'">임세정</a></td>
+                    <td><a href="임세하.html" class="nw-link hover:underline"><img src="이미지/임세하.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/FF8899/333333?text=7'">임세하</a></td>
+                    <td><a href="유리아.html" class="nw-link hover:underline"><img src="이미지/유리아.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/9856FF/FFFFFF?text=8'">유리아</a></td>
+                    <td><a href="전노아.html" class="nw-link hover:underline"><img src="이미지/전노아.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/6677CC/FFFFFF?text=V'">전노아</a></td>
+                </tr>
+            </table>
+        </details>
+
+        <!-- 인포박스 -->
+        <aside class="infobox">
+            <div class="infobox-title">달려라! 레일루미네 1기<br><span class="text-sm font-normal">Run! Railumine Season 1</span></div>
+            <div class="infobox-image">
+                <img src="이미지/달려라_레일루미네_포스터.png" alt="달려라! 레일루미네 공식 포스터" style="width:100%; height:auto;" onerror="this.src='https://placehold.co/300x420/37B484/FFFFFF?text=Run+Railumine'">
+                <div class="text-xs text-gray-500 mt-1">▲ 애니메이션 메인 키 비주얼</div>
+            </div>
+            <table>
+                <tr><th>기획 / 제작</th><td><a href="효빈교통공사.html" class="wiki-link">효빈교통공사</a>, 부시로드</td></tr>
+                <tr><th>공동 감독</th><td>최지훈 (KOR)<br>이시하라 마사시 (JPN)</td></tr>
+                <tr><th>애니메이션 제작</th><td>스튜디오 효빈<br>선라이즈</td></tr>
+                <tr><th>장르</th><td>숏폼, 옴니버스, 개그, 일상</td></tr>
+                <tr><th>주요 등장인물</th><td><a href="고나미.html" class="wiki-link">고나미</a>, <a href="하루빈.html" class="wiki-link">하루빈</a>, <a href="박라미.html" class="wiki-link">박라미</a> 외 (레일루미네)</td></tr>
+                <tr><th>방영 기간</th><td>2021년 4분기 (2021.10 ~ 2021.12)</td></tr>
+                <tr><th>편당 방영 시간</th><td>5분</td></tr>
+                <tr><th>화수</th><td>총 12화 (1쿨)</td></tr>
+            </table>
+        </aside>
+
+        <!-- 목차 -->
+        <div class="toc">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">특징</a></li>
+                <li>3. <a href="#s-3" class="wiki-link">등장인물</a></li>
+                <li>4. <a href="#s-4" class="wiki-link">상세 에피소드 가이드</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">여담</a></li>
+            </ul>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1">1. 개요</h2>
+        <div class="wiki-quote">
+            "이번 역은... 우우욱... 우리 집... 내리실 문은 오른쪽입니다아~ 췻- 삐삐삐!"<br>
+            <span class="text-sm font-normal not-italic text-gray-500">- <a href="고나미.html" class="wiki-link">고나미</a>, 8화 만취 자동안내방송 中</span>
+        </div>
+        <p>
+            <a href="효빈교통공사.html" class="wiki-link">효빈교통공사</a> 소속 마스코트 캐릭터 '레일루미네' 9인방을 주역으로 한 <strong>편당 5분 분량의 숏폼 옴니버스 애니메이션.</strong> 
+        </p>
+        <p>
+            2022년에 방영된 정규 24부작 대작 <a href="철도부.html" class="wiki-link">《철도부! - 애프터 스쿨 미라클 -》</a>이 방영되기 1년 전인 <strong>2021년 4분기(김성민 전 시장 재임 시절)</strong>에 선행 방영된 일종의 프리퀄 겸 파일럿 스핀오프 프로젝트다. 정규 애니메이션처럼 무거운 서사나 짠내 나는 사내 정치보다는, 캐릭터들의 나사 빠진 일상과 기행을 다루는 가벼운 개그물에 가깝다. 제작사는 정규 시리즈와 동일하게 '스튜디오 효빈'과 '선라이즈'가 공동으로 맡았다.
+        </p>
+
+        <!-- 2. 특징 -->
+        <h2 id="s-2">2. 특징</h2>
+        <ul class="list-disc pl-5 space-y-2 mb-6">
+            <li><strong>백색소음 ASMR 엔딩:</strong> 본작의 가장 큰 아이덴티티. <strong>매화 엔딩 크레딧이 올라갈 때 각 노선 전동차의 실제 구동음(VVVF 인버터 소리 등)과 안내방송이 백색소음처럼 잔잔하게 깔린다.</strong> 이 때문에 방영 당시 불면증에 시달리던 철도 동호인들과 수험생들 사이에서 '최고의 수면 유도 영상'으로 입소문을 탔다.</li>
+            <li>정규 애니메이션 <철도부!>와는 시간대나 설정이 다소 평행세계(패러렐 월드)처럼 묘사된다. <철도부!>에서는 고등학생/근로장학생이었던 멤버들이 여기서는 직위 고하를 막론하고 동등한 사내 동료나 룸메이트처럼 묘사되는 옴니버스식 구성을 취하고 있다.</li>
+            <li>5분이라는 짧은 러닝타임 안에 A파트, B파트, 그리고 쿠키 영상까지 욱여넣는 엄청난 템포를 보여준다.</li>
+        </ul>
+
+        <!-- 3. 등장인물 -->
+        <h2 id="s-3">3. 등장인물</h2>
+        <p>본작의 주역은 '레일루미네' 멤버들이며, 매 화마다 2~3명의 캐릭터가 짝을 지어 대환장 케미를 보여준다. <del>이 숏폼 버전에서는 다들 나사가 하나씩 빠져있다.</del></p>
+        
+        <table class="wiki-table-custom char-table mt-4 mb-6">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">이미지</th>
+                    <th style="width: 14%;">이름 (노선) / 나이</th>
+                    <th style="width: 8%;">상징색</th>
+                    <th style="width: 12%;">성우 (한/일)</th>
+                    <th style="width: 18%;">소속 / 직업</th>
+                    <th style="width: 40%;">상세 특징 및 관계성 (숏폼 Ver.)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><img src="이미지/고나미.png" style="width:70px; height:70px; object-fit:cover; border-radius:50%; margin:0 auto;" onerror="this.src='https://placehold.co/70x70/0077DD/FFFFFF?text=NaMi'"></td>
+                    <td><strong><a href="고나미.html" class="wiki-link">고나미</a></strong><br>(Go Nami)<br><span class="text-xs text-gray-500">1호선 / 26세</span></td>
+                    <td style="background-color: #0077DD; color: white; font-weight: bold;">파란색</td>
+                    <td><span class="text-[0.85em]">🇰🇷 박지윤<br>🇯🇵 세토 아사미</span></td>
+                    <td class="text-sm">효빈대(수석)<br><strong>기관사</strong> <span class="badge-worker">정규직</span></td>
+                    <td class="char-desc"><strong>FM 원칙주의자 & 철덕.</strong> 평소엔 군기반장이지만, 신차 반입일엔 카메라를 들고 뛰는 하드코어 철덕의 본능을 숨기지 못한다. 만취 시 안내방송 기계음을 완벽하게 모사한다.</td>
+                </tr>
+                <tr>
+                    <td><img src="이미지/하루빈.png" style="width:70px; height:70px; object-fit:cover; border-radius:50%; margin:0 auto;" onerror="this.src='https://placehold.co/70x70/00CCAA/FFFFFF?text=RuBin'"></td>
+                    <td><strong><a href="하루빈.html" class="wiki-link">하루빈</a></strong><br>(Ha Rubin)<br><span class="text-xs text-gray-500">2호선 / 24세</span></td>
+                    <td style="background-color: #00CCAA; color: white; font-weight: bold;">초록색</td>
+                    <td><span class="text-[0.85em]">🇰🇷 김선혜<br>🇯🇵 우치다 마아야</span></td>
+                    <td class="text-sm">효빈종합고-효빈대<br><strong>역무원</strong> <span class="badge-worker">정규직</span></td>
+                    <td class="char-desc"><strong>처세술 만렙 직장인.</strong> 취객을 웃으며 돌려보내고, 고나미의 잔소리를 아이스 바닐라 라떼와 함께 한 귀로 흘려듣는 월급루팡의 신. 거울 셀카와 중2병 놀이를 즐긴다.</td>
+                </tr>
+                <tr>
+                    <td><img src="이미지/박라미.png" style="width:70px; height:70px; object-fit:cover; border-radius:50%; margin:0 auto;" onerror="this.src='https://placehold.co/70x70/FFCC11/333333?text=RaMi'"></td>
+                    <td><strong><a href="박라미.html" class="wiki-link">박라미</a></strong><br>(Park Rami)<br><span class="text-xs text-gray-500">3호선 / 21세</span></td>
+                    <td style="background-color: #FFCC11; color: #333; font-weight: bold;">노란색</td>
+                    <td><span class="text-[0.85em]">🇰🇷 이새아<br>🇯🇵 이시카와 유이</span></td>
+                    <td class="text-sm">중수여고-엽월대<br><strong>대학생 (2)</strong></td>
+                    <td class="char-desc"><strong>쿨뷰티 퀸카 & 허세의 화신.</strong> 완벽한 '프레이밍'과 노을빛 골든 아워에 집착하는 감성 사진러. 고퀄리티 PPT 디자인으로 조별과제를 캐리하기도 하지만, 은근히 동네북 포지션을 담당한다.</td>
+                </tr>
+                <tr>
+                    <td><img src="이미지/다로나.png" style="width:70px; height:70px; object-fit:cover; border-radius:50%; margin:0 auto;" onerror="this.src='https://placehold.co/70x70/FF5522/FFFFFF?text=RoNa'"></td>
+                    <td><strong><a href="다로나.html" class="wiki-link">다로나</a></strong><br>(Da Rona)<br><span class="text-xs text-gray-500">4호선 / 22세</span></td>
+                    <td style="background-color: #FF5522; color: white; font-weight: bold;">주황색</td>
+                    <td><span class="text-[0.85em]">🇰🇷 윤아영<br>🇯🇵 타네자키 아츠미</span></td>
+                    <td class="text-sm">창전상고<br><strong>산업관리직</strong> <span class="badge-worker">정규직</span></td>
+                    <td class="char-desc"><strong>소심한 대쪽 & 매크로 마스터.</strong> 빵집 재고 현황부터 하루빈 추적 동선까지 모든 것을 엑셀 매크로로 통제하는 무서운 능력자. AI 같은 톤으로 팩폭을 가하는 게 특징.</td>
+                </tr>
+                <tr>
+                    <td><img src="이미지/미소하.png" style="width:70px; height:70px; object-fit:cover; border-radius:50%; margin:0 auto;" onerror="this.src='https://placehold.co/70x70/EE0022/FFFFFF?text=SoHa'"></td>
+                    <td><strong><a href="미소하.html" class="wiki-link">미소하</a></strong><br>(Mi Soha)<br><span class="text-xs text-gray-500">5호선 / 20세</span></td>
+                    <td style="background-color: #EE0022; color: white; font-weight: bold;">빨간색</td>
+                    <td><span class="text-[0.85em]">🇰🇷 김채하<br>🇯🇵 쿠노 미사키</span></td>
+                    <td class="text-sm">효빈대 사회복지학과<br><strong>대학생 (1)</strong> <span class="badge-student">근로장학생</span></td>
+                    <td class="char-desc"><strong>엘리트 천사 & 팩폭 제조기.</strong> 웃는 얼굴과 아기 같은 목소리로 두께 10cm짜리 '빨간 바인더'를 내려치며 다중회귀분석표로 임원들의 명치를 부수는 광기의 통계여왕.</td>
+                </tr>
+                <tr>
+                    <td><img src="이미지/라세나.png" style="width:70px; height:70px; object-fit:cover; border-radius:50%; margin:0 auto;" onerror="this.src='https://placehold.co/70x70/881188/FFFFFF?text=SeNa'"></td>
+                    <td><strong><a href="라세나.html" class="wiki-link">라세나</a></strong><br>(La Sena)<br><span class="text-xs text-gray-500">6호선 / 19세</span></td>
+                    <td style="background-color: #881188; color: white; font-weight: bold;">보라색</td>
+                    <td><span class="text-[0.85em]">🇰🇷 김율<br>🇯🇵 키토 아카리</span></td>
+                    <td class="text-sm">중수여고<br><strong>고등학생 (3)</strong></td>
+                    <td class="char-desc"><strong>성실한 치유계 & 영원한 고통꾼.</strong> 조용한 환경에서 영단어를 외우고 싶지만, 매번 사고 치는 언니들(유리아, 하루빈 등) 때문에 강제로 태클(츳코미)을 걸며 수명이 깎이고 있는 불쌍한 수험생.</td>
+                </tr>
+                <tr>
+                    <td><img src="이미지/임세정.png" style="width:70px; height:70px; object-fit:cover; border-radius:50%; margin:0 auto;" onerror="this.src='https://placehold.co/70x70/FF8899/333333?text=SeJeong'"></td>
+                    <td><strong><a href="임세정.html" class="wiki-link">임세정</a></strong><br>(Lim Sejeong)<br><span class="text-xs text-gray-500">7호선 / 30세</span></td>
+                    <td style="background-color: #FF8899; color: #333; font-weight: bold;">분홍색</td>
+                    <td><span class="text-[0.85em]">🇰🇷 윤미나<br>🇯🇵 스즈키 아이나</span></td>
+                    <td class="text-sm">다판고-효빈과학대<br><strong>역무원</strong> <span class="badge-worker">정규직</span></td>
+                    <td class="char-desc"><strong>K-장녀 & 인간 확성기.</strong> 임세하의 10년 터울 친언니. F학점을 맞은 동생에게 무자비한 등짝 스매싱을 날리면서도 아침엔 홍삼액을 챙겨준다. 스피커 앰프를 찢는 사자후의 달인.</td>
+                </tr>
+                <tr>
+                    <td><img src="이미지/임세하.png" style="width:70px; height:70px; object-fit:cover; border-radius:50%; margin:0 auto;" onerror="this.src='https://placehold.co/70x70/FF8899/333333?text=SeHa'"></td>
+                    <td><strong><a href="임세하.html" class="wiki-link">임세하</a></strong><br>(Lim Seha)<br><span class="text-xs text-gray-500">7호선 / 20세</span></td>
+                    <td style="background-color: #FF8899; color: #333; font-weight: bold;">분홍색</td>
+                    <td><span class="text-[0.85em]">🇰🇷 방연지<br>🇯🇵 다테 사유리</span></td>
+                    <td class="text-sm">중수여고-효빈대<br><strong>대학생 (1)</strong> <span class="badge-student">근로장학생</span></td>
+                    <td class="char-desc"><strong>공대 너드 (Nerd).</strong> 신형 트램 모터 배선도를 보며 침을 흘리는 기계 덕후. 숏폼에서는 언니 임세정에게 혼나거나 무모한 기계를 조작하려다 사고를 치는 개그 포지션을 자주 담당한다.</td>
+                </tr>
+                <tr>
+                    <td><img src="이미지/유리아.png" style="width:70px; height:70px; object-fit:cover; border-radius:50%; margin:0 auto;" onerror="this.src='https://placehold.co/70x70/9856FF/FFFFFF?text=YuRiA'"></td>
+                    <td><strong><a href="유리아.html" class="wiki-link">유리아</a></strong><br>(Yu Ria)<br><span class="text-xs text-gray-500">8호선 / 17세</span></td>
+                    <td style="background-color: #9856FF; color: white; font-weight: bold;">연보라색</td>
+                    <td><span class="text-[0.85em]">🇰🇷 장예나<br>🇯🇵 사이토 슈카</span></td>
+                    <td class="text-sm">효빈기계공고<br><strong>고등학생 (1)</strong></td>
+                    <td class="char-desc"><strong>걸어 다니는 몽키스패너.</strong> 신형 스크린도어나 제어반만 보면 분해 본능을 이기지 못하고 몽키스패너를 들이대는 통제 불능의 사고뭉치. 라세나의 뒷목을 잡게 하는 주범 중 하나다.</td>
+                </tr>
+                <tr>
+                    <td><img src="이미지/전노아.png" style="width:70px; height:70px; object-fit:cover; border-radius:50%; margin:0 auto;" onerror="this.src='https://placehold.co/70x70/6677CC/FFFFFF?text=NoA'"></td>
+                    <td><strong><a href="전노아.html" class="wiki-link">전노아</a></strong><br>(Jeon Noa)<br><span class="text-xs text-gray-500">빈효선 / 20세</span></td>
+                    <td style="background-color: #6677CC; color: white; font-weight: bold;">연청색</td>
+                    <td><span class="text-[0.85em]">🇰🇷 김현지<br>🇯🇵 마에다 카오리</span></td>
+                    <td class="text-sm">중수여고-평안명대<br><strong>대학생 (1)</strong> <span class="badge-student">근로장학생</span></td>
+                    <td class="char-desc"><strong>정의로운 관종 & 행정 폭격기.</strong> 코레일 소속임에도 위화감 없이 효빈교통공사 멤버들과 엮여 논다. 조별과제나 예산 회의에서 스티브 잡스 빙의 모드로 조원들과 임원들을 협박(?)하는 압도적 통솔력을 보여준다.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 4. 상세 에피소드 가이드 -->
+        <h2 id="s-4">4. 상세 에피소드 가이드</h2>
+        
+        <div class="ep-card border-l-[#0077DD]">
+            <span class="ep-num">제1화</span>
+            <span class="ep-title">규정은 피로 쓰였다 (feat. 벤티 사이즈 아.바.라)</span>
+            <span class="text-xs text-gray-500 ml-2">| 주역: <a href="고나미.html" class="wiki-link">고나미</a>(1), <a href="하루빈.html" class="wiki-link">하루빈</a>(2)</span>
+            <div class="ep-content">
+                <strong>[A파트]</strong> 나른한 오후의 휴게실. 고나미가 두꺼운 철도안전법 매뉴얼을 책상에 내리치며 "규정은 피로 쓰였다!"라며 사자후를 토한다. 타깃은 뺀질이 후배 하루빈. 하지만 하루빈은 눈 하나 깜짝 안 하고 벤티 사이즈 아이스 바닐라 라떼를 쭉 빨아들이며 영혼 없는 자본주의 미소로 "네~ 슨배님~ 명심하겠습니당~"으로 맞받아친다.<br>
+                <strong>[B파트]</strong> 고나미가 분노하여 '특별 교육'을 선언하려는 찰나, 창밖 선로로 신형 KTX-이음이 시험 운전을 하며 지나간다. 그 순간, 고나미의 눈동자가 커지고 피치가 하이솔(Sol)까지 치솟으며 "방금 저 구동음!! 미쓰비시 GTO 초기형 인버터 소리인데?!"라며 스마트폰 마이크를 들고 창문에 매달린다. 그 틈을 타 하루빈은 윙크하며 거울 셀카를 찍고 유유히 퇴근해 버린다.
+            </div>
+            <div class="ep-killpoint">
+                <strong>💡 킬포인트:</strong> 고나미의 0.1초 만에 이루어지는 FM ↔ 진성 철덕 태세 전환.
+            </div>
+        </div>
+
+        <div class="ep-card border-l-[#FFCC11]">
+            <span class="ep-num">제2화</span>
+            <span class="ep-title">골든 아워와 소금빵의 상관관계</span>
+            <span class="text-xs text-gray-500 ml-2">| 주역: <a href="박라미.html" class="wiki-link">박라미</a>(3), <a href="다로나.html" class="wiki-link">다로나</a>(4)</span>
+            <div class="ep-content">
+                <strong>[A파트]</strong> 3호선과 4호선이 교차하는 사능동 베이커리 골목. 박라미가 완벽한 역광과 노을빛이 떨어지는 '골든 아워'를 기다리며 30분째 바닥에 엎드려 카메라 셔터 타이밍을 재고 있다. 찰칵! 인생샷을 건지고 기분 좋게 최애 소금빵을 사러 빵집에 들어가는 라미.<br>
+                <strong>[B파트]</strong> 하지만 진열대는 텅 비어있다. 라미가 절망하는 순간, 빵집 구석에서 다로나가 무표정한 AI 톤으로 "금일 17시 32분부로 소금빵 재고 소진율 100% 도달했습니다."라며 엑셀 창이 띄워진 태블릿을 닫는다. 다로나의 양손에는 갓 구운 소금빵이 한가득 들려 있다. 라미가 그 자리에 주저앉아 오열하자, 다로나가 쿨하게 소금빵 하나를 라미 입에 물려주고 인파 속으로 사라진다.
+            </div>
+            <div class="ep-killpoint">
+                <strong>💡 킬포인트:</strong> 빵집 출몰 데이터를 엑셀 매크로로 돌리는 다로나의 광기.
+            </div>
+        </div>
+
+        <div class="ep-card border-l-[#EE0022]">
+            <span class="ep-num">제3화</span>
+            <span class="ep-title">빨간 바인더의 악마가 웃을 때</span>
+            <span class="text-xs text-gray-500 ml-2">| 주역: <a href="미소하.html" class="wiki-link">미소하</a>(5), <a href="전노아.html" class="wiki-link">전노아</a>(빈효선)</span>
+            <div class="ep-content">
+                <strong>[A파트]</strong> 본사 예산팀과의 삭막한 회의. 꼰대 임원들이 "전례가 없다", "예산이 부족하다"며 휠체어 리프트 유지보수 예산을 삭감하려 든다. 분위기가 험악해지자, 막내 미소하가 세상에서 제일 해맑고 귀여운 천사표 미소를 지으며 일어선다. 쾅! 두께 10cm짜리 '빨간 바인더'가 책상에 꽂힌다.<br>
+                <strong>[B파트]</strong> 미소하가 아기 같은 낭랑한 목소리로 "다중회귀분석표 132페이지를 보실래요?"라며 팩트 폭격을 쏟아내고 임원들이 식은땀을 흘린다. 이때 뒤에서 전노아가 나타나 손가락 세 개를 펴며 "이 사안의 핵심은 세 가지입니다!"라고 외치고, 지방계약법의 허점을 찌르는 완벽한 기안서를 들이민다. 결국 영혼이 털린 임원들이 결재 도장을 찍고 만다.
+            </div>
+            <div class="ep-killpoint">
+                <strong>💡 킬포인트:</strong> 웃는 얼굴로 명치를 부수는 미소하와 뒤에서 탭댄스 추는 노아의 깡패 콤비. <del>적폐 청산 듀오</del>
+            </div>
+        </div>
+
+<div class="ep-card border-l-[#881188]">
+            <span class="ep-num">제4화</span>
+            <span class="ep-title">노이즈 캔슬링을 뚫고 온 몽키스패너</span>
+            <span class="text-xs text-gray-500 ml-2">| 주역: <a href="라세나.html" class="wiki-link">라세나</a>(6), <a href="유리아.html" class="wiki-link">유리아</a>(8)</span>
+            <div class="ep-content">
+                <strong>[A파트]</strong> 수능 D-100. 6호선 승강장 벤치에서 라세나가 하얀 노이즈 캔슬링 이어폰을 끼고 "나는 건전하게 영어 듣기 평가를 하고 있다"며 자기 암시(일코)를 걸고 있다. 그때, 저 멀리서 막내 유리아가 눈을 반짝이며 신형 스크린도어 제어반에 몽키스패너를 들이대고 <strong>"대박! 이거 딱 한 번만 뜯어봐도 됩니까?!"</strong>라고 외치는 광기의 장면이 포착된다.<br>
+                <strong>[B파트]</strong> 라세나는 모른 척하려 했으나, ISFJ의 책임감이 끓어올라 결국 책을 던지고 유리아에게 몸을 날려 태클을 건다. 바닥을 구르는 찰나, 이어폰 블루투스 연결이 끊어지며 라세나의 스마트폰에서 극악무도한 하드 록(Rock) 애니송이 최대 볼륨으로 승강장에 울려 퍼진다. 수치심에 얼굴이 토마토가 된 라세나는 스패너를 쥔 유리아의 뒷덜미를 잡고 전력 질주로 도망친다.
+            </div>
+            <div class="ep-killpoint">
+                <strong>💡 킬포인트:</strong> 라세나의 3등급 영어 모의고사 성적표가 승강장 바람에 처량하게 날아가는 눈물겨운 연출.
+                <br><br>
+                <strong>🔥 역사적 재평가 (전설의 밈 탄생):</strong> 방영 당시에는 그저 비글미 넘치는 기행으로 웃어넘긴 에피소드였으나, 이 화에서 <strong>유리아가 눈을 번뜩이며 몽키스패너를 치켜드는 3초짜리 컷</strong>은 훗날 효빈시 정치판을 뒤흔든 엄청난 나비효과를 불러온다. 1년 뒤인 2022년, <a href="우신면.html" class="wiki-link">우신면</a>의 억지로 8호선 개통이 무기한 연기될 위기에 처하자 극대노한 철덕들과 평당맘 카페 회원들이 이 컷을 발굴해 낸 것. 이들은 <strong>"유리아가 스패너로 우신면의 선거 현수막과 남구 버스 정류장 BIT 기판을 모조리 정비(물리)하러 가는 짤"</strong>로 합성하여 인터넷에 살포했고, 이것이 부패 정치인 타도의 상징적인 저항 밈(Meme)으로 쓰이며 전설이 되었다. <del>이 에피소드를 기획한 제작진조차, 이 가벼운 개그 신이 훗날 현역 국회의원의 숨통을 끊어버리는 치명적인 무기가 될 줄은 상상도 못 했을 것이다.</del>
+            </div>
+        </div>
+
+        <div class="ep-card border-l-[#FF8899]">
+            <span class="ep-num">제5화</span>
+            <span class="ep-title">K-장녀의 등짝 스매싱과 회생제동</span>
+            <span class="text-xs text-gray-500 ml-2">| 주역: <a href="임세정.html" class="wiki-link">임세정</a>(7), <a href="임세하.html" class="wiki-link">임세하</a>(7)</span>
+            <div class="ep-content">
+                <strong>[A파트]</strong> 방구석에 틀어박혀 밥도 안 먹고 신형 트램의 모터 배선도를 보며 헤벌쭉 웃고 있는 기계 너드 임세하. 고된 야간 근무를 마치고 돌아온 언니 임세정의 눈에 식탁 위에 놓인 세하의 '기계공학 전공 F학점 통지서'가 들어온다.<br>
+                <strong>[B파트]</strong> "임.세.하." 지옥에서 올라온 듯한 낮고 굵은 목소리. 세정은 인간 확성기 급의 성량으로 사자후를 내지르며 무자비한 등짝 스매싱 5연타를 날린다. 세하는 "아악! 내 신체적 물리 하중이 한계를 초과했어!"라며 공대식 비명을 지른다. 다음 날 아침, 눈을 뜬 세하의 책상 위에는 언니가 억척스럽게 싸놓은 3단 고기 도시락과 홍삼액이 놓여 있다.
+            </div>
+            <div class="ep-killpoint">
+                <strong>💡 킬포인트:</strong> 눈물 쏙 빠지게 맵고, 가슴 먹먹하게 따뜻한 K-장녀의 매운맛. <del>타격음이 찰지다.</del>
+            </div>
+        </div>
+
+        <div class="ep-card border-l-[#6677CC]">
+            <span class="ep-num">제6화</span>
+            <span class="ep-title">[특집] 덕업일치의 현장! HAF를 사수하라</span>
+            <span class="text-xs text-gray-500 ml-2">| 주역: 레일루미네 전원 (박효빈 시장 카메오)</span>
+            <div class="ep-content">
+                <strong>[A파트]</strong> 효빈시 최대 서브컬처 축제 HAF 당일. 멤버들은 표면적으로 '안전 통제 요원'으로 배치된다. 하지만 실상은 대환장 숨덕 파티. 고나미는 순찰을 핑계로 철도 모형 부스에서 지갑을 열고 있고, 하루빈은 화장실에서 몰래 안대와 붕대를 감고 중2병 포즈를 취하고 있다. 라세나는 "난 행사 관심 없다"면서 한정판 굿즈 줄의 오차 없는 일렬종대를 각 잡고 세우고 있다.<br>
+                <strong>[B파트]</strong> 행사장에 엄청난 인파가 몰려 통제가 안 되는 순간, 갑자기 VIP 출입구 쪽에서 환호성이 터진다. 양손 가득 최애 캐릭터(노란색/파스텔 톤) 굿즈를 산더미처럼 들고 행복하게 걸어가는 <a href="박효빈.html" class="wiki-link">박효빈</a> 시장의 뒷모습이 지나간다. 이를 본 레일루미네 멤버들은 "우리 시장님은 진짜다"라며 소리 없는 경례를 올린다.
+            </div>
+            <div class="ep-killpoint">
+                <strong>💡 킬포인트:</strong> 시장님의 체통 따위는 한강에 던져버린 굿즈 플렉스(Flex).
+            </div>
+        </div>
+
+        <div class="ep-card border-l-[#FF5522]">
+            <span class="ep-num">제7화</span>
+            <span class="ep-title">AI 주임 해킹 사건 (범인은 2호선)</span>
+            <span class="text-xs text-gray-500 ml-2">| 주역: <a href="다로나.html" class="wiki-link">다로나</a>(4), <a href="하루빈.html" class="wiki-link">하루빈</a>(2)</span>
+            <div class="ep-content">
+                <strong>[A파트]</strong> 평화로운 4호선 역사. 갑자기 장내 스피커에서 다로나의 무표정한 AI 톤 목소리로 "고객 여러분, 지금부터 어둠의 불꽃에 휩싸여 반짝반짝 두근두근하시기 바랍니다. 크큭..."이라는 중2병 대사가 흘러나온다. 승객들은 어리둥절하고, 다로나는 멘탈이 붕괴되어 덜덜 떨며 주황색 치와와 모드가 된다.<br>
+                <strong>[B파트]</strong> CCTV 사각지대에서 낄낄대는 하루빈을 발견한 다로나. 그 순간, 다로나의 눈에 안광이 꺼지고 터미네이터 사신 모드로 각성한다. 그녀는 1분 1초의 동선 오차도 없는 최단 경로 매크로를 짜서 도망가는 하루빈을 추격해, 결국 '규정 위반 시말서'로 하루빈의 명치를 정확히 타격한다.
+            </div>
+            <div class="ep-killpoint">
+                <strong>💡 킬포인트:</strong> 성우(타네자키 아츠미)의 갭 차이(쭈구리 아냐 ↔ 냉혹한 비비/프리렌)를 극단적으로 활용한 오디오 연출.
+            </div>
+        </div>
+
+        <div class="ep-card border-l-[#0077DD]">
+            <span class="ep-num">제8화</span>
+            <span class="ep-title">공포의 주사: 인간 자동안내방송기</span>
+            <span class="text-xs text-gray-500 ml-2">| 주역: <a href="고나미.html" class="wiki-link">고나미</a>(1)</span>
+            <div class="ep-content">
+                <strong>[A파트]</strong> 승무본부 회식 다음 날. 고나미는 머리를 부여잡고 출근한다. 휴게실 문을 열자, 동료들이 모여 무언가를 들으며 킥킥대고 있다. 하루빈이 재생한 녹음 파일에는 만취한 고나미가 택시 안에서 "이번 역은... 우우욱... 우리 집... 내리실 문은 오른쪽입니다아~ 췻- 삐삐삐!"라며 완벽한 피치로 안내방송 기계음을 흉내 내는 진상 짓이 담겨 있다.<br>
+                <strong>[B파트]</strong> 고나미의 영혼이 입 밖으로 빠져나간다. 동료들이 놀리자 수치심에 얼굴이 붉어지지만, 그녀는 헛기침을 하더니 정색하며 "방금 그 녹음, 출입문 닫힘 경고음 주파수가 0.5Hz 틀렸군. 다시 녹음해."라며 쓸데없는 완벽주의로 억지 기강을 잡아버린다.
+            </div>
+            <div class="ep-killpoint">
+                <strong>💡 킬포인트:</strong> 혈중알코올농도 0.1%에서도 흐트러지지 않는 세토 아사미 / 박지윤 성우의 성대모사 차력쇼.
+            </div>
+        </div>
+
+        <div class="ep-card border-l-[#6677CC]">
+            <span class="ep-num">제9화</span>
+            <span class="ep-title">예산을 뜯어내는 세 가지 방법</span>
+            <span class="text-xs text-gray-500 ml-2">| 주역: <a href="전노아.html" class="wiki-link">전노아</a>(빈효선), <a href="박라미.html" class="wiki-link">박라미</a>(3)</span>
+            <div class="ep-content">
+                <strong>[A파트]</strong> 대학 시절 과거 회상. 교양 과목 조별 과제에서 무임승차하려는 진상 조원들이 도망치려 한다. 조장 전노아가 스티브 잡스 빙의 모드로 일어나 손가락 세 개를 쫙 펼친다. "당신들이 오늘 도망가면 안 되는 세 가지 이유. 첫째, 행정 절차에 따른 교수님 직통 고발. 둘째..." 살벌한 팩트 협박에 조원들이 얼어붙는다.<br>
+                <strong>[B파트]</strong> 옆에서 지켜보던 박라미가 현란한 포토샵으로 완성한 미친 퀄리티의 PPT 템플릿을 화면에 띄운다. "이 완벽한 프레이밍에 이름이 올라가고 싶다면, 지금 당장 노트북 켜." 노아의 불도저 채찍과 라미의 디자인 당근에 굴복한 조원들이 밤을 새우고, 둘은 하이파이브를 하며 무혈입성 A+를 따낸다.
+            </div>
+            <div class="ep-killpoint">
+                <strong>💡 킬포인트:</strong> 떡잎부터 달랐던 '비(非)효빈대 아웃사이더 연합'의 빌런 퇴치기.
+            </div>
+        </div>
+
+        <div class="ep-card border-l-[#FF8899]">
+            <span class="ep-num">제10화</span>
+            <span class="ep-title">트램을 막지 마라! 인간 확성기 출격</span>
+            <span class="text-xs text-gray-500 ml-2">| 주역: <a href="임세정.html" class="wiki-link">임세정</a>(7), <a href="임세하.html" class="wiki-link">임세하</a>(7)</span>
+            <div class="ep-content">
+                <strong>[A파트]</strong> 7호선 무가선 트램 선로 위에 고급 외제차가 불법 주차를 해놓고, 차주가 오히려 전차를 향해 삿대질을 하며 난동을 부린다. 트램 운행이 지연되고 시민들이 눈살을 찌푸리는 상황. 트램 뒷문이 열리고, 임세정이 무표정한 얼굴로 마이크 하나를 쥐고 걸어 나온다.<br>
+                <strong>[B파트]</strong> 세정이 숨을 깊게 들이마시고 마이크에 입을 댄다. "안전선 뒤로 차 빼. 당장!!!" 스피커 앰프가 터질 듯한 폭발적인 성량과 진동이 도로를 휩쓴다. 차주는 혼비백산하여 차를 빼서 도망가고, 승강장의 시민들은 라이브 공연인 줄 알고 열광적인 박수를 보낸다. 트램 구석에서 이 광경을 보던 세하는 공포에 질려 달달 떤다.
+            </div>
+            <div class="ep-killpoint">
+                <strong>💡 킬포인트:</strong> 스즈키 아이나 / 윤미나 성우의 스피커를 찢어버리는 압도적 민요 발성. <del>귀에서 피 난다</del>
+            </div>
+        </div>
+
+        <div class="ep-card border-l-[#881188]">
+            <span class="ep-num">제11화</span>
+            <span class="ep-title">금지된 심연 'Project V'의 위기</span>
+            <span class="text-xs text-gray-500 ml-2">| 주역: <a href="라세나.html" class="wiki-link">라세나</a>(6), <a href="고나미.html" class="wiki-link">고나미</a>(1)</span>
+            <div class="ep-content">
+                <strong>[A파트]</strong> 본사 휴게실. 라세나가 청소를 하다가 실수로 고나미의 업무용 노트북 마우스를 건드린다. 암호 화면이 풀리며 바탕화면의 'Project V' 폴더가 열린다. 파일명 <code>&lt;[극락] 1호선_제동음.mp3&gt;</code>. 호기심에 재생 버튼을 누르자 기괴한 모터 쇳소리가 고음질로 흘러나온다. 라세나의 얼굴이 창백해진다.<br>
+                <strong>[B파트]</strong> 갑자기 휴게실 불이 꺼진다. 라세나의 등 뒤로 거대한 그림자가 드리우고, 고나미가 공포 영화 빌런처럼 나타나 라세나의 어깨를 꽉 쥔다. "본 것은... 잊어라." 고나미는 말없이 한정판 코노에 카나타(라세나의 최애) 성우 라디오 CD를 라세나의 주머니에 찔러 넣어주고 어둠 속으로 사라진다.
+            </div>
+            <div class="ep-killpoint">
+                <strong>💡 킬포인트:</strong> 스릴러 영화급의 웅장한 브금(BGM)과 뇌물을 받고 타락하는 19세 모범생.
+            </div>
+        </div>
+
+        <div class="ep-card border-l-[#E63946]">
+            <span class="ep-num">제12화<br>(최종화)</span>
+            <span class="ep-title">우리의 선로는 내일도 빛난다 (Next Station!)</span>
+            <span class="text-xs text-gray-500 ml-2">| 주역: 레일루미네 전원</span>
+            <div class="ep-content">
+                <strong>[A파트]</strong> 효빈시에 대규모 정전 사태가 발생해 모든 열차가 멈춰 선다. 아수라장이 된 역사. 다로나의 매뉴얼 통제, 세정의 군중 압도, 노아의 신속한 대체 버스 행정 기획, 세하의 제어반 긴급 수리가 유기적으로 맞물리며 멤버들은 시민들을 완벽하게 대피시킨다.<br>
+                <strong>[B파트]</strong> 전력이 복구되고, 노을빛이 쏟아지는 골든 아워. 운행을 재개하는 전동차 앞에서 라미가 멤버들의 단체 사진을 찍는다. 고나미의 "내일도 정시 운행, 이상 무!" 선언과 함께 단체곡 「Next Station!」이 흘러나오며 감동적으로 마무리된다.<br>
+                <strong>[쿠키 영상]</strong> 정전 사태를 수습하느라 사설 모의고사 영어 시험을 놓친 라세나가 텅 빈 승강장에서 무릎을 꿇고 통곡한다. (옆에서 하루빈이 그 모습을 인스타 스토리로 찍고 있다)
+            </div>
+            <div class="ep-killpoint">
+                <strong>💡 킬포인트:</strong> 감동적인 피날레를 가차 없이 부숴버리는 쿠키 영상의 매운 개그.
+            </div>
+        </div>
+
+<h2 id="s-5">5. 여담</h2>
+        <ul class="list-disc pl-5 space-y-4 text-sm leading-relaxed">
+            <li>
+                <strong>김성민 전 시장 체제의 유산:</strong> 본작이 방영된 2021년 4분기는 현재의 박효빈 시장 체제가 아닌 '덕후 시장 3대장' 중 한 명인 <a href="김성민.html" class="wiki-link">김성민</a> 전 시장 재임 시절이었다. 정규 시즌인 &lt;철도부!&gt;가 사내 정치와 진지한 서사를 다루는 것과 달리, 본작은 철저하게 나사 빠진 일상과 B급 숏폼 개그에 집중했는데, 이는 당시 "시민들에게 철도는 친근하고 가벼운 휴식처여야 한다"는 김 시장의 시정 철학(?)이 강력하게 반영된 결과라고 한다.
+            </li>
+            <li>
+                <strong>철덕들의 ASMR 맛집 (광기의 음향 고증):</strong> 매화 엔딩 크레딧마다 깔리는 열차 구동음은 단순한 효과음 라이브러리가 아니다. 제작진과 음향 감독이 직접 1호선 <a href="곽암해수욕장역.html" class="wiki-link">곽산차량기지</a>와 각 노선 주요 역에 바이노럴(Binaural) 마이크를 들고 가서 새벽 내내 녹음해 온 <strong>100% 실황 날것의 소리</strong>다. 이 때문에 유튜브 등지에서는 '레일루미네 GTO 인버터 수면용 1시간 반복 재생' 영상이 조회수 100만을 넘기는 기염을 토했다.
+            </li>
+            <li>
+                본작의 9화에서 등장하는 전노아와 박라미의 조별과제 에피소드는, 훗날 2022년 정규 애니메이션 2쿨에서 이들이 효빈대 카르텔에 맞서 기획안을 밀어붙이는 명장면의 완벽한 떡밥(복선)으로 작용했다. 숏폼 시절의 억지 개그가 정규 서사의 복선이 된 훌륭한 사례.
+            </li>
+            <li>
+                <strong>전무후무한 '미개통 노선 캐릭터' 조기 투입의 진실 (김성민 시장 X 정민재 사장의 합작):</strong> 
+                본 애니메이션 방영 당시, <a href="유리아.html" class="wiki-link">유리아</a>가 담당하는 <a href="효빈 도시철도 8호선.html" class="wiki-link">8호선</a>은 2023년 개통을 목표로 한창 땅을 파고 있던 공사판 노선이었다. 다른 캐릭터들이 모두 노선 개통 이후에 데뷔한 것에 비하면 2년이나 이른 압도적 특혜였다. 이는 <strong>김성민 시장의 전폭적인 지지와 당시 효빈교통공사 2대 수장이었던 정민재 사장(재임 2019.01~2022.06)의 치밀한 기획력</strong>이 빚어낸 합작품이었다. 
+                <br><br>
+                뼛속까지 성덕이었던 김 시장이 <em>"이 스바라시한 유리아를 2023년까지 묵혀둘 수 없다!"</em>며 바람을 잡자, 독립 초기 공사의 IP 수익 다각화를 고민하던 정민재 사장은 이를 덥석 물었다. 정 사장은 <strong>"개통 전부터 캐릭터를 대스타로 만들면 8호선 초기 적자를 굿즈 수익으로 메울 수 있다"</strong>는 기적의 논리로 이사회를 설득, 유리아의 1기 애니메이션 조기 투입을 실무선에서 불도저처럼 밀어붙였다. <del>윗선(시장)이 까라면 까야지... 가 아니라 사장 본인도 신나서 즐겼다는 게 학계의 정설이다</del>
+            </li>
+            <li>
+                <strong>애니메이션 4화가 쏘아 올린 거대한 스노우볼 (우신면 낙선 사태):</strong> 
+                결과적으로 두 사람의 이 과감한 결단은 이듬해 효빈시 정치사를 뒤엎는 역대급 나비효과를 불러왔다. 남구 갑 국회의원 <a href="우신면.html" class="wiki-link">우신면</a>이 본인 집 조망권을 핑계로 '8호선 백지화 및 전면 지하화' 억지를 부리자, 이미 이 애니메이션을 통해 유리아에게 입덕해 있던 전국의 철덕들과 서브컬처 팬덤의 역린이 제대로 찔려버린 것이다.
+                <br><br>
+                팬들은 특히 유리아가 광기를 뿜어내며 신형 제어반에 몽키스패너를 들이대던 <strong>'본작 4화의 B파트 명장면'</strong>을 발굴해 냈다. 덕후들은 <strong>"저 아저씨 집 앞 버스 정류장 BIT 기판이랑 선거 현수막 좀 싹 다 정비(물리)해오면 안 됩니까?"</strong>라며 살기 등등하게 몽키스패너를 든 유리아의 고퀄리티 합성 밈(Meme)을 공장처럼 찍어내 인터넷에 살포했다. 
+                <br><br>
+                이 밈은 남구 최대 지역 커뮤니티인 '평당맘' 카페에 수출되어 대히트를 쳤고, 한국 사회에서 절대 섞일 수 없을 것 같았던 '부동산 맘카페'와 '서브컬처 오타쿠'가 <strong>우신면 타도와 8호선 사수</strong>라는 하나의 깃발 아래 뭉쳐 8호선 분담금 모금 운동에 화력을 쏟아붓는 역사적 진풍경을 연출해 냈다. 일개 5분짜리 숏폼 개그 애니메이션이 현역 국회의원을 타격하는 가장 치명적인 정치적 무기가 된 셈이다. <del>만약 정민재 사장이 유리아의 선행 발매를 기획하지 않았다면 우신면은 무사히 살아남았을지도 모른다</del>
+            </li>
+            <li>
+                <strong>국회의원실에 모셔진 레일루미네 블루레이:</strong>
+                이 엄청난 민심의 대통합을 현미경처럼 읽어낸 인물은 바로 <a href="고정민.html" class="wiki-link">고정민</a> 당시 남구 을 의원이었다. 평소 진성 오타쿠 아들 덕분에 본작을 챙겨보며 유리아 피규어를 사다 나르던 그는, 거실에서 아들이 <em>"아빠!! 4화에 나온 우리 유리아가 우신면 때문에 8호선 제어반 한 번 못 만져보고 실직 고아가 되게 생겼어!!"</em>라고 열변을 토하는 것을 보고 깨달음을 얻었다. 이 애니메이션발(發) 팬덤의 분노와 맘카페의 교통 인프라 니즈가 일치한다는 것을 간파한 고정민은 남구 갑 자객 공천을 수락했고, 결국 우신면을 15.50%라는 득표율로 박살 낸다. 지금도 고정민 의원의 국회 의원실 책상 한편에는 본작의 블루레이 박스 세트가 영감의 원천(?)으로 고이 모셔져 있다고 한다.
+            </li>
+            <li>
+                <strong>정치 스캔들이 낳은 블루레이 역주행:</strong>
+                우신면 사태와 8호선 사수 운동이 전국적인 이슈로 떠오르자, 본작의 블루레이(BD) 판매량이 2022년에 뜬금없이 역주행하는 기현상이 벌어졌다. 덕후들 사이에서 <strong>"블루레이를 사서 유리아의 직장(8호선) 건설 분담금에 보태주자"</strong>는 명분이 생기며 1차 생산분이 전량 매진되었고, 제작사인 스튜디오 효빈은 황급히 2차 추가 인쇄에 들어가야 했다. 애니메이션 업계에서는 "어그로 정치인 한 명이 BD 판매량을 견인했다"며 전설로 회자된다.
+            </li>
+            <li>
+                <strong>성우 녹음실 비하인드 (몽키스패너의 진실):</strong> 
+                일본판 유리아 성우인 <a href="https://namu.wiki/w/%EC%82%AC%EC%9D%B4%ED%86%A0%20%EC%8A%88%EC%B9%B4" class="wiki-link" target="_blank">사이토 슈카</a>는 4화 녹음 당시 캐릭터에 완전히 몰입하기 위해, 소품용 플라스틱 몽키스패너를 직접 일본 스튜디오에 들고 와서 허공에 휘두르며 <em>"대박!! 한 번만요!!"</em> 대사를 텐션 200%로 녹음했다고 한다. 나중에 이 일화를 전해 들은 한국판 성우 장예나 역시 질 수 없다며, 실제 집 공구함에서 묵직한 강철 몽키스패너를 꺼내와 인증샷을 남겨 팬들을 열광시켰다.
+            </li>
+            <li>
+                <strong>효빈교통공사 현직자들의 현실적인 PTSD:</strong> 
+                철덕들과 오타쿠들은 4화의 몽키스패너 씬과 11화의 제어반 뜯기 씬을 보며 열광했지만, 정작 현실의 효빈교통공사 기술/설비팀 직원들은 식은땀을 흘리며 경악했다고 한다. 한 현직 엔지니어는 블로그에 <em>"애니메이션이니까 웃으면서 보지, 현실 차량기지에서 고등학생이 AGT 무인 관제 수신기에 스패너를 들이대는 순간 그날로 전사적 비상경계령이 발동되고 징계 위원회가 열린다. 라세나가 목숨 걸고 태클 건 건 너무나 현실적인 생존 본능이었다"</em>라며 뼈 있는 감상평을 남겼다.
+            </li>
+            <li>
+                <strong>성지순례의 장소가 된 4화:</strong>
+                고정민 의원의 당선과 우신면의 정계 퇴출이 확정된 날 밤, 유튜브에 올라와 있던 본작 4화의 공식 클립 영상에는 <strong>"유리아가 스패너로 우신면을 심판했다", "성지순례 왔습니다. 8호선 개통하게 해주세요"</strong>라는 댓글 수천 개가 달리며 그야말로 축제 분위기가 형성되었다.
+            </li>
+        </ul>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-400 text-xs pb-10">
+            <p>이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)</p>
+            <p>기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            <br>
+            <p>효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</p>
+        </footer>
+    </div>
+
+    <!-- 스크립트 온전하게 복구 -->
+    <script>
+        // 각주 호버보드 (툴팁) 기능
+        document.addEventListener('DOMContentLoaded', () => {
+            const refs = document.querySelectorAll('.footnote-ref a');
+            const tooltip = document.getElementById('footnote-tooltip');
+
+            refs.forEach(ref => {
+                ref.addEventListener('mouseenter', (e) => {
+                    e.preventDefault(); 
+                    const targetId = ref.getAttribute('href').substring(1); 
+                    
+                    let targetContent = document.querySelector(`.footnote-content[id="${targetId}"]`);
+                    
+                    if (targetContent) {
+                        tooltip.innerHTML = targetContent.innerHTML;
+                        tooltip.style.display = 'block';
+                        moveTooltip(e);
+                    }
+                });
+
+                ref.addEventListener('mousemove', (e) => {
+                    moveTooltip(e);
+                });
+
+                ref.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+            });
+
+            function moveTooltip(e) {
+                const x = e.clientX + 15;
+                const y = e.clientY + 15;
+                
+                const tooltipRect = tooltip.getBoundingClientRect();
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+
+                let finalX = x;
+                let finalY = y;
+
+                if (x + tooltipRect.width > windowWidth) {
+                    finalX = x - tooltipRect.width - 20;
+                }
+                if (y + tooltipRect.height > windowHeight) {
+                    finalY = y - tooltipRect.height - 20;
+                }
+
+                tooltip.style.left = finalX + 'px';
+                tooltip.style.top = finalY + 'px';
+            }
+        });
+    </script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

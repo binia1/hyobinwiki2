@@ -1,0 +1,462 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈문화재단 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800&display=swap');
+        
+        :root { 
+            --wiki-main: #7777AA; /* 효빈위키 메인 컬러 */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0022aa; /* 효빈위키 스타일 파란 링크 */
+            --wiki-visited: #800080;
+            --wiki-table-header: #663399; /* 재단 고유색: 로열 퍼플 */
+            --wiki-table-header-text: #ffffff;
+            --wiki-del: #999;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 텍스트 스타일 */
+        .txt-lvl-1 { font-size: 2.8rem !important; font-weight: 800; color: #000000; margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1px; } 
+        h2 { font-size: 1.5rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 8px; margin-top: 2.5rem; margin-bottom: 1rem; color: var(--wiki-text); display: block; }
+        h3 { font-size: 1.2rem !important; font-weight: 700; margin-top: 1.5rem; margin-bottom: 10px; color: var(--wiki-text); }
+        h4 { font-size: 1.1rem !important; font-weight: 600; margin-top: 1rem; margin-bottom: 8px; color: var(--wiki-text); }
+        
+        /* 링크 스타일 */
+        a.wiki-link { color: var(--wiki-link); text-decoration: none; cursor: pointer; }
+        a.wiki-link:hover { text-decoration: underline; }
+        a.wiki-link:visited { color: var(--wiki-visited); }
+
+        /* 표 스타일 */
+        table.wiki-table { border-collapse: collapse; width: 100%; margin: 15px 0; border: 1px solid #ccc; font-size: 0.9rem; }
+        table.wiki-table th, table.wiki-table td { border: 1px solid #ccc; padding: 6px 10px; vertical-align: middle; }
+        table.wiki-table th { background-color: var(--wiki-table-header); color: white; text-align: center; font-weight: bold; }
+        table.wiki-table td { background-color: #fff; }
+
+        /* 인포박스 */
+        .infobox { 
+            border: 2px solid var(--wiki-table-header); 
+            background-color: #fff; 
+            width: 100%; 
+            max-width: 400px; 
+            font-size: 0.9rem; 
+            margin-bottom: 20px; 
+            float: right; 
+            margin-left: 20px; 
+            border-radius: 4px; 
+            overflow: hidden; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .infobox-title { background-color: var(--wiki-table-header); color: white; padding: 8px; text-align: center; font-size: 1.1rem !important; font-weight: bold; }
+        .infobox-image { text-align: center; padding: 0; background: white; border-bottom: 1px solid #ddd; }
+        .infobox table { width: 100%; border-collapse: collapse; border: none; }
+        .infobox th { background-color: #f5f5f5; color: #333; width: 120px; text-align: center; padding: 5px; border: 1px solid #ddd; font-weight: bold; }
+        .infobox td { padding: 5px 10px; border: 1px solid #ddd; text-align: left; }
+
+        /* 취소선 스타일 (효빈위키 스타일) */
+        .del { text-decoration: line-through; color: var(--wiki-del); }
+        .del:hover { color: #555; }
+        
+        /* 분류 박스 */
+        .category-box { border: 1px solid #ccc; background-color: #f5f5f5; padding: 5px 10px; font-size: 0.85rem; margin-bottom: 20px; border-radius: 4px; }
+
+        /* 목차 */
+        .toc { display: inline-block; border: 1px solid #ccc; background-color: #f9f9f9; padding: 12px 20px; margin-bottom: 20px; min-width: 250px; }
+        .toc-title { text-align: center; font-weight: bold; margin-bottom: 10px; }
+        .toc ul { list-style: none; padding-left: 0; margin: 0; font-size: 0.9rem; }
+        .toc li { margin-bottom: 2px; }
+        .toc a { text-decoration: none; color: #333; }
+        .toc a:hover { text-decoration: underline; }
+
+        /* 위키 도구 버튼 */
+        .wiki-tool-group { display: flex; gap: 4px; margin-bottom: 15px; justify-content: flex-end; }
+        .wiki-tool-btn { padding: 2px 10px; font-size: 12px; border: 1px solid #ccc; background: linear-gradient(to bottom, #fff, #eee); cursor: pointer; border-radius: 2px; color: #333; text-decoration: none; }
+
+        /* 각주 스타일 */
+        .footnote-link { vertical-align: super; font-size: 0.7em; color: var(--wiki-link); text-decoration: none; margin-left: 2px; cursor: pointer; }
+        
+        /* 각주 툴팁 (호버보드) 스타일 */
+        .fn-tooltip {
+            position: absolute;
+            background-color: white;
+            border: 1px solid #333;
+            padding: 8px 12px;
+            border-radius: 4px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+            z-index: 10000;
+            font-size: 0.85rem;
+            max-width: 350px;
+            display: none;
+            color: #333;
+            pointer-events: none; /* 마우스 이벤트가 툴팁에 가려지지 않도록 */
+            line-height: 1.4;
+        }
+        
+        /* 인용문 */
+        .quote { border-left: 5px solid var(--wiki-table-header); background-color: #f8f0ff; padding: 15px 20px; margin: 15px 0; font-style: italic; color: #555; }
+        
+        /* 외부 링크 아이콘 */
+        .ext-link::after { content: " 🔗"; font-size: 0.7em; }
+
+        /* 검색창 */
+        .search-bar { border: 1px solid #ccc; padding: 4px 8px; font-size: 14px; width: 250px; }
+        .search-btn { background-color: #555588; color: white; border: none; padding: 4px 10px; cursor: pointer; font-size: 14px; }
+        
+        /* 효빈광역시 공공기관 틀 스타일 */
+        .namu-frame a:hover { text-decoration: underline; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <!-- 1. 상단바 -->
+    <nav class="bg-[#7777AA] text-white p-2 px-4 flex justify-between items-center shadow-md sticky top-0 z-50 h-14">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl tracking-tight">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-1">
+            <input type="text" id="searchInput" placeholder="여기에서 검색" class="search-bar rounded-sm text-black" onkeypress="if(event.keyCode==13) handleSearch()">
+            <button onclick="handleSearch()" class="search-btn rounded-sm">🔍</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg pt-6">
+        
+        <!-- 2. 문서 제목 -->
+        <div class="flex justify-between items-end border-b-2 border-gray-400 pb-2 mb-4">
+            <div class="txt-lvl-1">효빈문화재단</div>
+            <div class="wiki-tool-group">
+                <a href="수정.html" class="wiki-tool-btn">편집</a>
+                <a href="토론.html" class="wiki-tool-btn">토론</a>
+                <a href="역사.html" class="wiki-tool-btn">역사</a>
+            </div>
+        </div>
+
+        <!-- 3. 분류 박스 -->
+        <div class="category-box">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="효빈광역시의공공기관.html" class="wiki-link">효빈광역시의 공공기관</a> | 
+            <a href="대한민국의비영리법인.html" class="wiki-link">대한민국의 비영리법인</a> | 
+            <a href="HAF.html" class="wiki-link">HAF 조직위원회</a> | 
+            <a href="2012년.html" class="wiki-link">2012년 설립</a>
+        </div>
+
+        <!-- 4. 내비게이션 틀 -->
+<div class="no-autolink">
+    <div id="hyobin-public-org-nav"></div>
+    <script src="js/효빈공공기관.js"></script>
+    <script> renderHyobinPublicOrg('hyobin-public-org-nav'); </script>
+</div>
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-8 relative">
+            
+            <!-- 5. 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit">
+                <div class="toc-title">목차 [접기]</div>
+                <ul class="space-y-1">
+                    <li>1. <a href="#s-1">개요</a></li>
+                    <li>2. <a href="#s-2">역사</a>
+                        <ul>
+                            <li>2.1. 태동기: 숨겨진 덕후들의 시대 (2012~2021)</li>
+                            <li>2.2. 암흑기: 윤대환의 문화 말살 (2006~2007)</li>
+                            <li>2.3. 대격변: 봉인 해제 (2022~현재)</li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3">조직 구성</a></li>
+                    <li>4. <a href="#s-4">주요 사업</a>
+                        <ul>
+                            <li>4.1. HAF (효빈 애니메이션 페스티벌)</li>
+                            <li>4.2. 성지 고증 및 라이선스 총괄</li>
+                            <li>4.3. 스쿨아이돌 힐스 조성 사업</li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5">사건사고 및 빌런</a>
+                        <ul>
+                            <li>5.1. 윤대환 일가와의 악연</li>
+                            <li>5.2. 반(反) 오타쿠 세력의 준동</li>
+                            <li>5.3. HAF 티켓팅 서버 폭파 사건</li>
+                        </ul>
+                    </li>
+                    <li>6. <a href="#s-6">여담</a></li>
+                    <li>7. <a href="#s-7">관련 문서</a></li>
+                </ul>
+            </div>
+
+            <!-- 6. 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden lg:order-last">
+                <div class="infobox-title">효빈문화재단<br><span class="text-sm font-normal">Hyobin Cultural Foundation</span></div>
+                <div class="infobox-image">
+                    <!-- 실제 이미지 링크 적용. onerror로 로컬 파일 없을 시 대체 이미지 표시 -->
+                    <img src="이미지/효빈문화재단_로고.png" 
+                         alt="효빈문화재단 로고" 
+                         class="w-full h-auto object-cover"
+                         onerror="this.src='https://images.unsplash.com/photo-1544252890-a1e7e828d506?q=80&w=400&h=250&auto=format&fit=crop'; this.onerror=null;">
+                    <div class="mt-2 text-sm font-bold text-[#663399] p-2">"상상을 현실로, 문화를 성지로"</div>
+                </div>
+                <table>
+                    <tr><th>정식 명칭</th><td>재단법인 효빈문화재단</td></tr>
+                    <tr><th>한자 명칭</th><td>財團法人 孝彬文化財團</td></tr>
+                    <tr><th>영문 명칭</th><td>Hyobin Cultural Foundation (HCF)</td></tr>
+                    <tr><th>설립일</th><td>2012년 9월 14일</td></tr>
+                    <tr><th>설립 근거</th><td>지방자치단체 출자·출연 기관의 운영에 관한 법률<br>효빈문화재단 설립 및 운영 조례</td></tr>
+                    <tr><th>이사장</th><td><strong>김미래</strong></td></tr>
+                    <tr><th>대표이사</th><td>최덕후</td></tr>
+                    <tr><th>주무관청</th><td><a href="효빈광역시청.html" class="wiki-link">효빈광역시</a> 문화체육관광국</td></tr>
+                    <tr><th>소재지</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구.html" class="wiki-link">북구</a> 고송동 293<br>(효빈예술센터 3~5층)</td></tr>
+                    <tr><th>직원 수</th><td>128명 (2025년 기준)<a href="#fn-3" id="r-fn-3" class="footnote-link">[3]</a></td></tr>
+                    <tr><th>자본금</th><td>500억 원</td></tr>
+                    <tr><th>주요 사업</th><td>문화예술 진흥, <strong>서브컬처 성지화 사업</strong><br>HAF 개최 및 운영, 굿즈 라이선싱</td></tr>
+                    <tr><th>관련 웹사이트</th><td><a href="#" class="wiki-link ext-link">공식 홈페이지</a></td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <!-- 본문 내용 -->
+        <h2 id="s-1">1. 개요</h2>
+        <p>
+            <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> 산하의 비영리 재단법인. 겉으로는 효빈시의 문화 예술 진흥과 시민들의 문화 복지 증진을 목적으로 설립된 평범한 지자체 산하 재단처럼 보인다. 
+            하지만 실상은 <span class="del">시장님의 덕질을 현실로 구현하는</span> 효빈시를 전 세계 <strong>서브컬처의 메카</strong>로 개조하는 'L-Project'<a href="#fn-1" id="r-fn-1" class="footnote-link">[1]</a>의 총괄 실무 기지이자 <strong>진정한 흑막</strong>이다.
+        </p>
+        <p class="mt-2">
+            <a href="효빈교통공사.html" class="wiki-link">효빈교통공사</a>가 이타샤 전동차를 굴리고, <a href="효빈도시공사.html" class="wiki-link">효빈도시공사</a>가 애니메이션 배경 같은 아파트를 짓는다면, 효빈문화재단은 그 모든 콘텐츠의 <strong>'철저한 고증'</strong>과 <strong>'정체성'</strong>을 부여하고 까다롭기로 소문난 일본 판권사들과의 <strong>'라이선스 계약'</strong>을 전담하는 핵심 브레인 조직이다. 사실상 효빈시가 '오타쿠 특별시'로 불리게 만든 일등 공신.
+        </p>
+
+        <h2 id="s-2">2. 역사</h2>
+        <h3 id="s-2.1">2.1. 태동기: 숨겨진 덕후들의 시대</h3>
+        <p>
+            흔히 2022년 박효빈 시장 취임 이전에는 재단이 별 볼 일 없었다고 생각하기 쉽지만, 사실 <strong>효빈시는 태생부터 덕후들의 도시였다.</strong> 단지 '일코(일반인 코스프레)'를 하고 있었을 뿐이다.
+        </p>
+        <p class="mt-2">
+            설립자인 <strong><a href="박현만.html" class="wiki-link">박현만</a></strong> 전 시장부터가 시청 집무실에 프라모델을 전시해두던 <strong>중증 '건덕후(건담 오타쿠)'</strong>였다. 
+            재단 설립 당시 "문화의 다양성"을 명분으로 <span class="del">자쿠</span> 조형물 설치를 시도하다가 시의회의 반대로 무산된 적이 있다.
+            이어 취임한 <strong><a href="김성민.html" class="wiki-link">김성민</a></strong> 전 시장은 한술 더 떠 <strong><a href="러브라이브.html" class="wiki-link">러브 라이브!</a></strong>의 <strong>'토죠 노조미'</strong> 오시(최애)였다. 
+            그는 "와시와시" 정신을 강조하며(?) 청소년 문화 교류라는 명목으로 일본 성우 초청 행사를 비밀리에 추진했고, 이것이 훗날 HAF의 전신이 되었다.
+        </p>
+
+        <h3 id="s-2.2">2.2. 암흑기: 윤대환의 문화 말살 (2006~2007)</h3>
+        <p>
+            재단과 효빈시 서브컬처계의 <strong>'볼드모트'</strong>이자 <strong>최악의 흑역사</strong>. 
+            2006년 단 3표 차이로 당선된 <strong><a href="윤대환.html" class="wiki-link">윤대환</a></strong> 시장 재임 시절, 재단은 존폐 위기에 몰렸다. 윤대환은 "애들 만화 장난질에 세금을 쓴다"며 HAF 전신 행사를 강제 폐지하고, 관련 예산을 전액 삭감해 자신의 버스 회사(두청운수) 도로 포장비로 돌렸다.
+        </p>
+        <p class="mt-2">
+            특히 당시 <a href="효빈고속버스터미널.html" class="wiki-link">칠양여객</a> 사장 <strong>옥덕호</strong>가 사비를 털어 운행하던 <strong>'에반게리온 초호기 래핑 버스'</strong>를 윤대환이 직접 시청 주차장으로 끌고 와 <strong>"이딴 흉물 치우라"며 강제로 래핑을 뜯어버린 사건</strong>은 전설적인 '피의 숙청'으로 남아있다. 
+            다행히 윤대환이 살인미수 및 선거법 위반으로 1년 만에 <strong>당선 무효</strong> 및 징역형을 선고받고 쫓겨나면서 암흑기는 끝났다.
+        </p>
+        
+        <h3 id="s-2.3">2.3. 대격변: 봉인 해제 (2022~현재)</h3>
+        <p>
+            2022년 <strong><a href="박효빈.html" class="wiki-link">박효빈</a></strong> 시장이 취임하면서 효빈시는 <strong>'오픈 덕질'</strong>을 선언했다. 그는 취임식 날부터 코스프레를 하고 등장해 전임 시장들이 몰래 다져놓은 기반을 양지로 끌어올렸다.
+            박 시장은 김미래 이사장을 영입, 재단을 명실상부한 <strong>'서브컬처 전략기획 본부'</strong>로 승격시켰다.
+        </p>
+
+        <h2 id="s-3">3. 조직 구성</h2>
+        <p>
+            일반적인 공기업과는 다르게 팀 명칭부터가 심상치 않다. 입사 면접 때 '최애캐'를 물어본다는 소문이 사실로 밝혀졌다.
+        </p>
+        <ul class="list-disc pl-5 mt-2 space-y-2">
+            <li><strong>전략기획실:</strong> 재단의 두뇌. 산하에 <strong>'덕력증진팀'</strong>이 있어 전 직원의 최신 애니메이션 트렌드 교육을 담당한다.</li>
+            <li><strong>콘텐츠사업본부:</strong> 일본 판권사들과 피 말리는 협상을 담당하는 특공대. 전원 JLPT N1 만점자라는 소문이 있다.</li>
+            <li><strong>성지조성본부:</strong>
+                <ul class="list-circle pl-5 mt-1">
+                    <li><strong>고증심의위원회:</strong> 도시공사가 짓는 건물이나 시설물이 원작과 일치하는지 감수한다. 1mm 오차도 허용하지 않는 광기의 집단.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2 id="s-4">4. 주요 사업</h2>
+        <h3 id="s-4.1">4.1. HAF (효빈 애니메이션 페스티벌)</h3>
+        <p>
+            재단의 존재 이유이자 가장 큰 연간 행사. 매년 10월경 개최되며, 수십만 명의 국내외 덕후들이 효빈시로 성지순례를 오게 만드는 기적의 축제다.
+            특히 <strong><a href="https://namu.wiki/w/러브%20라이브!%20시리즈" target="_blank" class="wiki-link ext-link">러브 라이브! 시리즈</a></strong> 성우들의 내한 공연 및 팬미팅을 매년 성공적으로 유치해내며 '섭외의 신'이라는 별명을 얻었다.
+        </p>
+
+        <h3 id="s-4.2">4.2. 성지 고증 및 라이선스 총괄</h3>
+        <p>
+            효빈시 곳곳에 조성되는 '성지'들의 퀄리티 컨트롤(QC)을 담당한다. 도시공사 아파트의 창문 각도 하나까지 원작과 대조하여 감수한다. 또한 일본 Sunrise, Bushiroad 등과의 제휴를 통해 오리지널 굿즈 판권을 독점 관리한다.
+        </p>
+
+        <h3 id="s-4.3">4.3. 스쿨아이돌 힐스 조성 사업</h3>
+        <p>
+            최근 <a href="청엽구.html" class="wiki-link">청엽구</a> 일대에 조성 중인 대규모 테마형 주거 단지. 이름부터 대놓고 <strong>'스쿨아이돌 힐스'</strong>다.
+            재단 측은 <strong>"24시간 아이돌의 숨결을 느낄 수 있는 주거 공간"</strong>이라고 홍보하고 있으며, 시공사인 <a href="효빈도시공사.html" class="wiki-link">효빈도시공사</a>의 사장이 사실 <strong>성공한 덕후</strong><span class="del">이자 중증 러브라이버</span>인 탓에, "예산 따위가 중요하냐, 아싸라비야!"를 외치며 오히려 재단보다 더 신나서 짓고 있다고 한다.
+        </p>
+
+        <h2 id="s-5">5. 사건사고 및 빌런</h2>
+        <p>효빈시의 '덕질'을 방해하려는 어둠의 세력들과의 투쟁 역사.</p>
+
+        <h3 id="s-5.1">5.1. 윤대환 일가와의 악연</h3>
+        <p>
+            <strong><a href="윤대환.html" class="wiki-link">윤대환</a></strong>(전 시장)은 재임 기간(2006~2007) 동안 효빈시의 모든 서브컬처 사업을 초토화시킨 장본인이다. 살인미수 등 강력 범죄로 감옥에 간 뒤에도 효빈시 덕후들에게는 '공공의 적' 1순위다.
+        </p>
+        <p class="mt-2">
+            그의 아들 <strong>윤재훈</strong> 역시 빌런의 피를 이어받았다. 효빈광역시장 선거에 집권 여당인 <strong>국민의힘</strong> 후보로 출마했으나, 토론회에서 "애니메이션 박물관을 밀어버리고 쇼핑몰을 짓겠다"는 망언을 쏟아내고 각종 구설수에 휘말려 <strong>득표율 9.99%</strong>라는 처참한 성적표를 받았다. <span class="del">집권 여당 후보가 선거비 보전도 못 받은 전설의 레전드.</span> 심지어 보수 지지층조차 그를 버리고 무소속 보수 후보를 찍었다고 한다.
+        </p>
+
+        <h3 id="s-5.2">5.2. 반(反) 오타쿠 세력의 준동</h3>
+        <p>
+            시민단체 '바른문화지킴이' 대표 <strong>이차야</strong>는 효빈시의 서브컬처 정책을 사사건건 방해하는 또 다른 빌런이다. 
+            그는 시위 도중 효빈 시민들을 향해 <strong>"이 도시는 단체로 미쳤다! 제정신이 아니다!"</strong>라고 고래고래 소리를 질렀다가, 지나가던 시민들에게 집단으로 <strong>모욕죄 및 명예훼손 고소</strong>를 당해 금융치료를 받았다는 훈훈한(?) 일화가 있다.
+        </p>
+        <p class="mt-2">
+            또한, 재단에 매일같이 "캐릭터 치마 길이가 짧다", "눈이 너무 크다"는 등 말도 안 되는 민원을 넣는 <strong>악성 민원인 A씨</strong>도 재단 블랙리스트 0순위에 올라 있다. 재단 직원들은 A씨의 전화가 오면 '보스 레이드' 준비 태세에 돌입한다고.
+        </p>
+
+        <h3 id="s-5.3">5.3. HAF 티켓팅 서버 폭파 사건</h3>
+        <p>
+            2023년 HAF 당시 뮤즈 파이널 멤버 전원 초청 소식에 전 세계 접속자가 몰려 서버가 3초 만에 물리적으로 타버린 사건. 결국 추첨제로 전환했다.
+        </p>
+
+        <h4 id="s-5.4">5.4. 스쿨아이돌 힐스 입주 자격 논란</h4>
+        <p>
+            입주 조건에 '덕력 인증'이 있다는 소문에 논란이 일었으나, 알고 보니 입주 자체 제한이 아니라 '커뮤니티 무료 이용' 같은 <strong>입주민 추가 혜택</strong> 조건임이 밝혀져 법적 문제는 없었다. "혜택은 준비된 자의 것"이라는 김미래 이사장의 명언이 남았다.
+        </p>
+
+        <h2 id="s-6">6. 여담</h2>
+        <div class="quote">
+            "우리는 행정 서비스를 제공하는 것이 아닙니다. <strong>여러분의 꿈을 백업하고 있을 뿐입니다.</strong>"<br>
+            - 김미래 이사장, 취임 1주년 인터뷰 중
+        </div>
+        <p>
+            <strong><a href="효빈교통공사.html" class="wiki-link">효빈교통공사</a> 사장 최대현</strong>과는 '톰과 제리' 같은 앙숙 관계다. 최대현 사장은 '대중적이고 화려한 디자인'을 선호하는 반면, 김미래 이사장은 '원작 고증과 매니아적 디테일'을 중시하기 때문.
+        </p>
+        <p class="mt-2">
+            하지만 둘 다 뼛속까지 '덕후'라는 공통점이 있어, 사석에서는 함께 굿즈 언박싱을 하거나 라이브 뷰잉을 보러 가는 등 <strong>영혼의 파트너</strong>로 돌변한다. 
+            특히 <strong>윤대환, 윤재훈, 이차야</strong> 같은 '빌런'들이 효빈시의 서브컬처 예산을 건드리려 하면, 언제 싸웠냐는 듯 합심하여 철벽 방어를 펼치는 든든한 전우가 된다. <span class="del">악당을 물리치기 위해 손잡는 라이벌 클리셰</span>
+        </p>
+        <p class="mt-2">
+            여기에 효빈시의 양대 관문인 <a href="효빈고속버스터미널.html" class="wiki-link">효빈고속버스터미널</a>을 운영하는 <strong>칠양여객</strong>의 사장 <strong>옥덕호</strong>까지 합세해 '효빈 덕후 삼대장'을 결성하고 있다. 
+            옥덕호 사장은 과거 윤대환에게 '에반게리온 버스'를 뜯긴 원한이 사무쳐 있어, 윤씨 일가 이야기만 나오면 치를 떤다고 한다.
+        </p>
+
+        <h2 id="s-7">7. 관련 문서</h2>
+        <ul class="list-disc pl-5 space-y-1 mt-2">
+            <li><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></li>
+            <li><a href="박효빈.html" class="wiki-link">박효빈</a></li>
+            <li><a href="윤대환.html" class="wiki-link">윤대환</a></li>
+            <li><a href="러브라이브.html" class="wiki-link">러브 라이브!</a></li>
+            <li><a href="HAF.html" class="wiki-link">HAF</a></li>
+        </ul>
+
+        <div class="mt-10 pt-4 border-t border-gray-300 text-sm">
+            <h2 style="border:none; margin:0; padding:0; font-size:1.1rem;">각주</h2>
+            <ol class="list-decimal pl-8 text-gray-600 mt-2">
+                <li id="fn-1">Love live Project의 약자라는 소문이 파다하다. <a href="#r-fn-1" class="footnote-link">↩</a></li>
+                <li id="fn-2">센다이시 아오바구(青葉区)에서 따왔다는 설이 유력하다. <a href="#r-fn-2" class="footnote-link">↩</a></li>
+                <li id="fn-3">정규직 80명, 무기계약직 48명. 행사 기간에는 아르바이트생만 500명 넘게 고용한다. <a href="#r-fn-3" class="footnote-link">↩</a></li>
+            </ol>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="wiki-footer mt-12 border-t-2 border-[#7777AA] pt-6 pb-10">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2 text-sm"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+
+    </div>
+
+    <script>
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+
+            const searchMap = {
+                '1호선': '1호선.html',
+                '2호선': '2호선.html',
+                '3호선': '3호선.html',
+                '4호선': '4호선.html',
+                '5호선': '5호선.html',
+                '6호선': '6호선.html',
+                '7호선': '7호선.html',
+                '8호선': '8호선.html',
+                '빈효선': '빈효선광역전철.html',
+                '공항': '효빈국제공항.html',
+                '효빈국제공항': '효빈국제공항.html',
+                '교통공사': '효빈교통공사.html',
+                '도시공사': '효빈도시공사.html',
+                '문화재단': '효빈문화재단.html',
+                '시청': '효빈광역시청.html',
+                '박효빈': '박효빈.html'
+            };
+
+            const target = searchMap[query] || (query + '.html');
+            window.location.href = target;
+        }
+
+        // 각주 툴팁 기능 구현
+        document.addEventListener('DOMContentLoaded', () => {
+            // 툴팁 요소 생성
+            const tooltip = document.createElement('div');
+            tooltip.className = 'fn-tooltip';
+            document.body.appendChild(tooltip);
+
+            // 문서 본문의 각주 링크 선택 (footer에 있는 역링크 제외)
+            const fnLinks = document.querySelectorAll('a[href^="#fn-"]');
+
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', (e) => {
+                    const fnId = link.getAttribute('href').substring(1); // # 제거
+                    const fnEl = document.getElementById(fnId);
+                    
+                    if (fnEl) {
+                        // 각주 내용 가져오기 (HTML 포함)
+                        // 뒤로가기 링크(↩)는 제거하고 보여주기 위해 임시 div 사용
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = fnEl.innerHTML;
+                        const backLinks = tempDiv.querySelectorAll('.footnote-link');
+                        backLinks.forEach(bl => bl.remove()); // 뒤로가기 화살표 제거
+
+                        tooltip.innerHTML = tempDiv.innerHTML;
+                        tooltip.style.display = 'block';
+                        
+                        // 위치 초기 설정
+                        updateTooltipPosition(e);
+                    }
+                });
+
+                link.addEventListener('mousemove', (e) => {
+                    updateTooltipPosition(e);
+                });
+
+                link.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+            });
+
+            function updateTooltipPosition(e) {
+                const xOffset = 10;
+                const yOffset = 15;
+                
+                // 화면 오른쪽 끝에서 잘리지 않도록 조정
+                let left = e.pageX + xOffset;
+                if (left + tooltip.offsetWidth > window.innerWidth) {
+                    left = e.pageX - tooltip.offsetWidth - xOffset;
+                }
+
+                tooltip.style.left = left + 'px';
+                tooltip.style.top = (e.pageY + yOffset) + 'px';
+            }
+        });
+    </script>
+
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>
+

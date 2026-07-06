@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>덕빈북도청 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        :root { 
+            /* [테마 컬러 설정] 덕빈북도 테마 (덕빈 블루 & 오렌지 포인트) */
+            --wiki-main: #27ae60; 
+            /* 무조건 #7777aa 적용 */
+            --wiki-nav-bg: #7777aa; 
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #27ae60;
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 (1.2배 정도로 조절) */
+        h2 { font-size: 2.2rem !important; line-height: 1.3; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.7rem !important; line-height: 1.3; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.4rem !important; line-height: 1.3; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-link.not-found { color: #d64937; } /* 문서 없음 스타일 */
+        
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 450px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.2rem !important; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: var(--wiki-main); color: white; width: 100px; padding: 5px 8px; border: 1px solid var(--wiki-main); text-align: center; font-weight: bold; }
+        .infobox td { padding: 5px 8px; border: 1px solid #ddd; text-align: center; }
+        .infobox .merged-row { background-color: #fff; text-align: center; padding: 10px; }
+
+        /* 데이터 테이블 */
+        .data-table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; font-size: 0.9rem; }
+        .data-table th, .data-table td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; }
+        .data-table th { background-color: #f2f2f2; color: #000; font-weight: bold; text-align: center; }
+        .data-table .section-header { background-color: #e5e7eb; font-weight: bold; text-align: center; color: #374151; border-top: 2px solid #9ca3af !important; border-bottom: 2px solid #9ca3af !important; }
+
+        /* 정당 배지 스타일 */
+        .party-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.8rem; white-space: nowrap; }
+        .gov-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; background-color: #6b7280; color: white; font-weight: bold; font-size: 0.8rem; white-space: nowrap; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* 인용 및 특수효과 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: normal; }
+        del { color: #ccc; text-decoration: line-through; }
+        .wiki-gray { color: #888; font-size: 0.9em; }
+
+        /* 하단 네비 박스 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+        
+        /* 각주 스타일 */
+        sup a { color: var(--wiki-link); text-decoration: none; font-weight: normal; }
+        sup a:hover { text-decoration: underline; }
+
+        /* 각주 툴팁 스타일 */
+        #wiki-tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            max-width: 350px;
+            z-index: 10000;
+            pointer-events: none;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            line-height: 1.5;
+            word-break: break-all;
+            border: 1px solid #555;
+        }
+
+        /* 광역자치단체 청사 네비게이션 틀 (효빈광역시청 양식) */
+        .council-grid-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: center; font-weight: bold; margin-bottom: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .council-grid-table td { border: 1px solid var(--wiki-border); padding: 0; }
+        .council-grid-table .color-bar { height: 26px; border-bottom: 1px solid var(--wiki-border); display: flex; justify-content: center; align-items: center; }
+        .council-grid-table .name-bar { height: 28px; background: white; display: flex; justify-content: center; align-items: center; }
+        .council-grid-table a { text-decoration: none; }
+        .council-grid-table a:hover { text-decoration: underline; }
+
+        /* 접기/펼치기 숨김용 */
+        .hidden-content { display: none; }
+        
+        /* 역대 청사 갤러리 스타일 */
+        .history-gallery { display: grid; grid-template-columns: repeat(1, 1fr); gap: 15px; margin: 20px 0; }
+        @media(min-width: 768px) { .history-gallery { grid-template-columns: repeat(3, 1fr); } }
+        .history-card { border: 1px solid var(--wiki-border); background: #fff; padding: 10px; text-align: center; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .history-card img { width: 100%; height: 180px; object-fit: cover; border: 1px solid #eee; margin-bottom: 8px; }
+        .history-card .title { font-weight: bold; font-size: 1rem; color: var(--wiki-main); margin-bottom: 4px; }
+        .history-card .desc { font-size: 0.85rem; color: #666; line-height: 1.4; }
+
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav-bg);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="효빈위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a href="덕빈북도청.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">토론</a>
+                <a href="덕빈북도청.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">편집</a>
+                <a href="덕빈북도청.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">역사</a>
+                <a href="덕빈북도청.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">즐겨찾기</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">덕빈북도청</div>
+            <div class="flex gap-2 mb-1">
+                <a href="덕빈북도청.html" class="wiki-btn">토론</a>
+                <a href="덕빈북도청.html" class="wiki-btn">편집</a>
+                <a href="덕빈북도청.html" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold text-[#27ae60]" style="color: var(--wiki-main);">분류:</span> 
+            <a href="덕빈북도청.html" class="wiki-link">덕빈북도청</a> | 
+            <a href="천조신도시.html" class="wiki-link">천조신도시</a> | 
+            <a href="덕빈북도_소재_관공서.html" class="wiki-link">덕빈북도 소재 관공서</a> | 
+            <a href="광역자치단체_청사.html" class="wiki-link">광역자치단체 청사</a> | 
+            <a href="가원구(빈주).html" class="wiki-link">가원구(빈주)의 건축물</a> | 
+            <a href="2017년_완공.html" class="wiki-link">2017년 완공</a>
+        </div>
+
+        <!-- 광역자치단체 청사 네비게이션 틀 -->
+        <table class="council-grid-table">
+            <tr>
+                <td colspan="5" style="border-color: #000; border-bottom: 1px solid #ccc; padding: 10px; background: linear-gradient(120deg, #fff 5%, #000 5.1% 9%, #fff 9.1% 10%, #000 10.1% 14%, #fff 14.1% 15%, #000 15.1% 19%, #fff 19.1% 81%, #cd313a 81.1% 90%, #0047a0 90.1%);">
+                    <div class="flex justify-center items-center gap-3">
+                        <img src="이미지/대한민국_국장.svg" alt="대한민국 국장" class="bg-white rounded-full w-10 h-10 object-contain shadow-sm border border-gray-200 p-1" onerror="this.src='https://via.placeholder.com/40?text=Gov'">
+                        <div class="text-left text-black leading-tight">
+                            <div class="text-xs drop-shadow-md font-bold text-gray-800">대한민국</div>
+                            <div class="text-xl font-extrabold tracking-widest drop-shadow-md">광역자치단체</div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5" style="background: #f8f9fa; padding: 8px; border-bottom: 1px solid #ccc; color: #444; font-size: 13px; cursor: pointer; user-select: none;" onclick="toggleBody('council-nav-body')" class="hover:bg-gray-200 transition">
+                    [ 펼치기 · 접기 ]
+                </td>
+            </tr>
+            <tbody id="council-nav-body" class="hidden-content">
+                <tr>
+                    <td style="width: 20%;"><div class="color-bar" style="background-color: #ae1932;"></div><div class="name-bar"><a href="서울특별시청.html" style="color: #ae1932;">서울특별시청</a></div></td>
+                    <td style="width: 20%;"><div class="color-bar" style="background-color: #E5007F;"></div><div class="name-bar"><a href="부산광역시청.html" style="color: #E5007F;">부산광역시청</a></div></td>
+                    <td style="width: 20%;"><div class="color-bar" style="background-color: #008837;"></div><div class="name-bar"><a href="대구광역시청.html" style="color: #008837;">대구광역시청</a></div></td>
+                    <td style="width: 20%;"><div class="color-bar" style="background-color: #0079c1;"></div><div class="name-bar"><a href="인천광역시청.html" style="color: #0079c1;">인천광역시청</a></div></td>
+                    <td style="width: 20%;"><div class="color-bar" style="background-color: #e8340b;"></div><div class="name-bar"><a href="광주광역시청.html" style="color: #e8340b;">광주광역시청</a></div></td>
+                </tr>
+                <tr>
+                    <td><div class="color-bar" style="background-color: #00ae4d;"></div><div class="name-bar"><a href="대전광역시청.html" style="color: #00ae4d;">대전광역시청</a></div></td>
+                    <td><div class="color-bar" style="background-color: #008c95;"></div><div class="name-bar"><a href="울산광역시청.html" style="color: #008c95;">울산광역시청</a></div></td>
+                    <td><div class="color-bar" style="background-color: #00a0c6;"></div><div class="name-bar"><a href="세종특별자치시청.html" style="color: #00a0c6;">세종특별자치시청</a></div></td>
+                    <td><div class="color-bar" style="background-color: #164194;"></div><div class="name-bar"><a href="경기도청.html" style="color: #164194;">경기도청</a></div></td>
+                    <td><div class="color-bar" style="background-color: #D50037;"></div><div class="name-bar"><a href="강원특별자치도청.html" style="color: #D50037;">강원특별자치도청</a></div></td>
+                </tr>
+                <tr>
+                    <td><div class="color-bar" style="background-color: #6f448c;"></div><div class="name-bar"><a href="충청북도청.html" style="color: #6f448c;">충청북도청</a></div></td>
+                    <td><div class="color-bar" style="background-color: #8c8c70;"></div><div class="name-bar"><a href="충청남도청.html" style="color: #8c8c70;">충청남도청</a></div></td>
+                    <td><div class="color-bar" style="background-color: #024694;"></div><div class="name-bar"><a href="전북특별자치도청.html" style="color: #024694;">전북특별자치도청</a></div></td>
+                    <td><div class="color-bar" style="background-color: #ffcc00;"></div><div class="name-bar"><a href="전라남도청.html" style="color: #d4a000;">전라남도청</a></div></td>
+                    <td><div class="color-bar" style="background-color: #27ae60;"></div><div class="name-bar"><a href="경상북도청.html" style="color: #27ae60;">경상북도청</a></div></td>
+                </tr>
+                <tr>
+                    <td><div class="color-bar" style="background-color: #f15a38;"></div><div class="name-bar"><a href="경상남도청.html" style="color: #f15a38;">경상남도청</a></div></td>
+                    <td><div class="color-bar" style="background-color: #939499;"></div><div class="name-bar"><a href="제주특별자치도청.html" style="color: #666;">제주특별자치도청</a></div></td>
+                    <td><div class="color-bar" style="background-color: #7777AA;"></div><div class="name-bar"><a href="효빈광역시청.html" style="color: #7777AA;">효빈광역시청</a></div></td>
+                    <!-- 덕빈북도청 강조 -->
+                    <td><div class="color-bar" style="background-color: var(--wiki-main);"></div><div class="name-bar bg-blue-50"><a href="덕빈북도청.html" style="color: var(--wiki-main); font-weight: 900;">덕빈북도청</a></div></td>
+                    <td><div class="color-bar" style="background-color: #335566;"></div><div class="name-bar"><a href="덕빈남도청.html" style="color: #335566;">덕빈남도청</a></div></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="merged-row" style="padding: 0;">
+                    <img src="이미지/덕북로고.png" alt="덕빈북도 로고" style="width: 180px; margin: 15px auto;" onerror="this.src='https://via.placeholder.com/180x60?text=Deokbinbuk-do'">
+                </div>
+                <div class="infobox-title" style="border-bottom: 2px solid #fff;">
+                    덕빈북도청<br>
+                    <span style="font-size: 0.9rem !important; font-weight: normal;">德彬北道廳<br>Deokbinbuk-do Provincial Office</span>
+                </div>
+                <div class="mb-4 text-center">
+                    <img src="이미지/덕북도청.png" alt="덕빈북도청 전경" class="inline-block border border-gray-300 p-1 bg-white shadow-sm" style="max-width: 600px; width: 100%;" onerror="this.src='https://via.placeholder.com/600x300?text=Deokbinbuk-do+Provincial+Office'">
+                    <div class="text-sm text-gray-500 mt-1">덕빈북도청 전경 (빈주시 가원구 천조읍)</div>
+                </div>
+
+                <div class="merged-row" style="background-color: var(--wiki-main); color: white; font-weight: bold;">슬로건</div>
+                <div class="merged-row text-[#27ae60]">
+                    <strong>새로운 변화, 행복한 덕빈</strong><br>
+                    <span class="text-xs text-gray-500"><del>새로운 (전철) 변화, 행복한 (역세권) 덕빈</del></span>
+                </div>
+                <table>
+                    <tr><th>주소</th><td><a href="덕빈북도.html" class="wiki-link">덕빈북도</a> <a href="빈주시.html" class="wiki-link">빈주시</a> <a href="가원구.html" class="wiki-link">가원구</a> 천조읍 증림리 27-2 (천조신도시)</td></tr>
+                    <tr><th>국가</th><td><a href="대한민국.html" class="wiki-link">대한민국</a></td></tr>
+                    <tr><th>광역자치단체</th><td><a href="덕빈북도.html" class="wiki-link">덕빈북도</a></td></tr>
+                    <tr><th>관할 구역</th><td>9시 9군</td></tr>
+                    <tr><th>도지사</th><td><span class="party-badge" style="background-color: #004EA2;">더불어민주당</span> <a href="강수성.html" class="wiki-link">강수성</a> (재선)</td></tr>
+                    <tr><th>부지사</th><td>윤산진 (행정)<br>고상현 (경제문화)</td></tr>
+                    <tr><th>웹사이트</th><td><a href="http://www.deokbinbuk.go.kr" class="wiki-link" target="_blank"><img src="이미지/홈페이지_아이콘.png" style="width: 20px; display: inline;" onerror="this.src='https://via.placeholder.com/20?text=W'"></a></td></tr>
+                    <tr>
+                        <th class="text-center align-middle">SNS</th>
+                        <td>
+                            <div class="flex gap-2 sns-links justify-center">
+                                <a href="#" data-sns="엑스" class="inline-block w-5 h-5 bg-[#000000] text-white flex justify-center items-center rounded text-xs font-bold text-decoration-none">X</a><span class="text-gray-300">|</span>
+                                <a href="#" data-sns="페이스북" class="inline-block w-5 h-5 bg-[#3b5998] text-white flex justify-center items-center rounded text-xs font-bold text-decoration-none"><i class="fab fa-facebook-f"></i></a><span class="text-gray-300">|</span>
+                                <a href="#" data-sns="유튜브" class="inline-block w-5 h-5 bg-[#FF0000] text-white flex justify-center items-center rounded text-xs font-bold text-decoration-none"><i class="fab fa-youtube"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </aside>
+
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1 w-full lg:w-auto">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">연혁 (청사 이전의 역사)</a>
+                        <ul>
+                            <li>2.1. <a href="#s-2-1" class="wiki-link">제1대 청사 (1896 ~ 1952)</a></li>
+                            <li>2.2. <a href="#s-2-2" class="wiki-link">제2대 청사 (1953 ~ 2017)</a></li>
+                            <li>2.3. <a href="#s-2-3" class="wiki-link">제3대 신청사 (2017 ~ 현재)</a></li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3" class="wiki-link">역대 도지사</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">조직 및 산하기관</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">이용 가능한 대중교통</a>
+                        <ul>
+                            <li>5.1. <a href="#s-5-1" class="wiki-link">광역전철</a></li>
+                            <li>5.2. <a href="#s-5-2" class="wiki-link">시내/마을버스</a></li>
+                        </ul>
+                    </li>
+                    <li>6. <a href="#s-6" class="wiki-link">여담 및 흑역사(?)</a>
+                        <ul>
+                            <li>6.1. <a href="#s-6-1" class="wiki-link">"아논 핫플" 천조읍의 기적</a></li>
+                        </ul>
+                    </li>
+                    <li>7. <a href="#s-7" class="wiki-link">관련 문서</a></li>
+                    <li>8. <a href="#s-8" class="wiki-link">둘러보기</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <p>대한민국 <a href="덕빈북도.html" class="wiki-link">덕빈북도</a>의 도정을 총괄하는 행정기관이자 그 기관이 입주한 청사. 도청 소재지는 도내 최대 도시인 <a href="빈주시.html" class="wiki-link">빈주시</a> 가원구 천조읍 증림리 27-2이다.</p>
+        <p>1896년 13도제 실시로 덕빈북도가 탄생할 당시에는 현 <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> 지역에 관찰사영(도청)을 두었으나, 한국전쟁으로 건물이 전소된 후 1953년 원래의 맹주였던 <a href="빈주시.html" class="wiki-link">빈주시</a> 구도심(빈성구 관동)으로 복귀하였다. 이후 청사 노후화와 행정 구역 확장에 따른 공간 부족 문제를 해결하기 위해 2017년 3월 15일, 현재의 <strong>천조신도시</strong>로 대대적인 이전을 단행했다.</p>
+        <p>신청사는 덕빈북도의 상징인 <strong>백로</strong>가 날개를 펴고 비상하는 웅장한 모습을 형상화하여 건축되었으며, 거대한 <a href="유리궁전.html" class="wiki-link">유리궁전</a> 디자인 덕분에 가원구의 독보적인 랜드마크로 자리 잡았다. 청사 앞 잔디광장은 주말마다 도민들의 피크닉 명소로 쓰이며, 때로는 <strong>대규모 집회</strong>(...)가 열리는 민주주의의 현장이 되기도 한다.</p>
+
+        <!-- 2. 연혁 -->
+        <h2 id="s-2" class="anchor-offset">2. 연혁 (청사 이전의 역사)</h2>
+        <p>덕빈북도청의 역사는 그야말로 <strong>"이별과 재회, 그리고 확장의 역사"</strong>로 요약된다. 무려 세 번이나 청사를 옮기며 파란만장한 세월을 겪어왔다.</p>
+        
+        <!-- [추가] 역대 청사 갤러리 -->
+        <div class="history-gallery">
+            <div class="history-card">
+                <img src="이미지/제1대_덕북도청.png" alt="제1대 덕빈북도청" onerror="this.src='https://via.placeholder.com/300x200?text=1st+Provincial+Office'">
+                <div class="title">제1대 도청사 (관찰사영)</div>
+                <div class="desc">구 효빈군<br>1896년 ~ 1952년 (전소)</div>
+            </div>
+            <div class="history-card">
+                <img src="이미지/제2대_덕북도청.png" alt="제2대 덕빈북도청" onerror="this.src='https://via.placeholder.com/300x200?text=2nd+Provincial+Office'">
+                <div class="title">제2대 도청사 (구도심)</div>
+                <div class="desc">빈주시 빈성구 관동<br>1953년 ~ 2017년 (현 빈성구청)</div>
+            </div>
+            <div class="history-card">
+                <img src="이미지/덕북도청.png" alt="제3대 덕빈북도청" onerror="this.src='https://via.placeholder.com/300x200?text=3rd+Provincial+Office'">
+                <div class="title">제3대 도청사 (신청사)</div>
+                <div class="desc">빈주시 가원구 천조읍<br>2017년 ~ 현재</div>
+            </div>
+        </div>
+
+        <h3 id="s-2-1">2.1. 제1대 청사 (1896 ~ 1952): 효빈의 셋방살이</h3>
+        <ul class="list-disc pl-5 mb-4">
+            <li><strong>위치</strong>: 구 효빈군 (현 <a href="효빈광역시청.html" class="wiki-link">효빈광역시청</a> 인근 부지)</li>
+            <li><strong>역사</strong>: 1883년 빈주에서 일어난 '계미군란(빈주전역의 군인의 난)'과 대홍수 크리로 빈주 관아가 박살난 뒤, 임시방편으로 효빈에 도 관아를 둔 것이 1896년 13도제 실시 이후에도 그대로 굳어졌다. <del>빈주의 뼈아픈 굴욕</del></li>
+            <li><strong>최후</strong>: 1952년 <a href="한국전쟁.html" class="wiki-link">한국전쟁</a> 중 폭격으로 청사가 완전히 파괴되면서 역사 속으로 사라졌다.</li>
+        </ul>
+
+        <h3 id="s-2-2">2.2. 제2대 청사 (1953 ~ 2017): 빈주로의 귀환</h3>
+        <ul class="list-disc pl-5 mb-4">
+            <li><strong>위치</strong>: 빈주시 빈성구 관동 일대 (구도심)</li>
+            <li><strong>역사</strong>: 전쟁 직후인 1953년, 도청을 70년 만에 본래의 주인인 빈주시로 복귀시켰다. 권위주의 시대 특유의 실용적이고 네모반듯한 콘크리트 성냥갑 디자인을 자랑했다. 주변으로 도의회, 경찰청 등이 모여들어 거대한 행정 타운을 형성했다.</li>
+            <li><strong>이전 사유</strong>: 2000년대 들어 건물이 심각하게 낡고 좁아져, 주차난은 기본이요 일부 부서는 컨테이너 가건물에서 업무를 보는 안습한 상황이 펼쳐졌다. 결국 천조신도시 개발 계획과 맞물려 신청사 건립이 결정되었다. 현재는 빈성구청 및 산하기관 건물로 리모델링되어 쓰이고 있다.</li>
+        </ul>
+
+        <h3 id="s-2-3">2.3. 제3대 신청사 (2017 ~ 현재): 천조신도시 시대</h3>
+        <ul class="list-disc pl-5">
+            <li><strong>위치</strong>: 빈주시 가원구 천조읍 증림리 27-2 (천조신도시)</li>
+            <li><strong>특징</strong>: 2017년 3월 15일 업무 개시. 백로를 모티브로 한 세련된 외관을 뽐낸다. 도청사 옆으로 도의회, 교육청 등이 줄지어 입주해 완벽한 '행정복합타운'을 완성했다. 도청 이전 버프로 <a href="천조읍.html" class="wiki-link">천조읍</a>은 인구 7만이 넘는 맘모스급 읍(邑)으로 성장했다.</li>
+        </ul>
+
+        <!-- 3. 역대 도지사 -->
+        <h2 id="s-3" class="anchor-offset">3. 역대 도지사</h2>
+        <p>초대 임명직 관선 도지사부터 현재의 제38대 도지사까지, 덕빈북도 행정을 이끌어온 수장들의 역사이다. 특히 민선 시대 이후로는 특정 정당의 절대적인 텃밭으로 굳어지는 양상을 보인다.</p>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%;">대수</th>
+                    <th style="width: 15%;">이름</th>
+                    <th style="width: 25%;">임기</th>
+                    <th style="width: 15%;">정부/당적</th>
+                    <th style="width: 10%;">출신지</th>
+                    <th>비고</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 관선 1차 -->
+                <tr>
+                    <td colspan="6" class="section-header">관선 1차 (임명직)</td>
+                </tr>
+                <tr>
+                    <td class="text-center">1대</td>
+                    <td class="text-center font-bold">김영기 (金榮基)</td>
+                    <td class="text-center text-sm">1948년 9월 15일 ~ 1949년 8월 20일</td>
+                    <td class="text-center"><span class="gov-badge">이승만 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm">초대 도지사.</td>
+                </tr>
+                <tr>
+                    <td class="text-center">2대</td>
+                    <td class="text-center font-bold">박동식 (朴東植)</td>
+                    <td class="text-center text-sm">1949년 8월 21일 ~ 1949년 12월 10일</td>
+                    <td class="text-center"><span class="gov-badge">이승만 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">3대</td>
+                    <td class="text-center font-bold">최진호 (崔鎭浩)</td>
+                    <td class="text-center text-sm">1949년 12월 11일 ~ 1951년 10월 12일</td>
+                    <td class="text-center"><span class="gov-badge">이승만 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">4대</td>
+                    <td class="text-center font-bold">이병규 (李秉圭)</td>
+                    <td class="text-center text-sm">1951년 10월 13일 ~ 1952년 9월 20일</td>
+                    <td class="text-center"><span class="gov-badge">이승만 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">5대</td>
+                    <td class="text-center font-bold">정기선 (鄭基善)</td>
+                    <td class="text-center text-sm">1952년 9월 21일 ~ 1955년 8월 28일</td>
+                    <td class="text-center"><span class="gov-badge">이승만 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">6대</td>
+                    <td class="text-center font-bold">황도영 (黃道永)</td>
+                    <td class="text-center text-sm">1955년 8월 29일 ~ 1956년 9월 15일</td>
+                    <td class="text-center"><span class="gov-badge">이승만 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">7대</td>
+                    <td class="text-center font-bold">윤성민 (尹成敏)</td>
+                    <td class="text-center text-sm">1956년 9월 16일 ~ 1957년 3월 5일</td>
+                    <td class="text-center"><span class="gov-badge">이승만 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">8대</td>
+                    <td class="text-center font-bold">장수환 (張守煥)</td>
+                    <td class="text-center text-sm">1957년 3월 6일 ~ 1959년 5월 18일</td>
+                    <td class="text-center"><span class="gov-badge">이승만 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">9대</td>
+                    <td class="text-center font-bold">신재문 (申재문)</td>
+                    <td class="text-center text-sm">1959년 5월 19일 ~ 1960년 5월 8일</td>
+                    <td class="text-center"><span class="gov-badge">이승만 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">10대</td>
+                    <td class="text-center font-bold">강대현 (姜大賢)</td>
+                    <td class="text-center text-sm">1960년 5월 9일 ~ 1960년 6월 30일</td>
+                    <td class="text-center"><span class="gov-badge">허정 내각</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+
+                <!-- 민선 1기 (과거) -->
+                <tr>
+                    <td colspan="6" class="section-header">민선 (선출직)</td>
+                </tr>
+                <tr>
+                    <td class="text-center">13대</td>
+                    <td class="text-center font-bold">조용철 (趙容哲)</td>
+                    <td class="text-center text-sm">1960년 12월 29일 ~ 1961년 5월 23일</td>
+                    <td class="text-center"><span class="party-badge" style="background-color: #00EA00; color: #000;">민주당</span></td>
+                    <td class="text-center">덕북 서진</td>
+                    <td class="text-sm">5.16 군사정변으로 인해 해임<del>(...)</del></td>
+                </tr>
+
+                <!-- 관선 2차 -->
+                <tr>
+                    <td colspan="6" class="section-header">관선 2차 (임명직)</td>
+                </tr>
+                <tr>
+                    <td class="text-center">14대</td>
+                    <td class="text-center font-bold">권태영 (權泰榮)</td>
+                    <td class="text-center text-sm">1961년 5월 25일 ~ 1961년 8월 18일</td>
+                    <td class="text-center"><span class="gov-badge" style="background-color: #4b5563;">국가재건최고회의</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">15대</td>
+                    <td class="text-center font-bold">송민우 (宋敏宇)</td>
+                    <td class="text-center text-sm">1961년 8월 19일 ~ 1963년 12월 10일</td>
+                    <td class="text-center"><span class="gov-badge" style="background-color: #4b5563;">국가재건최고회의</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">16대</td>
+                    <td class="text-center font-bold">임재석 (林載錫)</td>
+                    <td class="text-center text-sm">1963년 12월 11일 ~ 1968년 2월 25일</td>
+                    <td class="text-center"><span class="gov-badge">박정희 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">17대</td>
+                    <td class="text-center font-bold">오준호 (吳俊鎬)</td>
+                    <td class="text-center text-sm">1968년 2월 26일 ~ 1971년 6월 18일</td>
+                    <td class="text-center"><span class="gov-badge">박정희 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">18대</td>
+                    <td class="text-center font-bold">백창수 (白昌洙)</td>
+                    <td class="text-center text-sm">1971년 6월 19일 ~ 1973년 10월 15일</td>
+                    <td class="text-center"><span class="gov-badge">박정희 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">19대</td>
+                    <td class="text-center font-bold">서영환 (徐永煥)</td>
+                    <td class="text-center text-sm">1973년 10월 16일 ~ 1978년 12월 20일</td>
+                    <td class="text-center"><span class="gov-badge">박정희 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">20대</td>
+                    <td class="text-center font-bold">구본진 (具本鎭)</td>
+                    <td class="text-center text-sm">1978년 12월 21일 ~ 1980년 7월 12일</td>
+                    <td class="text-center"><span class="gov-badge">박정희 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">21대</td>
+                    <td class="text-center font-bold">안재훈 (安載勳)</td>
+                    <td class="text-center text-sm">1980년 7월 13일 ~ 1983년 10월 8일</td>
+                    <td class="text-center"><span class="gov-badge">최규하 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">22대</td>
+                    <td class="text-center font-bold">홍경수 (洪景洙)</td>
+                    <td class="text-center text-sm">1983년 10월 9일 ~ 1986년 8월 20일</td>
+                    <td class="text-center"><span class="gov-badge">전두환 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">23대</td>
+                    <td class="text-center font-bold">문상원 (文相元)</td>
+                    <td class="text-center text-sm">1986년 8월 21일 ~ 1988년 5월 15일</td>
+                    <td class="text-center"><span class="gov-badge">전두환 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">24대</td>
+                    <td class="text-center font-bold">유동민 (柳東敏)</td>
+                    <td class="text-center text-sm">1988년 5월 16일 ~ 1990년 6월 12일</td>
+                    <td class="text-center"><span class="gov-badge">노태우 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">25대</td>
+                    <td class="text-center font-bold">차현기 (車賢基)</td>
+                    <td class="text-center text-sm">1990년 6월 13일 ~ 1992년 4월 18일</td>
+                    <td class="text-center"><span class="gov-badge">노태우 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">26대</td>
+                    <td class="text-center font-bold">손정호 (孫正浩)</td>
+                    <td class="text-center text-sm">1992년 4월 19일 ~ 1993년 3월 1일</td>
+                    <td class="text-center"><span class="gov-badge">노태우 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm"></td>
+                </tr>
+                <tr>
+                    <td class="text-center">27대</td>
+                    <td class="text-center font-bold">오창석 (吳昌碩)</td>
+                    <td class="text-center text-sm">1993년 3월 2일 ~ 1994년 9월 18일</td>
+                    <td class="text-center"><span class="gov-badge">김영삼 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm">훗날 민선 1기로 화려하게 복귀한다.</td>
+                </tr>
+                <tr>
+                    <td class="text-center">28대</td>
+                    <td class="text-center font-bold">하태진 (河泰鎭)</td>
+                    <td class="text-center text-sm">1994년 9월 19일 ~ 1995년 6월 30일</td>
+                    <td class="text-center"><span class="gov-badge">김영삼 정부</span></td>
+                    <td class="text-center">-</td>
+                    <td class="text-sm">마지막 관선 도지사. <del>강제 임기 만료</del></td>
+                </tr>
+
+                <!-- 본격적인 민선 시대 -->
+<tr style="background-color: #e9ecef;">
+                    <td colspan="6" style="padding: 10px; font-weight: bold; color: #333; text-align: center; border: 1px solid #ccc;">민선 (선출직)</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; border: 1px solid #ccc;">29대</td>
+                    <td style="text-align: center; font-weight: bold; border: 1px solid #ccc;">오창석 (吳昌碩)</td>
+                    <td style="text-align: center; font-size: 0.85rem; border: 1px solid #ccc;">1995년 7월 1일 ~ 1998년 6월 30일</td>
+                    <td style="text-align: center; border: 1px solid #ccc;"><span style="display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; color: #ffffff; background-color: #D82634;">민주당</span></td>
+                    <td style="text-align: center; border: 1px solid #ccc;">덕북 군천</td>
+                    <td style="font-size: 0.85rem; border: 1px solid #ccc; text-align: left; padding-left: 10px;">관선 출신 민선 도지사. 27대 도지사를 역임했다.</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; border: 1px solid #ccc;">30대</td>
+                    <td rowspan="2" style="text-align: center; font-weight: bold; border: 1px solid #ccc;">이태식 (李太植)</td>
+                    <td style="text-align: center; font-size: 0.85rem; border: 1px solid #ccc;">1998년 7월 1일 ~ 2002년 6월 30일</td>
+                    <td style="text-align: center; border: 1px solid #ccc;"><span style="display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; color: #ffffff; background-color: #009A44;">새정치국민회의</span></td>
+                    <td rowspan="2" style="text-align: center; border: 1px solid #ccc;">덕북 천주</td>
+                    <td style="font-size: 0.85rem; border: 1px solid #ccc; text-align: left; padding-left: 10px;"></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; border: 1px solid #ccc;">31대</td>
+                    <td style="text-align: center; font-size: 0.85rem; border: 1px solid #ccc;">2002년 7월 1일 ~ 2006년 6월 30일</td>
+                    <td style="text-align: center; border: 1px solid #ccc;"><span style="display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; color: #ffffff; background-color: #00AA7B;">새천년민주당</span></td>
+                    <td style="font-size: 0.85rem; border: 1px solid #ccc; text-align: left; padding-left: 10px;">재선 성공.</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; border: 1px solid #ccc;">32대</td>
+                    <td rowspan="2" style="text-align: center; font-weight: bold; border: 1px solid #ccc;">한광호 (韓廣護)</td>
+                    <td style="text-align: center; font-size: 0.85rem; border: 1px solid #ccc;">2006년 7월 1일 ~ 2010년 6월 30일</td>
+                    <td style="text-align: center; border: 1px solid #ccc;"><span style="display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; color: #333333; background-color: #FFC10E;">열린우리당</span></td>
+                    <td rowspan="2" style="text-align: center; border: 1px solid #ccc;">덕북 덕현</td>
+                    <td style="font-size: 0.85rem; border: 1px solid #ccc; text-align: left; padding-left: 10px;"></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; border: 1px solid #ccc;">33대</td>
+                    <td style="text-align: center; font-size: 0.85rem; border: 1px solid #ccc;">2010년 7월 1일 ~ 2014년 6월 30일</td>
+                    <td style="text-align: center; border: 1px solid #ccc;"><span style="display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; color: #ffffff; background-color: #019E33;">민주당</span></td>
+                    <td style="font-size: 0.85rem; border: 1px solid #ccc; text-align: left; padding-left: 10px;">재선 성공.</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; border: 1px solid #ccc;">34대</td>
+                    <td style="text-align: center; font-weight: bold; border: 1px solid #ccc;">송지훈 (宋智勳)</td>
+                    <td style="text-align: center; font-size: 0.85rem; border: 1px solid #ccc;">2014년 7월 1일 ~ 2018년 6월 30일</td>
+                    <td style="text-align: center; border: 1px solid #ccc;"><span style="display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; color: #ffffff; background-color: #008CCD;">새정치민주연합</span></td>
+                    <td style="text-align: center; border: 1px solid #ccc;">덕북 강주</td>
+                    <td style="font-size: 0.85rem; border: 1px solid #ccc; text-align: left; padding-left: 10px;"></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; border: 1px solid #ccc;">35대</td>
+                    <td rowspan="3" style="text-align: center; font-weight: bold; border: 1px solid #ccc;"><a href="강수성.html" class="wiki-link" style="color: #0055AA;">강수성 (姜壽星)</a></td>
+                    <td style="text-align: center; font-size: 0.85rem; border: 1px solid #ccc;">2018년 7월 1일 ~ 2022년 6월 30일</td>
+                    <td rowspan="3" style="text-align: center; border: 1px solid #ccc;"><span style="display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; color: #ffffff; background-color: #004EA2;">더불어민주당</span></td>
+                    <td rowspan="3" style="text-align: center; border: 1px solid #ccc;">덕북 천주</td>
+                    <td style="font-size: 0.85rem; border: 1px solid #ccc; text-align: left; padding-left: 10px;"></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; border: 1px solid #ccc;">36대</td>
+                    <td style="text-align: center; font-size: 0.85rem; border: 1px solid #ccc;">2022년 7월 1일 ~ 2026년 6월 30일</td>
+                    <td style="font-size: 0.85rem; border: 1px solid #ccc; text-align: left; padding-left: 10px;">재선 성공.</td>
+                </tr>
+                <tr style="background-color: #f0f4ff;">
+                    <td style="text-align: center; border: 1px solid #ccc;">37대</td>
+                    <td style="text-align: center; font-size: 0.85rem; border: 1px solid #ccc;">2026년 7월 1일 ~ 재임 중</td>
+                    <td style="font-size: 0.85rem; border: 1px solid #ccc; text-align: left; padding-left: 10px;"><strong>3선 성공. 9회 지선 압승.</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 4. 조직 및 산하기관 -->
+        <h2 id="s-4" class="anchor-offset">4. 조직 및 산하기관</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>도지사</strong> (선출직 광역자치단체장)</li>
+            <li><strong>행정부지사</strong> (<a href="행정안전부.html" class="wiki-link">행정안전부</a> 파견, 윤산진)</li>
+            <li><strong>경제문화부지사</strong> (정무직, 고상현)</li>
+        </ul>
+
+        <h3 id="s-4-1" class="text-lg font-bold mt-4">주요 직속기관 및 사업소</h3>
+        <ul class="list-disc pl-5">
+            <li>덕빈북도농업기술원</li>
+            <li>덕빈북도보건환경연구원</li>
+            <li>덕빈북도소방본부</li>
+            <li>덕빈북도공무원교육원</li>
+        </ul>
+
+        <h3 id="s-4-2" class="text-lg font-bold mt-4">출자·출연기관</h3>
+        <ul class="list-disc pl-5">
+            <li><strong>덕빈북도개발공사</strong>: 원래는 도내 택지 및 산단 개발이 주업무여야 하는데, 도지사들이 하도 이곳저곳 땅을 파서 전철을 깔아대는 바람에 도민들에게는 사실상 <strong>'덕빈철도공사'</strong> 취급을 받는다.</li>
+            <li><strong>덕빈문화재단</strong></li>
+            <li><strong>덕빈경제진흥원</strong></li>
+            <li><strong>덕빈은행</strong>: IMF 때도 살아남은 기적의 지방은행. 본점이 빈주시에 있으며 옆 동네 <a href="효빈은행.html" class="wiki-link">효빈은행</a>과는 피 터지는 영혼의 라이벌이다.</li>
+        </ul>
+
+        <!-- 5. 이용 가능한 대중교통 -->
+        <h2 id="s-5" class="anchor-offset">5. 이용 가능한 대중교통</h2>
+        <p>도청 소재지답게 빈주 시내버스와 광역철도망이 밀집해 있다.</p>
+        
+        <h3 id="s-5-1">5.1. 광역전철</h3>
+        <ul class="list-disc pl-5">
+            <li><span style="display:inline-block; width:12px; height:12px; background-color:#0054A6; border-radius:50%; margin-right:5px;"></span><strong>빈주권 광역철도 (Korail Blue)</strong>: <a href="증림역.html" class="wiki-link"><strong>증림역</strong></a> 하차 후 도보 5분. 도청 이전과 함께 이용객이 폭발적으로 늘어나 하루 평균 1만 8천 명이 오가는 핵심 역이 되었다.</li>
+        </ul>
+
+        <h3 id="s-5-2">5.2. 시내/마을버스</h3>
+        <ul class="list-disc pl-5">
+            <li><strong>간선버스</strong> (<span style="color:#01B7ED; font-weight:bold;">#01B7ED</span>): 100, 200, 500번 (증림역 또는 도청 앞 정류장 하차)</li>
+            <li><strong>마일버스</strong> (<span style="color:#A664A0; font-weight:bold;">#A664A0</span>): 빈주01, 빈주02번</li>
+        </ul>
+
+        <!-- 6. 여담 및 흑역사 -->
+        <h2 id="s-6" class="anchor-offset">6. 여담 및 흑역사(?)</h2>
+        
+        <h3 id="s-6-1">6.1. "아논 핫플" 천조읍의 기적</h3>
+        <blockquote>"아논쨩 보러 도청 앞까지 왔습니다!"<br><span class="text-gray-500 text-sm">- 어느 뱅드림 팬의 성지순례 후기</span></blockquote>
+        <p>덕빈북도청이 자리잡은 가원구 <strong>천조읍(千早邑)</strong>은 본래 "천 개의 아침이 밝아오는 땅"이라는 근본 있는 지명 유래를 갖고 있다. 그러나 하필 일본 애니메이션 《BanG Dream! It's MyGO!!!!!》의 인기 캐릭터 <a href="치하야_아논.html" class="wiki-link">치하야 아논(千早 愛音)</a>의 성씨와 한국식 한자가 완벽하게 일치하는 바람에, 옆동네 효빈시의 어마어마한 서브컬처 인프라와 결합하여 졸지에 <strong>오타쿠 성지</strong>로 전락(?)해버렸다.</p>
+        <p>설상가상으로 인근 아천동에는 아예 <strong>아논동(阿論洞)</strong>이라는 법정동까지 있어서, 천조읍 도청 앞 잔디광장에서 사진을 찍고 아논동 마을회관으로 걸어가는 이른바 <strong>"아논 코스"</strong>가 존재한다. 심지어 도청 인근 증림리에 <a href="효빈교통공사.html" class="wiki-link">효빈교통공사</a> 공식 굿즈샵까지 입점하면서 빼도 박도 못하게 성지로 확정되었다. 주말마다 가방에 분홍색 뱃지를 주렁주렁 매단 청년들이 도청 앞을 배회하는 진풍경을 볼 수 있다.</p>
+        <p>결국 이 엄청난 화제성에 주목한 덕빈북도청에서 <strong>진짜로 공식 아논 콜라보 행사를 추진하는</strong> 기염을 토했다! 행사 발표 직후 일부 보수 성향 정치인들이 "도청 앞마당에서 일본 서브컬처 행사가 웬 말이냐"며 <del>야랄을 떨며</del> 맹비난을 쏟아냈으나, 도청 측은 이를 쿨하게 씹고 행사를 강행했다. 결과는 그야말로 <strong>대성공</strong>. 콜라보 기간 동안 전국 각지에서 몰려든 엄청난 인파 덕분에 <a href="증림역.html" class="wiki-link">증림역</a> 주변 상가와 천조신도시 배후 상권이 전례 없는 <strong>초대박 호황</strong>을 누리게 되면서, 반대하던 정치인들은 꿀 먹은 벙어리가 되고 말았다. <del>역시 금융치료 앞에서는 장사 없다</del> 이 사건 이후 증림역 상인회는 아논의 생일마다 자발적으로 축하 현수막을 내걸 정도로 서브컬처 친화적인 동네가 되었다 카더라.</p>
+
+        <!-- 7. 관련 문서 -->
+        <h2 id="s-7" class="anchor-offset">7. 관련 문서</h2>
+        <ul class="list-disc pl-5">
+            <li><a href="덕빈북도.html" class="wiki-link">덕빈북도</a></li>
+            <li><a href="빈주시.html" class="wiki-link">빈주시</a></li>
+            <li><a href="가원구(빈주).html" class="wiki-link">가원구(빈주)</a></li>
+            <li><a href="증림역.html" class="wiki-link">증림역</a></li>
+            <li><a href="효빈광역시청.html" class="wiki-link">효빈광역시청</a></li>
+            <li><a href="강수성.html" class="wiki-link">강수성</a> (현 덕빈북도지사)</li>
+        </ul>
+
+        <!-- 8. 둘러보기 -->
+        <h2 id="s-8" class="anchor-offset">8. 둘러보기</h2>
+        
+        <!-- [추가] 빈주시 가원구 소재 관공서 네비게이션 표 -->
+        <div class="w-full max-w-6xl mx-auto border-2 border-[#7799CC] mb-4 text-sm font-sans bg-white mt-10">
+            <div class="bg-[#7799CC] text-white p-2.5 flex justify-center items-center gap-3 border-b border-[#7799CC]">
+                <img src="이미지/빈주시.png" alt="가원구 로고" class="h-9 w-9 object-contain bg-transparent" onerror="this.src='https://via.placeholder.com/36?text=Gawon'">
+                <div class="flex flex-col items-center justify-center text-center">
+                    <span class="font-bold text-[12px] leading-tight opacity-90">덕빈북도 빈주시 가원구 소재</span>
+                    <span class="font-extrabold text-[18px] tracking-widest leading-tight drop-shadow-sm">행정기관</span>
+                </div>
+            </div>
+            
+            <div onclick="toggleBody('gawon-nav-body')" class="bg-[#6688BB] text-white text-center text-xs py-1.5 cursor-pointer font-bold select-none hover:bg-[#5577AA] transition-colors">
+                [ 펼치기 · 접기 ]
+            </div>
+
+            <table class="w-full border-collapse bg-white text-center table-fixed">
+                <colgroup>
+                    <col style="width: 16%;">
+                    <col style="width: 21%;">
+                    <col style="width: 21%;">
+                    <col style="width: 21%;">
+                    <col style="width: 21%;">
+                </colgroup>
+                
+                <tbody id="gawon-nav-body" class="hidden-content text-[13px]">
+                    <tr>
+                        <th class="bg-gray-100 py-3 font-bold text-gray-800 border border-gray-300 align-middle">지방자치</th>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/덕북로고.png" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=DB'"><a href="덕빈북도청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">덕빈북도청</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/의회_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=C'"><a href="덕빈북도의회.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">덕빈북도의회</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/빈주시.png" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=BJ'"><a href="빈주시청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">빈주시청</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/빈주시.png" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=GW'"><a href="가원구청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">가원구청</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="bg-gray-100 py-3 font-bold text-gray-800 border border-gray-300 align-middle">법조</th>
+                        <td colspan="2" class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_법원_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=L'"><a href="빈주지방법원.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">빈주지방법원</a></div>
+                        </td>
+                        <td colspan="2" class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_검찰청_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=P'"><a href="빈주지방검찰청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">빈주지방검찰청</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="bg-gray-100 py-3 font-bold text-gray-800 border border-gray-300 align-middle">교육</th>
+                        <td colspan="2" class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/교육청_로고.png" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=E'"><a href="덕빈북도교육청.html" class="text-red-600 hover:text-red-800 hover:underline font-semibold tracking-tighter break-keep leading-tight">덕빈북도교육청</a></div>
+                        </td>
+                        <td colspan="2" class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/교육청_로고.png" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=E'"><a href="빈주교육지원청.html" class="text-green-600 hover:text-green-800 hover:underline font-semibold tracking-tighter break-keep leading-tight">빈주교육지원청</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="bg-gray-100 py-3 font-bold text-gray-800 border border-gray-300 align-middle">
+                            <div class="mb-1">치안</div>
+                            <div class="text-red-600">소방</div>
+                        </th>
+                        <td colspan="2" class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_경찰청_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=P'"><a href="덕빈북도경찰청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">덕빈북도경찰청</a></div>
+                            <div class="flex items-center justify-center gap-1.5 mt-2"><img src="이미지/대한민국_경찰청_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=P'"><a href="빈주가원경찰서.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">빈주가원경찰서</a></div>
+                        </td>
+                        <td colspan="2" class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_소방청_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=F'"><a href="덕빈북도소방본부.html" class="text-red-600 hover:underline font-semibold tracking-tighter break-keep leading-tight">덕빈북도소방본부</a></div>
+                            <div class="flex items-center justify-center gap-1.5 mt-2"><img src="이미지/대한민국_소방청_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=F'"><a href="빈주가원소방서.html" class="text-red-600 hover:underline font-semibold tracking-tighter break-keep leading-tight">빈주가원소방서</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="bg-gray-100 py-3 font-bold text-gray-800 border border-gray-300 align-middle">
+                            <div class="mb-1 text-green-600">보건</div>
+                            <div class="mb-1">세무</div>
+                            <div>병무 / 환경</div>
+                        </th>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/보건소.svg" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=H'"><a href="가원구보건소.html" class="text-green-600 hover:underline font-semibold tracking-tighter break-keep leading-tight">가원구보건소</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_정부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=T'"><a href="가원세무서.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">가원세무서</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_정부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=M'"><a href="덕빈지방병무청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">덕빈지방병무청</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_정부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='https://via.placeholder.com/16?text=E'"><a href="덕빈지방환경청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">덕빈지방환경청</a></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="nav-box shadow-sm mt-5">
+            <div class="nav-box-header">[덕빈북도의 행정구역]</div>
+            <div class="nav-box-content leading-loose text-sm text-center">
+                <strong>시(市)</strong> : 
+                <a href="빈주시.html" class="wiki-link">빈주시</a> · 
+                <a href="강주시.html" class="wiki-link">강주시</a> · 
+                <a href="계성시.html" class="wiki-link">계성시</a> · 
+                <a href="군천시.html" class="wiki-link">군천시</a> · 
+                <a href="서진시.html" class="wiki-link">서진시</a> · 
+                <a href="서해시.html" class="wiki-link">서해시</a> · 
+                <a href="약산시.html" class="wiki-link">약산시</a> · 
+                <a href="전산시.html" class="wiki-link">전산시</a> · 
+                <a href="천주시.html" class="wiki-link">천주시</a><br>
+                <strong>군(郡)</strong> : 
+                <a href="기도군.html" class="wiki-link">기도군</a> · 
+                <a href="낭원군.html" class="wiki-link">낭원군</a> · 
+                <a href="덕현군.html" class="wiki-link">덕현군</a> · 
+                <a href="모제군.html" class="wiki-link">모제군</a> · 
+                <a href="반양군.html" class="wiki-link">반양군</a> · 
+                <a href="상안군.html" class="wiki-link">상안군</a> · 
+                <a href="선곡군.html" class="wiki-link">선곡군</a> · 
+                <a href="저천군.html" class="wiki-link">저천군</a> · 
+                <a href="치원군.html" class="wiki-link">치원군</a>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 10px;">
+            <div style="font-size: 0.8rem; color: #555;">
+                <ol>
+                    <li id="fn-1">[1] 증림역은 빈주권 광역철도(K21) 노선으로 도청 바로 앞(도보 5분 거리)에 위치하여 공무원 및 방문객 수요를 책임진다. <a href="#rfn-1">^</a></li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 검색 기능 핸들러
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                location.href = `search.html?q=${encodeURIComponent(query)}`;
+            } else {
+                showMsg('검색어를 입력해주세요.');
+            }
+        }
+
+        // 메시지 박스 표시 함수
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        // 목차 스무스 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                // 툴팁용 링크(href가 #fn- 으로 시작하는 것)는 스크롤 이벤트 제외
+                if(this.getAttribute('href').startsWith('#fn-')) return;
+                
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, 
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 존재하지 않는 로컬 링크 처리 (시뮬레이션)
+        document.querySelectorAll('a.wiki-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // 실제 동작은 서버 및 라우팅 환경에 따라 다름
+            });
+        });
+
+        // 각주 툴팁 기능 구현
+        const tooltip = document.createElement('div');
+        tooltip.id = 'wiki-tooltip';
+        document.body.appendChild(tooltip);
+
+        document.querySelectorAll('sup a').forEach(link => {
+            link.addEventListener('mouseenter', (e) => {
+                const href = link.getAttribute('href');
+                if (href && href.startsWith('#fn-')) {
+                    const targetId = href.substring(1); 
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = targetElement.innerHTML;
+                        
+                        const backLinks = tempDiv.querySelectorAll('a[href^="#rfn"]');
+                        backLinks.forEach(bl => bl.remove());
+
+                        tooltip.innerHTML = tempDiv.innerHTML;
+                        tooltip.style.display = 'block';
+                        
+                        moveTooltip(e);
+                    }
+                }
+            });
+
+            link.addEventListener('mousemove', moveTooltip);
+
+            link.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+
+        function moveTooltip(e) {
+            const x = e.pageX + 15;
+            const y = e.pageY + 15;
+            tooltip.style.left = x + 'px';
+            tooltip.style.top = y + 'px';
+        }
+
+        // 펼치기·접기 기능 스크립트 
+        function toggleBody(id) {
+            const el = document.getElementById(id);
+            if (!el) return; 
+            
+            if (el.classList.contains('hidden-content')) {
+                el.classList.remove('hidden-content');
+                el.style.display = ''; 
+            } else {
+                el.classList.add('hidden-content');
+            }
+        }
+
+        // SNS 로직
+        const fullTitle = document.title;
+        const officeName = fullTitle.split(' - ')[0].trim();
+        const snsLinks = document.querySelectorAll('.sns-links a');
+
+        snsLinks.forEach(link => {
+            const snsType = link.getAttribute('data-sns');
+            const targetUrl = `${officeName} ${snsType}.html`;
+            link.href = targetUrl; 
+
+            link.addEventListener('click', function(e) {
+                e.preventDefault(); 
+                window.location.href = targetUrl; 
+            });
+        });
+    </script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

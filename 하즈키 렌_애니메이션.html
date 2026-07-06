@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>하즈키 렌/애니메이션 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        :root { 
+            /* 상단바 및 검색창 배경색 무조건 #7777aa */
+            --wiki-nav: #7777aa; 
+            
+            /* 모든 헤더 및 항목열 배경색 (렌 퍼스널 컬러 - 사파이어 블루/다크 블루) */
+            --wiki-header: #003399;
+            --wiki-header-text: #ffffff; 
+            
+            /* 테마 컬러 */
+            --wiki-main: #003399; 
+            --wiki-point: #001a66; /* 가독성과 대비를 위한 진한 남색 */
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            
+            /* 노선 색상 (효빈시 규격) */
+            --line-1: #0077DD;
+            --line-2: #00CCAA;
+            --line-3: #FFCC11;
+            --line-4: #FF5522;
+            --line-5: #EE0022;
+            --line-6: #881188;
+            --line-7: #FF8899;
+            --line-8: #9856FF;
+            --line-binhyo: #6677CC;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-nav: #555588;
+            --wiki-header: #002266;
+            --wiki-header-text: #ffffff;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2b2d31; 
+            --wiki-link: #aaaadd; 
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; margin: 0; }
+        .wiki-container { max-width: 1152px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); display: flex; flex-direction: column; }
+
+        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: fixed !important; }
+        th { background-color: var(--wiki-header) !important; color: var(--wiki-header-text) !important; font-weight: bold; border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        td { border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        
+        .item-label { background-color: var(--wiki-header) !important; color: var(--wiki-header-text) !important; font-weight: bold; width: 120px; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 2px solid var(--wiki-point); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-point); }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: var(--wiki-point); border-left: 4px solid var(--wiki-point); padding-left: 12px; }
+        h4 { font-size: 1.15rem !important; font-weight: bold !important; margin-top: 1.2rem; margin-bottom: 0.5rem; }
+
+        nav { background-color: var(--wiki-nav) !important; }
+
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn.active { background-color: var(--wiki-header); color: var(--wiki-header-text) !important; font-weight: bold; }
+
+        /* 하이라이트 박스 (렌/효빈시 연계) */
+        .ren-box { border: 2px solid var(--wiki-point); background-color: #f0f4ff; color: #333; padding: 15px; border-radius: 8px; margin-top: 10px; font-size: 0.95rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
+        .ren-box::before { content: "🎮"; position: absolute; top: -10px; left: 10px; font-size: 20px; background: #fff; padding: 0 5px; border-radius: 50%; }
+        [data-theme='dark'] .ren-box { background-color: #1a2233; color: #eee; }
+        [data-theme='dark'] .ren-box::before { background: #121212; }
+
+        /* 스포일러 경고 박스 */
+        .spoiler-box { border-left: 4px solid #ff4444; background-color: #ffeeee; padding: 15px; margin: 15px 0; color: #d32f2f; font-weight: bold; font-size: 0.9rem; }
+        [data-theme='dark'] .spoiler-box { background-color: #3a1c1c; color: #ff6b6b; border-color: #ff4444; }
+
+        /* 인용구 박스 */
+        .quote-box { border-left: 4px solid var(--wiki-point); background-color: #f5f8ff; padding: 10px 15px; margin: 10px 0; color: #555; font-weight: bold; border-radius: 0 8px 8px 0; }
+        [data-theme='dark'] .quote-box { background-color: #2b2d31; color: #ccc; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        
+        .category-box, #toc-box { background-color: var(--wiki-gray-bg); border-color: var(--wiki-border); }
+        [data-theme='dark'] .category-box, [data-theme='dark'] #toc-box { background-color: #2b2d31 !important; border-color: #444 !important; color: #e5e7eb !important; }
+
+        .wiki-fn { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; font-size: 0.8em; vertical-align: super; }
+        .wiki-tooltip { position: absolute; background: white; border: 1px solid var(--wiki-border); padding: 10px; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 9999; display: none; max-width: 320px; font-size: 0.85rem; line-height: 1.4; color: var(--wiki-text); word-break: keep-all; }
+        [data-theme='dark'] .wiki-tooltip { background: #2b2d31; border-color: #444; color: #eee; }
+        
+        del { color: #aaa; text-decoration: line-through; }
+        [data-theme='dark'] del { color: #777; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-tooltip-container" class="wiki-tooltip"></div>
+
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[rgba(0,0,0,0.2)] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="text-xs text-gray-500 text-right mb-2">최근 수정 시각: 2026-06-01 06:17:40</div>
+        
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">하즈키 렌/애니메이션</h1>
+            <div class="wiki-btn-group shadow-sm mb-4">
+                <a href="토론.html" class="wiki-tool-btn">토론</a>
+                <a href="수정.html" class="wiki-tool-btn">편집</a>
+                <a href="역사.html" class="wiki-tool-btn">역사</a>
+                <div class="px-3 py-1 text-[11px] cursor-pointer hover:bg-gray-100" onclick="showMsg('즐겨찾기에 추가됨')">★</div>
+            </div>
+        </div>
+
+        <!-- 분류 박스 -->
+        <div class="category-box border p-2 mb-4 text-xs rounded">
+            <span class="font-bold text-[#003399]">분류:</span> 
+            <a href="러브 라이브! 슈퍼스타!!.html" class="wiki-link">러브 라이브! 슈퍼스타!!/등장인물</a> |
+            <a href="하즈키 렌.html" class="wiki-link">하즈키 렌</a>
+        </div>
+
+        <div class="border border-gray-300 bg-gray-50 p-2 text-sm text-center mb-6 dark:bg-[#2b2d31] dark:border-[#444]">
+            ⇦ 상위 문서: <strong><a href="하즈키 렌.html" class="wiki-link" style="color: #003399;">하즈키 렌</a></strong>
+        </div>
+
+        <!-- Liella! 멤버 테이블 -->
+        <table class="w-full text-center my-4 border-collapse border border-gray-300 text-sm">
+            <tr class="bg-gray-100 dark:bg-[#2b2d31]">
+                <td class="p-2 border border-gray-300"><a href="시부야 카논.html" class="wiki-link">시부야 카논</a></td>
+                <td class="p-2 border border-gray-300"><a href="탕 쿠쿠.html" class="wiki-link">탕 쿠쿠</a></td>
+                <td class="p-2 border border-gray-300"><a href="아라시 치사토.html" class="wiki-link">아라시 치사토</a></td>
+                <td class="p-2 border border-gray-300"><a href="헤안나 스미레.html" class="wiki-link">헤안나 스미레</a></td>
+                <td class="p-2 border border-gray-300 bg-blue-100 dark:bg-blue-900 font-bold" style="color: #003399;"><a href="하즈키 렌.html" class="wiki-link" style="color: #003399;">하즈키 렌</a><br><span class="text-xs text-gray-600 dark:text-gray-300">(CV. 아오야마 나기사)</span></td>
+            </tr>
+            <tr class="bg-gray-100 dark:bg-[#2b2d31]">
+                <td class="p-2 border border-gray-300"><a href="사쿠라코지 키나코.html" class="wiki-link">사쿠라코지 키나코</a></td>
+                <td class="p-2 border border-gray-300"><a href="요네메 메이.html" class="wiki-link">요네메 메이</a></td>
+                <td class="p-2 border border-gray-300"><a href="와카나 시키.html" class="wiki-link">와카나 시키</a></td>
+                <td class="p-2 border border-gray-300"><a href="오니츠카 나츠미.html" class="wiki-link">오니츠카 나츠미</a></td>
+                <td class="p-2 border border-gray-300"></td>
+            </tr>
+            <tr class="bg-gray-100 dark:bg-[#2b2d31]">
+                <td colspan="2" class="p-2 border border-gray-300"><a href="빈 마르가레테.html" class="wiki-link">빈 마르가레테</a></td>
+                <td colspan="3" class="p-2 border border-gray-300"><a href="오니츠카 토마리.html" class="wiki-link">오니츠카 토마리</a></td>
+            </tr>
+        </table>
+
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-8 mt-4">
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit w-full md:w-auto border p-4 rounded">
+                <div class="text-center font-bold border-b border-gray-300 mb-2 pb-1">목차</div>
+                <ul class="text-sm list-none p-0 m-0">
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">효빈광역시 유니버스 연계 (푸니푸니 헌터 효빈 지부 로어)</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">작중 행적</a>
+                        <ul>
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">1기</a></li>
+                            <li>3.2. <a href="#s-3-2" class="wiki-link">2기</a></li>
+                            <li>3.3. <a href="#s-3-3" class="wiki-link">3기</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">평가</a>
+                        <ul>
+                            <li>4.1. <a href="#s-4-1" class="wiki-link">1기</a></li>
+                            <li>4.2. <a href="#s-4-2" class="wiki-link">2기</a></li>
+                            <li>4.3. <a href="#s-4-3" class="wiki-link">3기</a></li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5" class="wiki-link">명대사</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">기타</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <p>슈퍼스타 애니메이션에서의 <a href="하즈키 렌.html" class="wiki-link">하즈키 렌</a>에 대한 평가 및 행적을 다루는 페이지.</p>
+        <p>유이가오카 여자고등학교 음악과 1학년 학생으로, 학교의 창립자인 하즈키 하나의 딸이다.</p>
+
+        <h2 id="s-2">2. 효빈광역시 유니버스 연계 (푸니푸니 헌터 효빈 지부 로어)</h2>
+        <div class="ren-box mb-6">
+            <div class="font-bold text-lg mb-2 border-b border-[#003399] pb-1">
+                🎮 "푸니푸니 헌터 효빈 지부장" 하즈키 렌
+            </div>
+            <ul class="list-disc pl-5 space-y-2 text-sm mt-2">
+                <li><strong>푸니푸니 헌터 대유행:</strong> 2기 7화에서 렌이 지독한 게임 중독을 겪었던 콘솔 게임 '푸니푸니 헌터'는 효빈시 학생들 사이에서도 엄청난 유행을 탔다. 특히 <a href="효빈대학교.html" class="wiki-link">효빈대학교</a> 이자캠퍼스 앞 PC방과 게임 센터에는 이른바 <strong>'하즈키 렌 VIP 지정석'</strong>이라는 전설의 명당이 존재하는데, 이 자리에 앉으면 어떤 몬스터든 토벌 100%를 달성할 수 있다는 괴담이 돈다.</li>
+                <li><strong>안천구 클래식 거리의 상징:</strong> 렌의 단정하고 엄격한 아가씨 이미지는 효빈광역시 안천구 예술의 전당 부근 클래식 거리의 명예 앰버서더로 완벽하게 부합한다. 가끔 이자동 공원에서 열리는 클래식 연주회 포스터에 렌을 오마주한 캐릭터가 등장하기도 한다.</li>
+                <li><strong>딸기 파르페 대란:</strong> 렌이 딸기를 좋아한다는 설정과 특대 파르페를 대접하는 장면 덕분에, 효빈시 칠채동과 이자동 일대의 디저트 카페에서는 '렌렌 특제 딸기 파르페'라는 메뉴를 앞다투어 출시했다. <del>물론 게임하느라 밤을 새운 게이머들의 당 충전용으로 제일 잘 팔린다.</del></li>
+            </ul>
+        </div>
+
+        <h2 id="s-3">3. 작중 행적</h2>
+        <div class="spoiler-box">
+            <strong>이 문서에 스포일러가 포함되어 있습니다.</strong><br>
+            이 문서가 설명하는 작품이나 인물 등에 대한 줄거리, 결말, 반전 요소 등을 직·간접적으로 포함하고 있습니다.
+        </div>
+
+        <h3 id="s-3-1">3.1. 1기</h3>
+        <p>1화에서 쿠쿠가 뿌린 전단지를 들고 오는 장면으로 첫 등장. 스쿨 아이돌은 교풍에 맞지 않으니 인정할 수 없다고 이야기 한다. 그 일방적인 태도에 반감을 느낀 카논과 말다툼을 벌이다가 당신도 스쿨 아이돌에 관심이 있냐고 되레 쏘아붙인다. 당황한 카논이 말을 잇지 못하자 음악과 학생들의 방해가 되지 않도록 오늘은 이만 돌아가라고 말한다. 치사토에 따르면 어머니가 이 학교의 설립자라고 한다. 카논과 쿠쿠가 스쿨 아이돌에 관심이 있는 학생들을 찾아다닐 때 교내를 순찰하는 모습으로 한 번 더 재등장 한다.</p>
+
+        <p>2화에서 쿠쿠가 제출한 부 창설 신청 서류를 기각했다. 이에 이유를 물어보러 온 카논과 쿠쿠에게 스쿨 아이돌은 음악과 관련된 부활동이냐고 되묻고 유이가오카 학원은 음악과가 있는 만큼 음악에선 가장 최고의 모습을 보여야 한다며 "아이돌부를 하고 싶으면 다른 학교에나 가보시죠" 막말 같은 말은 하면 거절한다. 하지만 쿠쿠가 이에 학생의 자유를 침해하고 있다고 교내에서 시위를 했고 이 이야기가 이사장 귀에 들어가자 이사장이 렌과 쿠쿠, 카논을 이사장실에 소집시킨다. 이사장은 셋에게 사실 여부를 확실히 들은 뒤 렌에게 '학생의 수준이 어떻든 학교 측의 명예를 이유로 동아리 창설을 막아선 안 된다'라는 정론을 들어 쿠쿠에게 손을 들어주었고<a href="#fn-1" id="rfn-1" class="wiki-fn" data-note="fn-1">[1]</a> 렌은 자신의 엄마 이야기를 꺼내 부 창설을 반대하려고 했으나 이사장은 '당신의 어머니는 학교 방침과 상관없다'라는 말로 렌의 추가 반론을 기각시킨다.</p>
+
+        <p>3화에서 노래하지 못하게 된 카논에게 페스에서 추태를 보여 학교의 평판에 영향을 끼칠 바에야 그만두라고 쏘아 붙인다. 치사토가 해보지 않으면 모른다면 카논은 변호하자 인상은 찌끄리면서 치사토의 연습에 방해나 되지 않았으면 좋겠다고 비꼰 것은 덤. 이후 페스 당일, 카논과 쿠쿠의 무대를 벽 뒤에 숨어 지켜본다.</p>
+
+        <p>4화에서 신인특별상을 수상한 공로를 인정받아 스쿨 아이돌 활동을 허가 받은 카논과 쿠쿠에게 부실 열쇠를 건네준다. 하지만 카논과 쿠쿠의 스쿨 아이돌 활동에 대한 거부감은 여전한지 두 사람의 실력으로는 러브라이브에서 우승할 가능성은 없을 거라고 못박는다. 이후 옥상을 스쿨 아이돌부의 연습 장소로 지정한 것에 대해 이사장에게 불만을 표하지만, 이사장의 정론을 듣고 입을 다문다.</p>
+
+        <p>5화에서는 등장하지 않으나, <a href="#fn-2" id="rfn-2" class="wiki-fn" data-note="fn-2">[2]</a> 6화에서는 치사토가 댄스 경연 대회 준비 중인 연습실을 방문할 때 등장한다. 카논 일행과 떨어져 행동하는 것에 대해 은근히 신경을 쓰고 있는 듯한 태도를 내비친다. 그리고 치사토의 가방에 있던 퇴학신청서를 우연치않게 발견하는데, 호기심은 있으면서도 차마 직접 묻지는 못하고 안절부절 연습실만 들락날락하다가 치사토가 단도직입적으로 용건이 뭐냐고 묻자 깜짝 놀라는 은근히 허당스러운 모습을 TVA에서 처음으로 보여주었다. 그 후 치사토의 어린 시절 이야기를 듣고 댄스 경연 대회 우승 후 어찌할 것이냐고 질문을 던졌다.</p>
+
+        <p>7화 예고편의 나레이션으로 등장하며, 초반에 치러진 학생회장 선거에 입후보한다. 보통과 학생들 사이에서 렌이 보통과를 음악과보다 낮게 보고 있다는 소문이 돌면서 불리하게 시작했지만, 보통과와 음악과의 화합을 이루겠다는 선심성 공약을 내세워서 스미레를 압도적으로 누르고<a href="#fn-3" id="rfn-3" class="wiki-fn" data-note="fn-3">[3]</a> 당선된다. 카논은 스쿨 아이돌만은 안 된다는 렌의 주장이 무슨 이유에서 나온 건지 알아보려고 대화를 시도하지만, 렌은 학교를 위해서라며 짧게 대답하고 자리를 떠 버린다.</p>
+
+        <p>다음날이 되자 강당에 학생회장 된 렌은 단상에 올려와 정식 학생회장이 된 것에 알리는 동시에 이번 문화제를 음악과 중심으로 진행할 것이라고 공약 폐기에 말은 통보한다. 이 발표에 보통과 학생 및 스쿨 아이돌부 멤버들은 크게 술렁일 수밖에 없었다. 보통과에서는 일부 학생들이 항의 서명을 했으며, 스미레도 이참에 렌을 공약 위반 건으로 탄핵하고 재선거를 실시하자는 얘기를 꺼냈다.</p>
+
+        <p>특히 스쿨 아이돌부 입장에서 렌의 행동은 발등에 불이 떨어진 비상사태였는데, 자기 공약도 뒤집었으니 무슨 수를 써서라도 자신이 싫어하는 스쿨 아이돌 동아리를 폐부시키려고 하지 않겠냐는 우려는 쿠쿠만의 기우가 아닌 현실로 떠오른 위협이었다. 스미레가 출마하기 전에 쿠쿠가 카논에게 출마를 권한 뒤, 유세 기간 동안 렌이 감시위원회를 만들어 교내에서 스쿨 아이돌을 금지하는 상상을 한 것도 그런 이유에서였다.</p>
+
+        <p>이에 카논 일행은 렌을 집까지 미행한 뒤 그곳에서 마주친 렌에게 집안 사정을 듣는다. 렌이 밝힌 바에 따르면 어머니는 사망했고 아버지는 해외에 머물고 있었다. 렌에게 남아 있는 것은 혼자 남은 집과 반려견 치비뿐이며, 그나마 집에 남은 재산도 어머니가 학교 설립에 보태느라 거의 다 써버려서 메이드에게 다음 달 줄 월급도 떨어진 상태였다. 카논과 일행들의 질문에 렌은 어머니가 남겨준 유산인 학교를 살리기 위해서라고 답한 뒤, 오늘 일은 비밀로 해 달라고 부탁한다.</p>
+
+        <p>이후 8화에선 카논 일행은 배웅은 해주면서 "유이가오카에 입학은 했단 것은 후회 안 했으면 좋겠다"이런 말 할 거면 왜 2화에서 카논와쿠쿠에게 다른 학교로 가라는 막말은 한 거지???는 말은 남긴 채 집으로 들어가 어머니에 졸업 사진은 보면서 모친이 자신에게 무슨 말은 남겼는지를 기억하려고 한다.</p>
+
+        <p>다음날에 학교 등교 중에 보통과 학생들이 항의서를 내밀어서 불만을 표출했지만 무시한 채 교내로 들어간다. 결국 항의가 계속되자 이사장까지 귀에 들어가게 됐고 이사장은 "이 상황은 제대로 해결하지 못할 경우 문화제를 취소하겠다"는 이사장 엄포에도 "내년 입학 희망수 몇 명" 이라도 상황에 안 맞는 질문은 한다. 그래도 뭐가 불안 했는지 아이돌부에 찾아와 카논 일행에게 사과를 하면서도 스쿨 아이돌은 절대로 안 된다고 말하자</p>
+
+        <p>왜 이렇게까지 스쿨아이돌을 적대하냐는 멤버들의 말에 그 이유는 설명하는데 알고 보니 렌의 어머님이 폐교를 막기 위해 스쿨 아이돌을 했다고 과거를 알자 자신도 나름대로 조사를 해봤지만 어머니 유품 중에 그 어디에도 스쿨 아이돌에 대한<a href="#fn-4" id="rfn-4" class="wiki-fn" data-note="fn-4">[4]</a> 자료를 찾을 수 없었고, 혹시나 어머니가 스쿨 아이돌 활동을 후회하고 있었을지도 모른다는 생각에 자료를 남기지 않았다고 판단한 것이 스쿨 아이돌을 반대한 이유라고 설명를 한다.</p>
+
+        <p>카논 일행도 렌의 어머니에 대한 자료를 찾지 못하자 다시 한번 전교생들을 집합시켜 현재 학교의 상황을 알리고자 하고, 이번 자신의 극단적인 행보로 인해 혼란을 일으킨 것에 사과를 해보지만 극도로 불만이 찬 보통과 학생들은 불만은 섞인 항의를 퍼붓는다. 그런데 보통과들의 항의 속에서도 "스쿨 아이돌은 절대로 안 돼" 라는 혼잣말을 한다</p>
+
+        <p>다행히 상황이 더 악화되기 전에 카논 일행이 렌 어머니의 아이돌 기록지를 찾은 동시에 단상에 올라와 렌 모친에 스쿨 아이돌 기록<a href="#fn-5" id="rfn-5" class="wiki-fn" data-note="fn-5">[5]</a>에 남긴 말에 모친이 자신에게 했던 말<a href="#fn-6" id="rfn-6" class="wiki-fn" data-note="fn-6">[6]</a>이 생각이 났고, 동시에 쿠쿠가 내민 아이돌 의상을 받으면서 자신 모친에 마음은 알지 못했다는 것을 깨달아 오열하고 혼란한 상황이 정리가 되었다</p>
+
+        <p>그렇게 카논 일행과 축제 준비 중에 카논 스쿨아이돌 제안은 받게 되지만<a href="#fn-7" id="rfn-7" class="wiki-fn" data-note="fn-7">[7]</a>, 그동안의 자신이 저지른 만행<a href="#fn-8" id="rfn-8" class="wiki-fn" data-note="fn-8">[8]</a>때문에 가입을 망설인다. 카논 일행의 설득과 학교 친구들의 응원을 통해 아이돌부에 가입하게 되었고 카논 일행들과 축제 연습 준비를 하면서 추첨을 통해 센터를 맡게 되면서 Wish Song 라이브를 멋있게 성공 시키면 8화를 마무리를 한다.</p>
+
+        <p>9화에서는 교칙이 바뀌면서 음악과에는 남지만 보통과 교복을 입으며, 그룹명을 정하는 회의 때는 혼자 딸기 프사를 쓰는데 스쿨 아이돌 홍보 영상을 찍는 게 처음이지만 많이 부끄러워하지만 그래도 '예쁘다', '화이팅!' '헤어스타일 좋다'<a href="#fn-9" id="rfn-9" class="wiki-fn" data-note="fn-9">[9]</a>같이 실시간 반응이 좋은 것도 확인한다. 카논이 혼자 촬영을 봐 줘야 한다고 빠질 때는 치사하다고 지적해서 카메라 앞에 세운 뒤, 계속 쭈뼛거리자 볼을 꼬집는다.</p>
+
+        <p>10화에선 지구 예선 과제인 랩을 시범삼아 해 보라는 카논의 제안을 받자 단가를 지었다.<a href="#fn-10" id="rfn-10" class="wiki-fn" data-note="fn-10">[10]</a> 중반에 센터를 맡게 된 스미레의 부담 원인을 분석할 때는 '골고루 잘 하지만 한 쪽에 특화된 분야가 없어서' 조연에 그쳤던 거라고 추측했다.</p>
+
+        <p>11화에선 부실에 아무도 없을 때 노트북에 뜬 백합물 광고 배너를 호기심에 클릭하고 경악한다. 예선 통과 직후에 리엘라 전원이 이사장의 호출을 받자 그 일로 혼나고 퇴학당할 거라고 김칫국을 마시지만 당연히 백합물 본 게 걸린 건 아니었다. 그 후 카논이 모교에서 독창을 하기 전에는 사전 답사에 따라갔다.</p>
+
+        <p>이후 12화에서는 아버지가 편지와 함께 학교에 후원금을 기부하며, 사야도 돌아오면서 형편이 나아졌다.</p>
+
+        <h3 id="s-3-2">3.2. 2기</h3>
+        <p><strong>1화~6화</strong><br>
+        크게 비중은 없지만, 학생 회의를 주관한다던가 다른 리엘라 멤버들과 함께 행동을 한다던가 할 때 얼굴을 비춘다.</p>
+
+        <p><strong>7화</strong><br>
+        7화의 중심 인물. 5화 당시 쿠쿠에게 배운 잠깐 플레이해 본 콘솔 게임<a href="#fn-11" id="rfn-11" class="wiki-fn" data-note="fn-11">[11]</a>에 푹 빠진 나머지, 아침부터 밤늦게까지 게임을 할 만큼 게임에 중독되고 말았다.<a href="#fn-12" id="rfn-12" class="wiki-fn" data-note="fn-12">[12]</a> 처음에 그 사실을 몰랐던 멤버는 학생회 일이 피곤해서 그런 걸로 생각하고 걱정했다. 한편 러브라이브 대회가 열리게 되자<a href="#fn-13" id="rfn-13" class="wiki-fn" data-note="fn-13">[13]</a> 렌은 작곡을 맡게 되는데, 게임 때문에 집중하지 못하던 걸 메이에게 들키자<a href="#fn-14" id="rfn-14" class="wiki-fn" data-note="fn-14">[14]</a> 렌은 다른 애들에게 들키면 체면이 말이 아니니까<a href="#fn-15" id="rfn-15" class="wiki-fn" data-note="fn-15">[15]</a> 메이에게 비밀을 지켜달라고 하면서, 집안에 게임기가 설치된 방문 열쇠를 맡긴다.</p>
+
+        <p>얼마 후, 열쇠에 대해 키나코에게 질문받은 메이는 둘러대려 하지만 미행한 일행에게 렌과 얘기하는 장면을 들키는 바람에 이상한 거 아니라고 해명해야 했다. 한편 렌의 부담을 덜어 줄 방법을 찾던 카논은 이사장에게 학생회 부회장으로 임명받고<a href="#fn-16" id="rfn-16" class="wiki-fn" data-note="fn-16">[16]</a>, 해명을 마친 메이가 렌을 찾아가서 사실대로 말하는 게 좋겠다고 말하자 렌은 게임 때문에 연습에 소홀했다고 밝힌다. 다행히 멤버들이 그냥 웃어넘겨서 큰 일은 없었는데, 당시 렌이 혼자서 공략하려다가 못한 푸니푸니 헌터의 도전과제 한 개<a href="#fn-17" id="rfn-17" class="wiki-fn" data-note="fn-17">[17]</a>도 일행이 협동 모드로 깨 줬다.</p>
+
+        <p>이후 저녁에 피아노 옆에 어머니 사진을 두고 작곡을 마무리하는데 작곡한 노래가 7화 <a href="#fn-18" id="rfn-18" class="wiki-fn" data-note="fn-18">[18]</a> 엔딩곡이다.</p>
+
+        <p><strong>8화</strong><br>
+        학생회 멤버 부회장 서기 회계 임명 때 이사장에게 앞으론 음악과 상관없이 공평하게 뽑고 싶다는 의견을 제시한다.그런데 본인을 포함해서 스쿨 아이돌 멤버가 3명이나 있다.</p>
+
+        <h3 id="s-3-3">3.3. 3기</h3>
+        <p><strong>3화</strong><br>
+        8에라의 센터를 맡은 시키가 강당에서 쓰러져 양호실에 갔다가 사라진 후 드론을 움직여 부실 창문 바깥에 유이가오<a href="#fn-19" id="rfn-19" class="wiki-fn" data-note="fn-19">[19]</a> 그림이 그려진 플랜카드를 보여주자 렌은 저것을 본 자에게 행복을 가져다주는 요정이라고 반응했다.</p>
+
+        <p><strong>8화</strong><br>
+        문화제 당일 마법소녀 코스프레를 했는데 본인도 부끄러워했다.</p>
+
+        <p><strong>10화</strong><br>
+        오랜만에 본인이 주역으로 나온 에피소드. 슬슬 졸업이 다가오자 후임자를 내정해야 하는 상황에서 여러 부원들을 찾아가 설득을 시도해 봤지만 렌의 인망이 워낙 두텁기에 다른 학생들은 선뜻 받아들이기가 어려웠다. 이에 나나미가 렌이 직접 후임을 정하는 것을 제안하고, 마침 렌은 신곡 작사로 어려움을 겪고 있는 키나코를 눈여겨본 뒤, 그녀를 자신의 집에 초대해 특대 파르테를 대접하면서 자신이 간직하고 있는 시집을 보여주었다. 키나코 자신도 충분히 납득할 수 있을 정도로 밝은 분위기의 곡을 만들도록 제안했는데 키나코가 다음 날 리엘라 멤버들의 응원 메세지를 보고 칠판에 자신의 상상의 나래를 펼친 것을 보자 그녀를 학생회장 재목으로 보고 자신의 뒤를 이어 줄 것을 부탁했다.</p>
+
+        <p>키나코는 처음에 못하겠다고 거절했지만 마르가레테의 격려를 받고 신곡 작사를 완성한 뒤, 다음 날 등교길에 렌의 집 앞에 찾아와 자신처럼 특출나지 않고 평범한 학생도 모두에게 도움이 되는 존재가 되고 싶다는 진심을 밝히고 렌의 제안대로 학생회장직을 승계하기로 결심했다. 이후 연설식 중에 키나코가 마이크를 실수로 떨어뜨리자 렌이 바닥에 닿기전에 이를 잡아 다시 원래 자리에 놓으면서 키나코에게 혼자가 아니라고 격려했다. 그렇게 키나코의 차기회장 취임은 성공적으로 이뤄지고 러브 라이브 도쿄 결선에서 1위로 최종 전국 대회에 진출하게 된다.</p>
+
+        <p><strong>11화</strong><br>
+        대학 입시를 앞둔 상태에서 액자에 걸린 어머니와 어린 시절 자신의 사진을 바라보면서 이제 자신이 졸업한 후에도 어머니가 일으켜세운 유이가오카는 오래 이어질 것이라고 흐뭇한 미소를 지었다. 이른 아침부터 학생회장으로서 업무를 보는 키나코를 보고 대견스러워하기까지 했다.</p>
+
+        <p><strong>12화</strong><br>
+        어머니가 생전에 세운 학교의 졸업식에서 어머니의 동창인 이사장의 부름을 받고 가장 먼저 졸업장을 수여받았다. 키나코의 송사 다음 렌이 졸업생 대표 답사로 졸업 후에도 학교 운영위원으로서 열심히 할 것을 연설했다. 졸업식이 끝나고 교문을 완전히 나온 5명의 졸업생이자 원년멤버들은 후배들을 그날 밤 시부야 스카이 옥상에 마련된 무대로 초대하여 은퇴곡을 들려주었다.</p>
+
+
+        <h2 id="s-4">4. 평가</h2>
+
+        <h3 id="s-4-1">4.1. 1기</h3>
+        <div class="bg-gray-100 p-3 my-2 text-sm rounded dark:bg-[#2b2d31]">
+            그 왕밉상<a href="#fn-20" id="rfn-20" class="wiki-fn" data-note="fn-20">[20]</a>...<br>
+            <span class="text-xs text-gray-500">- 2화에서 렌의 논리 없는 맹목적인 아이돌부 반대에 화가 난 탕 쿠쿠의 발언<a href="#fn-21" id="rfn-21" class="wiki-fn" data-note="fn-21">[21]</a></span>
+        </div>
+        <p>1기의 반동인물<a href="#fn-22" id="rfn-22" class="wiki-fn" data-note="fn-22">[22]</a>이자, 감독의 어이없는 캐릭터 해석이 만들어낸 1기 최대 피해자.</p>
+
+        <p>에리, 다이아, 세츠나, 시오리코에 이은 '개인적인 이유로 스쿨 아이돌을 반대하는 학생회장' 계보를 잇고 있다. 그러나 다른 인물들과 달리 스쿨 아이돌을 반대하는 명분이 뚜렷하지 않은 상태에서 엄마 찬스까지 써 가며 금지하다 보니<a href="#fn-23" id="rfn-23" class="wiki-fn" data-note="fn-23">[23]</a>, 리엘라 가입 전까진 역대 학생회장 가운데에서도 가장 불호가 심한 인물이었다.</p>
+
+        <p>전작에 나온 다른 학생회장들과 비교해 보면 반대하는 근거도 렌이 가장 빈약하다.<br>
+        에리는 가족이 모교 출신이며 마지막에 가입을 망설였다는 점에서 렌과 공통점이 있는 인물인데, 아마추어 발레리나였던 경력 때문에 스쿨 아이돌 활동을 풋내기 수준이라며 얕잡아 봤으나 어쨌든 무용 경력자여서 기초 실력은 있었고, 뮤즈 가입 직전에 잠시 안무 공부를 시킬 때도 뮤즈도 실력을 인정했다. 비록 뮤즈의 활동을 반대하긴 했어도 렌처럼 무리수를 쓰며 반대하진 않았으며, 최소한 왜 반대하는지에 대한 설명은 억지스럽게나마 했고 에리 개인의 사정에 대해서도 초반부터 어느 정도 조명을 했었다.<br>
+        다이아는 전직 스쿨 아이돌이며, 후배들이 아쿠아를 다시 만들었을 때도 반대는 했으나 가입 전까지 나름대로 도움을 주기도 했고 귀국한 마리에게 카난 쪽 사정을 설명해 주면서 오해도 풀어준다. 반대한 이유도 자신들이 한번 실패했기에 후배들도 실패하고 좌절하지 않게 하기 위해서였다.<br>
+        세츠나는 멤버의 활동 방침 조율에 실패하자 니지동을 해체했으나, 자신 없이도 스쿨 아이돌 활동이 가능한 여건이 되자 오히려 지지를 보내며 복귀했다.<br>
+        시오리코는 에리와 렌처럼 편견 때문에 반대한 인물인데, 반대하는 명분으로 스쿠스타 10장에서 학업과 적성을 제시했고 당시 동석했던 다이아와 에리도 10장 2화에서 학생이면 학업이 중요하다는 시오리코의 주장에 학업 한정으로 동의했다. 자기가 보기에 불가능하다고 판단된 자원봉사자 1천 명 모으기를 제시했지만, 나중에 등장한 란쥬와 달리 최소한의 명분과 선은 지켰고 니지동이 제시된 조건을 채우는 과정을 보며 편견을 벗게 된다.<br>
+        학부모 중에서 스쿨 아이돌을 반대한 인물은 SID 마키 편에 등장한 마키의 아버지와 물장판의 마리 어머니이다. 두 인물 모두 학업을 이유로 반대했고, 특히 마리 어머니는 '기껏 유학을 보냈는데 스쿨 아이돌을 하겠다며 도로 귀국했으면서 목표인 학교도 못 살렸다'는 명분은 확실하게 제시했다.</p>
+
+        <p>반면 렌은 반대했던 인물 중에서 가장 근거가 빈약한 케이스이다. 우선 쿠쿠와 카논에게 스쿨 아이돌을 무시하는 발언을 해서 쿠쿠에게 불만을 샀고<a href="#fn-24" id="rfn-24" class="wiki-fn" data-note="fn-24">[24]</a>, 회장 선거에서 당선되자 음악과와 보통과의 화합을 내세운 공약을 뒤엎으면서 교내에서도 탄핵 이야기가 나오는 등 인망이 바닥으로 치닫는 결과를 만들고 만다. 8화에서도 항의 서명서를 보여 준 보통과 학생들에게 입장 표명을 요구받을 때, 학생회를 거치라고 답하며 무시하면서 반감을 자초했었다.</p>
+
+        <p>특히 이전작들과는 달리 멤버들의 수준을 직접적으로 깔보는 장면과 선민사상으로까지 비쳐지는 일부 대사, 그런데도 불구하고 렌에 관한 서사와 떡밥은 초반 내내 하나도 없었다는 점이 렌 오시들과 Liella! 팬덤에게 큰 비판을 받았다. 물론 이런 캐릭터들이 대부분 그렇듯 나중에 가서 설명이 뒷받침하긴 했지만, 동기라도 명확하게 밝혔던 이전 학생회장들과 달리 렌은 맹목적인 거부감만 표하다 7~8화에서 급격히 개인 스토리를 풀어버리는 바람에 수습은 됐어도 급전개라는 비판은 피하지 못했다.</p>
+
+        <p>동시에 역대 캐릭터 중 집안 사정이나 인간관계가 가장 불행한 캐릭터이기도 하다. 설립자인 어머니의 딸로서 하즈키 재벌과 학교의 자존심이 상하지 않게 항상 철저한 준비성과 성실함, 그리고 판단력까지 갖추는 모습을 표현하면서 역대 시리즈 중에 주인공으로서는 여러모로 진지하게 바라볼 수 있을 정도로 상당한 임팩트를 주었다. 하지만 7화에선 교내에서 확실하게 자기 편을 드는 사람이 없는 상황이며 공개된 집안 사정도 금수저 집안 출신치고는 좋지 못하다.<br>
+        음악과에서는 렌이 출마한다고 했을 때 응원보다 걱정을 먼저 했는데, 보통과 학생이 음악과보다 많아서 표 경쟁에서 밀릴 수 있었기 때문이다.<br>
+        보통과는 렌이 음악과와 보통과의 화합을 공약으로 세워 표를 이끌어냈지만, 당선되자마자 공약을 뒤집는 바람에 평판이 나빠졌다.<br>
+        어머니 친구인 이사장도 스쿨 아이돌부에 대한 의견 때문에 그 부분에선 렌의 의견이 반영되지 않았다.<br>
+        가족도 돈도 없고, 의지할 만한 친구도 없었다.<br>
+        아버지는 러브라이브의 다른 아버지처럼 자세한 언급이 없으나, 8화에 따르면 외국에 나간 뒤라 같이 살지 않는다.<a href="#fn-25" id="rfn-25" class="wiki-fn" data-note="fn-25">[25]</a> 어머니는 사별했다고 렌이 직접 밝히며, 렌은 에리·다이아·시오리코와 다르게 외동이다.<br>
+        다른 시리즈에 등장한 에리, 다이아, 세츠나, 시오리코와 달리 믿고 상담할 만한 친구나 또래도 없었다. 이들에겐 노조미, 카난·마리, 니지동이 그 역할을 맡았지만 렌에겐 그런 인물이 없었다. 카논이 대화를 시도하지만 7화까진 렌 쪽에서 거부하고 있었다.<br>
+        집은 저택이지만 살림살이와 장식물이 거의 없고, 쓰는 사람이 없어서 흰 커튼을 덮어뒀다. 메이드의 다음 달 월급을 주기도 힘겹다. 학교도 입학생과 예산 문제가 우려되는 상황이라 렌이 이사장에게 재정 상황을 질문하기도 했다.</p>
+
+        <p>자신의 주장을 필사적으로 내세웠으면서도 어머니의 친구인 이사장마저 오히려 Liella! 멤버들의 의견을 들어주고 있고, 이제 더 이상 자신의 주장을 들어줄 사람이 없으며, 그저 우물 안에 개구리 신세가 될 뻔하는 위기까지 닥쳐오고 그녀의 멘탈은 한도를 넘어서기 직전까지 도달하게 되면서도 이를 감수하는 걸 보면 그저 반동인물이 아닌 자신의 생각에만 잠겨 방황하는 인물상을 표현했다는 것에서 나름 입체감있는 히로인 포지션 역할을 준 셈이다. 또한 7화에서 시청자들의 예상대로 Liella! 멤버들의 최종 목표의 떡밥이 풀리게 되면서, 8화는 렌 관련 떡밥을 회수하면서 스쿨 아이돌부에 가입하는 과정을 다뤘다.</p>
+
+        <p>헌데 이전까지의 트롤링을 수습해야 했던 7~8화의 개인스토리가 아쉽다는 평가가 나오며 렌의 입장도 다소 애매해지고 말았다. 큰 그림이라도 그리는 듯하던 초반 연출과는 달리 결국 스쿨아이돌 활동을 방해한 이유는 전부 개인적인 이유였다. 어째서 렌이 스쿨 아이돌을 반대했고 음악과를 우선시했는지는 설명해냈지만, 정작 오해의 근원이었던 어머니의 스쿨 아이돌 기록을 Liella! 멤버들이 며칠 수색해서 덜컥 찾아내는 바람에 등잔 밑이 어둡다는 말처럼 렌은 바보짓만 한 셈이 되어버렸다. 제작진이 후반부터 반전 요소를 넣고 싶었던 나머지, 내용 전개에서 무리수라도 쓰는 바람에 캐릭터의 매력과 내용의 개연성이 떨어지게 된 것이다.</p>
+
+        <p>사실 렌이 멤버들에게 뭔가 악감정이 있어서 스쿨 아이돌 활동을 탄압한 게 아니라, 스쿨 아이돌 활동 자체를 좋지 않게 볼 이유가 있다는 암시는 있었다.<a href="#fn-26" id="rfn-26" class="wiki-fn" data-note="fn-26">[26]</a> 그리고 그 이유가 렌의 어머니와 연관이 있다는 것도 어렵지 않게 추측할 수 있었으니, 렌의 개인 서사가 뜬금없이 튀어나온 것은 아니다. 다만 렌의 개인 사정, 보통과 배척으로 인한 음악과와 보통과의 갈등, 어머니의 스쿨 아이돌 활동과 오해, 그리고 갈등의 해소와 학교 전체의 화합으로 이어지는 스토리라인을 단 한 화 안에 전부 때려박으려다 이야기가 난잡해진 것이 주요 비판점으로 꼽힌다. 실제로도 7화 방영 이후 평은 '완성도는 아쉽지만 렌의 사정이 불쌍하다'는 의견이 많았다.</p>
+
+        <p>이후 러브 라이브! 슈퍼스타!! Liella! 3rd LoveLive! Tour ~WE WILL!!~에서 성우 아오야마 나기사가 1기 녹음 당시 있었던 비하인드 스토리를 밝혔는데 해당 내용이 심히 충격적이라 결국 시작부터 캐릭터 설정을 꼬았으면서 뒷 수습도 제대로 못 한 쿄고쿠 타카히코에 대한 민심은 나락으로 떨어졌다. 애초에 딸기 덕후 같이 가벼운 속성들도 살릴 수 있었음에도 굳이 심각한 뒷사정이나 호불호가 갈릴 수 있는 네타 요소들을 집어 넣으며 스스로 스토리의 개연성과 렌의 캐릭터성을 깎아먹었던 점 때문에 렌 오시들은 불만이 많았는데 아오야마의 해당 발언까지 나오면서 제대로 폭발해 버렸다.</p>
+
+        <p>합류 이후로는 아군이 된 적 보정으로 인해 개그 캐릭터가 되어가고 있다.<a href="#fn-27" id="rfn-27" class="wiki-fn" data-note="fn-27">[27]</a> 9화 내내 카논에게 츳코미를 걸거나, 10화에서 랩을 하랬더니 단가를 읊거나, 11화에서는 백합 관련 사이트에 들어갔다는 사실이 밝혀질까 걱정하는 모습이 나오는 등 우미, 에리, 리코 등의 후계구도를 착실히 밟고 있다.</p>
+
+        <p>실력적인 평가로는 우선 작곡이 가능한 멤버로, 카논이 렌의 합류와 동시에 작곡 담당을 렌에게 넘길 정도이니 어느 정도 실력이 되는 것으로 보인다. 또한 피겨스케이팅 경력이 있어서 댄스에 재능이 있다는 언급도 있었고, 가창력은 작중 언급되지는 않았지만 준수하다. 종합적으로는 스미레 못지않은 올라운더 캐릭터.</p>
+
+        <h3 id="s-4-2">4.2. 2기</h3>
+        <p>2기에서는 게임 덕후라는 속성이 추가되면서 네타거리가 늘어났다. 2기 초반부에 분량 자체가 없었던 렌에게 그나마 개성다운 개성을 만들었다는 점에서는 긍정적이지만 7화에서 그냥 게임 덕후도 아니고 게임 중독자에 가깝게 묘사되는 등 호불호가 극심하게 갈리기도 한다.</p>
+
+        <p>그러나 학생회장인데도 불구하고 스토리에 끼치는 영향은 극히 미미한 수준이다. 애초에 2기는 카논을 제외한 나머지 멤버들의 비중 자체가 높지 않았지만 그래도 다른 캐릭터들은 본인들을 중심으로 한 서사가 메인 스토리에 영향을 끼쳤는데<a href="#fn-28" id="rfn-28" class="wiki-fn" data-note="fn-28">[28]</a> 렌의 메인 에피소드 7화는 메인 스토리와 관계없는 에피소드라 결국 렌의 비중이 낮다는 비판은 계속 제기되고 있다. 심지어 빈 마르가레테보다 비중이 적을 정도고 7화 전에는 Sunny Passion과 분량 비교를 당했을 정도로 영향력이 미미했다. 그나마 1기처럼 에피소드 자체를 망치지는 않아 그럭저럭 넘어가는 편.</p>
+
+        <h3 id="s-4-3">4.3. 3기</h3>
+        <p>반동인물로 나온 1기 이후로 학생회장임에도 스토리에 끼친 영향이 미미했던 2기를 반면교사 삼은 덕분에 렌 역시 3기에서 메인 서사가 전무한 키나코의 멘토이자 더블 주역으로서 제대로된 역할을 치러내 3년 만에 고진감래를 이루었다는 호평을 받았다.</p>
+
+        <h2 id="s-5">5. 명대사</h2>
+        <div class="quote-box">
+            이 전단지를 나눠준게 당신이군요? 멋대로 이런 권유를 하다니, 이사장님의 허락은 받은겁니까?<br>
+            <span class="text-sm font-normal text-gray-500">- 1화, 첫 대사. 허락을 받지 않고 권유를 하고 있는 쿠쿠에게</span>
+        </div>
+        <div class="quote-box">
+            유감스럽게도, 당신들이 지금의 러브 라이브를 제패해 낼 거라고는 생각도 안듭니다.<br>
+            <span class="text-sm font-normal text-gray-500">- 4화, 부를 설립하게 된 카논의 포부에 전적으로 부정하며</span>
+        </div>
+        <div class="quote-box">
+            들으셨다시피 식구는 저 하나뿐이고, 집안에 돈도 없어요. 이대로라면 학교를 운영할 수도 없고요. 어머님의 유산인 학교를 지키려면, 제가 노력할 수 밖에 없어요.<br>
+            <span class="text-sm font-normal text-gray-500">- 7화, 사야와의 대화를 엿듣다가 들킨 카논에게.</span>
+        </div>
+        <div class="quote-box">
+            전 어머니를 따라 스쿨 아이돌이 되려고 다짐했었어요. 하지만 아무리 찾아봐도, 어머니의 스쿨 아이돌 활동에 대한 기록만 없었어요. 다른 활동 기록은 있는데 말이죠. 그래서 이런 생각이 들었네요. 어쩌면 어머니께선 그 시절을 잊고 싶으셨던 게 아닐까 하는 그런 생각 말예요...<br>
+            <span class="text-sm font-normal text-gray-500">- 8화, 어머니가 과거에 스쿨 아이돌 활동을 했지만 어째서인지 그 시절 자료만 없었다고 말하며.</span>
+        </div>
+        <div class="quote-box">
+            가을 주황빛(​あきあかね/아키아카네)<br>
+            노래하는 열엿새(うたにいざよう/우타니이자요우)<br>
+            하즈키 렌은(はづきれん/하즈키렌)<a href="#fn-29" id="rfn-29" class="wiki-fn" data-note="fn-29">[29]</a><br>
+            마음은 그 어느새(​おもいはいまだ/오모이와이마다)<br>
+            주저하고 있노라(いざよいなり/이자요이나리)<br>
+            <span class="text-sm font-normal text-gray-500">- 10화, 카논이 랩을 해 보라고 하자 즉석에서 지은 단가(短歌).</span>
+        </div>
+        <div class="quote-box">
+            호기심 때문에 저도 모르게 그런 걸 보다니... 학생회장으로서 실격이네요 정학이네요 퇴학이네요 제 인생은 이제 끝이네요...<br>
+            <span class="text-sm font-normal text-gray-500">- 11화, 부실에 아무도 없을 때 노트북에 뜬 백합물 광고 사이트를 호기심에 클릭한 뒤 반응.</span>
+        </div>
+
+        <h2 id="s-6">6. 기타</h2>
+        <ul class="list-disc pl-5 space-y-2 text-sm mt-3">
+            <li>어머니의 이름은 하즈키 하나. 2화에서 이사장의 친구라고 밝혀졌다. 또한 러브 라이브! 애니메이션 최초로 가족이 고인으로<a href="#fn-30" id="rfn-30" class="wiki-fn" data-note="fn-30">[30]</a> 힘없는 양갓집 아가씨 캐릭터이다.</li>
+            <li>始まりは君の空의 드라마 CD에서도 학교의 대한 사정이 잠깐 언급이 되었다.</li>
+        </ul>
+
+        <!-- 각주 -->
+        <div class="mt-10 border-t pt-4 text-xs text-gray-500">
+            <div id="fn-1" class="mt-1 pl-2">[1] 대신 렌의 말도 일리가 있다며, 학교의 명예를 위해 기한 내에 납득할 만한 성과를 내지 못하면 폐부시키겠다는 조건을 달았다.</div>
+            <div id="fn-2" class="mt-1 pl-2">[2] 지금까지 주연 멤버가 얼굴도 안 나온 에피소드는 뮤즈 편 애니 1기의 야자와 니코(2화), 선샤인 애니 1기의 오하라 마리(2화), 마츠우라 카난(5화, 7화) 뿐이다.</div>
+            <div id="fn-3" class="mt-1 pl-2">[3] Liella! 멤버들이 선거운동 중에 학생들에게 타코야키를 나누어주다가 이사장에게 걸리는 바람에 페널티를 받아 득표수가 마이너스인 상태였지만, 페널티가 없었더라도 비교도 안 될 정도로 차이가 컸다.</div>
+            <div id="fn-4" class="mt-1 pl-2">[4] 개인사정 때문에 생전에 비밀장소에다 활동 자료를 숨겨뒀던지라 그 시절을 어떻게 생각했는지는 모르고 있었다.</div>
+            <div id="fn-5" class="mt-1 pl-2">[5] 비록 폐교를 막지 못했지만 후회는 없다, 이 활동을 통해, 음악을 통해, 모두가 맺어졌고! 함께 노력하고 함께 꿈을 꾸고, 함께 일희일우 ( 一喜一憂 : 기쁨과 근심이 번갈아 일어남 뜻 )은 하면서, 그런 기적과도 같은 시간을 보낼 수 있었다!, 그래서 나는 모두와 약속했다! "맺어진다" {結( 맺을 결 / ゆい ), ヶ, 丘( 언덕 구 / おか ) : 유이가오카}는 의미에 학교를 반드시 여기에 다시 한번 만들어 내겠다고, 음악으로 맺어지는 학교를 여기에 다시 한번 세운다! 그게 나의 꿈이고, 모두에 꿈이다!</div>
+            <div id="fn-6" class="mt-1 pl-2">[6] 렌! 스쿨 아이돌은 엄마에게 최고에 추억이야</div>
+            <div id="fn-7" class="mt-1 pl-2">[7] 이 시점에서 카논이 성씨가 아닌 이름(렌짱)으로 부르게 된다</div>
+            <div id="fn-8" class="mt-1 pl-2">[8] 1화 : 아이돌부 만드려는 쿠쿠를 제지 하는 것 / 2화 : 음악과가 있으면 싫은면 다른 학교 가라는 막말 한 것 / 3화 : 트라우마 때문에 겁에 질은 카논에게 위로는커녕 학교 이미지를 흡집 내지 말라면 폭언 한 것 / 4화 : 신인특별상으로 동아리가 생긴 카논이, 열심히 해보겠다는 말에 응원은커녕 "그럼 실력으로 절대로 우승 못 한다"고 독설처럼 말한 것 등등</div>
+            <div id="fn-9" class="mt-1 pl-2">[9] 렌이 인사할 때 머리가 길어서 밑으로 처진다.</div>
+            <div id="fn-10" class="mt-1 pl-2">[10] 열심히 생각해서 지었다는 걸 어필하고 싶었는지 어떤 식으로 운을 맞췄는지 해설을 달았다. 유예하다(이자요우)와 열엿새밤(이자요이). 애니플러스에서는 유예하다 쪽을 '어느 새'로 의역하여 운을 맞추었다. 참고로 카논이 하이쿠라고 했다가 렌이 단가라고 정정시키는데 애니플러스에서는 하이쿠와 단가의 차이점에 대한 해설 자막이 지나간다.</div>
+            <div id="fn-11" class="mt-1 pl-2">[11] 마침 사야도 취미생활을 하나 가지시는 게 어떻냐고 말했고, 아버지도 게임기를 잔뜩 사주셔서 메이가 집에 왔을 때는 방 하나를 각종 콘솔과 게임기로 채울 수 있었다. 콘솔 게임뿐만 아니라 아케이드 게임기 여러 대에, 탑승하여 360도로 회전하는 게임기까지 있어 방 자체가 웬만한 오락실 뺨치는 경지에 이르렀다. 이 정도면 렌의 아버지 역시 어딘가 나사가 빠져 있다.</div>
+            <div id="fn-12" class="mt-1 pl-2">[12] 빨리감기 장면에선 치비가 렌 옆에서 계속 있었다가 밤이 되자 제 풀에 지쳐서 뻗어버렸다(...)</div>
+            <div id="fn-13" class="mt-1 pl-2">[13] 1차예선은 비대면/자유곡.</div>
+            <div id="fn-14" class="mt-1 pl-2">[14] 메이에게 스쿨 아이돌을 좋아하니까 당장 Sunny Passion에게 전화해 악수를 시켜주려고 하거나 당장 매점에서 까르보나라 빵을 사러가려고까지 한다(...)</div>
+            <div id="fn-15" class="mt-1 pl-2">[15] 이때 렌의 상상이 나오는데, 상상 속 리엘라 멤버들이 렌이 게임에 빠졌다고 비난하는 내용이다.</div>
+            <div id="fn-16" class="mt-1 pl-2">[16] 그 전에 카논이 치사토보고 임원을 맡을 생각은 없냐고 물었는데 치사토가 사양했다.</div>
+            <div id="fn-17" class="mt-1 pl-2">[17] 그것만 깨면 도전과제 100% 달성이었다.</div>
+            <div id="fn-18" class="mt-1 pl-2">[18] 뒤쫓아가는 꿈너머에서</div>
+            <div id="fn-19" class="mt-1 pl-2">[19] Liella!의 마스코트 공룡이다.</div>
+            <div id="fn-20" class="mt-1 pl-2">[20] 일본어 원문은 콘칙쇼(コンチクショウ)로 여성에 대한 욕설인 아마(アマ)와 동급의 매우 심한 욕이다. 어감을 살려 번역하면 '개자식'이나 '망할년', 한국에서 쓰는 욕으로 하면 씨발년 정도. 한국 애니플러스 방영판 번역인 '왕밉상'은 꽤나 순화한 것이다.</div>
+            <div id="fn-21" class="mt-1 pl-2">[21] 탕 쿠쿠가 화가 나면 필터링 없는 거친 면모를 보이긴 하지만 폭언 수준의 욕설을 퍼부은 점만 봐도 렌의 행동에 쿠쿠가 얼마나 열 받았는지를 알 수 있다.</div>
+            <div id="fn-22" class="mt-1 pl-2">[22] 심지어 4화까지는 빌런으로 비춰질 만한 대사들도 많은 편이다. 다만 이 발언들은 8화에서 재평가되기도 했다.</div>
+            <div id="fn-23" class="mt-1 pl-2">[23] 사실 란쥬와 비교하기는 상당히 애매하다. 란쥬는 렌과는 달리 오히려 스쿨 아이돌에 적극적이었지만, 다른 멤버들의 의사를 전혀 신경쓰지 않고 자기 맘대로 동호회 활동을 방해시킨 게 문제라면, 렌은 스쿨 아이돌 활동 자체에 대한 반대는 4화 이후로는 없었지만, 신설 학교인 유이가오카에서 유일하게 성과를 내 보통과 학생들의 지지가 강한 스쿨 아이돌에 대한 이유 없는 맹목적인 반대가 문제이다. 그나마 렌은 스쿨 아이돌에 대한 어머니의 뜻을 몰라서 반대했다는 변명이라도 있어 그냥 질투심 때문에 니지동을 혼란에 빠트린 란쥬보다는 사정이 낫다.</div>
+            <div id="fn-24" class="mt-1 pl-2">[24] 카논은 가입 전에도 렌 개인은 싫어하진 않았지만, 쿠쿠는 사석에서 썅X이라 부르기도 했다.</div>
+            <div id="fn-25" class="mt-1 pl-2">[25] 같이 산다면 2화에서 언급된 카논 아버지처럼 그 자리에 있다는 연출을 넣지만, 렌은 해당 사항이 없다.</div>
+            <div id="fn-26" class="mt-1 pl-2">[26] 대표적으로 2화에서 스쿨 아이돌을 위해서 레슨하는 모습을 바라본 렌의 아련한 모습, 굳이 쿠카를 몰래 보러 간 3화, 6화에서의 치사토가 스쿨 아이돌에 가담하지 않는 이유를 궁금해한 것 등이 있다.</div>
+            <div id="fn-27" class="mt-1 pl-2">[27] 쿠쿠나 스미레가 대놓고 개그캐인 데 비해, 렌은 일부 어설픈 행동과 표정 등으로 개그캐가 된 케이스.</div>
+            <div id="fn-28" class="mt-1 pl-2">[28] 쿠쿠-스미레는 9화에서의 임팩트가 강했고, 치사토는 평은 갈리지만 후반부에 중요한 역할을 했다. 메이-시키도 감초 역할을 톡톡히 해냈다. 그나마 렌과 비교될 수 있는 경우는 초반부에도 분량이 애매했고 후반부 영향도 미미했던 키나코와 1기의 렌처럼 에피소드 평가 자체가 좋지 않은 나츠미 정도다.</div>
+            <div id="fn-29" class="mt-1 pl-2">[29] 5/7/5/7/7 순서 때문에 마지막 글자인 ん은한 박으로 빠지는 게 맞다.</div>
+            <div id="fn-30" class="mt-1 pl-2">[30] 어머니는 사망, 아버지는 해외출장 중. 애니메이션 이외의 미디어 믹스까지 합치면 SID편에서 아버지와 사별한 야자와 니코가 있다.</div>
+        </div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-500 text-xs pb-10 leading-relaxed">
+            <div class="font-bold text-lg mb-3">HyobinWiki</div>
+            <div class="mb-4">
+                <span class="font-bold">크리에이티브 커먼즈 라이선스</span><br>
+                이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다.<br>
+                기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.
+            </div>
+            <div>
+                효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+                효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+        
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
+        };
+        
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                location.href = this.value.trim() + ".html";
+            }
+        });
+
+        document.querySelectorAll('.wiki-fn').forEach(el => {
+            el.addEventListener('mouseover', function(e) {
+                const noteId = this.getAttribute('data-note');
+                const noteEl = document.getElementById(noteId);
+                if (noteEl) {
+                    const tooltip = document.getElementById('wiki-tooltip-container');
+                    tooltip.innerHTML = noteEl.innerHTML;
+                    tooltip.style.display = 'block';
+                    
+                    let left = e.pageX + 10;
+                    let top = e.pageY + 10;
+                    if (left + 320 > window.innerWidth) left = window.innerWidth - 330;
+                    
+                    tooltip.style.left = left + 'px';
+                    tooltip.style.top = top + 'px';
+                }
+            });
+            el.addEventListener('mouseout', function() {
+                document.getElementById('wiki-tooltip-container').style.display = 'none';
+            });
+        });
+    </script>
+            <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+
+</body>
+</html>

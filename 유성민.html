@@ -1,0 +1,525 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유성민 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        /* 1. 전역 스타일 및 변수 */
+        :root { 
+            /* [테마 컬러] 개혁 보수/무소속 상징 오렌지 */
+            --wiki-main: #F39C12; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #E67E22; 
+            --wiki-table-header: #F39C12;
+            --wiki-table-header-text: #ffffff;
+            --wiki-alert-border: #F39C12;
+            --wiki-alert-bg: #FEF9E7;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-main: #D35400; 
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #E67E22; 
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            word-break: keep-all; 
+            margin: 0; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .wiki-container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px 40px; 
+            border-left: 1px solid var(--wiki-border); 
+            border-right: 1px solid var(--wiki-border); 
+            min-height: 100vh; 
+            background-color: var(--wiki-bg);
+        }
+
+        /* 표 스타일 */
+        table { 
+            border-collapse: collapse !important; 
+            width: 100% !important; 
+            margin: 15px 0; 
+            border: 1px solid var(--wiki-border) !important; 
+            table-layout: auto !important; 
+            font-size: 0.9rem;
+        }
+        th, td { 
+            border: 1px solid var(--wiki-border) !important; 
+            padding: 6px 10px; 
+            vertical-align: middle; 
+        }
+        th { 
+            background-color: var(--wiki-table-header); 
+            color: var(--wiki-table-header-text); 
+            font-weight: bold; 
+            text-align: center;
+        }
+        .table-center td { text-align: center; }
+
+        /* [수정] 제목 스타일: !important 적용 및 사이즈 확대 */
+        h1 { 
+            font-size: 3.0rem !important; 
+            font-weight: 900 !important; 
+            margin-bottom: 1.5rem; 
+            line-height: 1.1; 
+            border-bottom: 2px solid var(--wiki-border); 
+            padding-bottom: 10px;
+            letter-spacing: -1px;
+            color: var(--wiki-text);
+        }
+        h2 { 
+            font-size: 2.0rem !important; /* 본문 문단 제목 크기 확대 */
+            font-weight: 700 !important; 
+            margin-top: 2.5rem; 
+            margin-bottom: 1rem; 
+            border-bottom: 1px solid var(--wiki-border); 
+            padding-bottom: 0.3rem; 
+            color: var(--wiki-link); 
+            display: flex;
+            align-items: center;
+        }
+        h2::before { content: ""; display: inline-block; width: 8px; height: 2.0rem; background: var(--wiki-main); margin-right: 10px; border-radius: 2px; }
+        
+        h3 { 
+            font-size: 1.5rem !important; 
+            font-weight: 700 !important; 
+            margin-top: 1.8rem; 
+            margin-bottom: 0.8rem; 
+            border-left: 5px solid #ccc;
+            padding-left: 10px;
+        }
+
+        /* 인포박스 */
+        .infobox { 
+            border: 2px solid var(--wiki-main); 
+            background-color: #fff; 
+            width: 100%; max-width: 340px; 
+            font-size: 0.9rem; 
+            border-radius: 4px; 
+            overflow: hidden; 
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+        }
+        [data-theme='dark'] .infobox { background-color: #2d2f34; }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 12px; text-align: center; font-size: 1.3rem !important; font-weight: bold; }
+        .infobox-image { text-align: center; padding: 15px; border-bottom: 1px solid var(--wiki-border); background: white; }
+        .infobox th { background-color: var(--wiki-gray-bg); color: var(--wiki-main); width: 100px; text-align: center; padding: 6px 10px; font-weight: bold; border: 1px solid var(--wiki-border) !important; }
+        .infobox td { text-align: left; padding: 6px 10px; border: 1px solid var(--wiki-border) !important; }
+
+        /* 링크 & 유틸리티 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        del { color: #aaa; text-decoration: line-through; cursor: help; transition: 0.2s; }
+        del:hover { text-decoration: none; color: #888; }
+        
+        /* 뱃지 */
+        .wiki-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.75rem; vertical-align: middle; }
+        .badge-independent { background-color: #999999; }
+        .badge-saenuri { background-color: #C9151E; }
+        .badge-gukhim { background-color: #E61E2B; }
+
+        /* 목차 */
+        .toc { 
+            display: inline-block; 
+            min-width: 320px; 
+            border: 1px solid var(--wiki-border); 
+            background: var(--wiki-gray-bg); 
+            padding: 15px; 
+            border-radius: 4px; 
+        }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
+        .toc .lvl-2 { padding-left: 20px; }
+
+        /* 인용구 */
+        .quote-box { background-color: #f8f9fa; border-left: 5px solid var(--wiki-main); padding: 15px 20px; margin: 15px 0; font-style: italic; color: #555; }
+        [data-theme='dark'] .quote-box { background-color: #333; color: #ccc; }
+        
+        /* 각주 툴팁 */
+        .wiki-fn-link { cursor: pointer; color: var(--wiki-link); vertical-align: super; font-size: 0.7em; font-weight: bold; text-decoration: none; margin-left: 2px; }
+        #wiki-tooltip { display: none; position: absolute; background: white; border: 1px solid #999; padding: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); max-width: 350px; z-index: 9999; font-size: 0.85rem; border-radius: 4px; color: #333; line-height: 1.4; }
+
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+        [data-theme='dark'] .wiki-btn-group { background: #2d2f34; }
+        .wiki-tool-btn { padding: 6px 14px; font-size: 12px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; font-weight: bold; }
+        .wiki-tool-btn:hover { background-color: #f0f0f0; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <div id="wiki-msg-box" style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none;"></div>
+    <div id="wiki-tooltip"></div>
+
+    <!-- 상단바 -->
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">유성민</h1>
+            <div class="wiki-btn-group shadow-sm">
+                <a href="토론.html" class="wiki-tool-btn">토론</a>
+                <a href="수정.html" class="wiki-tool-btn">편집</a>
+                <a href="역사.html" class="wiki-tool-btn">역사</a>
+                <a href="즐겨찾기.html" class="wiki-tool-btn">★</a>
+            </div>
+        </div>
+
+        <div class="category-box border border-[#ccc] p-2 bg-gray-50 mb-4 rounded text-sm">
+            <span class="font-bold text-[#F39C12]">분류:</span> 
+            <a href="효빈광역시.html" class="wiki-link">효빈광역시의 정치인</a> | 
+            <a href="1969년.html" class="wiki-link">1969년 출생</a> | 
+            <a href="무소속.html" class="wiki-link">무소속 기초자치단체장 후보</a> | 
+            <a href="성택대학교.html" class="wiki-link">성택대학교 출신</a> | 
+            <a href="보수주의.html" class="wiki-link">개혁적 보수주의자</a> |
+            <span class="wiki-link" style="color:gray">비주류</span> |
+            <a href="분류_제9회_전국동시지방선거_낙선자.html" class="wiki-link">제9회 전국동시지방선거 낙선자</a>
+        </div>
+
+        <!-- 상단 레이아웃 분리 -->
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            <!-- 목차 -->
+            <div class="toc shrink-0 shadow-sm h-fit order-2 md:order-1">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">생애</a>
+                        <ul>
+                            <li>2.1. <a href="#s-2-1" class="wiki-link">유년기 및 학창 시절</a></li>
+                            <li>2.2. <a href="#s-2-2" class="wiki-link">정계 입문과 사퇴 (2014~2016)</a></li>
+                            <li>2.3. <a href="#s-2-3" class="wiki-link">무소속 돌풍 (2018)</a></li>
+                            <li>2.4. <a href="#s-2-4" class="wiki-link">2022년 지방선거: "보수의 양심"</a></li>
+                            <li>2.5. <a href="#s-2-5" class="wiki-link">2026년 지방선거: "전액 보전의 기적"</a></li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3" class="wiki-link">정치 성향</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">타 인물과의 관계</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">선거 이력</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">여담</a></li>
+                    <li>7. <a href="#s-7" class="wiki-link">둘러보기</a></li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
+                <div class="infobox-title">유성민<br><span class="text-sm font-normal">Yoo Seong-min | 柳成敏</span></div>
+                <div class="infobox-image">
+                    <img src="이미지/유성민.png" alt="유성민 후보" style="width: 100%; height: auto; display: block;" onerror="this.src='https://placehold.co/300x400/F39C12/FFFFFF?text=Yoo+Seong-min'">
+                    <div class="mt-2 text-xs text-gray-500">2026년 효빈시장 선거 포스터<br><span class="text-[10px] text-gray-400">"진짜는 썩지 않습니다. 효빈의 합리적 보수!"</span></div>
+                </div>
+                <table>
+                    <tr><th>출생</th><td>1969년 4월 19일 (만 57세)<br><span class="text-xs">덕빈북도 탄성군 흑택면 만서리<br>(現 <span class="wiki-link" onclick="location.href='창전구.html'">효빈광역시 창전구</span> 마시동)</span></td></tr>
+                    <tr><th>거주지</th><td><span class="wiki-link" onclick="location.href='남구.html'">효빈광역시 남구</span> 어간동</td></tr>
+                    <tr><th>학력</th><td><span class="wiki-link" onclick="location.href='광정초등학교.html'">광정초등학교</span> (졸업)<br><span class="wiki-link" onclick="location.href='광정중학교.html'">광정중학교</span> (졸업)<br><span class="wiki-link" onclick="location.href='마시고등학교.html'">마시고등학교</span> (졸업)<br><span class="wiki-link" onclick="location.href='성택대학교.html'">성택대학교</span> (경영학 / 학사)</td></tr>
+                    <tr><th>병역</th><td>육군 병장 만기전역</td></tr>
+                    <tr><th>소속 정당</th><td><span class="wiki-badge badge-independent">무소속</span><br><span class="text-xs text-gray-400">(前 새누리당)</span></td></tr>
+                    <tr><th>현직</th><td>효빈시정감시단 대표<br>마시동 향우회장</td></tr>
+                    <tr><th>경력</th><td>제7대 효빈시 남구의회 의원 (가 선거구)<br>제8대 효빈시의회 의원 (남구 제4선거구)</td></tr>
+                    <tr><th>별명</th><td>효빈의 유승민, <strong>합리적 꼰대</strong>,<br>만년 2등, <del>시장 호소인</del><sup class="wiki-fn-link" title="본인은 이 별명을 꽤 마음에 들어 한다.">[1]</sup></td></tr>
+                    <tr><th>MBTI</th><td>ISTJ-A <span class="text-xs text-gray-400">(청렴결백한 논리주의자)</span></td></tr>
+                </table>
+            </aside>
+        </div>
+        <!-- // 상단 레이아웃 분리 끝 -->
+
+        <!-- 본문 시작 -->
+        <h2 id="s-1">1. 개요</h2>
+        <div class="quote-box">
+            <strong>"부끄러움을 모르는 보수는 보수가 아닙니다. 저는 썩은 물과 섞이느니 차라리 말라죽는 길을 택하겠습니다."</strong><br>
+            - 2022년, <a href="국민의힘.html" class="wiki-link">국민의힘</a> 입당 제의를 거절하며 <del>윤재훈 의문의 1패</del>
+        </div>
+        <p>
+            <a href="효빈광역시.html" class="wiki-link">효빈광역시</a>의 정치인. 
+            보수 성향이지만 <a href="국민의힘.html" class="wiki-link">국민의힘</a>(특히 <a href="윤재훈.html" class="wiki-link">윤재훈</a> 계열)을 
+            극도로 혐오하는 <strong>합리적 보수</strong>를 자처하는 인물이다.
+        </p>
+        <p>
+            2014년 정계에 입문했으나 2016년 국정농단 사태 때 "내 손으로 뽑은 대통령이 부끄럽다"며 
+            기초의원직을 사퇴하는 초강수를 두었다. <del>보통은 탈당을 하지 사퇴는 안 한다. 역시 상남자.</del> 
+            이후 2018년 지방선거에서 무소속으로 시의원에 당선되는 저력을 보여주었고, 
+            2022년 효빈시장 선거에서는 거대 양당의 틈바구니 속에서 <strong>14.72%</strong>를 득표하며 
+            제1야당 후보 <a href="윤재훈.html" class="wiki-link">윤재훈</a>(9.99%)을 트리플 스코어로 누르고 2위를 기록했다.
+        </p>
+        <p>
+            이후 2026년 제9회 전국동시지방선거에 효빈시장 후보로 재도전, 마침내 <strong>15.27%</strong>의 득표율을 기록하며 
+            마의 15% 벽을 넘고 선거비 전액 보전을 받아내는 기적을 연출했다. <del>승리의 보수 단일후보</del>
+        </p>
+
+        <h2 id="s-2">2. 생애</h2>
+
+        <h3 id="s-2-1">2.1. 유년기 및 학창 시절</h3>
+        <p>
+            1969년 4월 19일, 당시 <a href="덕빈북도.html" class="wiki-link">덕빈북도</a> <a href="탄성군.html" class="wiki-link">탄성군</a> 
+            흑택면 만서리(현재의 <a href="창전구.html" class="wiki-link">창전구</a> 마시동)의 가난한 농가에서 태어났다. 
+            <a href="광정초등학교.html" class="wiki-link">광정초</a>, <a href="광정중학교.html" class="wiki-link">광정중</a>, 
+            <a href="마시고등학교.html" class="wiki-link">마시고</a>를 졸업할 때까지 줄곧 전교 1등을 놓치지 않은 수재였다. <del>공부만 잘했다.</del>
+        </p>
+        <p>
+            이후 지역 명문인 <a href="성택대학교.html" class="wiki-link">성택대학교</a> 경영학과에 진학해 학생회장을 역임했다. 
+            당시 운동권이 주류였던 대학가에서 드물게 "투쟁보다 실력"을 주장하며, 
+            화염병 대신 <strong>계산기</strong>를 들고 토론 배틀을 신청하고 다녔다. 
+            졸업 후에는 효빈시 내 중소기업에서 임원으로 근무하며 평범한 사회인으로 살았다.
+        </p>
+
+        <h3 id="s-2-2">2.2. 정계 입문과 사퇴 (2014~2016)</h3>
+        <p>
+            2014년 제6회 전국동시지방선거에서 <a href="새누리당.html" class="wiki-link">새누리당</a>의 영입 제안을 받고 정계에 입문했다. 
+            효빈시 <a href="남구.html" class="wiki-link">남구</a> 가 선거구(구의원)에 출마하여 압도적인 득표율로 당선되었다. 
+            구의원 시절 깐깐한 행정 감사로 공무원들이 기피하는 의원 1순위였다고 한다. <del>공무원 킬러</del>
+        </p>
+        <p>
+            그러나 2016년, <strong>박근혜-최순실 국정농단 사태</strong>가 터지자 그는 큰 충격을 받았다. 
+            보통의 정치인들이 탈당 후 바른정당으로 가거나 침묵을 지킨 것과 달리, 그는 
+            <strong>"이런 당의 공천을 받아 당선된 것 자체가 부끄럽다. 주민들에게 속죄하는 길은 사퇴뿐이다."</strong>라며 
+            12월 9일 탄핵 소추안 가결 직후 <strong>의원직을 사퇴</strong>해버렸다.
+            이 사건으로 그는 전국적인 인지도는 없었으나 지역구 내에서만큼은 "유성민은 진짜다", "저 양반 고집은 황소도 못 꺾는다"는 각인을 남겼다.
+        </p>
+
+        <h3 id="s-2-3">2.3. 무소속 돌풍 (2018)</h3>
+        <p>
+            사퇴 후 야인으로 돌아갔으나, 지역 주민들의 강력한 출마 요구가 빗발쳤다. 
+            결국 2018년 제7회 지방선거에서 당적 없이 <strong>무소속</strong>으로 체급을 올려 
+            <strong>효빈시의원(광역의원) 남구 제4선거구</strong>에 출마했다.
+        </p>
+        <p>
+            당시 민주당의 파란 물결이 거셌음에도 불구하고, 유성민은 
+            <strong>"당 보고 찍지 말고, 사람 보고 찍어주십시오"</strong>라는 슬로건 하나로 
+            민주당 후보를 3%p 차이로 꺾고 당선되는 파란을 일으켰다. 
+            이는 효빈시 지방선거 역사상 드문 무소속 광역의원 당선 사례로 기록된다.
+        </p>
+
+        <h3 id="s-2-4">2.4. 2022년 지방선거: "보수의 양심"</h3>
+        <p>
+            2022년 대선 직후 <a href="국민의힘.html" class="wiki-link">국민의힘</a> 지지율이 오르자, 
+            효빈시당에서는 경쟁력 있는 유성민에게 입당 및 시장 경선 참여를 제안했다. 
+            당선 가능성이 매우 높은 상황이었기에 거절하기 힘든 제안이었다.
+        </p>
+        <p>
+            그러나 그는 입당 조건으로 <strong>"부패한 토호 세력(<a href="윤대환.html" class="wiki-link">윤대환</a> 계열)의 청산"</strong>을 요구했고, 
+            당이 이를 받아들이지 않고 오히려 <a href="윤재훈.html" class="wiki-link">윤재훈</a>을 전략 공천하려 하자 미련 없이 협상 테이블을 엎었다.
+        </p>
+        <div class="quote-box">
+            "윤재훈 같은 혐오 종자와 같은 당을 하느니, 차라리 광야에서 얼어 죽겠습니다."
+        </div>
+        <p>
+            결국 무소속으로 효빈시장 선거에 출마했다. 
+            비록 <a href="박효빈.html" class="wiki-link">박효빈</a> 시장의 압도적인 인기(77.9%)에 밀려 낙선했으나, 
+            거대 야당 후보인 <a href="윤재훈.html" class="wiki-link">윤재훈</a>(9.99%)을 
+            <strong>14.72%</strong>라는 득표율로 짓누르며 2위를 차지했다.
+        </p>
+        <p>
+            득표율이 10% 이상 15% 미만인 <strong>14.72%</strong>를 기록하여 선거비용 <strong>반액</strong>을 보전받았다.
+            비록 전액 보전은 실패했지만, 앞서 언급한 박효빈 지지자들의 '전략적 후원' 덕분에 큰 빚을 지지는 않았다고 한다. 
+            <del>반면 윤재훈은 한 푼도 못 받고 가산 탕진했다. 꼴좋다.</del>
+        </p>
+
+        <h3 id="s-2-5">2.5. 2026년 지방선거: "전액 보전의 기적"</h3>
+        <p>
+            2026년 제9회 전국동시지방선거에서 다시 한 번 효빈광역시장 후보로 무소속 출마를 감행했다. 
+            이번 선거에서는 <a href="박효빈.html" class="wiki-link">박효빈</a> 시장이 역대급 시정 지지율을 등에 업고 출마한데다, 
+            국민의힘 후보로 징글징글한 <a href="윤재훈.html" class="wiki-link">윤재훈</a>이 또다시 출마하며 지난 선거와 유사한 구도가 형성되었다.
+        </p>
+        <p>
+            유성민은 <strong>"진짜는 썩지 않습니다. 효빈의 합리적 보수!"</strong>라는 슬로건을 내걸고 중도 및 보수층 표심을 공략했다. 
+            특히 지난 4년간 윤재훈이 보여준 끝없는 기행(계엄령 난동 등)에 질려버린 보수 유권자들에게 
+            "부끄럽지 않은 보수 후보를 찍어달라"며 간곡히 호소했다.
+        </p>
+        <p>
+            개표 결과, 비록 <a href="박효빈.html" class="wiki-link">박효빈</a>(76.79%)의 벽을 넘지는 못하고 2위로 낙선했지만, 
+            <strong>15.27%</strong>라는 경이로운 득표율을 기록하며 마침내 <strong>선거비용 전액 보전(15% 이상)</strong> 기준을 아슬아슬하게 돌파하는 기적을 연출했다!
+        </p>
+        <p>
+            이는 윤재훈(4.11%)에게 실망한 <strong>국민의힘 지지층의 표를 대거 흡수</strong>한 결과로 분석된다. 
+            사실상 보수 진영의 단일 후보로서 인정받은 셈이며, 
+            선거 당일 새벽 15%를 넘기자 캠프 관계자들이 얼싸안고 눈물을 흘렸다는 후문이다. 
+            <del>반면 윤재훈은 4.11%로 또다시 전액 미보전 크리를 맞으며 정의당 후보에게도 밀리는 대굴욕을 겪었다.</del>
+        </p>
+
+        <h2 id="s-3">3. 정치 성향</h2>
+        <p>
+            <strong>경제는 보수, 문화는 개방적 실용주의.</strong><br>
+            시장의 자율성을 중시하지만, 공정한 경쟁이 전제되어야 한다고 믿는다. 
+            <a href="박효빈.html" class="wiki-link">박효빈</a> 시장의 '효빈 패스'나 '청년 주택' 같은 복지 정책에 대해서도 
+            "재정 건전성이 우려되지만, 취지 자체는 동의한다"며 조건부 찬성 입장을 보였다.
+        </p>
+        <p>
+            특히 <a href="서브컬처.html" class="wiki-link">서브컬처</a> 정책에 대해서는 의외로 <strong>긍정적</strong>인 입장을 보인다. 
+            초기에는 "시장이 너무 가벼워 보인다"며 우려를 표했으나, 
+            <a href="L-Project.html" class="wiki-link">L-Project</a>가 가져오는 막대한 관광 수익과 지역 경제 활성화 효과를 확인한 뒤로는 
+            <strong>"돈이 되는 산업이라면 마다할 이유가 없다. 그것이 진정한 실용 보수다."</strong>라며 태도를 바꿨다. 
+            이는 <a href="윤재훈.html" class="wiki-link">윤재훈</a>처럼 맹목적으로 혐오감을 드러내는 것과는 확연히 대비되는 모습이다.
+        </p>
+
+        <h2 id="s-4">4. 타 인물과의 관계</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li>
+                <strong><a href="윤재훈.html" class="wiki-link">윤재훈</a></strong>: <strong>경멸의 대상이자 득표율 공급기.</strong><br>
+                같은 보수 진영임에도 사람 취급을 안 한다. 토론회에서 윤재훈이 "같은 보수끼리 단일화합시다"라고 하자 
+                마이크를 끄고 "자네는 보수가 아니라 그냥 양아치야"라고 일갈한 사건은 유명하다.
+                아이러니하게도 9회 지선에서는 윤재훈의 삽질 덕분에 보수표를 싹쓸이하여 15%를 넘길 수 있었다.
+            </li>
+            <li>
+                <strong><a href="박효빈.html" class="wiki-link">박효빈</a></strong>: <strong>인정하는 라이벌.</strong><br>
+                정책적으로는 대립각을 세우지만, 박효빈의 행정 능력과 진정성은 높이 평가한다. 
+                박효빈 역시 유성민을 "말이 통하는 어른"이라며 예우한다. 
+                사석에서는 서로 "시장님", "의원님" 하며 깍듯이 대한다고. <del>브로맨스?</del>
+            </li>
+            <li>
+                <strong><a href="강성택.html" class="wiki-link">강성택</a></strong>: <strong>안타까운 선배.</strong><br>
+                무소속의 설움을 공유하는 사이. 강성택이 3표 차로 낙선했을 때 술을 사주며 위로해줬다는 카더라가 있다. 
+                하지만 강성택의 과거 아집에 대해서는 비판적이다.
+            </li>
+        </ul>
+
+        <h2 id="s-5">5. 선거 이력</h2>
+        <table class="text-center w-full">
+            <thead>
+                <tr><th>연도</th><th>선거명</th><th>선거구</th><th>정당</th><th>득표수</th><th>득표율</th><th>결과</th><th>비고</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2014</td><td>제6회 지방선거</td><td>효빈시 남구 가선거구</td>
+                    <td><span class="wiki-badge badge-saenuri">새누리당</span></td>
+                    <td>12,405</td><td>48.5%</td><td><strong>당선 (1위)</strong></td><td>초선</td>
+                </tr>
+                <tr>
+                    <td>2018</td><td>제7회 지방선거</td><td>효빈시 남구 제4선거구</td>
+                    <td><span class="wiki-badge badge-independent">무소속</span></td>
+                    <td>21,300</td><td>38.2%</td><td><strong>당선 (1위)</strong></td><td>재선(체급 상승)</td>
+                </tr>
+                <tr>
+                    <td>2022</td><td>제8회 지방선거</td><td>효빈광역시장</td>
+                    <td><span class="wiki-badge badge-independent">무소속</span></td>
+                    <td>289,540</td><td>14.72%</td><td><span style="color:red">낙선 (2위)</span></td><td>선거비용 반액 보전</td>
+                </tr>
+                <tr style="background-color: #FEF9E7;">
+                    <td>2026</td><td>제9회 지방선거</td><td>효빈광역시장</td>
+                    <td><span class="wiki-badge badge-independent">무소속</span></td>
+                    <td>미상</td><td><strong>15.27%</strong></td><td><span style="color:red">낙선 (2위)</span></td><td><strong>선거비용 전액 보전</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="s-6">6. 여담</h2>
+        <ul class="list-disc pl-5 mt-2 space-y-2">
+            <li>
+                <strong>성택대학교 경영학과 출신:</strong> 대학 시절 별명이 '성택대 대처(Thatcher)'였다고 한다. 
+                토론 동아리에서 말빨로 운동권 선배들을 털어버린 전설이 있다. 당시 별명이 <strong>'논리 탱크'</strong>였다고.
+            </li>
+            <li>
+                <strong>박효빈과의 일화:</strong> 시장 선거 낙선 후, <a href="박효빈.html" class="wiki-link">박효빈</a> 당선인이 찾아와 
+                "선배님의 공약 중 '구도심 주차장 확대'는 제가 가져가서 쓰겠습니다"라고 하자 
+                쿨하게 "저작권료는 소주 한 잔이면 된다"며 허락했다고 한다. <del>대인배</del> 
+                이후 실제로 포장마차에서 소주를 마시는 모습이 목격되었다. 안주는 꼼장어였다고 한다.
+            </li>
+            <li>
+                <strong>사퇴의 밤, 어간동 대첩:</strong> 사퇴 결심을 밝힌 날 밤, 어간동 자택은 그야말로 <strong>제2차 한국전쟁</strong>을 방불케 하는 난리가 났다고 한다. 
+                부인 김 모 씨는 <strong>"당신이 무슨 독립투사냐, 처자식 굶길 작정이냐"</strong>며 등짝 스매싱을 날렸고, 
+                시골에 계신 노부모님은 전화로 "동네 창피해서 얼굴을 못 들고 다닌다"며 통곡을 하셨다.
+                하지만 유성민은 <strong>"부끄럽게 배지 달고 사느니 고시원에서 라면 먹고 살겠다!"</strong>라며 실제로 짐을 싸서 집을 나가려 했다. <del>사실상 가출 시위</del>
+                결국 남편의 '똥고집'을 이길 수 없음을 직감한 아내가 현관문 앞을 막아서며 "그래, 맘대로 해라! 대신 굶어 죽어도 난 모른다!"라고 반포기 상태로 허락(?)해 주었다고 한다.<sup class="wiki-fn-link" title="훗날 아내는 인터뷰에서 '그때 그냥 나가게 뒀어야 했는데...'라며 농담 반 진담 반으로 회고했다.">[3]</sup>
+            </li>
+            <li>
+                <strong>거주지:</strong> 현재 실거주지는 <strong>남구 어간동</strong>이다. 
+                본가는 <a href="창전구.html" class="wiki-link">창전구</a> 마시동이지만, 정치적 기반은 <a href="남구.html" class="wiki-link">남구</a>다. 
+                그래서 명절 때마다 "남구 사람이냐 창전구 사람이냐"는 질문을 받는데, "나는 효빈 사람이다"라고 우문현답을 한다. <del>회피 만렙</del>
+            </li>
+            <li>
+                <strong>숨겨진 덕후?</strong>: 손녀가 좋아한다며 <a href="굿즈.html" class="wiki-link">애니메이션 굿즈샵</a>에서 물건을 고르는 모습이 포착되었다. 
+                단순히 사주기만 하는 게 아니라 "이 피규어는 도색 마감이 훌륭하군"이라며 
+                퀄리티를 진지하게 분석하고 있었다고(...) <del>역시 경영학과 출신</del> 
+                이에 대해 묻자 "좋은 상품을 알아보는 눈에는 국경도 장르도 없다"고 답변했다.
+            </li>
+            <li>
+                <strong>소문난 애주가:</strong> 술을 꽤 좋아하며 주량은 소주 3병 이상이라고 한다. 
+                선거 유세 때도 시민들이 주는 막걸리를 마다하지 않고 다 받아 마셔 '막걸리 유세'라는 별칭이 붙기도 했다.
+                <a href="박효빈.html" class="wiki-link">박효빈</a> 시장이 술을 못 마시는 것(알쓰)과는 대조적이다.
+            </li>
+            <li>
+                최근에는 <a href="유튜브.html" class="wiki-link">유튜브</a> 채널 '유성민의 쓴소리'를 개설하여 시정 비판 및 보수 재건에 대한 영상을 올리고 있다. 
+                구독자는 아직 3천 명 수준이지만, 댓글 창은 <a href="윤재훈.html" class="wiki-link">윤재훈</a> 욕으로 도배되어 있다(...)
+            </li>
+        </ul>
+
+        <h2 id="s-7">7. 둘러보기</h2>
+        <div class="border border-[#ccc] p-3 rounded bg-white text-sm text-center">
+            <a href="효빈광역시장 선거.html" class="wiki-link">효빈광역시장 선거</a> · 
+            <a href="박효빈.html" class="wiki-link">박효빈</a> · 
+            <a href="윤재훈.html" class="wiki-link">윤재훈</a> · 
+            <a href="강성택.html" class="wiki-link">강성택</a> · 
+            <a href="남구.html" class="wiki-link">남구(효빈광역시)</a> · 
+            <a href="성택대학교.html" class="wiki-link">성택대학교</a>
+        </div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-400 text-xs pb-10">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+
+        // 각주 툴팁 기능
+        const tooltip = document.getElementById('wiki-tooltip');
+        document.querySelectorAll('.wiki-fn-link').forEach(link => {
+            link.addEventListener('mouseenter', (e) => {
+                tooltip.innerHTML = link.getAttribute('title');
+                tooltip.style.display = 'block';
+                tooltip.style.left = (e.pageX + 15) + 'px';
+                tooltip.style.top = (e.pageY + 15) + 'px';
+            });
+            link.addEventListener('mousemove', (e) => {
+                tooltip.style.left = (e.pageX + 15) + 'px';
+                tooltip.style.top = (e.pageY + 15) + 'px';
+            });
+            link.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

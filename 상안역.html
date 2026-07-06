@@ -1,0 +1,347 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상안역 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        :root { 
+            --wiki-main: #005BAC; /* 본문 강조색: 코레일 블루 */
+             --wiki-fixed: #7777AA; /* 상단 네비게이션: 효빈위키 기본색 */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-link: #0055AA; 
+            
+            /* 코레일 색상 */
+            --korail-blue: #005BAC;
+        }
+
+        body { font-family: 'Pretendard', 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: break-all; margin: 0; font-size: 15px; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900; color: #000; margin-bottom: 0.5rem; border-bottom: 2px solid #ccc; padding-bottom: 10px; }
+        
+        h2 { font-size: 2.5rem !important; font-weight: 800; border-bottom: 3px solid var(--wiki-main); padding-bottom: 10px; margin-top: 3rem; margin-bottom: 20px; color: #000; }
+        h3 { font-size: 1.8rem !important; font-weight: 700; margin-top: 2rem; margin-bottom: 15px; padding-left: 10px; border-left: 5px solid var(--wiki-main); color: #000; }
+
+        /* 테이블 공통 */
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; border: 1px solid #ccc; font-size: 14px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: center; vertical-align: middle; }
+        th { background-color: #f2f2f2; font-weight: 700; }
+
+        /* 인포박스 스타일 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 400px; font-size: 13px; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .infobox-top { background-color: var(--korail-blue); padding: 10px; text-align: center; color: white; }
+        .infobox-title { font-size: 2rem !important; font-weight: 900; }
+        
+        /* 인포박스 내부 테이블 */
+        .infobox-table { width: 100%; border: none; margin: 0; }
+        .infobox-table th { background: #f9f9f9; width: 35%; text-align: center; border: 1px solid #ddd; }
+        .infobox-table td { text-align: left; padding: 8px; border: 1px solid #ddd; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: 700; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* 철도거리표 스타일 */
+        .distance-table-container {
+            width: 100%;
+            background-color: #fff;
+            border-top: 2px solid #ccc;
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+        }
+        .main-header {
+            background-color: #f0f0f0;
+            color: #333;
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+            border-bottom: 1px solid #ccc;
+        }
+        .station-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding: 8px 0;
+            text-align: center;
+        }
+        .col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .col.side { flex-basis: 30%; font-size: 0.9em; }
+        .col.center { flex-basis: 40%; background-color: #fafafa; border-left: 1px solid #eee; border-right: 1px solid #eee; padding: 5px 0; }
+        
+        .station-link-dist { font-weight: bold; color: var(--wiki-link); text-decoration: none; font-size: 1.1em; }
+        .line-badge { font-size: 0.8em; color: #555; font-weight: bold; margin-bottom: 2px; }
+        .dist-val { font-size: 0.8em; color: #666; margin-top: 2px; }
+
+        .image-box { text-align: center; background: #eee; border-bottom: 1px solid #ccc; }
+        .image-box img { max-width: 100%; height: auto; display: block; }
+
+        /* 승강장 배선도 테이블 스타일 (3행 구조) */
+        .platform-track-table { border: 2px solid #aaa !important; margin: 15px 0 !important; background: #fff !important; width: 100% !important; table-layout: fixed; }
+        .track-normal { color: #000 !important; font-family: 'Courier New', monospace; font-size: 1.1rem !important; font-weight: bold; }
+        .platform-badge-box { color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.9rem !important; font-weight: 900; display: inline-block; min-width: 35px; }
+
+        /* 효빈위키식 스타일 */
+        .wiki-strike { text-decoration: line-through; color: #999; }
+        .wiki-footnote { font-size: 0.8em; vertical-align: super; color: var(--wiki-link); cursor: pointer; text-decoration: none; }
+
+        /* [추가] 빈주역 스타일 내비게이션 CSS */
+        .infobox-line-header { background-color: #ffffff; padding: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; border-bottom: 1px solid var(--wiki-border); }
+        .badge-rail { display: inline-flex; align-items: center; justify-content: center; height: 24px; padding: 0 10px; border-radius: 4px; color: white; font-weight: 900; font-size: 0.85rem; line-height: 1; }
+        
+        .rail-nav-table { width: 100% !important; margin: 0 !important; border: none !important; table-layout: fixed; background: #fff; }
+        .rail-nav-table td { border: none !important; border-bottom: 1px solid #eee !important; padding: 8px 4px !important; text-align: center; vertical-align: middle; }
+        .nav-prev-next { font-size: 0.8rem; color: #666; }
+        .nav-prev-next b { display: block; font-size: 1rem; color: #000; margin: 2px 0; }
+        .nav-center { color: white; font-weight: 900; font-size: 0.8rem; }
+        .nav-line-name { font-size: 0.7rem; background: rgba(0,0,0,0.1); padding: 1px 6px; border-radius: 10px; margin-bottom: 2px; display: inline-block; }
+
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <!-- 상단바 색상 #7777AA -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-fixed);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 또는 번호 검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="txt-lvl-1">상안역</div>
+        <div class="text-right text-sm text-gray-500 mb-2 font-bold">최근 수정 시각: 2026-01-21 16:30:00</div>
+
+        <div class="p-3 border border-gray-300 rounded mb-5 bg-white text-sm">
+            <span class="font-bold text-[#005BAC]">분류:</span> 
+            <a href="상안군의_철도역.html" class="wiki-link">상안군의 철도역</a> | 
+            <a href="1985년_개업한_철도역.html" class="wiki-link">1985년 개업한 철도역</a> | 
+            <a href="상빈선.html" class="wiki-link">상빈선</a>
+        </div>
+
+        <!-- 인포박스 시작 -->
+        <aside class="infobox">
+            <!-- 인포박스 헤더 코레일 블루 -->
+            <div class="infobox-top">
+                <div class="infobox-title">상 안</div>
+                <div class="text-sm">Sangan / 上安</div>
+            </div>
+
+            <!-- [추가] 노선 뱃지 -->
+            <div class="infobox-line-header">
+                <div class="badge-rail bg-[#5288f5]">새마을호</div>
+                <div class="badge-rail bg-[#f55839]">무궁화호</div>
+            </div>
+
+            <!-- [추가] 빈주역 스타일 내비게이션 테이블 -->
+            <div class="rail-nav-table-container">
+                <table class="rail-nav-table">
+                    <colgroup><col style="width:35%"><col style="width:30%"><col style="width:35%"></colgroup>
+<script>
+    function getStationLink(name) {
+        return `${name.endsWith('역') ? name : name + '역'}.html`;
+    }
+
+    const navData = [
+        // 상빈선
+        { 
+            line: '상빈선', name: '새마을 · 무궁화', color: '#f55839', 
+            prev: '시종착', prevDir: '', pDist: '', 
+            next: '해진', nextDir: '빈주', nDist: '7.86' 
+        }
+    ];
+    
+    navData.forEach(d => {
+        const prevText = d.prev === '시종착' 
+            ? '시종착' 
+            : `${d.prevDir} 방면<br><b><a href="${getStationLink(d.prev)}" class="wiki-link" style="color:#000;">${d.prev}</a></b>${d.pDist ? '<br>← ' + d.pDist + '㎞' : ''}`;
+
+        const nextText = d.next === '시종착' 
+            ? '시종착' 
+            : `${d.nextDir} 방면<br><b><a href="${getStationLink(d.next)}" class="wiki-link" style="color:#000;">${d.next}</a></b>${d.nDist ? '<br>' + d.nDist + ' ㎞ →' : ''}`;
+
+        document.write(`<tr>
+            <td class="nav-prev-next">${prevText}</td>
+            <td class="nav-center" style="background:${d.color}">
+                <div class="nav-line-name">${d.line}</div><br>
+                <div class="font-bold">${d.name}</div>
+                ${d.note ? '<div style="font-size:0.6rem">' + d.note + '</div>' : ''}
+            </td>
+            <td class="nav-prev-next">${nextText}</td>
+        </tr>`);
+    });
+</script>
+                </table>
+            </div>
+            
+            <div class="image-box">
+                <img src="이미지/상안역.png" alt="상안역 전경" onerror="this.src='https://placehold.co/400x250?text=Sangan+Station';">
+                <div class="p-2 text-xs text-gray-600 bg-gray-100 border-t border-gray-300">상안역사</div>
+            </div>
+
+            <table class="infobox-table">
+                <tr><th>운영 기관</th><td><a href="한국철도공사.html" class="wiki-link">한국철도공사</a></td></tr>
+                <tr><th>개업일</th><td>1985년 7월 24일</td></tr>
+                <tr><th>주소</th><td><a href="덕빈북도.html" class="wiki-link">덕빈북도</a> <a href="상안군.html" class="wiki-link">상안군</a> <a href="상안읍.html" class="wiki-link">상안읍</a> 순화리 31</td></tr>
+                <tr><th>노선</th><td><a href="상빈선.html" class="wiki-link">상빈선</a></td></tr>
+                <tr><th>등급</th><td>보통역 (3급)</td></tr>
+                <tr><th>승강장</th><td>2면 4선 (두단식)</td></tr>
+                <tr><th>운행열차</th><td><a href="새마을호.html" class="wiki-link">새마을호</a>, <a href="무궁화호.html" class="wiki-link">무궁화호</a></td></tr>
+            </table>
+
+            <!-- 철도거리표 (아이콘 제거, 텍스트 중심) -->
+            <div class="distance-table-container">
+                <div class="main-header">철도거리표</div>
+                
+                <div class="station-row">
+                    <div class="col side">
+                        <span class="direction">시종착</span>
+                        <span class="station-link-dist" style="color:#999; cursor:default;">(기점)</span>
+                        <span class="dist-val">0 km</span>
+                    </div>
+                    <div class="col center">
+                        <div class="line-badge text-[#005BAC]">상빈선</div>
+                        <span class="font-black text-lg">상 안</span>
+                    </div>
+                    <div class="col side">
+                        <span class="direction">빈주/우구 방면</span>
+                        <a href="해진역.html" class="station-link-dist">해 진</a>
+                        <span class="dist-val">7.86 km →</span>
+                        <div class="text-xs text-gray-500">(비전철)</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- 인포박스 끝 -->
+
+        <div class="inline-block min-w-[300px] border border-gray-300 bg-gray-50 p-4 mb-6">
+            <div class="text-center font-black mb-2 text-lg">목차</div>
+            <ul class="list-decimal list-inside text-sm font-bold text-[#0055AA] space-y-1">
+                <li><a href="#s-1">개요</a></li>
+                <li><a href="#s-2">역사</a></li>
+                <li><a href="#s-3">역 정보</a></li>
+                <li><a href="#s-4">일평균 이용객</a></li>
+                <li><a href="#s-5">연계 교통</a></li>
+                <li><a href="#s-6">여담</a></li>
+            </ul>
+        </div>
+        <div class="clear-both"></div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <p>
+            <a href="상빈선.html" class="wiki-link">상빈선</a>의 기점역. <a href="덕빈북도.html" class="wiki-link">덕빈북도</a> <a href="상안군.html" class="wiki-link">상안군</a> <a href="상안읍.html" class="wiki-link">상안읍</a> 순화리에 위치해 있다.
+        </p>
+        <p>
+            상안군의 관문 역할을 하는 역으로, 군청 소재지인 상안읍에 위치하여 접근성이 뛰어나다. 비록 상빈선이 단선 비전철 노선(전산~빈주 제외)이지만, <a href="새마을호.html" class="wiki-link">새마을호</a>와 <a href="무궁화호.html" class="wiki-link">무궁화호</a>가 필수 정차하며 상안군민들의 발이 되어주고 있다.
+        </p>
+
+        <h2 id="s-2">2. 역사</h2>
+        <ul class="list-disc ml-6 space-y-1 mb-4">
+            <li><b>1985년 7월 24일:</b> 상빈선 개통과 함께 영업 개시</li>
+            <li><b>2000년대:</b> 역사 리모델링 및 광장 정비</li>
+        </ul>
+
+        <h2 id="s-3">3. 역 정보</h2>
+        <p>
+            역사는 1980년대 후반에 지어진 붉은 벽돌 건물로, 다소 투박하지만 견고한 느낌을 준다. 역 앞에는 상안군의 특산물인 배를 형상화한 조형물이 있다. 상빈선의 시발역이기 때문에 선로가 끊겨 있는 두단식 구조를 취하고 있다.
+        </p>
+        <p>
+            다음 역인 <a href="해진역.html" class="wiki-link">해진역</a>(전산시 소재)까지는 7.86km 거리이다. 이 역을 출발한 열차는 상안군의 평야 지대를 지나 <a href="전산시.html" class="wiki-link">전산시</a>로 향한다.
+        </p>
+        
+        <h3 id="s-3-1">3.1. 승강장</h3>
+        <p>2면 4선의 두단식 승강장이다. 열차 편수가 많지 않아 평소에는 역사와 가장 가까운 1번, 2번 홈을 주로 사용한다.</p>
+
+        <!-- 승강장 배선도 (3행 구조) -->
+        <div class="my-4 overflow-x-auto">
+            <table class="platform-track-table" style="font-family:monospace; min-width:600px; text-align:center;">
+                <colgroup>
+                    <col style="width:10%">
+                    <col style="width:80%">
+                    <col style="width:10%">
+                </colgroup>
+                <tr><td colspan="3" class="bg-gray-100 font-bold">↑ (시종착)</td></tr>
+                <tr class="h-16">
+                    <td style="background:#ddd; border-right:2px solid #555;">1 2</td>
+                    <td class="track-normal">ㅣㅣ　　　　　　　　　　　　　　　　ㅣㅣ</td>
+                    <td style="background:#ddd; border-left:2px solid #555;">3 4</td>
+                </tr>
+                <tr><td colspan="3" class="bg-gray-100 font-bold">↓ <a href="해진역.html" class="wiki-link">해진</a></td></tr>
+            </table>
+        </div>
+
+        <table class="platform-track-table">
+            <thead>
+                <tr><th style="width:15%">번호</th><th style="width:30%">노선</th><th>행선지</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="platform-badge-box" style="background:#ddd; color:black;">1 · 2</span></td>
+                    <td style="text-align:left;"><b>상빈선</b></td>
+                    <td style="text-align:left;">
+                        <a href="해진역.html" class="wiki-link">해진</a> · <a href="전산역.html" class="wiki-link">전산</a> · <a href="군천역.html" class="wiki-link">군천</a> · <a href="빈주역.html" class="wiki-link">빈주</a> 방면
+                    </td>
+                </tr>
+                <tr>
+                    <td><span class="platform-badge-box" style="background:#ddd; color:black;">3 · 4</span></td>
+                    <td style="text-align:left;"><b>상빈선</b></td>
+                    <td style="text-align:left;">
+                        (주로 화물열차나 대기열차가 사용)
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="s-4">4. 일평균 이용객</h2>
+        <p>
+            상안군의 인구 감소세에도 불구하고, 시외버스와의 경쟁에서 우위를 점하며 꾸준한 이용객을 유지하고 있다. 특히 최근 이부면에 조성된 산업단지로 출퇴근하는 근로자들의 이용이 늘어나는 추세이다.
+        </p>
+
+        <h2 id="s-5">5. 연계 교통</h2>
+        <p>역 광장 바로 옆에 상안버스터미널이 위치해 있어 환승 동선이 매우 짧고 편리하다. 상안군 내 모든 노선의 버스가 이곳을 기점으로 운행한다.</p>
+        <ul class="list-disc ml-8 text-sm">
+            <li><b>상안 군내버스:</b> 상안역 - 군청 - 이부면(산업단지) - 각 면 소재지</li>
+        </ul>
+
+        <h2 id="s-6">6. 여담</h2>
+        <ul class="list-disc ml-8 space-y-2">
+            <li>
+                역 이름 <b>상안(上安)</b>은 '편안함이 으뜸'이라는 뜻이지만, 발음이 <b>'상한'</b>과 비슷해서 "도시락 상한 역", "기분 상한 역" 같은 아재 개그의 희생양이 되곤 한다. <span class="wiki-strike">상한가 역이었으면 떡상했을 텐데</span>
+            </li>
+            <li>
+                시종착역이라 열차 출발 전까지 여유롭게 앉아 있을 수 있어서, 겨울철에는 따뜻한 대합실 대신 미리 열차에 타서 자는 승객들이 많다. <span class="wiki-strike">움직이는 찜질방</span>
+            </li>
+            <li>
+                역 앞 시장(상안중앙시장)의 순대국밥이 기가 막히게 맛있다고 소문나 있다. 철도 동호인들 사이에서는 '국밥 먹으러 가는 역'으로 통한다.
+            </li>
+            <li>
+                인근 <a href="서진시.html" class="wiki-link">서진시</a>와의 통합 떡밥이 돌 때마다 "통합되면 역 이름이 서진역으로 바뀌는 거 아니냐"며 지역 주민들이 예민하게 반응하곤 한다.
+            </li>
+        </ul>
+
+    </div>
+    
+    <footer class="p-10 bg-gray-100 mt-20 text-sm text-center text-gray-500 font-bold">
+        이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. <br>
+        효빈위키는 백과사전이 아니며 검증되지 않았거나 잘못된 서술이 있을 수 있습니다.
+    </footer>
+
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>
+

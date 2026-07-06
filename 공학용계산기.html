@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>효빈도시철도 캐릭터 공학용 계산기 (LaTeX 버전)</title>
+<!-- Math.js for parsing and evaluation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+<!-- KaTeX for beautiful LaTeX rendering -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.js"></script>
+<!-- Nerdamer for Symbolic Calculus (미분/적분 처리용 엔진 추가) -->
+<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/nerdamer.core.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Algebra.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Calculus.js"></script>
+<style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        :root {
+            /* 기본 테마: 1호선 고나미 */
+            --theme-color: #0077DD;
+            --theme-light: #e6f2ff;
+            --bg-color: #f0f2f5;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: background-color 0.4s ease;
+        }
+
+        .header {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .header select {
+            padding: 12px 20px;
+            font-size: 16px;
+            font-family: 'Pretendard', sans-serif;
+            border: 2px solid var(--theme-color);
+            border-radius: 12px;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            background-color: white;
+            color: #333;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .header select:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: row;
+            background: white;
+            padding: 25px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            gap: 25px;
+            border-top: 10px solid var(--theme-color);
+            transition: border-color 0.4s ease;
+            max-width: 800px;
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .character-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 260px;
+            background-color: var(--theme-light);
+            border-radius: 16px;
+            padding: 20px;
+            transition: background-color 0.4s ease;
+        }
+
+        .character-section img {
+            width: 100%;
+            max-width: 180px;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.15));
+            transition: transform 0.3s ease;
+        }
+
+        .character-section img:hover {
+            transform: scale(1.05);
+        }
+
+        .character-name {
+            margin-top: 20px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--theme-color);
+            transition: color 0.4s ease;
+            text-align: center;
+        }
+
+        .calculator {
+            display: flex;
+            flex-direction: column;
+            width: 400px;
+            flex-grow: 1;
+        }
+
+        /* 화면 표시 영역 */
+        .display-container {
+            width: 100%;
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 16px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+            transition: border-color 0.3s ease;
+        }
+
+        .display-container:focus-within {
+            border-color: var(--theme-color);
+        }
+
+        /* LaTeX 렌더링 영역 */
+        #latex-display {
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-size: 1.8rem;
+            color: var(--theme-color);
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            scrollbar-width: thin;
+        }
+
+        /* 입력된 텍스트 및 결과 영역 */
+        #input-display {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2rem;
+            color: #6c757d;
+            text-align: right;
+            margin-top: 10px;
+            min-height: 24px;
+            word-wrap: break-word;
+        }
+
+        /* --- 새로 추가된 힌트 표시 영역 스타일 --- */
+        #hint-display {
+            font-size: 0.85rem;
+            color: var(--theme-color);
+            text-align: left;
+            margin-top: 8px;
+            min-height: 18px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background-color: var(--theme-light);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .keys {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            padding: 18px 0;
+            font-size: 17px;
+            font-weight: 700;
+            font-family: 'Pretendard', sans-serif;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            background-color: #f1f3f5;
+            color: #495057;
+            transition: all 0.15s ease;
+            box-shadow: 0 4px 0 #dee2e6;
+        }
+
+        button:hover {
+            background-color: #e9ecef;
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #dee2e6;
+        }
+
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #dee2e6;
+        }
+
+        .btn-eng {
+            background-color: #eef1f6;
+            color: #000;
+        }
+
+        .btn-operator {
+            background-color: var(--theme-light);
+            color: var(--theme-color);
+        }
+        .btn-operator:hover {
+            background-color: #dbe4f0;
+        }
+
+        .btn-equal {
+            background-color: var(--theme-color);
+            color: white;
+            grid-column: span 2;
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+        }
+        .btn-equal:hover {
+            background-color: var(--theme-color);
+            filter: brightness(1.1);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-clear {
+            background-color: #ff6b6b;
+            color: white;
+            box-shadow: 0 4px 0 #c92a2a;
+        }
+        .btn-clear:hover {
+            background-color: #fa5252;
+            box-shadow: 0 2px 0 #c92a2a;
+        }
+
+        /* --- 추가된 모드 전환 및 회계용 키패드 스타일 --- */
+        .mode-tabs {
+            display: flex;
+            width: 100%;
+            margin-bottom: 15px;
+            background-color: #e9ecef;
+            border-radius: 12px;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        .mode-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #868e96;
+            font-size: 0.95rem;
+        }
+
+        .mode-tab.active {
+            background-color: white;
+            color: var(--theme-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .eng-keys, .fin-keys {
+            display: none;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+        }
+
+        .eng-keys.active, .fin-keys.active {
+            display: grid;
+        }
+
+        .wiki-link {
+            margin-top: 30px;
+        }
+        .wiki-link a {
+            color: #868e96;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+        .wiki-link a:hover {
+            color: var(--theme-color);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .calculator {
+                width: 100%;
+                max-width: 400px;
+            }
+            .keys {
+                gap: 8px;
+            }
+            button {
+                padding: 15px 0;
+                font-size: 15px;
+            }
+        }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+<div class="header">
+<select id="lineSelector" onchange="changeTheme()">
+<option value="1">1호선 (고나미)</option>
+<option value="2">2호선 (하루빈)</option>
+<option value="3">3호선 (박라미)</option>
+<option value="4">4호선 (다로나)</option>
+<option value="5">5호선 (미소하)</option>
+<option value="6">6호선 (라세나)</option>
+<option value="7">7호선 (임세정·임세하)</option>
+<option value="8">8호선 (유리아)</option>
+<option value="binhyo">빈효선 (전노아)</option>
+<option value="binju1">빈주1호선 (박빛나)</option>
+<option value="binju2">빈주2호선 (김소빈)</option>
+<option value="deokju">덕주1호선 (이덕희)</option>
+<option value="changjeon">창전선 (심세이)</option>
+</select>
+</div>
+<div class="app-container">
+<!-- 캐릭터 표시 영역 -->
+<div class="character-section">
+<img alt="고나미" id="charImg" src="이미지/고나미.png"/>
+<div class="character-name" id="charName">1호선 - 고나미</div>
+</div>
+<!-- 계산기 영역 -->
+<div class="calculator">
+<div class="display-container">
+<!-- LaTeX가 렌더링 될 영역 -->
+<div id="latex-display">$$0$$</div>
+<!-- 입력 중인 원시 텍스트 표시 영역 -->
+<div id="input-display">0</div>
+<!-- 함수 입력 시 나타나는 실시간 가이드 영역 추가 -->
+<div id="hint-display">💡 힌트 대기중...</div>
+</div>
+<!-- 모드 전환 탭 -->
+<div class="mode-tabs">
+<div class="mode-tab active" id="tab-eng" onclick="setMode('eng')">공학용 모드</div>
+<div class="mode-tab" id="tab-fin" onclick="setMode('fin')">회계/재무 모드</div>
+</div>
+<!-- 공학용 키패드 (기존 keys 클래스를 eng-keys로 변경) -->
+<div class="eng-keys active" id="keypad-eng">
+<!-- 1행 -->
+<button class="btn-eng" onclick="appendValue('sin(')">sin</button>
+<button class="btn-eng" onclick="appendValue('cos(')">cos</button>
+<button class="btn-eng" onclick="appendValue('tan(')">tan</button>
+<button class="btn-eng" onclick="appendValue('log10(')">log</button>
+<button class="btn-eng" onclick="appendValue('log(')">ln</button>
+<button class="btn-clear" onclick="clearDisplay()">AC</button>
+<!-- 2행 -->
+<button class="btn-eng" onclick="appendValue('x')">x</button>
+<button class="btn-eng" onclick="appendValue('y')">y</button>
+<button class="btn-eng" onclick="appendValue('(')">(</button>
+<button class="btn-eng" onclick="appendValue(')')">)</button>
+<button class="btn-eng" onclick="appendValue('^')">x^y</button>
+<button class="btn-clear" onclick="deleteLast()">DEL</button>
+<!-- 3행 -->
+<button class="btn-eng" onclick="appendValue('sqrt(')">√</button>
+<button onclick="appendValue('7')">7</button>
+<button onclick="appendValue('8')">8</button>
+<button onclick="appendValue('9')">9</button>
+<button class="btn-operator" onclick="appendValue('/')">÷(분수)</button>
+<button class="btn-operator" onclick="appendValue('*')">×</button>
+<!-- 4행 -->
+<button class="btn-eng" onclick="appendValue('diff(')">d/dx</button>
+<button onclick="appendValue('4')">4</button>
+<button onclick="appendValue('5')">5</button>
+<button onclick="appendValue('6')">6</button>
+<button class="btn-operator" onclick="appendValue('-')">-</button>
+<button class="btn-operator" onclick="appendValue(',')">,</button>
+<!-- 5행 -->
+<button class="btn-eng" onclick="appendValue('integrate(')">∫(적분)</button>
+<button onclick="appendValue('1')">1</button>
+<button onclick="appendValue('2')">2</button>
+<button onclick="appendValue('3')">3</button>
+<button class="btn-operator" onclick="appendValue('+')">+</button>
+<button class="btn-eng" onclick="appendValue('e')">e</button>
+<!-- 6행 -->
+<button class="btn-eng" onclick="appendValue('defint(')">∫a~b</button>
+<button class="btn-eng" onclick="appendValue('pi')">π</button>
+<button onclick="appendValue('0')">0</button>
+<button onclick="appendValue('.')">.</button>
+<button class="btn-equal" onclick="calculate()">=</button>
+</div>
+<!-- 회계/재무용 키패드 신규 추가 -->
+<div class="fin-keys" id="keypad-fin">
+<!-- 1행 -->
+<button class="btn-eng" onclick="appendValue('PV(')">PV(현가)</button>
+<button class="btn-eng" onclick="appendValue('FV(')">FV(미래)</button>
+<button class="btn-eng" onclick="appendValue('PMT(')">PMT(지급)</button>
+<button class="btn-eng" onclick="appendValue('EAR(')">EAR(유효)</button>
+<button class="btn-clear" onclick="clearDisplay()">AC</button>
+<button class="btn-clear" onclick="deleteLast()">DEL</button>
+<!-- 2행 -->
+<button class="btn-eng" onclick="appendValue('NPV(')">NPV(순현가)</button>
+<button class="btn-eng" onclick="appendValue('IRR(')">IRR(내부수익)</button>
+<button class="btn-eng" onclick="appendValue('ROI(')">ROI(수익률)</button>
+<button class="btn-eng" onclick="appendValue('WACC(')">WACC(자본비용)</button>
+<button class="btn-eng" onclick="appendValue('[')">[</button>
+<button class="btn-eng" onclick="appendValue(']')">]</button>
+<!-- 3행 -->
+<button class="btn-eng" onclick="appendValue('(')">(</button>
+<button onclick="appendValue('7')">7</button>
+<button onclick="appendValue('8')">8</button>
+<button onclick="appendValue('9')">9</button>
+<button class="btn-operator" onclick="appendValue('/')">÷</button>
+<button class="btn-operator" onclick="appendValue(',')">,</button>
+<!-- 4행 -->
+<button class="btn-eng" onclick="appendValue(')')">)</button>
+<button onclick="appendValue('4')">4</button>
+<button onclick="appendValue('5')">5</button>
+<button onclick="appendValue('6')">6</button>
+<button class="btn-operator" onclick="appendValue('-')">-</button>
+<button class="btn-operator" onclick="appendValue('^')">x^y</button>
+<!-- 5행 -->
+<button class="btn-eng" style="visibility: hidden;">_</button>
+<button onclick="appendValue('1')">1</button>
+<button onclick="appendValue('2')">2</button>
+<button onclick="appendValue('3')">3</button>
+<button class="btn-operator" onclick="appendValue('+')">+</button>
+<button class="btn-operator" onclick="appendValue('*')">×</button>
+<!-- 6행 -->
+<button class="btn-eng" style="visibility: hidden;">_</button>
+<button class="btn-eng" style="visibility: hidden;">_</button>
+<button onclick="appendValue('0')">0</button>
+<button onclick="appendValue('.')">.</button>
+<button class="btn-equal" onclick="calculate()">=</button>
+</div>
+</div>
+</div>
+<div class="wiki-link">
+<a href="효빈도시철도.html">▶ 효빈위키 효빈도시철도 문서로 돌아가기</a>
+</div>
+<script>
+        // 색상 밝게 만드는 유틸리티 함수 (배경색 용)
+        function lightenColor(color, percent) {
+            var num = parseInt(color.replace("#",""),16),
+            amt = Math.round(2.55 * percent),
+            R = (num >> 16) + amt,
+            B = (num >> 8 & 0x00FF) + amt,
+            G = (num & 0x0000FF) + amt;
+            return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (B<255?B<1?0:B:255)*0x100 + (G<255?G<1?0:G:255)).toString(16).slice(1);
+        }
+
+        // 노선 데이터 세팅 (플레이스홀더 이미지를 사용하되, 실제 환경에서는 경로 수정)
+        const lineData = {
+            '1': { color: '#0077DD', charFile: '고나미', label: '1호선 - 고나미' },
+            '2': { color: '#00CCAA', charFile: '하루빈', label: '2호선 - 하루빈' },
+            '3': { color: '#FFCC11', charFile: '박라미', label: '3호선 - 박라미' },
+            '4': { color: '#FF5522', charFile: '다로나', label: '4호선 - 다로나' },
+            '5': { color: '#EE0022', charFile: '미소하', label: '5호선 - 미소하' },
+            '6': { color: '#881188', charFile: '라세나', label: '6호선 - 라세나' },
+            '7': { color: '#FF8899', charFile: '임세정', label: '7호선 - 임세정·임세하' },
+            '8': { color: '#9856FF', charFile: '유리아', label: '8호선 - 유리아' },
+            'binhyo': { color: '#6677CC', charFile: '전노아', label: '빈효선 - 전노아' },
+            'binju1': { color: '#CFBA0F', charFile: '박빛나', label: '빈주1호선 - 박빛나' },
+            'binju2': { color: '#C455F6', charFile: '김소빈', label: '빈주2호선 - 김소빈' },
+            'deokju': { color: '#FF4F91', charFile: '이덕희', label: '덕주1호선 - 이덕희' },
+            'changjeon': { color: '#33AAFF', charFile: '심세이', label: '창전선 - 심세이' }
+        };
+
+        function changeTheme() {
+            const selector = document.getElementById('lineSelector');
+            const data = lineData[selector.value];
+
+            // 테마 색상 적용
+            document.documentElement.style.setProperty('--theme-color', data.color);
+            document.documentElement.style.setProperty('--theme-light', lightenColor(data.color, 70));
+            
+            // 이미지 및 이름 업데이트 (플레이스홀더 제거, 찐 로컬 경로 적용)
+            const imgElement = document.getElementById('charImg');
+            imgElement.src = '이미지/' + data.charFile + '.png';
+            imgElement.alt = data.charFile;
+            
+            // 로컬 이미지가 없을 때 엑스박스 뜨는 것을 방지하기 위한 안전장치 (기본 내장 SVG)
+            imgElement.onerror = function() {
+                this.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22200%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23f0f2f5%22%2F%3E%3Ctext%20x%3D%22100%22%20y%3D%22100%22%20fill%3D%22%23adb5bd%22%20font-family%3D%22sans-serif%22%20font-size%3D%2214%22%20text-anchor%3D%22middle%22%3E이미지%20없음%3C%2Ftext%3E%3C%2Fsvg%3E';
+            };
+
+            document.getElementById('charName').textContent = data.label;
+        }
+
+        // --- 계산기 로직 (Math.js + KaTeX) ---
+        // 회계/재무용 커스텀 함수 정의 및 Math.js 주입
+        math.import({
+            PV: function(rate, nper, pmt, fv = 0) { // 현가
+                if (rate === 0) return -(fv + pmt * nper);
+                return -(fv / Math.pow(1 + rate, nper) + pmt * ((1 - Math.pow(1 + rate, -nper)) / rate));
+            },
+            FV: function(rate, nper, pmt, pv = 0) { // 미래가치
+                if (rate === 0) return -(pv + pmt * nper);
+                return -(pv * Math.pow(1 + rate, nper) + pmt * ((Math.pow(1 + rate, nper) - 1) / rate));
+            },
+            PMT: function(rate, nper, pv, fv = 0) { // 정기결제액(지급액)
+                if (rate === 0) return -(pv + fv) / nper;
+                return -(rate * (pv * Math.pow(1 + rate, nper) + fv)) / ((Math.pow(1 + rate, nper) - 1) * (1 + rate));
+            },
+            EAR: function(nomRate, nperYear) { // 유효이자율
+                return Math.pow(1 + nomRate / nperYear, nperYear) - 1;
+            },
+            NPV: function(rate, cashflows) { // 순현가
+                let arr = cashflows.toArray ? cashflows.toArray() : cashflows;
+                if(!Array.isArray(arr)) return "Error";
+                return arr.reduce((acc, val, i) => acc + val / Math.pow(1 + rate, i + 1), 0);
+            },
+            IRR: function(cashflows) { // 내부수익률 (뉴턴-랩슨법 근사)
+                let arr = cashflows.toArray ? cashflows.toArray() : cashflows;
+                if(!Array.isArray(arr)) return "Error";
+                let r = 0.1;
+                for(let i=0; i<100; i++) {
+                    let npv = 0, dNpv = 0;
+                    arr.forEach((val, t) => {
+                        npv += val / Math.pow(1+r, t);
+                        dNpv -= t * val / Math.pow(1+r, t+1);
+                    });
+                    if(Math.abs(dNpv) < 1e-10) break;
+                    let newR = r - npv / dNpv;
+                    if(Math.abs(newR - r) < 1e-7) return newR;
+                    r = newR;
+                }
+                return r;
+            },
+            ROI: function(gain, cost) { // 투자수익률
+                return (gain - cost) / cost;
+            },
+            WACC: function(E, D, Ke, Kd, taxRate) { // 가중평균자본비용
+                const V = E + D;
+                return (E/V)*Ke + (D/V)*Kd*(1-taxRate);
+            }
+        });
+
+        let currentExpr = '';
+        const latexDisplay = document.getElementById('latex-display');
+        const inputDisplay = document.getElementById('input-display');
+        const hintDisplay = document.getElementById('hint-display'); // 힌트 요소 추가
+
+        // --- 실시간 힌트 가이드 딕셔너리 ---
+        const functionHints = {
+            'diff': '미분: diff(수식, 변수)',
+            'integrate': '부정적분: integrate(수식, 변수)',
+            'defint': '정적분: defint(수식, 아래끝, 위끝, 변수)',
+            'PV': '현가: PV(이자율, 기간, 매기지급액, [미래가치=0])',
+            'FV': '미래가치: FV(이자율, 기간, 매기지급액, [현재가치=0])',
+            'PMT': '지급액: PMT(이자율, 기간, 현재가치, [미래가치=0])',
+            'EAR': '유효이자율: EAR(명목이자율, 연간복리횟수)',
+            'NPV': '순현가: NPV(할인율, [1기현금, 2기현금, ...]) *대괄호 필수',
+            'IRR': '내부수익률: IRR([-초기투자(음수), 1기, 2기, ...]) *대괄호 필수',
+            'ROI': '투자수익률: ROI(총수익, 총비용)',
+            'WACC': 'WACC(자기자본, 타인자본, 자기자본비용, 타인자본비용, 법인세율)'
+        };
+
+        // 실시간 힌트 업데이트 함수
+        function updateHint() {
+            // 현재 입력된 수식에서 가장 마지막에 열린 함수명을 추출 (예: "2+NPV(" -> "NPV")
+            const match = currentExpr.match(/([a-zA-Z]+)\([^)]*$/);
+            if (match && functionHints[match[1]]) {
+                hintDisplay.innerText = "💡 " + functionHints[match[1]];
+                hintDisplay.style.opacity = 1;
+            } else {
+                hintDisplay.style.opacity = 0;
+            }
+        }
+
+        // 입력 수식 렌더링
+        function renderDisplay(isResult = false) {
+            inputDisplay.innerText = currentExpr || '0';
+            updateHint(); // 렌더링 시 힌트도 같이 업데이트
+
+            if (currentExpr === '') {
+                katex.render("0", latexDisplay, { throwOnError: false, displayMode: true });
+                return;
+            }
+
+            try {
+                // 사용자가 입력 중인 수식의 괄호를 임시로 닫아주어 Parse 에러 방지 (미리보기 용도)
+                let previewExpr = currentExpr;
+                if(!isResult) {
+                    const openParen = (previewExpr.match(/\(/g) || []).length;
+                    const closeParen = (previewExpr.match(/\)/g) || []).length;
+                    if (openParen > closeParen) {
+                        previewExpr += ')'.repeat(openParen - closeParen);
+                    }
+                    const openBracket = (previewExpr.match(/\[/g) || []).length;
+                    const closeBracket = (previewExpr.match(/\]/g) || []).length;
+                    if (openBracket > closeBracket) {
+                        previewExpr += ']'.repeat(openBracket - closeBracket);
+                    }
+                }
+
+                // Math.js를 이용해 문자열을 AST(추상구문트리)로 변환 후 LaTeX 포맷으로 추출
+                const node = math.parse(previewExpr);
+                const latexStr = node.toTex({ parenthesis: 'keep', implicit: 'hide' });
+                
+                // KaTeX를 이용해 화면에 렌더링
+                katex.render(latexStr, latexDisplay, { throwOnError: false, displayMode: true });
+            } catch (err) {
+                // 파싱이 불가능한 중간 단계일 경우 임시로 텍스트 출력
+                let rawTex = currentExpr
+                    .replace(/sin\(/g, '\\sin(')
+                    .replace(/cos\(/g, '\\cos(')
+                    .replace(/tan\(/g, '\\tan(')
+                    .replace(/log10\(/g, '\\log(')
+                    .replace(/log\(/g, '\\ln(')
+                    .replace(/sqrt\(/g, '\\sqrt{')
+                    .replace(/pi/g, '\\pi')
+                    .replace(/diff\(/g, '\\frac{d}{dx}(')
+                    .replace(/integrate\(/g, '\\int(')
+                    .replace(/defint\(/g, '\\int_{a}^{b}(')
+                    .replace(/FV\(/g, '\\text{FV}(')
+                    .replace(/PV\(/g, '\\text{PV}(')
+                    .replace(/PMT\(/g, '\\text{PMT}(')
+                    .replace(/EAR\(/g, '\\text{EAR}(')
+                    .replace(/NPV\(/g, '\\text{NPV}(')
+                    .replace(/IRR\(/g, '\\text{IRR}(')
+                    .replace(/ROI\(/g, '\\text{ROI}(')
+                    .replace(/WACC\(/g, '\\text{WACC}(')
+                    .replace(/\*/g, '\\times')
+                    .replace(/\//g, '\\div');
+                
+                katex.render(rawTex, latexDisplay, { throwOnError: false, displayMode: true });
+            }
+        }
+
+        function appendValue(val) {
+            if (currentExpr === 'Error') currentExpr = '';
+            currentExpr += val;
+            renderDisplay();
+        }
+
+        function clearDisplay() {
+            currentExpr = '';
+            renderDisplay();
+        }
+
+        function deleteLast() {
+            if (currentExpr === 'Error') {
+                clearDisplay();
+                return;
+            }
+            
+            // 함수 단위를 한 번에 지우기 위한 로직 (재무 및 미적분 함수 추가)
+            const funcs = ['log10(', 'sqrt(', 'sin(', 'cos(', 'tan(', 'log(', 'pi', 'PV(', 'FV(', 'PMT(', 'EAR(', 'NPV(', 'IRR(', 'ROI(', 'WACC(', 'diff(', 'integrate(', 'defint('];
+            let deleted = false;
+
+            for (let f of funcs) {
+                if (currentExpr.endsWith(f)) {
+                    currentExpr = currentExpr.slice(0, -f.length);
+                    deleted = true;
+                    break;
+                }
+            }
+
+            if (!deleted) {
+                currentExpr = currentExpr.slice(0, -1);
+            }
+            renderDisplay();
+        }
+
+        function calculate() {
+            if (currentExpr === '') return;
+            try {
+                // 사용자가 괄호를 덜 닫았을 경우 자동으로 닫아주고 계산
+                const openParen = (currentExpr.match(/\(/g) || []).length;
+                const closeParen = (currentExpr.match(/\)/g) || []).length;
+                if (openParen > closeParen) {
+                    currentExpr += ')'.repeat(openParen - closeParen);
+                }
+                const openBracket = (currentExpr.match(/\[/g) || []).length;
+                const closeBracket = (currentExpr.match(/\]/g) || []).length;
+                if (openBracket > closeBracket) {
+                    currentExpr += ']'.repeat(openBracket - closeBracket);
+                }
+
+                let result;
+                
+                // 기호 연산(미분, 적분 등)이 포함된 경우 Nerdamer 엔진 사용, 그 외는 Math.js 사용
+                const isSymbolic = /(diff|integrate|defint|x|y)/.test(currentExpr);
+
+                if (isSymbolic) {
+                    // 상징적 미적분/대수학 연산 (예: diff(x^2, x) -> 2*x)
+                    result = nerdamer(currentExpr).evaluate().text();
+                } else {
+                    // 재무함수 및 일반 공학 숫자 계산
+                    result = math.evaluate(currentExpr);
+
+                    // 부동소수점 오차 보정 (예: 0.1 + 0.2)
+                    if(typeof result === 'number') {
+                        result = math.format(result, { precision: 14 });
+                    }
+                }
+                
+                currentExpr = result.toString();
+                renderDisplay(true);
+            } catch (error) {
+                currentExpr = "Error";
+                inputDisplay.innerText = "Error: 잘못된 수식 또는 인자입니다.";
+                katex.render("\\text{Error}", latexDisplay, { throwOnError: false, displayMode: true });
+            }
+        }
+
+        // 키패드 모드 전환 함수 (공학용 <-> 회계용)
+        function setMode(mode) {
+            // 모든 탭과 키패드에서 active 클래스 제거
+            document.getElementById('tab-eng').classList.remove('active');
+            document.getElementById('tab-fin').classList.remove('active');
+            document.getElementById('keypad-eng').classList.remove('active');
+            document.getElementById('keypad-fin').classList.remove('active');
+
+            // 선택된 모드에 active 클래스 부여
+            document.getElementById('tab-' + mode).classList.add('active');
+            document.getElementById('keypad-' + mode).classList.add('active');
+        }
+
+        // 초기 테마 및 렌더링 설정
+        changeTheme();
+        renderDisplay();
+
+        // 키보드 입력 지원
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            // 콤마(,)도 정규식에 추가하여 재무함수 인자 구분 지원
+            if (/[0-9\.\+\-\*\/\(\)\^,]/.test(key)) {
+                appendValue(key);
+            } else if (key === 'Enter') {
+                calculate();
+            } else if (key === 'Backspace') {
+                deleteLast();
+            } else if (key === 'Escape') {
+                clearDisplay();
+            }
+        });
+    </script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+</body>
+</html>

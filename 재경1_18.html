@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>재경관리사(회계변경, 오류수정) - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #0055aa; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #0055aa;
+            --wiki-table-header-text: #ffffff;
+            --wiki-alert-border: #a2a9b1;
+            --wiki-alert-bg: #f8f9fa;
+        }
+
+        [data-theme='dark'] {
+            --wiki-bg: #1a1a1a;
+            --wiki-text: #e0e0e0;
+            --wiki-border: #444;
+            --wiki-gray-bg: #2a2a2a;
+            --wiki-link: #66b3ff;
+            --wiki-table-header: #003366;
+            --wiki-alert-bg: #222;
+            --wiki-alert-border: #555;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; color: var(--wiki-text); } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--wiki-border); margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.1rem !important; font-weight: 700; margin-top: 1.5rem; margin-bottom: 1rem; }
+
+        /* 위키 요소 */
+        del { color: #7f7f7f; text-decoration: line-through; cursor: help; }
+        .wiki-drip { color: #aaa; font-size: 0.85em; }
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-quote { background-color: var(--wiki-gray-bg); border-left: 4px solid var(--wiki-main); padding: 15px; margin: 10px 0; font-style: italic; color: var(--wiki-text); position: relative; }
+        .text-highlight { background: linear-gradient(to top, #ffd6e0 50%, transparent 50%); font-weight: bold; }
+
+        /* 분류 박스 스타일 */
+        .category-box { background: var(--wiki-gray-bg); border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+
+        /* 테이블 스타일 */
+        table.wiki-table-custom { border-collapse: collapse !important; width: 100%; margin: 15px 0; border: 1px solid var(--wiki-border) !important; font-size: 0.9rem; background-color: var(--wiki-bg); }
+        table.wiki-table-custom th, table.wiki-table-custom td { border: 1px solid var(--wiki-border) !important; padding: 6px 10px; vertical-align: middle; }
+        table.wiki-table-custom th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; text-align: center; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: var(--wiki-bg); width: 100%; max-width: 380px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.3rem !important; font-weight: bold; }
+        .infobox table { border: none !important; margin: 0 !important; width: 100% !important; }
+        .infobox th { background-color: var(--wiki-gray-bg); text-align: center; padding: 8px 5px; border: 1px solid var(--wiki-border); width: 30%; font-weight: bold; vertical-align: middle;}
+        .infobox td { padding: 8px 5px; border: 1px solid var(--wiki-border); text-align: left; vertical-align: middle;}
+
+        /* 참교육 팩트폭력 전용 CSS */
+        .education-box { background-color: #f8fbff; border: 2px solid #0055aa; border-radius: 10px; padding: 25px; margin: 30px 0; box-shadow: 0 5px 15px rgba(0,85,170,0.08); }
+        [data-theme='dark'] .education-box { background-color: #1a2433; border-color: #3388ff; }
+        .education-title { display: inline-block; font-weight: 900; color: #fff; background-color: #0055aa; padding: 8px 20px; border-radius: 25px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .dialogue-idiot { margin-bottom: 12px; padding: 15px; background-color: rgba(255,255,255,0.9); border-radius: 8px; border-left: 5px solid #ff5522; font-weight: 500; font-size: 0.95rem; line-height: 1.6; color: #333; }
+        [data-theme='dark'] .dialogue-idiot { background-color: rgba(0,0,0,0.5); color: #ddd; }
+        .dialogue-honor { margin-bottom: 15px; padding: 15px; background-color: rgba(255,255,255,0.9); border-radius: 8px; border-left: 5px solid #00aabb; font-weight: 500; font-size: 0.95rem; line-height: 1.6; color: #333; }
+        [data-theme='dark'] .dialogue-honor { background-color: rgba(0,0,0,0.5); color: #ddd; }
+        .edu-note { background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 12px 15px; margin-top: 15px; font-weight: bold; color: #856404; }
+        [data-theme='dark'] .edu-note { background-color: #332b00; color: #ffdd55; border-color: #ffaa00; }
+        
+        .detail-list { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+        .detail-list li { margin-bottom: 0.5rem; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+<nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+        <span class="font-bold text-xl">HyobinWiki</span>
+    </div>
+    <div class="flex items-center gap-2">
+        <input type="text" id="searchInput" placeholder="문서 검색" class="p-1.5 px-3 rounded text-black text-sm w-48 focus:outline-none shadow-inner">
+        
+        <button type="button" onclick="검색실행함수()" class="bg-[#0055AA] p-1.5 px-4 rounded text-sm shadow-inner font-bold">검색</button>
+    </div>
+</nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">재경관리사 (재무회계 - 회계변경 및 오류수정)</div>
+        </div>
+
+        <div class="category-box border p-3 rounded mb-6">
+            <span class="font-bold text-[#0055aa]">분류:</span> 
+            <a href="국가공인자격증.html" class="wiki-link">국가공인자격증</a> | 
+            <a href="회계_세무_자격증.html" class="wiki-link">회계/세무 자격증</a> | 
+            <a href="삼일회계법인.html" class="wiki-link">삼일회계법인</a> | 
+            <a href="재무회계.html" class="wiki-link">재무회계</a> |
+            <a href="K-IFRS.html" class="wiki-link">K-IFRS</a>
+        </div>
+
+        <!-- 인포박스 -->
+        <aside class="infobox">
+            <div class="infobox-title">Chapter 18. 회계변경, 오류수정<br><span class="text-sm font-normal">Accounting Changes and Error Corrections</span></div>
+            <table>
+                <tr><th>분류</th><td>국가공인 민간자격증</td></tr>
+                <tr><th>주관처</th><td>삼일회계법인</td></tr>
+                <tr><th>시험 과목</th><td>1. 재무회계 (K-IFRS)</td></tr>
+                <tr><th>출제 빈도</th><td>⭐⭐⭐⭐ (매회 2~3문제 고정)</td></tr>
+                <tr><th>수험생 체감 난도</th><td>⭐⭐⭐⭐⭐ (소급적용과 전진적용의 늪)</td></tr>
+                <tr><th>특징</th><td>자동조정 오류와 비자동조정 오류 계산 문제에서 뇌정지가 자주 옴.</td></tr>
+            </table>
+        </aside>
+
+        <!-- 목차 -->
+        <div class="toc">
+            <div class="toc-title">목차 (Chapter 18)</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">회계변경의 의의 및 유형</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">회계정책의 변경 (소급적용)</a></li>
+                <li>3. <a href="#s-3" class="wiki-link">회계추정치의 변경 (전진적용)</a></li>
+                <li>4. <a href="#s-4" class="wiki-link">오류수정 (전기오류수정)</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">오류의 유형별 분류 및 수정방법</a></li>
+                <li>6. <a href="#s-6" class="wiki-link">자동조정 오류 vs 비자동조정 오류 (★핵심 계산)</a></li>
+                <li>7. <a href="#s-7" class="wiki-link">회계오류 수정 계산 사례 (기출)</a></li>
+            </ul>
+        </div>
+        <div class="clear-both"></div>
+
+        <div class="wiki-quote">
+            "과거를 지배하는 자가 재무제표를 지배한다. 소급적용은 뼈를 깎는 고통이 따르리라."<br>
+            <span class="wiki-drip text-sm block mt-2">- 재경관리사 시험 10분 전, 재수생의 마지막 읊조림</span><br>
+            <span class="wiki-drip text-sm block mt-1 text-gray-400">※ 효빈광역시 박효빈 시장(1996년생)은 시청 예산 장부 오류를 보고 "이게 자동조정이냐 비자동조정이냐!"며 실제 유저인 2003년생 박효빈에게 따졌다는 소문이 있다. (물론 동명이인이다.)</span>
+        </div>
+
+        <p>본 문서는 재경관리사 <strong>재무회계 과목 중 Chapter 18. 회계변경, 오류수정</strong> 파트의 방대한 이론과 K-IFRS 규정을 완벽하게 요약한 문서이다. 특히 정책의 변경인지 추정의 변경인지를 구분하는 문제와, 오류 수정 시 이익잉여금 조정 계산은 실전 단골 문제이다.</p>
+
+        <!-- 1. 회계변경 -->
+        <h2 id="s-1">1. 회계변경의 의의 및 유형</h2>
+        
+        <table class="wiki-table-custom">
+            <tr><th style="width: 20%;">구분</th><th>내용</th></tr>
+            <tr>
+                <td class="font-bold text-center">정의</td>
+                <td>기존 회계처리방법이 기업의 재무상태나 경영성과를 적절히 표시하지 못할 때, 새롭게 변경하는 것.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">유형</td>
+                <td>① <strong>회계정책의 변경</strong> (원칙, 관습 변경)<br>② <strong>회계추정치의 변경</strong> (새로운 정보에 따른 추정치 변경)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-red-600">공통 유의사항</td>
+                <td>정보이용자 보호를 위해 <strong>충분한 공시</strong> 필요 (회계변경 시 기간 간 <strong>비교가능성 저해 가능</strong>성이 있기 때문).</td>
+            </tr>
+        </table>
+
+        <!-- [참교육 1] 회계변경의 이유 -->
+        <div class="education-box">
+            <div class="education-title">🚨 참교육 팩트폭력 #1: 회계변경은 맘대로 하는 게 아니다</div>
+            <div class="dialogue-idiot">
+                <span style="color:#ff5522; font-weight:900;">토야마 카스미:</span> "반짝반짝! 작년엔 선입선출법으로 빵 원가를 계산했는데, 올해는 이동평균법이 이름이 멋있으니까 맘대로 바꿀래! 내 장부니까 내 맘이지!"
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#aa66dd; font-weight:900;">이치가야 아리사:</span> "이 바보 카스미!! 회계처리방법을 맘대로 막 바꾸면 작년 장부랑 올해 장부의 <strong>'비교가능성'이 완전히 박살 나잖아!!</strong> 회계변경은 K-IFRS에서 요구하거나, <strong>더 신뢰성 있고 목적적합한 정보를 제공할 수 있을 때만</strong> 엄격하게 허용된다고!!"
+            </div>
+        </div>
+
+        <h2 id="s-2">2. 회계정책의 변경</h2>
+        
+        <h3>Ⅰ. 회계정책의 변경 기준</h3>
+        <p><strong>회계정책</strong>: 재무제표 작성에 적용되는 원칙, 관습, 규칙.<br>
+        <strong>변경 가능한 경우:</strong> ① 기준서 요구 시 ② 더 신뢰성 있고 목적적합한 정보 제공 시</p>
+
+        <h4>※ 회계정책 변경의 대표적 예시 (★암기)</h4>
+        <ul class="detail-list">
+            <li>1. <strong>재고자산 원가흐름의 가정 변경</strong> (예: 선입선출법에서 이동평균법으로 변경)</li>
+            <li>2. <strong>유형자산과 무형자산의 측정기준 변경</strong> (예: 원가모형에서 재평가모형으로 변경)</li>
+            <li>3. <strong>투자부동산의 측정기준 변경</strong> (예: 원가모형에서 공정가치모형으로 변경)</li>
+        </ul>
+
+        <h4>※ 변경 불인정 사례 (회계정책 변경이 아닌 경우)</h4>
+        <ul class="detail-list">
+            <li>제시된 기준(더 신뢰성/목적적합) 중 어느 하나라도 충족하지 못하면 변경 불가 (동일 기간 내/기간 간 동일 회계정책 적용 원칙).</li>
+            <li>과거에 발생한 거래와 <strong>'실질이 다른'</strong> 거래, 기타 사건에 다른 회계정책 적용.</li>
+            <li>과거에 발생하지 않았거나, <strong>'중요하지 않았던'</strong> 거래에 대하여 <strong>'새로운'</strong> 회계정책을 적용하는 경우.</li>
+        </ul>
+
+        <!-- [참교육 2] 회계정책 변경이 아닌 경우 -->
+        <div class="education-box">
+            <div class="education-title">🚨 참교육 팩트폭력 #2: 새로운 거래에 새로운 정책을 쓰는 건 변경이 아니다</div>
+            <div class="dialogue-idiot">
+                <span style="color:#ff9999; font-weight:900;">우에하라 히마리:</span> "에이에이오! 우리 편의점 빵집에서 한 번도 안 팔아본 '외상 판매'를 올해 처음 시작했어! 그래서 대손충당금 회계정책을 새로 만들었는데, 이거 엄청난 '회계정책의 변경'이지?!"
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#00ccaa; font-weight:900;">아오바 모카:</span> "히마리~ 그건 그냥 <strong>과거에 발생하지 않았던 '새로운' 거래에 새로운 정책을 적용한 것뿐이라서 '회계정책의 변경'에 해당하지 않아~</strong> 기존에 있던 정책을 바꾸는 것만 회계정책 변경이라고 부른단다~ 빵이나 먹자."
+            </div>
+        </div>
+
+        <h3>Ⅱ. 회계정책 변경의 처리방법 (소급적용)</h3>
+        <table class="wiki-table-custom">
+            <tr><th class="w-1/4">구분</th><th class="w-1/4">방법</th><th>내용 및 예외</th></tr>
+            <tr>
+                <td class="font-bold text-center text-blue-700 bg-blue-50">원칙</td>
+                <td class="font-bold text-center bg-blue-50">소급적용<br>(Retrospective)</td>
+                <td class="bg-blue-50">
+                    - 새로운 회계정책이 <strong>처음부터 적용된 것으로 가정</strong>하여 과거 거래 조정.<br>
+                    - 비교표시되는 <strong>가장 이른 과거기간 자본(이익잉여금) 기초 금액 조정</strong> 및 과거 재무제표 재작성.
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-red-600 bg-red-50">예외 1<br>(특정기간 결정 불가)</td>
+                <td class="text-center bg-red-50">실무적 소급적용</td>
+                <td class="bg-red-50">실무적으로 소급적용할 수 있는 <strong>가장 이른 회계기간</strong>에 새로운 회계정책 적용하고, 자본 기초금액 조정.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-red-600 bg-red-50">예외 2<br>(과거 전체 결정 불가)</td>
+                <td class="font-bold text-center bg-red-50">전진적용<br>(Prospective)</td>
+                <td class="bg-red-50">실무적으로 적용할 수 있는 <strong>가장 이른 날부터</strong> 새로운 회계정책을 전진적용하여 비교정보 재작성.</td>
+            </tr>
+        </table>
+
+        <h4>※ 회계변경의 누적효과(Cumulative effect) 계산</h4>
+        <p class="font-bold bg-gray-100 p-2 text-center text-[#0055aa]">누적효과 = 변경 전 방법에 의한 기초장부금액 - 변경 후 방법에 의한 기초장부금액</p>
+        <p>- 새로운 회계처리방법을 적용하여 누적효과를 계산하고, 이를 <strong>'이익잉여금'</strong>에 가감한 후 전기의 재무제표를 재작성한다.<br>
+        - <strong>장점:</strong> 전기의 재무제표를 수정하므로 기간별 비교가능성 제고.<br>
+        - <strong>단점:</strong> 이미 공표된 재무제표 수정으로 신뢰성 저하 및 재작성에 많은 비용/시간 소요.</p>
+
+        <!-- [참교육 3] 회계정책 변경의 소급적용 -->
+        <div class="education-box">
+            <div class="education-title">🚨 참교육 팩트폭력 #3: 회계정책의 변경은 과거의 망령을 부른다</div>
+            <div class="dialogue-idiot">
+                <span style="color:#3fb8ff; font-weight:900;">타마데 치유:</span> "Listen! 우리 RAS의 재고자산 평가방법을 선입선출법에서 평균법으로 바꿨어! 작년 장부는 귀찮으니까 냅두고, 올해부터 쿨하게 새로운 방식으로 계산하자!"
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#cc090f; font-weight:900;">와카나 레이:</span> "츄츄, 그건 룰 위반이야. 재고자산 평가방법 변경은 '회계정책의 변경'이기 때문에 원칙적으로 <strong>'소급적용'</strong>을 해야 해. 귀찮더라도 <strong>새로운 정책을 처음부터 쓴 것처럼 과거 재무제표를 싹 다 다시 고치고, 누적효과를 올해 기초 '이익잉여금'에 반영</strong>해야 한다고."
+            </div>
+        </div>
+
+        <h2 id="s-3">3. 회계추정치의 변경</h2>
+        
+        <h3>Ⅰ. 회계추정치 변경의 의의</h3>
+        <p><strong>회계추정치:</strong> 측정불확실성의 영향을 받는 재무제표상 화폐금액.<br>
+        회계정책은 직접 관측 불가하여 '추정'해야 하는 금액으로 측정을 요구할 수 있음. 기업은 최근 정보/경험에 기초한 판단/가정을 수반하여 추정치를 개발한다. <strong>(측정기법, 평가기법 사용)</strong>.</p>
+
+        <h4>※ 회계추정치 변경의 대표적 예시 (★암기)</h4>
+        <ul class="detail-list">
+            <li>1. 기대신용손실에 대한 <strong>손실충당금 (대손추정률)</strong></li>
+            <li>2. 재고자산 항목의 <strong>순실현가능가치 (NRV)</strong></li>
+            <li>3. 자산이나 부채의 <strong>공정가치 추정</strong></li>
+            <li>4. 유형자산 항목의 <strong>감가상각비 (내용연수, 잔존가치, 상각방법 변경)</strong></li>
+            <li>5. <strong>보증의무</strong>에 대한 충당부채</li>
+        </ul>
+        <p class="text-red-600 font-bold bg-yellow-100 p-1 inline-block mt-2">주의: 감가상각방법의 변경은 '정책'의 변경이 아니라 '추정치'의 변경이다!</p>
+
+        <!-- [참교육 4] 감가상각방법의 변경은 추정이다 -->
+        <div class="education-box">
+            <div class="education-title">🚨 참교육 팩트폭력 #4: 감가상각방법 변경의 소속을 묻다</div>
+            <div class="dialogue-idiot">
+                <span style="color:#02D1E0; font-weight:900;">야마다 료:</span> "내 베이스 기타의 감가상각방법을 정액법에서 정률법으로 변경하겠어. 방법(Method)을 바꾸는 거니까 당연히 '회계정책의 변경'이겠지? 과거 장부 다 고쳐야겠네. 귀찮다."
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#FCCA95; font-weight:900;">이지치 니지카:</span> "료!! 맨날 돈 빌려가더니 회계도 까먹었냐?! 감가상각방법을 바꾸는 건 효익 소비 형태의 <strong>'추정치'가 바뀐 걸로 봐서 '회계추정치의 변경'</strong>에 해당한다고! 그러니까 과거 장부 고칠 필요 없이 앞으로만 잘하면 돼(전진적용)!"
+            </div>
+        </div>
+
+        <h3>Ⅱ. 정책 vs 추정 구분 및 처리방법 (전진적용)</h3>
+        <ul class="detail-list">
+            <li><strong>변경 사유:</strong> 회계추정치의 근거가 되었던 상황의 변화, 새로운 정보의 획득, 경험의 축적.</li>
+            <li><strong>오류수정과의 구분:</strong> 성격상 회계추정치 변경은 새로운 정보에 의한 것이므로 <strong>과거기간의 '오류수정'이 아니다.</strong> (단, 투입변수 오류에서 비롯된 거면 오류수정임).</li>
+            <li><strong>구분 어려울 때:</strong> 회계정책의 변경과 회계추정치 변경을 <strong>구분하는 것이 어려운 경우에는 이를 <span class="text-blue-700 font-bold">'회계추정치 변경'</span>으로 본다.</strong></li>
+        </ul>
+
+        <table class="wiki-table-custom">
+            <tr><th class="w-1/4">구분</th><th>회계추정치 변경의 처리 (전진적용)</th></tr>
+            <tr>
+                <td class="font-bold text-center">처리 원칙</td>
+                <td>
+                    변경효과는 다음 회계기간 당기손익에 포함하여 <strong>전진적으로 인식</strong>한다.<br>
+                    - 당기에만 영향: 당기손익에 반영.<br>
+                    - 미래에도 영향: 변경 발생 기간과 미래기간 모두 반영.
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-red-600">특징</td>
+                <td>
+                    <span class="text-red-600 font-bold">과거에 보고된 재무제표는 절대 수정하지 않음!</span><br>
+                    누적효과 반영 없이 당기와 미래에만 변경된 방법 적용. (재무제표 신뢰성은 유지되나, 비교가능성은 저하됨).
+                </td>
+            </tr>
+        </table>
+
+        <!-- [참교육 5] 정책과 추정 구분이 어려울 때 -->
+        <div class="education-box">
+            <div class="education-title">🚨 참교육 팩트폭력 #5: 정책인지 추정인지 헷갈릴 때의 룰</div>
+            <div class="dialogue-idiot">
+                <span style="color:#dd0088; font-weight:900;">우다가와 아코:</span> "크크큭... 심연의 어둠 속에서 이 변경이 '정책'의 변경인지 '추정'의 변경인지 구분이 모호해졌다! 이럴 땐 더 복잡하고 고통스러운 '정책의 변경(소급적용)'으로 처리하는 것이 다크니스의 룰이겠지?!"
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#bbbbbb; font-weight:900;">시로카네 린코:</span> "아코 쨩... K-IFRS에서는 두 개를 구분하기 어려울 때는 <strong>무조건 '회계추정치의 변경(전진적용)'으로 본다</strong>고 규정하고 있어... 굳이 사서 고생해서 과거 장부를 뜯어고치지 말라는 회계기준위원회의 배려야..."
+            </div>
+        </div>
+
+        <h3>Ⅲ. 회계변경 공시 요구사항</h3>
+        <table class="wiki-table-custom text-sm">
+            <tr><th class="w-1/4">구분</th><th>공시 항목 (요약)</th></tr>
+            <tr>
+                <td class="font-bold text-center bg-gray-50">회계정책 변경 시<br>(IFRS 최초적용)</td>
+                <td class="bg-gray-50">기준서 명칭, 경과규정 적용 사실, 정책변경 성격, 경과규정 내용/미래영향, <strong>각 항목별 조정금액(과거기간, 주당이익 등)</strong>, 실무적 소급 불가 시 사유/적용방법.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">회계정책 자발적 변경</td>
+                <td>변경 성격, <strong>신뢰성/목적적합성 제고 근거</strong>, 항목별/주당이익 조정금액, 소급 불가 시 사유.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center bg-gray-50">회계추정치 변경 시</td>
+                <td class="bg-gray-50">당기 또는 미래에 영향을 미칠 것으로 예상되는 <strong>변경내용과 변경효과 금액 공시</strong> (미래 영향 추정 불가 시 그 사실 공시).</td>
+            </tr>
+        </table>
+
+        <h2 id="s-4">4. 오류수정 (전기오류수정)</h2>
+        
+        <h3>Ⅰ. 오류수정의 의의 및 유형</h3>
+        <p><strong>정의:</strong> 전기 또는 그 이전 재무제표의 오류를 <strong>당기에 발견하여 수정</strong>하는 것. (고의나 과실 모두 포함).</p>
+        <ul class="detail-list">
+            <li><strong>(1) 회계기준 적용의 오류:</strong> K-IFRS에 위배되어 회계처리 한 경우. <span class="text-blue-700">(※ 기준 내에서 다른 처리로 변경하는 건 '회계변경'이고, 기준 위반을 고치는 건 '오류수정'임)</span></li>
+            <li><strong>(2) 추정의 오류:</strong> 추정이 합리적이지 못해 발생 (추가 정보에 의한 회계추정치 변경과 구별됨. 우발상황 결과에 따른 손익은 오류수정 아님).</li>
+            <li><strong>(3) 계정분류의 오류:</strong> 고의/과실로 B/S나 I/S 계정과목을 잘못 분류.</li>
+            <li><strong>(4) 산술적 계산 오류:</strong> 덧셈, 뺄셈 등 계산 잘못.</li>
+            <li><strong>(5) 사실의 간과 및 부정:</strong> 비용/수익 발생 기록 누락이나 이연 간과.</li>
+        </ul>
+
+        <!-- [참교육 6] 회계추정치 변경 vs 추정의 오류 -->
+        <div class="education-box">
+            <div class="education-title">🚨 참교육 팩트폭력 #6: 고의적 누락은 추정의 변경이 아니라 '오류'다</div>
+            <div class="dialogue-idiot">
+                <span style="color:#FF51C4; font-weight:900;">오니츠카 나츠미:</span> "작년에 스무디 재고가 썩어서 버린 걸 장부에 적는 걸 까먹었(간과)습니다 데스노! 하지만 이건 나츠미의 '합리적인 추정치 변경'이니까 과거 장부는 놔두고 올해 비용으로 슬쩍 처리하겠습니다 데스노!"
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#4cd2e2; font-weight:900;">오니츠카 토마리:</span> "agree 못 합니다, 언니. 당시 알 수 있었던 사실을 간과하거나 부정으로 누락한 것은 '추정치의 변경'이 아니라 명백한 <strong>'전기오류(Prior period error)'</strong>입니다. 중대한 오류이므로 과거 재무제표를 소급해서 재작성해야 합니다. 분식회계는 철창행입니다."
+            </div>
+        </div>
+
+        <h2 id="s-5">5. 오류의 유형별 분류 및 수정방법</h2>
+        <p>오류가 어디에 영향을 미치느냐에 따라 수정 방법이 다르다.</p>
+        <table class="wiki-table-custom">
+            <tr><th class="w-1/4">유형</th><th>설명 및 예시</th><th>수정 처리 방법</th></tr>
+            <tr>
+                <td class="font-bold text-center text-blue-700">① 재무상태표(B/S)만 영향</td>
+                <td>자산, 부채, 자본 계정의 <strong>분류상 오류</strong><br>(예: 유동성 분류 오류, 미수금을 다른 계정으로 오분류)</td>
+                <td><strong>계정 재분류</strong> (당기순이익 영향 없음)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-blue-700">② 손익계산서(I/S)만 영향</td>
+                <td>I/S 계정분류상 오류 (예: 대출할인을 영업외비용 처리, 무형자산상각비를 감가상각비로 기장)</td>
+                <td>
+                    - 장부 마감 <strong>전</strong>: 수정분개 수행<br>
+                    - 장부 마감 <strong>후</strong>: <strong><span class="text-red-600">수정분개 불필요</span></strong> (손익항목은 마감 시 모두 이익잉여금으로 뭉쳐져 이월되므로 이미 자동 상계됨)
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-red-600 bg-red-50">③ B/S + I/S 모두 영향</td>
+                <td class="bg-red-50">순이익과 장부금액에 모두 영향을 미치는 오류<br>(예: 감가상각비 과대/과소 계상)</td>
+                <td class="bg-red-50 font-bold"><strong>자동조정 여부</strong>에 따라 처리 방식 상이 (아래 6번 목차 참조)</td>
+            </tr>
+        </table>
+
+        <!-- [참교육 7] 손익계산서 계정분류 오류의 마감 후 처리 -->
+        <div class="education-box">
+            <div class="education-title">🚨 참교육 팩트폭력 #7: 장부 마감 후의 I/S 계정 오류는 유령이다</div>
+            <div class="dialogue-idiot">
+                <span style="color:#E7D600; font-weight:900;">나카스 카스미:</span> "카스밍이 작년에 '복리후생비'로 적어야 할 빵 값을 실수로 '여비교통비'로 적었어요! 장부는 이미 작년에 다 마감(승인)됐지만, 지금이라도 수정분개해서 여비교통비를 취소해야겠죠?!"
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#9CA5B9; font-weight:900;">텐노지 리나:</span> "리나짱 보드, '무의미'. 복리후생비나 여비교통비나 결국 둘 다 비용이라서, <strong>장부가 마감될 때 어차피 다 합쳐져서 '이익잉여금'으로 넘어가 버렸어.</strong> 다음 기로 이월되는 잔액이 없으니까, 마감 후에 발견한 I/S 계정 분류 오류는 <strong>수정분개를 할 필요가 없어.</strong>"
+            </div>
+        </div>
+
+        <h2 id="s-6">6. 자동조정 오류 vs 비자동조정 오류 (★핵심 계산)</h2>
+        
+        <table class="wiki-table-custom">
+            <tr><th class="w-1/4">구분</th><th>정의 및 예시</th><th>처리 방식</th></tr>
+            <tr>
+                <td class="font-bold text-center text-blue-700 bg-blue-50">자동조정 오류</td>
+                <td class="bg-blue-50">
+                    오류가 발생한 다음 회계연도에 <strong>영향이 반대로 작용하여 2년 안에 순이익/잉여금 오류가 '자동 수정'</strong>되는 오류.<br>
+                    - 선급비용/선수수익 오류 (보험료 과대/과소 계상)<br>
+                    - 미지급비용/미수수익 오류 (이자비용 과소/과대 계상)<br>
+                    - <strong>기말 재고자산 오류</strong> (당기 기말재고 과대 = 내년 기초재고 과대 → 내년 이익 과소로 상계됨)
+                </td>
+                <td class="bg-blue-50">
+                    - 마감 전: 이익잉여금 수정분개<br>
+                    - <strong>마감 후 (2년 뒤 발견 시): <span class="text-red-600 font-bold">특별한 수정분개 불필요</span></strong> (이미 이익잉여금이 원상복구 됨)
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-red-600 bg-red-50">비자동조정 오류</td>
+                <td class="bg-red-50">
+                    두 회계기간 경과만으로 자동 조정되지 않고, 자산 내용연수 등 <strong>여러 연도(3년 이상)에 걸쳐 오류가 남는 경우.</strong><br>
+                    - 건물 취득세/자본적 지출을 당기비용으로 누락 처리<br>
+                    - 감가상각비 과대/과소 계상
+                </td>
+                <td class="bg-red-50">
+                    언제 발견하든 <strong>반드시 소급 수정(이익잉여금 및 관련 자산/부채 조정) 분개 필요.</strong>
+                </td>
+            </tr>
+        </table>
+
+        <!-- [참교육 8] 재고자산 오류의 자동조정 마법 -->
+        <div class="education-box">
+            <div class="education-title">🚨 참교육 팩트폭력 #8: 기말재고자산 오류는 2년이면 자체 소멸한다</div>
+            <div class="dialogue-idiot">
+                <span style="color:#ff9999; font-weight:900;">우에하라 히마리:</span> "에이에이오! 큰일 났어! 20X1년 기말에 편의점 빵 재고를 8만 원이나 뻥튀기해서 적었는데, 20X2년 장부까지 다 마감된 지금(20X3년) 발견했어! 20X1년 이익이 뻥튀기됐으니 감옥 가는 거 아냐?!"
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#ffee88; font-weight:900;">하자와 츠구미:</span> "히마리 쨩, 너무 걱정 마. 20X1년 기말재고 과대계상은 20X2년의 '기초재고 과대계상'이 돼서, 20X2년에는 반대로 매출원가가 커져서 이익이 줄어들어. <strong>결국 2년이 지나면서 잉여금 오류가 '자동 상계(+8만 -8만 = 0)'되니까, 2년이 다 지난 후엔 굳이 이익잉여금 수정분개를 할 필요가 없어! (자동조정 오류)</strong>"
+            </div>
+        </div>
+
+        <!-- [참교육 9] 비자동조정 오류의 무서움 -->
+        <div class="education-box">
+            <div class="education-title">🚨 참교육 팩트폭력 #9: 감가상각 오류는 자동 회복되지 않는다</div>
+            <div class="dialogue-idiot">
+                <span style="color:#485EC6; font-weight:900;">아사카 카린:</span> "어머, 작년에 건물 취득세 500만 원을 자산에 안 넣고 몽땅 세금과공과(비용)로 떨어버렸네. 이것도 재고 오류처럼 1년 지나면 알아서 자연스럽게 회복(자동조정)되는 거겠지?"
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#FF5800; font-weight:900;">미야시타 아이:</span> "카린 선배, 꿈 깨! 건물을 취득원가에 안 넣고 비용 처리한 건, 10년 치 감가상각비가 완전히 꼬여버리는 <strong>'비자동조정 오류'</strong>야! 이건 가만히 둔다고 2년 만에 0으로 돌아오지 않으니까, 지금 발견했으면 당장 <strong>과거 이익잉여금이랑 감가상각누계액을 싹 다 뜯어고치는 소급 수정분개</strong>를 해야 해!"
+            </div>
+        </div>
+
+        <h3>Ⅲ. 오류수정의 회계처리 및 공시 원칙</h3>
+        <ul class="detail-list">
+            <li><strong>원칙:</strong> 중요한 전기오류는 후속기간에 발견 시, 비교표시된 재무정보를 재작성하여 <strong>소급 수정(Retrospective)</strong>한다. (오류 발견 기간의 당기손익으로 보고하지 않음).</li>
+            <li>비교표시되는 가장 이른 과거기간 이전 오류면, <strong>기초 이익잉여금</strong>에 반영.</li>
+            <li><strong>실무적 결정 불가 시:</strong> 실무적으로 소급 재작성할 수 있는 가장 이른 회계기간 기초금액 재작성. (과거 전체 결정 불가 시 가장 이른 날부터 <strong>전진적 재작성</strong>).</li>
+            <li><strong>공시:</strong> 전기오류의 성격, 항목별 수정금액(주당이익 포함), 기초금액 수정액, 소급 불가 시 사유 및 적용방법 등 공시.</li>
+        </ul>
+
+        <!-- [참교육 10] 전기오류 수정액의 처리 위치 -->
+        <div class="education-box">
+            <div class="education-title">🚨 참교육 팩트폭력 #10: 과거의 실수는 당기손익이 아니라 이익잉여금으로 갚아라</div>
+            <div class="dialogue-idiot">
+                <span style="color:#A0FFF9; font-weight:900;">탕 쿠쿠:</span> "작년에 빼먹은 비용 1,000만 원을 올해 발견했슙니다! 올해의 '전기오류수정손실' 계정으로 손익계산서에 올려서 올해 당기순이익을 확 줄이겠슙니다!"
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#0000A0; font-weight:900;">하즈키 렌:</span> "쿠쿠 씨. K-IFRS에서는 중요한 전기오류수정손익을 올해의 당기손익(P&L)에 반영하는 것을 엄격히 금지합니다. <strong>과거의 오류는 재무상태표의 '기초 이익잉여금'을 직접 깎아서 소급 재작성</strong>해야 합니다. 올해 이익에 묻어가려 하지 마십시오."
+            </div>
+        </div>
+
+        <h2 id="s-7">7. 회계오류 수정 계산 사례 (기출 완벽 분석)</h2>
+        <p>자동조정 오류와 비자동조정 오류의 흐름을 묻는 <strong>수정 후 당기순이익 도출 문제</strong>는 무조건 출제된다. 아래 표의 로직을 반드시 외워라.</p>
+
+        <h3>사례 1: 선급비용의 오류 (자동조정)</h3>
+        <p><strong>상황:</strong> (주)삼일해운이 20X1.7.1 ~ 20X2.6.30의 1년분 자동차보험료 1,200,000원을 <strong>전액 20X1년 비용으로 처리(선급비용 600,000원 누락)</strong>. 수정 전 순이익은 20X1년 20M, 20X2년 30M.</p>
+        <table class="wiki-table-custom text-center">
+            <tr><th>구분</th><th>20X1년도</th><th>20X2년도</th></tr>
+            <tr><td class="bg-gray-50">수정 전 당기순이익</td><td>20,000,000</td><td>30,000,000</td></tr>
+            <tr><td class="bg-gray-50">오류 조정</td><td><span class="text-blue-700">+ 600,000</span> (비용 과대계상 취소)</td><td><span class="text-red-600">- 600,000</span> (비용 과소계상 추가)</td></tr>
+            <tr><td class="font-bold bg-blue-100">수정 후 당기순이익</td><td class="font-bold">20,600,000</td><td class="font-bold">29,400,000</td></tr>
+        </table>
+        <p class="text-sm mt-1">※ 20X2년 장부 마감 전 오류 발견 시 수정분개: (차) 보험료 600,000 / (대) 이익잉여금 600,000<br>※ <strong>20X2년 장부 마감 후 발견 시: 2년에 걸쳐 자동 상계(+60만 -60만)되었으므로 수정분개 불필요.</strong></p>
+
+        <h3>사례 2: 미지급비용의 오류 (자동조정)</h3>
+        <p><strong>상황:</strong> (주)효성건설이 20X1년에 발생한 이자비용 500,000원을 <strong>미지급비용으로 계상하지 않고 누락</strong>. 수정 전 순이익은 20X1년 9M, 20X2년 10M.</p>
+        <table class="wiki-table-custom text-center">
+            <tr><th>구분</th><th>20X1년도</th><th>20X2년도</th></tr>
+            <tr><td class="bg-gray-50">수정 전 당기순이익</td><td>9,000,000</td><td>10,000,000</td></tr>
+            <tr><td class="bg-gray-50">오류 조정</td><td><span class="text-red-600">- 500,000</span> (비용 과소계상 추가)</td><td><span class="text-blue-700">+ 500,000</span> (비용 과대계상 취소)</td></tr>
+            <tr><td class="font-bold bg-blue-100">수정 후 당기순이익</td><td class="font-bold">8,500,000</td><td class="font-bold">10,500,000</td></tr>
+        </table>
+        <p class="text-sm mt-1">※ 20X2년 장부 마감 전 오류 발견 시: (차) 이익잉여금 500,000 / (대) 이자비용 500,000 (마감 후엔 자동 상계로 불필요).</p>
+
+        <h3>사례 3: 기말재고자산의 오류 (자동조정)</h3>
+        <p><strong>상황:</strong> (주)한강이 <strong>20X1년도 기말상품재고액을 80,000원 과대계상</strong>함. 수정 전 순이익은 20X1년 2M, 20X2년 1M.</p>
+        <table class="wiki-table-custom text-center">
+            <tr><th>구분</th><th>20X1년도</th><th>20X2년도</th></tr>
+            <tr><td class="bg-gray-50">오류의 흐름</td><td>기말재고 과대 → <strong>매출원가 과소</strong></td><td>기초재고 과대 → <strong>매출원가 과대</strong></td></tr>
+            <tr><td class="bg-gray-50">수정 전 당기순이익</td><td>2,000,000</td><td>1,000,000</td></tr>
+            <tr><td class="bg-gray-50">오류 조정 (이익 측면)</td><td><span class="text-red-600">- 80,000</span> (이익 과대계상분 취소)</td><td><span class="text-blue-700">+ 80,000</span> (이익 과소계상분 복구)</td></tr>
+            <tr><td class="font-bold bg-blue-100">수정 후 당기순이익</td><td class="font-bold">1,920,000</td><td class="font-bold">1,080,000</td></tr>
+        </table>
+        <p class="text-sm mt-1">※ 20X2년 마감 전 발견 시 수정분개: (차) 이익잉여금 80,000 / (대) 매출원가 80,000. (재고오류도 2년 뒤면 자동 상계됨).</p>
+
+        <h3>사례 4: 자본적 지출을 수익적 지출로 처리 (비자동조정)</h3>
+        <p><strong>상황:</strong> (주)용산이 20X1년 초 건물 구입 시 취득세 5,000,000원을 <strong>건물 원가에 안 넣고 세금과공과(당기비용) 처리</strong>. (내용연수 10년, 정액법). 20X2년에 오류 적발.</p>
+        <ul class="detail-list mt-2 text-sm bg-gray-50 p-4 border border-gray-300">
+            <li><strong>회사가 행한 20X1년 오류 분개:</strong> (차) 세금과공과 5,000,000 / 감가상각비 9,500,000<br>
+            <span class="text-gray-500">→ (자산 95M 기준으로 감가상각 9.5M만 함)</span></li>
+            <li><strong>올바른 20X1년 분개:</strong> (차) 건물 5,000,000 / 감가상각비 10,000,000 <br>
+            <span class="text-blue-700 font-bold">→ (자산 100M 기준으로 감가상각 10M을 했어야 함)</span></li>
+            <li><strong>20X2년의 소급 오류수정분개 (★결론):</strong><br>
+            (차) 건물 5,000,000 <span class="ml-4">(누락된 자산 복구)</span><br>
+            (차) 감가상각비 500,000 <span class="ml-4 text-xs">(20X2년 올해 누락된 감가상각비 0.5M 추가)</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(대) 이익잉여금 4,500,000 <span class="text-xs text-red-600 font-bold">(과거 과대계상된 비용 5M 취소 - 과거 과소계상된 감가비 0.5M = 4.5M 순이익 복구)</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(대) 감가상각누계액 1,000,000 <span class="text-xs">(2년 치 누락된 감가상각누계액 0.5M * 2)</span>
+            </li>
+        </ul>
+
+        <!-- [참교육 11] 비자동조정 소급수정 분개 -->
+        <div class="education-box">
+            <div class="education-title">🚨 참교육 팩트폭력 #11: 이익잉여금 수정 계산의 핵심 논리</div>
+            <div class="dialogue-idiot">
+                <span style="color:#FF791B; font-weight:900;">타카미 치카:</span> "기적이야! 20X2년에 건물 취득세 누락한 거 고칠 때 대변에 '이익잉여금 4,500,000원'은 어디서 튀어나온 숫자야?! 기적으로 찍은 거야?!"
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#F43232; font-weight:900;">쿠로사와 다이아:</span> "뿌뿌 데스와!! 20X1년에 건물이 아니라 '세금과공과(비용)'로 500만 원이나 털었으니 이익이 500만 원 줄어들었겠죠? 근데 건물을 안 잡았으니 작년 감가상각비 50만 원은 또 덜 잡혀서 이익이 50만 원 커졌죠! 결국 작년엔 <strong>(-500만 + 50만 = -450만 원)</strong>만큼 순이익(잉여금)이 억울하게 까인 상태니까, 올해 이걸 고치려면 대변에 이익잉여금을 450만 원 늘려줘야 하는 겁니다! 논리적 상계입니다!"
+            </div>
+        </div>
+
+        <div class="edu-note text-sm">
+            <strong>[재무회계 Ch18. 회계변경, 오류수정 - 생존 타이핑 노트]</strong><br>
+            ✔ <strong>회계정책의 변경:</strong> 재고자산 평가(선입선출→평균), 유무형/투자 측정기준(원가→공정). <strong>원칙은 소급적용 (누적효과를 기초 이익잉여금에 가감).</strong><br>
+            ✔ <strong>회계추정치의 변경:</strong> 대손율, 감가상각(내용연수, 잔존가치, <strong>★상각방법 변경 포함!</strong>). <strong>원칙은 전진적용 (과거 재무제표 수정 금지).</strong><br>
+            ✔ <strong>구분 모호 시:</strong> 무조건 <strong>'회계추정치의 변경'</strong>으로 간주.<br>
+            ✔ <strong>오류수정:</strong> 기준 위반, 사실 간과 등. 중요한 오류는 <strong>소급 재작성</strong>.<br>
+            ✔ <strong>자동조정 오류:</strong> 선급비용/수익, 기말재고 오류. 2년 지나면 잉여금이 <strong>자동 상계(수정분개 불필요)</strong>됨.<br>
+            ✔ <strong>비자동조정 오류:</strong> 감가상각 누락 등. 언제 발견하든 <strong>무조건 이익잉여금 소급 수정분개</strong> 필요.
+        </div>
+    </div>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

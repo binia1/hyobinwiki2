@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈위키:통계 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #7777AA;
+            --wiki-table-header-text: #ffffff;
+            --wiki-box-bg: #ffffff;
+            --wiki-badge-bg: #eeeeee;
+        }
+
+        /* 다크 모드 변수 재정의 */
+        body.dark-mode {
+            --wiki-main: #8888CC; 
+            --wiki-border: #444;
+            --wiki-bg: #1f2023;
+            --wiki-text: #ddd;
+            --wiki-gray-bg: #2a2d30;
+            --wiki-link: #6699ff;
+            --wiki-table-header: #444477;
+            --wiki-table-header-text: #eee;
+            --wiki-box-bg: #2a2d30;
+            --wiki-badge-bg: #3a3d40;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; transition: background-color 0.3s, color 0.3s; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 30px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .page-title { font-size: 2.2rem; font-weight: 900; color: var(--wiki-main); border-bottom: 2px solid var(--wiki-border); padding-bottom: 10px; margin-bottom: 20px; display: flex; align-items: baseline; gap: 10px; }
+        .namespace { font-size: 1.5rem; color: #888; font-weight: normal; }
+
+        /* 링크 및 버튼 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* 안내 박스 스타일 */
+        .info-box { border: 1px solid var(--wiki-border); border-radius: 4px; padding: 15px 20px; background-color: var(--wiki-gray-bg); margin-bottom: 30px; font-size: 0.95rem; }
+        
+        /* 통계 카드 스타일 */
+        .stat-card { background-color: var(--wiki-box-bg); border: 1px solid var(--wiki-border); border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .stat-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 15px; border-bottom: 2px solid var(--wiki-main); padding-bottom: 5px; color: var(--wiki-main); }
+        .stat-number { font-size: 2.5rem; font-weight: 900; color: var(--wiki-text); text-align: center; margin: 10px 0; }
+        .stat-desc { text-align: center; font-size: 0.85rem; color: #888; }
+
+        /* 막대 그래프 스타일 */
+        .bar-chart { margin-top: 10px; }
+        .bar-row { display: flex; align-items: center; margin-bottom: 8px; }
+        .bar-label { width: 120px; font-size: 0.85rem; font-weight: bold; }
+        .bar-track { flex-grow: 1; height: 12px; background-color: var(--wiki-gray-bg); border-radius: 6px; overflow: hidden; border: 1px solid var(--wiki-border); }
+        .bar-fill { height: 100%; }
+        .bar-value { width: 50px; text-align: right; font-size: 0.8rem; color: #888; }
+
+        /* 순위 리스트 스타일 */
+        .rank-list { list-style: none; padding: 0; margin: 0; }
+        .rank-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--wiki-border); font-size: 0.9rem; }
+        .rank-item:last-child { border-bottom: none; }
+        .rank-num { font-weight: bold; color: var(--wiki-main); width: 20px; }
+        .rank-name { flex-grow: 1; }
+        .rank-count { color: #888; font-size: 0.8rem; }
+
+        /* 취소선 (효빈위키식) */
+        del { color: #888; text-decoration: line-through; }
+
+        /* 로고 및 네비게이션 */
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9); color: white; padding: 12px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+
+        /* 모달 스타일 */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-window { background: var(--wiki-bg); color: var(--wiki-text); width: 90%; max-width: 400px; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid var(--wiki-border); }
+        .modal-header { font-weight: bold; font-size: 1.2rem; margin-bottom: 15px; border-bottom: 2px solid var(--wiki-main); padding-bottom: 5px; }
+        .modal-input { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid var(--wiki-border); border-radius: 4px; background: var(--wiki-gray-bg); color: var(--wiki-text); }
+        .modal-btn { width: 100%; padding: 10px; background: var(--wiki-main); color: white; font-weight: bold; border-radius: 4px; margin-top: 10px; border: none; cursor: pointer; }
+        .modal-btn:hover { opacity: 0.9; }
+        .close-btn { float: right; cursor: pointer; color: #888; }
+        .modal-link { color: var(--wiki-link); cursor: pointer; text-decoration: none; font-weight: bold; }
+        .modal-link:hover { text-decoration: underline; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body id="body">
+
+    <div id="wiki-msg-box"></div>
+
+    <!-- 네비게이션 바 -->
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <div class="nav-logo-box">H</div>
+            <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white">HyobinWiki</a>
+            <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+                <a href="index.html" class="hover:underline text-white no-underline">대문</a>
+                <a href="최근_변경.html" class="hover:underline text-white no-underline">최근 변경</a>
+                <a href="최근_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
+            </div>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2">
+                <div class="hidden lg:flex items-center gap-1 mr-2">
+                    <a href="편집요청.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">편집요청</a>
+                    <a href="최근_토론.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">토론</a>
+                    <a href="역사.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">역사</a>
+                    <a href="즐겨찾기.html" class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" title="즐겨찾기">★</a>
+                    <a href="더보기.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1">더보기 <span class="text-[9px]">▼</span></a>
+                </div>
+                
+                <input type="text" id="headerSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }">
+                <button onclick="handleSearch('headerSearchInput')" class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
+            </div>
+            <div class="flex gap-1" id="auth-buttons">
+                <button onclick="toggleModal('loginModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" id="btn-login">로그인</button>
+                <button onclick="toggleModal('settingsModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">설정</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 메인 컨테이너 -->
+    <div class="wiki-container shadow-lg">
+        
+        <h1 class="page-title">
+            <span class="namespace">특수기능:</span>통계
+        </h1>
+
+        <div class="info-box shadow-sm">
+            <strong>📊 효빈위키 통계 현황</strong><br>
+            효빈위키 서버에 등록된 문서의 개수, 편집 횟수 등 전반적인 통계를 보여주는 페이지입니다. 시스템 캐시로 인해 수치가 실시간으로 정확하게 반영되지 않을 수 있습니다.
+            <br><span class="text-xs text-gray-500 mt-2 block">※ 기준일: 2026년 현재</span>
+        </div>
+
+        <!-- 최상단 요약 통계 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="stat-card">
+                <div class="stat-title">전체 문서 수</div>
+                <div class="stat-number">1,600</div>
+                <div class="stat-desc">넘겨주기, 틀, 분류 문서 포함</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">총 편집 횟수</div>
+                <div class="stat-number">45,215</div>
+                <div class="stat-desc">개설 이후 누적된 기여 횟수</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">등록된 회원 수</div>
+                <div class="stat-number">342</div>
+                <div class="stat-desc">최근 30일 이내 접속자 기준</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 왼쪽 컬럼 -->
+            <div class="flex flex-col gap-6">
+                <!-- 분류별 문서 수 (대중교통 색상 적극 활용) -->
+                <div class="stat-card">
+                    <div class="stat-title">효빈도시철도 노선별 문서 비중</div>
+                    <div class="bar-chart">
+                        <div class="bar-row"><div class="bar-label">1호선 (탄성지선)</div><div class="bar-track"><div class="bar-fill" style="width: 85%; background-color: #0077DD;"></div></div><div class="bar-value">85%</div></div>
+                        <div class="bar-row"><div class="bar-label">2호선 (어간지선)</div><div class="bar-track"><div class="bar-fill" style="width: 78%; background-color: #00CCAA;"></div></div><div class="bar-value">78%</div></div>
+                        <div class="bar-row"><div class="bar-label">3호선</div><div class="bar-track"><div class="bar-fill" style="width: 60%; background-color: #FFCC11;"></div></div><div class="bar-value">60%</div></div>
+                        <div class="bar-row"><div class="bar-label">4호선</div><div class="bar-track"><div class="bar-fill" style="width: 65%; background-color: #FF5522;"></div></div><div class="bar-value">65%</div></div>
+                        <div class="bar-row"><div class="bar-label">5호선</div><div class="bar-track"><div class="bar-fill" style="width: 50%; background-color: #EE0022;"></div></div><div class="bar-value">50%</div></div>
+                        <div class="bar-row"><div class="bar-label">6호선</div><div class="bar-track"><div class="bar-fill" style="width: 55%; background-color: #881188;"></div></div><div class="bar-value">55%</div></div>
+                        <div class="bar-row"><div class="bar-label">7호선</div><div class="bar-track"><div class="bar-fill" style="width: 40%; background-color: #FF8899;"></div></div><div class="bar-value">40%</div></div>
+                        <div class="bar-row"><div class="bar-label">8호선</div><div class="bar-track"><div class="bar-fill" style="width: 35%; background-color: #9856FF;"></div></div><div class="bar-value">35%</div></div>
+                        <div class="bar-row"><div class="bar-label">빈효선 광역전철</div><div class="bar-track"><div class="bar-fill" style="width: 25%; background-color: #6677CC;"></div></div><div class="bar-value">25%</div></div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-3">* 해당 노선의 역, 마스코트, 사건사고 문서가 전체 철도 문서에서 차지하는 작성률입니다.</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-title">내용이 가장 긴 문서 Top 5</div>
+                    <ul class="rank-list">
+                        <li class="rank-item"><span class="rank-num">1</span><span class="rank-name"><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></span><span class="rank-count">145,210 글자</span></li>
+                        <li class="rank-item"><span class="rank-num">2</span><span class="rank-name"><a href="효빈도시철도.html" class="wiki-link">효빈도시철도</a></span><span class="rank-count">132,045 글자</span></li>
+                        <li class="rank-item"><span class="rank-num">3</span><span class="rank-name"><a href="윤대환.html" class="wiki-link">윤대환/비판 및 사건사고</a></span><span class="rank-count">115,880 글자</span></li>
+                        <li class="rank-item"><span class="rank-num">4</span><span class="rank-name"><a href="효빈대학교.html" class="wiki-link">효빈대학교</a></span><span class="rank-count">98,320 글자</span></li>
+                        <li class="rank-item"><span class="rank-num">5</span><span class="rank-name"><a href="효빈시내버스.html" class="wiki-link">효빈시내버스</a></span><span class="rank-count">92,100 글자</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 오른쪽 컬럼 -->
+            <div class="flex flex-col gap-6">
+                
+                <!-- 문서 훼손/수정 전쟁 순위 -->
+                <div class="stat-card">
+                    <div class="stat-title">가장 많이 롤백(훼손 복구)된 문서 Top 5</div>
+                    <div class="text-xs text-gray-500 mb-2">잦은 반달리즘 및 수정 전쟁으로 관리자 개입이 많았던 문서들입니다.</div>
+                    <ul class="rank-list">
+                        <li class="rank-item">
+                            <span class="rank-num">1</span>
+                            <span class="rank-name"><a href="윤대환.html" class="wiki-link text-red-500">윤대환</a></span>
+                            <span class="rank-count">1,824회</span>
+                        </li>
+                        <li class="rank-item">
+                            <span class="rank-num">2</span>
+                            <span class="rank-name"><a href="박효빈.html" class="wiki-link text-red-500">박효빈</a></span>
+                            <span class="rank-count">1,205회</span>
+                        </li>
+                        <li class="rank-item text-xs text-gray-500 ml-5 border-none pt-0 pb-2">↳ 1996년생 현직 시장을 2003년생 실존 인물(사용자)과 동일시하며 '창조주' 드립을 치는 악성 훼손.</li>
+                        
+                        <li class="rank-item">
+                            <span class="rank-num">3</span>
+                            <span class="rank-name"><a href="두청운수.html" class="wiki-link text-red-500">두청운수</a></span>
+                            <span class="rank-count">945회</span>
+                        </li>
+                        <li class="rank-item text-xs text-gray-500 ml-5 border-none pt-0 pb-2">↳ 2세대(2003~2007) 갈색 버스의 75인승 과적, 플라스틱 시트에 대한 시민들의 분노가 담긴 취소선 드립 폭주.</li>
+
+                        <li class="rank-item">
+                            <span class="rank-num">4</span>
+                            <span class="rank-name"><a href="임세정_임세하.html" class="wiki-link">임세정·임세하</a> (7호선)</span>
+                            <span class="rank-count">760회</span>
+                        </li>
+                        <li class="rank-item text-xs text-gray-500 ml-5 border-none pt-0 pb-2">↳ 뱅드림 캐릭터(치하야 아논)와 색상 및 기믹이 겹친다는 이유로 동일인물인 양 서술하는 밈적 훼손.</li>
+
+                        <li class="rank-item">
+                            <span class="rank-num">5</span>
+                            <span class="rank-name"><a href="유리아.html" class="wiki-link">유리아</a> (8호선)</span>
+                            <span class="rank-count">530회</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-title">가장 많은 링크가 연결된 역 문서</div>
+                    <ul class="rank-list">
+                        <li class="rank-item"><span class="rank-num">1</span><span class="rank-name"><a href="사가당역.html" class="wiki-link">사가당역</a> (3, 4호선 환승)</span><span class="rank-count">4,210 링크</span></li>
+                        <li class="rank-item"><span class="rank-num">2</span><span class="rank-name"><a href="고속버스터미널역.html" class="wiki-link">고속버스터미널역</a> (3, 5호선 환승)</span><span class="rank-count">3,890 링크</span></li>
+                        <li class="rank-item"><span class="rank-num">3</span><span class="rank-name"><a href="전천중앙역.html" class="wiki-link">전천중앙역</a> (5, 6호선 환승)</span><span class="rank-count">3,150 링크</span></li>
+                        <li class="rank-item"><span class="rank-num">4</span><span class="rank-name"><a href="효빈국제공항역.html" class="wiki-link">효빈국제공항역</a> (3호선 종점)</span><span class="rank-count">2,880 링크</span></li>
+                        <li class="rank-item"><span class="rank-num">5</span><span class="rank-name"><a href="가동사거리역.html" class="wiki-link">가동사거리역</a> (4, 6호선 환승)</span><span class="rank-count">2,410 링크</span></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="info-box shadow-sm mt-6" style="background-color: var(--wiki-box-bg); border-left: 4px solid var(--wiki-main);">
+            <strong>💡 알아두면 쓸데없는 효빈위키 통계 여담</strong>
+            <ul class="list-disc mt-2 text-sm">
+                <li>현재 효빈위키에 가장 많이 업로드된 사진 확장자는 당연하게도 <code class="bg-gray-200 dark:bg-gray-700 px-1 rounded text-red-500">.png</code>입니다. <del>이름도 무조건 한국어로 써야 해서 은근히 빡세다</del></li>
+                <li>3세대 스타더스트 작전(2008~) 시내버스 노선 중 문서를 읽는 체류 시간이 가장 긴 문서는 광역버스(Royal Blue, #485EC6)입니다.</li>
+                <li>한때 1호선 탄성지선의 '비마리유적지구역' 문서가 유적지 괴담으로 인해 며칠간 접속자 수 1위를 달성한 적이 있습니다.</li>
+            </ul>
+        </div>
+
+        <footer class="mt-20 border-t border-[var(--wiki-border)] pt-10 text-center text-gray-400 text-xs pb-10">
+            <p class="mb-2">모든 문서는 크리에이티브 커먼즈 저작자표시-동일조건변경허락 4.0에 따라 사용할 수 있습니다.</p>
+            본 문서의 저작권은 효빈위키에 있습니다.
+        </footer>
+    </div>
+
+    <!-- 설정 및 로그인 모달 -->
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-window">
+            <div class="modal-header">로그인 <span class="close-btn" onclick="toggleModal('loginModal')">&times;</span></div>
+            <input type="text" id="loginId" class="modal-input" placeholder="아이디">
+            <input type="password" id="loginPw" class="modal-input" placeholder="비밀번호" onkeypress="if(event.keyCode==13) doLogin()">
+            <button class="modal-btn" onclick="doLogin()">로그인</button>
+            <div class="text-xs text-center mt-3 text-gray-500">계정이 없으신가요? <span class="modal-link" onclick="toggleModal('loginModal'); toggleModal('signupModal');">회원가입</span></div>
+        </div>
+    </div>
+
+    <div id="signupModal" class="modal-overlay">
+        <div class="modal-window">
+            <div class="modal-header">회원가입 <span class="close-btn" onclick="toggleModal('signupModal')">&times;</span></div>
+            <input type="text" id="signupId" class="modal-input" placeholder="아이디">
+            <input type="password" id="signupPw" class="modal-input" placeholder="비밀번호">
+            <input type="password" id="signupPwConfirm" class="modal-input" placeholder="비밀번호 확인" onkeypress="if(event.keyCode==13) doSignup()">
+            <button class="modal-btn" onclick="doSignup()">가입하기</button>
+            <div class="text-xs text-center mt-3 text-gray-500">이미 계정이 있으신가요? <span class="modal-link" onclick="toggleModal('signupModal'); toggleModal('loginModal');">로그인</span></div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-window">
+            <div class="modal-header">효빈위키 설정 <span class="close-btn" onclick="toggleModal('settingsModal')">&times;</span></div>
+            <div class="flex items-center justify-between mb-4">
+                <span>🌙 다크 모드</span>
+                <input type="checkbox" id="darkModeCheck" onchange="toggleDarkMode()" class="w-5 h-5 accent-[#7777AA]">
+            </div>
+            <div class="mb-2">
+                <div class="flex justify-between mb-1">
+                    <span>🔠 글자 크기</span>
+                    <span id="fontSizeVal">100%</span>
+                </div>
+                <input type="range" id="fontSizeRange" min="80" max="130" value="100" step="5" class="w-full accent-[#7777AA]" oninput="changeFontSize(this.value)">
+            </div>
+            <button class="modal-btn mt-4" onclick="toggleModal('settingsModal')">닫기</button>
+        </div>
+    </div>
+
+    <script src="assets/wiki_index.js"></script>
+    <script>
+        // 기본 UI 토글 스크립트
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerHTML = text; // HTML 허용 (강조 태그 등)
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 3500);
+        }
+
+        function toggleDarkMode() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('hb_dark_mode', body.classList.contains('dark-mode'));
+        }
+
+        function changeFontSize(val) {
+            document.body.style.fontSize = val + '%';
+            document.getElementById('fontSizeVal').innerText = val + '%';
+            localStorage.setItem('hb_font_size', val);
+        }
+
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const isDark = localStorage.getItem('hb_dark_mode') === 'true';
+            if (isDark) { document.body.classList.add('dark-mode'); document.getElementById('darkModeCheck').checked = true; }
+            const fontSize = localStorage.getItem('hb_font_size');
+            if (fontSize) { changeFontSize(fontSize); document.getElementById('fontSizeRange').value = fontSize; }
+        });
+
+        function handleSearch(inputId) {
+            const q = document.getElementById(inputId).value.trim();
+            if(q) location.href = encodeURI("효빈위키 검색.html") + "?q=" + encodeURIComponent(q);
+            else showMsg('검색어를 입력해주세요.');
+        }
+
+        // 더보기 메뉴 로직
+        window.addEventListener('DOMContentLoaded', () => {
+            const moreBtn = Array.from(document.querySelectorAll('a')).find(el => el.textContent.includes('더보기'));
+            if (moreBtn) {
+                moreBtn.href = "javascript:void(0);";
+                moreBtn.addEventListener('click', (e) => {
+                    e.preventDefault(); e.stopPropagation(); toggleMoreDropdown(moreBtn);
+                });
+            }
+            document.addEventListener('click', (e) => {
+                const menu = document.getElementById('hb-more-dropdown');
+                if (menu && menu.style.display === 'block') {
+                    if (e.target !== moreBtn && !moreBtn.contains(e.target) && !menu.contains(e.target)) menu.style.display = 'none';
+                }
+            });
+        });
+
+        function toggleMoreDropdown(btn) {
+            let menu = document.getElementById('hb-more-dropdown');
+            if (!menu) {
+                menu = document.createElement('div');
+                menu.id = 'hb-more-dropdown';
+                menu.style.position = 'absolute'; menu.style.background = 'var(--wiki-box-bg)'; menu.style.border = '1px solid var(--wiki-border)';
+                menu.style.borderRadius = '6px'; menu.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)'; menu.style.padding = '5px 0';
+                menu.style.zIndex = '10001'; menu.style.minWidth = '130px'; menu.style.display = 'none'; menu.style.transition = 'background-color 0.3s, border-color 0.3s';
+
+                const menuItems = [
+                    { text: '🎲 임의의 문서', action: 'window.location.href="임의의_문서.html"' },
+                    { text: '📂 파일 올리기', href: '파일_올리기.html' },
+                    { text: '📝 필요한 문서', href: '필요한_문서.html' },
+                    { text: '📊 위키 통계', href: '통계.html' },
+                    { text: '❓ 도움말', href: '도움말.html' }
+                ];
+                menuItems.forEach(item => {
+                    const a = document.createElement('a');
+                    a.innerText = item.text; a.style.display = 'block'; a.style.padding = '10px 16px'; a.style.color = 'var(--wiki-text)';
+                    a.style.textDecoration = 'none'; a.style.fontSize = '13px'; a.style.fontWeight = 'bold'; a.style.cursor = 'pointer';
+                    if (item.href) a.href = item.href; else if (item.action) a.setAttribute('onclick', item.action);
+                    a.onmouseenter = () => a.style.background = 'var(--wiki-gray-bg)';
+                    a.onmouseleave = () => a.style.background = 'transparent';
+                    menu.appendChild(a);
+                });
+                document.body.appendChild(menu);
+            }
+            if (menu.style.display === 'block') { menu.style.display = 'none'; } 
+            else {
+                const rect = btn.getBoundingClientRect();
+                menu.style.top = (rect.bottom + window.scrollY + 8) + 'px';
+                if (rect.left + 130 > window.innerWidth) { menu.style.right = (window.innerWidth - rect.right - window.scrollX) + 'px'; menu.style.left = 'auto'; } 
+                else { menu.style.left = (rect.left + window.scrollX) + 'px'; menu.style.right = 'auto'; }
+                menu.style.display = 'block';
+            }
+        }
+    </script>
+    <script src="secret_search.js"></script>
+
+    <script src="assets/hb_wiki_core.js?v=2"></script>
+
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

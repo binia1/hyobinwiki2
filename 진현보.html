@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>진현보 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/election_district.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* [테마 컬러 설정] 자유통일당 남색/파란색 */
+            --wiki-main: #0958A7; 
+            
+            /* [고정] 상단 내비게이션 바 색상 */
+            --wiki-nav-bg: #7777aa;
+
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: var(--wiki-main); /* 링크 색상도 테마 컬러 계열로 */
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.15rem !important; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 (프로필용) */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 450px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.3rem !important; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: var(--wiki-main); color: #fff; width: 100px; padding: 6px 8px; border: 1px solid var(--wiki-border); text-align: center; vertical-align: middle; font-weight: bold; }
+        .infobox td { padding: 6px 8px; border: 1px solid var(--wiki-border); vertical-align: middle; }
+
+        /* 데이터 테이블 */
+        .data-table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; font-size: 0.95rem; }
+        .data-table th, .data-table td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; }
+        .data-table th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; text-align: center; }
+        .data-table tr:nth-child(even) { background-color: #fdfdfd; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* [특수 스타일] 효빈위키 느낌 요소 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+        del { color: #ccc; text-decoration: line-through; } /* 취소선 드립용 */
+        .wiki-gray { color: #888; font-size: 0.9em; } /* 괄호 속 혼잣말용 */
+        
+        /* 정당 뱃지 스타일 */
+        .party-badge { 
+            display: inline-block; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            color: white; 
+            font-weight: bold; 
+            font-size: 0.9em; 
+            text-decoration: none; 
+            line-height: 1.2;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .party-badge.text-black { color: #333; text-shadow: none; } /* 노란색 배경용 */
+        
+        /* 정당 라벨 스타일 (인포박스용) */
+        .party-label { display: inline-block; padding: 2px 6px; border-radius: 3px; background: var(--wiki-main); color: white; font-size: 0.9em; font-weight: bold; text-decoration: none; }
+
+        /* 각주 스타일 */
+        .wiki-fn-link { color: var(--wiki-link); font-size: 0.8em; vertical-align: super; text-decoration: none; font-weight: bold; cursor: pointer; margin-left: 2px; }
+        .wiki-fn-link:hover { text-decoration: underline; }
+        
+        /* 각주 툴팁 (호버보드) */
+        #wiki-tooltip { 
+            display: none; 
+            position: absolute; 
+            background: white; 
+            border: 1px solid #999; 
+            padding: 10px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+            max-width: 350px; 
+            z-index: 9999; 
+            font-size: 0.85rem; 
+            border-radius: 4px; 
+            line-height: 1.4; 
+            color: #333;
+            pointer-events: none; /* 툴팁이 마우스 가리지 않게 */
+        }
+
+        /* 하단 네비 박스 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+
+        /* 푸터 저작권 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; }
+        .wiki-footer strong { color: #333; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-tooltip"></div> <!-- 툴팁 컨테이너 -->
+
+    <!-- 상단 내비게이션 바 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav-bg);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="효빈위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a href="진현보.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">토론</a>
+                <a href="진현보.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">편집</a>
+                <a href="진현보.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">진현보</div>
+            <div class="flex gap-2 mb-1">
+                <a href="진현보.html" class="wiki-btn">토론</a>
+                <a href="진현보.html" class="wiki-btn">편집</a>
+                <a href="진현보.html" class="wiki-btn">역사</a>
+                <button class="wiki-btn" onclick="alert('즐겨찾기에 추가되었습니다.')">☆ 즐겨찾기</button>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold" style="color: var(--wiki-main);">분류:</span> 
+            <a href="효빈광역시의_정치인.html" class="wiki-link">효빈광역시의 정치인</a> | 
+            <a href="자유통일당.html" class="wiki-link">자유통일당</a> | 
+            <a href="1949년_출생.html" class="wiki-link">1949년 출생</a> | 
+            <a href="낙선인.html" class="wiki-link">낙선인</a> | 
+            <a href="개신교.html" class="wiki-link">개신교/목회자</a> | 
+            <a href="극우파.html" class="wiki-link">극우파</a> | 
+            <a href="인간비판.html" class="wiki-link">인간비판/정치인</a> | 
+            <a href="남구(효빈).html" class="wiki-link">남구(효빈)</a>
+        </div>
+
+        <!-- 내비게이션 박스 (자유통일당 당협위원장) -->
+        <table class="nav-table" style="border: 2px solid var(--wiki-main); width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.9rem;">
+            <tr>
+                <td class="nav-header" style="background-color: var(--wiki-main); padding: 5px;">
+                    <span class="nav-header-wrap" style="display:inline-flex; align-items:center; gap:4px; justify-content: center; width: 100%;">
+                        <a href="효빈광역시.html" class="wiki-link" style="color:white;"><img src="이미지/효빈시_로고.png" width="20" style="vertical-align: middle; display:block;" onerror="this.style.display='none'"></a>
+                        <a href="자유통일당.html" class="wiki-link" style="color:white; font-weight: bold;">자유통일당 효빈광역시당 당협위원장</a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 0;">
+                    <details open style="border: none; margin: 0;">
+                        <summary style="display:none;">[ 펼치기 · 접기 ]</summary>
+                        <div style="padding: 5px; background-color: #f9f9f9;">
+                             <table style="width: 100%; text-align: center; border-collapse: collapse;">
+                                <tr style="background-color: var(--wiki-main); color: white;">
+                                    <td style="width: 25%; padding: 4px; border: 1px solid #ccc;"><a href="중구-동구.html" class="nav-th" style="color: white; font-weight: bold; text-decoration: none;">중구·동구</a></td>
+                                    <td style="width: 25%; padding: 4px; border: 1px solid #ccc;"><a href="서구(선거구).html" class="nav-th" style="color: white; font-weight: bold; text-decoration: none;">서구</a></td>
+                                    <td style="width: 25%; padding: 4px; border: 1px solid #ccc;"><a href="남구_갑(효빈).html" class="nav-th" style="color: white; font-weight: bold; text-decoration: none;">남구 갑</a></td>
+                                    <td style="width: 25%; padding: 4px; border: 1px solid #ccc;"><a href="남구_을(효빈).html" class="nav-th" style="color: white; font-weight: bold; text-decoration: none;">남구 을</a></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 6px; border: 1px solid #ccc;"><a href="조광훈.html" class="nav-link" style="color: #333; font-weight: bold; text-decoration: none;">조광훈</a></td>
+                                    <td style="padding: 6px; border: 1px solid #ccc;"><span style="color: #999;">(공석)</span></td>
+                                    <td style="padding: 6px; border: 1px solid #ccc;"><a href="진현보.html" class="nav-link" style="color: #333; font-weight: bold; text-decoration: none;">진현보</a></td>
+                                    <td style="padding: 6px; border: 1px solid #ccc;"><span style="color: #999;">(공석)</span></td>
+                                </tr>
+                                <tr style="background-color: var(--wiki-main); color: white;">
+                                    <td style="padding: 4px; border: 1px solid #ccc;"><a href="북구_갑(효빈).html" class="nav-th" style="color: white; font-weight: bold; text-decoration: none;">북구 갑</a></td>
+                                    <td style="padding: 4px; border: 1px solid #ccc;"><a href="북구_을(효빈).html" class="nav-th" style="color: white; font-weight: bold; text-decoration: none;">북구 을</a></td>
+                                    <td style="padding: 4px; border: 1px solid #ccc;"><a href="북구_병(효빈).html" class="nav-th" style="color: white; font-weight: bold; text-decoration: none;">북구 병</a></td>
+                                    <td style="padding: 4px; border: 1px solid #ccc;"><a href="안천구_갑.html" class="nav-th" style="color: white; font-weight: bold; text-decoration: none;">안천 갑</a></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 6px; border: 1px solid #ccc;"><span style="color: #999;">(공석)</span></td>
+                                    <td style="padding: 6px; border: 1px solid #ccc;"><span style="color: #999;">(공석)</span></td>
+                                    <td style="padding: 6px; border: 1px solid #ccc;"><span style="color: #999;">(공석)</span></td>
+                                    <td style="padding: 6px; border: 1px solid #ccc;"><span style="color: #999;">(공석)</span></td>
+                                </tr>
+                                <tr style="background-color: var(--wiki-main); color: white;">
+                                    <td style="padding: 4px; border: 1px solid #ccc;"><a href="안천구_을.html" class="nav-th" style="color: white; font-weight: bold; text-decoration: none;">안천 을</a></td>
+                                    <td style="padding: 4px; border: 1px solid #ccc;"><a href="청엽구_갑.html" class="nav-th" style="color: white; font-weight: bold; text-decoration: none;">청엽 갑</a></td>
+                                    <td style="padding: 4px; border: 1px solid #ccc;"><a href="청엽구_을.html" class="nav-th" style="color: white; font-weight: bold; text-decoration: none;">청엽 을</a></td>
+                                    <td style="padding: 4px; border: 1px solid #ccc;"><a href="창전구_갑.html" class="nav-th" style="color: white; font-weight: bold; text-decoration: none;">창전 갑</a></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 6px; border: 1px solid #ccc;"><span style="color: #999;">(공석)</span></td>
+                                    <td style="padding: 6px; border: 1px solid #ccc;"><span style="color: #999;">(공석)</span></td>
+                                    <td style="padding: 6px; border: 1px solid #ccc;"><span style="color: #999;">(공석)</span></td>
+                                    <td style="padding: 6px; border: 1px solid #ccc;"><span style="color: #999;">(공석)</span></td>
+                                </tr>
+                                <tr style="background-color: var(--wiki-main); color: white;">
+                                    <td style="padding: 4px; border: 1px solid #ccc;"><a href="창전구_을.html" class="nav-th" style="color: white; font-weight: bold; text-decoration: none;">창전 을</a></td>
+                                    <td style="padding: 4px; border: 1px solid #ccc;"><a href="탄성군(선거구).html" class="nav-th" style="color: white; font-weight: bold; text-decoration: none;">탄성</a></td>
+                                    <td colspan="2" style="background-color: #fff; border:none;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 6px; border: 1px solid #ccc;"><span style="color: #999;">(공석)</span></td>
+                                    <td style="padding: 6px; border: 1px solid #ccc;"><span style="color: #999;">(공석)</span></td>
+                                    <td colspan="2" style="border:none;"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" style="background-color: #f9f9f9; font-size: 0.9em; padding-top: 10px; border-top: 1px solid #ccc;">
+                                        <a href="효빈광역시당.html" class="wiki-link">자유통일당 효빈광역시당</a>
+                                    </td>
+                                </tr>
+                             </table>
+                             <div style="margin-top: 5px; font-size: 0.8em; text-align: left;">
+                                 <span style="color: var(--wiki-main); font-weight: bold;">◀ 2024년</span> | 
+                                 <span style="background-color: var(--wiki-main); color: white; padding: 2px 4px; border-radius: 2px;">자유통일당</span> 외 타 정당 보기
+                             </div>
+                        </div>
+                    </details>
+                </td>
+            </tr>
+        </table>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">생애</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">논란 및 기행</a>
+                        <ul>
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">코로나19 대면 예배 강행 및 공권력 조롱 사건</a></li>
+                            <li>3.2. <a href="#s-3-2" class="wiki-link">"12.3 비상계엄은 나의 생일 선물" 망언</a></li>
+                            <li>3.3. <a href="#s-3-3" class="wiki-link">조광훈과의 남구 평당신도시 확성기 연합 집회</a></li>
+                            <li>3.4. <a href="#s-3-4" class="wiki-link">평당신도시 맘카페 좌표찍기 및 사이버 테러</a></li>
+                            <li>3.5. <a href="#s-3-5" class="wiki-link">8호선 공사 방해 "땅굴 파면 지옥문 열린다" 망언</a></li>
+                            <li>3.6. <a href="#s-3-6" class="wiki-link">조광훈·전광훈과의 환장의 콜라보 및 헌금 내전</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">가족 관계 (정상인들의 탈출 서사)</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">타 정치인과의 관계</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">소속 정당</a></li>
+                    <li>7. <a href="#s-7" class="wiki-link">선거 이력</a>
+                        <ul>
+                            <li>7.1. <a href="#s-7-1" class="wiki-link">제22대 국회의원 선거</a></li>
+                        </ul>
+                    </li>
+                    <li>8. <a href="#s-footnote" class="wiki-link">각주</a></li>
+                    <li>9. <a href="#s-9" class="wiki-link">둘러보기</a></li>
+                </ul>
+            </div>
+
+            <!-- 프로필 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="infobox-title">진현보<br><span class="text-sm font-normal">陳賢保 | Jin Hyun-bo</span></div>
+                <div class="bg-white text-center border-b">
+                    <img src="이미지/진현보.png" alt="진현보 프로필" class="w-full block" onerror="this.src='https://via.placeholder.com/200x250?text=No+Image';">
+                </div>
+                <table>
+                    <tr><th>출생</th><td>1949년 12월 3일 (76세)<br>덕빈북도 탄성군 어간면 평산리<br><span class="text-xs text-gray-500">(현 <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="남구(효빈).html" class="wiki-link">남구</a> 평당동)</span></td></tr>
+                    <tr><th>거주지</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="남구(효빈).html" class="wiki-link">남구</a> 평당동</td></tr>
+                    <tr><th>학력</th><td>효빈남고등학교 (졸업)<br>대한신학교 (미인가 / 졸업)<a href="#fn-1" id="rfn-1" class="wiki-fn-link" data-content="현 안양대학교의 전신이 아닌, 조광훈과 함께 다녔다는 정체불명의 사이비 야매 신학교다.">[1]</a></td></tr>
+                    <tr><th>소속 정당</th><td><span class="party-label" style="background-color: var(--wiki-main);">자유통일당</span></td></tr>
+                    <tr><th>종교</th><td><a href="개신교.html" class="wiki-link">개신교</a></td></tr>
+                    <tr><th>가족</th><td>배우자, 슬하 1남 2녀<br><span class="text-xs text-gray-500">(장남 진수혁, 차녀 진수현은 절연 후 탈출)</span></td></tr>
+                    <tr><th>현직</th><td class="text-left">효빈세계로교회 담임목사<br>자유통일당 효빈시 남구 당원협의회 위원장</td></tr>
+                    <tr><th>주요 경력</th><td class="text-left">(전) 효빈기독교총연합회 공동회장<br>(현) 제22대 국회의원 선거 효빈 남구 갑 후보</td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <blockquote>
+            <strong>"12월 3일 비상계엄령은 하나님이 내게 주신 생일 선물이자, 종북 좌파로부터 대한민국을 구원하는 생일 선물입니다! 할렐루야!"</strong><br>
+            <del>그리고 그 선물은 단 6시간 만에 칼같이 반품 처리되었다</del>
+        </blockquote>
+        <p><a href="대한민국.html" class="wiki-link">대한민국</a>의 <a href="개신교.html" class="wiki-link">개신교</a> 목사이자 극우 성향의 정치인. 효빈광역시 남구 평당동에 위치한 대형 교회인 '효빈세계로교회'의 담임목사를 맡고 있다. 제22대 총선에서 효빈 남구 갑 선거구에 <a href="자유통일당.html" class="wiki-link">자유통일당</a> 소속으로 출마했으나, 존재감 없는 2.32%의 득표율로 낙선했다.</p>
+        <p>중구·동구의 <a href="조광훈.html" class="wiki-link">조광훈</a>과 영혼의 투톱을 달리는 효빈시 극우 기독교계의 양대 산맥 중 한 명이다. 조광훈이 효빈역 광장에서 깽판을 치는 행동대장 격이라면, 진현보는 남구의 부촌인 평당신도시를 거점으로 삼아 "순교"를 운운하며 공권력에 정면으로 불복하는 지능적(?) 어그로꾼으로 악명이 높다.</p>
+
+        <!-- 2. 생애 -->
+        <h2 id="s-2" class="anchor-offset">2. 생애</h2>
+        <p>1949년 12월 3일, 당시 행정구역 상 덕빈북도 탄성군 어간면 평산리에서 태어났다. 이곳이 바로 현재 효빈시 최고 부촌이자 남구 갑 선거구의 핵심인 평당동(평당신도시) 일대다. 본인 스스로를 "평당의 흙을 먹고 자란 진짜 남구의 아들"이라고 지칭하며 지역 부심을 부리지만, 정작 평당동 토박이들이나 신도시 입주민들은 그를 "동네 집값 깎아먹는 소음 공해 1순위"로 취급하며 극도로 혐오한다.</p>
+        <p>효빈남고등학교를 졸업하고, 조광훈(패러디 원본 전광훈)과 동일한 이름의 <strong>대한신학교</strong>를 졸업했다. 본인은 이를 현 안양대학교의 전신이라고 떠벌리고 다니지만, 실제로는 정식 인가조차 받지 못한 정체불명의 야매 사이비 신학교로 밝혀졌다. 이 학력 덕분에 조광훈과는 교단 내에서 선후배로 엮이며 끈끈한 극우 카르텔을 형성하게 되었다. 이후 자신의 고향인 평당동에 '효빈세계로교회'를 개척해 대형 교회로 키웠고, 이를 정치적 기반으로 삼아 우파 운동에 뛰어들었다.</p>
+
+        <!-- 3. 논란 및 기행 -->
+        <h2 id="s-3" class="anchor-offset">3. 논란 및 기행</h2>
+
+        <h3 id="s-3-1">3.1. 코로나19 대면 예배 강행 및 공권력 조롱 사건</h3>
+        <p>전국적으로 코로나19 방역을 위한 종교시설 대면 예배 금지 조치가 내려졌을 때, 이를 정면으로 위반하고 수천 명 단위의 대면 예배를 매주 강행해 효빈시 전체를 발칵 뒤집어 놓았다.</p>
+        <p>당시 시청 공무원들과 경찰이 교회를 폐쇄 조치하려 출동하자, 신도들을 동원해 교회 입구에 바리케이드를 치고 <strong>"예배당 문을 닫느니 차라리 여기서 순교하겠다! 공산당의 방역 독재에 맞서라!"</strong>라며 난동을 부렸다. 이 사건으로 남구 주민들의 분노가 폭발해 맘카페를 중심으로 '효빈세계로교회 퇴출 운동'까지 벌어졌으나, 본인은 이를 "사탄의 핍박"이라며 훈장처럼 자랑하고 다닌다.</p>
+
+        <h3 id="s-3-2">3.2. "12.3 비상계엄은 나의 생일 선물" 망언</h3>
+        <p>진현보의 어록 중 가장 널리 알려진 희대의 망언. 2024년 12월 3일 윤석열 대통령의 비상계엄 선포 사태 당시, 공교롭게도 그날이 진현보의 생일(12월 3일)이었다.</p>
+        <p>교회 식당에서 신도들과 성대한 생일 파티를 하던 중 계엄 선포 뉴스가 속보로 뜨자, 그는 흥분을 주체하지 못하고 마이크를 잡은 뒤 <strong>"보십시오! 12월 3일 비상계엄령은 하나님이 제게 주신 생일 선물이자, 종북 좌파들로부터 대한민국을 구원하는 국가의 생일 선물입니다!"</strong>라고 만세 삼창을 부르는 기행을 저질렀다.</p>
+        <p>그러나 불과 6시간 만에 국회의 계엄 해제 요구 결의안이 통과되면서 계엄령이 허무하게 해제되었고, 진현보의 이 발언 영상은 인터넷에 박제되어 <strong>"6시간짜리 반품 생일 선물"</strong>, <strong>"쿠팡 로켓배송보다 빠른 반품"</strong>이라는 조롱과 함께 전국적인 밈(Meme)이 되어버렸다.<del>(...)</del></p>
+
+        <h3 id="s-3-3">3.3. 조광훈과의 남구 평당신도시 확성기 연합 집회</h3>
+        <p>제22대 총선 유세 기간 중, 중구에서 쫓겨난 조광훈을 남구 평당신도시 중심 상가로 불러들여 '구국 연합 유세'를 빙자한 초대형 확성기 집회를 열었다.</p>
+        <p>가뜩이나 8호선 건설 지연 문제로 예민해져 있던 평당동 주민들이 찬송가 소음에 폭발해 단체로 항의하러 쏟아져 나왔다. 이때 당시 남구 을 현역 의원이자 8호선 해결사로 칭송받던 더불어민주당 <a href="고정민.html" class="wiki-link">고정민</a> 후보가 직접 현장에 등판, <strong>"여기가 당신들 앞마당입니까? 시민들 일상 망치지 말고 당장 스피커 끄고 남구에서 나가세요!"</strong>라며 일갈하는 사이다 명장면이 연출되었다. 이 사건을 계기로 남구 갑의 보수표마저 고정민에게 쏠리며 진현보와 <a href="우신면.html" class="wiki-link">우신면</a>(국민의힘)이 사이좋게 몰락하는 결정적 계기가 되었다.</p>
+
+        <h3 id="s-3-4">3.4. 평당신도시 맘카페 좌표찍기 및 사이버 테러</h3>
+        <p>효빈세계로교회의 극심한 주말 확성기 소음과 불법 주차 문제로 평당신도시 지역 커뮤니티(맘카페)에 민원 글이 올라오자, 진현보는 주일 예배 설교 시간에 <strong>"저 맘카페 맘충들이 마귀의 사주를 받아 교회를 탄압한다"</strong>며 회원들의 실명과 아이디를 대형 스크린에 띄우는 이른바 '좌표 찍기'를 시전했다.</p>
+        <p>이후 교회의 광신도들이 맘카페에 몰려가 입에 담지 못할 패륜적인 쌍욕과 저주 댓글을 도배하고, 심지어 민원을 넣은 주민이 운영하는 자영업 식당에 찾아가 단체로 영업을 방해하는 등 조직적인 테러를 자행했다. 결국 참다못한 맘카페 매니저와 주민들이 영업방해 및 명예훼손으로 단체 소송을 걸자 "이것이 현대판 십자가 고난"이라며 적반하장으로 피해자 코스프레를 해 공분을 샀다.</p>
+
+        <h3 id="s-3-5">3.5. 8호선 공사 방해 "땅굴 파면 지옥문 열린다" 망언</h3>
+        <p>남구 주민들의 최대 숙원 사업인 효빈 도시철도 8호선 공사가 첫 삽을 뜨려 하자, 공사 현장 인근에 교회가 있다는 이유만으로 신도들을 동원해 포크레인을 가로막고 드러누웠다.</p>
+        <p>그는 확성기를 들고 <strong>"지하에 거대한 땅굴을 파는 것은 하나님의 창조 질서를 거스르고 지옥문을 여는 짓이다! 저 땅굴을 통해 북한군이 평당동으로 쳐들어올 것이다!"</strong>라는, 중구 조광훈의 '7호선 반대 논리'와 소름 돋게 똑같은 망언을 쏟아냈다.</p>
+        <p>문제는 <strong>효빈 8호선은 애초에 지하화 계획이 전혀 없는 '고가 경전철'이라는 것이다.</strong>(...) <del>하늘로 다니는 경전철을 보고 땅굴 드립을 치는 기적의 지능</del> 사업 계획서 한 줄조차 읽어보지 않고 무작정 "지하 땅굴" 운운하며 난동을 피운 사실이 알려지자, 남구 주민들은 어처구니가 승천하여 "고가 철도에 북한군이 어떻게 오냐? 행글라이더 타고 쳐들어오냐?", "지옥문은 니들 주둥아리가 지옥문이다"라며 조롱 섞인 맞불 집회를 여는 등 남구 일대가 한바탕 거대한 코미디 난장판이 되었다.</p>
+
+        <h3 id="s-3-6">3.6. 조광훈·전광훈과의 환장의 콜라보 및 헌금 내전</h3>
+        <p>서울 사랑제일교회의 전광훈 목사와 부활제일교회의 <a href="조광훈.html" class="wiki-link">조광훈</a> 목사를 평당신도시로 초청하여 벌인 <strong>'빤스 목사 멀티버스 대충돌'</strong> 사건이다.</p>
+        <p>이들은 나란히 단상에 서서 <strong>"내란수괴 윤석열 각하를 구출하자!", "필리핀 공항에서 쌍욕하다 쫓겨난 윤재훈은 진정한 애국 청년!", "5호선을 끊은 살인미수범 윤대환을 동상 세워 찬양하자!"</strong>라는, 대한민국의 법치와 상식을 믹서기에 갈아버린 망언 3단 콤보를 시전했다. 진현보 역시 옆에서 <strong>"이분들이야말로 진정한 성령의 본체들이다!"</strong>라며 핏대를 세우며 호응했다.</p>
+        <p>그러나 이 훈훈했던 극우 콜라보는 집회 후반부 <strong>'애국 헌금 수금 시간'</strong>에 완벽하게 박살 났다. 전광훈이 "이 돈은 서울 이승만 광장 짓는 데 쓰겠다"고 하자, 조광훈과 진현보가 <strong>"아니, 여긴 효빈시인데 왜 서울로 돈을 빼돌리냐! 효빈 알박기 소송비로 써야 한다!"</strong>며 마이크를 뺏었다. 결국 <strong>서울 광신도 부대와 효빈 광신도 부대가 헌금 바구니를 차지하기 위해 머리채를 잡고 뒹구는 대규모 물리적 육탄전(내전)</strong>이 벌어졌다.</p>
+        <p>이후 박효빈 시장이 파견한 시청 특사경의 물대포와 상인들의 까나리 액젓 투척에 혼비백산하며 쫓겨났으나, 수억 원의 징벌적 과태료를 맞고 돈줄이 마르자 몇 주 뒤 유튜브 라이브에서 <strong>"우리가 싸운 건 주사파 마귀 사탄의 이간질 때문이었다! 형님 아우님!"</strong>이라며 구역질 나는 화해 쑈를 벌였다. 돈 앞에서는 신념도 자존심도 없는 사기꾼들의 민낯을 보여준 완벽한 코미디였다.</p>
+
+        <!-- 4. 가족 관계 (정상인들의 탈출 서사) -->
+        <h2 id="s-4" class="anchor-offset">4. 가족 관계 (정상인들의 탈출 서사)</h2>
+        <p>가족으로는 배우자와 슬하에 <strong>1남 2녀(장녀, 장남, 차녀)</strong>를 두고 있다. 그러나 극우 사이비 목사인 친부와 가문의 모든 악마성을 몰빵받은 첫째 장녀 사이에서, **지극히 상식적이었던 밑의 두 동생(장남, 차녀)이 참다못해 절연을 선언하고 가문을 야반도주한 눈물겨운 탈출 서사**가 존재한다.</p>
+
+        <ul class="list-disc pl-5 space-y-4 mt-4">
+            <li><strong>장남 진수혁 (1980년생, 舊 진에스더) - "지네라 불리던 소년의 탈출"</strong><br>
+                진현보 가문의 둘째이자 장남. 아버지가 거룩한 성경 속 왕비 이름을 붙여준다며 아들에게 <strong>'진에스더'</strong>라는 기괴한 이름을 지어주었다. 하필 성이 진씨라 학창 시절 내내 <strong>'지네'</strong>라고 불리며 엄청난 인격 모독과 트라우마에 시달렸다. 친부의 사이비적 광기와 장녀 진레아의 갑질에 진저리를 치던 그는, 성인이 되자마자 여동생(차녀)과 함께 효빈시를 완전히 떠나 수도권으로 야반도주했다. 현재는 46세 대기업 부장급으로 완벽하게 신분을 세탁하고 성공한 상식인 아재가 되었으며, 이름도 '진수혁'으로 당당히 개명했다.</li>
+            
+            <li><strong>차녀 진수현 (1993년생, 舊 진단비) - "'돈받냐' 소녀의 각성"</strong><br>
+                진현보 가문의 막내딸. "하늘에서 내리는 거룩한 단비"라는 뜻이었으나, 현실은 학교 친구들에게 <strong>"너 이름이 단비니까 맨날 돈 받냐?"</strong>라며 지독한 조롱을 당했다. 오빠 진수혁과 함께 비밀 단톡방을 파서 "성인 되자마자 이 지옥구석 탈출하자"고 결의했고, 약속대로 가출에 성공해 현재 33세 커리어우먼으로 번듯하게 자립했다. 탈출 직후 이름부터 '진수현'으로 갈아엎었다. 진현보는 이 남매를 가리켜 <strong>"마귀의 유혹에 빠져 집을 나간 자식들"</strong>이라며 저주를 퍼붓고 있다.</li>
+
+            <li class="bg-blue-50 p-4 rounded-md border-l-4 border-blue-500 my-4">
+                <strong class="text-blue-800 text-lg">💡 조유진(舊 조시온)과의 만남과 '상식인 연합' 결성</strong><br>
+                이 남매가 효빈 시민들과 상식인들에게 엄청난 지지를 받는 이유는, 이들이 단순히 도망치는 데 그치지 않고 <strong><a href="조광훈.html" class="wiki-link">조광훈</a> 가문의 불쌍한 2006년생 늦둥이 <a href="조유진.html" class="wiki-link">조유진</a>을 구원해 준 정신적 버팀목</strong>이기 때문이다.<br><br>
+                HAF(효빈 애니메이션 페스티벌) 난입 사건 당시 친부에게 머리채를 잡혀 만신창이가 된 채 서울 안전가옥으로 피신한 20살 조유진(당시 조시온) 앞에, 소식을 들은 진수혁(46)과 진수현(33)이 직장 연차를 내고 한걸음에 달려왔다. 나이 차이가 너무 나 자신들이 도망칠 때 차마 데려오지 못했던 어린 소녀가 자신들과 똑같은 종교적 아동학대를 당했다는 사실에 두 남매는 오열했다.<br>
+                진수현이 유진의 엉킨 머리를 빗겨주고, 진수혁은 "이제 오빠가 가진 돈과 인맥 다 써서 저 인간들 최고형 먹일게"라고 약속했다. 세 사람은 각자 새로 발급받은 민증을 나란히 겹쳐놓으며 <strong>"우리는 더 이상 '지네(진에스더)', '돈받냐(진단비)', '奀(조시온)'이 아니다. 가문의 저주받은 DNA를 끊어낸 완벽한 상식인이다"</strong>라고 선언했다. 이들은 자신들이 과거 탈출 전 수집해 둔 장녀 진레아의 범죄 증거를 조유진의 USB에 보태어 민주당 특조위에 넘김으로써, 자신들을 학대했던 친부들의 가문을 합법적으로 공중분해 시키고 있는 진정한 승리자들이 되었다.
+            </li>
+
+            <li><strong>장녀 진레아 - "가문의 악마성을 몰빵받은 진짜 흑막"</strong><br>
+                진수혁·진수현 남매가 절연하고 떠난 가장 큰 이유이자, 효빈시 기독교계의 시한폭탄. 아버지의 뻔뻔함을 넘어선 지능형 경제 사범이자 사이버 테러리스트다.
+                <ul class="list-disc pl-5 mt-2 text-sm text-gray-700">
+                    <li><strong>무논리 행동대장:</strong> 아버지가 '비상계엄 생일 선물' 망언을 쳤을 때, 옆에서 춤을 추며 <strong>"이제 계엄군이 김성민이랑 고정민을 다 잡아갈 것이다! 할렐루야!"</strong>라고 환호했던 부전여전의 끝판왕이다.</li>
+                    <li><strong>청년부 폰지 사기 및 횡령:</strong> 교회 청년부와 재정부를 장악해 사회 초년생들에게 불법 다단계 투자를 강요했다. 수억 원대의 헌금과 대출금을 착취한 뒤, 그 피눈물 묻은 돈으로 서울 강남의 클럽 VIP룸을 전전하며 명품 쇼핑을 즐겼다.</li>
+                    <li><strong>댓글 조작 (십자군 드루킹):</strong> 교회 내 컴퓨터실을 개조해 매크로 프로그램을 돌리며 아버지와 자유통일당을 찬양하고, 민주당 정치인과 평당동 맘카페 주민들을 악의적으로 비방하는 <strong>'댓글 조작 공작소'</strong>를 진두지휘한 총책이다. 현재 진수혁·진수현 남매가 조유진을 통해 넘긴 '매크로 IP 리스트' 증거물로 인해 경찰의 대대적인 압수수색을 당하고 쇠고랑을 찰 위기에 처해있다.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <!-- 5. 타 정치인과의 관계 -->
+        <h2 id="s-5" class="anchor-offset">5. 타 정치인과의 관계</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong><a href="고정민.html" class="wiki-link">고정민</a></strong> (더불어민주당, 남구 갑 국회의원)<br>
+                천적 그 자체. 고정민이 남구 을 의원이던 시절부터 진현보의 대면 예배 강행을 "반사회적 범죄 행위"라며 강력하게 규탄해 왔다. 22대 총선에서는 남구 갑으로 넘어온 고정민에게 확성기 집회를 강제 철거당하는 수모를 겪었으며, 선거 결과조차 75.96% 대 2.32%라는 더블 스코어도 아닌 '서른 배 스코어'로 압살당했다.</li>
+            <li><strong><a href="조광훈.html" class="wiki-link">조광훈</a></strong> (자유통일당, 중구·동구 후보)<br>
+                신학대 동문이자 영혼의 파트너. 효빈시를 극우 기독교 성지로 만들겠다는 원대한(그리고 헛된) 꿈을 공유하고 있다. 조광훈이 효빈역에서 어그로를 끌면, 진현보는 평당동에서 판을 까는 환장의 티키타카를 보여준다.</li>
+            <li><strong><a href="우신면.html" class="wiki-link">우신면</a></strong> (국민의힘, 22대 총선 경쟁자)<br>
+                진현보는 남구 갑 현역이었던 우신면을 향해 "8호선 지하화나 핑계 대면서 민주당 눈치나 보는 가짜 우파"라고 비난하며 표를 갉아먹었다. 결과적으로 우신면이 15.50%라는 굴욕적인 득표율로 낙선하는 데 미세한(?) 지분을 챙겼다.</li>
+        </ul>
+
+        <!-- 6. 소속 정당 -->
+        <h2 id="s-6" class="anchor-offset">6. 소속 정당</h2>
+        <p>평생의 동지이자 선배인 <a href="조광훈.html" class="wiki-link">조광훈</a>과 정치적 궤적을 100% 동일하게 공유하고 있다.</p>
+        <table class="data-table text-center">
+            <thead>
+                <tr>
+                    <th style="width:20%">기간</th><th style="width:40%">정당명</th><th style="width:40%">비고</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2016~2020</td><td><span class="party-badge" style="background-color: #123164">기독자유당</span></td><td>창당 참여</td>
+                </tr>
+                <tr>
+                    <td>2020</td><td><span class="party-badge" style="background-color: #E61E2B">기독자유통일당</span></td><td>당명 변경</td>
+                </tr>
+                <tr>
+                    <td>2021~2022</td><td><span class="party-badge" style="background-color: #FF0000">국민혁명당</span></td><td>창당 발기인</td>
+                </tr>
+                <tr>
+                    <td>2022~현재</td><td><span class="party-badge" style="background-color: var(--wiki-main)">자유통일당</span></td><td>당명 변경</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 7. 선거 이력 -->
+        <h2 id="s-7" class="anchor-offset">7. 선거 이력</h2>
+
+        <h3 id="s-7-1">7.1. <a href="제22대_국회의원_선거.html" class="wiki-link">제22대 국회의원 선거</a> (효빈 남구 갑)</h3>
+        <table class="data-table text-center">
+            <thead>
+                <tr>
+                    <th>기호</th><th>이름</th><th>정당</th><th>득표수</th><th>득표율</th><th>비고</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td><td><a href="고정민.html" class="wiki-link">고정민</a></td><td><span class="party-badge" style="background-color: #004EA2">더불어민주당</span></td><td>89,520</td><td>75.96%</td><td><strong>당선</strong></td>
+                </tr>
+                <tr>
+                    <td>2</td><td><a href="우신면.html" class="wiki-link">우신면</a></td><td><span class="party-badge" style="background-color: #E61E2B">국민의힘</span></td><td>18,265</td><td>15.50%</td><td>낙선</td>
+                </tr>
+                <tr class="font-bold bg-gray-50">
+                    <td>8</td><td>진현보</td><td><span class="party-badge" style="background-color: var(--wiki-main)">자유통일당</span></td><td><strong>2,758</strong></td><td><strong>2.32%</strong></td><td>낙선</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 8. 각주 -->
+        <h2 id="s-footnote" class="anchor-offset">8. 각주</h2>
+        <div class="toc text-sm p-4 w-full">
+            <ol class="list-decimal pl-4 space-y-2">
+                 <li id="fn-1">현 안양대학교의 전신이 아닌, 조광훈과 함께 다녔다는 정체불명의 사이비 야매 신학교다. <a href="#rfn-1" class="wiki-link">↑</a></li>
+            </ol>
+        </div>
+
+        <!-- 9. 둘러보기 -->
+        <h2 id="s-9" class="anchor-offset">9. 둘러보기</h2>
+        <div class="nav-box shadow-sm mt-10">
+            <div class="nav-box-header">제22대 국회의원 선거 효빈 남구 갑 후보</div>
+            <div class="nav-box-content leading-loose text-sm">
+                <a href="고정민.html" class="wiki-link text-blue-600">더불어민주당 고정민 (당선)</a> · 
+                <a href="우신면.html" class="wiki-link text-red-600">국민의힘 우신면</a> · 
+                <span style="color: var(--wiki-main); font-weight: bold;">자유통일당 진현보</span>
+            </div>
+        </div>
+
+        <div class="nav-box shadow-sm mt-6">
+            <div class="nav-box-header">[ 관련 인물 및 단체 둘러보기 ]</div>
+            <div class="nav-box-content leading-loose text-sm">
+                <a href="조광훈.html" class="wiki-link">조광훈</a> · 
+                <a href="고정민.html" class="wiki-link">고정민</a> · 
+                <a href="자유통일당.html" class="wiki-link">자유통일당</a>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                location.href = `search.html?q=${encodeURIComponent(query)}`;
+            } else {
+                showMsg('검색어를 입력해주세요.');
+            }
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                // 각주 링크 클릭 시 기본 이동 동작 유지
+                if(this.classList.contains('wiki-fn-link')) return;
+
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 각주 호버보드(툴팁) 기능
+        const tooltip = document.getElementById('wiki-tooltip');
+        document.querySelectorAll('.wiki-fn-link').forEach(link => {
+            link.addEventListener('mouseenter', (e) => {
+                const content = link.getAttribute('data-content');
+                if(content) {
+                    tooltip.innerHTML = content;
+                    tooltip.style.display = 'block';
+                }
+            });
+
+            link.addEventListener('mousemove', (e) => {
+                // 마우스 오른쪽 하단에 위치하도록 설정
+                tooltip.style.left = (e.pageX + 15) + 'px';
+                tooltip.style.top = (e.pageY + 15) + 'px';
+            });
+
+            link.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

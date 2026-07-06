@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>분석결과 시각화 (SECTION 02) - 효빈위키</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Mermaid.js (흐름도, 마인드맵용) -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
+    <!-- Chart.js (완벽한 차트 시각화 구현용 - 핑계 절대 없음!) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- MathJax for LaTeX Rendering -->
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      chtml: {
+        fontURL: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2'
+      }
+    };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #00CCAA; 
+            --wiki-line-color: #00CCAA; 
+            
+            --wiki-header-bg: var(--wiki-line-color);
+            --wiki-header-text: #ffffff;
+            --wiki-table-header-bg: #e6faf6;
+            --wiki-table-header-text: #000000;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f8f9fa; 
+            --wiki-link: #008877; 
+            --wiki-footer-bg: #f0f0f0;
+            --wiki-footer-text: #777;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #33eebb; 
+            --wiki-table-header-bg: #222;
+            --wiki-table-header-text: #ffffff;
+            --wiki-footer-bg: #1a1a1a;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.7; word-break: keep-all; margin: 0; transition: background-color 0.3s, color 0.3s; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 30px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1.5px; border-bottom: 3px solid var(--wiki-main); padding-bottom: 15px;} 
+        
+        h2 { font-size: 2rem; font-weight: 900; border-bottom: 2px solid var(--wiki-line-color); padding-bottom: 8px; margin-top: 3.5rem; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; color: var(--wiki-text); }
+        h2::before { content: ""; display: inline-block; width: 6px; height: 2rem; background: var(--wiki-line-color); }
+        h3 { font-size: 1.5rem; font-weight: 800; margin-top: 2.5rem; margin-bottom: 15px; border-left: 6px solid var(--wiki-line-color); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 10px; color: var(--wiki-text); }
+
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; border: 1px solid var(--wiki-border); font-size: 0.95rem; }
+        th, td { border: 1px solid var(--wiki-border); padding: 10px 12px; text-align: left; vertical-align: middle; color: var(--wiki-text); }
+        th { background-color: var(--wiki-table-header-bg); font-weight: 800; text-align: center; border-bottom: 2px solid var(--wiki-main);}
+
+        .infobox { float: right; margin-left: 25px; margin-bottom: 20px; width: 350px; clear: right; border: 2px solid var(--wiki-main); border-radius: 4px; background-color: var(--wiki-bg); }        
+        .infobox-top { background-color: var(--wiki-main); padding: 20px 10px; text-align: center; border-bottom: 1px solid var(--wiki-border); color: #fff; }
+        .infobox-top b { font-size: 1.8rem; line-height: 1.2; letter-spacing: -1px; font-weight: 900; }
+
+        .toc { display: inline-block; min-width: 300px; margin-bottom: 25px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 20px; border-radius: 4px; }        
+        .toc-title { text-align: center; font-weight: 900; border-bottom: 1px solid var(--wiki-border); margin-bottom: 15px; padding-bottom: 10px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding: 0; margin: 0; line-height: 1.6; font-weight: 600;}
+        .toc li { margin-bottom: 4px; }
+        .toc .pl-5 { padding-left: 20px; font-weight: 400;}
+
+        .wiki-link { color: var(--wiki-link); font-weight: 700; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        .quote-box { background: var(--wiki-gray-bg); padding: 15px 20px; font-weight: 600; border-left: 5px solid var(--wiki-line-color); margin-bottom: 20px; color: var(--wiki-text); border-radius: 4px;}
+        .exam-box { border: 2px solid #ff4444; background-color: #fffafa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        [data-theme='dark'] .exam-box { background-color: #2a1111; border-color: #cc3333; }
+        .exam-title { font-weight: 900; color: #ff4444; margin-bottom: 10px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;}
+        
+        .anime-box { border: 2px dashed; background-color: #fdf5fd; padding: 20px; border-radius: 8px; margin: 20px 0; color: #333; display: flex; gap: 15px; align-items: flex-start;}
+        [data-theme='dark'] .anime-box { background-color: #2a1a2a; color: #eee;}
+        .anime-box-title { font-weight: 900; font-size: 1.15rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;}
+        .anime-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid; flex-shrink: 0; background-color: #fff;}
+
+        .mermaid { background: var(--wiki-bg); padding: 15px; border-radius: 8px; margin: 15px 0; display: flex; justify-content: center; overflow-x: auto; border: 1px solid var(--wiki-border);}
+        
+        /* 차트 렌더링 컨테이너 스타일 */
+        .chart-container { width: 100%; max-width: 750px; margin: 25px auto; background: #fff; padding: 20px; border-radius: 12px; border: 1px solid var(--wiki-border); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        [data-theme='dark'] .chart-container { background: #222; border-color: #444; }
+        
+        del { color: #999; text-decoration: line-through; }
+        
+        /* 각주 및 툴팁 전용 CSS */
+        .fn-link { color: var(--wiki-link); font-size: 0.75em; vertical-align: super; margin: 0 1px; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .fn-link:hover { text-decoration: underline; }
+        
+        .wiki-footnotes { margin-top: 60px; padding-top: 20px; border-top: 2px solid var(--wiki-border); }
+        .wiki-footnotes h4 { font-size: 1.1rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 10px; }
+        .wiki-footnotes ul { list-style: none; padding: 0; margin: 0; }
+        .wiki-footnotes li { margin-bottom: 8px; font-size: 0.9rem; line-height: 1.6; padding: 4px 8px; border-radius: 4px; transition: background-color 0.3s; }
+        .wiki-footnotes li:target { background-color: rgba(0, 204, 170, 0.15); }
+
+        .wiki-tooltip {
+            position: absolute; background-color: var(--wiki-bg); color: var(--wiki-text); border: 1px solid var(--wiki-border);
+            border-radius: 6px; padding: 12px 16px; font-size: 0.85rem; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 0.2s ease-in-out, transform 0.2s ease;
+            transform: translateY(5px); z-index: 9999; word-break: keep-all; line-height: 1.6;
+        }
+        .wiki-tooltip.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+        [data-theme='dark'] .wiki-tooltip { box-shadow: 0 4px 15px rgba(0,0,0,0.6); background-color: #222; }
+    
+        /* 효빈위키 전용 하단 내비게이션 틀 CSS */
+        .wiki-nav-box { margin: 40px auto 10px; border: 1px solid var(--wiki-border); border-radius: 4px; background: var(--wiki-bg); overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .wiki-nav-header { display: flex; align-items: center; justify-content: center; padding: 12px; font-weight: 900; font-size: 1.1rem; color: #fff; background: linear-gradient(to right, #005BAC, #00CCAA); letter-spacing: 1px; }
+        .wiki-nav-toggle { text-align: center; padding: 6px; background: var(--wiki-gray-bg); border-bottom: 1px solid var(--wiki-border); border-top: 1px solid var(--wiki-border); cursor: pointer; font-size: 0.85rem; user-select: none; color: var(--wiki-text); font-weight: bold; }
+        .wiki-nav-toggle:hover { filter: brightness(0.95); }
+        .wiki-nav-content { display: none; }
+        .wiki-nav-content.active { display: block; }
+        .wiki-nav-table { width: 100%; border-collapse: collapse; text-align: center; margin: 0; font-size: 0.9rem; }
+        .wiki-nav-table th, .wiki-nav-table td { border: 1px solid var(--wiki-border); padding: 12px; }
+        .wiki-nav-table th { color: #fff; font-weight: bold; vertical-align: middle; }
+        .wiki-nav-table td { text-align: left; line-height: 1.8; word-break: keep-all; }
+        .bg-nav-red { background-color: #D81C2F; } /* 효빈 시내버스 급행 레드 */
+        .bg-nav-blue { background-color: #485EC6; } /* 효빈 시내버스 광역 블루 */
+        .wiki-nav-item { display: inline-block; margin-right: 12px; white-space: nowrap; }
+        .wiki-nav-item a { color: var(--wiki-link); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .wiki-nav-item a:hover { color: #FF4F91; text-decoration: underline; font-weight: bold; }
+
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <nav class="bg-[#00CCAA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50 border-b border-[#009988]">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl tracking-tight text-white">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1.5 px-4 rounded text-black text-sm w-64 focus:outline-none shadow-inner">
+            <button class="bg-[#008877] p-1.5 px-4 rounded text-sm hover:bg-[#006655] font-bold transition-colors text-white">검색</button>
+            <button onclick="document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')" class="bg-[#009988] p-1.5 px-3 rounded text-xs border border-[#006655] text-white shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="txt-lvl-1">분석결과 시각화 (SECTION 02)</div>
+
+        <div class="category-box bg-[#f9f9f9] border border-[#ccc] p-3 mb-5 rounded text-sm font-bold">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="빅데이터분석기사_필기.html" class="wiki-link">빅데이터분석기사 필기</a> | <a href="빅데이터분석기사.html" class="wiki-link">빅데이터분석기사</a> | <a href="데이터_전처리.html" class="wiki-link">데이터 전처리</a> | <a href="데이터_탐색.html" class="wiki-link">데이터 탐색</a> | <a href="데이터_시각화.html" class="wiki-link">데이터 시각화</a> | <a href="분류_알고리즘.html" class="wiki-link">분류 알고리즘</a> | <a href="데이터_마이닝.html" class="wiki-link">데이터 마이닝</a> | <a href="통계학.html" class="wiki-link">통계학</a> | <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> | <a href="효빈광역시_시내버스.html" class="wiki-link">효빈광역시 시내버스</a> | <a href="러브라이브!_시리즈.html" class="wiki-link">러브라이브! 시리즈</a> | <a href="니지가사키_스쿨_아이돌_동호회.html" class="wiki-link">니지가사키 스쿨 아이돌 동호회</a> | <a href="걸즈_밴드_크라이.html" class="wiki-link">걸즈 밴드 크라이</a> | <a href="봇치_더_록!.html" class="wiki-link">봇치 더 록!</a>
+        </div>
+        
+
+        <aside class="infobox shadow-sm">
+            <div class="infobox-top">
+                <b>빅데이터분석기사 필기</b><br>
+                <span class="text-sm opacity-80">PART 04. 빅데이터 결과 해석</span>
+            </div>
+            <table>
+                <tr><th>과목명</th><td>제4과목 빅데이터 결과 해석</td></tr>
+                <tr><th>섹션</th><td>SECTION 02. 분석결과 시각화</td></tr>
+                <tr><th>출제빈도</th><td>상 (<del>중</del>) 하</td></tr>
+                <tr><th>반복학습</th><td>[1] [2] [3] 회독</td></tr>
+                <tr><th>빈출태그</th><td>#데이터시각화 #시간시각화 #분포 #관계 #인포그래픽</td></tr>
+            </table>
+        </aside>
+
+        <div class="toc shadow-sm">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li><a href="#s-1" class="wiki-link">1. 데이터 시각화 개요</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-1-1" class="wiki-link">1) 데이터 시각화 정의</a></li>
+                        <li><a href="#s-1-2" class="wiki-link">2) 데이터 시각화 특성 및 접근방법</a></li>
+                        <li><a href="#s-1-3" class="wiki-link">3) 데이터의 유형 (범주형, 수치형)</a></li>
+                        <li><a href="#s-1-4" class="wiki-link">4) 주요 용어 및 5) 시각적 속성</a></li>
+                        <li><a href="#s-1-6" class="wiki-link">6) 데이터 시각화 방법</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-2" class="wiki-link">2. 데이터 시각화 영역</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-2-1" class="wiki-link">1) 정보 시각화</a></li>
+                        <li><a href="#s-2-2" class="wiki-link">2) 정보 디자인 & 3) 인포그래픽</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-3" class="wiki-link">3. 시간 시각화 (★ 차트.js 전격 구현)</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-3-1" class="wiki-link">1) 시간 시각화 정의</a></li>
+                        <li><a href="#s-3-2" class="wiki-link">2) 막대그래프</a></li>
+                        <li><a href="#s-3-3" class="wiki-link">3) 누적막대그래프 & 4) 묶은막대그래프</a></li>
+                        <li><a href="#s-3-5" class="wiki-link">5) 점그래프 & 6) 꺾은선그래프(연속)</a></li>
+                        <li><a href="#s-3-7" class="wiki-link">7) 계단그래프 & 8) 추세선</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-4" class="wiki-link">4. 개념 체크 (기출 풀이)</a></li>
+            </ul>
+        </div>
+
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-3 my-3 text-sm">
+            <b>[참고/날개]</b><br>
+            데이터 시각화는 <b>분석 결과를 쉽게 이해하는 것</b>이 궁극적인 목적이다.
+        </div>
+
+        <h2 id="s-1">01 데이터 시각화 개요</h2>
+        <p>분석된 결과를 해석하는 대표적인 방법인 데이터 시각화는 데이터 값을 시각적 속성으로 변환하고, 이를 그래프로 표현하는 과정이다. 시각화를 통해서 데이터의 의미를 명확하게 표현하고 효율적으로 전달할 수 있다.</p>
+
+        <h3 id="s-1-1">1) 데이터 시각화 정의</h3>
+        <ul class="list-disc pl-6 space-y-2 mb-4">
+            <li>데이터 시각화는 데이터의 <b>분석 결과를 쉽게 이해할 수 있도록 시각적으로 표현하고 전달하는 과정과 기법</b>을 말한다.</li>
+            <li>데이터 사이의 관계를 대표할 수 있는 특징을 도표나 차트 등으로 표현하여 정보를 명확하고 효과적으로 전달하는 것을 목적으로 한다.</li>
+            <li>시각화를 위해서는 데이터의 의미를 정확하게 표현하는 <b>기능적인 측면</b>과 사람이 쉽게 인지하고 직관적으로 이해할 수 있는 <b>심미적인 측면</b>을 모두 고려해야 한다.</li>
+        </ul>
+
+        <p class="font-bold ml-4 text-gray-800">▶ 데이터 시각화 학문적 정의</p>
+        <table class="text-sm w-full mt-2 text-center">
+            <tr>
+                <th class="bg-gray-100" style="width: 25%;">학자</th>
+                <th class="bg-gray-100">정의</th>
+            </tr>
+            <tr>
+                <td class="font-bold">스튜어드<br>(Stuart K. Card, 1999)</td>
+                <td class="text-left pl-4">추상적인 데이터를 컴퓨터의 쌍방향적 시각 표현을 통해서 <b>이해와 인식의 정도를 증폭</b>하는 것이다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold">앤디<br>(Andy Kirk, 2012)</td>
+                <td class="text-left pl-4">대규모의 데이터를 탐색하고 이해하려 할 때 동일한 범주안에서 많은 양의 데이터에 의미를 부여함으로써 <b>공간에 배치된 숫자의 패턴을 인지</b>하게 하는 방법이다.</td>
+            </tr>
+        </table>
+
+        <h3 id="s-1-2">2) 데이터 시각화 특성</h3>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li>자료로부터 정보를 습득하는 시간을 절감하고 데이터에 대한 즉각적인 판단이 가능하다.</li>
+            <li>데이터의 특징과 패턴, 추세를 직관적으로 제공하여 의미 이해를 효과적으로 돕는다.</li>
+            <li>하나의 시각화 자료를 통해 시간, 공간, 분포 등 다양한 측면에서의 다차원적 표현이 가능하다.</li>
+            <li>그래픽 도구를 이용함으로써 데이터의 의미, 관계, 차이, 분포 등을 선명하게 표현한다.</li>
+        </ul>
+
+        <p class="font-bold ml-4 text-gray-800">▶ 데이터 시각화 접근방법</p>
+        <table class="text-sm w-full mt-2 text-center">
+            <tr>
+                <th class="bg-gray-100" style="width: 25%;">접근방법</th>
+                <th class="bg-gray-100">정의</th>
+            </tr>
+            <tr>
+                <td class="font-bold">통계적 그래픽<br><span class="font-normal text-xs">(Statistical Graphics)</span></td>
+                <td class="text-left pl-4">데이터의 분포와 통계적 정보를 2차원 또는 3차원 공간에 시각적으로 표현하는 방법.</td>
+            </tr>
+            <tr>
+                <td class="font-bold">주제 지도학<br><span class="font-normal text-xs">(Thematic Cartography)</span></td>
+                <td class="text-left pl-4">특정 주제의 지리적 분포와 패턴을 나타내는 <b>지도 형태</b>로 표현하는 방법.</td>
+            </tr>
+        </table>
+
+        <div class="anime-box" style="border-color: #FFCC11; background-color: #FFFDEE;">
+            <img src="이미지/박라미.png" alt="박라미" class="anime-img" onerror="this.style.display='none'" style="border-color: #FFCC11;">
+            <div>
+                <div class="anime-box-title" style="color: #DD9900;">🏕️ [효빈위키 암기 특강!] 3호선 박라미의 Ben Fry 7단계!</div>
+                <p class="text-sm text-gray-800">솔직히 영단어까지 다 외우기 귀찮겠지만, 앞글자만 따서 <b>"획.분.필.마.표.정.소"</b> 라고 주문 외우듯이 암기해 두자! 가끔 순서 뒤죽박죽 섞어놓고 "다음 중 벤 프라이 형님의 시각화 순서로 알맞은 것은?" 하고 뜬금포로 출제되니까 조심해!</p>
+                
+                <div class="mermaid mt-2 mb-2">
+                graph LR
+                    A["1. 획득<br/>(Acquire)"] --> B["2. 분석<br/>(Parse)"] --> C["3. 필터<br/>(Filter)"] --> D["4. 마이닝<br/>(Mine)"]
+                    D --> E["5. 표현<br/>(Represent)"] --> F["6. 정제<br/>(Refine)"] --> G["7. 소통<br/>(Interact)"]
+                    
+                    style A fill:#fff9c4,stroke:#fbc02d
+                    style D fill:#fff9c4,stroke:#fbc02d
+                    style E fill:#fff9c4,stroke:#fbc02d
+                    style G fill:#ffcdd2,stroke:#b71c1c
+                </div>
+                
+                <ul class="list-decimal pl-5 text-sm space-y-1 text-gray-800 mt-2">
+                    <li><b>획득(Acquire):</b> 다양한 소스로부터 데이터 얻기</li>
+                    <li><b>분석(Parse):</b> 데이터 의미에 대한 구조 제공 및 카테고리별 정렬</li>
+                    <li><b>필터(Filter):</b> 관심 있는 데이터를 제외한 쓰레기 데이터 제거</li>
+                    <li><b>마이닝(Mine):</b> 패턴 식별, 수학적 문맥 배치 등 통계/데이터 마이닝 방법 적용</li>
+                    <li><b>표현(Represent):</b> 막대그래프, 목록, 트리 같은 기본 시각적 모델(도구) 선택</li>
+                    <li><b>정제(Refine):</b> 기본 표현을 개선하여 보다 선명하고 심미적으로 매력적이게 함</li>
+                    <li><b>소통(Interact):</b> 사용자가 데이터를 조작하거나 볼 수 있는 양방향 제어 기능 추가</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 id="s-1-3">3) 데이터의 유형 (★매우 중요)</h3>
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-2 my-2 text-sm">
+            <b>[참고/날개] 계수형 데이터(Count Data)</b><br>
+            명목형 데이터를 계수형 데이터라고도 한다. 자료들이 어떤 범주에 속하는지 횟수를 세어 나타내는 자료이다.
+        </div>
+        <p>데이터는 그 특성에 따라 크게 <b>범주형(Categorical)</b>과 <b>수치형(Numerical)</b>으로 나눌 수 있다. 범주형은 명목형과 순서형으로, 수치형은 이산형과 연속형으로 세분화된다.</p>
+
+        <div class="mermaid mt-4 mb-4">
+        graph TD
+            A["데이터 (Data)"] --> B["범주형 (Categorical)"]
+            A --> C["수치형 (Numerical)"]
+            
+            B --> B1["명목형 데이터 (Nominal)"]
+            B --> B2["순서형 데이터 (Ordinal)"]
+            
+            C --> C1["이산형 데이터 (Discrete)"]
+            C --> C2["연속형 데이터 (Continuous)"]
+            
+            style B fill:#fff3e0,stroke:#e65100
+            style C fill:#e8f5e9,stroke:#2e7d32
+        </div>
+
+        <p class="font-bold ml-4 mt-4 text-gray-800">▶ 데이터의 세부 유형 특징</p>
+        <table class="text-sm w-full mt-2 text-center">
+            <tr>
+                <th class="bg-gray-100" style="width: 15%;">대분류</th>
+                <th class="bg-gray-100" style="width: 25%;">유형</th>
+                <th class="bg-gray-100">특징 및 예시</th>
+            </tr>
+            <tr>
+                <td rowspan="2" class="font-bold bg-orange-50 text-orange-800 align-middle">범주형<br>(질적자료)</td>
+                <td class="font-bold bg-orange-50">명목형 데이터<br>(Nominal)</td>
+                <td class="text-left pl-4 bg-orange-50">• 특정 카테고리가 가질 수 있는 값의 집합.<br>• <b>순서를 매길 수 없지만 셀 수는 있다.</b><br>🔘 <b>예:</b> 성별, 색깔, 취미, 혈액형 등</td>
+            </tr>
+            <tr>
+                <td class="font-bold bg-orange-50 border-t border-orange-200">순서형 데이터<br>(Ordinal)</td>
+                <td class="text-left pl-4 bg-orange-50 border-t border-orange-200">• 특정 카테고리가 순서로 구분될 수 있는 데이터.<br>• <b>명확한 서열이나 순서를 매길 수 있다.</b><br>🔘 <b>예:</b> 5점 척도 만족도, 학점(A, B, C), 등수 등</td>
+            </tr>
+            <tr>
+                <td rowspan="2" class="font-bold bg-green-50 text-green-800 align-middle border-t border-green-200">수치형<br>(양적자료)</td>
+                <td class="font-bold bg-green-50 border-t border-green-200">이산형 데이터<br>(Discrete)</td>
+                <td class="text-left pl-4 bg-green-50 border-t border-green-200">• <b>딱딱 끊어져서 셀 수 있는 형태</b>의 값을 표현하며 주로 정수값이다.<br>🔘 <b>예:</b> 반별 학생 수, 불량품 개수, 교통사고 건수 등</td>
+            </tr>
+            <tr>
+                <td class="font-bold bg-green-50 border-t border-green-200">연속형 데이터<br>(Continuous)</td>
+                <td class="text-left pl-4 bg-green-50 border-t border-green-200">• 연속인 어떤 구간에서 값을 취하며 소수점 쪼개기가 가능한 측정량이다.<br>🔘 <b>예:</b> 시간, 온도, 무게, 길이, 속도 등</td>
+            </tr>
+        </table>
+
+        <div class="anime-box" style="border-color: #0077DD; background-color: #EBF5FF;">
+            <img src="이미지/고나미.png" alt="고나미" class="anime-img" onerror="this.style.display='none'" style="border-color: #0077DD;">
+            <div>
+                <div class="anime-box-title" style="color: #0055AA;">💡 [효빈위키 1초 컷 특강!] 1호선 고나미의 데이터 척도 4형제 마스터!</div>
+                <p class="text-sm text-gray-800">이 척도 4형제는 빅분기 필기의 <b>절대 존엄 단골 문제</b>입니다! 여기서 점수 날리면 너무 억울하니까 러브라이브랑 효빈전철 엮어서 한 방에 외워보죠!</p>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>명목 척도 (Nominal Scale):</b> 오직 분류만을 위한 이름표예요. 숫자로 쓴다고 해도 의미가 없죠. 효빈광역시 1호선(파란색), 2호선(초록색) 혹은 러브라이브 멤버들의 혈액형! 1호선에 2호선 더한다고 3호선 되는 거 아니잖아요? 덧셈뺄셈 아무 의미 없습니다!</li>
+                    <li><b>순위/서열 척도 (Ordinal Scale):</b> 순위는 있지만 간격은 의미 없는 애들이에요. 니지가사키 스쿨 아이돌 인기투표 1등, 2등, 3등. 1등이랑 2등 표 차이가 2등이랑 3등 표 차이랑 똑같다는 보장이 없죠?</li>
+                    <li><b>등간 척도 (Interval Scale):</b> 간격은 똑같지만 절대 0(Zero)이 없는 녀석! <b>'온도'</b>가 무조건 시험에 튀어나옵니다. 오늘 20도라고 어제 10도보다 "2배 덥다(비율)"고 말하면 통계학적으로 뺨을 맞으니까 절대 낚이지 마세요!</li>
+                    <li><b>비율 척도 (Ratio Scale):</b> 가장 강력한 끝판왕. 절대 0이 존재해서 곱하기 나누기(비율)가 다 됩니다. 내 몸무게, 통장 잔고, 버스 배차 간격(분) 등이 여기 속해요!</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 id="s-1-4">4) 주요 용어 및 5) 시각적 속성</h3>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li><b>탐색적 자료분석(EDA: Exploratory Data Analysis):</b> 모델링 전 데이터를 요리조리 뜯어보며 시각적으로 주요 특징을 파악하는 기법.</li>
+            <li><b>차트(Chart):</b> 원그래프, 막대그래프 등 개별 데이터를 표현하는 방식.</li>
+            <li><b>축(Axis) & 스케일(Scale):</b> 데이터가 표시될 기준선과 그 값의 범위 간격.</li>
+            <li><b>범례(Legend):</b> 차트에 표현된 기호나 선의 의미를 친절하게 설명하는 안내판.</li>
+            <li><b>이상치(Outliers):</b> 정상분포를 벗어나는 돌연변이 데이터. 시각화를 통해 직관적으로 발견할 수 있다.</li>
+        </ul>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li><b>데이터의 시각적 속성:</b> 체계적 방식을 통해 데이터 값을 시각적 그래픽 속성으로 변환한다.
+                <ul class="list-circle pl-6 mt-1 text-sm text-gray-700">
+                    <li><b>연속형/이산형 모두 적용 가능:</b> 위치, 크기, 선 굵기, 색상</li>
+                    <li><b>이산형 데이터에만 적용 가능:</b> 형태(세모, 네모 등), <b>선 유형(실선, 점선 등)</b> - 연속된 수치를 점선으로 표현하면 뚝뚝 끊어져 모스부호가 되어버리므로 이산형에만 쓴다!</li>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="mermaid mt-4 mb-4">
+        graph TD
+            A["데이터의 시각적 속성 분류"] --> B["연속형 / 이산형 모두 적용"]
+            A --> C["이산형 데이터에만 적용"]
+            B --> B1["위치"]
+            B --> B2["크기"]
+            B --> B3["선 굵기"]
+            B --> B4["색"]
+            C --> C1["형태 (세모, 네모)"]
+            C --> C2["선 유형 (점선, 파선)"]
+        </div>
+
+        <h3 id="s-1-6">6) 데이터 시각화 방법</h3>
+        <p>목적에 따라 <b>시간, 분포, 관계, 비교, 공간</b> 5가지 시각화 방법이 주로 사용된다.</p>
+        
+        <table class="text-sm w-full mt-2 text-center">
+            <tr>
+                <th class="bg-gray-100" style="width: 20%;">시각화 방법</th>
+                <th class="bg-gray-100">주요 사용 도구</th>
+            </tr>
+            <tr><td class="font-bold text-blue-700">시간 시각화</td><td>막대그래프, 누적막대그래프, 점그래프, <b>꺾은선그래프(연속)</b></td></tr>
+            <tr><td class="font-bold text-green-700">분포 시각화</td><td>히스토그램, <b>파이차트, 도넛차트, 트리맵</b>, 누적연속그래프</td></tr>
+            <tr><td class="font-bold text-red-600">관계 시각화</td><td><b>산점도(Scatter plot)</b>, 버블차트, 히트맵</td></tr>
+            <tr><td class="font-bold text-purple-700">비교 시각화</td><td>히트맵, 체르노프 페이스(얼굴 표정), 스타차트, 평행좌표계</td></tr>
+            <tr><td class="font-bold text-orange-600">공간 시각화</td><td><b>지도 매핑 (Cartogram)</b></td></tr>
+        </table>
+        
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-2 my-2 text-sm">
+            <b>[참고/날개]</b> U.S. Phillips Curve (인플레이션 vs 실업률) 산점도는 전형적인 <b>관계 시각화</b>(음의 상관관계)의 예시이다.
+        </div>
+
+
+        <h2 id="s-2">02 데이터 시각화 영역</h2>
+        <p>데이터 시각화와 유사한 개념인 정보 시각화, 인포그래픽, 정보 디자인의 특징을 명확히 구별할 수 있어야 한다.</p>
+
+        <div class="mermaid mt-4 mb-4">
+        graph LR
+            A["[정보형 메시지]<br/>객관적 팩트 위주"] --- B(("데이터<br/>시각화"))
+            B --- C(("정보<br/>시각화"))
+            C --- D(("인포<br/>그래픽"))
+            D --- E["[설득형 메시지]<br/>주관적 어필 위주"]
+            
+            style A fill:none,stroke:none
+            style E fill:none,stroke:none
+            style B fill:#3a4f6e,stroke:#fff,color:#fff
+            style C fill:#4b6a96,stroke:#fff,color:#fff
+            style D fill:#6886ae,stroke:#fff,color:#fff
+        </div>
+
+        <h3 id="s-2-1">1) 정보 시각화 (Information Visualization)</h3>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li>방대한 양의 정보를 사용자가 직관적으로 이해할 수 있게 큰 범위의 표현을 강조한다.</li>
+            <li>수치뿐만 아니라 <b>텍스트나 지형정보 같은 비수치 정보</b>까지 포괄한다. 데이터 시각화에서 한 단계 더 정보 형태의 가공 과정을 거친다.</li>
+            <li><b>활용 도구:</b> 카토그램(지도도표), 덴드로그램(계통도), 트리맵, <b>하이퍼볼릭 트리(Hyperbolic tree)</b> 등.</li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #FF8899; background-color: #FFF0F5;">
+            <img src="이미지/임세정.png" alt="임세정" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF8899;">
+            <div>
+                <div class="anime-box-title" style="color: #CC4466;">🎀 [효빈위키 심화 해설] 7호선 임세정 언니의 시각화 영역 구분법!</div>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>데이터 시각화 vs 인포그래픽:</b> 핵심은 <b>타겟층</b>과 <b>목적</b>이야. 데이터 시각화가 분석가들끼리 "음, 산점도를 보니 상관관계가 0.8이군" 하고 객관적 팩트 체크를 하는 용도라면, <b>인포그래픽</b>은 덕진구청 민원실이나 보건소 게시판에 일반 시민들 보라고 알록달록하게 스토리를 담아 붙여놓은 <b>설득용 홍보물</b>에 가까워. 피그마(Figma)나 일러스트레이터로 디자이너의 영혼을 갈아 넣은 시각적 결과물이지!</li>
+                    <li><b>하이퍼볼릭 트리 (Hyperbolic Tree):</b> 1-490 페이지에 깨알같이 나오는 이 녀석, 원형 중앙에 트리를 배치하는 기법이야. 효빈광역시의 거미줄 같은 광역전철 노선도를 한 화면에 우겨넣을 때 아주 유용하지. 중앙역(중심 노드)은 엄청 크게 보여주고, 외곽으로 갈수록 공간을 돋보기처럼 왜곡해서 촘촘하게 보여주는 방식! 폰 화면 좁을 때 쓰는 개꿀 기법이야.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 id="s-2-2">2) 정보 디자인 (Information Design) & 3) 인포그래픽 (Infographic)</h3>
+        <ul class="list-disc pl-6 space-y-2 mb-4 mt-2">
+            <li><b>정보 디자인:</b> 시각 디자인의 하위 영역으로 정보를 구성하여 효율적으로 사용할 수 있게 하는 기술이다. 데이터 시각화, 인포그래픽을 모두 껴안는 <b>가장 상위 포괄 개념</b>이다.</li>
+            <li><b>인포그래픽:</b> 일반인을 대상으로 <b>'설득형 메시지'</b>를 전달하기 위해 스토리를 곁들여 빠르고 분명하게 표현하는 것이 핵심이다. 차트, 지도, 픽토그램, 다이어그램, 일러스트레이션이 총동원된다.
+                <ul class="list-circle pl-6 mt-1 text-sm text-gray-700">
+                    <li><b>기본 3대 요소:</b> 비주얼(Visual), 내용(Content), 지식(Knowledge).</li>
+                    <li><b>6대 유형:</b> 통계(정보), 과정(프로세스), 비교, 지도(지리), 목록, 타임라인 인포그래픽.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #33AAFF; background-color: #E6F3FF;">
+            <img src="이미지/심세이.png" alt="심세이" class="anime-img" onerror="this.style.display='none'" style="border-color: #33AAFF;">
+            <div>
+                <div class="anime-box-title" style="color: #0077DD;">💻 [효빈위키 팩폭 해설] 창전선 심세이의 픽토그램 & 명작 지도!</div>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>샤를 미나르의 나폴레옹 행군도:</b> 1-488 페이지 밑에 깔린 그 흑백 지도, 데이터 시각화 역사상 <b>가장 위대한 명작</b>으로 꼽히는 녀석이야. 선 굵기(군대 규모), 위치(지리), 색상(진격/후퇴), 온도 변화까지 하나의 평면 이미지에 때려 넣은 엄청난 작품이지! 시험에서도 가끔 "다음 중 공간 시각화(지도 매핑)의 대표적인 예시로 알맞은 것은?" 하고 툭 튀어나오니 눈에 발라두라구.</li>
+                    <li><b>픽토그램(Pictogram):</b> 그림(picto)과 텔레그램(telegram)의 합성어. 외국인이나 글을 모르는 애기들도 직관적으로 이해할 수 있어야 해. 관공서 화장실 마크, 비상구의 달려가는 초록색 아저씨, 지하철 승강장 안내판 같은 그림 문자들이야.</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <h2 id="s-3">03 시간 시각화 (★ Chart.js 전격 구현)</h2>
+        <p>시간에 따른 데이터의 변화를 표현하는 것으로, <b>일정 기간에 걸쳐 진행되는 변화와 경향성(트렌드)</b>을 추적하는 데 주로 사용된다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li><b>이산형(분절형) 도구:</b> 특정 시점 구간 값을 명확히 표현 (막대, 누적막대, 묶은막대, 점그래프)</li>
+            <li><b>연속형 도구:</b> 지속적으로 변화하는 흐름과 패턴 표현 (꺾은선, 계단그래프, 추세선)</li>
+        </ul>
+
+        <h3 id="s-3-2">1) 막대그래프</h3>
+        <p>데이터 값을 길이로 표현해 상대적 차이를 직관적으로 보여준다. <b>값축(Y축)은 무조건 0부터 시작해야 꼼수 없는 정확한 비교가 가능하다.</b> (0부터 안 그리면 100 깎인 게 절반 날아간 것처럼 과장되게 보임)</p>
+        
+        <h3 id="s-3-3">2) 누적막대그래프 & 3) 묶은막대그래프</h3>
+        <div class="bg-gray-50 p-4 border rounded shadow-sm mb-4">
+            <ul class="list-disc pl-6 space-y-2 text-sm text-gray-800">
+                <li><b>묶은막대그래프:</b> 그룹별로 얇은 막대기 여러 개를 나란히 세운다. <b>세부 항목끼리 경쟁(?)하듯 비교</b>하기 좋으나, 전체 합계(총매출 등) 추이를 파악하긴 어렵다.</li>
+                <li><b>누적막대그래프:</b> 막대 하나에 여러 항목을 층층이 위로 쌓아 올린다. <b>하나의 막대로 세부 항목의 비율과 '전체의 합'을 동시에</b> 보여줄 때 가장 강력하다.</li>
+            </ul>
+            
+            <!-- Chart.js: 막대형 그래프 비교 (묶은 vs 누적) -->
+            <div class="chart-container mt-4">
+                <canvas id="barChartCompare"></canvas>
+            </div>
+            <p class="text-xs text-center text-gray-500 mt-2">▲ 묶은막대(좌측 비교) vs 누적막대(우측 전체 파악) 시각화 비교 예시 (걸즈 밴드 크라이 vs 봇치 더 록! 굿즈 판매량)</p>
+        </div>
+
+        <h3 id="s-3-5">4) 점그래프 & 5) 꺾은선그래프(연속 시계열)</h3>
+        <div class="bg-gray-50 p-4 border rounded shadow-sm mb-4">
+            <ul class="list-disc pl-6 space-y-2 text-sm text-gray-800">
+                <li><b>점그래프:</b> 가로축 시간에 대응하는 값을 선 연결 없이 점으로만 콕콕 찍어, 좁은 공간에 분포 흐름을 파악하기 좋다.</li>
+                <li><b>꺾은선그래프:</b> 점과 점 사이를 선으로 이어 <b>경향성(추세)</b>을 뚜렷하게 보여준다. 데이터의 연속된 특성을 표현한다.</li>
+                <li class="text-red-600">※ 꺾은선 그래프에서 세로축 길이를 늘리거나 가로축을 확 줄이면 변화가 엄청나게 급격해 보이는 시각적 왜곡이 일어난다.</li>
+            </ul>
+            
+            <!-- Chart.js: 꺾은선 그래프 -->
+            <div class="chart-container mt-4">
+                <canvas id="lineChartTrend"></canvas>
+            </div>
+            <p class="text-xs text-center text-gray-500 mt-2">▲ 기업의 월별 매출액 변화를 보여주는 꺾은선그래프</p>
+        </div>
+
+        <h3 id="s-3-7">6) 계단그래프 & 7) 추세선</h3>
+        <div class="bg-gray-50 p-4 border rounded shadow-sm mb-4">
+            <ul class="list-disc pl-6 space-y-2 text-sm text-gray-800">
+                <li><b>계단그래프:</b> 점과 점 사이를 직선 대각선으로 긋는 게 아니라, 값이 유지되다가 특정 시점에 '팍!' 하고 급격히 튀어 오르는 것을 직각으로 꺾어 표현한다. (예: 연도별 최저임금, <b>효빈광역시 시내버스 요금 인상 추이</b>)</li>
+                <li><b>추세선:</b> 막대그래프 등의 위로 대각선을 그어 즉각적 변화보단 전반적인 <b>경향성(이동평균 등)</b>을 보여주는 마법의 선이다.</li>
+            </ul>
+            
+            <!-- Chart.js: 계단그래프 및 추세선 혼합 -->
+            <div class="chart-container mt-4">
+                <canvas id="stepTrendChart"></canvas>
+            </div>
+            <p class="text-xs text-center text-gray-500 mt-2">▲ 효빈광역시 시내버스 악덕 요금 인상(계단형)과 물가상승률 이동평균 추세선의 결합</p>
+        </div>
+
+        <div class="anime-box" style="border-color: #6677CC; background-color: #F0F2FA;">
+            <img src="이미지/전노아.png" alt="전노아" class="anime-img" onerror="this.style.display='none'" style="border-color: #6677CC;">
+            <div>
+                <div class="anime-box-title" style="color: #4455AA;">💡 [효빈위키 봇의 팩트체크!] 핑계는 이제 그만! Chart.js 전격 도입!</div>
+                <p class="text-sm text-gray-800">이전 문서들에서 머메이드(Mermaid.js)의 한계 때문에 누적막대나 계단그래프를 텍스트로만 때우거나 어설픈 선으로 대충 그렸던 점, 깊이 반성합니다!(...)</p>
+                <p class="text-sm text-gray-800 mt-1">그래서 이번엔 자바스크립트 최강의 시각화 라이브러리인 <b>Chart.js</b>를 직접 공수해 와서 위 섹션들에 <b>진짜 완벽한 누적/묶은막대, 꺾은선, 계단형 그래프</b>를 동적으로 렌더링해 두었습니다. 이제 더 이상 핑계 대지 않고, 책에 나오는 모든 형태의 그래프를 마우스 오버(Hover) 툴팁과 함께 직접 만져보며 공부하실 수 있어요!</p>
+                <p class="text-sm text-gray-800 mt-1">특히 저 <b>계단그래프</b>를 보세요. 효빈광역시 2세대 시내버스(똥색 시절...) 요금이 폭리 취하면서 한방에 확 오르던 트라우마가 그래프 직각 꺾임에서 그대로 느껴지지 않나요? 꺾은선그래프랑 용도가 완벽하게 다르답니다!</p>
+            </div>
+        </div>
+
+
+        <h2 id="s-4">04 개념 체크 (기출 풀이)</h2>
+        
+        <div class="exam-box">
+            <div class="exam-title">✔️ 개념 체크 및 기출 풀이</div>
+            
+            <p class="font-bold">Q1. 시간에 따른 실내온도 변화를 그래프로 시각화 할 때 필요한 시각화 속성으로 적당하지 않은 것은?</p>
+            <p class="pl-4 text-sm mt-1">
+                ① 위치 속성<br>
+                ② 크기 속성<br>
+                ③ 색 속성<br>
+                <b>④ 선유형 속성</b>
+            </p>
+            <p class="text-xs text-gray-500 mt-2 pl-4"><b>[해설]</b> 선 유형(실선, 파선, 점선 등)은 뚝뚝 끊어지는 <b>이산형 데이터</b>에만 적용하는 속성이다. 온도 같은 <b>연속형 데이터</b>를 점선(모스부호?)으로 나타내면 뚝뚝 끊어져 보여 연속적인 변화 흐름을 파악하기 불가능해진다.</p>
+            
+            <hr class="border-red-200 my-4">
+
+            <p class="font-bold">Q2. 서비스 만족도 조사를 할 때 만족 정도에 따른 5개의 보기를 사용한다면, 해당 보기가 속하는 데이터의 유형은 어느 것인가?</p>
+            <div class="bg-gray-100 p-2 text-sm my-2 ml-4 w-3/4 rounded border">
+                당신은 현재의 서비스에 만족하십니까?<br>
+                1) 매우불만 &nbsp; 2) 불만 &nbsp; 3) 보통 &nbsp; 4) 만족 &nbsp; 5) 매우만족
+            </div>
+            <p class="pl-4 text-sm mt-1">
+                ① 명목형 데이터<br>
+                <b>② 순서형 데이터</b><br>
+                ③ 이산형 데이터<br>
+                ④ 연속형 데이터
+            </p>
+            <p class="text-xs text-gray-500 mt-2 pl-4"><b>[해설]</b> 숫자의 '간격'이나 '비율'이 아니라 단순히 불만족~만족까지의 <b>'순위(서열)'</b>를 나타내는 5점 척도이므로, 범주형 데이터 중에서도 서열을 매길 수 있는 <b>순서형 데이터(Ordinal Data)</b>에 해당한다.</p>
+
+            <hr class="border-red-200 my-4">
+
+            <p class="font-bold">Q3. 데이터 자체 보다는 데이터를 기초로 해석된 <u>설득형 메시지</u>를 대중에게 전달하기 위한 시각적 도구로 가장 적합한 것은?</p>
+            <p class="pl-4 text-sm mt-1">
+                <b>① 인포그래픽 (Infographic)</b><br>
+                ② 데이터 시각화<br>
+                ③ 정보 시각화<br>
+                ④ 카토그램
+            </p>
+            <p class="text-xs text-gray-500 mt-2 pl-4"><b>[해설]</b> 구청 게시판 홍보물처럼 그래픽 요소를 듬뿍 넣어 일반인을 대상으로 <b>'스토리와 설득'</b>을 목적으로 하는 최종 진화형 도구는 인포그래픽이다.</p>
+
+            <hr class="border-red-200 my-4">
+
+            <p class="font-bold">Q4. 다음 중 그래프에 대해 올바르게 설명하는 것은?</p>
+            <p class="pl-4 text-sm mt-1">
+                ① 두 변수 값의 비교를 위해서는 막대그래프를 사용하는 것이 좋다.<br>
+                ② 세로막대그래프의 x축은 값축이다.<br>
+                <b>③ 막대그래프의 면적은 그래프의 값과 연관이 없다.</b><br>
+                ④ 꺾은선그래프에서 세로축의 길이를 늘리면 데이터 값의 변화가 완만하게 보여진다.
+            </p>
+            <p class="text-xs text-gray-500 mt-2 pl-4"><b>[해설]</b> 막대그래프는 막대의 오직 <b>길이(높이)</b>에만 데이터 값이 대응하며 면적이나 굵기와는 상관없다. 세로막대의 x축은 시간축(범주), y축이 값축이며, 꺾은선 그래프에서 세로축 길이를 늘리면 변화가 '급격하게' 보인다.</p>
+        </div>
+
+    
+        <!-- 나무위키식 하단 내비게이션 틀 시작 -->
+        <div class="wiki-nav-box" id="bigbunNav">
+            <div class="wiki-nav-header">
+                📊 빅데이터분석기사 필기 전체 문서 목록
+            </div>
+            <div class="wiki-nav-toggle" onclick="document.getElementById('bigbunNavContent').classList.toggle('active')">
+                [ 펼치기 · 접기 ]
+            </div>
+            <div class="wiki-nav-content" id="bigbunNavContent">
+                <table class="wiki-nav-table">
+                    <tbody>
+                        <tr>
+                            <th class="bg-nav-red" style="width: 18%;">제1과목<br>빅데이터 분석 기획</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기1-1.html">빅분기1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-1.html">빅분기1-2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-2.html">빅분기1-2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-3.html">빅분기1-2-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-1.html">빅분기1-3-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-2.html">빅분기1-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-3.html">빅분기1-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-4.html">빅분기1-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-1.html">빅분기1-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-2.html">빅분기1-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-1.html">빅분기1-5-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-2.html">빅분기1-5-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-6.html">빅분기1-6</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제2과목<br>빅데이터 탐색</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기2-1.html">빅분기2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-2.html">빅분기2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-3.html">빅분기2-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-red">제3과목<br>빅데이터 모델링</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-1.html">빅분기3-1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-2.html">빅분기3-1-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-3.html">빅분기3-1-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-2.html">빅분기3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-2.html">빅분기3-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-3.html">빅분기3-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-4.html">빅분기3-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-1.html">빅분기3-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-2.html">빅분기3-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-3.html">빅분기3-4-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제4과목<br>빅데이터 결과 해석</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기4-1.html">빅분기4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-2.html">빅분기4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-3.html">빅분기4-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-4.html">빅분기4-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-5.html">빅분기4-5</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-6.html">빅분기4-6</a></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 나무위키식 하단 내비게이션 틀 끝 -->
+
+    </div> <!-- wiki-container end -->
+
+    <footer class="wiki-footer p-6 text-center border-t border-[var(--wiki-border)] bg-[var(--wiki-footer-bg)] text-[var(--wiki-footer-text)]">
+        <div class="font-bold text-sm">
+            이 저작물은 <span class="text-[var(--wiki-text)]">효빈위키</span> 규정에 따라 이용할 수 있습니다.<br>
+            ※ 본 문서는 빅데이터분석기사 필기 제4과목(분석결과 시각화 - 데이터 유형, 시간 시각화, 인포그래픽)의 완전판입니다.
+        </div>
+    </footer>
+
+    <!-- Chart.js 동적 렌더링 스크립트 (핑계 없는 완벽 구현!) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mermaid.js 초기화
+            mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+
+            // 1. 묶은막대 vs 누적막대 비교 차트 (Chart.js)
+            const ctxBar = document.getElementById('barChartCompare').getContext('2d');
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['1분기', '2분기', '3분기', '4분기'],
+                    datasets: [
+                        {
+                            label: '걸즈 밴드 크라이 굿즈',
+                            data: [1200, 1900, 3000, 2500],
+                            backgroundColor: '#FF4F91', // 덕주1호선 핫핑크
+                            stack: 'Stack 0', // 누적 스택 지정
+                        },
+                        {
+                            label: '봇치 더 록! 굿즈',
+                            data: [1500, 2100, 2800, 3200],
+                            backgroundColor: '#FFCC11', // 3호선 옐로우
+                            stack: 'Stack 0', // 누적 스택 지정
+                        },
+                        {
+                            label: '러브라이브 누적 합계 (비교군 묶은막대)',
+                            data: [2700, 4000, 5800, 5700],
+                            backgroundColor: '#6677CC', // 빈효선 연청색
+                            stack: 'Stack 1', // 스택을 분리하여 묶은막대 효과 완성
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: false },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true, beginAtZero: true }
+                    }
+                }
+            });
+
+            // 2. 꺾은선그래프 차트 (Chart.js)
+            const ctxLine = document.getElementById('lineChartTrend').getContext('2d');
+            new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: ['1월', '2월', '3월', '4월', '5월', '6월'],
+                    datasets: [{
+                        label: '월별 기업 매출 추이 (천만 원)',
+                        data: [1000, 2500, 3500, 3000, 2000, 1500],
+                        borderColor: '#0077DD', // 1호선 블루
+                        backgroundColor: 'rgba(0, 119, 221, 0.1)',
+                        pointBackgroundColor: '#EE0022', // 5호선 레드
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        fill: true,
+                        tension: 0.1 // 살짝 부드러운 연속적인 곡선
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true, suggestedMax: 4000 }
+                    }
+                }
+            });
+
+            // 3. 계단그래프 + 추세선 혼합 차트 (Chart.js)
+            const ctxStep = document.getElementById('stepTrendChart').getContext('2d');
+            new Chart(ctxStep, {
+                data: {
+                    labels: ['2000년', '2004년', '2008년', '2012년', '2016년', '2020년', '2024년'],
+                    datasets: [
+                        {
+                            type: 'line',
+                            label: '시내버스 요금 인상 (계단형 팍!)',
+                            data: [400, 400, 700, 900, 900, 1250, 1500],
+                            borderColor: '#881188', // 6호선 퍼플
+                            borderWidth: 3,
+                            stepped: true, // 계단그래프 핵심 속성! 직각으로 꺾임
+                            fill: false
+                        },
+                        {
+                            type: 'bar',
+                            label: '해당 연도 소비자 물가지수 (가상)',
+                            data: [350, 420, 680, 850, 950, 1100, 1450],
+                            backgroundColor: 'rgba(0, 204, 170, 0.4)', // 2호선 그린 투명도
+                            borderColor: '#00CCAA',
+                            borderWidth: 1
+                        },
+                        {
+                            type: 'line',
+                            label: '장기 물가 추세선 (Moving Avg)',
+                            data: [300, 450, 600, 800, 1000, 1200, 1550],
+                            borderColor: '#FF5522', // 4호선 오렌지
+                            borderDash: [5, 5], // 점선(추세선 느낌)
+                            pointRadius: 0,
+                            fill: false,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, suggestedMax: 1800 }
+                    }
+                }
+            });
+
+            // 각주 툴팁 구동 JS
+            const tooltip = document.createElement('div');
+            tooltip.className = 'wiki-tooltip';
+            document.body.appendChild(tooltip);
+
+            const fnLinks = document.querySelectorAll('a.fn-link');
+            
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        const childNodes = Array.from(targetElement.childNodes);
+                        const tooltipContent = childNodes
+                            .filter(node => node.nodeName !== 'A')
+                            .map(node => node.nodeType === Node.TEXT_NODE ? node.textContent : node.outerHTML)
+                            .join('')
+                            .trim();
+                        
+                        tooltip.innerHTML = tooltipContent;
+                        tooltip.classList.add('visible');
+                        
+                        const rect = this.getBoundingClientRect();
+                        let topPos = rect.bottom + window.scrollY + 8;
+                        let leftPos = rect.left + window.scrollX;
+                        
+                        tooltip.style.display = 'block';
+                        if (leftPos + tooltip.offsetWidth > window.innerWidth) {
+                            leftPos = window.innerWidth - tooltip.offsetWidth - 20;
+                        }
+                        
+                        tooltip.style.left = leftPos + 'px';
+                        tooltip.style.top = topPos + 'px';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    tooltip.classList.remove('visible');
+                });
+            });
+        });
+    </script>
+    
+    <!-- 필수 외부 스크립트 복구 -->
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

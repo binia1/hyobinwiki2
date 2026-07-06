@@ -1,0 +1,581 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메가박스 효빈터미널 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        :root { 
+            --wiki-nav: #7777AA; 
+            --wiki-header: #BBFF64;
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            --mega-color: #352461; /* 메가박스 시그니처 컬러 */
+        }
+
+        [data-theme='dark'] { 
+            --wiki-nav: #444477;
+            --wiki-header: #88AA33;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; margin: 0; }
+        .wiki-container { max-width: 1280px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); display: flex; flex-direction: column; }
+
+        /* 테이블 스타일 */
+        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; }
+        th, td { border: 1px solid var(--wiki-border) !important; padding: 6px 8px; vertical-align: middle; font-size: 0.85rem; }
+        
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        /* 취소선 스타일 */
+        del { color: #aaa; text-decoration: line-through; }
+        [data-theme='dark'] del { color: #777; }
+
+        h1 { font-size: 2.3rem !important; font-weight: 700 !important; margin-bottom: 1rem; border-bottom: 2px solid var(--wiki-header); padding-bottom: 10px; }
+        h2 { font-size: 1.7rem !important; font-weight: 700 !important; margin-top: 2rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        h2::before { content: ""; display: inline-block; width: 6px; height: 1.5rem; background: var(--wiki-header); }
+        h3 { font-size: 1.3rem !important; font-weight: 700 !important; margin-top: 1.5rem; border-left: 4px solid var(--wiki-header); padding-left: 10px; }
+
+        /* 인포박스 스타일 */
+        .infobox { border: 2px solid var(--mega-color); background-color: #fff; width: 100%; max-width: 400px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .infobox-header { background-color: var(--mega-color); color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 1.2rem; }
+        .infobox-content { padding: 0; }
+        .infobox th { background-color: var(--mega-color) !important; color: white !important; width: 100px; text-align: center; font-weight: bold; border: 1px solid #ddd !important; }
+        .infobox td { padding: 8px; border: 1px solid #ddd !important; text-align: left; }
+
+        /* 메가박스 내비게이션 스타일 */
+        .mega-nav-frame { border: 2px solid var(--mega-color); margin: 10px 0; }
+        .mega-nav-header { background-color: #fff; color: var(--mega-color); padding: 5px; text-align: center; border-bottom: 2px solid var(--mega-color); }
+        .mega-nav-content { background-color: #fff; padding: 5px; }
+        
+        details.mega-details { margin-bottom: 5px; width: 100%; }
+        details.mega-details summary { 
+            background-color: #f0f0f0; padding: 5px 10px; cursor: pointer; font-weight: bold; list-style: none; text-align: center; border: 1px solid #ddd;
+        }
+        details.mega-details summary:hover { background-color: #e0e0e0; }
+        details.mega-details[open] summary { background-color: var(--mega-color); color: white; }
+        .mega-list-box { padding: 10px; border: 1px solid #ddd; border-top: none; font-size: 0.9rem; line-height: 1.8; text-align: left; }
+        .mega-branch-link { display: inline-block; margin: 0 5px; color: #333; text-decoration: none; }
+        .mega-branch-link:hover { text-decoration: underline; color: var(--mega-color); }
+        .mega-branch-new { font-size: 0.8em; color: red; vertical-align: super; }
+        .mega-branch-sub { font-size: 0.8em; color: gray; }
+
+        /* 층별 안내 테이블 */
+        .floor-table th { background-color: var(--mega-color); color: white; width: 80px; text-align: center; }
+        
+        /* 특별관 배지 */
+        .spec-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: white; font-size: 0.8rem; margin: 2px; }
+
+        /* 캡션 스타일 */
+        .caption { font-size: 0.85rem; color: #666; text-align: center; margin-top: 5px; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <div id="wiki-msg-box" style="display:none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000;"></div>
+
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="효빈위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a href="토론.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">토론</a>
+                <a href="수정.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">편집</a>
+                <a href="역사.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">메가박스 효빈터미널</h1>
+            <div class="flex bg-white border rounded overflow-hidden shadow-sm mb-4">
+                <a href="토론.html" class="wiki-tool-btn" style="padding: 4px 12px; border-right: 1px solid #ccc;">토론</a>
+                <a href="수정.html" class="wiki-tool-btn" style="padding: 4px 12px; border-right: 1px solid #ccc;">편집</a>
+                <a href="역사.html" class="wiki-tool-btn" style="padding: 4px 12px; border-right: 1px solid #ccc;">역사</a>
+                <div class="px-3 py-1 text-[11px] cursor-pointer hover:bg-gray-100">★</div>
+            </div>
+        </div>
+
+        <div class="category-box bg-white border p-2 mb-4 text-xs">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="메가박스_지점.html" class="wiki-link">메가박스 지점</a> | 
+            <a href="효빈광역시의_영화관.html" class="wiki-link">효빈광역시의 영화관</a> | 
+            <a href="2012년.html" class="wiki-link">2012년 개업</a> |
+            <a href="북구.html" class="wiki-link">북구(효빈광역시)</a>
+        </div>
+
+        <!-- [틀] 메가박스 지점 현황 (전체 복원) -->
+        <div class="mega-nav-frame">
+            <div class="mega-nav-header">
+                <div class="flex items-center justify-center gap-2">
+                    <img src="이미지/메가박스_로고.png" style="height: 30px;" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Megabox_logo.svg/300px-Megabox_logo.svg.png'">
+                    <span class="font-bold text-lg">전국 지점 현황</span>
+                </div>
+                <div class="text-xs text-gray-500 mt-1">
+                    <span class="bg-gray-200 px-1">음영</span>: 개관 예정 | <span class="text-sm">○</span>: 위탁관
+                </div>
+            </div>
+            <div class="mega-nav-content">
+                <!-- 효빈/덕북 -->
+                <details class="mega-details" open>
+                    <summary>효빈 / 덕북 / 덕남 </summary>
+                    <div class="mega-list-box">
+                        <a href="메가박스_효빈.html" class="mega-branch-link">효빈</a> · 
+                        <a href="메가박스_고송.html" class="mega-branch-link">고송</a> · 
+                        <a href="메가박스_안천.html" class="mega-branch-link">안천</a> · 
+                        <a href="메가박스_HJ중수.html" class="mega-branch-link">HJ중수</a> · 
+                        <a href="메가박스_청엽.html" class="mega-branch-link">청엽</a> · 
+                        <a href="메가박스_창전.html" class="mega-branch-link">창전</a> · 
+                        <a href="메가박스_효빈대.html" class="mega-branch-link">효빈대</a> · 
+                        <a href="메가박스_항동.html" class="mega-branch-link">항동</a> · 
+                        <a href="메가박스_탄성.html" class="mega-branch-link">탄성</a> · 
+                        <a href="메가박스_효빈터미널.html" class="mega-branch-link" style="background:#1D1E23; color:#c09a5b; padding:0 3px;">효빈터미널</a> · 
+                        <a href="메가박스_빈주가원.html" class="mega-branch-link">빈주가원</a> · 
+                        <a href="메가박스_빈주장기.html" class="mega-branch-link">빈주장기</a> · 
+                        <a href="메가박스_빈주역.html" class="mega-branch-link">빈주역</a> · 
+                        <a href="메가박스_천주궁하.html" class="mega-branch-link">천주궁하</a> · 
+                        <a href="메가박스_천주천성.html" class="mega-branch-link">천주천성</a> · 
+                        <a href="메가박스_약산.html" class="mega-branch-link">약산</a> · 
+                        <a href="메가박스_군천.html" class="mega-branch-link">군천</a> · 
+                        <a href="메가박스_서해.html" class="mega-branch-link">서해</a> · 
+                        <a href="메가박스_덕주.html" class="mega-branch-link">덕주</a> · 
+                        <a href="메가박스_낙주.html" class="mega-branch-link">낙주</a> · 
+                        <a href="메가박스_운진.html" class="mega-branch-link">운진</a> · 
+                        <a href="메가박스_방산.html" class="mega-branch-link">방산</a>
+                    </div>
+                </details>
+
+                <!-- 서울 -->
+                <details class="mega-details">
+                    <summary>서울</summary>
+                    <div class="mega-list-box">
+                        <a href="메가박스_강남.html" class="mega-branch-link">강남</a> · 
+                        <a href="메가박스_강동.html" class="mega-branch-link">강동<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="메가박스_구의이스트폴.html" class="mega-branch-link">구의이스트폴</a> · 
+                        <a href="메가박스_군자.html" class="mega-branch-link">군자<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="메가박스_더부티크목동현대백화점.html" class="mega-branch-link" style="background:#1D1E23; color:#c09a5b; padding:0 3px;">더 부티크 목동현대백화점</a> · 
+                        <a href="메가박스_동index.html" class="mega-branch-link">동대문<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="메가박스_마곡.html" class="mega-branch-link">마곡</a> · 
+                        <a href="메가박스_목동.html" class="mega-branch-link">목동</a> · 
+                        <a href="메가박스_상봉.html" class="mega-branch-link">상봉</a> · 
+                        <a href="메가박스_상암월드컵경기장.html" class="mega-branch-link">상암월드컵경기장</a> · 
+                        <a href="메가박스_센트럴.html" class="mega-branch-link" style="background:#1D1E23; color:#c09a5b; padding:0 3px;">센트럴</a> · 
+                        <a href="메가박스_송파파크하비오.html" class="mega-branch-link">송파파크하비오<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="메가박스_신촌.html" class="mega-branch-link">신촌</a> · 
+                        <a href="메가박스_이수.html" class="mega-branch-link">이수</a> · 
+                        <a href="메가박스_창동.html" class="mega-branch-link">창동</a> · 
+                        <a href="메가박스_코엑스.html" class="mega-branch-link">코엑스</a> · 
+                        <a href="픽쳐하우스.html" class="mega-branch-link">픽쳐하우스<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="메가박스_홍대.html" class="mega-branch-link">홍대</a> · 
+                        <a href="메가박스_화곡.html" class="mega-branch-link">화곡</a>
+                    </div>
+                </details>
+
+                <!-- 경기 -->
+                <details class="mega-details">
+                    <summary>경기</summary>
+                    <div class="mega-list-box">
+                        <a href="#" class="mega-branch-link">김포한강신도시</a> · 
+                        <a href="#" class="mega-branch-link">고양스타필드</a> · 
+                        <a href="#" class="mega-branch-link">광명소하<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">광명AK플라자</a> · 
+                        <a href="#" class="mega-branch-link">금정AK플라자</a> · 
+                        <a href="#" class="mega-branch-link">남양주<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">남양주현대아울렛 스페이스원</a> · 
+                        <a href="#" class="mega-branch-link">동탄<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">동탄역<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">미사강변<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">별내<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">부천스타필드시티</a> · 
+                        <a href="#" class="mega-branch-link">분당</a> · 
+                        <a href="#" class="mega-branch-link">성남모란<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">수원<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">수원남문<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">수원스타필드</a> · 
+                        <a href="#" class="mega-branch-link">수원인계</a> · 
+                        <a href="#" class="mega-branch-link">수원AK플라자</a> · 
+                        <a href="#" class="mega-branch-link">수원호매실<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">시흥배곧<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">시흥정왕<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">안산중앙<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">안성스타필드</a> · 
+                        <del><a href="#" class="mega-branch-link">양주<sup class="mega-branch-sub">○</sup></a></del> · 
+                        <a href="#" class="mega-branch-link">용인테크노밸리<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">의정부민락</a> · 
+                        <a href="#" class="mega-branch-link">백석벨라시타</a> · 
+                        <a href="#" class="mega-branch-link">킨텍스</a> · 
+                        <a href="#" class="mega-branch-link">파주금촌<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">파주운정<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">평택비전<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">하남스타필드</a>
+                    </div>
+                </details>
+
+                <!-- 인천 -->
+                <details class="mega-details">
+                    <summary>인천</summary>
+                    <div class="mega-list-box">
+                        <a href="#" class="mega-branch-link">검단<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">송도(트리플스트리트)</a> · 
+                        <a href="#" class="mega-branch-link">영종<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">영종하늘도시<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">인천논현<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link" style="background:#99999933">인천학익(시티오씨엘)</a> · 
+                        <del><a href="#" class="mega-branch-link">청라지젤<sup class="mega-branch-sub">○</sup></a></del> · 
+                        <a href="#" class="mega-branch-link" style="background:#99999933">청라스타필드</a>
+                    </div>
+                </details>
+
+                <!-- 대전/세종/충청 -->
+                <details class="mega-details">
+                    <summary>대전 / 세종 / 충청</summary>
+                    <div class="mega-list-box">
+                        <a href="#" class="mega-branch-link">공주<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">논산<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">대전</a> · 
+                        <a href="#" class="mega-branch-link">대전신세계 아트앤사이언스</a> · 
+                        <a href="#" class="mega-branch-link">대전유성</a> · 
+                        <a href="#" class="mega-branch-link">대전중앙로</a> · 
+                        <a href="#" class="mega-branch-link">대전현대아울렛</a> · 
+                        <a href="#" class="mega-branch-link">세종(조치원)<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">세종나성</a> · 
+                        <del><a href="#" class="mega-branch-link">세종청사</a></del> · 
+                        <a href="#" class="mega-branch-link">오창<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">진천</a> · 
+                        <a href="#" class="mega-branch-link">천안<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">청주사창<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">청주성안길<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">청주터미널</a> · 
+                        <a href="#" class="mega-branch-link">충주연수<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">홍성내포<sup class="mega-branch-sub">○</sup></a>
+                    </div>
+                </details>
+
+                <!-- 부산/대구/경상 -->
+                <details class="mega-details">
+                    <summary>부산 / 대구 / 경상</summary>
+                    <div class="mega-list-box">
+                        <a href="#" class="mega-branch-link">경북도청<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">경산하양<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">구미강동</a> · 
+                        <a href="#" class="mega-branch-link">김천<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">남포항<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">대구세븐밸리(칠곡)<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">대구신세계(동대구)</a> · 
+                        <a href="#" class="mega-branch-link">대구이시아</a> · 
+                        <a href="#" class="mega-branch-link">대구프리미엄만경관<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">덕천<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">마산(경남대)<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">부산극장<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">부산대<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">북대구(칠곡)<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">사상</a> · 
+                        <a href="#" class="mega-branch-link">삼천포<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">서면대한<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">양산<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">양산증산</a> · 
+                        <a href="#" class="mega-branch-link">울산<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">정관<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">진주(중안)<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">창원<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">창원내서</a> · 
+                        <a href="#" class="mega-branch-link" style="background:#99999933">창원스타필드</a> · 
+                        <a href="#" class="mega-branch-link" style="background:#99999933">포항</a> · 
+                        <a href="#" class="mega-branch-link">화명<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">해운대(장산)<sup class="mega-branch-sub">○</sup></a>
+                    </div>
+                </details>
+
+                <!-- 광주/전라 -->
+                <details class="mega-details">
+                    <summary>광주 / 전라</summary>
+                    <div class="mega-list-box">
+                        <a href="#" class="mega-branch-link">광주상무<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">광주하남<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">목포하당(포르모)<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">순천<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">여수웅천<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">전대(광주)<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">전주객사<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">전주혁신<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">첨단<sup class="mega-branch-sub">○</sup></a>
+                    </div>
+                </details>
+
+                <!-- 강원/제주 -->
+                <details class="mega-details">
+                    <summary>강원 / 제주</summary>
+                    <div class="mega-list-box">
+                        <a href="#" class="mega-branch-link">남춘천<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">속초<sup class="mega-branch-sub">○</sup></a> · 
+                        <del><a href="#" class="mega-branch-link">원주<sup class="mega-branch-sub">○</sup></a></del> · 
+                        <a href="#" class="mega-branch-link">원주혁신<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">춘천석사</a> · 
+                        <a href="#" class="mega-branch-link">제주삼화<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">제주서귀포<sup class="mega-branch-sub">○</sup></a> · 
+                        <a href="#" class="mega-branch-link">제주아라<sup class="mega-branch-sub">○</sup></a>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- 2-Column Layout for TOC and Infobox (Same Height) -->
+        <div class="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
+            <!-- 목차 (Left) -->
+            <div id="toc-box" class="toc bg-[#f9f9f9] border border-gray-300 p-4 rounded md:min-w-[300px] flex-grow-0">
+                <div class="text-center font-bold border-bottom border-gray-300 mb-2 pb-1">목차</div>
+                <ul class="text-sm list-none p-0 m-0">
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">특징</a>
+                         <ul class="pl-4">
+                            <li>2.1. <a href="#s-2-1" class="wiki-link">효빈시 오타쿠의 심장</a></li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3" class="wiki-link">역사</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">시설</a>
+                        <ul class="pl-4">
+                            <li>4.1. <a href="#s-4-1" class="wiki-link">상영관</a></li>
+                            <li>4.2. <a href="#s-4-2" class="wiki-link">로비 및 매점 (굿즈샵)</a></li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5" class="wiki-link">트리비아</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">대중교통</a></li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 (Right) -->
+            <aside class="infobox flex-shrink-0" style="margin:0;">
+                <div class="infobox-header">
+                    <img src="이미지/메가박스_로고.png" style="height:25px; vertical-align:middle; margin-right:5px;" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Megabox_logo.svg/300px-Megabox_logo.svg.png'; this.style.filter='brightness(0) invert(1)';"><br>
+                    <span>MEET PLAY SHARE</span><br>
+                    <span style="font-size:1.4em;">메가박스 효빈터미널</span>
+                </div>
+                <img src="이미지/메가박스_효빈터미널.png" class="w-full bg-white" alt="지점 전경" style="min-height:180px; object-fit:cover; background-color:#eee;" onerror="this.src='https://via.placeholder.com/400x200?text=Megabox+Hyobin+Terminal'">
+                <div class="infobox-content">
+                    <table class="w-full">
+                        <tr><th colspan="2">개관일</th><td colspan="4">2012년 5월 4일</td></tr>
+                        <tr><th colspan="2">주소</th><td colspan="4"><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구.html" class="wiki-link">북구</a> 해서동 550-1<br>(효빈고속버스터미널 4~7층)</td></tr>
+                        <tr><th colspan="2">상영관</th><td colspan="4"><strong>15관 / 2,500석</strong></td></tr>
+                        <tr><th colspan="2">특별관</th>
+                            <td colspan="4">
+                                <span class="spec-badge" style="background-color: #000; border:1px solid #000;">Dolby Cinema</span>
+                                <span class="spec-badge" style="background-color: #329EB1; border:1px solid #329EB1;">COMFORT</span>
+                                <span class="spec-badge" style="background-color: #E6007E; border:1px solid #E6007E;">HAF SPECIAL</span>
+                            </td>
+                        </tr>
+                        <tr><th colspan="2">홈페이지</th><td colspan="4"><a href="#" class="wiki-link" target="_blank">효빈터미널점</a></td></tr>
+                    </table>
+                </div>
+            </aside>
+        </div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <div style="text-align:center; margin:15px 0; border: 1px solid #ccc; padding: 10px; background-color: #f0f0f0;">
+            <strong>대한민국 영화관 중 팝콘 냄새와 <del>땀 냄새</del> 굿즈 종이 냄새가 가장 진하게 섞여 있는 곳.</strong><br>
+            <span style="font-size:0.8em;">- 효빈시 모 영화 커뮤니티 유저의 한 줄 평</span>
+        </div>
+        <p>
+            <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구.html" class="wiki-link">북구</a> 해서동 <a href="효빈고속버스터미널.html" class="wiki-link">효빈고속버스터미널</a> 4층부터 7층까지를 통째로 사용하고 있는 <strong>효빈시 최대 규모(15관 2,500석)</strong>의 멀티플렉스 영화관이다.
+        </p>
+        <p>
+            단순히 영화만 보는 곳이 아니라, 효빈시의 정체성 그 자체인 <strong>'오타쿠 문화'의 최전선 기지</strong> 역할을 수행하고 있다. <a href="CGV_효빈역.html" class="wiki-link">CGV 효빈역</a>점이 아이맥스를 앞세워 일반 관객(머글)들을 공략한다면, 이곳은 전국의 애니메이션 매니아들을 블랙홀처럼 빨아들이는 <strong>성지(聖地)</strong>로 통한다. 
+        </p>
+        <p>
+            주말이나 <a href="HAF.html" class="wiki-link">HAF(효빈 애니메이션 페스티벌)</a> 기간에는 터미널 이용객 + 군인 + 덕후들이 뒤엉켜 그야말로 혼돈의 카오스를 연출한다. 특히 인기 애니메이션 극장판 개봉일 아침이면 터미널 하차장에서 메가박스 매표소까지 이어지는 <a href="오픈런.html" class="wiki-link">오픈런</a> 행렬이 장관이다. ~~이걸 구경하는 일반 시민들의 눈빛이 포인트.~~
+        </p>
+
+        <h2 id="s-2">2. 특징</h2>
+        <h3 id="s-2-1">2.1. 효빈시 오타쿠의 심장</h3>
+        <p>
+            <strong>"니들이 뭘 좋아할지 몰라서 다 가져와봤어."</strong>
+        </p>
+        <p>
+             효빈시 인구의 20%가 오타쿠라는 경이로운 통계를 등에 업고, 메가박스 본사 차원에서 아예 <strong>'대놓고 밀어주는'</strong> 지점이다. 일반적인 극장에서는 조조나 심야에 퐁당퐁당으로 걸어주는 마이너한 일본 심야 애니메이션 극장판을, 여기서는 <strong>골든타임(주말 오후)에 제일 큰 관(컴포트관)에서 틀어버리는</strong> 패기를 보여준다.
+        </p>
+        <p>
+            이 때문에 효빈시 내의 다른 메가박스 지점(<a href="메가박스_효빈대.html" class="wiki-link">효빈대점</a>, <a href="메가박스_청엽.html" class="wiki-link">청엽점</a> 등)도 이곳의 낙수 효과를 톡톡히 본다. 여기서 표를 못 구하면 2호선 타고 효빈대점으로 튀어가야 하기 때문.
+        </p>
+        <p>
+            직원 채용 시 <strong>'애니메이션 관련 지식 보유자 우대'</strong>라는 암묵적인 룰이 있다고 카더라. 실제로 매표소나 굿즈샵 직원들의 <a href="특전.html" class="wiki-link">특전</a> 포스터 말아주는 솜씨가 가히 <strong>인간 문화재 급</strong>이다. 
+            <del>포스터에 구김 하나 없이 0.5초 만에 고무줄을 끼우는 스킬을 보면 경이롭기까지 하다.</del> 가끔 손님과 직원이 "이번 특전 색지 라인업 망했네요"라며 스몰토크를 나누는 기묘한 광경도 목격된다.
+        </p>
+
+        <h2 id="s-3">3. 역사</h2>
+        <ul class="list-disc pl-5 text-sm">
+            <li><strong>2012년 5월 4일:</strong> 효빈고속버스터미널 리모델링과 함께 11개관 규모로 그랜드 오픈. 당시엔 그냥 "터미널에 영화관 생겼네" 정도의 반응이었다.</li>
+            <li><strong>2016년:</strong> 모 애니메이션(너의 이름은.)의 대히트 당시, 효빈시 덕후들의 화력을 실감한 점장이 상영관 확대를 본사에 건의. 이때부터 <strong>'애니메이션 쿼터제'</strong>가 암암리에 시행되었다.</li>
+            <li><strong>202X년:</strong> 경쟁사인 <a href="CGV_효빈역.html" class="wiki-link">CGV 효빈역</a>점 점장이 애니메이션 단독 수입을 시도하다가 본사에 찍혀 좌천되는 <strong>'효빈역 반란 미수 사건'</strong>이 발생. 이에 반사이익으로 메가박스 효빈터미널점으로 덕후 수요가 대거 몰리게 된다.</li>
+            <li><strong>2024년:</strong> 터미널 상가 공실을 흡수하여 4개관을 증축, 총 15개관으로 확장하며 <strong>효빈시 최대 규모 영화관</strong> 타이틀을 거머쥐었다. 동시에 <strong>Dolby Cinema</strong>관을 도입하며 쐐기를 박았다.</li>
+        </ul>
+
+        <h2 id="s-4">4. 시설</h2>
+        <h3 id="s-4-1">4.1. 상영관</h3>
+        <p>
+            4층 매표소와 이어진 에스컬레이터를 타고 올라가면 5~7층에 상영관이 배치되어 있다.
+        </p>
+        <ul class="list-disc pl-5 text-sm">
+            <li><strong>Dolby Cinema (4관):</strong> 효빈시 유일의 돌비 시네마. 사운드에 민감한 덕후들을 위해 특별히 공을 들였다고 한다. <del>옆 상영관에서 조용한 멜로 영화 보는데 여기서 전투씬 나오면 웅장한 진동이 느껴진다 카더라. 4D 체험 개이득?</del></li>
+            <li><strong>HAF SPECIAL (1~5관):</strong> 평소에는 일반관이지만, HAF 기간이나 대형 애니메이션 페스티벌이 열리면 <strong>가변형 벽체</strong>를 통해 로비를 확장하고 전용 상영관으로 변신한다. 이 기간에는 관내 광고도 전부 애니메이션 광고만 나온다.</li>
+            <li><strong>일반관 (10~15관):</strong> 주로 단기 상영작이나 정말 매니악한 작품들이 걸린다. 좌석 수는 적지만 스크린 비율이 좋아서 명당 경쟁이 치열하다.</li>
+        </ul>
+
+        <h3 id="s-4-2">4.2. 로비 및 매점 (굿즈샵)</h3>
+        <p>
+            들어가자마자 <strong>압도적인 크기의 애니메이션 현수막</strong>이 반겨준다. 
+            매점 옆에는 팝콘보다 굿즈를 더 많이 파는 것 같은 <strong>'메가 굿즈샵'</strong>이 있는데, 규모가 웬만한 서울 <a href="애니플러스.html" class="wiki-link">애니플러스</a> 샵 뺨친다.
+        </p>
+        <p>
+            로비 구석에는 <strong>'코스어 전용 탈의실'</strong>(임시) 표지판이 항상 구비되어 있으며, 주말에는 로비 소파에 칼이나 마법봉 같은 흉기(?)들이 널브러져 있어도 아무도 신고하지 않는 평화로운 풍경을 볼 수 있다.
+            엘리베이터 문이 열렸는데 중세 기사 갑옷을 입은 사람이 타고 있어도 당황하지 말고 자연스럽게 타면 된다. <del>오히려 그들이 자리를 비켜준다. 매너가 좋다.</del>
+        </p>
+
+        <h2 id="s-5">5. 트리비아</h2>
+        <ul class="list-disc pl-5 text-sm">
+            <li>
+                <strong>오리지널 티켓 수집 난이도 최상:</strong> 물량이 가장 많이 들어오지만, 그만큼 수령하러 오는 좀비 떼(?)도 가장 많다. 인기작의 경우 조조 영화 시작 3시간 전부터 터미널 대합실에 낚시 의자를 펴고 대기하는 인원들을 볼 수 있다.
+            </li>
+            <li>
+                <strong>터미널 던전:</strong> 터미널 구조가 워낙 복잡해서, 지방에서 처음 원정 온 덕후들이 영화관 입구를 못 찾아 헤매다가 상영 시간을 놓치는 비극이 종종 발생한다. <span style="color:red; font-weight:bold;">3층 승차장이 아니라 4층으로 올라가야 한다!</span>
+            </li>
+            <li>
+                군인 할인 이용률이 전국 메가박스 지점 중 1위라고 한다. 터미널이라는 특성상 휴가 나온 군인들이 복귀 전에 "마지막으로 사회의 문물을 즐기기 위해" 들르는 필수 코스. <del>복귀 버스 시간 10분 남겨놓고 쿠키 영상까지 보다가 뛰어나가는 용사들이 매주 목격된다.</del>
+            </li>
+        </ul>
+
+        <h2 id="s-6">6. 대중교통</h2>
+        <p>
+            이름값 한다. 터미널 내부에 있으니 접근성은 타의 추종을 불허한다. <a href="효빈도시철도.html" class="wiki-link">효빈 도시철도</a> 3호선과 5호선이 만나는 환승역이라 효빈시 어디서든 오기 편하다.
+        </p>
+
+        <h3 style="font-size:1.1rem; border-left:4px solid var(--mega-color); padding-left:10px; margin-top:15px;">지하철</h3>
+        <ul class="list-disc pl-5 text-sm">
+            <li><span style="color:#FFCC11; font-weight:bold;">●</span> <a href="효빈도시철도3호선.html" class="wiki-link">효빈 도시철도 3호선</a> <a href="효빈고속버스터미널역.html" class="wiki-link">고속버스터미널역</a> - 지하 연결통로 이용 (던전 주의)</li>
+            <li><span style="color:#EE0022; font-weight:bold;">●</span> <a href="효빈도시철도5호선.html" class="wiki-link">효빈 도시철도 5호선</a> <a href="효빈고속버스터미널역.html" class="wiki-link">고속버스터미널역</a> - 도보 3분</li>
+        </ul>
+
+        <h3 style="font-size:1.1rem; border-left:4px solid var(--mega-color); padding-left:10px; margin-top:15px;">버스</h3>
+        <p>
+            터미널 앞이라 효빈시 버스의 절반은 여기로 모인다. 버스 색깔만 봐도 어디 가는 버스인지 알 수 있다.
+        </p>
+        
+        <table class="w-full text-center border text-sm floor-table" style="margin-top:10px;">
+            <tr style="background-color:#eee;">
+                <th style="background-color:#555;">구분</th>
+                <th>노선 번호</th>
+            </tr>
+            <tr>
+                <td style="font-weight:bold; color:#D81C2F;">급행<br>(순방향)</td>
+                <td style="text-align:left;">
+                    <a href="bus_06.html" class="wiki-link" style="color:#D81C2F;">6</a>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold; color:#D81C2F;">급행<br>(역방향)</td>
+                <td style="text-align:left;">
+                    <a href="bus_06-1.html" class="wiki-link" style="color:#D81C2F;">06-1</a>
+                </td>
+            </tr>
+             <tr>
+                <td style="font-weight:bold; color:#E7D600;">순환<br>(순방향)</td>
+                <td style="text-align:left;">
+                    <a href="bus_10.html" class="wiki-link" style="color:#E7D600;">10</a>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold; color:#E7D600;">순환<br>(역방향)</td>
+                <td style="text-align:left;">
+                    <a href="bus_10-1.html" class="wiki-link" style="color:#E7D600;">10-1</a>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold; color:#01B7ED;">간선<br>(순방향)</td>
+                <td style="text-align:left;">
+                    <a href="bus_18.html" class="wiki-link" style="color:#01B7ED;">18</a>, 
+                    <a href="bus_39.html" class="wiki-link" style="color:#01B7ED;">39</a>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold; color:#01B7ED;">간선<br>(역방향)</td>
+                <td style="text-align:left;">
+                    <a href="bus_81.html" class="wiki-link" style="color:#01B7ED;">81</a>, 
+                    <a href="bus_93.html" class="wiki-link" style="color:#01B7ED;">93</a>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold; color:#37B484;">지선<br>(순방향)</td>
+                <td style="text-align:left;">
+                    <a href="bus_331.html" class="wiki-link" style="color:#37B484;">331</a>, 
+                    <a href="bus_334.html" class="wiki-link" style="color:#37B484;">334</a>, 
+                    <a href="bus_341.html" class="wiki-link" style="color:#37B484;">341</a>, 
+                    <a href="bus_361.html" class="wiki-link" style="color:#37B484;">361</a>, 
+                    <a href="bus_371.html" class="wiki-link" style="color:#37B484;">371</a>, 
+                    <a href="bus_391.html" class="wiki-link" style="color:#37B484;">391</a>
+                </td>
+            </tr>
+             <tr>
+                <td style="font-weight:bold; color:#37B484;">지선<br>(역방향)</td>
+                <td style="text-align:left;">
+                    <a href="bus_331.html" class="wiki-link" style="color:#37B484;">331</a>, 
+                    <a href="bus_334.html" class="wiki-link" style="color:#37B484;">334</a>, 
+                    <a href="bus_341.html" class="wiki-link" style="color:#37B484;">341</a>, 
+                    <a href="bus_361.html" class="wiki-link" style="color:#37B484;">361</a>, 
+                    <a href="bus_371.html" class="wiki-link" style="color:#37B484;">371</a>, 
+                    <a href="bus_391.html" class="wiki-link" style="color:#37B484;">391</a>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold; color:#FF5800;">좌석/광역</td>
+                <td style="text-align:left;">
+                    <span style="color:#FF5800;">(순)</span> <a href="bus_3000.html" class="wiki-link" style="color:#FF5800;">3000</a>, <a href="bus_6666.html" class="wiki-link" style="color:#FF5800;">6666</a><br>
+                    <span style="color:#FF5800;">(역)</span> <a href="bus_3000R.html" class="wiki-link" style="color:#FF5800;">3000R</a>, <a href="bus_6666R.html" class="wiki-link" style="color:#FF5800;">6666R</a>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold; color:#84C36E;">공항</td>
+                <td style="text-align:left;">
+                    <span style="color:#84C36E;">(순)</span> <a href="bus_A03.html" class="wiki-link" style="color:#84C36E;">A03</a><br>
+                    <span style="color:#84C36E;">(역)</span> <a href="bus_A03R.html" class="wiki-link" style="color:#84C36E;">A03R</a>
+                </td>
+            </tr>
+        </table>
+
+        <footer class="wiki-footer border-t border-gray-300 mt-10 pt-4">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>말고, 완전히 다 포함해서
+

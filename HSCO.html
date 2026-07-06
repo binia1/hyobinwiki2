@@ -1,0 +1,516 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSCO - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800&display=swap');
+        
+        :root { 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0022aa; 
+            --wiki-visited: #800080;
+            --wiki-table-header: #00008B; /* HSCO 고유색: 다크 블루 (신뢰, 비즈니스, 세이카의 쿨한 이미지) */
+            --wiki-table-header-text: #ffffff;
+            --wiki-del: #999;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 텍스트 스타일 */
+        .txt-lvl-1 { font-size: 2.8rem !important; font-weight: 800; color: #000000; margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1px; } 
+        h2 { font-size: 1.6rem !important; font-weight: 700; border-bottom: 2px solid var(--wiki-table-header); padding-bottom: 8px; margin-top: 3rem; margin-bottom: 1.2rem; color: var(--wiki-text); display: block; }
+        h3 { font-size: 1.3rem !important; font-weight: 700; margin-top: 2rem; margin-bottom: 10px; color: var(--wiki-text); border-left: 5px solid var(--wiki-table-header); padding-left: 10px; }
+        h4 { font-size: 1.1rem !important; font-weight: 600; margin-top: 1.5rem; margin-bottom: 8px; color: #555; }
+        h5 { font-size: 1rem !important; font-weight: 600; margin-top: 1rem; margin-bottom: 5px; color: #333; }
+        
+        /* 링크 스타일 */
+        a.wiki-link { color: var(--wiki-link); text-decoration: none; cursor: pointer; }
+        a.wiki-link:hover { text-decoration: underline; }
+        a.wiki-link:visited { color: var(--wiki-visited); }
+
+        /* 표 스타일 */
+        table.wiki-table { border-collapse: collapse; width: 100%; margin: 15px 0; border: 1px solid #ccc; font-size: 0.95rem; }
+        table.wiki-table th, table.wiki-table td { border: 1px solid #ccc; padding: 10px 12px; vertical-align: middle; }
+        table.wiki-table th { background-color: var(--wiki-table-header); color: white; text-align: center; font-weight: bold; }
+        table.wiki-table td { background-color: #fff; }
+
+        /* 인포박스 */
+        .infobox { 
+            border: 2px solid var(--wiki-table-header); 
+            background-color: #fff; 
+            width: 100%; 
+            max-width: 400px; 
+            font-size: 0.9rem; 
+            margin-bottom: 20px; 
+            float: right; 
+            margin-left: 20px; 
+            border-radius: 4px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .infobox-title { background-color: var(--wiki-table-header); color: white; padding: 12px; text-align: center; font-size: 1.2rem !important; font-weight: bold; }
+        .infobox-image { text-align: center; padding: 0; background: white; border-bottom: 1px solid #ddd; }
+        .infobox table { width: 100%; border-collapse: collapse; border: none; }
+        .infobox th { background-color: #eef2ff; color: #333; width: 130px; text-align: center; padding: 8px; border: 1px solid #ddd; font-weight: bold; }
+        .infobox td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; }
+
+        /* 취소선 스타일 */
+        .del { text-decoration: line-through; color: var(--wiki-del); }
+        .del:hover { color: #555; }
+        
+        /* 분류 박스 */
+        .category-box { border: 1px solid #ccc; background-color: #f5f5f5; padding: 8px 15px; font-size: 0.9rem; margin-bottom: 20px; border-radius: 4px; }
+
+        /* 목차 */
+        .toc { display: inline-block; border: 1px solid #ccc; background-color: #f9f9f9; padding: 15px 25px; margin-bottom: 30px; min-width: 300px; border-radius: 5px; }
+        .toc-title { text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding-left: 0; margin: 0; font-size: 0.95rem; }
+        .toc li { margin-bottom: 4px; }
+        .toc a { text-decoration: none; color: #333; }
+        .toc a:hover { text-decoration: underline; color: var(--wiki-table-header); }
+
+        /* 인용문 */
+        .quote { border-left: 5px solid var(--wiki-table-header); background-color: #eef2ff; padding: 20px 30px; margin: 20px 0; font-style: italic; color: #555; font-size: 1.05rem; }
+        
+        /* 외부 링크 아이콘 */
+        .ext-link::after { content: " 🔗"; font-size: 0.7em; }
+
+        /* 지하철 노선 원형 아이콘 */
+        .sw-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            margin: 0 2px;
+            vertical-align: middle;
+            text-decoration: none !important;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        /* 사용자 지정 노선 색상 */
+        .sw-1 { background-color: #0077DD; }
+        .sw-3 { background-color: #FFCC11; color: #333; } /* 노란색 배경엔 어두운 글씨 */
+        .sw-5 { background-color: #EE0022; }
+        .sw-7 { background-color: #FF8899; }
+        
+        a:hover .sw-icon { opacity: 0.8; }
+
+        /* 각주 툴팁 스타일 */
+        .wiki-tooltip {
+            display: none;
+            position: absolute;
+            background: white;
+            border: 1px solid #7777AA;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            padding: 12px;
+            font-size: 0.9rem;
+            max-width: 350px;
+            z-index: 1000;
+            border-radius: 4px;
+            color: #333;
+            line-height: 1.4;
+            pointer-events: none; /* 마우스가 툴팁 위로 올라가서 깜빡이는 현상 방지 */
+        }
+        
+        /* 각주 목록 스타일 */
+        .wiki-footnotes {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+            font-size: 0.9rem;
+        }
+        .footnote-item {
+            margin-bottom: 8px;
+        }
+        .footnote-back {
+            text-decoration: none;
+            color: var(--wiki-link);
+            margin-right: 5px;
+        }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <!-- 1. 상단바 -->
+    <nav class="bg-[#7777AA] text-white p-2 px-4 flex justify-between items-center shadow-md sticky top-0 z-50 h-14">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl tracking-tight">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-1">
+            <input type="text" id="searchInput" placeholder="여기에서 검색" class="p-1 px-3 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch()">
+            <button onclick="handleSearch()" class="bg-[#555588] p-1 px-4 rounded text-sm hover:bg-[#444477] transition-colors">검색</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg pt-6">
+        
+        <!-- 2. 문서 제목 -->
+        <div class="flex justify-between items-end border-b-2 border-gray-400 pb-2 mb-4">
+            <div class="txt-lvl-1">HSCO</div>
+            <div class="wiki-tool-group">
+                <a href="수정.html" class="wiki-tool-btn">편집</a>
+                <a href="토론.html" class="wiki-tool-btn">토론</a>
+                <a href="역사.html" class="wiki-tool-btn">역사</a>
+            </div>
+        </div>
+
+        <!-- 3. 분류 박스 -->
+        <div class="category-box">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="효빈광역시의공공기관.html" class="wiki-link">효빈광역시의 공공기관</a> | 
+            <a href="대한민국의출자기관.html" class="wiki-link">대한민국의 출자기관</a> | 
+            <a href="전시컨벤션센터.html" class="wiki-link">전시컨벤션센터</a> | 
+            <a href="2001년.html" class="wiki-link">2001년 설립</a>
+        </div>
+
+        <!-- 4. 내비게이션 틀 -->
+        <div class="no-autolink">
+    <div id="hyobin-public-org-nav"></div>
+    <script src="js/효빈공공기관.js"></script>
+    <script> renderHyobinPublicOrg('hyobin-public-org-nav'); </script>
+</div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-8 relative">
+            
+            <!-- 5. 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit">
+                <div class="toc-title">목차 [접기]</div>
+                <ul class="space-y-1">
+                    <li>1. <a href="#s-1">개요</a></li>
+                    <li>2. <a href="#s-2">역사</a>
+                        <ul>
+                            <li>2.1. 건립 및 초기 (2001~2005)</li>
+                            <li>2.2. 암흑기: '북구센터 강제 점거 시도' (2006~2007)</li>
+                            <li>2.3. 정상화 및 확장 (2008~2021)</li>
+                            <li>2.4. 서브컬처 MICE 중심지 (2022~현재)</li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3">조직 및 시설</a>
+                        <ul>
+                            <li>3.1. 본사 (북구센터)</li>
+                            <li>3.2. 탄성센터 & 창전센터</li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4">주요 행사</a>
+                        <ul>
+                            <li>4.1. HAF (효빈 애니메이션 페스티벌) HQ</li>
+                            <li>4.2. 국제 게임/일러스트 페어</li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5">논란 및 사건사고</a>
+                        <ul>
+                            <li>5.1. 윤대환 시기 차고지화 시도 사건</li>
+                            <li>5.2. 이차야 대표 진입 시도 및 퇴거 조치</li>
+                        </ul>
+                    </li>
+                    <li>6. <a href="#s-6">여담 (이세희 센터장)</a></li>
+                    <li>7. <a href="#s-7">관련 문서</a></li>
+                </ul>
+            </div>
+
+            <!-- 6. 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden lg:order-last">
+                <div class="infobox-title">HSCO<br><span class="text-sm font-normal">Hyobin Exhibition & Convention Center</span></div>
+                <div class="infobox-image">
+                    <!-- 실제 이미지 링크 적용. onerror로 로컬 파일 없을 시 대체 이미지 표시 -->
+                    <img src="이미지/HSCO_로고.png" 
+                         alt="HSCO 로고" 
+                         class="w-full h-auto object-cover"
+                         onerror="this.src='https://images.unsplash.com/photo-1554469384-e58fac16e23a?q=80&w=400&h=250&auto=format&fit=crop'; this.onerror=null;">
+                    <div class="mt-2 text-sm font-bold text-[#00008B] p-2">"비즈니스와 문화가 만나는 글로벌 플랫폼"</div>
+                    <img src="이미지/HSCO.png" 
+                         alt="HSCO 로고" 
+                         class="w-full h-auto object-cover"
+                         onerror="this.src='https://images.unsplash.com/photo-1554469384-e58fac16e23a?q=80&w=400&h=250&auto=format&fit=crop'; this.onerror=null;">
+                </div>
+                <table>
+                    <tr><th>정식 명칭</th><td>주식회사 효빈전시컨벤션센터</td></tr>
+                    <tr><th>한자 명칭</th><td>株式會社 孝彬展示ConventionCenter</td></tr>
+                    <tr><th>영문 명칭</th><td>Hyobin Exhibition & Convention Center (HSCO)</td></tr>
+                    <tr><th>개관일</th><td>2001년 5월 23일</td></tr>
+                    <tr><th>설립 근거</th><td>지방자치단체 출자·출연 기관의 운영에 관한 법률<br>상법</td></tr>
+                    <tr><th>대표이사</th><td><strong>이세희</strong></td></tr>
+                    <tr><th>주주</th><td><a href="효빈광역시청.html" class="wiki-link">효빈광역시</a> (51%)<br><a href="효빈도시공사.html" class="wiki-link">효빈도시공사</a> (29%), 기타 (20%)</td></tr>
+                    <tr><th>본사 소재지</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구.html" class="wiki-link">북구</a> 생곡동 239</td></tr>
+                    <tr><th>전시면적</th><td>총 88,000㎡ (3개 센터 합산)</td></tr>
+                    <tr><th>주요 행사</th><td><a href="HAF.html" class="wiki-link">HAF</a>, <a href="효빈모터쇼.html" class="wiki-link">효빈모터쇼</a>, <a href="G-Star.html" class="wiki-link">G-Star</a>(유치 추진)</td></tr>
+                    <tr><th>관련 웹사이트</th><td><a href="https://www.hyobinexpo.com" class="wiki-link ext-link">공식 홈페이지</a></td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <!-- 본문 내용 -->
+        <h2 id="s-1">1. 개요</h2>
+        <p>
+            <a href="효빈광역시.html" class="wiki-link">효빈광역시</a>의 <a href="국제전시.html" class="wiki-link">국제 전시</a> 및 <a href="컨벤션센터.html" class="wiki-link">컨벤션 센터</a>. 
+            <a href="MICE.html" class="wiki-link">MICE</a> 산업의 핵심 거점으로, <a href="북구.html" class="wiki-link">북구</a> 본사를 중심으로 <a href="탄성군.html" class="wiki-link">탄성</a>, <a href="창전구.html" class="wiki-link">창전</a> 등 총 3개의 전시 센터를 운영하고 있다.
+        </p>
+        <p class="mt-2">
+            본사인 **북구센터(북구)**는 세계 최대 규모의 <a href="서브컬처.html" class="wiki-link">서브컬처</a> 축제인 <strong><a href="HAF.html" class="wiki-link">HAF(효빈 애니메이션 페스티벌)</a></strong>의 메인 본부(HQ)이자 <strong>ZONE 1(기업 부스 및 메인 스테이지)</strong> 역할을 수행하는 <a href="성지.html" class="wiki-link">성지</a> 중의 성지다.
+            <a href="효빈광역시.html" class="wiki-link">효빈시</a> MICE 산업의 발상지이자 현재까지도 가장 중요한 거점으로 자리 잡고 있다.
+        </p>
+
+        <h2 id="s-2">2. 역사</h2>
+        <h3 id="s-2.1">2.1. 건립 및 초기 (2001~2005)</h3>
+        <p>
+            2001년, <a href="북구.html" class="wiki-link">북구</a> <a href="생곡동.html" class="wiki-link">생곡동</a> 239번지 일원에 '<a href="효빈전시관.html" class="wiki-link">효빈전시관</a>'으로 개관했다. 당시 효빈시의 유일한 전시 컨벤션 시설로서 <a href="지역경제.html" class="wiki-link">지역 경제</a> 활성화에 큰 기대를 모았다.
+        </p>
+
+        <h3 id="s-2.2">2.2. 암흑기: '북구센터 강제 점거 시도' (2006~2007)</h3>
+        <p>
+            2006년 <strong><a href="윤대환.html" class="wiki-link">윤대환</a></strong> 시장이 취임하면서 HSCO는 위기를 맞았다. 
+            윤대환은 자신의 <a href="버스회사.html" class="wiki-link">버스 회사</a>인 <a href="두청운수.html" class="wiki-link">두청운수</a>의 차고지가 부족하다며, HSCO의 야외 <a href="주차장.html" class="wiki-link">주차장</a>과 확장 예정 부지를 강제로 점거하고 <strong>임시 <a href="차고지.html" class="wiki-link">차고지</a></strong>로 사용하려 했다.
+        </p>
+        <p class="mt-2">
+            이로 인해 국제 행사가 줄줄이 취소되고 전시장 주변이 <a href="버스.html" class="wiki-link">버스</a> <a href="매연.html" class="wiki-link">매연</a>으로 뒤덮이는 등 파행 운영이 지속되었다. 직원들과 시민들의 결사적인 반대로 전시장 건물 자체는 지켜냈으나, 이 시기는 HSCO 역사상 가장 어두운 시기로 기록된다.
+        </p>
+
+        <h3 id="s-2.3">2.3. 정상화 및 확장 (2008~2021)</h3>
+        <p>
+            2008년 <a href="박현만.html" class="wiki-link">박현만</a> 시장 복귀 후, 두청운수 임시 차고지 시설은 즉시 철거되었다. 
+            박 시장은 훼손된 부지를 정비하고, 해당 부지에 제2전시장과 <a href="오디토리움.html" class="wiki-link">오디토리움</a>을 증축하여 <strong>'HSCO 북구센터'</strong>의 위용을 갖추게 했다.
+            2015년 대대적인 <a href="리모델링.html" class="wiki-link">리모델링</a>을 거쳐 현재의 현대적인 외관을 갖추게 되었다.
+        </p>
+
+        <h3 id="s-2.4">2.4. 서브컬처 MICE 중심지 (2022~현재)</h3>
+        <p>
+            2022년 <strong><a href="박효빈.html" class="wiki-link">박효빈</a></strong> 시장 취임이후 2년차인 2023년, 민간 전시기획 전문가 <strong>이세희(Lee Se-hee)</strong><a href="#fn-1" id="r-fn-1" class="footnote-link">[1]</a>가 대표이사로 취임했다.
+            이 대표는 북구센터를 HAF의 메인 무대로 격상시키고, <a href="탄성군.html" class="wiki-link">탄성군</a>과 <a href="창전구.html" class="wiki-link">창전구</a>에 특화 센터를 추가 건립하며 효빈시를 '<a href="MICE.html" class="wiki-link">MICE</a> <a href="트라이앵글.html" class="wiki-link">트라이앵글</a>' 도시로 만들었다.
+        </p>
+
+        <h2 id="s-3">3. 조직 및 시설</h2>
+        <h3 id="s-3.1">3.1. 본사 (북구센터)</h3>
+        <div class="mb-4 p-4 border rounded bg-gray-50 text-sm">
+            <strong>교통:</strong> 
+            <a href="3호선.html" class="wiki-link"><span class="sw-icon sw-3">3</span></a> <a href="사능역.html" class="wiki-link">사능역</a>(직통 연결), 
+            <a href="1호선.html" class="wiki-link"><span class="sw-icon sw-1">1</span></a>/<a href="5호선.html" class="wiki-link"><span class="sw-icon sw-5">5</span></a> 환승역 <a href="전천역.html" class="wiki-link">전천역</a>(도보 10분), 
+            <a href="7호선.html" class="wiki-link"><span class="sw-icon sw-7">7</span></a> <a href="치남역.html" class="wiki-link">치남역</a>과 인접하여 최고의 접근성을 자랑한다.
+        </div>
+        <p>
+            <strong>위치:</strong> <a href="북구.html" class="wiki-link">북구</a> <a href="생곡동.html" class="wiki-link">생곡동</a> 239.
+            <strong>특징:</strong> <a href="HAF.html" class="wiki-link">HAF</a>의 메인 행사장(HQ). 3,000석 규모의 라이브홀 <strong>'STARRY Hall'</strong>과 초대형 전시장을 갖추고 있다. 윤대환 시기의 아픔을 딛고 문화와 비즈니스의 중심지로 거듭난 상징적인 장소다.
+        </p>
+        
+        <h4 class="mt-4 border-b border-gray-300 pb-2">시설 구조 상세</h4>
+        <p class="mb-3 text-sm text-gray-600">이세희 대표 취임 이후 <a href="서브컬처.html" class="wiki-link">서브컬처</a> 및 대형 행사에 최적화된 동선으로 리뉴얼되었다.</p>
+        
+        <div class="space-y-4">
+            <div>
+                <h5 class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#00008B]"></span>제1전시장 (본관)</h5>
+                <p class="pl-4 text-sm">
+                    <strong>지상 1층 (Hall 1 & 2):</strong> 단일 층으로 최대 26,000㎡의 전시 공간을 제공한다. <a href="HAF.html" class="wiki-link">HAF</a> 기간에는 '기업 부스 존'으로 활용되며, 천고가 15m로 높아 초대형 부스 설치가 가능하다. <br>
+                    <strong>지상 2층 (Conference Hall):</strong> 20여 개의 중소 회의실과 VIP 대기실이 위치한다. HAF 기간에는 코스어(Cosplayer) 전용 초대형 <strong>탈의실 및 메이크업 룸</strong>으로 변신하며, 샤워 시설까지 완비되어 있어 호평을 받는다.<br>
+                    <strong>지상 3층 (Grand Ballroom):</strong> 국제 회의 및 연회가 가능한 공간.
+                </p>
+            </div>
+            
+            <div>
+                <h5 class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#00008B]"></span>제2전시장 (신관)</h5>
+                <p class="pl-4 text-sm">
+                    <strong>지상 1~2층 (Hall 3):</strong> 1층과 2층이 복층 구조로 연결된 독특한 전시장. 주로 인디 게임, 일러스트 페어 등 창작자 중심의 행사가 열린다.<br>
+                    <strong>지하 1층 (Otaku Street):</strong> 제1전시장과 제2전시장을 잇는 지하 연결 통로. 단순한 통로가 아니라, 각종 굿즈샵, 가챠샵, 콜라보 카페가 입점해 있어 365일 서브컬처 팬들의 발길이 끊이지 않는 <strong>'상설 덕질 구역'</strong>이다.
+                </p>
+            </div>
+
+            <div>
+                <h5 class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#00008B]"></span>오디토리움 (STARRY Hall)</h5>
+                <p class="pl-4 text-sm">
+                    <strong>좌석 수:</strong> 3,002석 (스탠딩 시 4,500명 수용 가능)<br>
+                    <strong>특징:</strong> 이세희 대표가 과거 운영했던 라이브 하우스의 이름을 따 <strong>'STARRY Hall'</strong>로 명명되었다. 국내 최고 수준의 음향 시설을 갖추고 있으며, 애니송 라이브, 성우 팬미팅, e스포츠 결승전 등이 주로 열린다. 무대 뒤편에는 아티스트를 위한 전용 리허설 룸이 별도로 마련되어 있다.
+                </p>
+            </div>
+
+            <div>
+                <h5 class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#00008B]"></span>야외 광장 (Event Plaza)</h5>
+                <p class="pl-4 text-sm">
+                    전시장 앞의 거대한 광장. HAF 기간에는 이타샤(Itasha) 전시와 푸드 트럭 존이 운영되며, 주말마다 버스킹 공연이 펼쳐진다.
+                </p>
+            </div>
+        </div>
+
+        <h3 id="s-3.2">3.2. 탄성센터 & 창전센터</h3>
+        <p>
+            <strong>탄성센터(<a href="탄성군.html" class="wiki-link">탄성군</a>):</strong> <a href="친환경.html" class="wiki-link">친환경</a>·<a href="힐링.html" class="wiki-link">힐링</a>·<a href="캠핑.html" class="wiki-link">캠핑</a> 박람회 특화. 야외 전시장이 넓다.
+            <strong>창전센터(<a href="창전구.html" class="wiki-link">창전구</a>):</strong> <a href="중공업.html" class="wiki-link">중공업</a> 및 <a href="철도.html" class="wiki-link">철도</a> 산업 박람회 특화. <a href="창전차량사업소.html" class="wiki-link">창전차량기지</a>와 인접해 있어 철도 관련 행사에 최적화되어 있다.
+        </p>
+
+        <h2 id="s-4">4. 주요 행사</h2>
+        <h3 id="s-4.1">4.1. HAF (효빈 애니메이션 페스티벌) HQ</h3>
+        <p>
+            <a href="HAF.html" class="wiki-link">HAF</a> 기간 동안 <strong>북구센터(본사)</strong>는 축제의 <strong>심장부(HQ)</strong>가 된다.
+            <a href="개막식.html" class="wiki-link">개막식</a>, 글로벌 기업 전시, 메인 스테이지 <a href="공연.html" class="wiki-link">공연</a> 등이 모두 이곳에서 이루어지며, 전 세계에서 몰려든 수십만 명의 인파로 인산인해를 이룬다.
+        </p>
+
+        <h3 id="s-4.2">4.2. 국제 게임/일러스트 페어</h3>
+        <p>
+            북구센터 전역을 활용하여 개최된다. 특히 <a href="인디게임.html" class="wiki-link">인디 게임</a> 개발자들을 위한 '효빈 인디 게임 쇼'는 <a href="이세희.html" class="wiki-link">이세희</a> 대표의 전폭적인 지원 아래 급성장하고 있다.
+        </p>
+
+        <h2 id="s-5">5. 논란 및 사건사고</h2>
+        <h3 id="s-5.1">5.1. 윤대환 시기 차고지화 시도 사건</h3>
+        <p>
+            2006년 <a href="윤대환.html" class="wiki-link">윤대환</a>이 HSCO의 확장 예정 부지를 <strong><a href="두청운수.html" class="wiki-link">두청운수</a> 버스 차고지</strong>로 전용하려 했던 사건. 
+            도심 핵심 시설인 컨벤션 센터 바로 옆에 버스 차고지를 만들려는 발상은 큰 비난을 샀다. 
+            당시 직원들과 시민들이 "효빈의 미래를 매연으로 덮을 수 없다"며 <a href="인간띠.html" class="wiki-link">인간 띠</a>를 만들어 저항했고, 결국 전시장 건물은 지켜냈다. 
+            이 사건은 2007년 윤대환 구속의 결정적인 증거 중 하나가 되었다.
+        </p>
+
+        <h3 id="s-5.2">5.2. 이차야 대표 진입 시도 및 퇴거 조치</h3>
+        <p>
+            2023년 <a href="HAF.html" class="wiki-link">HAF</a> 개최 2일 차, 극우 <a href="시민단체.html" class="wiki-link">시민단체</a> 대표 <strong><a href="이차야.html" class="wiki-link">이차야</a></strong>가 확성기를 들고 북구센터 로비에 난입하여 소란을 피운 사건.
+        </p>
+        <p class="mt-2">
+            당시 이차야는 "일본 만화는 불순하다", "오타쿠들은 사회악"이라는 등의 망언을 쏟아내며 행사장 진입을 시도해 관람객들의 눈살을 찌푸리게 했다. 보안 요원들이 제지했으나 막무가내로 밀치고 들어오려던 일촉즉발의 상황이었다.
+        </p>
+        <p class="mt-2">
+            그때, 현장 순찰을 돌던 <strong><a href="이세희.html" class="wiki-link">이세희</a> 대표</strong>가 등장했다. 그녀는 팔짱을 낀 채 특유의 싸늘한 눈빛(일명 '절대영도 시선')으로 이차야를 내려다보며 다음과 같이 일갈했다.
+        </p>
+        <div class="quote" style="margin: 10px 0; padding: 10px 20px; font-size: 0.95rem;">
+            "당신 같은 사람이 감히 내 구역에서 꽥꽥거리는 꼴, 더는 못 봐주겠군요.<br>
+            <strong>여긴 꿈을 사랑하는 사람들을 위한 곳입니다. 당신 같은 혐오주의자가 올 곳이 아닙니다. 당장 끌어내세요.</strong>"
+        </div>
+        <p class="mt-2">
+            이차야는 평소의 기세등등하던 모습은 온데간데없이 이세희 대표의 압도적인 '포스'에 눌려 꿀 먹은 벙어리가 되었고, 결국 보안 요원들에 의해 사지가 들린 채 짐짝처럼 행사장 밖으로 퇴거 조치되었다. 이를 지켜보던 수천 명의 관람객들이 환호성을 질렀으며, 이 사건 이후 이차야는 HSCO 영구 출입 금지 명단(Blacklist)에 올랐다.
+        </p>
+
+        <h2 id="s-6">6. 여담 (이세희 센터장)</h2>
+        <div class="quote">
+            "완벽하지 않은 무대는 용납 못 해. 조명, 음향, 동선... 전부 다시 체크해. (직원들이 겁먹자) ...끝나고 다 같이 회식이야. 내가 쏠게."<br>
+            - <a href="이세희.html" class="wiki-link">이세희</a> 대표
+        </div>
+        <p>
+            제9대 대표이사 <strong><a href="이세희.html" class="wiki-link">이세희</a></strong>는 <strong>[<a href="봇치더락.html" class="wiki-link">봇치 더 락!</a>]</strong>의 <strong><a href="이지치세이카.html" class="wiki-link">이지치 세이카</a></strong>를 모티브로 한 인물이다. 
+            금발(염색)에 날카로운 눈매를 가진 쿨뷰티 스타일로, 업무에 있어서는 무서울 정도로 엄격하지만 내 사람에게는 따뜻한 <strong>'<a href="츤데레.html" class="wiki-link">츤데레</a>'</strong> 리더십의 정석이다.
+        </p>
+        <p class="mt-2">
+            평소에는 칼 같은 정장을 고수하며 <strong>'HSCO의 얼음마녀'</strong>라 불리지만, 사실은 엄청난 <strong>'<a href="숨덕.html" class="wiki-link">숨덕</a>(숨은 오타쿠)'</strong>이라는 것이 공공연한 비밀이다.
+        </p>
+        <ul class="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>가족 관계:</strong> <a href="효빈테크노파크.html" class="wiki-link">효빈테크노파크</a> 원장 <strong><a href="이직하.html" class="wiki-link">이직하</a>(Lee Chi-ka)</strong>의 <strong>친언니</strong>다. 동생이 덜렁대면 뒤에서 몰래 챙겨주는 모습이 자주 목격된다.</li>
+            <li><strong>덕질 모먼트:</strong> 
+                <ul class="list-circle pl-5 mt-1">
+                    <li>집무실 안쪽에 비밀 금고가 있는데, 중요 서류가 아니라 <strong>한정판 <a href="피규어.html" class="wiki-link">피규어</a></strong>와 <strong><a href="애니메이션.html" class="wiki-link">애니메이션</a> BD</strong>가 들어있다는 소문이 있다.</li>
+                    <li><a href="HAF.html" class="wiki-link">HAF</a> 기간 중 <strong><a href="코스프레.html" class="wiki-link">코스프레</a></strong>를 한 관람객을 마주치면 눈이 반짝이며 몰래 "엄지 척"을 날린다고 한다.</li>
+                    <li>과거 <a href="홍대.html" class="wiki-link">홍대</a> 인근에서 전설적인 <a href="라이브하우스.html" class="wiki-link">라이브 하우스</a> 'STARRY'를 운영했던 매니저 출신이다. 당시 <a href="인디밴드.html" class="wiki-link">인디 밴드</a>들을 혹독하게 조련하여 스타로 키워낸 전적이 있다.</li>
+                    <li>동생 <a href="이직하.html" class="wiki-link">이직하</a>의 폭로에 따르면, 집에서는 헐렁한 핑크색 트레이닝복을 입고 인형을 껴안은 채 애니메이션을 정주행한다고 한다. <strong><a href="갭모에.html" class="wiki-link">갭 모에</a></strong>의 결정체.</li>
+                </ul>
+            </li>
+            <li><strong>인형 사랑:</strong> 차가운 이미지와 달리, 북구센터 집무실 책상 밑에는 귀여운 봉제 인형들이 가득하다고 한다. 결재를 받으러 갔다가 인형과 눈이 마주친 직원들이 한둘이 아니라고.</li>
+        </ul>
+
+        <h2 id="s-7">7. 관련 문서</h2>
+        <ul class="list-disc pl-5 space-y-1 mt-2">
+            <li><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></li>
+            <li><a href="HAF.html" class="wiki-link">HAF (효빈 애니메이션 페스티벌)</a></li>
+            <li><a href="박효빈.html" class="wiki-link">박효빈</a></li>
+            <li><a href="윤대환.html" class="wiki-link">윤대환</a></li>
+            <li><a href="효빈테크노파크.html" class="wiki-link">효빈테크노파크</a> (자매 기관)</li>
+            <li><a href="이세희.html" class="wiki-link">이세희</a></li>
+            <li><a href="이직하.html" class="wiki-link">이직하</a></li>
+        </ul>
+        
+        <!-- 8. 각주 -->
+        <div class="wiki-footnotes">
+            <h2>각주</h2>
+            <div class="footnote-item" id="fn-1">
+                <a href="#r-fn-1" class="footnote-back">[1]</a>
+                <span>전직 'STARRY' 라이브 하우스 매니저이자, 인디 밴드 프로듀서 출신. 파격적인 인사였으나 실력으로 증명했다.</span>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="wiki-footer mt-12 border-t-2 border-[#7777AA] pt-6 pb-10">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2 text-sm"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+
+    </div>
+
+    <script>
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+
+            const searchMap = {
+                '1호선': '1호선.html',
+                '2호선': '2호선.html',
+                '3호선': '3호선.html',
+                '4호선': '4호선.html',
+                '5호선': '5호선.html',
+                '6호선': '6호선.html',
+                '7호선': '7호선.html',
+                '8호선': '8호선.html',
+                '빈효선': '빈효선광역전철.html',
+                '공항': '효빈국제공항.html',
+                '효빈국제공항': '효빈국제공항.html',
+                '교통공사': '효빈교통공사.html',
+                '도시공사': '효빈도시공사.html',
+                '문화재단': '효빈문화재단.html',
+                'HSCO': 'HSCO.html',
+                '벡스코': 'HSCO.html',
+                '시청': '효빈광역시청.html',
+                '박효빈': '박효빈.html'
+            };
+
+            const target = searchMap[query] || (query + '.html');
+            window.location.href = target;
+        }
+
+        // 각주 툴팁 로직
+        document.addEventListener('DOMContentLoaded', () => {
+            const links = document.querySelectorAll('.footnote-link');
+            const tooltip = document.createElement('div');
+            tooltip.className = 'wiki-tooltip';
+            document.body.appendChild(tooltip);
+
+            links.forEach(link => {
+                link.addEventListener('mouseenter', (e) => {
+                    const targetId = link.getAttribute('href').substring(1); // '#' 제거
+                    const targetEl = document.getElementById(targetId);
+                    
+                    if (targetEl) {
+                        // 각주 내용 가져오기 (a 태그와 span 태그가 있음)
+                        const content = targetEl.querySelector('span') ? targetEl.querySelector('span').innerHTML : targetEl.innerHTML;
+                        tooltip.innerHTML = content;
+                        tooltip.style.display = 'block';
+                        
+                        const rect = link.getBoundingClientRect();
+                        tooltip.style.left = (rect.left + window.scrollX) + 'px';
+                        tooltip.style.top = (rect.bottom + window.scrollY + 5) + 'px';
+                    }
+                });
+
+                link.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+            });
+        });
+    </script>
+
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

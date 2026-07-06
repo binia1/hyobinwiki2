@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>기술통계 (Part 3) - 효빈위키</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Mermaid.js (최신 안정화 버전) -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
+    <!-- MathJax for LaTeX Rendering -->
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      chtml: {
+        fontURL: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2'
+      }
+    };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #00CCAA; 
+            --wiki-line-color: #00CCAA; 
+            
+            --wiki-header-bg: var(--wiki-line-color);
+            --wiki-header-text: #ffffff;
+            --wiki-table-header-bg: #e6faf6;
+            --wiki-table-header-text: #000000;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f8f9fa; 
+            --wiki-link: #008877; 
+            --wiki-footer-bg: #f0f0f0;
+            --wiki-footer-text: #777;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #33eebb; 
+            --wiki-table-header-bg: #222;
+            --wiki-table-header-text: #ffffff;
+            --wiki-footer-bg: #1a1a1a;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.7; word-break: keep-all; margin: 0; transition: background-color 0.3s, color 0.3s; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 30px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1.5px; border-bottom: 3px solid var(--wiki-main); padding-bottom: 15px;} 
+        
+        h2 { font-size: 2rem; font-weight: 900; border-bottom: 2px solid var(--wiki-line-color); padding-bottom: 8px; margin-top: 3.5rem; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; color: var(--wiki-text); }
+        h2::before { content: ""; display: inline-block; width: 6px; height: 2rem; background: var(--wiki-line-color); }
+        h3 { font-size: 1.5rem; font-weight: 800; margin-top: 2.5rem; margin-bottom: 15px; border-left: 6px solid var(--wiki-line-color); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 10px; color: var(--wiki-text); }
+
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; border: 1px solid var(--wiki-border); font-size: 0.95rem; }
+        th, td { border: 1px solid var(--wiki-border); padding: 10px 12px; text-align: left; vertical-align: middle; color: var(--wiki-text); }
+        th { background-color: var(--wiki-table-header-bg); font-weight: 800; text-align: center; border-bottom: 2px solid var(--wiki-main);}
+
+        .infobox { float: right; margin-left: 25px; margin-bottom: 20px; width: 350px; clear: right; border: 2px solid var(--wiki-main); border-radius: 4px; background-color: var(--wiki-bg); }        
+        .infobox-top { background-color: var(--wiki-main); padding: 20px 10px; text-align: center; border-bottom: 1px solid var(--wiki-border); color: #fff; }
+        .infobox-top b { font-size: 1.8rem; line-height: 1.2; letter-spacing: -1px; font-weight: 900; }
+
+        .toc { display: inline-block; min-width: 300px; margin-bottom: 25px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 20px; border-radius: 4px; }        
+        .toc-title { text-align: center; font-weight: 900; border-bottom: 1px solid var(--wiki-border); margin-bottom: 15px; padding-bottom: 10px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding: 0; margin: 0; line-height: 1.6; font-weight: 600;}
+        .toc li { margin-bottom: 4px; }
+        .toc .pl-5 { padding-left: 20px; font-weight: 400;}
+
+        .wiki-link { color: var(--wiki-link); font-weight: 700; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        .quote-box { background: var(--wiki-gray-bg); padding: 15px 20px; font-weight: 600; border-left: 5px solid var(--wiki-line-color); margin-bottom: 20px; color: var(--wiki-text); border-radius: 4px;}
+        .exam-box { border: 2px solid #ff4444; background-color: #fffafa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        [data-theme='dark'] .exam-box { background-color: #2a1111; border-color: #cc3333; }
+        .exam-title { font-weight: 900; color: #ff4444; margin-bottom: 10px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;}
+        
+        .anime-box { border: 2px dashed; background-color: #fdf5fd; padding: 20px; border-radius: 8px; margin: 20px 0; color: #333; display: flex; gap: 15px; align-items: flex-start;}
+        [data-theme='dark'] .anime-box { background-color: #2a1a2a; color: #eee;}
+        .anime-box-title { font-weight: 900; font-size: 1.15rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;}
+        .anime-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid; flex-shrink: 0; background-color: #fff;}
+
+        .mermaid { background: var(--wiki-bg); padding: 15px; border-radius: 8px; margin: 15px 0; display: flex; justify-content: center; overflow-x: auto; border: 1px solid var(--wiki-border);}
+        
+        del { color: #999; text-decoration: line-through; }
+        
+        /* 완벽한 LaTeX 렌더링을 위한 수학 수식 박스 */
+        .math-formula { background: var(--wiki-gray-bg); padding: 15px 20px; border-radius: 8px; text-align: center; margin: 20px 0; border: 1px solid var(--wiki-border); overflow-x: auto; font-size: 1.1rem;}
+
+        /* 각주 및 툴팁 전용 CSS */
+        .fn-link { color: var(--wiki-link); font-size: 0.75em; vertical-align: super; margin: 0 1px; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .fn-link:hover { text-decoration: underline; }
+        
+        .wiki-footnotes { margin-top: 60px; padding-top: 20px; border-top: 2px solid var(--wiki-border); }
+        .wiki-footnotes h4 { font-size: 1.1rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 10px; }
+        .wiki-footnotes ul { list-style: none; padding: 0; margin: 0; }
+        .wiki-footnotes li { margin-bottom: 8px; font-size: 0.9rem; line-height: 1.6; padding: 4px 8px; border-radius: 4px; transition: background-color 0.3s; }
+        .wiki-footnotes li:target { background-color: rgba(0, 204, 170, 0.15); }
+
+        .wiki-tooltip {
+            position: absolute; background-color: var(--wiki-bg); color: var(--wiki-text); border: 1px solid var(--wiki-border);
+            border-radius: 6px; padding: 12px 16px; font-size: 0.85rem; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 0.2s ease-in-out, transform 0.2s ease;
+            transform: translateY(5px); z-index: 9999; word-break: keep-all; line-height: 1.6;
+        }
+        .wiki-tooltip.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+        [data-theme='dark'] .wiki-tooltip { box-shadow: 0 4px 15px rgba(0,0,0,0.6); background-color: #222; }
+    
+        /* 효빈위키 전용 하단 내비게이션 틀 CSS */
+        .wiki-nav-box { margin: 40px auto 10px; border: 1px solid var(--wiki-border); border-radius: 4px; background: var(--wiki-bg); overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .wiki-nav-header { display: flex; align-items: center; justify-content: center; padding: 12px; font-weight: 900; font-size: 1.1rem; color: #fff; background: linear-gradient(to right, #005BAC, #00CCAA); letter-spacing: 1px; }
+        .wiki-nav-toggle { text-align: center; padding: 6px; background: var(--wiki-gray-bg); border-bottom: 1px solid var(--wiki-border); border-top: 1px solid var(--wiki-border); cursor: pointer; font-size: 0.85rem; user-select: none; color: var(--wiki-text); font-weight: bold; }
+        .wiki-nav-toggle:hover { filter: brightness(0.95); }
+        .wiki-nav-content { display: none; }
+        .wiki-nav-content.active { display: block; }
+        .wiki-nav-table { width: 100%; border-collapse: collapse; text-align: center; margin: 0; font-size: 0.9rem; }
+        .wiki-nav-table th, .wiki-nav-table td { border: 1px solid var(--wiki-border); padding: 12px; }
+        .wiki-nav-table th { color: #fff; font-weight: bold; vertical-align: middle; }
+        .wiki-nav-table td { text-align: left; line-height: 1.8; word-break: keep-all; }
+        .bg-nav-red { background-color: #D81C2F; } /* 효빈 시내버스 급행 레드 */
+        .bg-nav-blue { background-color: #485EC6; } /* 효빈 시내버스 광역 블루 */
+        .wiki-nav-item { display: inline-block; margin-right: 12px; white-space: nowrap; }
+        .wiki-nav-item a { color: var(--wiki-link); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .wiki-nav-item a:hover { color: #FF4F91; text-decoration: underline; font-weight: bold; }
+
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <nav class="bg-[#00CCAA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50 border-b border-[#009988]">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl tracking-tight text-white">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1.5 px-4 rounded text-black text-sm w-64 focus:outline-none shadow-inner">
+            <button class="bg-[#008877] p-1.5 px-4 rounded text-sm hover:bg-[#006655] font-bold transition-colors text-white">검색</button>
+            <button onclick="document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')" class="bg-[#009988] p-1.5 px-3 rounded text-xs border border-[#006655] text-white shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="txt-lvl-1">기술통계 (SECTION 01)</div>
+
+        <div class="category-box bg-[#f9f9f9] border border-[#ccc] p-3 mb-5 rounded text-sm font-bold">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="빅데이터분석기사_필기.html" class="wiki-link">빅데이터분석기사 필기</a> | <a href="빅데이터분석기사.html" class="wiki-link">빅데이터분석기사</a> | <a href="데이터_탐색.html" class="wiki-link">데이터 탐색</a> | <a href="분류_알고리즘.html" class="wiki-link">분류 알고리즘</a> | <a href="군집분석.html" class="wiki-link">군집분석</a> | <a href="통계학.html" class="wiki-link">통계학</a> | <a href="확률론.html" class="wiki-link">확률론</a> | <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> | <a href="효빈도시철도.html" class="wiki-link">효빈도시철도</a> | <a href="효빈광역시_시내버스.html" class="wiki-link">효빈광역시 시내버스</a> | <a href="러브라이브!_시리즈.html" class="wiki-link">러브라이브! 시리즈</a> | <a href="니지가사키_스쿨_아이돌_동호회.html" class="wiki-link">니지가사키 스쿨 아이돌 동호회</a> | <a href="BanG_Dream!.html" class="wiki-link">BanG Dream!</a> | <a href="MyGO!!!!!.html" class="wiki-link">MyGO!!!!!</a> | <a href="걸즈_밴드_크라이.html" class="wiki-link">걸즈 밴드 크라이</a> | <a href="토게나시_토게아리.html" class="wiki-link">토게나시 토게아리</a>
+        </div>
+        
+
+        <aside class="infobox shadow-sm">
+            <div class="infobox-top">
+                <b>빅데이터분석기사 필기</b><br>
+                <span class="text-sm opacity-80">PART 03. 통계기법의 이해</span>
+            </div>
+            <table>
+                <tr><th>과목명</th><td>제2과목 빅데이터 탐색</td></tr>
+                <tr><th>섹션</th><td>SECTION 01. 기술통계</td></tr>
+                <tr><th>출제빈도</th><td>상(중)하</td></tr>
+                <tr><th>반복학습</th><td>[1] [2] [3] 회독</td></tr>
+                <tr><th>빈출태그</th><td>#표본추출 #확률 #분포 #기댓값 #분산 #중심극한정리</td></tr>
+            </table>
+        </aside>
+
+        <div class="toc shadow-sm">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li><a href="#s-1" class="wiki-link">1. 데이터 요약</a></li>
+                <li><a href="#s-2" class="wiki-link">2. 표본추출</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-2-1" class="wiki-link">1) 전수조사와 표본조사</a></li>
+                        <li><a href="#s-2-2" class="wiki-link">2) 표본추출 오차</a></li>
+                        <li><a href="#s-2-3" class="wiki-link">3) 확률 표본추출 기법 (단순, 계통, 층화, 군집)</a></li>
+                        <li><a href="#s-2-4" class="wiki-link">4) 비확률 표본추출 기법 (편의, 판단, 할당, 눈덩이)</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-3" class="wiki-link">3. 확률분포</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-3-1" class="wiki-link">1) 확률의 개념 (수학적/통계적 확률, 베이즈 정리 등)</a></li>
+                        <li><a href="#s-3-2" class="wiki-link">2) 확률변수 (이산, 연속)</a></li>
+                        <li><a href="#s-3-3" class="wiki-link">3) 확률분포 (질량함수, 밀도함수)</a></li>
+                        <li><a href="#s-3-4" class="wiki-link">4) 확률변수의 기댓값과 분산</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+
+        <h2 id="s-1">01 데이터 요약</h2>
+        <p><b>기술통계(Descriptive Statistics)</b>는 분석에 필요한 데이터를 요약하여 묘사·설명하는 통계기법을 말한다.</p>
+        <p>분석을 위해서 단순히 데이터를 정리하는 행위 자체는 의미가 없다. 분석 데이터의 특성을 찾아내서 그 특성의 정량화를 통한 체계적 요약이 필요하다.</p>
+
+        <div class="anime-box" style="border-color: #0077DD; background-color: #EBF5FF;">
+            <img src="이미지/고나미.png" alt="고나미" class="anime-img" onerror="this.style.display='none'" style="border-color: #0077DD;">
+            <div>
+                <div class="anime-box-title" style="color: #0055AA;">💡 [효빈위키 개념 해설] 1호선 고나미의 데이터 팩폭!</div>
+                <p class="text-sm text-gray-800">쉽게 말해, 파이썬이나 판다스(Pandas)로 기껏 데이터를 긁어와 놓고 그냥 표본만 띡 던져놓으면 아무도 안 본다는 뜻이에요. <del>효빈광역시 시내버스의 100만 건 노선별 배차 간격 데이터를 그냥 엑셀에 냅다 복붙해둔다고 그게 분석이 될 리가 없잖아요?</del> 그 데이터의 평균, 분산, 꼬리 길이 같은 '특징'을 숫자로 딱 떨어지게 요약해야 비로소 진짜 분석의 가치가 생기는 거랍니다!</p>
+            </div>
+        </div>
+
+        <h4 class="mt-4 font-bold text-gray-800">▶ 기술통계의 종류</h4>
+        <table class="text-sm w-full">
+            <tr>
+                <th class="bg-gray-100" style="width: 25%;">종류</th>
+                <th class="bg-gray-100">설명</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">중심화 경향<br>(Central Tendency)</td>
+                <td>관찰 또는 수집된 데이터의 물리적 상대적 위치에 대한 정리 요약이다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">분산도 경향<br>(Degree of Dispersion)</td>
+                <td>데이터들이 흩어진 정도에 대한 기술 및 요약이다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">자료의 분포형태<br>(Shape of Distribution, Skewness)</td>
+                <td>자료의 분포가 대칭인지 치우쳐 있는지에 대한 기술 및 요약이다.</td>
+            </tr>
+        </table>
+        <p class="text-sm mt-2 text-gray-700">분석대상이 되는 데이터의 단순 정리가 아닌 데이터의 분포가 가지는 특성을 찾아내서 본격적인 분석 이전에 기본적인 특징을 수치적으로 정량화하여 기술한다. 주로 기초 통계량을 산출하여 결과를 도출한다.</p>
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-3 my-3 text-sm">
+            <b>[기적의 TIP 📝]</b> 기초 통계량은 CHAPTER 02 - SECTION 01의 내용을 참고한다.
+        </div>
+
+
+        <h2 id="s-2">02 표본추출</h2>
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-3 my-3 text-sm">
+            <b>[참고/날개 📌]</b> 모집단은 우리가 무엇을 알려고 하느냐에 따라 다르게 정의되기 때문에 모집단을 명확하게 정의해야 한다.
+        </div>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li><b>모집단(Population):</b> 연구·실험의 결과가 일반화된 큰 집단, 정보를 얻고자 하는 관심 대상의 전체집합으로 정의한다.</li>
+            <li><b>표본(Sample):</b> 여러 자료를 포함하는 모집단 속에서 그 일부를 끄집어 내어 조사한 결과로 원래 집단의 성질을 추측할 수 있는 자료로 정의한다.</li>
+            <li><b>표본추출(Sampling):</b> 모집단으로부터 표본을 선택하는 행위(과정)를 말한다.</li>
+        </ul>
+
+        <h3 id="s-2-1">1) 전수조사와 표본조사</h3>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li><b>① 전수조사:</b> 관심의 대상이 되는 모집단 전체를 대상으로 조사하는 것이다. (예: 인구조사 등)
+                <ul class="list-circle pl-6 space-y-1 mt-1">
+                    <li>인력(manpower)과 예산(budget)이 비교적 많이 소요된다. 현실적으로 집단 내 모든 단위를 조사하는 것은 불가능한 경우가 많기 때문에, 대부분의 통계조사는 표본조사에 의해 이루어진다.</li>
+                </ul>
+            </li>
+            <li><b>② 표본조사:</b> 관심의 대상이 되는 모집단에서 표본을 추출하여 표본을 대상으로 조사를 시행하는 것이다.
+                <ul class="list-circle pl-6 space-y-1 mt-1">
+                    <li>기본적으로 전수조사가 정확한 결과를 도출할 수 있으나 비용문제 등의 제약사항이 존재한다. 모집단의 일부가 전체를 대표할 수 있다는 근거가 명확하다면 <b>일부 표본으로 모집단 전체의 분석결과로 사용 가능</b>하다.</li>
+                    <li>전수조사에 비해 비용 절감, 조사결과의 신속성, 조사규모가 작아 심도 있는 조사 가능, 관리가 비교적 잘 되어 정확성이 높다.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="quote-box" style="border-color: #EE0022;">
+            💬 <b>[효빈위키 팩트폭력]</b><br>
+            전수조사를 하려면 돈과 시간이 무지막지하게 깨진다. <del>구청에서 복무해 본 사회복무요원이라면 행정 업무에서 인력과 예산이 얼마나 피 말리는 문제인지 뼈저리게 알 것이다.(...)</del> 그래서 보통은 현실과 타협하여 표본조사를 실시하게 된다.
+        </div>
+
+        <h3 id="s-2-2">2) 표본추출 오차(Sampling Bias, Sampling Error)</h3>
+        <p>표본에서 선택된 대상이 모집단의 특성을 과잉 대표하거나 과소 대표할 때 발생한다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li><b>① 과잉 대표:</b> 중복선택 등의 원인으로 모집단이 반복·중복된 데이터만으로 규정되는 현상을 지칭한다.</li>
+            <li><b>② 과소 대표 (※ 원문 오타 '최소 대표' 교정):</b> 실제모집단의 대표성을 나타낼 표본이 아닌 다른 데이터가 표본이 되는 현상이다.</li>
+        </ul>
+        <p class="font-bold text-red-600 ml-6 mb-4">※ 표본추출 시 표본의 크기(Sample Size)보다는 대표성을 가지는 표본을 추출하는 것이 중요하다.</p>
+
+
+        <h3 id="s-2-3">3) 확률 표본추출 기법</h3>
+        <p>모집단에 속하는 모든 추출단위에 대해 사전에 일정한 추출확률이 주어지는 표본추출법이다. 모든 표본들의 추출확률을 사전에 알 수 있고, 추정량의 통계적 정확도를 확률적으로 나타낼 수 있다.</p>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">① 단순무작위 추출(Simple Random Sampling)</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>통계조사에서 가장 기본이 되는 표본추출법이다.</li>
+            <li>모집단으로부터 무작위(randomly) 추출하고 독립적 선택으로 편향성(bias)을 제거하여 난수(Random Number)를 이용하는 것이 기본이다.</li>
+            <li>모집단내의 조사단위수($N$)를 파악한 다음 원하는 표본수($n$) 만큼 난수를 발생시키고 그 수에 해당되는 조사단위를 표본으로 선택한다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">② 계통추출(Systematic Sampling)</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-2">
+            <li>모집단에서 <b>추출간격(Sampling Interval)</b>을 설정하여 간격 사이에서 무작위로 추출하는 방법이다.</li>
+            <li>전체 모집단이 $N$개인 집단에서 $K$(단, $K < N$)라는 추출간격으로 뽑는다면 $N/K$ 수만큼 표본이 선택될 수 있다($1/K$ 계통추출법).</li>
+        </ul>
+
+        <!-- Mermaid 계통추출 다이어그램 -->
+        <div class="mermaid mt-4 mb-4">
+        flowchart LR
+            subgraph Population ["모집단 (Population)"]
+                direction LR
+                P1("1") --- P2(("2")) --- P3("3") --- P4("4") --- P5(("5")) --- P6("6") --- P7("7") --- P8(("8")) --- P9("9") --- P10("10") --- P11(("11")) --- P12("12")
+                style P2 fill:#555,stroke:#333,stroke-width:2px,color:#fff
+                style P5 fill:#555,stroke:#333,stroke-width:2px,color:#fff
+                style P8 fill:#555,stroke:#333,stroke-width:2px,color:#fff
+                style P11 fill:#555,stroke:#333,stroke-width:2px,color:#fff
+            end
+            
+            subgraph Sample ["계통 추출된 표본 (Sample every 3rd)"]
+                direction LR
+                S2(("2")) --- S5(("5")) --- S8(("8")) --- S11(("11"))
+                style S2 fill:#555,stroke:#333,stroke-width:2px,color:#fff
+                style S5 fill:#555,stroke:#333,stroke-width:2px,color:#fff
+                style S8 fill:#555,stroke:#333,stroke-width:2px,color:#fff
+                style S11 fill:#555,stroke:#333,stroke-width:2px,color:#fff
+            end
+
+            P2 -.-> S2
+            P5 -.-> S5
+            P8 -.-> S8
+            P11 -.-> S11
+        </div>
+        <p class="text-sm text-center text-gray-500 mb-6">▲ 계통추출의 예시 (k=3 간격)</p>
+
+        <div class="anime-box" style="border-color: #6677CC; background-color: #F0F2FA;">
+            <img src="이미지/전노아.png" alt="전노아" class="anime-img" onerror="this.style.display='none'" style="border-color: #6677CC;">
+            <div>
+                <div class="anime-box-title" style="color: #4455AA;">💡 [효빈위키 맞춤 해설] 빈효선 전노아의 계통추출 특강!</div>
+                <ul class="list-disc pl-5 text-sm space-y-1 mt-2 text-gray-800">
+                    <li><b>단순무작위 추출:</b> 아무런 사전 지식이 없을 때 파이썬 `random` 모듈을 돌려서 무지성 뺑뺑이를 돌리는 것과 같아요. 가장 근본적이지만, 그만큼 제일 원초적인 방법이죠!</li>
+                    <li><b>계통추출:</b> 효빈광역시 시내버스 노선을 짤 때 정류장이나 배차 간격(Interval)을 일정한 주기로 설정하는 것을 떠올려보세요! 처음 시작점 2번만 무작위로 정해두면, 그 뒤로는 `+3`씩 기계적으로 5번, 8번, 11번을 뽑아내는 방식입니다. 파이썬으로 코딩할 때 `for i in range(start, N, K):` 루프 돌리는 것과 완벽하게 똑같은 원리랍니다!</li>
+                </ul>
+            </div>
+        </div>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">③ 층화추출(Stratified Sampling)</h4>
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-3 my-2 text-sm">
+            <b>[참고/날개 📌]</b><br>
+            * <b>층:</b> 관심을 갖고 있는 집단, 각 집단 내에 있는 추출단위들이 유사하도록 구성<br>
+            * <b>층화추출:</b> 집단 내 동질적, 집단 간 이질적
+        </div>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>모집단을 서로 겹치지 않게 <b>여러 층(strata)으로 나누어 분할된 층별로 배정된 표본을 단순 임의 추출법에 따라 추출</b>하는 방법이다.</li>
+            <li>각 집단별 분석이 필요한 경우나 모집단 전체에 대한 특성치의 효율적 추정이 필요한 경우 시행한다. (예: 모집단의 남녀 성비가 3:2이면 표본의 성비도 3:2가 되도록 뽑는 경우)</li>
+            <li>단순임의추출법에 비해 추정의 정도를 높일 수 있고, 전체뿐만 아니라 각 층별 추정결과도 얻을 수 있다. 조사관리가 편리하고 조사비용이 절감된다.</li>
+        </ul>
+        
+        <p class="font-bold mt-2 ml-4">▶ 표본 배분의 방법 예시</p>
+        <table class="text-sm w-full">
+            <tr>
+                <th class="bg-gray-100" style="width: 25%;">방법</th>
+                <th class="bg-gray-100">특징</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">비례배분법</td>
+                <td>- 각 층 내의 추출단위 수에 비례하여 표본크기를 배분하는 방법<br>- 층 내의 변동과 조사비용은 고려하지 않고 층의 크기만을 고려함<br>- 일반적으로 여론조사 등에 많이 활용됨<br><b>예)</b> 여론 조사를 위해 한 지역의 <b>유권자의</b> 성비가 (남:여=3:2)라면 표본도 3:2 수준으로 추출</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">네이만배분법</td>
+                <td>- 각 층의 크기와 층별 <b>변동의 정도</b>를 동시에 고려한 표본배정 방법<br>- 변동이 큰 층에 대해서는 상대적으로 많은 표본을 배정</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">최적배분법</td>
+                <td>- 추정량의 분산을 최소화 시키거나 주어진 분산 범위 하에서 <b>비용을 최소화</b> 시키는 방법</td>
+            </tr>
+        </table>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">④ 군집추출(Cluster Sampling)</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>모집단을 차이가 없는 여러 개 군집으로 나누어 <b>군집 단위의 일부 또는 전체에 대한 분석</b>을 시행한다.</li>
+            <li>모집단에 대한 구체적인 추출 방법론을 정하기 어려운 경우 사용하면 편리하다. 표본크기가 같은 경우 단순 임의추출에 비해 표본 오차가 증대할 가능성이 있다.</li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #FFCC11; background-color: #FFFDEE;">
+            <img src="이미지/박라미.png" alt="박라미" class="anime-img" onerror="this.style.display='none'" style="border-color: #FFCC11;">
+            <div>
+                <div class="anime-box-title" style="color: #DD9900;">🏕️ [효빈위키 기적의 해설] 3호선 박라미의 층화 vs 군집 뽀개기!</div>
+                <p class="text-sm text-gray-800">사조사 2급이나 빅분기, ADsP 단골 출제 포인트! <b>층화추출</b>과 <b>군집추출</b>을 헷갈리면 절대 안 돼!</p>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>층화추출 (집단 내 동질적, 집단 간 이질적):</b> 러브라이브! 니지가사키 멤버들을 1학년, 2학년, 3학년 <b>'층'</b>으로 딱 나눠서 각 학년마다 몇 명씩 무작위로 쏙쏙 뽑아오는 방식이야. 같은 1학년끼리는 동질적이지만, 1학년과 3학년 집단은 서로 다르잖아?</li>
+                    <li><b>군집추출 (집단 내 이질적, 집단 간 동질적):</b> 이번엔 MyGO!!!!! 나 토게나시 토게아리 같은 <b>'밴드(군집)'</b> 자체를 통째로 하나 뽑는 거야. 밴드 안에는 보컬, 기타, 베이스 등 역할이 다 섞여 있어서(이질적) 전체의 축소판 느낌이고, 각 밴드들끼리는 구성이 비슷비슷(동질적)하잖아!</li>
+                </ul>
+                <p class="text-sm text-gray-800 mt-1"><del>수험생이라면 이 문장을 입에 달고 살아야 해. 안 그러면 시험장에서 머리가 하얗게 백지화되는 기적을 맛볼 수 있어.(...)</del></p>
+            </div>
+        </div>
+
+        <h3 id="s-2-4">4) 비확률 표본추출 기법</h3>
+        <p>각 추출단위들이 표본에 추출될 확률을 객관적으로 나타낼 수 없는 표본추출법이다. 비용, 시간, 조사의 편리함 때문에 자주 사용한다.</p>
+
+        <ul class="list-disc pl-6 space-y-4 mb-4 mt-2">
+            <li><b>① 간편추출법(편의추출법, Convenience Sampling):</b> 응답자를 선정하는 데 있어서 <b>조사원 개인의 자의적인 판단</b>에 따라 간편하게 뽑는 방법. 대표성을 보장할 수 없다. (예: 지나가는 사람 붙잡고 묻기)</li>
+            <li><b>② 판단추출법(Judgement Sampling):</b> 조사자가 나름의 지식과 <b>경험(짬바)</b>에 의해 모집단을 가장 잘 대표한다고 판단되는 표본을 주관적으로 선정. (예: "내 경험상 이 학교 애들이 평균이야!" 하고 고르기)</li>
+            <li><b>③ 할당추출법(Quota Sampling):</b> 층화추출처럼 모집단을 연령/성별로 나누고 비율을 맞추지만, <b>마지막에 뽑을 때 무작위(랜덤)가 아니라 조사원 마음대로 편하게(비확률) 뽑아버리는 방법.</b></li>
+            <li><b>④ 눈덩이추출법(Snowball Sampling):</b> 특수한 <b>은닉 집단(접근이 어려운 집단)</b>을 조사할 때, 아는 사람 한 명을 먼저 찾고 그 사람에게 다른 사람을 소개받아 눈덩이처럼 표본을 키워가는 기법. (예: 폭력조직원, 불법체류자 조사)</li>
+        </ul>
+
+        <div class="quote-box" style="border-color: #881188;">
+            ⚠️ <b>[효빈위키 팩트폭력: 할당 vs 층화 함정]</b><br>
+            층화추출(확률 추출)과 할당추출은 그룹을 나누고 비율을 맞추는 것까지는 똑같으나, 마지막 추출 방식에서 갈린다. ADsP나 빅분기 필기시험에서 두 개를 교묘하게 섞어놓고 낚시하는 경우가 많으니 절대 낚이지 말자. 눈덩이추출법의 예시로 나오는 폭력조직원 실태 조사 같은 것도 <del>"너 말고 너랑 같이 노는 애들 또 누구 있어? 번호 불어."</del> 하는 방식의 다단계 파도타기 기법이다.
+        </div>
+
+
+        <h2 id="s-3">03 확률분포</h2>
+
+        <h3 id="s-3-1">1) 확률의 개념</h3>
+        <p>통계적 현상에서 불확정 현상을 반복 관찰하여 법칙성을 찾아낸다.</p>
+
+        <div class="bg-gray-100 border-l-4 border-gray-500 p-4 mb-4 mt-4">
+            <h4 class="font-bold text-gray-800">💡 [더 알아두기 TIP] 경우의 수 공식</h4>
+            <ul class="list-disc pl-6 text-sm space-y-1 mt-1">
+                <li><b>합의 법칙:</b> $n(A \cup B) = n(A) + n(B) - n(A \cap B)$</li>
+                <li><b>곱의 법칙:</b> $n(A \times B) = n(A) \times n(B)$</li>
+            </ul>
+            <div class="math-formula text-sm">
+                <b>순열 (Permutation, 순서 고려 O):</b><br>
+                $$_nP_r = \frac{n!}{(n-r)!}$$
+                <br>
+                <b>조합 (Combination, 순서 고려 X):</b><br>
+                $$_nC_r = \frac{n!}{(n-r)!r!}$$
+            </div>
+            <p class="text-xs text-red-600 font-bold text-center mt-2">※ 고등학교 확통 수포자 양산 구간 주의! (순서를 따지느냐 안 따지느냐가 핵심)</p>
+        </div>
+
+        <div class="anime-box" style="border-color: #33AAFF; background-color: #E6F3FF;">
+            <img src="이미지/심세이.png" alt="심세이" class="anime-img" onerror="this.style.display='none'" style="border-color: #33AAFF;">
+            <div>
+                <div class="anime-box-title" style="color: #0077DD;">💻 [효빈위키 수포자 구출] 창전선 심세이의 순열 vs 조합!</div>
+                <p class="text-sm text-gray-800"><b>순열(P)과 조합(C)</b> 팩토리얼($!$) 공식을 마주하고 책을 덮고 싶겠지만 꾹 참고 외워두자!</p>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>순열 (P):</b> 걸즈 밴드 크라이에서 멤버 5명 중에 보컬, 기타, 베이스 포지션을 각자 정하는 거야. "니나가 보컬을 하고 모모카가 기타를 하는 것"과 "모모카가 보컬을 하고 니나가 기타를 하는 것"은 완전히 다른 밴드가 되어버리지? 이처럼 <b>'순서와 역할'이 몹시 중요</b>할 때 순열(P)을 쓰는 거야!</li>
+                    <li><b>조합 (C):</b> 그냥 멤버 5명 중에 주말 합숙 놀러 갈 사람 3명을 무작위로 뽑는 거야. 먼저 뽑히든 나중에 뽑히든 다 똑같이 놀러 가는 거니까 <b>'순서 상관없이'</b> 뭉탱이로 뽑는 거지!</li>
+                </ul>
+            </div>
+        </div>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">① 확률</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li><b>수학적 확률:</b> 표본공간 $S$의 각 사건이 일어날 가능성이 동등할 때, 책상머리에서 계산하는 이상적인 확률. $P(A) = n(A)/n(S)$. (예: 주사위 6의 눈이 나올 확률 1/6)</li>
+            <li><b>통계적 확률:</b> 무한히 반복 시행했을 때 발생하는 <b>상대도수($r/n$)</b>를 기반으로 추정하는 현실 데이터 기반 확률. 빅데이터 분석에서는 이 경험적 데이터가 핵심이 된다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">② 사건(Event) & ③ 표본공간(Sample Space)</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li><b>표본공간($S$):</b> 통계적 실험에서 모든 발생 가능한 결과들의 집합. (전사건)</li>
+            <li><b>사건:</b> 시행의 결과. <b>전사건</b>은 100% 무조건 일어나는 일, <b>공사건($\emptyset$)</b>은 확률 0% 절대 안 일어나는 일, <b>근원사건</b>은 더 쪼갤 수 없는 단일 결과 한 개를 뜻한다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">④ 확률의 기본성질 & ⑤ 조건부 확률</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>$P(A^c) = 1 - P(A)$ (여사건의 확률)</li>
+            <li>$P(A_i \cup A_j) = P(A_i) + P(A_j) - P(A_i \cap A_j)$</li>
+            <li><b>조건부 확률:</b> 사건 B가 일어났다는 조건 하에서 사건 A가 일어날 확률. 분모가 전체 우주($S$)가 아니라 <b>사건 B로 축소</b>된다.</li>
+        </ul>
+        <div class="math-formula">
+            $$P(A|B) = \frac{P(A \cap B)}{P(B)}$$
+        </div>
+
+        <div class="mermaid mt-4 mb-4">
+        flowchart LR
+            subgraph Space_S [표본공간 S]
+                direction LR
+                A(("사건 A")) --- Intersect(("A ∩ B"))
+                Intersect --- B(("사건 B"))
+            end
+            
+            Action["B가 이미 일어났음! (조건)"]
+            
+            Space_S --> Action
+            Action --> Space_B
+            
+            subgraph Space_B ["새로운 전체 우주 B"]
+                Cond_A(("A ∩ B만이<br/>A의 지분이 됨"))
+            end
+            
+            style A fill:#4a86e8,color:#fff,stroke:#333
+            style B fill:#999,color:#fff,stroke:#333
+            style Intersect fill:#2b5496,color:#fff,stroke:#333
+            style Cond_A fill:#2b5496,color:#fff,stroke:#333
+        </div>
+
+        <div class="anime-box" style="border-color: #FF5522; background-color: #FFF2EE;">
+            <img src="이미지/다로나.png" alt="다로나" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF5522;">
+            <div>
+                <div class="anime-box-title" style="color: #DD4411;">💡 [효빈위키 멘탈 주의보] 4호선 다로나의 조건부 & 독립/배반 정리!</div>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>조건부 확률 $P(A|B)$:</b> <b>'|' 기호 뒤에 있는 놈이 원인(조건, 즉 분모)이 된다</b>는 것만 외우면 반은 먹고 들어갑니다. 분모에 전체가 들어가는 게 아니라 사건 B로 축소되는 게 핵심이에요! 가령, "오늘 비가 왔을 때(조건 B), 버스가 지연될(사건 A) 확률"을 구하는 거죠.</li>
+                    <li>통계 뉴비 뚝배기 깨는 <b>독립 vs 배반</b> 헷갈리지 마세요!
+                        <ul class="list-circle pl-6 mt-1">
+                            <li><b>배반사건:</b> 교집합이 절대 없는 <b>'철천지원수'</b>. 주사위를 던져 홀수이면서 동시에 짝수일 수는 없죠. 뱅드림에서 카스미 기타 소리와 사아야 드럼 소리가 절대 안 섞이는 거라고 보면 됩니다.</li>
+                            <li><b>독립사건:</b> 서로 전혀 신경 쓰지 않는 <b>'철저한 마이웨이'</b>. 내가 효빈역에서 1호선을 타는 사건과 저기 미국에서 누가 햄버거를 먹는 사건은 서로 1도 영향을 주지 않습니다. $P(A \cap B) = P(A) \times P(B)$가 완벽히 성립하죠!</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">⑦ 총확률정리 & ⑧ 베이지안 정리(Bayes' Theorem)</h4>
+        <p>임의의 사건 B의 확률을 상호 배타적으로 분할된 $k$개의 조건부 확률로 쪼개어 구하는 것이 총확률정리이다. 베이즈 정리는 이를 역이용하여, <b>결과(B)가 이미 발생했을 때 그 원인이 특정 사건($A_i$)이었을 사후확률(Posterior)을 역추적</b>하는 딥러닝과 통계의 근본 공식이다.</p>
+        
+        <div class="math-formula">
+            <b>총확률정리:</b><br>
+            $$P(B) = \sum_{i=1}^{k} P(B|A_i)P(A_i)$$
+            <br>
+            <b>베이즈 정리 (사후확률 역추적):</b><br>
+            $$P(A_i|B) = \frac{P(B|A_i)P(A_i)}{\sum_{i=1}^{k} P(B|A_i)P(A_i)}$$
+        </div>
+
+        <div class="anime-box" style="border-color: #FF4F91; background-color: #FFF0F5;">
+            <img src="이미지/이덕희.png" alt="이덕희" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF4F91;">
+            <div>
+                <div class="anime-box-title" style="color: #CC1166;">⚙️ [효빈위키 팩트폭력] 덕주1호선 이덕희의 흡연충 베이즈 정리!</div>
+                <p class="text-sm text-gray-800">드디어 올 것이 왔다. 통계와 머신러닝의 근본 오브 근본, <b>베이즈 정리</b>야.</p>
+                <p class="text-sm text-gray-800 mt-1">혐연가 효빈이가 가장 싫어하는 담배!(...) 흡연을 많이 하는 직장인들 때문에 병원에서 <b>'기관지 이상 반응(B)'</b>이 결과로 떴어. 근데 검사 기계가 100% 완벽한 게 아니라서 건강한 사람도 오진을 낼 확률이 있거든. 이때 베이즈 정리를 쓰면 <b>"분명 기계는 이상 반응(B)이라고 삑삑거리는데, 실제 내 기관지는 멀쩡할($A_2$) 확률"</b>을 아주 과학적으로 구할 수 있어!</p>
+                <p class="text-sm text-gray-800 mt-1">결과적으로 분모 $\Sigma$ 부분에는 '진짜 아파서 삑삑거린 확률 + 건강한데 기계가 미쳐서 삑삑거린 확률'을 다 더해 넣고, 분자에는 '건강한데도 억울하게 이상 반응이 나온 확률'만 올려서 나누면 눈물겨운 억울함 확률(사후확률)이 계산되는 거지. 나이브 베이즈 분류기에서 숨 쉬듯이 쓰이니까 꼭 기억해 둬!</p>
+            </div>
+        </div>
+
+        <h3 id="s-3-2">2) 확률변수</h3>
+        <p>사건의 시행의 결과(현상)를 하나의 수치(실수)로 대응시킬 때의 함수를 의미하며, $X$로 표기한다.</p>
+
+        <div class="mermaid mt-4 mb-4">
+        graph LR
+            subgraph S ["표본공간 S (현실의 사건)"]
+                Event(("동전 앞면"))
+            end
+            
+            subgraph RealLine ["실수선 (수치화된 데이터)"]
+                direction LR
+                Axis(" ") --- X_val(("X = 1")) --- AxisEnd(" ")
+            end
+            
+            Event -->|"확률변수 함수 X"| X_val
+            
+            style Event fill:#2b5496,stroke:#fff,stroke-width:2px,color:#fff
+            style X_val fill:#4a86e8,stroke:#fff,stroke-width:2px,color:#fff
+            style S fill:#f0f0f0,stroke:#333
+            style RealLine fill:none,stroke:none
+        </div>
+
+        <ul class="list-disc pl-6 space-y-2 mb-4">
+            <li><b>이산확률변수(Discrete):</b> 취할 수 있는 값의 수가 유한하거나 딱딱 셀 수 있는 변수. (예: 주사위 눈금 1, 2, 3...)</li>
+            <li><b>연속확률변수(Continuous):</b> 취할 수 있는 값의 수가 무한하고 연속적인 변수. (예: 효빈도시철도 탑승 소요 시간 12.34분, 몸무게 등). 특정 구간 내에서의 면적(확률)값을 적분하여 구한다.</li>
+        </ul>
+
+        <h3 id="s-3-3">3) 확률분포</h3>
+        <p>확률분포는 수치로 대응된 확률변수의 개별 값들이 가지는 확률값의 분포이다.</p>
+
+        <ul class="list-disc pl-6 space-y-4 mb-4 mt-2">
+            <li><b>① 이산확률분포 & 확률질량함수(PMF):</b> 변수가 셀 수 있을 때, 그 불연속한 값에 대한 확률을 나타내는 함수 $f(x) = P(X=x)$. 모든 확률을 더하면 1이 된다.</li>
+            <li><b>② 연속확률분포 & 확률밀도함수(PDF):</b> 변수가 연속적일 때 분포를 나타내는 함수. 면적을 적분하여 확률을 구한다.
+                <div class="math-formula text-sm my-1">
+                    $$\int f(x) dx = 1 \quad \text{,  그리고} \quad P(a < X < b) = \int_{a}^{b} f(x) dx$$
+                </div>
+            </li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #EE0022; background-color: #FFF0F2;">
+            <img src="이미지/미소하.png" alt="미소하" class="anime-img" onerror="this.style.display='none'" style="border-color: #EE0022;">
+            <div>
+                <div class="anime-box-title" style="color: #CC0011;">🎀 [효빈위키 팩트 체크] 5호선 미소하의 출판사 오타 교정!</div>
+                <p class="text-sm text-gray-800"><b>🚨 수험서 치명적 오류 교정 노트</b></p>
+                <ul class="list-disc pl-5 text-sm space-y-1 mt-2 text-gray-800">
+                    <li>원본 수험서 연속확률분포 파트에서 "모든 $x$에 대해서 $0 \le f(x) \le 1$"이라고 적혀 있는데, 이는 <b>명백한 오류</b>입니다! 확률밀도함수(PDF)의 함숫값 $f(x)$는 확률 자체가 아니라 '밀도'이기 때문에 높이가 1을 넘을 수도 있어요! 올바른 조건은 <b>$f(x) \ge 0$</b> 이랍니다. <del>출판사가 이산확률분포 내용을 복붙하다가 수정하는 걸 까먹은 게 학계의 정설이에요.(...)</del></li>
+                    <li><b>질량 vs 밀도 암기법:</b> 셀 수 있는 건 저울로 무게를 잴 수 있으니 <b>'질량(Mass)'</b>, 소수점 단위로 쪼개지는 연속적인 시간이나 거리는 빽빽하게 채워져 있으니 <b>'밀도(Density)'</b>예요. <b>이산=질량, 연속=밀도</b>만 짝지어 놔도 객관식 한 문제는 거저먹습니다!</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 id="s-3-4">4) 확률변수의 기댓값과 분산</h3>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">① 기댓값(Expected Value)</h4>
+        <p>각 확률변수가 특정 값을 가질 확률을 가중치로 확률변수의 결과값을 <b>평균화</b>한 값으로 표시한다. (결국 평균을 의미한다.)</p>
+        
+        <div class="math-formula">
+            $$E(X) = \sum x \cdot f(x) \quad \text{(이산확률변수의 기댓값)}$$
+        </div>
+
+        <p class="text-sm mt-2"><b>예)</b> 주사위를 한 번 던졌을 때 기댓값:<br> $E(X) = 1 \times \frac{1}{6} + 2 \times \frac{1}{6} + 3 \times \frac{1}{6} + 4 \times \frac{1}{6} + 5 \times \frac{1}{6} + 6 \times \frac{1}{6} = 3.5$</p>
+        <p class="text-sm text-gray-700 mt-2">이 '기댓값'이라는 거창한 이름 때문에 쫄 필요 전혀 없습니다. 우리가 평소에 쓰는 <b>가중 평균(Weighted Average)</b>과 완벽히 동일한 계산 방식이에요! "어떤 일이 일어날 확률을 그 값에 곱해서 싹 다 더해준 값"이라고 이해하면 편안합니다.</p>
+
+    
+        <!-- 나무위키식 하단 내비게이션 틀 시작 -->
+        <div class="wiki-nav-box" id="bigbunNav">
+            <div class="wiki-nav-header">
+                📊 빅데이터분석기사 필기 전체 문서 목록
+            </div>
+            <div class="wiki-nav-toggle" onclick="document.getElementById('bigbunNavContent').classList.toggle('active')">
+                [ 펼치기 · 접기 ]
+            </div>
+            <div class="wiki-nav-content" id="bigbunNavContent">
+                <table class="wiki-nav-table">
+                    <tbody>
+                        <tr>
+                            <th class="bg-nav-red" style="width: 18%;">제1과목<br>빅데이터 분석 기획</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기1-1.html">빅분기1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-1.html">빅분기1-2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-2.html">빅분기1-2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-3.html">빅분기1-2-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-1.html">빅분기1-3-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-2.html">빅분기1-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-3.html">빅분기1-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-4.html">빅분기1-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-1.html">빅분기1-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-2.html">빅분기1-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-1.html">빅분기1-5-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-2.html">빅분기1-5-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-6.html">빅분기1-6</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제2과목<br>빅데이터 탐색</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기2-1.html">빅분기2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-2.html">빅분기2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-3.html">빅분기2-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-red">제3과목<br>빅데이터 모델링</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-1.html">빅분기3-1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-2.html">빅분기3-1-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-3.html">빅분기3-1-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-2.html">빅분기3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-2.html">빅분기3-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-3.html">빅분기3-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-4.html">빅분기3-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-1.html">빅분기3-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-2.html">빅분기3-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-3.html">빅분기3-4-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제4과목<br>빅데이터 결과 해석</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기4-1.html">빅분기4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-2.html">빅분기4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-3.html">빅분기4-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-4.html">빅분기4-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-5.html">빅분기4-5</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-6.html">빅분기4-6</a></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 나무위키식 하단 내비게이션 틀 끝 -->
+
+    </div> <!-- wiki-container end -->
+
+    <footer class="wiki-footer p-6 text-center border-t border-[var(--wiki-border)] bg-[var(--wiki-footer-bg)] text-[var(--wiki-footer-text)]">
+        <div class="font-bold text-sm">
+            이 저작물은 <span class="text-[var(--wiki-text)]">효빈위키</span> 규정에 따라 이용할 수 있습니다.<br>
+            ※ 본 문서는 빅데이터분석기사 필기 제2과목(기술통계 - 표본추출 및 확률분포)의 완벽 반영판입니다.
+        </div>
+    </footer>
+
+    <!-- 각주 툴팁 구동 JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'wiki-tooltip';
+            document.body.appendChild(tooltip);
+
+            const fnLinks = document.querySelectorAll('a.fn-link');
+            
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        const childNodes = Array.from(targetElement.childNodes);
+                        const tooltipContent = childNodes
+                            .filter(node => node.nodeName !== 'A')
+                            .map(node => node.nodeType === Node.TEXT_NODE ? node.textContent : node.outerHTML)
+                            .join('')
+                            .trim();
+                        
+                        tooltip.innerHTML = tooltipContent;
+                        tooltip.classList.add('visible');
+                        
+                        const rect = this.getBoundingClientRect();
+                        let topPos = rect.bottom + window.scrollY + 8;
+                        let leftPos = rect.left + window.scrollX;
+                        
+                        tooltip.style.display = 'block';
+                        if (leftPos + tooltip.offsetWidth > window.innerWidth) {
+                            leftPos = window.innerWidth - tooltip.offsetWidth - 20;
+                        }
+                        
+                        tooltip.style.left = leftPos + 'px';
+                        tooltip.style.top = topPos + 'px';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    tooltip.classList.remove('visible');
+                });
+            });
+        });
+    </script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

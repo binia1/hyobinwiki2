@@ -1,0 +1,50 @@
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. 링크를 걸어줄 백과사전 표제어 (키워드 사전)
+    const wikiKeywords = [
+        "오하라 마리", "아쿠아", "소원면", "소원역", "효빈광역시", "탄성군", 
+        "러브 라이브!", "Guilty Kiss", "호시조라 린"
+        // 여기에 링크가 필요한 단어들을 계속 추가하시면 됩니다.
+    ];
+
+    // 2. 중요: 단어 길이순으로 내림차순 정렬
+    // 이유: '오하라 마리'를 먼저 변환해야, '마리'라는 단어에 먹히지 않습니다.
+    wikiKeywords.sort((a, b) => b.length - a.length);
+
+    // 정규식 생성 (키워드 중 하나라도 매칭되면 캡처)
+    // 정규식에 특수문자(예: 러브 라이브!)가 들어갈 수 있으므로 이스케이프 처리
+    const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedKeywords = wikiKeywords.map(escapeRegExp);
+    const regex = new RegExp(`(${escapedKeywords.join('|')})`, 'g');
+
+    // 3. TreeWalker로 문서 내의 '텍스트 노드'만 탐색
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    const nodesToReplace = [];
+
+    while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const parentTag = node.parentNode.tagName;
+
+        // 4. 이미 링크(A)가 있거나, 건드리면 안 되는 태그는 제외
+        if (['A', 'SCRIPT', 'STYLE', 'TITLE', 'BUTTON', 'TEXTAREA'].includes(parentTag)) {
+            continue;
+        }
+
+        // 텍스트 안에 키워드가 포함되어 있다면 교체 대상 배열에 추가
+        if (regex.test(node.nodeValue)) {
+            nodesToReplace.push(node);
+        }
+    }
+
+    // 5. 수집된 텍스트 노드들을 HTML <a> 태그로 치환
+    nodesToReplace.forEach(node => {
+        const span = document.createElement('span');
+        // 시장님 지시사항: '한국어 단어 이름.html' 형식 및 위키 링크 클래스 적용
+        span.innerHTML = node.nodeValue.replace(regex, '<a href="$1.html" class="wiki-link">$1</a>');
+        
+        // 기존 텍스트 노드를 새로운 span 요소로 교체
+        node.parentNode.replaceChild(span, node);
+        
+        // (선택) span 태그 자체를 벗겨내고 내용물만 남기고 싶다면 아래 주석 해제
+        // span.outerHTML = span.innerHTML; 
+    });
+});

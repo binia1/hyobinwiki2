@@ -1,0 +1,640 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>역 정보 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;800;900&display=swap');
+        
+        :root { 
+            /* 기본 테마 및 B선(스미레색) 설정 */
+            --wiki-main: #7777AA; 
+            --wiki-line-b: #74f466; /* 헤안나 스미레 색 */
+            --wiki-line-color: var(--wiki-line-b);
+            --wiki-line-text: #000000;
+            
+            --wiki-header-bg: var(--wiki-line-color);
+            --wiki-header-text: var(--wiki-line-text);
+            --wiki-table-header-bg: #f9f9f9;
+            --wiki-table-header-text: #000000;
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA; 
+            --wiki-footer-bg: #f0f0f0;
+            --wiki-footer-text: #777;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.7; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 800; color: #000000; margin-bottom: 1rem; line-height: 1.1; letter-spacing: -1.5px; } 
+        
+        h2 { 
+            font-size: 2.2rem; 
+            font-weight: 900 !important; 
+            border-bottom: 3px solid var(--wiki-line-color); 
+            padding-bottom: 10px; 
+            margin-top: 3.5rem; 
+            margin-bottom: 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            color: #000;
+            clear: both; 
+        }
+        h2::before { content: ""; display: inline-block; width: 10px; height: 2.2rem; background: var(--wiki-line-color); border: 1px solid #aaa; }
+        
+        h3 { 
+            font-size: 1.5rem; 
+            font-weight: 800 !important; 
+            margin-top: 2rem; 
+            margin-bottom: 15px; 
+            border-left: 6px solid var(--wiki-line-color); 
+            padding-left: 12px; 
+            color: #000;
+        }
+
+        table { border-collapse: collapse !important; width: 100% !important; margin: 20px 0; border: 1px solid var(--wiki-border) !important; table-layout: auto !important; font-size: 0.9rem; }
+        th, td { border: 1px solid var(--wiki-border) !important; padding: 10px 14px; text-align: center; vertical-align: middle; }
+        th { background-color: var(--wiki-table-header-bg); color: #000; font-weight: 900 !important; border: 1px solid var(--wiki-border) !important; }
+
+        /* 인포박스 스타일 */
+        .infobox { border: 2px solid var(--wiki-line-color); background-color: #fff; width: 100%; max-width: 400px; font-size: 0.85rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .infobox-top-station-name { background-color: #ffffff; padding: 15px 10px; text-align: center; border-bottom: 1px solid var(--wiki-border); }
+        .infobox-top-station-name b { font-size: 2rem; line-height: 1; letter-spacing: -1.5px; color: #000; font-weight: 900; }
+
+        .infobox-line-header { background-color: #ffffff; padding: 10px; display: flex; justify-content: center; gap: 8px; border-bottom: 1px solid var(--wiki-border); }
+        
+        /* 뱃지 스타일 */
+        .station-ring {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px; border: 3px solid; background: #fff;
+            font-weight: 900; font-size: 1.1rem; line-height: 1; flex-shrink: 0; border-radius: 50%;
+            color: black;
+        }
+        .ring-sm { width: 24px; height: 24px; border-width: 2px; font-size: 0.8rem; margin-right: 4px; vertical-align: middle; }
+
+        .line-b { border-color: var(--wiki-line-b); background-color: var(--wiki-line-b); }
+        .line-b-ring { border-color: var(--wiki-line-b); color: black; }
+
+        .infobox-rail-nav { display: flex; width: 100%; border-bottom: 1px solid var(--wiki-border); align-items: stretch; min-height: 80px; background: #fff; }
+        .rail-nav-prev, .rail-nav-next { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 0.8rem; color: #666 !important; line-height: 1.4; padding: 10px; text-decoration: none !important; transition: background 0.2s; cursor: pointer; }
+        .rail-nav-prev:hover, .rail-nav-next:hover { background: #f8fafc; }
+        .rail-nav-prev b, .rail-nav-next b { font-size: 1rem; color: #000 !important; margin: 3px 0; display: block; font-weight: 900; }
+        
+        .rail-nav-center { flex: none; width: 90px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: var(--wiki-line-color); color: var(--wiki-line-text); font-weight: 900; font-size: 1rem; border-left: 1px solid rgba(0,0,0,0.1); border-right: 1px solid rgba(0,0,0,0.1); }
+        
+        .infobox-map { height: 160px; background: #eee; border-bottom: 1px solid var(--wiki-border); position: relative; overflow: hidden; }
+        .infobox-map img { width: 100%; height: 100%; object-fit: cover; }
+        .infobox-title-bar { background-color: var(--wiki-gray-bg); text-align: center; font-weight: bold; padding: 8px; border-bottom: 1px solid var(--wiki-border); font-size: 0.9rem; }
+
+        .infobox-main-row { display: flex; border-bottom: 1px solid var(--wiki-border); background-color: #ffffff; color: #000000; }
+        .infobox-line-badge { width: 80px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1rem; flex-shrink: 0; border-right: 1px solid rgba(0,0,0,0.1); background-color: #f8f9fa; color: #000; text-align: center; }
+        .infobox-station-name { flex: 1; padding: 12px; text-align: center; display: flex; flex-direction: column; gap: 2px; }
+        .infobox-station-name b { font-size: 1.5rem; color: #000; line-height: 1; font-weight: 900; }
+        .infobox-station-name .eng-name { font-size: 0.9rem; color: #444; font-weight: 700; }
+        .infobox-station-name .other-name { font-size: 0.85rem; color: #666; font-weight: normal; }
+
+        /* 효빈위키 스타일 요소 */
+        del { color: #aaa; text-decoration: line-through; }
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        .wiki-tool-group { display: flex; gap: 2px; margin-bottom: 15px; }
+        .wiki-tool-btn { padding: 5px 14px; font-size: 13px; border: 1px solid var(--wiki-border) !important; background: white; cursor: pointer; border-radius: 4px; color: var(--wiki-text); text-decoration: none; font-weight: 900; }
+        .wiki-tool-btn:hover { background: #f0f0f0; }
+
+        .toc { display: inline-block; min-width: 320px; border: 1px solid var(--wiki-border) !important; background: var(--wiki-gray-bg); padding: 20px; border-radius: 4px; margin-bottom: 25px; }
+        .toc-title { text-align: center; font-weight: 900; border-bottom: 1px solid var(--wiki-border); margin-bottom: 12px; padding-bottom: 8px; }
+
+        .platform-section-table { border: 2px solid var(--wiki-line-color) !important; background: var(--wiki-line-color) !important; color: var(--wiki-line-text) !important; width: 100% !important; margin: 10px 0 !important; border-radius: 4px !important; overflow: hidden !important; }
+        .platform-media-box { background: #eee; min-height: 150px; position: relative; overflow: hidden; border-bottom: 1px solid rgba(0,0,0,0.1); }
+        .platform-media-box img { width: 100%; height: 100%; object-fit: cover; }
+        .platform-media-caption { padding: 8px; text-align: center; font-weight: 900; font-size: 0.95rem; color: var(--wiki-line-text); }
+        .platform-track-table { border: 2px solid var(--wiki-line-color) !important; margin: 15px 0 !important; background: #fff !important; width: 100% !important; }
+        .platform-track-table td { padding: 14px !important; border: 1px solid var(--wiki-line-color) !important; font-weight: 900; text-align: center; }
+        
+        .track-normal { color: #000 !important; font-family: monospace; font-size: 1.25rem; }
+        .platform-badge-box { color: var(--wiki-line-text); padding: 4px 10px; border-radius: 3px; font-size: 0.85rem !important; font-weight: 900; }
+
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 50px; font-size: 0.9rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 10px; font-weight: 900; text-align: center; }
+        .nav-box-content { background-color: white; padding: 15px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; line-height: 1.5; }
+        .nav-item { display: inline-flex; align-items: center; gap: 6px; text-decoration: none !important; font-weight: 900; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 28px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        
+        .wiki-footer { margin-top: 100px; padding: 50px 20px; background-color: var(--wiki-footer-bg); border-top: 1px solid var(--wiki-border); color: var(--wiki-footer-text); font-size: 0.8rem; line-height: 1.8; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+    <div id="wiki-msg-box"></div>
+
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='효빈대학교_시설.html'">
+            <span class="font-bold text-xl tracking-tight text-white">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="역명 검색" class="p-1.5 px-4 rounded text-black text-sm w-80 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch()">
+            <button onclick="handleSearch()" class="bg-[#555588] p-1.5 px-5 rounded text-sm hover:bg-[#444477] font-bold transition-colors">검색</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="txt-lvl-1" id="page-title">로딩 중...</div>
+
+        <div class="category-box bg-[#f9f9f9] border border-[#ccc] p-3 mb-5 rounded text-sm font-bold">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="효빈대학교_시설.html" class="wiki-link">효빈대학교의 교통</a> | <a href="효빈대_B선.html" class="wiki-link">효빈대 B선</a> | <a href="2018년개업.html" class="wiki-link">2018년 개업한 철도역</a>
+        </div>
+
+        <div class="wiki-tool-group">
+            <div class="wiki-tool-btn">토론</div>
+            <div class="wiki-tool-btn">편집</div>
+            <div class="wiki-tool-btn">역사</div>
+            <div class="wiki-tool-btn" onclick="toggleFavorite()">★</div>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-10">
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit">
+                <div class="toc-title text-sm uppercase tracking-widest text-black">목차</div>
+                <ul class="space-y-1.5 text-sm font-bold">
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">역 정보</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">역 주변 정보</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">승강장</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">여담</a></li>
+                </ul>
+            </div>
+
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden">
+                <div class="infobox-top-station-name"><b id="infobox-name">-</b></div>
+                <div class="infobox-line-header">
+                    <div class="station-ring line-b-ring" id="infobox-badge">B</div>
+                </div>
+
+                <div class="infobox-rail-nav">
+                    <div id="nav-prev" class="rail-nav-prev"></div>
+                    <div class="rail-nav-center">
+                        <div class="text-xs mb-1 opacity-70">효빈대 B선</div>
+                        <span id="nav-center-id" class="text-xl">-</span>
+                    </div>
+                    <div id="nav-next" class="rail-nav-next"></div>
+                </div>
+
+                <div class="infobox-map" style="width: 100%; height: 250px; overflow: hidden; position: relative; display: block !important;">
+                    <iframe src="https://binia1.github.io/mymap/" 
+                            loading="lazy"
+                            style="width: 160%; height: 160%; border: none; 
+                                   position: absolute; top: 0; left: 0;
+                                   transform: scale(0.625); transform-origin: 0 0;">
+                    </iframe>
+                </div>                
+                <div class="infobox-title-bar">역명 표기</div>
+                <div class="infobox-main-row">
+                    <div class="infobox-line-badge"><a href="효빈대_B선.html" class="wiki-link" style="color: inherit;">B선</a></div>
+                    <div class="infobox-station-name">
+                        <b id="infobox-name-kr">-</b>
+                        <span class="eng-name" id="infobox-name-eng">-</span>
+                        <span class="other-name" id="infobox-name-other">-</span>
+                    </div>
+                </div>
+
+                <table>
+                    <tr><th>주소</th><td id="infobox-addr">-</td></tr>
+                    <tr><th>운영 기관</th><td><a href="효빈대학교.html" class="wiki-link">효빈대학교 교통대학</a></td></tr>
+                    <tr><th colspan="2" style="background:var(--wiki-gray-bg); text-align:center; font-weight:900;">개통일</th></tr>
+                    <tr>
+                        <td style="background:var(--wiki-line-color); color:var(--wiki-line-text); text-align:center; font-weight:900; width:100px;"><a href="효빈대_B선.html" style="color: inherit; text-decoration: none;">B선</a></td>
+                        <td style="font-weight:700;">2018년 3월 2일</td>
+                    </tr>
+                    <tr><th>역사 구조</th><td>지상 3층 (모노레일 역사)</td></tr>
+                    <tr><th>승강장 구조</th><td><a href="상대식_승강장.html" class="wiki-link">2면 2선 상대식 승강장</a></td></tr>
+                    <tr><th colspan="2" style="background:var(--wiki-gray-bg); text-align:center; font-weight:900;">노선색</th></tr>
+                    <tr>
+                        <td colspan="2" style="text-align:center; font-weight:700;">
+                            <span style="color:#74f466; -webkit-text-stroke: 0.5px black;">●</span> <del>스미레색</del> 연두색
+                        </td>
+                    </tr>
+                    <tr><th>운임</th><td>무료 (재학생/졸업생)<br>500원 (외부인)<br><span style="font-size:0.8em; color:#888">(행사 시 면제)</span></td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <h2 id="s-1"><b>1. 개요</b></h2>
+        <p id="station-overview">역 개요 정보를 불러오는 중입니다.</p>
+
+        <h2 id="s-2"><b>2. 역 정보</b></h2>
+        <p id="station-detail">상세 정보를 불러오는 중입니다.</p>
+
+        <h2 id="s-3"><b>3. 역 주변 정보</b></h2>
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="3" class="py-3 bg-white border-b-2 border-gray-100">
+                        <div class="flex items-center justify-center gap-3">
+                            <div class="station-ring ring-sm line-b-ring">B</div>
+                            <span class="text-xl font-extrabold tracking-tight text-black">주요 시설</span>
+                        </div>
+                    </th>
+                </tr>
+                <tr><th width="20%">구분</th><th width="80%">시설명</th></tr>
+            </thead>
+            <tbody id="exit-table-body">
+                </tbody>
+        </table>
+
+        <h2 id="s-4"><b>4. 승강장</b></h2>
+        <div class="platform-section-table">
+            <div class="platform-media-box">
+                <img id="platform-img" src="이미지/승강장.png" loading="lazy" alt="승강장 사진" onerror="this.src='https://placehold.co/800x150/74f466/000000?text=Platform+Image';">
+            </div>
+            <div class="platform-media-caption">B선 승강장 전경</div>
+        </div>
+        <table class="platform-track-table">
+            <tr><td colspan="5" class="bg-gray-50 font-bold" id="platform-prev-link">-</td></tr>
+            <tr>
+                <td width="20%"><span class="platform-badge-box" style="background: var(--wiki-line-color);">하</span></td>
+                <td class="track-normal">ㅣ</td>
+                <td class="track-normal">ㅣ</td> 
+                <td width="20%"><span class="platform-badge-box" style="background: var(--wiki-line-color);">상</span></td>
+            </tr>
+            <tr><td colspan="5" class="bg-gray-50 font-bold" id="platform-next-link">-</td></tr>
+        </table>
+        <table class="platform-track-table">
+            <tr>
+                <td width="15%"><span class="platform-badge-box" style="background: var(--wiki-line-color);">상</span></td>
+                <td width="40%" class="text-left font-bold" style="color: #000;">
+                    <div class="station-ring ring-sm line-b-ring">B</div> 효빈대 B선
+                </td>
+                <td class="text-left text-sm font-bold text-black" id="dest-up">교통대학 기지 방면</td>
+            </tr>
+            <tr>
+                <td width="15%"><span class="platform-badge-box" style="background: var(--wiki-line-color);">하</span></td>
+                <td width="40%" class="text-left font-bold" style="color: #000;">
+                    <div class="station-ring ring-sm line-b-ring">B</div> 효빈대 B선
+                </td>
+                <td class="text-left text-sm font-bold text-black" id="dest-down">효빈대 중앙환승장 방면</td>
+            </tr>
+        </table>
+
+        <h2 id="s-5"><b>5. 여담</b></h2>
+        <ul id="tmi-list" class="list-disc ml-8 font-bold text-black leading-loose">
+            <li>정보 없음</li>
+        </ul>
+
+        <div class="nav-box shadow-sm">
+            <div class="nav-box-header">효빈대학교 교내 교통</div>
+            <div class="nav-box-content">
+                <a href="효빈대_A선.html" class="nav-item"><div class="station-ring ring-sm" style="border-color: #a0fff9; background-color:#a0fff9; color: black;">A</div><span class="wiki-link">A선 (트램)</span></a>
+                <a href="효빈대_B선.html" class="nav-item"><div class="station-ring ring-sm" style="border-color: #74f466; background-color:#74f466; color: black;">B</div><span class="wiki-link">B선 (모노레일)</span></a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="wiki-footer">
+        <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+        <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+        이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+        기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+        
+        <p class="mt-4 text-xs text-gray-500">
+        효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+        효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+        </p>
+    </footer>
+
+    <script>
+        // 1. 주소창에서 ID(?id=XXX)를 강제로 가져옵니다.
+        const urlParams = new URLSearchParams(window.location.search);
+        // 만약 ID가 없으면 경고창을 띄우고 B01로 갑니다 (에러 방지)
+        const stationId = urlParams.get('id') || "B01";
+
+// 2. 역 데이터베이스 (효빈대 B선 전 구간)
+        const stationData = {
+            "B01": {
+                name: "교통대학 기지",
+                engName: "Transport College Base",
+                otherName: "交通大学基地",
+                addr: "효빈광역시 북구 소조동",
+                desc: "<a href='효빈대_B선.html' class='wiki-link'>효빈대 B선</a>의 기점이자 심장부, 교내 모노레일의 모든 차량이 잠드는 거대한 차량기지.",
+                detail: "<a href='교통대학.html' class='wiki-link'>교통대학</a> 1호관(35-1동) 교통관제센터(TCC)와 바로 연결된 중추적인 역이다. 철도운전실습장이 역사 바로 밑에 위치해 있어, 승강장에서 조용히 귀를 기울이면 모노레일 시뮬레이터 구동음과 함께 교관(교수님)의 불호령(...)이 서라운드로 들려온다. B선 열차들의 야간 주박 및 일상 검수가 이루어지며, 막차 시간대에는 피곤에 찌든 기관사 교대 인력들이 자주 목격된다.",
+                prev: null,
+                next: { id: "B02", name: "중앙도서관" },
+                nearby: ["교통대학 1~3호관", "교통관제센터(TCC)", "철도운전실습장", "효빈 버스 통합 차고지(북측)"],
+                tmi: [
+                    "역사 내 매점에서는 밥 위에 제육볶음과 계란프라이 2개를 얹어주는 일명 '기관사 정식 도시락'을 파는데, 혜자로운 가성비 덕에 철덕과 교통대생들의 영혼의 주식으로 통한다.",
+                    "가끔 HAF 축제 기간을 앞두고 새로운 애니메이션 래핑이 적용된 특별 열차가 이곳에서 최초로 출고될 때면, 새벽 5시부터 대포 카메라를 든 철도 동호인들이 승강장 끝 펜스에 진을 치고 있는 진풍경이 펼쳐진다."
+                ]
+            },
+            "B02": {
+                name: "중앙도서관",
+                engName: "Central Library",
+                otherName: "中央図書館",
+                addr: "효빈광역시 북구 소조동",
+                desc: "효빈대 지성인들의 베이스캠프이자 수면 부족 좀비(?)들의 안식처, <a href='중앙도서관.html' class='wiki-link'>중앙도서관</a> 접근성 최강의 역.",
+                detail: "평소에는 전공 서적을 든 학생들이 오가는 조용한 역이지만, 중간/기말고사 기간만 되면 24시간 철야 연장 운행의 핵심 거점으로 변모한다. 도서관 지하에 마련된 '수면 캡슐 라운지'와 서브컬처 시청각실인 '오토노키 극장'으로 향하는 학생들 덕분에 야간 유동 인구가 교내에서 손에 꼽을 정도로 많다. 도서관과 쾌적한 지하 통로로 이어져 있어 비가 오는 날엔 발 디딜 틈이 없다.",
+                prev: { id: "B01", name: "교통대학 기지" },
+                next: { id: "B03", name: "사회복지대" },
+                nearby: ["중앙도서관 본관/별관", "지혜의 숲 북카페", "오토노키 극장(멀티미디어실)"],
+                tmi: [
+                    "시험 기간 막차 시간대(새벽 1시경)에는 빈자리가 없어서 모노레일 손잡이에 팔을 걸치고 서서 기절해 있는 딥슬립 좀비들을 흔하게 볼 수 있다.",
+                    "집중력 향상을 위해 역사 내 BGM으로 빗소리나 백색소음 대신 '지브리 애니메이션 OST 피아노 버전'이 흘러나온다."
+                ]
+            },
+            "B03": {
+                name: "사회복지대",
+                engName: "College of Social Welfare",
+                otherName: "社会福祉大",
+                addr: "효빈광역시 북구 소조동",
+                desc: "박효빈 시장의 모교이자 민부선 총장의 'Verde(포용과 치유)' 철학의 본산, <a href='사회복지학대학.html' class='wiki-link'>사회복지학대학</a> 정문 앞 역.",
+                detail: "민부선 총장의 지시로 설계된 특수 역사. 휠체어나 전동 스쿠터, 유아차의 이동이 100% 원활하도록 승강장 단차와 틈새를 완전히 제거한 교내 유일의 '무장애(Barrier-free) 1등급 역'이다. 역사 전체가 친환경적인 녹색(Verde) 테마로 꾸며져 있어 심리적 안정감을 주며, 지하 4층 깊이의 5호선 <a href='소조역.html' class='wiki-link'>소조역</a>과 에스컬레이터로 직접 환승이 가능하다.",
+                prev: { id: "B02", name: "중앙도서관" },
+                next: { id: "B04", name: "미술사회대" },
+                nearby: ["사회복지학대학 1~3호관", "머슬 웰페어 헬스장", "늘품 지역아동 멘토링 라운지", "종합사회복지관"],
+                tmi: [
+                    "역사 한구석 자판기 옆에는 박효빈 시장이 사비로 기증했다는 전설의 '최고급 프로틴(단백질 쉐이크) 자판기'가 설치되어 있다. 3대 500을 치는 복지대생들의 성수.",
+                    "역무원들이 교내 전체에서 유독 과하게 친절하다는 소문이 있다. 사회복지대 앞이라 민원이나 서비스 평가에 매우 민감하기 때문이라는 카더라가 돌고 있다."
+                ]
+            },
+            "B04": {
+                name: "미술사회대",
+                engName: "Fine Arts & Social Sciences",
+                otherName: "美術社会大",
+                addr: "효빈광역시 북구 소조동",
+                desc: "낭만과 현실, 예술과 사회비판이 아슬아슬하게 교차하는 혼돈의 역. <a href='미술대학.html' class='wiki-link'>미술대학</a>과 사회과학대학 사이에 위치해 있다.",
+                detail: "한쪽 출구에서는 붉은 글씨로 대자보를 작성하며 열띤 정치/사회 토론을 벌이는 사회대생들이, 반대쪽 출구에서는 철야 야간 작업(야작)에 찌들어 거대한 화구통과 캔버스를 메고 널브러진 미대생들이 공존하는 기묘한 뷰를 자랑한다. 특히 미대생들의 압도적인 화구 부피 때문에 등하교 시간대 승하차 지연이 가장 자주 발생하는 마의 구간이기도 하다.",
+                prev: { id: "B03", name: "사회복지대" },
+                next: { id: "B05", name: "법전원" },
+                nearby: ["미술대학 1~3호관", "디자인대학", "사회과학대학 본관"],
+                tmi: [
+                    "승강장의 회색 콘크리트 벽면 전체가 미대생들에게 합법적인 캔버스로 제공되며, 매 학기 졸업반의 광기 어린(...) 아방가르드 벽화로 리뉴얼된다.",
+                    "역사 공기에 유화 물감, 시너(Thinner), 그리고 사회대생들이 피우는 담배 냄새와 커피 찌든 내가 오묘하게 섞여서 난다."
+                ]
+            },
+            "B05": {
+                name: "법전원",
+                engName: "Law School",
+                otherName: "法務大学院",
+                addr: "효빈광역시 서구 당선동",
+                desc: "효빈대 최고의 아웃풋을 자랑하는 18층짜리 거대 랜드마크 '정의의 탑', <a href='법학전문대학원.html' class='wiki-link'>법학전문대학원</a> 역.",
+                detail: "교내 전철역 중 가장 조용하고 엄숙한 분위기(사실상 독서실)를 유지한다. 예비 법조인인 로스쿨생들의 멘탈과 면학 분위기를 보호하기 위해 안내방송 볼륨이 일반 역의 30% 수준으로 하향 세팅되어 있으며, 스크린도어 작동음마저 거의 들리지 않게 특수 무소음 튜닝이 되어 있다. 승강장에서 함부로 떠들면 따가운 눈총을 받는다.",
+                prev: { id: "B04", name: "미술사회대" },
+                next: { id: "B06", name: "효빈대중앙환승장", url: "효빈대_중앙환승장역.html" },
+                nearby: ["법학전문대학원(정의의 탑)", "성운관(고시반 전용 열람실)", "상과대학 건물 일부"],
+                tmi: [
+                    "승강장 벤치나 스크린도어 구석에 수험용 육법전서나 팔뚝만 한 판례집이 버려져(?) 있는 것을 종종 볼 수 있는데, 절대 주우면 안 된다. 화장실 간 고시생이 자리(영역)를 표시해 둔 것이다.",
+                    "1월 변호사 시험 기간이 다가오면 역사 전체에 숨이 턱 막힐 듯한 살기가 감돌며, 이어폰을 꽂고 중얼중얼 판례를 랩 하듯 외우는 학생들을 볼 수 있다."
+                ]
+            },
+            // B06은 별도 중앙환승장 파일
+            
+            "B07": {
+                name: "예술대",
+                engName: "College of Arts",
+                otherName: "芸術大",
+                addr: "효빈광역시 서구 당선동",
+                desc: "역사 자체가 이미 하나의 거대한 갤러리이자 버스킹 공연장. <a href='예술대학.html' class='wiki-link'>예술대학</a>과 직접 연결된 감성의 성지.",
+                detail: "단순한 교통 인프라를 넘어, 조명부터 바닥 타일의 질감까지 예술대학 교수진과 학생들의 자문이 100% 반영된 교내 최고의 미관 디자인 역이다. 대합실 중앙에는 누구나 칠 수 있는 그랜드 피아노가 한 대 놓여 있어 음대생들의 즉흥 쇼팽 연주나 밴드 키보디스트의 애니송 커버가 울려 퍼지며, 역 앞 광장은 댄스 동아리들의 릴스(Reels) 촬영과 버스킹 무대로 24시간 에너지가 넘친다.",
+                prev: { id: "B06", name: "효빈대중앙환승장", url: "효빈대_중앙환승장역.html" },
+                next: { id: "B08", name: "자연대" },
+                nearby: ["예술대학 1~2호관", "음악대학 콘서트홀", "무용대학 실기실", "동아리관(CiRCLE 합주실)"],
+                tmi: [
+                    "남자 화장실 거울과 타일에 유성 매직으로 그려진 정체불명의 캐릭터 낙서 퀄리티가 현대미술 뺨치게 높아서, 시설과에서 지우기를 포기하고 아예 아크릴 액자를 씌워 보존 중이라는 후문이 있다.",
+                    "동아리관 지하의 'CiRCLE' 방음 합주실에서 베이스 앰프를 최대치로 올리면, 이 역의 승강장 바닥 타일이 미세하게 진동(떨림)하는 것을 발바닥으로 느낄 수 있다."
+                ]
+            },
+            "B08": {
+                name: "자연대",
+                engName: "College of Natural Sciences",
+                otherName: "自然大",
+                addr: "효빈광역시 서구 당선동",
+                desc: "기초과학의 산실이자 우주와 자연의 법칙을 묵묵히 탐구하는 <a href='자연과학대학.html' class='wiki-link'>자연과학대학</a> 거점역.",
+                detail: "사계절 내내 하얀 실험복(랩 가운)을 휘날리며 초췌한 몰골로 탑승하는 랩실 대학원생들의 주 서식지다. 역 주변으로 전북대학교의 명물 '건지 광장'을 완벽하게 오마주한 초대형 인공 호수 '건지 오리 연못'이 펼쳐져 있어, 모노레일 창밖으로 캠퍼스 내에서 가장 평화롭고 아름다운 물의 풍경을 감상할 수 있는 힐링 스팟이기도 하다.",
+                prev: { id: "B07", name: "예술대" },
+                next: { id: "B09", name: "베르데홀" },
+                nearby: ["자연과학대학 1~3호관", "건지 오리 연못", "키라키라 천문관측소", "스마트 유기농 식물원"],
+                tmi: [
+                    "가끔 승강장에 서서, 진입하는 B선 모노레일의 원심력과 궤도 곡률을 진지하게 아이패드에 수식으로 계산하고 있는 물리학과 학생이 심심찮게 목격된다.",
+                    "봄철이 되면 연못에서 탈출한 거위나 오리 가족들이 단체로 역 입구나 에스컬레이터를 점거하는 바람에, 수의대생들이 포획망을 들고 출동하는 소동이 벌어지곤 한다."
+                ]
+            },
+            "B09": {
+                name: "베르데홀",
+                engName: "Verde Hall",
+                otherName: "ベルデホール",
+                addr: "효빈광역시 서구 당선동",
+                desc: "효빈대 서브컬처 인프라의 알파이자 오메가. 덕업일치의 абсолю́т(절대적) 성지 <a href='베르데_홀.html' class='wiki-link'>베르데 홀</a> 역.",
+                detail: "민부선 총장의 'Verde(포용) & Shiny(도전)' 교육 철학이 물리적으로 집대성된 거대 복합 문화 시설 '베르데 홀'과 직결되는 역이다. 평소에도 공식 콜라보 카페의 한정판 굿즈를 사기 위한 오픈런 인파로 북적이며, 1년에 한 번 캠퍼스를 뒤집어놓는 대학 축제 <a href='HAF.html' class='wiki-link'>HAF(효빈 애니메이션 페스티벌)</a> 기간에는 전국에서 몰려든 오타쿠와 코스어들로 인해 문자 그대로 '헬게이트'가 열려 특별 교통 통제 인력이 배치된다.",
+                prev: { id: "B08", name: "자연대" },
+                next: { id: "B10", name: "북부 기숙사" },
+                nearby: ["베르데 홀 본관", "엠마의 빵집 분점", "HAF 상설 팝업 스토어", "방도도서관"],
+                tmi: [
+                    "스크린도어 상단 노선도에 누군가 '엠마 베르데' 캐릭터 스티커를 몰래 붙여놓았는데, 떼어내면 또 붙는 기현상이 반복되자 결국 역장이 포기하고 공식 마스코트처럼 방치 중이다.",
+                    "열차 진입 안내방송의 성우 목소리가 묘하게 특정 스쿨 아이돌 캐릭터(이탈리아계 혼혈)를 닮았다는 도시 전설이 파다하다. 물론 총장실은 긍정도 부정도 하지 않고 있다."
+                ]
+            },
+            "B10": {
+                name: "북부 기숙사",
+                engName: "North Dormitory",
+                otherName: "北部寄宿舎",
+                addr: "효빈광역시 북구 소조동",
+                desc: "무자비한 통금 시간과 아침 1교시 출석을 사수하려는 기숙사생들의 눈물겨운 생명줄.",
+                detail: "니나관(20층), 아와관(23층) 등 아파트 뺨치는 초거대 생활관 단지들을 책임지는 곳이다. 매일 아침 8시 40분에서 9시 사이, 1교시 지각을 면하기 위해 머리를 채 말리지도 못한 채 샴푸 냄새를 흩뿌리며 전력 질주하는 수천 명의 기숙사생들로 인해 역 전체가 흡사 전쟁터를 방불케 한다. 이 시간대 B선 모노레일은 효빈시 출근길 2호선 뺨치는 가축수송의 절정을 보여준다.",
+                prev: { id: "B09", name: "베르데홀" },
+                next: { id: "B11", name: "보건진료소" },
+                nearby: ["기숙사 니나관/아와관", "기숙사 1·2단지", "소금하우스(게스트하우스)", "스쿠터 수리소 '기어스'"],
+                tmi: [
+                    "역사 바로 앞에 위치한 편의점(CU)은 야식을 찾는 기숙사생들 덕분에 컵라면 및 삼각김밥 매출액이 교내 1위는 물론, 효빈시 전체 TOP 3 안에 랭크되는 기염을 토한다.",
+                    "새벽 막차 시간에는 술에 취해 비틀거리면서도 점호/통금 시간을 맞추기 위해 캐리비안의 해적처럼 미친 듯이 질주하는 청춘들의 런웨이가 매일 밤 개장한다."
+                ]
+            },
+            "B11": {
+                name: "보건진료소",
+                engName: "Health Clinic",
+                otherName: "保健診療所",
+                addr: "효빈광역시 서구 당선동",
+                desc: "학점과 스펙에 치여 몸과 마음이 병든(?) 청춘들의 따뜻한 쉼터. 교내 <a href='보건진료소.html' class='wiki-link'>보건진료소</a> 앞.",
+                detail: "학위 논문의 압박에 찌든 이공계/의과대 랩실 대학원생들의 무너진 멘탈을 심폐소생술 해주는 '캠퍼스 심리건강센터'가 2층으로 바로 연결되어 있다. 주변 병동과 요양 환자들을 배려하여 역사 내외부는 물론 승강장에서도 큰 소리로 떠들지 않고 정숙을 유지하는 것이 효빈대생들의 엄격한 암묵적 룰이다.",
+                prev: { id: "B10", name: "북부 기숙사" },
+                next: { id: "B12", name: "대운동장" },
+                nearby: ["보건진료소 본관", "캠퍼스 심리건강센터", "효빈대 어린이병원", "효빈대 암센터"],
+                tmi: [
+                    "과음한 다음 날(특히 목요일, 금요일 오전), 숙취라는 핑계의 응급처치(?)를 위해 생리식염수 수액을 맞으러 오픈런을 하는 좀비 같은 학생들이 많다. '119 부를 정도가 아니면 일단 보건소 역으로 가라'는 교내 격언이 있다.",
+                    "가끔 역 앞 광장에 헌혈의 집 '블루 아카이브' 콜라보 헌혈 버스가 정차하는 날이면, 아프던 학생들도 기적처럼 완치되어(...) 포토카드를 얻기 위해 줄을 서는 기적을 볼 수 있다."
+                ]
+            },
+            "B12": {
+                name: "대운동장",
+                engName: "Main Stadium",
+                otherName: "大運動場",
+                addr: "효빈광역시 서구 당선동",
+                desc: "효빈대 스포츠의 심장부이자 대규모 야외 공연의 메카, <a href='대운동장.html' class='wiki-link'>대운동장</a> 및 선샤인 노천극장 접근역.",
+                detail: "3.39km²의 평지 캠퍼스 특성을 극대화한 탁 트인 시야를 자랑하는 뷰(View) 맛집이다. 가을 HAF 축제 전야제나 대형 밴드 동아리의 연합 공연이 열릴 때면 역 주변 언덕이 거대한 스탠딩 콘서트장으로 변모한다. 역에서 내리자마자 강렬한 흙먼지 냄새와 인조 잔디 냄새, 그리고 청춘들의 땀 냄새가 물씬 풍겨오는 에너제틱한 공간이다.",
+                prev: { id: "B11", name: "보건진료소" },
+                next: { id: "B13", name: "본부. 충승당" },
+                nearby: ["대운동장 육상트랙", "선샤인 노천극장", "잔디 축구장", "야외 테니스장 및 풋살장"],
+                tmi: [
+                    "사범대 체육교육과 근장생들이 군가를 부르며 단체 구보를 뛸 때면, 다수의 발구름 때문에 역사 1층 바닥이 미세하게 쿵쿵 울리는 물리적 마법을 겪을 수 있다.",
+                    "대운동장 야간 라이트가 켜진 밤, B선 모노레일 창밖으로 내려다보는 캠퍼스의 탁 트인 야경이 '효빈대 8경' 중 1경으로 꼽힌다."
+                ]
+            },
+            "B13": {
+                name: "본부. 충승당",
+                engName: "University Headquaters",
+                otherName: "大学本部",
+                addr: "효빈광역시 서구 당선동",
+                desc: "수만 명의 대학을 움직이는 행정 심장부 <a href='본부.html' class='wiki-link'>대학본부</a>와 가장 오래된 붉은 벽돌의 역사관 <a href='충승당.html' class='wiki-link'>충승당</a>을 잇는 역.",
+                detail: "청바지와 과잠을 입은 학생들보다는 셔츠에 사원증을 멘 교직원과 조교들이 출퇴근용으로 가장 많이 애용하는 '정장 차림 핫플레이스'. 모노레일 승강장에서 본관 옥상의 친환경 정원과, 총장/시장님이 이용한다는 '효빈은행 본점 VIP실' 입구가 살짝 내려다보이는 권력 지향적인(?) 구조로 설계되었다.",
+                prev: { id: "B12", name: "대운동장" },
+                next: { id: "B14", name: "상과대 학생회관" },
+                nearby: ["대학본부 건물", "충승당(역사관)", "효빈은행 본점", "효빈대 유실물 보관소"],
+                tmi: [
+                    "운이 좋은 날엔 민부선 총장이 총장실 창밖을 내다보며 결재 서류를 읽는 모습을 승강장에서 목격할 수 있다. <del>물론 쌍안경으로 자세히 보면 결재 서류가 아니라 애니메이션 피규어 카탈로그일 확률이 99.9%다.</del>",
+                    "2월 학위수여식(졸업식) 시즌이 되면 역 앞 충승당 건물 주변은 학사모를 높게 던지는 졸업생들의 포토존으로 빈틈없이 꽉 찬다."
+                ]
+            },
+            "B14": {
+                name: "상과대 학생회관",
+                engName: "Student Union",
+                otherName: "学生会館",
+                addr: "효빈광역시 서구 당선동",
+                desc: "교내 여론, 동아리 정치, 그리고 굶주린 배(학식)의 완벽한 융합 메카. <a href='학생복지회관.html' class='wiki-link'>학생복지회관</a> 연결역.",
+                detail: "총학생회관과 수십 개의 동아리방이 밀집해 있어 교내에서 가장 포스터와 현수막이 많이 붙는 곳이다. 교내 라디오 스피커를 통제하는 'HBUS(효빈대 방송국)'가 인접해 있다. 무엇보다 점심시간인 12시가 되면 학생 식당 거대 푸드코트에서 뿜어져 나오는 갓 튀긴 돈까스와 김치찌개 냄새가 환풍구를 타고 승강장까지 직행하여, 하차하는 학생들의 위장을 무자비하게 공격한다.",
+                prev: { id: "B13", name: "본부. 충승당" },
+                // ★ 다음 역은 중앙환승장 파일로 이동
+                next: { id: "B15", name: "효빈대중앙환승장", url: "효빈대_중앙환승장역.html" },
+                nearby: ["학생복지회관(푸드코트)", "상과대학 1~3호관", "동아리관", "HBUS(효빈대 방송국)"],
+                tmi: [
+                    "점심시간 무렵 이 역을 지나면, HBUS 방송국 덕후 국원들이 무자비하게 틀어대는 J-POP과 서브컬처 애니메이션 OST가 스크린도어를 뚫고 강제로 고막에 주입된다. 귀를 막아도 소용없다.",
+                    "날씨가 유독 맑은 날이면, 학생회관 옥상에 신문지를 깔고 배달 온 짜장면 랩을 뜯으며 소주를 까는(?) 화석 선배들을 승강장에서 구경할 수 있다."
+                ]
+            }
+        };
+
+function loadStation() {
+            // 위에서 가져온 stationId를 사용합니다.
+            if (stationId && stationData[stationId]) {
+                const data = stationData[stationId];
+                
+                // 만약 이 역이 '별도 파일'로 가야 하는 역이라면 (혹시 모를 오류 방지)
+                if (data.url && !window.location.href.includes(data.url)) {
+                    location.href = data.url;
+                    return;
+                }
+
+                // 정보 표시
+                document.title = `${data.name}역 - 효빈위키`;
+                document.getElementById('page-title').innerText = `${data.name}역`;
+                document.getElementById('infobox-name').innerText = data.name;
+                document.getElementById('infobox-badge').innerText = stationId;
+                
+                document.getElementById('infobox-name-kr').innerText = data.name;
+                document.getElementById('infobox-name-eng').innerText = data.engName;
+                document.getElementById('infobox-name-other').innerText = data.otherName;
+                document.getElementById('infobox-addr').innerText = data.addr;
+                document.getElementById('nav-center-id').innerText = stationId;
+
+                // ★ 추가된 부분: 역 이름에 맞춰 승강장 이미지 동적 변경 (이미지/한국어이름.png 형식)
+                document.getElementById('platform-img').src = `이미지/${data.name}역_승강장.webp`;
+                document.getElementById('platform-img').alt = `이미지/${data.name}역_승강장`;
+
+                // -----------------------------------------------------------
+                // [이전 역 버튼]
+                // -----------------------------------------------------------
+                const prevDiv = document.getElementById('nav-prev');
+                if (data.prev) {
+                    const prevHref = data.prev.url ? data.prev.url : `?id=${data.prev.id}`;
+                    prevDiv.outerHTML = `
+                    <a href="${prevHref}" id="nav-prev" class="rail-nav-prev" style="color:#666; text-decoration:none; display:flex;">
+                        ${data.name.includes("환승장") ? "상과대 방면" : "이전 역"}<br>
+                        <b style="color:#000; margin:3px 0; display:block;">${data.prev.name}</b>
+                        ←
+                    </a>`;
+                } else {
+                    prevDiv.outerHTML = `<div id="nav-prev" class="rail-nav-prev" style="color:#ccc; cursor:default;">시점</div>`;
+                }
+
+                // -----------------------------------------------------------
+                // [다음 역 버튼]
+                // -----------------------------------------------------------
+                const nextDiv = document.getElementById('nav-next');
+                if (data.next) {
+                    const nextHref = data.next.url ? data.next.url : `?id=${data.next.id}`;
+                    nextDiv.outerHTML = `
+                    <a href="${nextHref}" id="nav-next" class="rail-nav-next" style="color:#666; text-decoration:none; display:flex;">
+                        ${data.name.includes("기지") ? "중앙도서관 방면" : "다음 역"}<br>
+                        <b style="color:#000; margin:3px 0; display:block;">${data.next.name}</b>
+                        →
+                    </a>`;
+                } else {
+                    nextDiv.outerHTML = `<div id="nav-next" class="rail-nav-next" style="color:#ccc; cursor:default;">종점</div>`;
+                }
+
+                // 내용 채우기
+                document.getElementById('station-overview').innerHTML = `효빈대 B선의 역. ${data.desc}`;
+                document.getElementById('station-detail').innerHTML = data.detail;
+
+                // 주변 정보
+                const nearbyBody = document.getElementById('exit-table-body');
+                nearbyBody.innerHTML = '';
+                if(data.nearby) {
+                    data.nearby.forEach((item, index) => {
+                        nearbyBody.innerHTML += `<tr><td style="text-align:center; font-weight:900;">${index + 1}</td><td>${item}</td></tr>`;
+                    });
+                }
+
+                // TMI
+                const tmiList = document.getElementById('tmi-list');
+                tmiList.innerHTML = '';
+                if(data.tmi) {
+                    data.tmi.forEach(item => {
+                        tmiList.innerHTML += `<li>${item}</li>`;
+                    });
+                }
+
+                // 승강장 표 링크
+                const prevUrl = data.prev ? (data.prev.url ? data.prev.url : '?id='+data.prev.id) : '#';
+                const nextUrl = data.next ? (data.next.url ? data.next.url : '?id='+data.next.id) : '#';
+
+                document.getElementById('platform-prev-link').innerHTML = data.prev ? `<a href="${prevUrl}" class="wiki-link">${data.prev.name}</a> ↑` : '시점';
+                document.getElementById('platform-next-link').innerHTML = data.next ? `↓ <a href="${nextUrl}" class="wiki-link">${data.next.name}</a>` : '종점';
+
+                document.getElementById('dest-up').innerText = "교통대학 기지 방면";
+                document.getElementById('dest-down').innerText = "효빈대중앙환승장 방면";
+
+            } else {
+                document.getElementById('page-title').innerText = "역 정보를 찾을 수 없습니다 (" + stationId + ")";
+                document.querySelector('.infobox').style.display = 'none';
+            }
+        }
+        // 검색 기능은 hb_wiki_core.js가 처리하므로 여기서는 빈 함수로 두거나 삭제해도 됨
+        // 하지만 기존 호출 호환성을 위해 남겨둠
+        window.handleSearch = function(id) {
+             if(window.HB_handleSearch) window.HB_handleSearch(id);
+        }
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            if(box) { box.innerText = text; box.style.display = 'block'; setTimeout(() => { box.style.display = 'none'; }, 2000); }
+        }
+        function toggleFavorite() { showMsg('즐겨찾기에 추가되었습니다.'); }
+
+        // 핵심 변경사항: window.onload 대기 없이 DOM이 그려지자마자 실행하도록 변경!
+        document.addEventListener('DOMContentLoaded', loadStation);
+    </script>
+    
+    <script src="assets/wiki_index.js" defer></script>
+    <script src="assets/hb_wiki_core.js" defer></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+
+</body>
+</html>

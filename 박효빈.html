@@ -1,0 +1,1245 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>박효빈 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        /* 1. 전역 스타일 및 변수 */
+        :root { 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA; 
+            --wiki-table-header: #7777AA;
+            --wiki-table-header-text: #ffffff;
+        }
+
+        /* 위키 도구 버튼 스타일 */
+        .wiki-btn-group { display: flex; border-radius: 4px; overflow: hidden; border: 1px solid #ccc; }
+        .wiki-tool-btn { 
+            padding: 4px 12px; background: #fff; font-size: 13px; color: #555; 
+            border-right: 1px solid #ccc; cursor: pointer; text-decoration: none !important; display: flex; align-items: center;
+        }
+        .wiki-tool-btn:last-child { border-right: none; }
+        .wiki-tool-btn:hover { background: #f0f0f0; color: #000; }
+        .wiki-tool-btn.active { background: #0055aa; color: #fff; border-color: #0055aa; }
+
+        [data-theme='dark'] { 
+            --wiki-main: #9999CC; 
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            word-break: keep-all; 
+            margin: 0; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* 헤딩 스타일 */
+        h1 {
+            font-size: 2.5rem !important; 
+            font-weight: 700 !important; 
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        h2 {
+            font-size: 1.85rem !important; 
+            font-weight: 700 !important; 
+            margin-top: 2.5rem; 
+            margin-bottom: 1rem; 
+            border-bottom: 1px solid var(--wiki-border);
+            padding-bottom: 0.3rem;
+            color: var(--wiki-link);
+        }
+        h3 {
+            font-size: 1.45rem !important; 
+            font-weight: 700 !important; 
+            margin-top: 1.8rem; 
+            margin-bottom: 0.8rem; 
+        }
+
+        .wiki-container { 
+            max-width: 1152px; 
+            margin: 0 auto; 
+            padding: 20px 40px; 
+            border-left: 1px solid var(--wiki-border); 
+            border-right: 1px solid var(--wiki-border); 
+            min-height: 100vh; 
+            background-color: var(--wiki-bg);
+        }
+
+        /* 일반 표 스타일 */
+        table.data-table, table.infobox-table { 
+            border-collapse: collapse !important; 
+            width: 100% !important; 
+            margin: 15px 0; 
+            border: 1px solid var(--wiki-border) !important; 
+            table-layout: auto !important; 
+        }
+        .data-table th, .data-table td, .infobox-table th, .infobox-table td { 
+            border: 1px solid var(--wiki-border) !important; 
+            padding: 8px 12px; 
+            text-align: center; 
+            vertical-align: middle; 
+        }
+        .data-table th { 
+            background-color: var(--wiki-table-header); 
+            color: var(--wiki-table-header-text); 
+            font-weight: bold; 
+        }
+
+        /* 내비게이션 박스 전용 스타일 (삽입된 부분) */
+        .wiki-nav-table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            border: 2px solid #7777aa;
+            background-color: #fff;
+            font-size: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .wiki-nav-table td {
+            border: 1px solid #ddd;
+            padding: 5px 8px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .wiki-nav-table .header-cell {
+            background-color: #7777aa;
+            color: #fff;
+            font-weight: bold;
+            border: 1px solid #7777aa;
+        }
+        .wiki-nav-table .sub-header {
+            font-size: 0.85em;
+            color: #7777aa;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .wiki-nav-table .col-20 { width: 20%; }
+        .wiki-nav-table .symbol-img { height: 40px; vertical-align: middle; }
+        .wiki-nav-table .slogan-img { width: 70px; vertical-align: middle; }
+        .wiki-nav-table a { color: #0275d8; text-decoration: none; }
+        .wiki-nav-table a:hover { text-decoration: underline; }
+        [data-theme='dark'] .wiki-nav-table { background-color: #1e1e1e; border-color: #9999cc; }
+        [data-theme='dark'] .wiki-nav-table .header-cell { background-color: #555588; border-color: #555588; }
+        [data-theme='dark'] .wiki-nav-table .sub-header { color: #aaaadd; }
+        [data-theme='dark'] .wiki-nav-table td { border-color: #444; }
+
+
+        /* 인포박스 */
+        .infobox { 
+            border: 1px solid var(--wiki-main); 
+            background-color: #fff; 
+            width: 100%; max-width: 320px; 
+            font-size: 0.85rem; 
+            margin-bottom: 20px; 
+            float: right; 
+            margin-left: 20px; 
+            border-radius: 4px; 
+            overflow: hidden; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        [data-theme='dark'] .infobox { background-color: #2d2f34; }
+
+        .infobox-title { 
+            background-color: var(--wiki-main); 
+            color: white; 
+            padding: 10px; 
+            text-align: center; 
+            font-size: 1.2rem; 
+            font-weight: bold; 
+        }
+        .infobox-image {
+            text-align: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--wiki-border);
+            background: white;
+        }
+        .infobox-image img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            display: block;
+            margin: 0 auto;
+        }
+        .infobox th { 
+            background-color: var(--wiki-gray-bg); 
+            color: var(--wiki-main); 
+            width: 90px; 
+            text-align: center; 
+            padding: 5px 8px; 
+            font-weight: bold;
+            border: 1px solid var(--wiki-border) !important;
+        }
+        .infobox td { 
+            text-align: left; 
+            padding: 5px 8px; 
+            border: 1px solid var(--wiki-border) !important;
+        }
+
+        /* 링크 및 기타 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        .wiki-badge { display: inline-block; padding: 2px 6px; border-radius: 3px; color: white; font-weight: bold; font-size: 0.7rem; margin-right: 3px; vertical-align: middle; cursor: pointer; }
+        .badge-minju { background-color: #004ea2; }
+        .badge-gukhim { background-color: #e61e2b; }
+        .badge-jinbo { background-color: #FFED00; color: #000; }
+        .badge-independent { background-color: #999999; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        
+        .category-box { background: #fff; border: 1px solid var(--wiki-border); padding: 5px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        [data-theme='dark'] .category-box { background: #2d2f34; border-color: #444; }
+        
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc .lvl-2 { padding-left: 15px; }
+        .toc .lvl-3 { padding-left: 30px; }
+
+        /* 각주 호버보드 */
+        #wiki-footnote-tooltip { 
+            position: absolute; display: none; background: var(--wiki-gray-bg); border: 2px solid var(--wiki-main); 
+            padding: 12px; font-size: 0.85rem; max-width: 320px; z-index: 100000; 
+            box-shadow: 4px 4px 20px rgba(0,0,0,0.3); border-radius: 8px; pointer-events: none; color: var(--wiki-text);
+        }
+        .wiki-fn-link { vertical-align: super; font-size: 0.7em; color: var(--wiki-link); cursor: pointer; text-decoration: none; margin-left: 2px; font-weight: bold; }
+
+        /* 인용구 박스 */
+        .quote-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--wiki-main);
+            padding: 15px;
+            margin: 10px 0;
+            font-style: italic;
+        }
+        [data-theme='dark'] .quote-box { background-color: #2a2a2a; }
+
+        /* 상세 정보 박스 (분석용) */
+        .detail-box {
+            background-color: #f0f7ff;
+            border: 1px solid #cce5ff;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        .detail-title {
+            font-weight: bold;
+            color: #0055aa;
+            margin-bottom: 5px;
+            display: block;
+            border-bottom: 1px dashed #0055aa;
+            padding-bottom: 5px;
+        }
+        
+        /* 볼드체 강조 (사용자 요청) */
+        strong { font-weight: 900; color: #000; }
+        [data-theme='dark'] strong { color: #fff; }
+        del { text-decoration: line-through; color: gray; }
+        /* 효빈위키 여담 섹션 전용 스타일 (기존 위키 스타일에 맞춰 조절 가능) */
+    .wiki-content-box { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; line-height: 1.6; color: #333; }
+    .wiki-list { padding-left: 20px; }
+    .wiki-list > li { margin-bottom: 20px; }
+    .wiki-link { color: #0066cc; text-decoration: none; word-break: keep-all; }
+    .wiki-link:hover { text-decoration: underline; }
+    .strike { text-decoration: line-through; color: #888; }
+    
+    /* 우측 이미지 박스 (효빈위키 스타일) */
+    .wiki-image-right {
+        float: right;
+        width: 350px;
+        margin: 0 0 15px 20px;
+        border: 1px solid #ccc;
+        background-color: #f9f9f9;
+        padding: 5px;
+        text-align: center;
+        font-size: 0.9em;
+    }
+    .wiki-image-right img { width: 100%; height: auto; display: block; border: 1px solid #ddd; }
+    .wiki-image-caption { margin-top: 8px; color: #555; font-weight: bold; }
+    
+    /* 인용구 스타일 */
+    .wiki-quote {
+        border-left: 4px solid #005BAC;
+        background-color: #f5f5f5;
+        padding: 10px 15px;
+        margin: 10px 0;
+        color: #555;
+    }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-footnote-tooltip"></div>
+
+    <!-- 상단바 -->
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="handleSearchFromNav('효빈광역시')">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 또는 번호 검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">박효빈</h1>
+            <div class="wiki-btn-group shadow-sm mb-4">
+                <a href="토론.html" class="wiki-tool-btn">토론</a>
+                <a href="수정.html" class="wiki-tool-btn">편집</a>
+                <a href="역사.html" class="wiki-tool-btn">역사</a>
+                <div class="wiki-tool-btn" onclick="showMsg('즐겨찾기에 추가됨')">★</div>
+            </div>
+        </div>
+
+<div class="category-box">
+    <span class="font-bold text-[#7777AA]">분류:</span> 
+    <a href="https://namu.wiki/w/대한민국의%20광역자치단체장" class="wiki-link" target="_blank">대한민국의 광역자치단체장</a> | 
+    <span class="wiki-link" onclick="handleSearchFromNav('효빈광역시장')">효빈광역시장</span> | 
+    <a href="https://namu.wiki/w/분류:1996년%20출생" class="wiki-link" target="_blank">1996년 출생</a> | 
+    <a href="https://namu.wiki/w/분류:더불어민주당%20소속%20정치인" class="wiki-link" target="_blank">더불어민주당 소속 정치인</a> |
+    <span class="wiki-link" onclick="handleSearchFromNav('효빈대학교')">효빈대학교 출신</span> |
+    <span class="wiki-link" onclick="handleSearchFromNav('서구')">서구(효빈광역시) 출신</span> | 
+    <span class="wiki-link" onclick="handleSearchFromNav('러브라이버')">러브라이버</span> |
+        <span class="wiki-link" onclick="handleSearchFromNav('뱅드림 덕후')">뱅드림 덕후</span> |
+            <span class="wiki-link" onclick="handleSearchFromNav('북구')">북구(효빈) 거주</span> |   
+    <span class="wiki-link" onclick="handleSearchFromNav('성공한 덕후')">성공한 덕후</span>
+</div>
+<div class="no-autolink">
+    <div id="hyobin-all-mayors-nav"></div>
+    <script src="js/전체효빈광역시장.js"></script>
+    <script> renderAllHyobinMayorsNav('hyobin-all-mayors-nav'); </script>
+</div>
+
+        <!-- ======================= 내비게이션 박스 끝 ======================= -->
+
+       <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4">
+<div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 md:order-1">
+    <div class="toc-title">목차</div>
+    <ul>
+        <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+        <li>2. <a href="#s-2" class="wiki-link">생애 (Backstory)</a>
+            <ul>
+                <li>2.1. <a href="#s-2-1" class="wiki-link">윤대환 시대의 피해자 (가정 붕괴)</a></li>
+                <li>2.2. <a href="#s-2-2" class="wiki-link">학교폭력과 각성 ("살기 위해 살을 깎다")</a></li>
+                <li>2.3. <a href="#s-2-3" class="wiki-link">대학 시절: 15학번 쓰리잡 청년과 희망TV</a></li>
+                <li>2.4. <a href="#s-2-4" class="wiki-link">일본 여행과 복지 공부</a></li>
+                <li>2.5. <a href="#s-2-5" class="wiki-link">국회 연설과 복지 전문가로서의 각성</a></li>
+                <li>2.6. <a href="#s-2-6" class="wiki-link">정계 입문의 방아쇠: "가난하면 자유를 모른다고?"</a></li>
+            </ul>
+        </li>
+        <li>3. <a href="#s-3" class="wiki-link">정치 활동: 시의원 지망생에서 광역시장으로</a>
+            <ul>
+                <li>3.1. <a href="#s-3-1" class="wiki-link">2022년 효빈시의 정치 공백과 전략공천</a></li>
+                <li>3.2. <a href="#s-3-2" class="wiki-link">윤재훈과의 재회, 그리고 전설의 토론회</a></li>
+                <li>3.3. <a href="#s-3-3" class="wiki-link">2026년 제9회 지선 리매치와 광기의 토론회</a></li>
+            </ul>
+        </li>
+        <li>4. <a href="#s-4" class="wiki-link">주요 정책 활동 (Hyobin Policy)</a>
+            <ul>
+                <li>4.1. <a href="#s-4-1" class="wiki-link">효빈 패스 (H-Pass)</a></li>
+                <li>4.2. <a href="#s-4-2" class="wiki-link">청년 안심 주택 '효빈 하우스' </a></li>
+                <li>4.3. <a href="#s-4-3" class="wiki-link">심야 안심 귀가 버스 (올빼미) </a></li>
+                <li>4.4. <a href="#s-4-4" class="wiki-link">덕업일치 창업 지원센터 </a></li>
+                <li>4.5. <a href="#s-4-5" class="wiki-link">블루 버드 멘토단 (상세)</a></li>
+                <li>4.6. <a href="#s-4-6" class="wiki-link">L-Project (서브컬처 도시)</a></li>
+                <li>4.7. <a href="#s-4-7" class="wiki-link">실전형 노동 정책</a></li>
+                <li>4.8. <a href="#s-4-8" class="wiki-link">골든 로드 (a.k.a 카스밍 로드)</a></li>
+                <li>4.9. <a href="#s-4-9" class="wiki-link">시정 게시대 혁신 & 가족돌봄청년 조례</a></li>
+            </ul>
+        </li>
+        <li>5. <a href="#s-5" class="wiki-link">사건 사고 (a.k.a 효빈시 4대 대첩)</a>
+            <ul>
+                <li>5.1. <a href="#s-5-1" class="wiki-link">시청 내부 폭행 및 인종차별 사건 (김 팀장 사건)</a></li>
+                <li>5.2. <a href="#s-5-2" class="wiki-link">탕쿠쿠 대첩 (와이탄의 기적)</a></li>
+                <li>5.3. <a href="#s-5-3" class="wiki-link">사아야 빵 사건</a></li>
+                <li>5.4. <a href="#s-5-4" class="wiki-link">중수역 등신대 수호</a></li>
+                <li>5.5. <a href="#s-5-5" class="wiki-link">필리핀 케손시티 자매결연</a></li>
+                <li>5.6. <a href="#s-5-6" class="wiki-link">덕후 공무원 폭행 사건 (상세)</a></li>
+                <li>5.7. <a href="#s-5-7" class="wiki-link">사아야 빵 사건 (엠마 빵 사건)</a></li>
+                <li>5.8. <a href="#s-5-8" class="wiki-link">필리핀 케손시티 자매결연 (상세)</a></li>
+            </ul>
+        </li>
+        <li>6. <a href="#s-6" class="wiki-link">논란 및 비판 (억지 논란)</a>
+            <ul>
+                <li>6.1. <a href="#s-6-1" class="wiki-link">특정 마스코트 과도한 편애 논란</a></li>
+                <li>6.2. <a href="#s-6-2" class="wiki-link">지역 농산물(토마토) 고의 배척 및 홀대 논란</a></li>
+                <li>6.3. <a href="#s-6-3" class="wiki-link">초호화 관저 '중수카스미 아파트' 세금 낭비 억까</a></li>
+                <li>6.4. <a href="#s-6-4" class="wiki-link">집무실 체력단련장 사유화 의혹</a></li>
+                <li>6.5. <a href="#s-6-5" class="wiki-link">시내버스 도색(스타더스트 작전) 개인 사유화 의혹</a></li>
+                <li>6.6. <a href="#s-6-6" class="wiki-link">'블루버드 멘토단' 오타쿠 특혜 채용 의혹</a></li>
+                <li>6.7. <a href="#s-6-7" class="wiki-link">품위유지비 애니메이션 굿즈 사적 유용 억까 의혹</a></li>
+            </ul>
+        </li>
+        <li>7. <a href="#s-7" class="wiki-link">인간 관계 (사제 연대)</a></li>
+        <li>8. <a href="#s-8" class="wiki-link">여담</a></li>
+        <li>9. <a href="#s-9" class="wiki-link">소속 정당</a></li>
+        <li>10. <a href="#s-10" class="wiki-link">선거 이력</a></li>
+        <li>11. <a href="#s-11" class="wiki-link">둘러보기</a></li>
+    </ul>
+</div>
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
+                <div class="infobox-title">
+                    <span style="font-size: 0.85rem; font-weight: normal; display: block; margin-bottom: 4px; color: #e2e8f0;">제 19대 효빈광역시장<br>제 20대 효빈광역시장 </span>
+                    박효빈<br>
+                    <span class="text-sm font-normal">Park Hyo-bin | 朴孝彬</span>
+                </div>
+                <div class="infobox-image">
+                    <img src="이미지/박효빈.png" alt="효빈광역시장" onerror="this.src='https://via.placeholder.com/150x200?text=Park+Hyo-bin';">
+                </div>
+                <table class="infobox-table">
+                    <tr>
+                        <th>출생</th>
+                        <td>1996년 7월 9일 (만 29세)<br><span class="text-xs"><a href="서구.html" class="wiki-link">효빈광역시 서구</a> 당선동</span></td>
+                    </tr>
+                    <tr>
+                        <th>거주지</th>
+                        <td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구.html" class="wiki-link">북구</a> 중수동</td>
+                    </tr>
+                    <tr>
+                        <th>현직</th>
+                        <td><strong><a href="효빈광역시장.html" class="wiki-link">효빈광역시장</a></strong><br><a href="효빈대학교.html" class="wiki-link">효빈대학교</a> 총동창회 이사</td>
+                    </tr>
+                    <tr>
+                        <th>재임 기간</th>
+                        <td><strong>제19·20대 (민선 8·9기)</strong><br>2022년 7월 1일 ~ 현직</td>
+                    </tr>
+                    <tr>
+                        <th>서명</th>
+                        <td>
+                            <img src="이미지/박효빈 시장 싸인.png" alt="박효빈 시장 서명" style="display: block; margin: 0 auto; max-width: 100%;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>정당</th>
+                        <td><span class="wiki-badge badge-minju">더불어민주당</span></td>
+                    </tr>
+                    <tr>
+                        <th>신체</th>
+                        <td>174.5cm, 마른 근육질 체형</td>
+                    </tr>
+                    <tr>
+                        <th>가족</th>
+                        <td>아버지 박진수, 어머니 안다야·마리벨 아벨라<br>여동생 박슬아, 이부동생 3명</td>
+                    </tr>
+                    <tr>
+                        <th>학력</th>
+                        <td><a href="족포초등학교.html" class="wiki-link">족포초등학교</a> <span class="text-xs">(졸업)</span><br><a href="내성중학교.html" class="wiki-link">내성중학교</a> <span class="text-xs">(졸업)</span><br><a href="효빈동고등학교.html" class="wiki-link">효빈동고등학교</a> <span class="text-xs">(졸업)</span><br><a href="효빈대학교.html" class="wiki-link">효빈대학교</a> 사회복지학대학 <span class="text-xs">(사회복지정책학 / 학사)</span></td>
+                    </tr>
+                    <tr>
+                        <th>병역</th>
+                        <td><a href="https://namu.wiki/w/사회복무요원" class="wiki-link" target="_blank">사회복무요원</a> 소집해제<br><span class="text-xs">(효빈광역시 북구청 / 2018~2020)</span></td>
+                    </tr>
+                    <tr>
+                        <th>별명</th>
+                        <td>성덕 시장, 효빈시의 아이돌, 혐오 분쇄기, 한바다 아빠</td>
+                    </tr>
+                    <tr>
+                        <th>최애<br><span class="text-xs">(Oshi)</span></th>
+                        <td>
+                            <strong><a href="나카스 카스미.html" class="wiki-link">나카스 카스미</a></strong> <span class="text-xs">(<a href="오사카 시즈쿠.html" class="wiki-link">시즈쿠</a>와의 커플링 강력 지지)</span><br>
+                            <span class="text-xs" style="line-height: 1.4; display: inline-block; margin-top: 4px;">
+                                <strong>[러브라이브! 시리즈]</strong><br>
+                                <a href="아야세 에리.html" class="wiki-link">에리</a>, <a href="사쿠라우치 리코.html" class="wiki-link">리코</a>, <a href="탕 쿠쿠.html" class="wiki-link">쿠쿠</a>, <a href="안요지 히메.html" class="wiki-link">히메</a><br>
+                                <strong>[BanG Dream!]</strong><br>
+                                <a href="야마부키 사아야.html" class="wiki-link">사아야</a>, <a href="아오바 모카.html" class="wiki-link">모카</a>, <a href="와카미야 이브.html" class="wiki-link">이브</a>, <a href="마츠바라 카논.html" class="wiki-link">카논</a>, <a href="미나토 유키나.html" class="wiki-link">유키나</a>, <a href="쿠라타 마시로.html" class="wiki-link">마시로</a>, <a href="타카마츠 토모리.html" class="wiki-link">토모리</a>, <a href="와카바 무츠미.html" class="wiki-link">무츠미</a><br>
+                                <del style="color: #999;">비서실장: 제발 그만하세요</del>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>MBTI</th>
+                        <td><a href="https://namu.wiki/w/ESFP" class="wiki-link" target="_blank">ESFP</a> (자유로운 영혼의 연예인)</td>
+                    </tr>
+                </table>
+            </aside>
+        </div>
+
+<h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <blockquote>
+            <strong>"덕후가 세상을 바꾼다. 그것도 아주 힙하게."</strong><br>
+            <strong>"헌정 사상 최연소 광역시장, 그리고 <a href="러브 라이브!.html" class="wiki-link">러브 라이브!</a>가 낳은 괴물."</strong>
+        </blockquote>
+        <p>
+            <a href="대한민국.html" class="wiki-link">대한민국</a>의 <a href="정치인.html" class="wiki-link">정치인</a>이자 제19·20대 <a href="효빈광역시.html" class="wiki-link">효빈광역시</a>장(민선 8·9기). 1996년생으로 2022년 지방선거에서 <strong>만 26세</strong>의 나이로 당선되며 헌정 사상 최연소 광역자치단체장이라는 타이틀을 거머쥐었고, 2026년 제9회 지선에서도 <strong>76.79%</strong>라는 압도적인 지지율로 가볍게 재선에 성공했다.
+        </p>
+        <p>
+            <strong>'성공한 덕후(성덕)'</strong>이자 <strong>'미친 디테일의 행정가'</strong>라는, 도저히 양립할 수 없을 것 같은 두 가지 속성을 동시에 만렙으로 찍은 인물이다. 과거 <a href="윤대환.html" class="wiki-link">윤대환</a> 전 시장의 무능한 교통 정책과 혐오 정치로 무너진 가정사를 딛고 일어나, 자신을 억압하던 기득권을 압도적인 실력으로 짓밟으며 효빈시를 전 세계 서브컬처 팬들의 성지로 만들었다. <del>이쯤 되면 시장직은 덕질을 편하게 하기 위한 수단이 아닐까 합리적 의심이 든다</del>
+        </p>
+
+<h2 id="s-2" class="anchor-offset">2. 생애 (Backstory)</h2>
+
+        <h3 id="s-2-1" class="anchor-offset">2.1. 윤대환 시대의 피해자 (가정 붕괴)</h3>
+        <p>
+            1996년 7월 9일, <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> 서구 당선동의 낡은 주택가에서 한국인 아버지(박진수)와 필리핀인 어머니(안다야) 사이에서 태어났다. 당시 지방 도시에서 <strong>다문화 가정</strong>이라는 배경은 그 자체로 차별과 낙인의 굴레였다. 설상가상으로 그의 어린 시절은 <a href="윤대환.html" class="wiki-link">윤대환</a> 전 시장이 싸지른 똥을 온몸으로 받아낸 피눈물 나는 역사였다.
+        </p>
+        <p>
+            가장의 무게를 짊어지던 아버지는 중학생 시절 당했던 악질적인 학교폭력 후유증으로 인해 <strong>뇌전증(간질)</strong> 판정을 받으며 근로 능력을 상실했고, 생계를 위해 거리에서 고물을 수집해야 했다. 어린 박효빈 역시 아버지를 도와 고물 수레를 끌며 절대 빈곤의 늪에서 허덕였다. 결정타는 2006년에 터졌다. 윤대환의 막장 같은 <strong>철도 말살 정책</strong>으로 인해 <a href="5호선.html" class="wiki-link"><span style="color:#EE0022; font-weight:bold;">5호선</span></a> 공사가 무기한 중단되었고, 당시 공사 현장에서 일용직으로 일하던 아버지는 하루아침에 실직자가 되었다. 엎친 데 덮친 격으로 가세가 급격히 기울었고, 결국 부모님은 이혼의 아픔을 겪게 된다. <strong>이 뼈아픈 가정 붕괴 사건은 훗날 박효빈이 '복지'와 '교통권'을 정치의 최우선 핵심 목표로 삼는 결정적 계기</strong>가 되었다.
+        </p>
+
+        <h3 id="s-2-2" class="anchor-offset">2.2. 학교폭력과 각성 ("살기 위해 살을 깎다")</h3>
+        <p>
+            당시 박효빈의 집은 바퀴벌레가 들끓고 비만 오면 천장에서 물이 새는 낡은 연립주택이었으며, 싼값에 배를 채우기 위해 유통기한이 임박한 편의점 폐기 라면, 빵, 삼각김밥만 먹다 보니 전형적인 <strong>'빈곤 비만'</strong>이 찾아왔다. 그는 당시 <a href="족포초등학교.html" class="wiki-link">족포초등학교</a>에 다녔는데, 하필이면 당시 시장의 아들이자 같은 반이었던 <a href="윤재훈.html" class="wiki-link">윤재훈</a>(96년생 동갑) 일당의 눈에 띄어 지독한 학교폭력의 표적이 되었다.
+        </p>
+        <p>
+            이들은 박효빈을 "바이러스"라 부르며 그가 지나가면 옷을 터는 시늉을 했고, 카카오톡 단체방을 만들어 피해자들의 '급'을 나누며 그를 최하위 장난감으로 취급했다. 심지어 동네에서 고물을 줍는 박효빈의 아버지를 향해 <strong>비비탄 총을 난사하며 조롱하는 패륜적인 만행</strong>까지 저질렀다. 더 기가 막힌 것은 담임 교사의 태도였다. 이 참상을 방관했을 뿐만 아니라, 편식을 고친답시고 급식 시간에 토마토를 강제로 쑤셔 넣어 구토하게 만드는 만행을 저질렀다. 이 사건은 박효빈에게 평생 채소류(특히 토마토)를 입에도 대지 못하는 트라우마로 남았다. <del>물론 성인이 된 후 혈족 중 최장신을 찍으며 키 안 큰다고 저주하던 담임보다 훨씬 커진 게 유머.</del>
+        </p>
+        <blockquote style="border-left: 4px solid #ccc; padding-left: 15px; background-color: #f9f9f9; padding: 10px;">
+            "야, 쟤네 집 기초수급자라며? 근데 왜 이렇게 뚱뚱해? 우리 아빠가 낸 세금으로 맛있는 거 처먹어서 살쪘냐? 완전 부정수급자네. 세금 도둑이야, 도둑."<br>
+            - <a href="윤재훈.html" class="wiki-link">윤재훈</a>의 망언
+        </blockquote>
+        <p>
+            어른들마저 가해에 동참했다. 학부모회 임원들이 아버지를 "범죄자 아니냐"며 매도하자, 참다못한 아버지가 학부모 모임 문을 '쾅!!!' 닫고 나오며 <strong>"아휴, 돈 아깝다"</strong>라고 일갈한 사이다 일화도 존재한다. 박효빈은 학폭 없는 학교를 만들겠다며 전교 어린이 회장 선거에 출마했으나, 연단에서 강제로 쫓겨나는 억까 속에서도 기적적인 36표를 얻었다.
+        </p>
+        <p>
+            이 끔찍하고 악랄한 기억은 어린 박효빈의 영혼에 "가난한데 뚱뚱하면 죄인이 된다", <strong>"세상에 무시당하지 않으려면 겉모습부터 완벽하게 바꿔야 한다"</strong>는 처절한 강박을 심어주었다. 중학교 진학 후 그는 극단적인 감량 스트레스로 섭식장애를 앓기도 했으나, 웨이트 트레이닝(쇠질)으로 이를 완벽히 극복했다. 라면을 끊고 생두부와 삶은 달걀을 씹어 먹으며 턱걸이를 한 결과, 가슴둘레 97cm의 압도적인 역삼각형 피지컬을 자랑하는 <strong>헬창 시장님</strong>으로 환골탈태했다.
+        </p>
+
+        <h3 id="s-2-3" class="anchor-offset">2.3. 대학 시절: 15학번 쓰리잡 청년과 희망TV</h3>
+        <div style="text-align: center; margin: 15px 0;">
+            <a href="이미지/박효빈_과잠.png" target="_blank">
+                <img src="이미지/박효빈_과잠.png" alt="효빈대학교 15학번 과잠을 입은 박효빈" style="max-width: 300px; border: 1px solid #ccc; border-radius: 5px;">
+            </a>
+            <br>
+            <span style="font-size: 0.85em; color: #666;">▲ <a href="효빈대학교.html" class="wiki-link">효빈대학교</a> 사회복지정책학과 15학번 과잠을 입은 풋풋한 시절의 박 시장. <del>저 다크서클을 보라</del></span>
+        </div>
+        <p>
+            <a href="효빈대학교.html" class="wiki-link">효빈대학교</a> <strong>15학번</strong>으로 당당히 합격했지만, 캠퍼스의 낭만은커녕 남들 다 하는 학생회 근처에도 가보지 못했다. 병든 아버지와 어린 동생들을 책임져야 하는 <strong>가족돌봄청년(영 케어러)</strong>이었기 때문이다. 하루 3~4시간만 자며 미친 듯이 <strong>주 3개, 쓰리잡(Three-job) 체제</strong>의 노동 강도를 버텨냈다. 평일 아침엔 교내 편의점 매대를 지켰고<del>(카카오페이 바코드 스캔 각도를 조절해 고의 오류를 내어 미성년자 담배 구매를 철벽 방어한 전설이 있다)</del>, 오후엔 지역아동센터 멘토링, 주말 야간엔 <a href="맥도날드.html" class="wiki-link">맥도날드</a> 메인터넌스 및 워시 업무를 도맡아 '날쌘돌이'라는 이명을 얻었다. 독한 세제와 끓는 물을 맞아가며 한쪽 귀에 에어팟을 꼽고 전공 공부 MP3를 들으며 뇌에 법제론을 각인시켰다.
+        </p>
+        <p>
+            이런 지옥 같은 통학(노면의 덜컹거림에 갤럭시북 노트북 힌지가 으스러져 유선 데스크탑으로 전락하는 억까) 속에서도 그의 성적표는 <strong>전부 A+(4.5)의 폭격기</strong> 수준이었다. 심지어 복수전공인 경영학과의 최종 보스 '중급회계' 수업에서는 수강생 82명 중 5등을 차지하며 본전공생들을 짓밟아버리는 하극상을 연출했고, 기출문제집 노랭이를 찢어발기며 SQLD와 ADsP 등 실용적인 데이터 자격증을 휩쓸었다. <del>기초수급자라면서 애플워치를 차고 다닌다는 비난에는 "연락을 못 받을 불안감을 해소해 학점 방어를 가능케 한 20만 원짜리 창조 경제"라고 일축했다.</del>
+        </p>
+        <p>
+            지역아동센터 멘토링 시절에는 전설을 썼다. 꿀만 빨려던 '먼지' 등 무능한 빌런 근로장학생들이 짬처리를 시전할 때, 박효빈은 밤새 중등 수학을 다시 공부해 문·이과 통합 5과목을 하드캐리했다. 사비로 두끼 떡볶이와 설빙을 쏘고, 맘스터치 기프티콘을 원격 전송하는 자본주의 피딩(Feeding) 카르텔로 아이들의 성적을 30점이나 폭등시켰다.
+        </p>
+        <p>
+            그러나 국가 행정은 이 청년에게 가혹했다. 쓰리잡 스케줄 탓에 아르바이트 소득 신고가 며칠 늦자, 행정청은 고작 14만 원 초과 소득에 대해 <strong>총 84만 원 환수</strong>라는 국가 공인 고리대금업급 철퇴를 내리려 했다. 길거리에서 오열하며 서류 방어전을 치른 끝에 피해를 줄였지만, 이는 훗날 <strong>"약자가 서류를 들고 구걸하게 만드는 신청주의 행정은 폭력"</strong>이라며 닫힌 시스템을 부수겠다는 독기로 승화되었다.
+        </p>
+        <p>
+            2016년, 그의 짠내 나고 눈물겨운 일대기가 <strong>SBS 희망TV</strong>에 '가족을 돌보며 쓰리잡을 뛰는 청년'으로 전국 방송을 타게 되었고, 이는 훗날 정치 인생을 뒤바꾸는 엄청난 복선이 된다.
+        </p>
+
+        <h3 id="s-2-4" class="anchor-offset">2.4. 일본 여행과 복지 공부</h3>
+        <p>
+            대학 시절, <a href="월드비전.html" class="wiki-link">월드비전</a>의 가족돌봄청년 지원 사업에 선발되어 일본 도쿄로 짧은 여행을 다녀올 기회를 얻었다. 본질은 애니메이션 성지순례 및 스탬프 랠리 이벤트를 즐기기 위한 덕질 여행이었으나, 서브컬처의 성지 이케부쿠로를 배회하다 <strong>'카나메정 구민 히로바'</strong>에 우연히 들어가게 된다. 유창한 일본어로 "한국의 사회복지학과 학생"이라며 당당히 말을 걸어 현지 복지 행정 자료를 한가득 얻어냈고, 대형 서점에서 일본 사회복지사 수험서를 탐독하며 덕업일치의 정석을 보여줬다.
+        </p>
+
+        <h3 id="s-2-5" class="anchor-offset">2.5. 국회 연설과 복지 전문가로서의 각성</h3>
+        <p>
+            2018년 2월, <a href="사회복무요원.html" class="wiki-link">사회복무요원</a> 입소를 코앞에 두고 박효빈은 <strong>국회의사당</strong> 단상에 서게 된다. 월드비전 주최 '돌봄아동·청소년 맞춤형 지원 포럼'에 사례 당사자 대표로 파격 초청받은 것이다.
+        </p>
+        <blockquote style="border-left: 4px solid #ccc; padding-left: 15px; background-color: #f9f9f9; padding: 10px;">
+            "친구들이 인생네컷 찍을 때 저는 생업 전선에서 알바를 뛰어야 했습니다. 누군가는 저를 대견하다고 하지만, 청년의 희생을 칭찬으로 덮고 방치하는 사회는 병든 사회입니다. 저희에게 필요한 건 동정이 아니라, 당장 숨통을 틔워줄 제도입니다."
+        </blockquote>
+        <p>
+            이 피를 토하는 듯한 연설은 현장의 기립박수를 이끌어냈고, 국회도서관에 영구 박제되었다. 포럼 말미에는 거물급 인사들을 제치고 '엔딩 요정'으로 촌평 마이크를 잡았다. 직후 관할 구청으로 떠난 그는 낫을 들고 시내 불법 현수막을 찢어발기며 행정 실무를 익혔다. 소집해제 후 복학과 동시에 2022년 선거 출마를 결심, 현장 감각을 날카롭게 벼렸다.
+        </p>
+
+        <h3 id="s-2-6" class="anchor-offset">2.6. 정계 입문의 방아쇠: "가난하면 자유를 모른다고?"</h3>
+        <p>
+            본래 <strong>시의원</strong> 출마를 조용히 준비하고 있던 2021년 겨울, 편의점 야간 알바 중 유통기한이 지난 폐기 도시락으로 끼니를 때우던 박효빈은 <a href="윤석열.html" class="wiki-link">윤석열</a> 당시 대선 후보의 <strong>"가난하고 못 배운 사람은 자유가 뭔지 모른다"</strong>는 오만한 망언, 그리고 정부의 대학생 튜터링 시급 대폭 삭감 사태를 접하게 된다.
+        </p>
+        <p>
+            어린 시절 자신을 쓰레기 취급하던 가해자의 폭언과 겹쳐 들리는 기성 정치의 폭력 앞에 그는 분노했다. <em>'가난한 자에게 자유는 사치스러운 철학이 아니라, 생존을 위해 매 순간 피 흘리며 쟁취해야 하는 투쟁 그 자체다.'</em> 그는 분노를 삼키며 "저 오만한 기득권을 무너뜨리고, 진짜 자유와 복지가 무엇인지 내 손으로 직접 복지 법령의 독소조항을 도려내어 증명하겠다"고 뼈저리게 다짐했다.
+        </p>
+        <h2 id="s-3" class="anchor-offset">3. 정치 활동: 시의원 지망생에서 광역시장으로</h2>
+
+        <h3 id="s-3-1" class="anchor-offset">3.1. 2022년 효빈시의 정치 공백과 전략공천</h3>
+        <p>
+            2022년 지방선거를 앞두고 효빈시 정치판에 거대한 지각변동이 일어났다. 당시 재임 중이던 <a href="김성민.html" class="wiki-link">김성민</a> 시장이 2022년 2월 1일 전격 사퇴한 것이다. 과거 2020년 총선에서 보수 진영의 <a href="주민우.html" class="wiki-link">주민우</a>가 <a href="7호선.html" class="wiki-link"><span style="color:#FF8899; font-weight:bold;">7호선(전차)</span></a> 폐지 공약으로 어부지리 당선되었다가 선거법 위반으로 의원직을 상실하자, <strong>중구·동구 원도심을 탈환하기 위해 김성민 시장이 직접 체급을 낮춰 국회의원 재보궐선거에 등판</strong>했기 때문이다.
+        </p>
+        <p>
+            갑작스럽게 <strong>효빈광역시장</strong> 자리가 공석이 되자 <a href="더불어민주당.html" class="wiki-link">더불어민주당</a>은 비상에 걸렸다. 공교롭게도 당시 효빈시의 굵직한 구청장들이나 국회의원들은 각자의 사정으로 광역시장 도전에 큰 뜻이 없었고, 중앙당 입장에서는 정권교체로 여당이 된 <a href="국민의힘.html" class="wiki-link">국민의힘</a>에 대항해 완전히 새롭고 혁신적인 <strong>'청년 쇄신 후보'</strong>를 내세워야만 하는 절박한 타이밍이었다.
+        </p>
+        <p>
+            이때 당 지도부의 눈에 들어온 사람이 바로 <strong>시의원 공천을 준비 중이던 26세의 계약직 복지사, 박효빈</strong>이었다.
+        </p>
+        <p>
+            과거 2016년 SBS 희망TV에서 방영된 그의 눈물겨운 쓰리잡 일대기와, 2019년 국회 포럼에서 보여준 묵직한 연설 영상이 당내에서 폭발적으로 재조명되었다. <strong>"이 청년이야말로 가난을 딛고 일어선 진짜 흙수저 영웅이자, 2030의 표심과 복지 어젠다를 모두 잡을 수 있는 완벽한 카드다."</strong> 결국 당은 시의원을 준비하던 그를 일약 <strong>효빈광역시장 후보로 전략 공천</strong>하는 헌정 사상 전무후무한 파격수를 둔다.
+        </p>
+
+        <h3 id="s-3-2" class="anchor-offset">3.2. 윤재훈과의 재회, 그리고 전설의 토론회</h3>
+        <p>
+            운명의 장난처럼, 본선 상대는 어린 시절 그를 '세금 돼지'라 조롱하며 괴롭혔던 <a href="윤대환.html" class="wiki-link">윤대환</a> 전 시장의 아들, 금수저 <a href="윤재훈.html" class="wiki-link">윤재훈</a>(국민의힘)이었다. 
+        </p>
+        <p>
+            윤재훈은 TV 토론회에서조차 정신을 못 차리고 박효빈을 향해 "옛날에 내가 놀리던 뚱땡이", "기초수급자 출신이 무슨 행정을 아느냐"며 가정 교육을 운운하는 패륜적 발언을 생방송으로 터뜨렸다. 하지만 박효빈은 쏟아지는 모욕 앞에서도 침착함을 잃지 않고 단호하게 반박했다.
+        </p>
+        <blockquote style="border-left: 4px solid #0077DD; padding-left: 15px; background-color: #f0f8ff; padding: 10px;">
+            <strong>"시민 여러분, 저 개인을 향한 조롱은 얼마든지 참겠습니다. 하지만, 가난 때문에 오늘 밤도 눈물 흘리는 우리 청년들과 아이들의 아픔을 비웃는 것은 절대 용서할 수 없습니다."</strong>
+        </blockquote>
+        <p>
+            이 진정성 어린 한마디는 선거의 판도를 완전히 끝내버렸다. 결과는 <strong>박효빈 67.90% vs 윤재훈 9.99%</strong>. 제1야당 후보가 선거비용 보전선인 10%에 단 0.01%p 모자란 득표율을 기록해 선거비용 전액을 허공에 날려버린 헌정 사상 초유의 참패이자, 흙수저 출신 청년 시장의 위대한 탄생이었다.
+        </p>
+
+        <h3 id="s-3-3" class="anchor-offset">3.3. 2026년 제9회 지선 리매치와 광기의 토론회</h3>
+        <p>
+            시간이 흘러 2026년 제9회 전국동시지방선거. 놀랍게도(혹은 뻔뻔하게도) <a href="국민의힘.html" class="wiki-link">국민의힘</a> 소속으로 <a href="윤재훈.html" class="wiki-link">윤재훈</a>이 다시 한번 공천을 받아 출마하며 4년 만의 리매치가 성사되었다. 
+            이미 압도적인 시정 지지율 고공행진을 달리고 있던 박효빈을 꺾기 위해 윤재훈 캠프가 선택한 최후의 발악은 바로 <strong>'혐덕(서브컬처 혐오) 네거티브'</strong>였다.
+        </p>
+        <p>
+            TV 토론회에서 윤재훈은 박 시장의 집무실 사진(피규어와 네소베리로 도배된 모습)을 폼보드로 들고 나와 삿대질을 하며 <strong>"시장이란 자가 나이 서른 먹고 일본 만화 쪼가리나 보며 시정을 내팽개치고 있다. 효빈시의 품격이 오타쿠 수준으로 추락했다!"</strong>라며 핏대를 세웠다.
+            그러자 박효빈 시장은 특유의 차분하고 나긋나긋한 미성으로, <strong>하지만 내용물은 광기에 가까운 논리적 폭격</strong>을 생방송으로 쏟아냈다.
+        </p>
+        <blockquote style="border-left: 4px solid #E61E2B; padding-left: 15px; background-color: #fff0f0; padding: 10px; border-radius: 4px; margin-bottom: 1rem;">
+            "예, 저 오타쿠 맞습니다. 그런데 윤 후보님, 그 '오타쿠 시장'이 기획한 <a href="HAF.html" class="wiki-link">HAF(효빈 애니메이션 페스티벌)</a>와 서브컬처 창업 지원 덕분에 작년 한 해 우리 시 <strong>구도심 상권 매출이 300% 뛰었고, 지방 세수가 2천억 원 늘었습니다.</strong><br><br>
+            후보님이 강남 룸살롱에서 비싼 양주병 세우며 '품격' 찾으실 때, 저는 밤새 시정 자료 읽으면서 <a href="나카스 카스미.html" class="wiki-link">카스밍</a> 네소베리 쓰다듬은 죄밖에 없습니다. 
+            아무런 대안도 없이 시민들의 문화를 갈라치기하고 혐오를 조장하는 후보님보다, <strong>'모두가 함께 웃는 세상'을 외치는 화면 속 2D 캐릭터들이 백배 천배 더 훌륭한 민주 시민의 소양을 갖추고 있습니다!</strong> 취미를 비하하기 전에 본인의 바닥난 지지율이나 걱정하십시오."
+        </blockquote>
+        <p>
+            이 <strong>'오타쿠 커밍아웃 + 팩트 폭행 + 광기의 덕후 선언'</strong>이 생방송을 타자마자, 효빈시 전역의 덕후들은 물론이고 일반 시민들마저 "아니 틀린 말이 하나도 없네", "룸살롱 갈 바엔 피규어 사는 시장이 백번 낫지"라며 열광했다. 
+            결국 이 토론회는 윤재훈의 정치적 명줄을 완전히 끊어버렸고, 박효빈은 <strong>76.79%</strong>라는 경이로운 득표율로 재선에 성공하며 윤재훈을 <strong>4.11%</strong>라는 처참한 득표율로 두 번 다시 정계에 발을 못 붙이게 묻어버렸다.
+        </p>
+
+        <h2 id="s-4">4. 주요 정책 활동 (Hyobin Policy)</h2>
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4">
+            <strong>
+                "책상머리 행정이 아닙니다. 제 정책은 편의점 폐기 도시락과 <a href="효빈광역시_맥도날드.html" class="wiki-link">맥도날드</a> 주방의 기름때에서 나왔습니다."
+            </strong>
+        </div>
+        
+        <h3 id="s-4-1">4.1. <a href="효빈 패스.html" class="wiki-link">효빈 패스 (H-Pass)</a></h3>
+        <p><strong>"교통비 때문에 면접을 포기하는 청춘은 없어야 한다."</strong></p>
+        <p>박효빈 시장의 **제1호 공약**이자, 그의 정치 철학인 **'교통=생존권'**을 가장 완벽하게 구현한 정책. 대학 시절 아르바이트 3개를 뛰면서 교통비로만 월 15만 원을 써야 했던 자신의 경험에서 착안했다.</p>
+        <ul class="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>내용:</strong> 월 **3만 원** 정기권으로 효빈시 관내 **모든 대중교통(지하철, 버스, 트램) 무제한 이용**.</li>
+            <li><strong>대상:</strong> 청년(19~34세), 학생, 저소득층, 65세 이상 노인. (일반인은 월 5만 원)</li>
+            <li><strong>파급력:</strong> 시행 첫 달 만에 **대중교통 이용률이 20% 증가**했고, 특히 대학생들의 교통비 부담이 **40% 이상 감소**하는 기적적인 성과를 냈다.</li>
+        </ul>
+
+        <h3 id="s-4-2">4.2. 청년 안심 주택 '효빈 하우스' </h3>
+        <p><strong>"집이 없으면 꿈도 없다. 곰팡이 핀 반지하에서 벗어나게 해주겠다."</strong></p>
+        <p>윤대환 시절 무너진 가정 형편으로 곰팡이가 핀 반지하 방에서 살아야 했던 박효빈의 트라우마가 반영된 주거 정책. 구도심의 빈집과 노후 모텔을 시 매입하여 리모델링한 뒤, 청년들에게 초저가로 공급한다.</p>
+        <ul class="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>내용:</strong> 보증금 없음, 월세 **5~10만 원** 수준의 공유 주택(Share House) 공급.</li>
+            <li><strong>특징:</strong> 단순한 주거 공간이 아니라, 1층에 **'공유 주방', '스터디 카페', '굿즈 전시관(?!)'**을 설치하여 청년들의 커뮤니티 공간으로 활용한다.</li>
+            <li><strong>입주 조건:</strong> 효빈시에 거주하는 무주택 청년이면 누구나 신청 가능하며, **'덕질 장려'** 차원에서 서브컬처 관련 창작 활동을 하는 청년에게는 우선 입주권을 준다. <span class="wiki-link" onclick="showMsg('이게 나라다...')">[1]</span></li>
+        </ul>
+
+        <h3 id="s-4-3">4.3. 심야 안심 귀가 버스 (올빼미 버스 효빈 버전) </h3>
+        <p><strong>"알바 끝나고 막차 끊겨서 걸어가는 그 막막함, 제가 제일 잘 압니다."</strong></p>
+        <p>대학 시절 편의점 야간 알바가 끝나고 버스가 끊겨 2시간을 걸어서 귀가했던 박 시장의 경험에서 나온 정책. 기존 노선버스가 끊긴 심야 시간대(00:00 ~ 04:00)에 운행하는 전용 버스다.</p>
+        <ul class="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>노선:</strong> 대학가, 유흥가, 주거 밀집 지역을 연결하는 **4개 핵심 노선(N1~N4)** 신설.</li>
+            <li><strong>특징:</strong> 안심 귀가 스카우트와 연계하여, 정류장에서 집까지 도보 동행 서비스도 제공한다. 버스 내부에는 **'안심 벨'**과 **'고화질 CCTV'**가 설치되어 있다.</li>
+            <li><strong>반응:</strong> 야간 아르바이트생과 늦게까지 공부하는 학생들에게 **'갓효빈'** 소리를 듣는 효자 정책이다. 택시 기사들은 싫어한다고 카더라. <del>당연하지</del></li>
+        </ul>
+
+        <h3 id="s-4-4">4.4. 덕업일치 창업 지원센터 (Start-up Otaku) </h3>
+        <p><strong>"덕질도 돈이 된다. 아니, 산업이 된다."</strong></p>
+        <p>박 시장이 아키하바라 시찰 후 **'서브컬처는 거대한 산업 생태계'**라는 확신을 가지고 추진한 경제 정책. 단순히 굿즈를 사는 소비 도시를 넘어, 직접 콘텐츠를 생산하는 **'생산 기지'**로 만들겠다는 야심 찬 계획이다.</p>
+        <ul class="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>내용:</strong> 서브컬처 관련 창업(굿즈 제작, 동인지 인쇄, 코스프레 의상 제작, 테마 카페 등) 시 창업 자금 **최대 5천만 원** 지원 및 사무실 무상 임대.</li>
+            <li><strong>성과:</strong> 전국에서 금손들이 몰려와 효빈시 구도심 상가에 **'공방 거리'**가 형성되었으며, <a href="HAF.html" class="wiki-link">HAF</a> 기간 동안 자체 제작 굿즈 판매로 엄청난 수익을 올리고 있다.</li>
+        </ul>
+
+        <h3 id="s-4-5">4.5. 블루 버드 멘토단 (상세)</h3>
+        <p>저소득층 대학생을 <a href="효빈시청.html" class="wiki-link">시청</a> 행정 실무에 투입하여 경력과 생계를 동시에 보장하는 프로그램. 단순한 근로 장학생 제도가 아니다.</p>
+        <div class="detail-box">
+            <span class="detail-title">🔹 탄생 비화: Liyuu 방송 시청 중 오열</span>
+            <p>어느 날 새벽, 박효빈 시장은 <a href="러브 라이브! 슈퍼스타!!.html" class="wiki-link">러브 라이브! 슈퍼스타!!</a>의 **<a href="탕 쿠쿠.html" class="wiki-link">탕 쿠쿠</a>** 성우 **Liyuu**의 개인 방송을 시청하고 있었다. 방송 중 Liyuu가 "효빈시는 정말 따뜻한 곳인 것 같아요"라고 언급하자, 박 시장은 그 자리에서 오열하며(...) 이렇게 외쳤다고 한다. <br><strong>"우리 청년들이 덕질하다가 취직도 못하고 굶으면 안 된다. 내가 알바 3개 뛰면서 지옥을 봤는데, 내 후배들은 그렇게 살게 하지 않겠다."</strong> <br>그 즉시 비서관을 호출해 정책 초안을 지시했고, 그렇게 탄생한 것이 '블루 버드 멘토단'이다.</p>
+        </div>
+        <ul class="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>사업 개요:</strong> 취약계층 대학생을 선발하여 시청 내 핵심 부서에 배치, 단순 노무(복사, 청소)가 아닌 **'실질적인 행정 실무'**를 경험하게 하는 예비 공무원 육성 프로그램.</li>
+            <li><strong>처우:</strong> 급여는 생활임금의 **1.2배**. "이거 하나만 해도 학비와 생계 유지가 가능하도록" 설계되었다.</li>
+            <li><strong>성과:</strong> 1기 멘토단 출신인 **이 주무관**이 공무원 시험에 합격해 정식 임용되는 등 실질적인 취업 사다리 역할을 하고 있다.</li>
+        </ul>
+
+        <h3 id="s-4-6">4.6. L-Project (서브컬처 도시)</h3>
+        <p><a href="효빈시.html" class="wiki-link">효빈시</a> 전체를 거대한 서브컬처 성지로 만드는 계획. 지하철 안내방송을 성우 목소리로 바꾸고, 역마다 스탬프 랠리를 설치했다. 일반 시민들은 당황했으나, 전국 덕후들이 몰려와 돈을 쓰고 가니 상인들은 "박효빈 시장 만세"를 외치게 되었다. <strong>골든 로드(Golden Road)</strong> 사업은 구도심 우범지대의 가로등을 전면 교체하여 치안율을 40% 올린 정책인데, 사실 최애캐 **나카스 카스미**의 이미지 컬러(파스텔 옐로우)로 도배하고 싶었던 사심이 들어갔다는 게 정설이다. 팬들은 이를 **'카스밍 로드'**라 부른다.</p>
+        <ul class="list-disc pl-5 mt-2 space-y-1">
+            <li>
+                <strong><a href="HAF.html">HAF</a> (효빈 애니메이션 페스티벌):</strong> 
+                효빈 도시철도망 전체를 <a href="성지순례.html" class="wiki-link">성지순례</a> 코스로 만드는 기획. 
+                지하철 안내방송이 성우 목소리로 바뀌고 역마다 스탬프 랠리가 열린다.
+            </li>
+            <li>
+                <strong>효과:</strong> 죽어가던 구도심 상권에 전국 덕후들이 몰려와 돈을 뿌리고 가니 상인들이 
+                "<a href="효빈시.html">효빈</a> 시장 만세! <a href="애니메이션.html" class="wiki-link">애니</a> 만세!"를 외치게 되었다.
+            </li>
+        </ul>
+
+        <h3 id="s-4-7">4.7. 실전형 노동 정책</h3>
+        <p>
+            대학 시절 공강 시간에 <a href="편의점.html" class="wiki-link">편의점</a> 알바를 뛰며 폐기 도시락으로 끼니를 때웠던 경험을 바탕으로, 
+            **<a href="아동급식카드.html" class="wiki-link">결식 아동 급식카드</a>** 사용처를 대폭 확대하고 디자인을 일반 카드처럼 변경했다. 
+            또한 시청 공무직(청소/시설) 휴게 시설을 호텔급으로 개조했다.
+        </p>
+
+        <h3 id="s-4-8">4.8. <a href="골든 로드.html">골든 로드</a> (a.k.a <a href="카스밍 로드.html">카스밍 로드</a>)</h3>
+        <p>
+            <a href="구도심.html">구도심</a> 우범지대의 가로등과 보도블록을 전면 교체하여 치안율을 40%나 올렸다. 
+            표면적으로는 <a href="CPTED.html" class="wiki-link">셉테드(CPTED)</a> 설계였지만, 
+            실제로는 최애캐 [<a href="나카스 카스미.html" class="wiki-link">나카스 카스미</a>]의 이미지 컬러인 
+            **<a href="노란색.html" class="wiki-link">노란색(파스텔 옐로우)</a>**으로 도배하고 싶었던 사심이 들어갔다는 게 정설이다.
+        </p>
+
+        <h3 id="s-4-9">4.9. 시정 게시대 혁신 & <a href="영 케어러.html" class="wiki-link">가족돌봄청년</a> 조례</h3>
+        <p>
+            <a href="사회복무요원.html" class="wiki-link">사회복무요원</a> 시절 불법 광고물 제거반으로 근무하며 느꼈던 문제점을 정책으로 승화시켰다. 
+            시민들이 합법적으로 광고를 걸 공간이 부족하다는 점을 파악, 
+            **'<a href="스마트 시정 게시대.html">스마트 시정 게시대</a>'**를 대폭 확충했다. 
+            특히 **'최애 캐릭터 생일 축하 광고'** 전용 게시대를 만들어 저렴한 가격에 팬들이 광고를 걸 수 있게 했고, 
+            불법 광고물에는 즉각 <a href="과태료.html" class="wiki-link">과태료</a>를 부과하여 
+            **도시 미관 개선 + 세입 증대 + 악성 민원 감소**의 1석 3조 효과를 거두었다.
+        </p>
+        <p>
+            또한 본인의 경험을 바탕으로 
+            **'<a href="영 케어러.html" class="wiki-link">가족돌봄청년(영 케어러)</a> 지원 조례'**를 
+            전국 지자체 중 가장 선제적으로 제정하여, 복지 사각지대에 놓인 청년들을 발굴하고 지원하는 시스템을 구축했다. 
+            이는 중앙 정부 정책보다 앞선 선진적인 행정 사례로 꼽힌다.
+        </p>
+
+        <h2 id="s-5" class="anchor-offset">5. 사건 사고 (a.k.a 효빈시 4대 대첩)</h2>
+        <div class="space-y-4">
+            <p><a href="효빈시.html" class="wiki-link">효빈시</a>에서는 서브컬처 행사를 건드리면, <strong>근육질의 덕후 시장</strong>이 직접 드라군을 끌고 온다.</p>
+            <div>
+                <h3 id="s-5-1" class="font-bold text-lg">5.1. 시청 내부 폭행 및 인종차별 사건 (일명 '탕쿠쿠 파일 사건')</h3>
+                <div class="detail-box">
+                    <span class="detail-title">🚨 사건 개요 및 시장의 대응</span>
+                    <p><strong>발단:</strong> 효빈시청 문화관광과 **김 팀장(6급)**이 부하 직원인 **이 주무관(9급, 블루 버드 멘토단 출신)**의 책상에 놓인 **L4홀더(탕쿠쿠 일러스트)**를 보고 "나이 처먹고 만화냐", "시장놈이 오타쿠라 물이 흐리다"며 시비를 걸었다.</p>
+                    <p><strong>폭행:</strong> 김 팀장은 이 주무관이 항의하자 파일을 찢어버리고, **"어디 똥남아(혼혈 비하) 시장 믿고 까부냐"**며 인종차별적 발언을 쏟아낸 뒤, **결재판 모서리로 이 주무관의 머리를 내리찍어** 유혈 사태를 일으켰다.</p>
+                    <p><strong>박효빈의 극대노:</strong> 보고를 받은 박 시장은 일정을 전면 취소하고 현장으로 달려왔다. 피 묻은 탕쿠쿠 파일을 본 박 시장은 **"제 직원을 때린 건 저를 때린 겁니다. 그리고 제 어머니를 '똥'이라 부른 당신 입이 쓰레기통입니다."**라고 일갈하며 즉시 직위 해제를 통보했다.</p>
+                    <p><strong>결말:</strong> 김 팀장은 **파면(최고 수위 징계)**당하고 형사 고발되었다. 조사 결과 김 팀장은 <a href="윤대환.html" class="wiki-link">윤대환</a> 전 시장의 심복으로, 박 시장을 음해하기 위해 언론사(조선일보 최 기자)와 짜고 가짜 뉴스를 유포하려 했던 **정치 공작 카르텔**의 일원임이 밝혀졌다. 이 사건은 필리핀 현지에도 보도되어 **<a href="케손시티.html" class="wiki-link">케손시티</a>(박 시장 어머니 고향)** 시장이 위로 서한을 보내고 자매결연을 맺는 전화위복이 되었다.</p>
+                </div>
+            </div>
+            <div>
+                <h3 id="s-5-2" class="font-bold text-lg">5.2. 탕쿠쿠 대첩 (와이탄의 기적)</h3>
+                <p class="pl-2 mt-1">혐오 세력 <a href="윤재훈.html" class="wiki-link">윤재훈</a>이 행사장에 난입해 깽판을 쳐서 행사가 취소될 위기에 처하자, 박 시장이 마이크를 잡고 자신의 핸드폰 사진첩을 공개했다. 과거 상하이 와이탄 여행 당시 탕쿠쿠 인형을 들고 찍은 <strong>"고향 왔다 쿠쿠야"</strong> 인증샷을 보여주며 진정성을 호소했고, 이에 감동한 팬들과 성우가 행사를 강행하여 전설로 남았다.</p>
+            </div>
+            <div>
+                <h3 id="s-5-3" class="font-bold text-lg">5.3. 사아야 빵 사건</h3>
+                <p class="pl-2 mt-1"><a href="사능동.html" class="wiki-link">사능동</a> 빵집 테러 당시 짓밟힌 빵을 보며 <strong>"이건 단순한 밀가루 덩어리가 아니라 사아야의 영혼이다!"</strong>라며 극대노, 직접 앞치마를 두르고 빵 복구 작업에 참여했다.</p>
+            </div>
+        </div>
+        <div>
+            <h3 id="s-5-4" class="font-bold text-lg">
+                5.4. <a href="중수역.html">중수역</a> 등신대 수호
+            </h3>
+            <p class="pl-2 mt-1">
+                [<a href="사가라 마유.html" class="wiki-link">사가라 마유</a>](<a href="나카스 카스미.html" class="wiki-link">나카스 카스미</a> 성우)가 
+                <a href="중수역.html">중수역</a>을 방문했을 때, 괴한이 등신대를 넘어뜨리려 하자 <a href="비서관.html">비서관</a>이 몸을 날려 막아냈다. 
+                <a href="사가라 마유.html" class="wiki-link">마유치</a>는 "나보다 더한 광견은 처음 본다"며 감동했고, 
+                사가라 마유가 "여기가 <a href="나카스.html" class="wiki-link">나카스</a>(中須) 가문의 영지인가요?"라고 묻자 
+                <a href="박효빈.html">박 시장</a>이 흐뭇하게 웃었다는 후문.
+            </p>
+        </div>
+
+        <div>
+            <h3 id="s-5-5" class="font-bold text-lg">
+                5.5. <a href="필리핀.html" class="wiki-link">필리핀</a> <a href="케손시티.html" class="wiki-link">케손시티</a> 자매결연
+            </h3>
+            <p class="pl-2 mt-1">
+                <a href="윤재훈.html">윤재훈</a>이 <a href="필리핀.html" class="wiki-link">필리핀</a> 공항에서 난동을 부리자, 
+                <a href="박효빈.html">박 시장</a>이 어머니의 나라에 대신 사과하며 수습했다. 
+                이에 감동한 <a href="케손시티.html" class="wiki-link">케손시티</a> 시장이 자매결연을 제안, 
+                <a href="윤재훈.html">윤재훈</a>은 의도치 않게 <a href="효빈시.html">효빈시</a> 외교에 기여(?)하고 영구 추방당했다.
+            </p>
+        </div>
+
+        <div>
+            <h3 id="s-5-6" class="font-bold text-lg">
+                5.6. 덕후 공무원 폭행 사건 (상세)
+            </h3>
+            <p class="pl-2 mt-1">
+                꼰대 <a href="김팀장.html">김 팀장</a>이 부하 직원의 
+                <a href="탕 쿠쿠.html" class="wiki-link">탕쿠쿠</a> 파일을 찢고 폭행하자, 
+                <a href="박효빈.html">박 시장</a>이 직접 쳐들어가 "감히 내 직원(<a href="블루버드.html">블루 버드</a> 출신)을 건드려?"라며 참교육했다. 
+                김 팀장은 파면당했다.
+            </p>
+        </div>
+
+        <div>
+            <h3 id="s-5-7" class="font-bold text-lg">
+                5.7. <a href="야마부키 사아야.html" class="wiki-link">야마부키 사아야</a> 대첩 & <a href="엠마 베르데.html" class="wiki-link">엠마</a> 빵 사건
+            </h3>
+            <p class="pl-2 mt-1">
+                <a href="윤재훈.html">윤재훈</a>이 <a href="성우.html" class="wiki-link">성우</a>에게 욕설을 했다가 쫓겨나고, 
+                <a href="사능역.html">사능역</a> 광고판을 훼손하려다 동네 할머니들에게 등짝 스매싱을 맞았다. 
+                지역 특산품 '<a href="엠마 베르데.html" class="wiki-link">엠마</a> 빵'을 비하한 세력은 
+                성우 본인에게 <a href="SNS.html" class="wiki-link">SNS</a> 팩폭을 맞고 글로벌 망신을 당했다.
+            </p>
+        </div>
+
+        <div>
+            <h3 id="s-5-8" class="font-bold text-lg">
+                5.8. <a href="필리핀.html" class="wiki-link">필리핀</a> <a href="케손시티.html" class="wiki-link">케손시티</a> 자매결연 (상세)
+            </h3>
+            <p class="pl-2 mt-1">
+                <a href="윤재훈.html">윤재훈</a>이 <a href="필리핀.html" class="wiki-link">필리핀</a> <a href="세부.html" class="wiki-link">세부</a>로 도주해 
+                <a href="인종차별.html" class="wiki-link">인종차별</a> 난동을 부리자, 
+                <a href="박효빈.html">박 시장</a>이 필리핀 방송에 출연해 <a href="타갈로그어.html" class="wiki-link">타갈로그어</a>로 사과했다. 
+                이에 감동한 <a href="케손시티.html" class="wiki-link">케손시티</a> 시장이 자매결연을 제안했고, 
+                <a href="윤재훈.html">윤재훈</a>은 필리핀 영구 입국 금지(<a href="Blacklist.html" class="wiki-link">Blacklist</a>)를 당했다.
+            </p>
+        </div>
+
+<h2 id="s-6" class="anchor-offset">6. 논란 및 비판 (사실상 억지 논란 모음)</h2>
+        <div style="background-color: #f8f9fa; border-left: 4px solid #EE0022; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            <strong>※ 주의: 본 문단은 표면상 논란 및 비판을 다루고 있으나, 그 실체는 반대파(<a href="윤재훈.html" class="wiki-link">윤재훈</a> 및 극우 언론)의 악의적인 억지 비판(억까)이거나, 시장 본인의 지나친 오타쿠/헬창 기질로 인해 발생한 웃지 못할 해프닝에 가깝습니다. <del>시장님 지못미</del></strong>
+        </div>
+
+        <h3 id="s-6-1" class="anchor-offset">6.1. 특정 마스코트 과도한 편애 및 예산 낭비 논란</h3>
+        <p>
+            명색이 효빈시의 수장으로서 모든 도시철도 마스코트를 공평하게 사랑해야 할 시장이, 유독 <strong><a href="7호선.html" class="wiki-link"><span style="color:#FF8899; font-weight:bold;">7호선</span></a> 마스코트인 <a href="임세하.html" class="wiki-link">임세하</a></strong>에게만 과도한 편애를 보인다는 타 노선 팬덤(특히 1호선 고나미, 2호선 하루빈 팬덤)의 볼멘소리에서 시작된 논란이다.
+        </p>
+        <p>
+            실제로 시장실 한편이 임세하의 1/1 등신대와 아크릴 스탠드로 도배되어 있으며, 시 예산 결재용 만년필조차 세하의 이미지 컬러인 핫핑크를 쓴다는 사실이 내부 고발(?)로 알려졌다. 특히 세하가 정비복 속에 압도적인 중장갑(B87) 피지컬을 숨기고 있다는 공식 설정이 풀린 이후 시장의 총애가 더욱 노골화되자 <strong>"이것이 시장의 중립성이냐"</strong>는 우스갯소리 섞인 비판이 일었다. <del>이에 대해 천 비서관은 "시장의 개인적 오시(推し) 존중은 헌법상 행복추구권에 해당한다"는 기적의 쉴드를 쳐 장내를 뒤집어놓았다.</del>
+        </p>
+
+        <h3 id="s-6-2" class="anchor-offset">6.2. 지역 농산물(토마토) 고의 배척 및 홀대 논란</h3>
+        <p>
+            2024년 지역 농산물 소비 촉진 행사에서 박효빈 시장이 다른 과일과 채소는 폭풍 먹방을 시전하면서, 유독 <strong>토마토 코너</strong>만 황급히 지나가고 시식을 결사거부한 장면이 지역 방송에 송출되었다. 윤재훈의 잔당(보수 성향 인터넷 매체)들은 이를 두고 <strong>"박 시장이 효빈시 토마토 농가의 피땀 어린 결실을 무시하고 노골적으로 배척한다!"</strong>며 대서특필했다. 
+        </p>
+        <p>
+            하지만 며칠 뒤, 이는 초등학교 시절 악질 담임 교사에게 강제로 토마토를 입에 쑤셔 넣어지고 구토했던 <strong>끔찍한 아동학대 트라우마</strong> 때문임이 널리 알려졌다. 진실을 알게 된 시민들은 해당 억까 기사를 쓴 기자의 신상을 털 기세로 들고일어났고, 급기야 토마토 농가 협회장마저 시청을 방문해 "우리 토마토 때문에 시장님이 고통받은 줄 몰랐다. 억지로 드시지 말라"며 즙을 짜는 사태가 벌어졌다. 결국 박 시장이 "토마토는 잘못이 없습니다. 제 위장이 나약할 뿐입니다"라며 토마토 농가 보조금을 두 배로 늘려 완벽한 해피엔딩(?)으로 끝났다.
+        </p>
+
+        <h3 id="s-6-3" class="anchor-offset">6.3. 초호화 관저 '중수카스미 아파트' 세금 낭비 억까</h3>
+        <p>
+            2022년 당선 직후, 보수 언론과 윤재훈 캠프는 박 시장이 입주한 북구 중수동의 <strong>'중수카스미 아파트'</strong>를 두고 <strong>"오타쿠 시장이 자신의 최애캐(나카스 카스미)를 기리기 위해 시 예산을 털어 별 모양(★)의 초호화 주상복합 펜트하우스를 지었다!"</strong>며 대대적인 네거티브 공세를 펼쳤다. 행정구역이 하필 '중수동(中須洞)'이고, 아파트 이름이 '카스미'에, 단지 배치가 완벽한 붉은 별 모양(토야마 카스미 상징)이었기 때문이다.
+        </p>
+        <p>
+            하지만 박 시장은 즉각 긴급 기자회견을 열고 <strong>2015년도 건축물대장</strong>을 흔들며 절규했다. <em>"제가 시장 직권 남용으로 지은 게 아니라구요! 저 대학교 1학년 때 민간 건설사가 지어놓은 일반 아파트입니다!!"</em> 
+            알고 보니 이 아파트는 2015년 민간 분양된 평범한 대단지 아파트였으며, 이름인 '카스미' 역시 '가수미(佳秀美)'라는 브랜드명의 우연한 발음 일치였을 뿐이다. 심지어 펜트하우스도 아닌 일반 대형 평수 세대를 <strong>시장의 100% 개인 사비와 은행 대출 영끌</strong>로 매입한 사실이 밝혀지며, 오히려 "우주가 점지해 준 듀얼 코어 성지에 입주한 진정한 성덕"이라는 찬사만 받게 되었다. 윤재훈 측은 이 헛발질로 인해 완벽하게 데꿀멍했다.
+        </p>
+
+        <h3 id="s-6-4" class="anchor-offset">6.4. 집무실 체력단련장 사유화 의혹</h3>
+        <p>
+            퇴근 후 시장 집무실에서 매일 밤 무거운 철덩어리가 바닥에 떨어지는 '쾅! 쾅!' 하는 굉음이 들려, 시청 직원들 사이에서 "야간 비밀 공사를 하는 것 아니냐", "시장실에 귀신이 들렸다"는 괴담과 민원이 제기된 사건이다.
+        </p>
+        <p>
+            알고 보니 박효빈 시장이 본업 스트레스를 풀기 위해 집무실 안쪽 프라이빗 공간에 <strong>최고급 파워랙과 벤치프레스 세트를 들여놓고, <a href="Roselia.html" class="wiki-link">Roselia</a>의 《FIRE BIRD》나 니지가사키의 《TOKIMEKI Runners》를 노동요 삼아 매일 밤 3대 250의 쇠질을 하고 있던 것</strong>으로 밝혀졌다. 일부 꼰대 시의원들이 "신성한 시청에서 뭐하는 짓이냐"고 태클을 걸었으나, 박 시장이 "시민을 지키려면 시장의 육체부터 강해야 한다. 나는 덤벨의 무게만큼 시정의 무게를 견디고 있다"는 무적의 헬창 논리로 입을 틀어막았다. <del>오히려 시청 청원경찰들은 캡틴 아메리카 급 피지컬의 시장님이 직접 쇠질을 하니 보안이 철저해졌다며 환호했다 카더라.</del>
+        </p>
+
+<h3 id="s-6-5" class="anchor-offset">6.5. 시내버스 도색(스타더스트 작전) 개인 사유화 억지 논란</h3>
+        <p>
+            박효빈 시장은 취임 후 윤대환 시절의 흑역사인 '두청운수 똥색(갈색) 버스'를 폐기하고, 효빈광역시 대중교통의 정체성을 재확립하기 위해 <strong>시내버스 3세대 대개편(스타더스트 작전)</strong>을 단행했다. 이는 2008년 효빈시가 최초로 제정한 간/지선 도색 체계를 현대적 감각으로 계승·발전시킨 것이었으나, 혐오 세력은 이를 두고 <strong>"시장 개인의 덕질을 위해 시민의 혈세를 낭비한 '오타쿠 사유화' 행위"</strong>라며 대대적인 억지 논란을 창조했다.
+        </p>
+        <p>
+            비판의 핵심은 새로 변경된 버스 색상 코드가 니지가사키 학원 멤버들의 퍼스널 컬러와 일치한다는 점이었다.
+        </p>
+        <ul style="margin-top: 10px; margin-bottom: 10px; padding-left: 20px;">
+            <li><strong>간선:</strong> Sky Blue (<span style="color:#01B7ED; font-weight:bold;">#01B7ED</span>) - 오사카 시즈쿠</li>
+            <li><strong>지선:</strong> Jade Green (<span style="color:#37B484; font-weight:bold;">#37B484</span>) - 미후네 시오리코</li>
+            <li><strong>순환:</strong> Pastel Yellow (<span style="color:#E7D600; font-weight:bold;">#E7D600</span>) - 나카스 카스미</li>
+            <li><strong>급행:</strong> Scarlet Red (<span style="color:#D81C2F; font-weight:bold;">#D81C2F</span>) - 유키 세츠나</li>
+        </ul>
+        <p>
+            윤재훈 일당은 이를 두고 *"멀쩡한 2008년식 표준 도색을 놔두고 왜 시장 최애캐 색깔로 바꾸느냐"* 며 거품을 물었다. 그러나 이는 <strong>2008년 제정 당시의 규정을 철저히 분석하여 채도와 명도를 현대적으로 보정했을 뿐</strong>이며, 당시의 도색 가이드라인이 명시한 표준 색상 계열(Blue, Green, Yellow, Red)과 정확히 부합함이 기술 문서로 증명되었다. 즉, 18년 전 전통을 현대적으로 리마스터링한 것을 두고 오타쿠 혐오에 눈이 멀어 억지 프레임을 씌운 것.
+        </p>
+        <p>
+            박 시장은 기자회견에서 *"2008년부터 이어진 효빈시 대중교통의 전통을 계승하는 것이 어떻게 사유화입니까? 오히려 똥색 버스로 도시 이미지를 추락시켰던 전임 시장들의 '시각적 테러'를 정상화한 것입니다"* 라며 뼈를 때렸다. 결정적으로 개편 후 버스 이용객 만족도가 92%를 기록하고, 특히 젊은 층의 대중교통 이용률이 폭증하면서 혐오 세력은 *"버스가 예뻐져서 탔더니 시장 덕질을 돕게 되었다"* 라는 해괴한 음모론만 남긴 채 완벽하게 멸망했다. <del>순환버스를 탈 때마다 카스밍의 환청이 들린다는 오타쿠 시민들의 제보는 보너스다.</del>
+        </p>
+
+        <h3 id="s-6-6" class="anchor-offset">6.6. '블루버드 멘토단' 오타쿠 특혜 채용(블라인드 위반) 의혹</h3>
+        <p>
+            박 시장이 기획한 청년 인재 양성 프로그램인 <strong>'블루버드 멘토단'</strong> 합격자 명단을 두고 제기된 의혹. 합격자들의 SNS나 성향을 분석해 본 결과, <strong>합격자의 80% 이상이 중증 서브컬처 팬(러브라이버, 뱅드리머 등)</strong>이라는 충격적인(?) 통계가 나온 것이다. 야당은 즉시 "시장이 자신과 같은 오타쿠들만 밀실에서 특혜 채용하는 블라인드 위반을 저질렀다!"며 특검을 요구했다.
+        </p>
+        <p>
+            그러나 시청 감사위원회의 블라인드 채용 데이터 전수 조사 결과는 너무나도 투명했다. 면접 당시 지원자 이름, 학력, 출신을 모두 가렸음에도 불구하고, 덕후 출신 지원자들이 <strong>"본인의 덕질을 어떻게 지역 상권 굿즈 사업과 대중교통 비운임 수익 창출로 연결할 것인가"</strong>에 대한 광기 어린 PPT와 완벽한 예산안(10원 단위까지 쪼개는 짬바)을 들이미는 바람에 면접관들이 압도적인 점수를 줄 수밖에 없었던 것이다. 
+            결국 <strong>"오타쿠들이 일을 미친 듯이 잘해서 실력으로 합격한 것뿐"</strong>이라는 결론이 나며, 오히려 효빈시가 '가장 공정하고 능력 중심적인 채용을 하는 도시'로 전국적인 칭송을 받는 기적의 역효과를 낳았다.
+        </p>
+
+        <h3 id="s-6-7" class="anchor-offset">6.7. 품위유지비 애니메이션 굿즈 사적 유용 억까 의혹</h3>
+        <p>
+            2026년 제9회 지방선거 직전, 윤재훈 측에서 터뜨린 최후의 헛발질. <strong>"박효빈 시장이 시청 품위유지비와 판공비(세금)를 횡령하여 방대한 양의 일본 애니메이션 피규어와 네소베리를 불법으로 사들이고 있다!"</strong>며 긴급 기자회견을 열었다.
+        </p>
+        <p>
+            그러나 시청 자체 감사 결과, 시장실과 관저를 도배하고 있는 그 엄청난 양의 굿즈들은 <strong>단 1원의 세금도 섞이지 않은, 100% 박효빈 시장의 장관급 사비(월급)와 영끌로 긁은 '내돈내산' 컬렉션</strong>임이 밝혀졌다. 결정적으로 천 비서관이 브리핑 룸에 나타나 "시장님이 오프라인 지역 경제를 살리겠다며 관내 서브컬처 매장의 월매출을 혼자서 하드캐리하고 계신 카드 영수증 내역입니다"라며 산더미 같은 결제 내역을 공개해 윤재훈 측을 완벽하게 압살했다. 이 코미디 같은 헛발질로 인해 윤재훈의 득표율은 완벽하게 박살 났다.
+        </p>
+
+        <h2 id="s-7" class="anchor-offset">7. 인간 관계 (사제 연대)</h2>
+        <div style="background-color: #f8f9fa; border-left: 4px solid #0077DD; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            <strong>"저에게 효빈시는 단순한 행정구역이 아닙니다. 제가 사랑하고, 저를 살게 해준 사람들이 살아 숨 쉬는 무대입니다."</strong>
+        </div>
+
+        <h3 id="s-7-1" class="anchor-offset">7.1. <a href="민부선.html" class="wiki-link">민부선</a> (효빈대학교 총장)</h3>
+        <p><strong>"나의 정치적 스승이자, 숨겨진 덕질 영혼의 동지."</strong></p>
+        <p>
+            효빈대학교 사회복지경영학과 교수 시절 박효빈을 가르쳤던 스승. 2020년 수업 당시 박효빈이 발표한 '가족 치료 사례(재벌가 자녀의 진로 갈등)'가 실은 <strong><a href="오하라 마리.html" class="wiki-link">오하라 마리</a>(러브라이브 선샤인)</strong>의 이야기임을 단번에 간파하고 따로 불러내 <strong>"자네도... 동지인가?"</strong>라며 커밍아웃(?)을 했다고 한다. (참고로 민 총장은 오하라 마리 & 엠마 베르데 오시였다.)
+        </p>
+        <p>
+            이후 2024년 '엠마 빵 사건'이나 2025년 '카스미-시즈쿠 패널 훼손 사건' 등 서브컬처 혐오 범죄가 발생할 때마다, 두 사람은 <strong>"우리의 오시(推し)를 건드린 자를 용서하지 않겠다"</strong>는 사적인 분노와 공적인 정의감을 강력하게 공유하며 공동 대응했다. 단순한 사제 관계를 넘어, <strong>'사회복지-문화 융합'</strong>이라는 시정 비전을 함께 그리는 영혼의 파트너다.
+        </p>
+
+        <h3 id="s-7-2" class="anchor-offset">7.2. <a href="한바다.html" class="wiki-link">한바다</a> (Han Bada)</h3>
+        <p><strong>"나의 영원한 아이돌이자, 시정의 동반자."</strong></p>
+        <p>
+            박효빈 시장에게 <a href="한바다.html" class="wiki-link">한바다</a>는 단순한 마스코트 캐릭터가 아니다. 어린 시절 찢어지는 가난과 학교폭력에 시달릴 때, 전광판 속 한바다의 밝은 미소를 보며 위로를 받았다고 한다. 취임 직후 한바다를 단순 명예 주무관에서 <strong>'효빈시 공식 홍보대사'</strong>로 파격 승격시키고, 본인과 함께 <strong>'더블 센터(Double Center)'</strong> 체제를 선언했다. 매달 사비로 굿즈를 대량 구매하며 이를 당당히 "품위 유지비"라고 부른다.
+        </p>
+
+        <h3 id="s-7-3" class="anchor-offset">7.3. <a href="돈불라.html" class="wiki-link">돈불라</a> (Donbulla)</h3>
+        <p><strong>"최고의 샌드백이자, 시정에 필요한 완벽한 필요악."</strong></p>
+        <p>
+            철도 파괴자 <a href="윤대환.html" class="wiki-link">윤대환</a>이 만든 흉물 마스코트. 본래 폐기 처분될 뻔했으나 박효빈 시장의 기발한 아이디어로 <strong>'공익 캠페인용 공식 빌런'</strong>으로 부활했다. 박 시장은 "무단횡단, 쓰레기 투기 등 나쁜 짓의 예시를 시민들에게 보여주는 데 이보다 완벽하게 얄미운 캐릭터는 없다"며 매우 흡족해한다고 한다.
+        </p>
+
+        <h3 id="s-7-4" class="anchor-offset">7.4. <a href="박현만.html" class="wiki-link">박현만</a> (Park Hyun-man)</h3>
+        <p><strong>"효빈의 정신적 지주이자, 벼랑 끝에 몰렸던 우리 가족의 은인."</strong></p>
+        <p>
+            2006년 윤대환에 의해 5호선 공사가 중단되면서 건설 일용직이었던 박효빈의 아버지가 실직했을 때, 2008년 보궐선거로 복귀한 박현만 시장이 공사를 전면 재개하고 노동자들의 체불 임금을 챙겨준 덕분에 박효빈의 가정이 간신히 회생할 수 있었다. 박효빈은 그를 진심으로 "아버지의 은인"이라 여기며, 1세대 건담 덕후인 박현만과 세대를 초월한 끈끈한 덕토크를 나누기도 한다.
+        </p>
+
+        <h3 id="s-7-5" class="anchor-offset">7.5. <a href="윤재훈.html" class="wiki-link">윤재훈</a> (Yoon Jae-hoon)</h3>
+        <p><strong>"철천지원수이자, 내 인생을 단련시킨 완벽한 반면교사."</strong></p>
+        <p>
+            초등학교 동창이자 학창 시절 기초수급자였던 박효빈을 '세금 돼지'라 부르며 지독하게 괴롭혔던 학교폭력 가해자. 성인이 되어서는 2022년 광역시장 선거의 상대 후보로 만나 패륜적인 막말을 퍼부었다. 박효빈은 그를 사사롭게 용서하는 대신, 압도적인 실력과 <strong>67.90% 대 9.99%</strong>라는 처참한 득표율 차이로 정치적 생명을 끊어버림으로써 가장 완벽하고 통쾌한 복수를 완성했다.
+        </p>
+
+        <h2 id="s-8" class="anchor-offset" style="border-bottom: 1px solid #ccc; padding-bottom: 5px;">8. 여담</h2>
+
+        <div class="wiki-content-box">
+            
+            <ul class="wiki-list" style="list-style-type: disc;">
+                <li>
+                    <strong>이름이 곧 도시 그 자체 (효빈시의 박효빈):</strong> 대한민국 헌정 사상 유일무이하게 <strong>현직 시장의 본명('효빈')과 자치단체장 관할 구역인 <a href="효빈광역시.html" class="wiki-link">효빈광역시</a>의 이름이 완벽하게 일치</strong>하는 사례다. 
+                    이 때문에 2022년 민선 8기 취임식 당시 박효빈 시장이 <strong>“저 개인의 효빈이 아닌, 시민 여러분 모두의 효빈광역시로 나아가겠습니다!”</strong>라는 역사적인(...) 포부를 밝혀 장내를 웃음바다로 만들기도 했다. <del>내 이름이 곧 내 도시다</del>
+                    <br><br>
+                    실제로 효빈시는 서해를 품고 동쪽으로 덕빈북도와 접하는 덕빈 지역 최대 도시로서, 인접한 <a href="선곡군.html" class="wiki-link">선곡군</a>, <a href="약산시.html" class="wiki-link">약산시</a>, <a href="천주시.html" class="wiki-link">천주시</a>, <a href="치원군.html" class="wiki-link">치원군</a>, <a href="기도군.html" class="wiki-link">기도군</a>까지 아우르는 막강한 중심지다. 특히 광역철도로 밀접하게 연결되어 교류가 잦은 덕북 제2의 도시 천주시의 시민들이나 타 지역 관광객들은, 처음 박 시장의 이름을 듣고 <strong>"자기가 다스린다고 도시 이름을 본인 이름으로 개명한 독재자냐", "자기 제국을 건설하려고 광역철도를 깐 거냐"</strong>고 진심으로 오해하는 촌극이 종종 벌어진다. (물론 도시명과 이름이 겹친 것은 <strong>순전한 우연의 일치</strong>일 뿐이다.)
+                    <br><br>
+                    시청 내부 상황도 코미디가 따로 없는데, 결재 서류나 언론 기사에서 '박효빈 효빈시장', '효빈시 박효빈 시장의 효빈 발전 계획' 등 똑같은 단어가 무한 반복되다 보니 공무원들과 기자들 사이에서 <a href="https://namu.wiki/w/게슈탈트%20붕괴" class="wiki-link" target="_blank">게슈탈트 붕괴</a>가 오는 건 일상이다. <del>오타쿠 시민들은 "이름부터가 시장 할 운명을 타고난 진골 중의 성골"이라며 맹목적으로 칭송한다.</del> 가끔 시청 민원실이나 지하철역에서 타지 사람이 "저기... 효빈 굿즈 어딨어요?"라고 물어보면 담당 주무관이 도시 공식 마스코트 굿즈를 찾아야 할지, 아니면 시장님의 최애 애니메이션 굿즈(...)를 묻는 건지 동공 지진을 일으키며 0.1초 고민하게 된다 카더라.
+                </li>
+
+                <li>
+                    <strong>효빈교통공사 원픽은 '임세하':</strong> 효빈시의 수장으로서 모든 도시철도 마스코트를 사랑하지만, 그중에서도 <strong>가장 총애하는 원픽(오시)</strong>은 다름 아닌 <strong><a href="7호선.html" class="wiki-link"><span style="color:#FF8899; font-weight:bold;">7호선</span></a> 공식 마스코트 <a href="임세하.html" class="wiki-link">임세하</a></strong>다. 
+                    겉보기엔 화사한 핑크빛 갸루 같지만 실상은 기름때를 묻히고 모터를 뜯어보는 중증 '공대 너드'라는 미친 갭 모에에 완벽하게 치여버렸다고. 특히 세하가 어머니의 고향인 필리핀 다문화 가정 출신이라는 점, 그리고 헐렁한 정비복 속에 <strong>압도적인 중장갑(B87) 피지컬</strong>을 숨기고 있다는 사실이 밝혀진 이후로 시청 시장실 한편을 세하의 1/1 등신대와 아크릴 스탠드로 도배해 '7호선 특별 성역'으로 만들어버렸다.
+                </li>
+
+                <li>
+                    <div class="wiki-image-right">
+                        <img src="이미지/시장사저_집무실.png" alt="박효빈 시장 시장실의 굿즈 컬렉션">
+                        <div class="wiki-image-caption">
+                            ▲ 효빈광역시청 시장 집무실 책상을 가득 메운 굿즈들의 모습. 결재 서류 대신 사아야, 카스미 피규어 박스와 네소베리 부대가 집무실을 점령하고 있다. <del>시청 집무실인지 애니메이트인지 헷갈린다 (....)</del>
+                        </div>
+                    </div>
+                    <div class="wiki-image-right" style="margin-top: 10px;">
+                        <img src="이미지/박효빈 굿즈.png.jpg" alt="박효빈 시장 자택의 굿즈 컬렉션">
+                        <div class="wiki-image-caption">
+                            ▲ 북구 중수동 자택(관저) 한편을 차지하고 있는 제단(...)의 모습. 시청 집무실에 이어 자택까지 완벽하게 덕질의 이원화를 이뤄냈다. 
+                        </div>
+                    </div>
+                    <strong>시장실과 관저를 모두 점령한 피규어 컬렉션과 광기의 라인업:</strong> 공식 마스코트 등신대가 세워져 있는 시청 시장 집무실 한편에도 본인의 2D '오시' 라인업 굿즈가 산더미처럼 쌓여 있지만, 퇴근 후의 공간인 <strong>본인의 자택(관저)</strong> 역시 상황은 다르지 않다. 공과 사를 막론하고 두 공간 모두 완벽한 오타쿠의 방(...)으로 꾸며놓아 해외 귀빈들이 집무실을 방문하면 시정 브리핑보다 컬렉션 소개를 먼저 듣게 될 정도. 그 방대한 리스트를 살펴보면 다음과 같다.
+                    <ul style="margin-top: 10px; list-style: circle; padding-left: 20px;">
+                        <li><strong><a href="https://namu.wiki/w/BanG%20Dream!" class="wiki-link" target="_blank">뱅드림!</a>:</strong> <a href="야마부키 사아야.html" class="wiki-link">야마부키 사아야</a>, <a href="아오바 모카.html" class="wiki-link">아오바 모카</a>, <a href="와카미야 이브.html" class="wiki-link">와카미야 이브</a>, <a href="마츠바라 카논.html" class="wiki-link">마츠바라 카논</a>, <a href="미나토 유키나.html" class="wiki-link">미나토 유키나</a>, <a href="쿠라타 마시로.html" class="wiki-link">쿠라타 마시로</a>, <a href="아사히 롯카.html" class="wiki-link">아사히 롯카</a>, <a href="타카마츠 토모리.html" class="wiki-link">타카마츠 토모리</a>, <a href="와카바 무츠미.html" class="wiki-link">와카바 무츠미</a></li>
+                        <li><strong><a href="https://namu.wiki/w/LoveLive!%20Series" class="wiki-link" target="_blank">러브라이브! 시리즈</a>:</strong> <a href="아야세 에리.html" class="wiki-link">아야세 에리</a>, <a href="토죠 노조미.html" class="wiki-link">토죠 노조미</a>, <a href="사쿠라우치 리코.html" class="wiki-link">사쿠라우치 리코</a>, <a href="와타나베 요우.html" class="wiki-link">와타나베 요우</a>, <a href="나카스 카스미.html" class="wiki-link">나카스 카스미</a>(커플링은 <a href="오사카 시즈쿠.html" class="wiki-link">시즈쿠</a>와의 조합을 강력 지지한다고...), <a href="탕 쿠쿠.html" class="wiki-link">탕 쿠쿠</a>, <a href="헤안나 스미레.html" class="wiki-link">헤안나 스미레</a>, <a href="안요지 히메.html" class="wiki-link">안요지 히메</a>, <a href="카츠라기 이즈미.html" class="wiki-link">카츠라기 이즈미</a></li>
+                        <li><strong><a href="https://namu.wiki/w/봇치%20더%20록!" class="wiki-link" target="_blank">봇치 더 록!</a>:</strong> <a href="키타 이쿠요.html" class="wiki-link">키타 이쿠요</a>, <a href="고토 히토리.html" class="wiki-link">고토 히토리</a></li>
+                    </ul>
+                    흥미롭게도 이 라인업은 본인의 식성과 퍼스널 컬러를 그대로 투영한 <strong>거울 치료(?) 수준</strong>이다. <strong>빵/고기 러버</strong>(모카, 사아야), <strong>파란색 쿨톤 계열</strong>, 그리고 자신과 같은 <strong>다문화 혼혈</strong>(에리, 이브) 속성을 가진 캐릭터들이 주를 이룬다. 
+                </li>
+
+                <li>
+                    <strong>환상의 짝꿍, 영혼의 파트너 천 비서관:</strong> 참고로 박효빈 시장을 보좌하는 <strong>비서실장(일명 천 비서관, 1991년생으로 시장보다 5살 연상)</strong> 또한 <strong><a href="https://namu.wiki/w/러브%20라이브!%20선샤인!!" class="wiki-link" target="_blank">러브라이브 선샤인</a></strong>의 <a href="타카미 치카.html" class="wiki-link">타카미 치카</a>와 <a href="사쿠라우치 리코.html" class="wiki-link">사쿠라우치 리코</a>(일명 치카리코 조합)의 광팬이다. 
+                    상관이 시장실을 애니메이션 굿즈로 도배하는 미친 짓을 벌이면 정상적인 비서관이라면 뜯어말려야 정상이지만, 천 비서관은 오히려 한술 더 떠서 일본에서 한정판 희귀 굿즈를 직구해오거나 집무실 구도 배치를 적극적으로 돕는 환장의 케미를 보여준다. 두 사람은 시장과 비서실장이라는 상하 관계를 넘어 <strong>서브컬처로 맺어진 영혼의 파트너</strong>이자 <strong>덕질 전우</strong>다. <del>천 비서관: "시장님, 결재 서류 놔둘 자리가 없으니 이번에 도착한 네소베리는 관저로 보내겠습니다."</del>
+                </li>
+
+                <li>
+                    <strong>오프라인 성덕 행보:</strong> 바쁜 시정 업무 중에도 내한 성우는 무조건 영접하러 가는 열정적인 성덕이다. <a href="아이다 리카코.html" class="wiki-link">아이다 리카코</a>(리캬코) 팬미팅 당시 똑같이 핑크색 옷을 입힌 <a href="사쿠라우치 리코.html" class="wiki-link">리코</a> 네소베리를 들이밀어 "리코쨩 빔!"을 맞고 완벽하게 성불했으며, AGF 배웅회에서는 <a href="마에다 카오리.html" class="wiki-link">마에다 카오리</a>에게 <a href="오사카 시즈쿠.html" class="wiki-link">시즈쿠</a> 네소베리를 흔들어 찐텐 미소를 이끌어냈다. 심지어 <a href="아이미.html" class="wiki-link">아이미</a> 서울 팬미팅 중 "한국 추천 여행지"를 묻는 질문에 관객석에서 냅다 <strong>"효빈!(혹은 전주!)"</strong>이라고 샤우팅을 질러 화답하게 만드는 기행을 벌이기도 했다.
+                </li>
+
+                <li>
+                    <strong>아 물론 일은 기가 막히게 잘 합니다(...):</strong> 
+                    위의 내용이나 시장실 풍경만 보면 시정은 내팽개치고 덕질만 하는 낙하산 시장처럼 보일 수 있지만, 사실 <strong>박효빈 시장과 천 비서관</strong> 모두 빈민가에서 올라와 산전수전 다 겪은 상상을 초월하는 <strong>워커홀릭(본업 존잘)</strong>이다. 애니메이션에서 영감을 받은 아이디어를 실제 행정에 접목시켜 시민들의 편의를 극대화하는 실용 정책을 무서운 속도로 쏟아내고 있다. 
+                    <br><br>
+                    특히 박효빈 시장은 매일 관저에서 시청으로 출근할 때 관용차 대신 <strong><a href="6호선.html" class="wiki-link"><span style="color:#881188; font-weight:bold;">6호선</span></a></strong>(혹은 7호선 트램)을 이용하며, 이 출근길 버스킹(?) 과정에서 시민들과 격의 없이 대화하고 민원을 수첩에 적어가는 것으로 유명하다. <del>산더미 같은 굿즈 관리와 덕질, 그리고 운동까지 병행할 시간은 오로지 잠을 줄여서 만든다고 한다. 15학번 시절 쓰리잡 뛰며 버티던 독기를 아직도 못 고쳤다.</del>
+                </li>
+
+                <li>
+                    <div class="wiki-image-right">
+                        <img src="이미지/헬스장 바벨.png" alt="벤치프레스 중인 박효빈 시장">
+                        <div class="wiki-image-caption">
+                            ▲ 퇴근 후 시장님의 2차 집무실. <del>광기의 벤치프레스</del> 3대 250을 칠 때 듣는 노동요는 Roselia의 《FIRE BIRD》나 니지가사키의 《TOKIMEKI Runners》다.
+                        </div>
+                    </div>
+                    <div class="wiki-image-right" style="margin-top: 10px;">
+                        <img src="이미지/박효빈몸.png.jpg" alt="박효빈 시장 헬창 피지컬">
+                        <div class="wiki-image-caption">
+                            ▲ 극단적 편식쟁이라는 사실이 믿기지 않는 가슴둘레 97cm의 다부진 피지컬. <del>마지막 1RM은 미나토 유키나의 고음과 함께 들어 올린다 카더라.</del>
+                        </div>
+                    </div>
+                    
+                    <strong>초딩 입맛 편식과 무결점(?) 청정 라이프의 기묘한 공존:</strong> 
+                    무려 4개 국어를 구사하는 뇌섹남의 면모와는 다르게, 식성은 완벽한 초딩 입맛이다. 고기와 빵을 지극히 사랑하는 반면, 채소류 특히 토마토는 아예 입에도 대지 못한다. 어린 시절 무능한 담임 교사의 강제 배식으로 구토를 했던 뼈아픈 트라우마 때문. 
+                    <br><br>
+                    하지만 식습관을 제외한 나머지 생활 패턴은 스님을 능가하는 <strong>궁극의 건강 청정 라이프</strong>를 자랑한다. 우선 술을 전혀 못 마시는 <strong>진성 알쓰</strong>라 회식 자리에서는 항상 사이다만 마신다. (물론 맨정신으로 테이블 위에 올라가 럽라 애니송을 열창하는 미친 텐션을 보여준다.) 게다가 <strong>담배는 태어나서 단 한 번도 입에 댄 적이 없는 순도 100% 비흡연자</strong>이며, 직장인들의 포션인 <strong>커피조차 쓴맛을 싫어해 거의 마시지 않는다.</strong> <del>참고로 여동생 박슬아가 학창 시절 호기심에 담배에 손을 댔다가 오빠한테 걸려서 싹 끊었다는 일화가 있다.</del>
+                    <br><br>
+                    이렇게 술, 담배, 커피를 일절 안 하는 맑은 몸(?)에, 과거 빈곤 비만과 섭식장애를 극복하기 위해 시작한 <strong>웨이트 트레이닝</strong>이 더해져 현재는 가슴둘레 97cm, 키 174.5cm의 압도적인 피지컬을 자랑하는 <strong>근수저 헬창 시장</strong>이 되었다. 요약하자면 <strong>"술, 담배, 커피 안 하고 쇠질만 엄청나게 하는데 밥은 채소 빼고 편식하는"</strong> 기괴한 밸런스의 소유자. 
+                </li>
+
+                <li>
+                    <strong>목소리 및 언행:</strong> 외형은 다부진 근육질이지만, 목소리는 변성기가 다 지나지 않은 듯한 <strong>중성적이고 얇은 미성</strong>이다. 덕분에 사석에서 통화할 때는 미성년자나 대학생으로 오해받기도 한다. 하지만 공식 석상에서 '시장 모드'를 켤 때는 묘하게 나긋나긋하면서도 신뢰감 있는 톤으로 변하며, 특유의 차분하고 논리적인 언변 덕분에 브리핑 전달력이 압도적으로 좋다. <del>물론 철도나 애니 이야기가 나오면 톤이 한 옥타브 올라가며 속사포 랩이 시작된다.</del>
+                </li>
+
+                <li>
+                    <strong>퍼스널 컬러와 인간관계:</strong> 본인만의 확고한 퍼스널 컬러는 <strong>스틸 마인드 블루(#4682B4)</strong>다. 참고로 본인 피셜, 아쉽게도 현재 <strong>여자친구가 없는 솔로</strong>라고 한다.
+                </li>
+
+                <li>
+                    <strong>언어 부심:</strong> 어머니의 모국어인 <a href="https://namu.wiki/w/타갈로그어" class="wiki-link" target="_blank">타갈로그어</a>, 기본 <a href="https://namu.wiki/w/영어" class="wiki-link" target="_blank">영어</a>, 그리고 수년간의 덕질로 단련된 <a href="https://namu.wiki/w/일본어" class="wiki-link" target="_blank">일본어</a>(청해 및 회화 만렙)까지 4개 국어가 가능하다. 일본 시찰 당시 통역 없이 오타쿠 용어까지 섞어 쓰며 프리토킹을 해 현지인들을 경악하게 했으며, 다문화(필리핀 혼혈) 배경을 전혀 부끄러워하지 않고 당당한 자부심을 가지고 있다.
+                </li>
+
+                <li>
+                    <strong>월드비전, 지옥에서 내려온 동아줄:</strong> 시장님의 인생에서 <a href="https://namu.wiki/w/월드비전" class="wiki-link" target="_blank">월드비전</a>은 각별함을 넘어 구원자나 다름없다. 
+                    단순히 쌀과 반찬을 지원해 끼니를 때우게 해준 수준이 아니었다. 당시 바퀴벌레가 들끓고 비만 오면 천장에서 물이 폭포수처럼 새던 <a href="내성동.html" class="wiki-link">내성동</a>의 낡은 연립주택(일명 쓰레기집)에서 가족들을 구출해 주었고, 아픈 아버지와 어린 동생들을 홀로 건사하며 '독박 돌봄'에 짓눌려가던 20대 청년 박효빈에게 "청년의 삶에도 숨통이 트여야 한다"며 일본 여행(이케부쿠로 복지관 시찰 겸 덕질)을 전액 지원해 준 곳도 월드비전이었다. 
+                    이후 광역시장으로 당선되어 난생처음으로 '안정적이고 넉넉한' 첫 월급(장관급 대우)을 받았을 때, <strong>가장 먼저 한 일이 월드비전 정기후원 한도를 최대치로 끌어올린 것</strong>이었다. 당시 비서실장에게 "옛날에 그분들이 쓰레기집에서 날 꺼내주지 않았다면, 지금의 박효빈은 없었다. 이제는 효빈시의 이름으로 그 은혜를 갚을 차례"라고 말했다는 일화는 유명하다.
+                </li>
+
+                <li>
+                    <strong>다사다난한 이사 스토리와 여동생 박슬아:</strong> 지옥 같던 내성동 연립주택을 탈출한 뒤, 가족은 고향인 서구 <a href="당선동.html" class="wiki-link">당선동</a>에 잠시 머물렀다. 
+                    이후 여동생 <a href="박슬아.html" class="wiki-link">박슬아</a>가 동구에 위치한 <a href="효빈정보고등학교.html" class="wiki-link">효빈여자상업고등학교</a>(이후 남녀공학으로 전환되며 '효빈정보고등학교'로 교명 변경)를 졸업하자마자, 가족은 다 함께 북구 <a href="중수동.html" class="wiki-link">중수동</a>으로 이사했다. 
+                    이 기막힌 이사 타이밍 덕분에 박효빈은 관할 구역인 <a href="북구청.html" class="wiki-link">북구청</a>에서 사회복무요원으로 병역 의무를 이행할 수 있었다. 참고로 여동생 박슬아는 공부로 뼈를 깎은 오빠와 달리 학업에 큰 뜻이 없어(...) <a href="옥선대학교.html" class="wiki-link">옥선대학교</a>에 진학했다고 한다. 
+                </li>
+
+                <li>
+                    <strong>2호선 통학의 추억:</strong> 2020년 사회복무요원 소집해제 후, 남은 4학년 2학기는 중수동 집에서 <a href="효빈대학교.html" class="wiki-link">효빈대학교</a>까지 매일 <a href="2호선.html" class="wiki-link"><span style="color:#00CCAA; font-weight:bold;">2호선</span></a>을 타고 통학했다. 
+                    당시 취업과 출마 준비를 병행하며 2호선 지옥철에 시달렸던 생생한 경험은, 훗날 효빈시의 궤도 교통망을 촘촘하게 뜯어고치고 <a href="효빈 패스.html" class="wiki-link">효빈 패스(H-Pass)</a>를 설계하는 강력한 현장 데이터가 되었다.
+                </li>
+
+                <li>
+                    <strong>과거 털이의 결말:</strong> 2022년 선거 당시, 상대인 윤재훈 측과 보수 언론에서 박효빈의 '먼지'를 털기 위해 대학 시절과 알바 기록을 이 잡듯 뒤진 적이 있다. 
+                    그러나 캐면 캘수록 미담은커녕 너무나도 처절하고 눈물겨운 생존기(폐기 도시락 먹방, 편의점 야간 알바 중 코피, 곰팡이 핀 집 거주 등)와 덕질 기록(...)밖에 나오지 않아, 오히려 뒷조사를 하던 기자들이 <strong>"이 청년은 제발 좀 잘 됐으면 좋겠다"</strong>며 숙연해졌다는 전설적인 촌극이 벌어졌다.
+                </li>
+
+                <li>
+                    <strong>탕쿠쿠 대첩 (2023)과 '쿠쿠스 배리어':</strong> 극우 악플러 <strong><a href="윤재훈.html" class="wiki-link">윤재훈</a></strong> 일당이 <strong><a href="https://namu.wiki/w/Liyuu" class="wiki-link" target="_blank">Liyuu</a></strong>(탕쿠쿠 성우) 팬미팅 행사장에 난입해 기물을 훼손하고 욕설을 퍼붓다 현장의 시민들과 팬들에게 물리적으로 압살당한 사건. 
+                    당시 시청 소속 공무원들과 박 시장은 신속하게 방어벽을 쳐 성우를 보호했는데, 이 사건을 계기로 효빈시는 문화예술인 보호 및 혐오 범죄 무관용 대응 조례인 일명 <strong>'쿠쿠스 배리어(Kuku's Barrier)'</strong>를 제정하여 혐오 세력이 효빈시에 발붙일 곳을 법적으로 영구 차단해버렸다.
+                </li>
+
+                <li>
+                    <strong>블루버드 정책 (Bluebird Policy):</strong> 위 '탕쿠쿠 대첩' 이후, 박효빈 시장이 직접 현장에 뛰어들어 사건을 수습했다는 미담을 전해 들은 <strong><a href="https://namu.wiki/w/Liyuu" class="wiki-link" target="_blank">Liyuu</a></strong>가 개인 방송 중 "효빈 시장님 정말 대단하시네요, 덕분에 안심했어요"라며 직접 감사 인사를 전했다. 
+                    이에 제대로 '성덕'이 되어버린 박 시장은 벅차오르는 감동에 며칠 동안 잠을 이루지 못했고(...), 그 새벽의 광기와 감성을 듬뿍 담아 밤을 꼬박 새워 기획한 것이 바로 <strong>'블루버드 멘토단'</strong>이다. 단순한 장학금을 넘어 취약계층 청소년들에게 실무 행정 경험과 문화생활 및 성지순례 비용을 전폭 지원하는 이 프로그램은 "모든 청년은 가난과 상관없이 마음껏 덕질할 권리가 있다"는 모토 아래 대성공을 거두었다.
+                </li>
+
+                <li>
+                    <strong>관저 TMI</strong>: 시장 관저를 굳이 북구 <strong>중수동(中須洞)</strong>에 잡았는데, 공식적으로는 "교통의 요지라서"라고 둘러댔지만, 덕후 시민들은 "<a href="나카스 카스미.html" class="wiki-link">나카스 카스미</a>(中須 かすみ)와 한자가 같아서 노린 것 아니냐"는 <del>킹리적 갓심</del> 합리적 의심을 거두지 않고 있다. 본인도 부인하지 않는 눈치며, 심지어 입주한 관저 아파트 이름마저 <strong>'카스미 아파트'</strong>다.(...)
+                </li>
+
+                <li>
+                    <strong>금기어:</strong> <strong>9.99%</strong> (<span class="wiki-link">윤재훈</span>의 8회 지선 득표율). 시장실에서 이 숫자를 언급하면 시장님이 튀어나오는 웃음을 참느라 안면 근육이 심하게 일그러진다. 0.01%p 차이로 윤재훈이 선거비를 다 날린 기적의 숫자이기 때문.
+                </li>
+
+                <li>
+                    <strong>제9회 전국동시지방선거 리매치:</strong> 2026년 제9회 지선에서 과거 9.99%라는 전설적인 득표율(...)을 기록했던 원수 <strong><a href="윤재훈.html" class="wiki-link">윤재훈</a></strong>과 또다시 맞붙었다. 결과는 박효빈 76.79%, 윤재훈 4.11%로, 윤재훈은 지난 선거의 9.99%보다도 한참 더 떨어진 4%대 득표율이라는 경이로운(...) 기록을 세우며 정치 생명이 완전히 끝장났다. 덕후 시민들은 "9.99%도 아까웠는데 4.11%면 아주 소수점까지 가겠다"며 축제 분위기다.
+                </li>
+            </ul>
+        </div>
+        
+        <h2 id="s-9" class="anchor-offset">9. 소속 정당</h2>
+        <p>
+            본래 2016년 대학생 신분으로 입당했으나, 병역의무로 인한 사회복무요원 복무로 인해 잠시 당적을 내려놓았다가 2020년 소집해제와 함께 복당하며 본격적인 정치의 길을 걷기 시작했다.
+        </p>
+        <table class="data-table text-center text-sm w-full mb-4" style="border-collapse: collapse; border: 1px solid #ddd;">
+            <thead style="background-color: #f1f5f9;">
+                <tr>
+                    <th style="padding: 10px; border: 1px solid #ddd;">정당</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">기간</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">비고</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">
+                        <span class="wiki-badge badge-minju" onclick="window.open('https://namu.wiki/w/더불어민주당')">더불어민주당</span>
+                    </td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">2016 - 2018</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">최초 입당 (대학 재학 및 쓰리잡 시절)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">
+                        <span class="wiki-badge badge-independent">무당적</span>
+                    </td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">2018 - 2020</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;"><a href="사회복무요원.html" class="wiki-link">사회복무요원</a> 복무로 인한 자동 탈당</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">
+                        <span class="wiki-badge badge-minju" onclick="window.open('https://namu.wiki/w/더불어민주당')">더불어민주당</span>
+                    </td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">2020 - 현재</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">소집해제 후 복당 (이후 효빈시장 전략공천 및 재선)</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2 id="s-10" class="anchor-offset">10. 선거 이력</h2>
+        <p>2022년 제8회 전국동시지방선거에서 <strong>67.90%</strong>라는 압도적인 득표율로 당선되어 전국 광역단체장 중 2위와 가장 큰 격차로 기록되었다. 이어진 2026년 제9회 전국동시지방선거에서도 <strong>76.79%</strong>라는 경이로운 득표율로 가볍게 재선에 성공하며 흔들림 없는 막강한 지지 기반을 증명했다.</p>
+        
+        <h3 class="text-lg font-bold mt-6 mb-2" style="border-bottom: 2px solid #004EA2; display: inline-block; padding-bottom: 2px;">제8회 전국동시지방선거</h3>
+        <table class="data-table text-center text-xs w-full mt-2 mb-6">
+            <thead>
+                <tr><th>선거명</th><th>선거구</th><th>기호</th><th>정당</th><th>후보</th><th>득표율</th><th>당락</th><th>비고</th></tr>
+            </thead>
+            <tbody>
+                <tr class="bg-blue-50 font-bold">
+                    <td>제8회 지방선거</td><td>효빈광역시장</td><td>1</td><td><span class="wiki-badge badge-minju" onclick="window.open('https://namu.wiki/w/더불어민주당')">더불어민주당</span></td><td>박효빈</td><td>67.90%</td><td>당선 (1위)</td><td>최연소</td>
+                </tr>
+                <tr>
+                    <td>제8회 지방선거</td><td>효빈광역시장</td><td>5</td><td><span class="wiki-badge badge-independent" onclick="window.open('https://namu.wiki/w/무소속')">무소속</span></td><td><a href="유성민.html" class="wiki-link">유성민</a></td><td>14.71%</td><td>낙선 (2위)</td><td></td>
+                </tr>
+                <tr>
+                    <td>제8회 지방선거</td><td>효빈광역시장</td><td>2</td><td><span class="wiki-badge badge-gukhim" onclick="window.open('https://namu.wiki/w/국민의힘')">국민의힘</span></td><td><span class="wiki-link" onclick="handleSearchFromNav('윤재훈')">윤재훈</span></td><td>9.99%</td><td>낙선 (3위)</td><td>선거비용 미보전<sup class="wiki-fn-link" onclick="alert('9.99%. 오타 아니다. 진짜 9.99%다. 0.01%p 차이로 선거비용을 다 날린 기적의 숫자.')">[7]</sup></td>
+                </tr>
+                <tr>
+                    <td>제8회 지방선거</td><td>효빈광역시장</td><td>4</td><td><span class="wiki-badge badge-independent" onclick="window.open('https://namu.wiki/w/무소속')">무소속</span></td><td><a href="강성택.html" class="wiki-link">강성택</a></td><td>4.20%</td><td>낙선 (4위)</td><td>민주계 성향</td>
+                </tr>
+                <tr>
+                    <td>제8회 지방선거</td><td>효빈광역시장</td><td>3</td><td><span class="wiki-badge badge-jinbo" onclick="window.open('https://namu.wiki/w/정의당')">정의당</span></td><td>이사원</td><td>3.20%</td><td>낙선 (5위)</td><td></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 class="text-lg font-bold mt-6 mb-2" style="border-bottom: 2px solid #555; display: inline-block; padding-bottom: 2px;">제9회 전국동시지방선거</h3>
+        <table class="data-table text-center text-xs w-full mt-2">
+            <thead>
+                <tr><th>선거명</th><th>선거구</th><th>기호</th><th>정당</th><th>후보</th><th>득표율</th><th>당락</th><th>비고</th></tr>
+            </thead>
+            <tbody>
+                <tr class="bg-blue-50 font-bold">
+                    <td>제9회 지방선거</td><td>효빈광역시장</td><td>1</td><td><span class="wiki-badge badge-minju" onclick="window.open('https://namu.wiki/w/더불어민주당')">더불어민주당</span></td><td>박효빈</td><td>76.79%</td><td>당선 (1위)</td><td>재선</td>
+                </tr>
+                <tr>
+                    <td>제9회 지방선거</td><td>효빈광역시장</td><td>7</td><td><span class="wiki-badge badge-independent" onclick="window.open('https://namu.wiki/w/무소속')">무소속</span></td><td><a href="유성민.html" class="wiki-link">유성민</a></td><td>15.27%</td><td>낙선 (2위)</td><td>보수 성향</td>
+                </tr>
+                <tr>
+                    <td>제9회 지방선거</td><td>효빈광역시장</td><td>2</td><td><span class="wiki-badge badge-gukhim" onclick="window.open('https://namu.wiki/w/국민의힘')">국민의힘</span></td><td><a href="윤재훈.html" class="wiki-link">윤재훈</a></td><td>4.11%</td><td>낙선 (3위)</td><td>선거비용 미보전 (4%대 굴욕)</td>
+                </tr>
+                <tr>
+                    <td>제9회 지방선거</td><td>효빈광역시장</td><td>6</td><td><span class="wiki-badge" style="background-color: #FFED00; color: #333;" onclick="window.open('https://namu.wiki/w/정의당')">정의당</span></td><td>이사원</td><td>3.00%</td><td>낙선 (4위)</td><td></td>
+                </tr>
+                <tr>
+                    <td>제9회 지방선거</td><td>효빈광역시장</td><td>5</td><td><span class="wiki-badge" style="background-color: #51BDC5;" onclick="window.open('https://namu.wiki/w/새미래민주당')">새미래민주당</span></td><td>지총민</td><td>0.83%</td><td>낙선 (5위)</td><td></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="s-11" class="anchor-offset">11. 둘러보기</h2>
+        <div class="border border-[#ccc] p-3 rounded bg-white text-sm text-center">
+            <span class="wiki-link" onclick="handleSearchFromNav('효빈광역시')">효빈광역시</span> · 
+            <span class="wiki-link" onclick="handleSearchFromNav('L-Project')">L-Project</span> · 
+            <span class="wiki-link" onclick="handleSearchFromNav('효빈 애니메이션 페스티벌')">효빈 애니메이션 페스티벌 (HAF)</span> · 
+            <a href="한바다.html" class="wiki-link">한바다</a> · 
+            <a href="박현만.html" class="wiki-link">박현만</a> · 
+            <a href="윤재훈.html" class="wiki-link">윤재훈</a> · 
+            <span class="wiki-link" onclick="handleSearchFromNav('효빈대학교')">효빈대학교</span>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="mt-20 border-t pt-10 text-center text-gray-400 text-xs pb-10">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        function handleSearchFromNav(title) {
+            if (!title) return;
+            const fileMap = {
+                '효빈광역시': '효빈광역시.html',
+                '남구': '남구.html',
+                '남구(효빈광역시)': '남구.html',
+                '동구': '동구.html',
+                '동구(효빈광역시)': '동구.html',
+                '북구': '북구.html',
+                '북구(효빈광역시)': '북구.html',
+                '서구': '서구.html',
+                '서구(효빈광역시)': '서구.html',
+                '중구': '중구.html',
+                '안천구': '안천구.html',
+                '안천구(효빈광역시)': '안천구.html',
+                '창전구': '창전구.html',
+                '창전구(효빈광역시)': '창전구.html',
+                '청엽구': '청엽구.html',
+                '청엽구(효빈광역시)': '청엽구.html',
+                '탄성군': '탄성군.html',
+                '탄성군(효빈광역시)': '탄성군.html',
+                '덕빈북도': 'deokbin_buk.html',
+                '덕빈남도': 'deokbin_nam.html',
+                '박효빈': '박효빈.html'
+            };
+
+            if (fileMap[title]) {
+                window.location.href = fileMap[title];
+            } else {
+                const t = String(title).trim();
+                const hasExt = /\.[a-zA-Z0-9]+($|\?)/.test(t);
+                window.location.href = hasExt ? t : (t + '.html');
+            }
+        }
+
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
+        };
+
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') handleSearchFromNav(this.value.trim());
+        });
+    
+        // --- 링크 처리(한국어 파일명 포함) ---
+        function handleLink(target){
+            if(!target) return;
+            const t = String(target).trim();
+            if(!t) return;
+            const hasExt = /\.[a-zA-Z0-9]+($|\?)/.test(t);
+            location.href = hasExt ? t : (t + '.html');
+        }
+        function normalizeWikiLinks(){
+            document.querySelectorAll('a.wiki-link').forEach(a=>{
+                const href = a.getAttribute('href');
+                if(!href) return;
+                const h = href.trim();
+                if(!h || h.startsWith('#') || h.startsWith('http') || h.startsWith('mailto:') || h.startsWith('tel:') || h.startsWith('javascript:')) return;
+                if(/\.[a-zA-Z0-9]+($|\?)/.test(h)) return;
+                a.setAttribute('href', h + '.html');
+            });
+        }
+        normalizeWikiLinks();
+    </script>
+
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

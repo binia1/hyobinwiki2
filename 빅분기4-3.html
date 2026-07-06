@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>분석결과 해석 (SECTION 01) - 효빈위키</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Mermaid.js (최신 안정화 버전) -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
+    <!-- MathJax for LaTeX Rendering -->
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      chtml: {
+        fontURL: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2'
+      }
+    };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #00CCAA; 
+            --wiki-line-color: #00CCAA; 
+            
+            --wiki-header-bg: var(--wiki-line-color);
+            --wiki-header-text: #ffffff;
+            --wiki-table-header-bg: #e6faf6;
+            --wiki-table-header-text: #000000;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f8f9fa; 
+            --wiki-link: #008877; 
+            --wiki-footer-bg: #f0f0f0;
+            --wiki-footer-text: #777;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #33eebb; 
+            --wiki-table-header-bg: #222;
+            --wiki-table-header-text: #ffffff;
+            --wiki-footer-bg: #1a1a1a;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.7; word-break: keep-all; margin: 0; transition: background-color 0.3s, color 0.3s; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 30px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1.5px; border-bottom: 3px solid var(--wiki-main); padding-bottom: 15px;} 
+        
+        h2 { font-size: 2rem; font-weight: 900; border-bottom: 2px solid var(--wiki-line-color); padding-bottom: 8px; margin-top: 3.5rem; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; color: var(--wiki-text); }
+        h2::before { content: ""; display: inline-block; width: 6px; height: 2rem; background: var(--wiki-line-color); }
+        h3 { font-size: 1.5rem; font-weight: 800; margin-top: 2.5rem; margin-bottom: 15px; border-left: 6px solid var(--wiki-line-color); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 10px; color: var(--wiki-text); }
+
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; border: 1px solid var(--wiki-border); font-size: 0.95rem; }
+        th, td { border: 1px solid var(--wiki-border); padding: 10px 12px; text-align: left; vertical-align: middle; color: var(--wiki-text); }
+        th { background-color: var(--wiki-table-header-bg); font-weight: 800; text-align: center; border-bottom: 2px solid var(--wiki-main);}
+
+        .infobox { float: right; margin-left: 25px; margin-bottom: 20px; width: 350px; clear: right; border: 2px solid var(--wiki-main); border-radius: 4px; background-color: var(--wiki-bg); }        
+        .infobox-top { background-color: var(--wiki-main); padding: 20px 10px; text-align: center; border-bottom: 1px solid var(--wiki-border); color: #fff; }
+        .infobox-top b { font-size: 1.8rem; line-height: 1.2; letter-spacing: -1px; font-weight: 900; }
+
+        .toc { display: inline-block; min-width: 300px; margin-bottom: 25px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 20px; border-radius: 4px; }        
+        .toc-title { text-align: center; font-weight: 900; border-bottom: 1px solid var(--wiki-border); margin-bottom: 15px; padding-bottom: 10px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding: 0; margin: 0; line-height: 1.6; font-weight: 600;}
+        .toc li { margin-bottom: 4px; }
+        .toc .pl-5 { padding-left: 20px; font-weight: 400;}
+
+        .wiki-link { color: var(--wiki-link); font-weight: 700; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        .quote-box { background: var(--wiki-gray-bg); padding: 15px 20px; font-weight: 600; border-left: 5px solid var(--wiki-line-color); margin-bottom: 20px; color: var(--wiki-text); border-radius: 4px;}
+        .exam-box { border: 2px solid #ff4444; background-color: #fffafa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        [data-theme='dark'] .exam-box { background-color: #2a1111; border-color: #cc3333; }
+        .exam-title { font-weight: 900; color: #ff4444; margin-bottom: 10px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;}
+        
+        .anime-box { border: 2px dashed; background-color: #fdf5fd; padding: 20px; border-radius: 8px; margin: 20px 0; color: #333; display: flex; gap: 15px; align-items: flex-start;}
+        [data-theme='dark'] .anime-box { background-color: #2a1a2a; color: #eee;}
+        .anime-box-title { font-weight: 900; font-size: 1.15rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;}
+        .anime-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid; flex-shrink: 0; background-color: #fff;}
+
+        .mermaid { background: var(--wiki-bg); padding: 15px; border-radius: 8px; margin: 15px 0; display: flex; justify-content: center; overflow-x: auto; border: 1px solid var(--wiki-border);}
+        
+        del { color: #999; text-decoration: line-through; }
+        
+        /* 완벽한 LaTeX 렌더링을 위한 수학 수식 박스 */
+        .math-formula { background: var(--wiki-gray-bg); padding: 15px 20px; border-radius: 8px; text-align: center; margin: 20px 0; border: 1px solid var(--wiki-border); overflow-x: auto; font-size: 1.1rem;}
+
+        /* 각주 및 툴팁 전용 CSS */
+        .fn-link { color: var(--wiki-link); font-size: 0.75em; vertical-align: super; margin: 0 1px; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .fn-link:hover { text-decoration: underline; }
+        
+        .wiki-footnotes { margin-top: 60px; padding-top: 20px; border-top: 2px solid var(--wiki-border); }
+        .wiki-footnotes h4 { font-size: 1.1rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 10px; }
+        .wiki-footnotes ul { list-style: none; padding: 0; margin: 0; }
+        .wiki-footnotes li { margin-bottom: 8px; font-size: 0.9rem; line-height: 1.6; padding: 4px 8px; border-radius: 4px; transition: background-color 0.3s; }
+        .wiki-footnotes li:target { background-color: rgba(0, 204, 170, 0.15); }
+
+        .wiki-tooltip {
+            position: absolute; background-color: var(--wiki-bg); color: var(--wiki-text); border: 1px solid var(--wiki-border);
+            border-radius: 6px; padding: 12px 16px; font-size: 0.85rem; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 0.2s ease-in-out, transform 0.2s ease;
+            transform: translateY(5px); z-index: 9999; word-break: keep-all; line-height: 1.6;
+        }
+        .wiki-tooltip.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+        [data-theme='dark'] .wiki-tooltip { box-shadow: 0 4px 15px rgba(0,0,0,0.6); background-color: #222; }
+    
+        /* 효빈위키 전용 하단 내비게이션 틀 CSS */
+        .wiki-nav-box { margin: 40px auto 10px; border: 1px solid var(--wiki-border); border-radius: 4px; background: var(--wiki-bg); overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .wiki-nav-header { display: flex; align-items: center; justify-content: center; padding: 12px; font-weight: 900; font-size: 1.1rem; color: #fff; background: linear-gradient(to right, #005BAC, #00CCAA); letter-spacing: 1px; }
+        .wiki-nav-toggle { text-align: center; padding: 6px; background: var(--wiki-gray-bg); border-bottom: 1px solid var(--wiki-border); border-top: 1px solid var(--wiki-border); cursor: pointer; font-size: 0.85rem; user-select: none; color: var(--wiki-text); font-weight: bold; }
+        .wiki-nav-toggle:hover { filter: brightness(0.95); }
+        .wiki-nav-content { display: none; }
+        .wiki-nav-content.active { display: block; }
+        .wiki-nav-table { width: 100%; border-collapse: collapse; text-align: center; margin: 0; font-size: 0.9rem; }
+        .wiki-nav-table th, .wiki-nav-table td { border: 1px solid var(--wiki-border); padding: 12px; }
+        .wiki-nav-table th { color: #fff; font-weight: bold; vertical-align: middle; }
+        .wiki-nav-table td { text-align: left; line-height: 1.8; word-break: keep-all; }
+        .bg-nav-red { background-color: #D81C2F; } /* 효빈 시내버스 급행 레드 */
+        .bg-nav-blue { background-color: #485EC6; } /* 효빈 시내버스 광역 블루 */
+        .wiki-nav-item { display: inline-block; margin-right: 12px; white-space: nowrap; }
+        .wiki-nav-item a { color: var(--wiki-link); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .wiki-nav-item a:hover { color: #FF4F91; text-decoration: underline; font-weight: bold; }
+
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <nav class="bg-[#00CCAA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50 border-b border-[#009988]">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl tracking-tight text-white">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1.5 px-4 rounded text-black text-sm w-64 focus:outline-none shadow-inner">
+            <button class="bg-[#008877] p-1.5 px-4 rounded text-sm hover:bg-[#006655] font-bold transition-colors text-white">검색</button>
+            <button onclick="document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')" class="bg-[#009988] p-1.5 px-3 rounded text-xs border border-[#006655] text-white shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="txt-lvl-1">분석결과 해석 (SECTION 01)</div>
+
+        <div class="category-box bg-[#f9f9f9] border border-[#ccc] p-3 mb-5 rounded text-sm font-bold">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="빅데이터분석기사_필기.html" class="wiki-link">빅데이터분석기사 필기</a> | <a href="빅데이터분석기사.html" class="wiki-link">빅데이터분석기사</a> | <a href="데이터_전처리.html" class="wiki-link">데이터 전처리</a> | <a href="데이터_탐색.html" class="wiki-link">데이터 탐색</a> | <a href="데이터_시각화.html" class="wiki-link">데이터 시각화</a> | <a href="회귀분석.html" class="wiki-link">회귀분석</a> | <a href="분류_알고리즘.html" class="wiki-link">분류 알고리즘</a> | <a href="군집분석.html" class="wiki-link">군집분석</a> | <a href="연관성_분석.html" class="wiki-link">연관성 분석</a> | <a href="머신러닝.html" class="wiki-link">머신러닝</a> | <a href="통계학.html" class="wiki-link">통계학</a> | <a href="확률론.html" class="wiki-link">확률론</a> | <a href="분석결과_활용.html" class="wiki-link">분석결과 활용</a> | <a href="분석모형_평가.html" class="wiki-link">분석모형 평가</a> | <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> | <a href="효빈광역시_시내버스.html" class="wiki-link">효빈광역시 시내버스</a> | <a href="러브라이브!_시리즈.html" class="wiki-link">러브라이브! 시리즈</a>
+        </div>
+        
+
+        <aside class="infobox shadow-sm">
+            <div class="infobox-top">
+                <b>빅데이터분석기사 필기</b><br>
+                <span class="text-sm opacity-80">PART 04. 빅데이터 결과 해석</span>
+            </div>
+            <table>
+                <tr><th>과목명</th><td>제4과목 빅데이터 결과 해석</td></tr>
+                <tr><th>섹션</th><td>SECTION 01. 분석결과 해석</td></tr>
+                <tr><th>출제빈도</th><td>상/중/(하)</td></tr>
+                <tr><th>반복학습</th><td>[1] [2] [3] 회독</td></tr>
+                <tr><th>빈출태그</th><td>#모델별해석 #기여도평가 #시각화 #평가지표</td></tr>
+            </table>
+        </aside>
+
+        <div class="toc shadow-sm">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li><a href="#s-1" class="wiki-link">1. 분석 모델별 결과 해석</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-1-1" class="wiki-link">1) 분석모형 해석</a>
+                            <ul class="pl-5">
+                                <li>① 회귀 모델 (MAE, MSE, RMSE, R²)</li>
+                                <li>② 분류 모델 (오차행렬, 정밀도, 재현율, ROC/AUC)</li>
+                                <li>③ 군집분석 모델 (실루엣, 자카드, Dunn Index, 팔꿈치 기법)</li>
+                                <li>④ 연관분석 모델 (지지도, 신뢰도, 향상도)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#s-2" class="wiki-link">2. 비즈니스 기여도 평가</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-2-1" class="wiki-link">1) 빅데이터 분석 목적 (질문 먼저)</a></li>
+                        <li><a href="#s-2-2" class="wiki-link">2) 분석 결과의 기여도 평가 (ROI)</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-3" class="wiki-link">3. 개념 체크 (기출 문제)</a></li>
+                <li><a href="#s-4" class="wiki-link">4. 분석 모델별 시각화</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-4-1" class="wiki-link">1) 회귀 모델 (히트맵, 산점도)</a></li>
+                        <li><a href="#s-4-2" class="wiki-link">2) 분류 모델 (SVM, 평행좌표계, 트리 다이어그램)</a></li>
+                        <li><a href="#s-4-3" class="wiki-link">3) 딥러닝 모델 (t-SNE, 노드-링크)</a></li>
+                        <li><a href="#s-4-4" class="wiki-link">4) 군집분석 모델 (산점도)</a></li>
+                        <li><a href="#s-4-5" class="wiki-link">5) 연관분석 모델 (네트워크 그래프)</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+
+        <h2 id="s-1">01 분석 모델별 결과 해석</h2>
+        
+        <h3 id="s-1-1">1) 분석모형 해석</h3>
+        <p>분석 후 적합한 모형을 도출하는 데 지표가 사용되며 <b>각 모델(회귀, 분류, 군집, 연관)마다 평가되는 해석 지표들이 명확히 다르다.</b></p>
+
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-3 my-3 text-sm">
+            <b>[기적의 TIP]</b><br>
+            모델마다 다른 해석 지표를 짚고 넘어가자. 모델의 평가지표에 관한 문제가 자주 출제되므로 각 평가지표의 의미와 수식을 정확하게 이해해야 한다. <del>당연한 소리지만 이걸 다 외워야 문제를 푼다는 뜻이다.</del>
+        </div>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">① 회귀 모델</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li>회귀 모델의 평가를 위한 지표는 일반적으로 잔차, 결정계수 등이 있다.</li>
+            <li><b>잔차(Residual):</b> 회귀모형으로 실제 값과 예측 값의 차이를 의미하는 것이며, 잔차에는 패턴이나 추세가 있어서는 안 된다.</li>
+            <li><b>결정계수($R^2$):</b> 추정된 회귀식이 변동을 얼마나 잘 설명했는가에 대한 지표로, 값이 <b>1에 가까울수록 실제 관측값이 회귀선상에 정확히 일치함</b>을 의미한다.</li>
+        </ul>
+
+        <p class="font-bold ml-4 text-gray-800">▶ 회귀 모델 평가지표 테이블</p>
+        <table class="text-sm w-full mt-2 text-center">
+            <tr>
+                <th class="bg-gray-100" style="width: 15%;">지표 구분</th>
+                <th class="bg-gray-100" style="width: 25%;">지표명 (약자)</th>
+                <th class="bg-gray-100">의미</th>
+                <th class="bg-gray-100" style="width: 30%;">수식</th>
+            </tr>
+            <tr>
+                <td class="font-bold bg-gray-50">[잔차]</td>
+                <td class="font-bold">MAE<br><span class="font-normal text-xs text-gray-600">(Mean Absolute Error)</span></td>
+                <td class="text-left pl-2">예측값과 실제값 차이를 <b>절댓값</b>으로 변환, 더한 뒤의 평균</td>
+                <td>$$MAE = \frac{\sum |y - \hat{y}|}{n}$$</td>
+            </tr>
+            <tr>
+                <td class="font-bold bg-gray-50">[잔차]</td>
+                <td class="font-bold">MSE<br><span class="font-normal text-xs text-gray-600">(Mean Squared Error)</span></td>
+                <td class="text-left pl-2">예측값과 실제값 차이를 <b>제곱</b>, 더한 뒤의 평균</td>
+                <td>$$MSE = \frac{\sum (y - \hat{y})^2}{n}$$</td>
+            </tr>
+            <tr>
+                <td class="font-bold bg-gray-50">[잔차]</td>
+                <td class="font-bold">MAPE<br><span class="font-normal text-xs text-gray-600">(Mean Absolute Percentage Error)</span></td>
+                <td class="text-left pl-2">MAE를 <b>퍼센트(%)</b>로 변환한 값</td>
+                <td>$$MAPE = \frac{\sum \left| \frac{y - \hat{y}}{y} \right|}{n} \times 100$$</td>
+            </tr>
+            <tr>
+                <td class="font-bold bg-gray-50">[잔차]</td>
+                <td class="font-bold">RMSE<br><span class="font-normal text-xs text-gray-600">(Root Mean Squared Error)</span></td>
+                <td class="text-left pl-2">MSE에 <b>루트</b>를 씌운 값</td>
+                <td>$$RMSE = \sqrt{\frac{\sum (y - \hat{y})^2}{n}}$$</td>
+            </tr>
+            <tr>
+                <td class="font-bold bg-gray-50">[잔차]</td>
+                <td class="font-bold">RMSLE<br><span class="font-normal text-xs text-gray-600">(Root Mean Square Logarithmic Error)</span></td>
+                <td class="text-left pl-2">RMSE에 <b>로그($\log$)</b>를 적용한 값 (이상치에 덜 민감)</td>
+                <td>$$RMSLE = \sqrt{\frac{\sum (\log(y+1) - \log(\hat{y}+1))^2}{n}}$$</td>
+            </tr>
+            <tr>
+                <td class="font-bold bg-blue-50">[결정계수]</td>
+                <td class="font-bold text-blue-700">$R^2$<br><span class="font-normal text-xs text-gray-600">(Coefficient of Determination)</span></td>
+                <td class="text-left pl-2">총제곱합(SST)에 대한 회귀제곱합(SSR). 1에 가까울수록 설명력이 높다.</td>
+                <td class="text-xs">$$R^2 = \frac{SSR}{SST} = 1 - \frac{SSE}{SST}$$</td>
+            </tr>
+            <tr>
+                <td class="font-bold bg-blue-50">[결정계수]</td>
+                <td class="font-bold text-blue-700">수정된 $R^2$<br><span class="font-normal text-xs text-gray-600">(Adjusted R squared)</span></td>
+                <td class="text-left pl-2">표본크기($n$)와 독립변수 개수($p$)를 <b>추가 고려하여 페널티 부여</b>. (쓸데없는 변수가 많아질수록 $R^2$가 커지는 꼼수 방지)</td>
+                <td class="text-xs">$$R_{adj}^2 = 1 - \frac{(n-1)}{(n-p-1)}(1 - R^2)$$</td>
+            </tr>
+        </table>
+
+        <div class="anime-box" style="border-color: #0077DD; background-color: #EBF5FF;">
+            <img src="이미지/고나미.png" alt="고나미" class="anime-img" onerror="this.style.display='none'" style="border-color: #0077DD;">
+            <div>
+                <div class="anime-box-title" style="color: #0055AA;">💡 [효빈위키 맞춤 해설] 1호선 고나미의 회귀 지표 정복!</div>
+                <p class="text-sm text-gray-800">이 수식들이 도대체 뭘 의미하는 건지 감이 안 오는 위키러들을 위해 우리만의 언어로 풀어줄게요!</p>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>회귀 모델 지표 (도착 시간 예측 모형):</b> 예를 들어, 효빈광역시 도시철도 7호선(트램)의 정거장 도착 예정 시간을 예측하는 AI 모델을 만들었다고 쳐보죠! 여기서 오차(잔차)는 "트램이 도착한다고 앱에 뜬 시간"과 "실제 트램이 내 눈앞에서 문을 연 시간"의 차이랍니다.</li>
+                    <li><b>MAE:</b> 단순히 1분 늦고, 2분 빨리 온 오차들을 절대값으로 다 더해서 평균 낸 것! 직관적이죠?</li>
+                    <li><b>MSE:</b> 이 오차들을 '제곱'해서 평균 냅니다. 만약 트램이 사고가 나서 10분 지연됐다? 오차가 100으로 뻥튀기되니까, <b>큰 지연 사고(Outlier)에 페널티를 세게 먹이는</b> 지표예요. <del>민원 전화 폭주를 두려워하는 개발자 입장에선 제일 뼈아픈 수치죠.</del></li>
+                </ul>
+            </div>
+        </div>
+
+        <h4 class="mt-6 text-[var(--wiki-main)] font-bold">② 분류 모델</h4>
+        <p>모델이 데이터가 특정 클래스에 속할 확률을 <b>얼마나 정확하게 분류/예측하는지 평가</b>한다.</p>
+
+        <p class="font-bold ml-4 mt-2 text-gray-800">▶ 혼동 행렬 (Confusion Matrix)</p>
+        <table class="text-sm w-full mt-2 text-center border-collapse">
+            <tr>
+                <th colspan="2" rowspan="2" class="bg-gray-100 border-none"></th>
+                <th colspan="2" class="bg-blue-100">실제 값 (Actual)</th>
+            </tr>
+            <tr>
+                <th class="bg-blue-50">Positive (참)</th>
+                <th class="bg-blue-50">Negative (거짓)</th>
+            </tr>
+            <tr>
+                <th rowspan="2" class="bg-gray-100 align-middle">예측 결과<br>(Predicted)</th>
+                <th class="bg-gray-50">Positive (긍정 예측)</th>
+                <td class="font-bold text-green-700">True Positive (TP)</td>
+                <td class="font-bold text-red-500">False Positive (FP)</td>
+            </tr>
+            <tr>
+                <th class="bg-gray-50">Negative (부정 예측)</th>
+                <td class="font-bold text-red-500">False Negative (FN)</td>
+                <td class="font-bold text-green-700">True Negative (TN)</td>
+            </tr>
+        </table>
+
+        <p class="font-bold ml-4 mt-4 text-gray-800">▶ 분류 모델 평가지표 테이블</p>
+        <table class="text-sm w-full mt-2 text-center">
+            <tr>
+                <th class="bg-gray-100" style="width: 20%;">지표명</th>
+                <th class="bg-gray-100" style="width: 40%;">의미</th>
+                <th class="bg-gray-100">수식</th>
+            </tr>
+            <tr>
+                <td class="font-bold">정확도<br>(Accuracy)</td>
+                <td class="text-left pl-4">예측 값이 실제 값과 동일하게 <b>정답을 맞춘 비율</b></td>
+                <td>$$\frac{TP + TN}{TP + FP + TN + FN}$$</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-blue-700">정밀도<br>(Precision)</td>
+                <td class="text-left pl-4"><b>예측 값이 Positive로 분류한 것 중</b> 실제 값이 Positive인 비율 (내 예측의 정확성)</td>
+                <td class="text-blue-700">$$\frac{TP}{TP + FP}$$</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-red-600">재현율<br>(Recall)</td>
+                <td class="text-left pl-4"><b>실제 값이 Positive인 것 중</b>에 Positive로 예측 분류한 비율 (정답을 놓치지 않은 비율)</td>
+                <td class="text-red-600">$$\frac{TP}{TP + FN}$$</td>
+            </tr>
+            <tr>
+                <td class="font-bold">F1-score</td>
+                <td class="text-left pl-4">정밀도와 재현율의 <b>조화평균</b></td>
+                <td>$$2 \times \frac{Pre \cdot Rec}{Pre + Rec}$$</td>
+            </tr>
+            <tr>
+                <td class="font-bold">ROC & AUC</td>
+                <td class="text-left pl-4">ROC는 FPR이 변할 때 TPR이 어떻게 변하는지 보여주는 곡선.<br>AUC는 ROC 곡선 밑의 <b>면적</b> (1에 가까울수록 최고)</td>
+                <td class="text-xs text-left pl-2"><b>FPR:</b> $\frac{FP}{FP + TN}$ (오답률)<br><b>TPR:</b> $\frac{TP}{FN + TP}$ (재현율)</td>
+            </tr>
+        </table>
+
+        <div class="anime-box" style="border-color: #FF5522; background-color: #FFF2EE;">
+            <img src="이미지/다로나.png" alt="다로나" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF5522;">
+            <div>
+                <div class="anime-box-title" style="color: #DD4411;">💡 [효빈위키 꿀팁] 4호선 다로나의 악성 민원인 필터링 모형!</div>
+                <p class="text-sm text-gray-800">구청이나 사회복지시설에서 근무할 때 들어오는 민원 중 <b>'악성 진상 민원(Positive)'</b>을 걸러내는 AI 모델이 있다고 가정해 볼까요?</p>
+                
+                <div class="mermaid mt-2 mb-2">
+                    graph TD
+                        A["접수된 민원 데이터"] --> B{"AI 모델의 판독"}
+                        B -->|"진상 민원으로 예측"| C["Positive 예측"]
+                        B -->|"일반 민원으로 예측"| D["Negative 예측"]
+                        
+                        C --> E{"실제 진상인가?"}
+                        D --> F{"실제 진상인가?"}
+                        
+                        E -->|"Yes"| TP["True Positive<br/>: 진상을 정확히 컷!"]
+                        E -->|"No"| FP["False Positive<br/>: 선량한 시민을 진상으로 오해 😱<br/>(1형 오류)"]
+                        
+                        F -->|"Yes"| TN["True Negative<br/>: 일반 민원을 무사히 통과시킴"]
+                        F -->|"No"| FN["False Negative<br/>: 진상 민원인데 프리패스 시킴 🤬<br/>(2형 오류)"]
+                        
+                        style FP fill:#ffcdd2,stroke:#b71c1c,stroke-width:2px
+                        style FN fill:#ffcdd2,stroke:#b71c1c,stroke-width:2px
+                </div>
+                
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>정밀도(Precision):</b> AI가 "이거 악성입니다!"라고 경고한 것 중, <b>진짜 진상</b>의 비율이에요. 이게 낮으면(FP가 높으면) 멀쩡한 시민한테 험악하게 응대하게 돼서 뉴스에 나오고 큰일 납니다!(...)</li>
+                    <li><b>재현율(Recall):</b> 실제 존재하는 <b>진상 전체 무리</b> 중에서, AI가 잡아낸 놈들의 비율이에요. 이게 낮으면(FN이 높으면) 방어벽이 뚫려서 담당 주무관님과 사회복무요원들이 하루 종일 고통받게 됩니다.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h4 class="mt-6 text-[var(--wiki-main)] font-bold">③ 군집분석 모델</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li>군집그룹의 통계량을 요약하고 관측치의 공통점과 변동성을 확인한다.</li>
+            <li>연속형 변수의 경우 평균/중앙값을, 범주형 변수가 있는 경우 범주별 분포를 확인한다.</li>
+        </ul>
+
+        <p class="font-bold ml-4 text-gray-800">▶ 군집분석 평가지표 테이블</p>
+        <table class="text-sm w-full mt-2 text-center">
+            <tr>
+                <th class="bg-gray-100" style="width: 20%;">지표명</th>
+                <th class="bg-gray-100" style="width: 40%;">의미</th>
+                <th class="bg-gray-100">수식</th>
+            </tr>
+            <tr>
+                <td class="font-bold">외부평가<br>(External Evaluation)</td>
+                <td class="text-left pl-4">얼마나 유사하게 군집화가 되었는지 확인.<br><b>자카드 지수(Jaccard Index)</b> 활용 (집합 간 유사도)</td>
+                <td>$$J(A, B) = \frac{|A \cap B|}{|A \cup B|}$$</td>
+            </tr>
+            <tr>
+                <td class="font-bold">내부평가<br>(Internal Evaluation)</td>
+                <td class="text-left pl-4">적절한 군집 개수 결정.<br><b>Dunn Index:</b> 군집 간 거리가 멀수록, 분산값이 작을수록 좋은 군집화 결과 반영. <b>(클수록 좋다)</b></td>
+                <td class="text-xs">$$Dunn = \frac{\text{군집 간 거리 최소값}}{\text{군집 내 거리 최대값}}$$</td>
+            </tr>
+            <tr>
+                <td class="font-bold">팔꿈치 기법<br>(Elbow Method)</td>
+                <td class="text-left pl-4">오차(SSE) 그래프에서 기울기가 완만해지는 <b>팔꿈치(elbow)</b> 모습을 나타내는 K값을 최적의 군집 개수로 지정</td>
+                <td>$$SSE = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$</td>
+            </tr>
+            <tr>
+                <td class="font-bold">실루엣 기법<br>(Silhouette Method)</td>
+                <td class="text-left pl-4">다른 군집과의 거리는 떨어져 있고 동일 군집끼리는 뭉쳐 있다는 의미. <b>-1 ~ 1</b> 값을 가지며 <b>1에 가까울수록 최적화 됨.</b></td>
+                <td>$$s(i) = \frac{b(i) - a(i)}{\max(a(i), b(i))}$$</td>
+            </tr>
+        </table>
+
+        <div class="anime-box" style="border-color: #FFCC11; background-color: #FFFDEE;">
+            <img src="이미지/박라미.png" alt="박라미" class="anime-img" onerror="this.style.display='none'" style="border-color: #FFCC11;">
+            <div>
+                <div class="anime-box-title" style="color: #DD9900;">🏕️ [효빈위키 꿀팁] 3호선 박라미의 팔꿈치 기법!</div>
+                <p class="text-sm text-gray-800">효빈광역시의 버스 정류장 데이터를 모아서 '교통 생활권'을 몇 개의 권역(클러스터 K)으로 묶는 게 제일 합리적일지 고민한다고 쳐보자!</p>
+                <p class="text-sm text-gray-800 mt-1">K(권역의 수)를 무작정 100개, 200개 늘리면 각각의 오차(SSE)는 당연히 줄어들겠지만, 구역이 너무 잘게 쪼개져서 시청에서 행정 관리가 안 되겠지? 그래프를 그렸을 때 오차가 팍팍 줄어들다가 어느 순간 완만해지는 꺾임점(진짜 팔꿈치 모양!)이 생기는데, 거기가 바로 <b>가성비 터지는 최적의 구역 개수</b>라는 뜻이야. 시험에 자주 나오니 꼭 외워둬!</p>
+            </div>
+        </div>
+
+        <h4 class="mt-6 text-[var(--wiki-main)] font-bold">④ 연관분석 모델</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li>두 개 또는 그 이상의 품목들 사이의 <b>상호 관련성(장바구니 분석)</b>을 도출한다.</li>
+            <li>지지도, 신뢰도 및 향상도가 높은 빈발 집합 규칙들을 찾는 <b>Apriori 알고리즘</b>을 주로 사용한다.</li>
+        </ul>
+
+        <p class="font-bold ml-4 text-gray-800">▶ 연관분석 평가지표 테이블</p>
+        <table class="text-sm w-full mt-2 text-center">
+            <tr>
+                <th class="bg-gray-100" style="width: 20%;">지표명</th>
+                <th class="bg-gray-100" style="width: 50%;">의미</th>
+                <th class="bg-gray-100">수식</th>
+            </tr>
+            <tr>
+                <td class="font-bold">지지도<br>(Support)</td>
+                <td class="text-left pl-4">전체 거래($N$) 중에서 <b>품목 A와 B가 동시에 포함된 영수증</b>의 비율 (얼마나 자주 같이 팔리나?)</td>
+                <td>$$\frac{P(A \cap B)}{N}$$</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-blue-700">신뢰도<br>(Confidence)</td>
+                <td class="text-left pl-4">품목 A가 구매되었을 때, <b>품목 B가 추가로 구매될 확률 (조건부 확률)</b></td>
+                <td class="text-blue-700">$$\frac{P(A \cap B)}{P(A)}$$</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-red-600">향상도<br>(Lift)</td>
+                <td class="text-left pl-4">품목 A를 샀다는 사실이 B 구매 확률을 얼마나 '향상'시켰는지 파악하는 척도.<br><b>> 1 : 양의 상관관계 (같이 잘 팔림)</b><br><b>= 1 : 독립적인 관계</b><br><b>< 1 : 음의 상관관계 (서로 밀어냄)</b></td>
+                <td class="text-red-600">$$\frac{P(A \cap B)}{P(A) \times P(B)}$$</td>
+            </tr>
+        </table>
+
+        <div class="anime-box" style="border-color: #881188; background-color: #FDF5FD;">
+            <img src="이미지/라세나.png" alt="라세나" class="anime-img" onerror="this.style.display='none'" style="border-color: #881188;">
+            <div>
+                <div class="anime-box-title" style="color: #660066;">🚇 [효빈위키 팩폭 해설] 6호선 라세나의 굿즈샵 구매 알고리즘!</div>
+                <p class="text-sm text-gray-800">전형적인 오타쿠 굿즈샵 연관분석을 떠올리면 이해가 단번에 돼!</p>
+                
+                <div class="mermaid mt-2 mb-2">
+                    graph LR
+                        A["러브라이브 아쿠아<br>아이다 리카코 사진집"] -->|"향상도 Lift > 1<br>(같이 삼!)"| B["아쿠아 공식 펜라이트"]
+                        A -->|"향상도 Lift < 1<br>(절대 안 삼)"| C["건강식품 / 단백질 쉐이크"]
+                        
+                        style A fill:#fce4ec,stroke:#ad1457,stroke-width:2px
+                        style B fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+                        style C fill:#f5f5f5,stroke:#9e9e9e,stroke-width:1px,stroke-dasharray: 5 5
+                </div>
+
+                <ul class="list-disc pl-5 text-sm space-y-1 mt-2 text-gray-800">
+                    <li><b>지지도(Support):</b> "전체 굿즈 결제 건수 중에서 '사진집'과 '펜라이트'를 같이 산 영수증이 얼마나 되냐?"</li>
+                    <li><b>신뢰도(Confidence):</b> "사진집을 집어 든 덕후가, 계산대 가기 전에 펜라이트까지 같이 집어들 확률이 얼마나 되냐?"</li>
+                    <li><b>향상도(Lift):</b> 향상도가 1보다 크면 <b>"사진집을 샀기 때문에 펜라이트를 살 확률이 팍 올라갔다!(양의 상관관계)"</b>는 뜻이야. 반대로 1보다 작으면 "사진집을 사는 오타쿠는 건강식품을 거의 안 산다(...)"처럼 서로 상극인 관계를 뼈저리게 보여주는 거지.</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <h2 id="s-2">02 비즈니스 기여도 평가</h2>
+        <p>데이터 분석은 비즈니스에 도입 활용함으로써 의사결정, 운영 프로세스의 효율화, 개선을 도출하게 되며 이에 대한 <b>실질적인 기여도(돈이 되는가?)</b> 평가가 반드시 필요하다.</p>
+
+        <h3 id="s-2-1">1) 빅데이터 분석 목적</h3>
+        <p>빅데이터 분석의 근본적인 목적은 과거의 데이터를 토대로 미래를 분석하고 <b>가치를 창출</b>하는 것이다. (고객 인사이트, 제품 및 절차 효율성, 디지털 마케팅, 위기 관리시스템 등)</p>
+        <ul class="list-disc pl-6 space-y-2 mb-4 mt-2">
+            <li><b>의사결정을 위한 분석기획 발굴:</b> <b>"질문 먼저(question first)"</b> 방식으로 질문의 구체화, 과제의 추진 시급성, 분석모델의 구현 가능성을 고려하여 과제를 선정한다.</li>
+            <li>분석 활용 시나리오를 정의하고, 전략적 중요도와 실행 용이성, 투자가치(재무, 비재무)를 따져 우선순위를 평가하고 마스터플랜을 수립한다.</li>
+        </ul>
+
+        <h3 id="s-2-2">2) 분석 결과의 기여도 평가</h3>
+        <p>일반적으로 분석 결과의 기여도 평가는 <b>ROI(Return Of Investment, 투자수익률)</b> 또는 업무 효율성 향상에 대한 비용 지표로 측정한다.</p>
+        <ul class="list-disc pl-6 space-y-2 mb-4 mt-2">
+            <li><b>ROI (투자수익률):</b> 투자한 자본에 대한 수익/손실 비율. 기획안 결재를 받기 위한 가장 중요한 마법의 공식이다.
+                <div class="math-formula text-sm my-1">
+                    $$ROI = \frac{\text{총체적인 금전적 이익} - \text{소요된 비용}}{\text{소요된 비용}} \times 100$$
+                </div>
+            </li>
+            <li>그 외 투자 이후 회수기간(Payback Period), 비용-효과 분석(Cost-benefit analysis) 등으로 기여도를 증명해낸다.</li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #FF4F91; background-color: #FFF0F5;">
+            <img src="이미지/이덕희.png" alt="이덕희" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF4F91;">
+            <div>
+                <div class="anime-box-title" style="color: #CC1166;">⚙️ [효빈위키 팩트 체크] 덕주1호선 이덕희의 기여도 평가!</div>
+                <p class="text-sm text-gray-800">이번 파트는 모델의 성능을 넘어, <b>'그래서 이 분석으로 우리한테 얼마가 떨어지는데?'</b>를 다루는 실전 압축 파트야. <del>수식 외우다 뇌정지 오기 딱 좋은 구간이지.</del></p>
+                <p class="text-sm text-gray-800 mt-1">지자체 사회복지 정책을 짤 때 항상 부딪히는 벽이 '예산'이잖아? 예를 들어, '효빈광역시 시외버스 요금 지원 및 환승 체계 개편'이라는 빅데이터 프로젝트를 기획했다고 치자.</p>
+                <ul class="list-disc pl-5 text-sm space-y-1 mt-1 text-gray-800">
+                    <li><b>소요된 비용:</b> 스마트 환승 시스템 서버 구축비, 버스 회사 보조금 지급액.</li>
+                    <li><b>총체적인 금전적 이익:</b> 시민들의 교통비 절감액, 대중교통 이용률 증가로 인한 탄소 배출 감소 환경 개선 비용 환산액.</li>
+                </ul>
+                <p class="text-sm text-gray-800 mt-1">이 둘을 저 ROI 공식에 때려 넣어서, 투입 예산 대비 시민들의 복지 체감 및 경제적 효과가 퍼센트(%)로 얼마나 뻥튀기되었는지 증명해 내야 기획안이 시장님께 통과된다는 소리야!</p>
+            </div>
+        </div>
+
+
+        <h2 id="s-3">03 개념 체크 (기출 문제)</h2>
+        
+        <div class="exam-box">
+            <div class="exam-title">✔️ 개념 체크 및 기출 예상 풀이</div>
+            
+            <p class="font-bold">Q1. 다음 Python <code>classification_report</code> 분석 결과를 해석하는 설명으로 올바르지 않은 것은?</p>
+            <div class="bg-gray-800 text-gray-100 p-4 rounded font-mono text-xs mb-4 overflow-x-auto whitespace-pre">
+               precision    recall  f1-score   support
+
+    setosa       1.00      1.00      1.00         8
+versicolor       0.38      0.27      0.32        11
+ virginica       0.64      0.74      0.68        19
+
+ avg/total       0.64      0.66      0.64        38
+            </div>
+            <p class="pl-4 text-sm mt-1">
+                ① <code>setosa</code>의 경우 분류기는 1.0인 정밀도와 재현율을 보인다.<br>
+                ② <code>versicolor</code>의 경우 <code>versicolor</code>로 분류한 인스턴스의 38%가 실제 <code>versicolor</code>임을 보여준다.<br>
+                <b>③ <code>virginica</code>의 경우 <code>virginica</code>로 분류한 인스턴스의 74%가 실제 <code>virginica</code>임을 보여준다.</b><br>
+                ④ <code>versicolor</code>의 경우 <code>versicolor</code> 인스턴스의 27%가 <code>versicolor</code>로 분류됨을 나타낸다.
+            </p>
+            <p class="text-xs text-gray-500 mt-2 pl-4"><b>[해설]</b> 머신러닝 성능 평가표 읽는 법 낚시다. "virginica로 분류(예측)한 것 중 실제 정답의 비율"은 <b>정밀도(Precision)</b>를 의미하므로 표의 첫 번째 열인 <b>64% (0.64)</b>가 맞다. 보기 ③은 재현율(0.74) 수치를 가져와 정밀도 자리에 욱여넣은 전형적인 훼이크다. <del>출제자 인성 논란</del></p>
+            
+            <hr class="border-red-200 my-4">
+
+            <p class="font-bold">Q2. 다음 중 분석 결과의 '비즈니스 기여도 평가'와 관련된 것은?</p>
+            <p class="pl-4 text-sm mt-1">
+                <b>① ROI (Return Of Investment)</b><br>
+                ② Support (지지도)<br>
+                ③ Confidence (신뢰도)<br>
+                ④ Lift (향상도)
+            </p>
+            <p class="text-xs text-gray-500 mt-2 pl-4"><b>[해설]</b> ROI는 투자 대비 수익률로 기여도 평가에 직접적으로 사용되는 비즈니스 지표다. 나머지 Support, Confidence, Lift 3형제는 오타쿠 굿즈샵(...) <b>연관분석 모델(Apriori)</b>을 평가하는 통계 지표다.</p>
+        </div>
+
+
+        <h2 id="s-4">04 분석 모델별 시각화</h2>
+        <p>각 분석 모델이 내뱉은 복잡한 데이터와 결과를 인간의 눈으로 쉽게 파악할 수 있도록 도식화하는 과정이다.</p>
+
+        <h3 id="s-4-1">1) 회귀 모델 시각화</h3>
+        <ul class="list-disc pl-6 space-y-2 mb-4 mt-2">
+            <li>변수들 간의 관계 분석을 위해 <b>히트맵(Heat Map)</b>과 다중 <b>산점도 행렬(Scatter Plot Matrix)</b>을 활용한다.</li>
+            <li>각기 다른 수많은 변수들이 종속변수와 양/음의 어떤 상관관계를 맺는지 색상의 진하기로 표현하여 한눈에 관계를 파악(관계 시각화)할 수 있게 돕는다.</li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #FF8899; background-color: #FFF0F5;">
+            <img src="이미지/임세정.png" alt="임세정" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF8899;">
+            <div>
+                <div class="anime-box-title" style="color: #CC4466;">🎀 [효빈위키 꿀팁] 7호선 임세정 언니의 시각화 특강!</div>
+                <p class="text-sm text-gray-800"><b>히트맵(Heat Map)과 산점도</b></p>
+                <p class="text-sm text-gray-800 mt-1">효빈광역시 행정구역별로 '대중교통 만족도'에 영향을 미치는 요인들을 분석한다고 쳐보자. 버스 배차 간격, 지하철역과의 거리, 환승 대기 시간 등등 수많은 변수들을 한눈에 묶어서 보고 싶을 때 <b>산점도 행렬</b>을 쫙 그리는 거야. 그리고 이 변수들끼리 얼마나 끈끈하게 연결되어 있는지(상관관계)를 <b>히트맵 온도계처럼 붉은색 파란색 색깔로 쫙 칠해서 보여주지.</b> 빨간색일수록 상관관계 계수가 1에 가까워서 "아, 환승 체계가 개판이면 민원이 폭주하는구나!" 하고 바로 직관적으로 꽂아주는 강력한 무기란다.</p>
+            </div>
+        </div>
+
+        <h3 id="s-4-2">2) 분류 모델 시각화</h3>
+        
+        <ul class="list-disc pl-6 space-y-4 mb-4 mt-2">
+            <li><b>① SVM (Support Vector Machine):</b> 산점도 상에서 서로 다른 두 군집 사이를 가로지르는 실선(초평면, Hyperplane)과 여백(마진, Margin) 구분선을 긋는 시각화 기법을 쓴다.
+                <div class="mermaid mt-2">
+                graph TD
+                    A["데이터 산점도 분포 확인"] --> B{"결정 경계선 찾기"}
+                    B -->|"최전방 적군/아군 선택"| C["서포트 벡터(Support Vector) 설정"]
+                    B -->|"정중앙 기준선 긋기"| D["초평면(Hyperplane) 생성"]
+                    C --> E["마진(Margin) 완충지대 최대화"]
+                    D --> E
+                    E --> F["최적의 분류선 완성!"]
+                    
+                    style E fill:#bbdefb,stroke:#0d47a1,stroke-width:2px
+                </div>
+                <span class="text-sm text-gray-600">※ 두 집단이 싸우고 있을 때 가장 가까이서 대치하고 있는 녀석들(서포트 벡터)을 기준으로 선을 긋는다. 양쪽 전선에서 최대한 공평하게 멀리 떨어진 완충 지대(마진)를 제일 넓게 잡는 것이 SVM의 핵심이다.</span>
+            </li>
+            <li><b>② KNN (K-Nearest Neighbor):</b> 다차원 변수를 2차원에 모두 우겨넣기 위해 <b>평행좌표계(Parallel Coordinates Plot)</b>를 사용한다. X축에 모든 변수를 나란히 세우고 꺾은선으로 연결하여 집단별 경향성을 파악한다. (예: 붓꽃 데이터셋의 종별 선의 높낮이 비교)</li>
+            <li><b>③ 의사결정나무:</b> 관계시각화 기법인 <b>트리 다이어그램(Tree Diagram)</b>으로 스무고개 치는 과정을 완벽하게 시각화한다.</li>
+        </ul>
+
+        <h3 id="s-4-3">3) 딥러닝 모델 시각화</h3>
+        <p>복잡한 은닉층 아키텍처와 특징을 인간이 이해할 수 있도록 구조를 분해하여 시각화한다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li><b>① 네트워크 구조:</b> <b>노드-링크 다이어그램(Node-link Diagram)</b>을 사용하여 뉴런 동그라미와 가중치 선을 직관적으로 그린다.</li>
+            <li><b>② 차원 축소 및 산점도:</b> 고차원의 텐서 데이터를 <b>t-SNE (t분포 확률적 임베딩)</b> 또는 PCA 기법을 이용해 2차원 평면 산점도로 예쁘게 찌부러뜨려 시각화한다.</li>
+            <li><b>③ 훈련 진행 상황:</b> 에포크(Epoch)에 따른 손실(Loss)과 정확도(Accuracy) 변화를 <b>선도표(Line Chart)</b>로 모니터링한다.</li>
+            <li><b>④ 객체 기반 탐색:</b> 분류가 완료된 이미지나 객체들을 대시보드 그리드 형태로 나열하여 직접 눈으로 확인한다.</li>
+        </ul>
+
+        <h3 id="s-4-4">4) 군집분석 모델 시각화</h3>
+        <p>다수의 객체를 묶은 군집(Cluster)별로 색상을 다르게 칠하여 <b>산점도(Scatter Plot)</b>로 공간적 밀집도를 시각화한다. 2차원 평면 위에 4~5개의 군집이 각자 색깔을 뽐내며 모여 있는 모습을 그린다.</p>
+
+        <h3 id="s-4-5">5) 연관분석 모델 시각화</h3>
+        <p>Apriori 알고리즘 결과, 각 연관규칙 별로 같이 장바구니에 담긴 항목(item)끼리 선으로 연결하는 <b>네트워크 그래프(Network Graph)</b>를 활용한다.</p>
+        <div class="mermaid mt-4 mb-4">
+        graph TD
+            A(("red wine")) --- B(("liquor"))
+            C(("mustard")) --- D(("hamburger"))
+            D --- E(("sausage"))
+            F(("napkins")) --- G(("chocolate"))
+            
+            %% 노드 크기와 선 연결로 연관성 및 빈도를 표현한 네트워크 시각화
+            style A fill:#ffebee,stroke:#c62828
+            style D fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
+            style E fill:#fff9c4,stroke:#fbc02d
+        </div>
+        <p class="text-sm text-center text-gray-500 mb-6">▲ 연관분석 네트워크 시각화 (같이 묶이는 상품끼리 거리가 가깝고 선이 굵다)</p>
+
+    
+        <!-- 나무위키식 하단 내비게이션 틀 시작 -->
+        <div class="wiki-nav-box" id="bigbunNav">
+            <div class="wiki-nav-header">
+                📊 빅데이터분석기사 필기 전체 문서 목록
+            </div>
+            <div class="wiki-nav-toggle" onclick="document.getElementById('bigbunNavContent').classList.toggle('active')">
+                [ 펼치기 · 접기 ]
+            </div>
+            <div class="wiki-nav-content" id="bigbunNavContent">
+                <table class="wiki-nav-table">
+                    <tbody>
+                        <tr>
+                            <th class="bg-nav-red" style="width: 18%;">제1과목<br>빅데이터 분석 기획</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기1-1.html">빅분기1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-1.html">빅분기1-2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-2.html">빅분기1-2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-3.html">빅분기1-2-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-1.html">빅분기1-3-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-2.html">빅분기1-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-3.html">빅분기1-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-4.html">빅분기1-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-1.html">빅분기1-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-2.html">빅분기1-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-1.html">빅분기1-5-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-2.html">빅분기1-5-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-6.html">빅분기1-6</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제2과목<br>빅데이터 탐색</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기2-1.html">빅분기2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-2.html">빅분기2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-3.html">빅분기2-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-red">제3과목<br>빅데이터 모델링</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-1.html">빅분기3-1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-2.html">빅분기3-1-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-3.html">빅분기3-1-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-2.html">빅분기3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-2.html">빅분기3-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-3.html">빅분기3-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-4.html">빅분기3-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-1.html">빅분기3-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-2.html">빅분기3-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-3.html">빅분기3-4-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제4과목<br>빅데이터 결과 해석</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기4-1.html">빅분기4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-2.html">빅분기4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-3.html">빅분기4-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-4.html">빅분기4-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-5.html">빅분기4-5</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-6.html">빅분기4-6</a></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 나무위키식 하단 내비게이션 틀 끝 -->
+
+    </div> <!-- wiki-container end -->
+
+    <footer class="wiki-footer p-6 text-center border-t border-[var(--wiki-border)] bg-[var(--wiki-footer-bg)] text-[var(--wiki-footer-text)]">
+        <div class="font-bold text-sm">
+            이 저작물은 <span class="text-[var(--wiki-text)]">효빈위키</span> 규정에 따라 이용할 수 있습니다.<br>
+            ※ 본 문서는 빅데이터분석기사 필기 제4과목(분석결과 해석 - 평가지표, 시각화 기법)의 완전판입니다.
+        </div>
+    </footer>
+
+    <!-- 각주 툴팁 구동 JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'wiki-tooltip';
+            document.body.appendChild(tooltip);
+
+            const fnLinks = document.querySelectorAll('a.fn-link');
+            
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        const childNodes = Array.from(targetElement.childNodes);
+                        const tooltipContent = childNodes
+                            .filter(node => node.nodeName !== 'A')
+                            .map(node => node.nodeType === Node.TEXT_NODE ? node.textContent : node.outerHTML)
+                            .join('')
+                            .trim();
+                        
+                        tooltip.innerHTML = tooltipContent;
+                        tooltip.classList.add('visible');
+                        
+                        const rect = this.getBoundingClientRect();
+                        let topPos = rect.bottom + window.scrollY + 8;
+                        let leftPos = rect.left + window.scrollX;
+                        
+                        tooltip.style.display = 'block';
+                        if (leftPos + tooltip.offsetWidth > window.innerWidth) {
+                            leftPos = window.innerWidth - tooltip.offsetWidth - 20;
+                        }
+                        
+                        tooltip.style.left = leftPos + 'px';
+                        tooltip.style.top = topPos + 'px';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    tooltip.classList.remove('visible');
+                });
+            });
+        });
+    </script>
+    
+    <!-- 필수 외부 스크립트 복구 -->
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

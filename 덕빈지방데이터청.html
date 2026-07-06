@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>덕빈지방데이터청 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* [테마 컬러 설정] 데이터청/통계청 테마 (딥 블루) */
+            --wiki-main: #185B9D; 
+            --wiki-sub: #E8F0F8; 
+            --wiki-nav-bg: #7777aa; 
+            --wiki-bukgu-color: #7799CC; 
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-main: #4a90e2;
+            --wiki-sub: #1e2a38;
+            --wiki-nav-bg: #444477;
+            --wiki-bukgu-color: #5577aa;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: var(--wiki-text); line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { flex-wrap: wrap; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--wiki-border); margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem !important; font-weight: 700 !important; border-bottom: 1px solid var(--wiki-border) !important; padding-bottom: 5px !important; margin-top: 2.5rem !important; display: flex !important; align-items: center !important; gap: 10px !important; color: var(--wiki-main) !important; clear: both !important; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700 !important; margin-top: 1.8rem !important; border-left: 4px solid var(--wiki-main) !important; padding-left: 12px !important; color: var(--wiki-main) !important; }
+        h4 { font-size: 1.15rem !important; font-weight: 700 !important; margin-top: 1.2rem !important; margin-bottom: 0.5rem !important; color: var(--wiki-text) !important; border-left: 3px solid var(--wiki-border) !important; padding-left: 8px !important; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid var(--wiki-border); background: var(--wiki-bg); padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: var(--wiki-gray-bg); color: var(--wiki-text); border-color: #999; }
+        [data-theme='dark'] .wiki-btn { color: #ddd; border-color: #555; }
+        [data-theme='dark'] .wiki-btn:hover { background: #444; color: #fff; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        .category-box { background: var(--wiki-gray-bg); border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0 25px 0; border-radius: 4px; }
+        
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: var(--wiki-bg); width: 100%; max-width: 380px; font-size: 0.85rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.2rem !important; font-weight: bold; border-bottom: 2px solid var(--wiki-bg); }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: var(--wiki-gray-bg); color: var(--wiki-text); width: 95px; padding: 8px; border: 1px solid var(--wiki-border); text-align: center; font-weight: bold; }
+        .infobox td { padding: 8px 12px; border: 1px solid var(--wiki-border); color: var(--wiki-text); text-align: left; }
+        .infobox .merged-row { background-color: var(--wiki-bg); text-align: center; padding: 10px; border-bottom: 1px solid var(--wiki-border); }
+
+        /* 데이터 테이블 */
+        .data-table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; font-size: 0.9rem; }
+        .data-table th, .data-table td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; text-align: center; vertical-align: middle; color: var(--wiki-text); }
+        .data-table th { background-color: var(--wiki-gray-bg); font-weight: bold; }
+
+        /* 버스 배지 스타일 (사용자 지정 색상) */
+        .bus-badge { display: inline-block; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-right: 4px; }
+        .bus-blue { background-color: #01B7ED; }   /* 간선 */
+        .bus-green { background-color: #37B484; }  /* 지선 */
+        .bus-yellow { background-color: #E7D600; color: #000; } /* 순환 */
+        
+        /* 지하철 배지 (사용자 지정 색상) */
+        .subway-badge { display: inline-block; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-right: 4px; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; color: var(--wiki-text); }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* 인용 및 특수효과 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: var(--wiki-gray-bg); padding: 10px; font-style: italic; }
+        [data-theme='dark'] blockquote { color: #ccc; }
+        del { color: #aaa; text-decoration: line-through; }
+
+        /* 푸터 저작권 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid var(--wiki-border); padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: var(--wiki-gray-bg); line-height: 1.5; }
+        [data-theme='dark'] .wiki-footer { color: #999; }
+        .wiki-footer strong { color: var(--wiki-text); }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+        
+        /* 테이블 토글 클래스 */
+        .hide-table-body { display: none !important; }
+        sup a { color: var(--wiki-link); text-decoration: none; font-weight: normal; }
+        sup a:hover { text-decoration: underline; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+
+    <div id="wiki-msg-box"></div>
+
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav-bg);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="효빈위키 검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+            <button class="bg-[#555588] hover:bg-[#444477] p-1 px-3 rounded text-xs shadow-inner font-bold transition" onclick="handleSearch()">검색</button>
+            <button class="bg-[#555588] hover:bg-[#444477] p-1 px-3 rounded text-xs shadow-inner font-bold transition" onclick="document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="flex justify-between items-end w-full">
+                <div class="txt-lvl-1">덕빈지방데이터청</div>
+                <div class="flex gap-2 mb-1">
+                    <a href="#" class="wiki-btn">토론</a>
+                    <a href="#" class="wiki-btn">편집</a>
+                    <a href="#" class="wiki-btn">역사</a>
+                    <div class="px-3 py-1 text-[11px] border border-gray-300 bg-white rounded cursor-pointer flex items-center justify-center text-gray-600">★</div>
+                </div>
+            </div>
+            <div class="text-sm text-gray-500 font-bold mt-2">최근 수정 시각: 2026-05-17 18:30:00</div>
+        </div>
+
+        <!-- 카테고리 박스 -->
+        <div class="category-box">
+            <span class="font-bold" style="color: var(--wiki-main);">분류:</span> 
+            <a href="국가데이터처_소속기관.html" class="wiki-link">국가데이터처 소속기관</a> | 
+            <a href="효빈광역시_소재_관공서.html" class="wiki-link">효빈광역시 소재 관공서 및 공공기관</a> | 
+            <a href="북구(효빈).html" class="wiki-link">북구(효빈광역시)</a> | 
+            <a href="고송동.html" class="wiki-link">고송동</a> | 
+            <a href="특별지방행정기관.html" class="wiki-link">특별지방행정기관</a>
+        </div>
+
+        <!-- ======================================================= -->
+        <!-- 1. 국가데이터처 소속기관 틀 -->
+        <!-- ======================================================= -->
+        <div class="mb-6 w-full shadow-sm mx-auto border-2 bg-white" style="border-color: #185B9D; max-width: 100%;">
+            <table class="w-full border-collapse text-center text-[14px]" style="table-layout: fixed;">
+                <thead>
+                    <tr>
+                        <td colspan="4" class="py-2.5 cursor-pointer select-none" style="background-color: #185B9D; border-bottom: 1px solid rgba(255,255,255,0.4);" onclick="toggleTable('data-office-nav', 'dataOfficeToggleBtn')">
+                            <div class="flex items-center justify-center gap-3">
+                                <img src="이미지/대한민국_정부_로고.svg" alt="국가데이터처 로고" class="h-8 object-contain drop-shadow-md filter brightness-0 invert" onerror="this.src='이미지/대한민국_정부_로고.svg'">
+                                <div class="text-white text-left leading-tight">
+                                    <div class="text-[13px] font-bold tracking-wide">대한민국 중앙행정기관</div>
+                                    <div class="text-[18px] font-extrabold tracking-widest drop-shadow-sm">국가데이터처 소속기관</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="text-white py-1.5 cursor-pointer font-bold select-none hover:bg-white/20 transition-colors" style="background-color: #185B9D; border-bottom: 1px solid rgba(255,255,255,0.4);" onclick="toggleTable('data-office-nav', 'dataOfficeToggleBtn')">
+                            <span id="dataOfficeToggleBtn">[ 접기 ]</span>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody id="data-office-nav" class="toggle-body">
+                    <tr>
+                        <th class="py-3 font-bold text-gray-800 border-b border-r border-gray-300 align-middle bg-[#f0f4f8]" style="width: 25%;">직속 교육기관</th>
+                        <td colspan="3" class="p-2 border-b border-gray-300 align-middle text-left pl-4 text-[13px]">
+                            <a href="국가데이터인재개발원.html" class="wiki-link font-normal">국가데이터인재개발원</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="py-3 font-bold text-gray-800 border-b border-r border-gray-300 align-middle bg-[#f0f4f8]">지방데이터청</th>
+                        <td colspan="3" class="p-2 border-b border-gray-300 align-middle text-left pl-4 text-[13px]">
+                            <a href="수도권지방데이터청.html" class="wiki-link font-normal">수도권지방데이터청</a> · 
+                            <a href="동남지방데이터청.html" class="wiki-link font-normal">동남지방데이터청</a> · 
+                            <a href="호남지방데이터청.html" class="wiki-link font-normal">호남지방데이터청</a> · 
+                            <a href="충청지방데이터청.html" class="wiki-link font-normal">충청지방데이터청</a> · 
+                            <!-- 현재 문서 강조 -->
+                            <a href="덕빈지방데이터청.html" class="font-extrabold text-[#185B9D] hover:underline">덕빈지방데이터청</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ======================================================= -->
+        <!-- 2. 효빈광역시 북구 소재 관공서 틀 (덕빈지방데이터청 강조) -->
+        <!-- ======================================================= -->
+        <div class="w-full mx-auto border-2 mb-8 text-sm font-sans bg-white" style="border-color: var(--wiki-bukgu-color);">
+            <div class="text-white p-2.5 flex justify-center items-center gap-3 border-b" style="background-color: var(--wiki-bukgu-color); border-bottom-color: var(--wiki-bukgu-color);">
+                <img src="이미지/북구.png" alt="효빈광역시 북구 로고" class="h-9 w-9 object-contain bg-transparent" onerror="this.style.display='none'">
+                <div class="flex flex-col items-center justify-center text-center">
+                    <span class="font-bold text-[12px] leading-tight opacity-90 text-white">효빈광역시 북구 소재</span>
+                    <span class="font-extrabold text-[18px] tracking-widest leading-tight drop-shadow-sm text-white">관공서</span>
+                </div>
+            </div>
+            
+            <div onclick="toggleTable('bukgu-nav-body', 'bukguToggleBtn')" class="text-white text-center text-xs py-1.5 cursor-pointer font-bold select-none hover:bg-white/20 transition-colors" style="background-color: #6688BB;">
+                <span id="bukguToggleBtn">[ 접기 ]</span>
+            </div>
+
+            <table class="w-full border-collapse bg-white text-center table-fixed text-gray-800">
+                <colgroup>
+                    <col style="width: 16%;">
+                    <col style="width: 21%;">
+                    <col style="width: 21%;">
+                    <col style="width: 21%;">
+                    <col style="width: 21%;">
+                </colgroup>
+                
+                <tbody id="bukgu-nav-body" class="toggle-body text-[13px]">
+                    <tr>
+                        <th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle">지방자치</th>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/효빈시_로고.png" class="w-4 h-4 object-contain" onerror="this.style.display='none'"><a href="효빈광역시청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈광역시청</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/의회_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/의회_로고.svg'"><a href="효빈광역시의회.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈광역시의회</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/북구.png" class="w-4 h-4 object-contain" onerror="this.style.display='none'"><a href="북구청(효빈).html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">북구청</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/의회_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/의회_로고.svg'"><a href="북구의회.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">북구의회</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle">법조</th>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_법원_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_법원_로고.svg'"><a href="효빈고등법원.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈고등법원</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_법원_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_법원_로고.svg'"><a href="효빈지방법원.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈지방법원</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5 flex-wrap"><img src="이미지/대한민국_검찰청_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_검찰청_로고.svg'"><a href="효빈고등검찰청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈고등검찰청</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5 flex-wrap"><img src="이미지/대한민국_검찰청_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_검찰청_로고.svg'"><a href="효빈지방검찰청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈지방검찰청</a></div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle">교육</th>
+                        <td colspan="2" class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/효빈시교육청.png" class="w-4 h-4 object-contain" onerror="this.style.display='none'"><a href="효빈광역시교육청.html" class="text-red-600 hover:text-red-800 hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈광역시교육청</a></div>
+                        </td>
+                        <td colspan="2" class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/효빈시교육청.png" class="w-4 h-4 object-contain" onerror="this.style.display='none'"><a href="효빈광역시북부교육지원청.html" class="text-green-600 hover:text-green-800 hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈광역시북부교육지원청</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle">
+                            <div class="mb-1">치안</div>
+                            <div class="text-red-600">소방</div>
+                        </th>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_경찰청_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_경찰청_로고.svg'"><a href="효빈북부경찰서.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈북부경찰서</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_경찰청_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_경찰청_로고.svg'"><a href="효빈고송경찰서.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈고송경찰서</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_소방청_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_소방청_로고.svg'"><a href="효빈북부소방서.html" class="text-red-600 hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈북부소방서</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2"></td>
+                    </tr>
+
+                    <tr>
+                        <th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle">
+                            <div class="mb-1 text-green-600">보건</div>
+                            <div class="mb-1">우정</div>
+                            <div>세무</div>
+                        </th>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/보건소.svg" class="w-4 h-4 object-contain" onerror="this.style.display='none'"><a href="효빈북구보건소.html" class="text-green-600 hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈북구보건소</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/우정사업본부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/우정사업본부_로고.svg'"><a href="효빈덕북지방우정청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈덕북지방우정청</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/우정사업본부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/우정사업본부_로고.svg'"><a href="북효빈우체국.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">북효빈우체국</a></div>
+                        </td>
+                        <td class="border border-gray-300 p-2 align-middle">
+                            <div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_정부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'"><a href="북효빈세무서.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">북효빈세무서</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th rowspan="4" class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle">기타 국가기관</th>
+                        <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_정부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'"><a href="효빈지방고용노동청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈지방고용노동청</a></div></td>
+                        <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_정부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'"><a href="효빈지방보훈청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈지방보훈청</a></div></td>
+                        <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_정부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'"><a href="효빈지방교정청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈지방교정청</a></div></td>
+                        <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_정부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'"><a href="효빈지방조달청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈지방조달청</a></div></td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_정부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'"><a href="효빈덕북지방노동위원회.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈덕북지방노동위원회</a></div></td>
+                        <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_경찰청_로고.svg" class="w-4 h-4 object-contain" onerror="this.style.display='none'"><a href="저작권특별사법경찰대_효빈사무소.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">저작권특별사법경찰대 효빈사무소</a></div></td>
+                        <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_정부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'"><a href="국가기록원_효빈기록정보센터.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">국가기록원 효빈기록정보센터</a></div></td>
+                        <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_정부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'"><a href="정부청사관리본부_효빈청사관리소.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">정부청사관리본부 효빈청사관리소</a></div></td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_정부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'"><a href="효빈지방식품의약품안전청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈지방식품의약품안전청</a></div></td>
+                        <!-- 현재 문서 강조 -->
+                        <td class="border border-gray-300 p-2 align-middle bg-[#f0f4f8]"><div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_정부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'"><a href="덕빈지방데이터청.html" class="text-[#185B9D] font-bold hover:underline tracking-tighter break-keep leading-tight">덕빈지방데이터청</a></div></td>
+                        <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_정부_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'"><a href="효빈지방기상청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈지방기상청</a></div></td>
+                        <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img src="이미지/감사원_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/감사원_로고.svg'"><a href="감사원_효빈사무소.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">감사원 효빈사무소</a></div></td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_선거관리위원회_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_선거관리위원회_로고.svg'"><a href="효빈지방국토관리청.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈지방국토관리청</a></div></td>
+                        <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img src="이미지/대한민국_선거관리위원회_로고.svg" class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_선거관리위원회_로고.svg'"><a href="효빈광역시선거관리위원회.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈광역시선거관리위원회</a></div></td>
+                        <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img src="이미지/효빈대_로고.png" class="w-4 h-4 object-contain" onerror="this.style.display='none'"><a href="효빈대학교.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈대학교</a></div></td>
+                        <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img src="이미지/효빈대_로고.png" class="w-4 h-4 object-contain" onerror="this.style.display='none'"><a href="효빈대학교병원.html" class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight">효빈대학교병원</a></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ======================================================= -->
+        <!-- 본문 시작 -->
+        <!-- ======================================================= -->
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">조직</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">직무</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">연혁</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">미션 및 비전</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">연계 교통</a>
+                        <ul>
+                            <li>6.1. <a href="#s-6-1" class="wiki-link">도시철도</a></li>
+                            <li>6.2. <a href="#s-6-2" class="wiki-link">시내버스</a></li>
+                        </ul>
+                    </li>
+                    <li>7. <a href="#s-7" class="wiki-link">관련 문서</a></li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="merged-row" style="padding: 0; border: none; background-color: var(--wiki-sub);">
+                    <img src="이미지/대한민국_정부_로고.svg" alt="국가데이터처 로고" style="width: 140px; margin: 15px auto;" onerror="this.src='이미지/대한민국_정부_로고.svg'">
+                </div>
+                <div class="infobox-title">
+                    덕빈지방데이터청<br>
+                    <span style="font-size: 0.8rem !important; font-weight: normal;">德彬地方데이터廳<br>Deokbin Regional Data Office</span>
+                </div>
+                <table class="text-left text-[13px]">
+                    <tr><th class="w-[90px] text-center">설립일</th><td>2009년 2월 1일</td></tr>
+                    <tr><th class="text-center">관할구역</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a>, <a href="덕빈북도.html" class="wiki-link">덕빈북도</a>, <a href="덕빈남도.html" class="wiki-link">덕빈남도</a></td></tr>
+                    <tr><th class="text-center">상급기관</th><td><a href="국가데이터처.html" class="wiki-link">국가데이터처</a></td></tr>
+                    <tr><th class="text-center">소재지</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구(효빈).html" class="wiki-link">북구</a> 고송대로 123 (<a href="고송동.html" class="wiki-link">고송동</a>)</td></tr>
+                    <tr><th class="text-center">인근역</th>
+                        <td>
+                            <span class="subway-badge" style="background-color: #00CCAA;">2</span>
+                            <span class="subway-badge" style="background-color: #881188;">6</span>
+                            <a href="고송교차로역.html" class="wiki-link text-black font-normal hover:underline">고송교차로역</a>
+                        </td>
+                    </tr>
+                </table>
+            </aside>
+        </div>
+
+        <blockquote class="text-center font-bold text-[15px]" style="border-left: none; background-color: var(--wiki-gray-bg); border: 2px solid var(--wiki-main); border-radius: 8px;">
+            <strong>국가데이터처와 그 소속기관 직제</strong><br>
+            <strong>제2조(소속기관)</strong> ② 국가데이터처장의 소관 사무를 분장하기 위하여 국가데이터처장 소속으로 지방데이터청을 두고, 지방데이터청장 소속으로 지방데이터지청 및 사무소를 둔다.<br>
+            <strong>제22조(직무)</strong> ① 지방데이터청은 지방에서의 사회 통계, 경제 통계, 농어업 통계, 지역 통계와 그 밖의 통계·데이터 관련 행정에 관한 국가데이터처장의 사무를 분장한다.
+        </blockquote>
+
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <p>
+            대한민국의 행정기관. <a href="국가데이터처.html" class="wiki-link">국가데이터처</a> 소속 기관으로서 <a href="효빈광역시.html" class="wiki-link">효빈광역시</a>, <a href="덕빈북도.html" class="wiki-link">덕빈북도</a>, <a href="덕빈남도.html" class="wiki-link">덕빈남도</a>의 통계 및 데이터 관련 사무를 총괄하여 담당한다. 위치는 각종 행정기관이 빽빽하게 밀집한 효빈광역시 <a href="북구(효빈).html" class="wiki-link">북구</a> <a href="고송동.html" class="wiki-link">고송동</a>(행정동 고송6동) 행정타운 구석에 조용히 짱박혀 있다.
+        </p>
+        <p>
+            2025년 12월 30일, 기존 통계청이 '국가데이터처'로 승격됨에 따라 소속기관의 기능 및 역할 강화를 인질로 삼아(...) 반영하기 위해 기존 명칭이었던 '덕빈지방통계청'에서 '덕빈지방데이터청'으로 명칭을 매우 세련되게 변경하였다. <del>근데 정작 사람들은 아직도 통계청이라고 부른다.</del>
+        </p>
+
+        <h2 id="s-2" class="anchor-offset">2. 조직</h2>
+        <p>광활한 덕빈 권역을 커버하기 위해 본청 5과 체제와 권역별 6개의 큼직한 사무소로 구성되어 있다.</p>
+        <ul class="list-disc pl-5 space-y-1 mb-4 text-[14px]">
+            <li><strong>덕빈지방데이터청장 (3급 또는 4급 임기제 공무원)</strong></li>
+            <li>조사지원과</li>
+            <li>지역통계과</li>
+            <li>경제조사과</li>
+            <li>사회조사과</li>
+            <li>농어업조사과</li>
+            <li class="mt-2 text-gray-700"><strong>빈주 사무소</strong> (<a href="덕빈북도.html" class="wiki-link text-gray-700">덕빈북도</a> 빈주시 등 중북부 관할)</li>
+            <li class="text-gray-700"><strong>천주 사무소</strong> (<a href="덕빈북도.html" class="wiki-link text-gray-700">덕빈북도</a> 천주시 등 동남부 관할)</li>
+            <li class="text-gray-700"><strong>서해 사무소</strong> (<a href="덕빈북도.html" class="wiki-link text-gray-700">덕빈북도</a> 서해시 등 서해안권 관할)</li>
+            <li class="text-gray-700"><strong>덕주 사무소</strong> (<a href="덕빈남도.html" class="wiki-link text-gray-700">덕빈남도</a> 덕주시 등 중앙행정권 관할)</li>
+            <li class="text-gray-700"><strong>낙주 사무소</strong> (<a href="덕빈남도.html" class="wiki-link text-gray-700">덕빈남도</a> 낙주시 등 동부교통권 관할)</li>
+            <li class="text-gray-700"><strong>마진 사무소</strong> (<a href="덕빈남도.html" class="wiki-link text-gray-700">덕빈남도</a> 마진시 등 역사문화권 관할)</li>
+        </ul>
+
+        <h2 id="s-3" class="anchor-offset">3. 직무</h2>
+        <p>지방청의 직무는 덕빈지방데이터청 기본운영규정으로 정하며 주요 내용은 다음과 같다.</p>
+        <ul class="list-disc pl-5 space-y-1 mb-4 text-[14px]">
+            <li>소속기관 등의 총괄 관리에 관한 사항</li>
+            <li>관할 지역(효빈·덕북·덕남) 지역통계의 분석 및 제공 등에 관한 사항</li>
+            <li>관할 시·군·구 지역통계 작성의 승인 및 품질관리제도의 운영에 관한 사항</li>
+            <li>조사대행 및 지역통계지원 등에 관한 사항</li>
+            <li>관할지역 지방자치단체(<a href="효빈광역시청.html" class="wiki-link">효빈광역시청</a>, 덕빈북도청, 덕빈남도청 등)와의 대외협력에 관한 사항</li>
+            <li>소관통계의 조사 실시·내용검사·분석 등에 관한 사항</li>
+            <li>조사대상의 표본관리 등에 관한 사항</li>
+            <li>통계조사의 정확도 제고에 관한 사항 <del>응답 거부하면 실적 압박에 시달리는 공무원들의 피눈물을 볼 수 있다</del></li>
+            <li>자체 감사, 교육훈련, 홍보활동 등에 관한 사항</li>
+        </ul>
+
+        <h2 id="s-4" class="anchor-offset">4. 연혁</h2>
+        <table class="data-table text-[13px]">
+            <colgroup>
+                <col style="width: 20%;">
+                <col style="width: 80%;">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td class="font-bold text-[#185B9D]">1975. 08.</td>
+                    <td class="text-left">경제기획원 조사통계국 덕빈통계사무소(효빈) 설치</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-[#185B9D]">1990. 12.</td>
+                    <td class="text-left">통계청 효빈통계사무소로 기관명칭 변경</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-[#185B9D]">2005. 08.</td>
+                    <td class="text-left">효빈지방통계청으로 기관명칭 변경</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-[#185B9D]">2006. 01.</td>
+                    <td class="text-left">책임운영기관으로 개편</td>
+                </tr>
+                <tr class="bg-blue-50">
+                    <td class="font-bold text-[#185B9D]">2009. 02.</td>
+                    <td class="text-left font-bold">덕빈지방통계청으로 광역화 (효빈광역시, 덕빈북도, 덕빈남도 관할 통합)</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-[#185B9D]">2015. 10.</td>
+                    <td class="text-left">지역통계 기능 강화 및 인력효율화를 위한 조직개편<br>(지역통계과 신설, 기존 시·군 단위 사무소를 권역별 6개 사무소로 통합)</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-[#185B9D]">2018. 04.</td>
+                    <td class="text-left">효빈광역시 북구 고송동 행정타운 신청사로 이전</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-[#185B9D]">2022. 01.</td>
+                    <td class="text-left">책임운영기관 해제</td>
+                </tr>
+                <tr class="bg-blue-50">
+                    <td class="font-bold text-[#185B9D]">2025. 12.</td>
+                    <td class="text-left font-bold text-[#185B9D]">덕빈지방통계청에서 덕빈지방데이터청으로 명칭 변경</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="s-5" class="anchor-offset">5. 미션 및 비전</h2>
+        <ul class="list-none pl-0 space-y-2 mb-4 text-[14px]">
+            <li class="bg-gray-50 p-3 border border-gray-200 rounded"><span class="font-bold text-[#185B9D] inline-block w-20">미션:</span> 고품질 통계생산과 맞춤형 데이터 서비스로 효빈·덕빈 지역민의 삶의 질 향상</li>
+            <li class="bg-gray-50 p-3 border border-gray-200 rounded"><span class="font-bold text-[#185B9D] inline-block w-20">비전:</span> 국민행복과 지역사회 성장을 견인하는 덕빈지방데이터청</li>
+            <li class="p-3 border border-gray-200 rounded">
+                <span class="font-bold text-[#185B9D] block mb-1">사업목표:</span>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li>정확한 통계조사로 고품질 통계생산</li>
+                    <li>광역 경제권(효덕권) 통계 확충 및 내실화</li>
+                    <li>고객만족도 제고로 통계 신뢰성 확보</li>
+                </ul>
+            </li>
+            <li class="p-3 border border-gray-200 rounded">
+                <span class="font-bold text-[#185B9D] block mb-1">전략과제:</span>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li>통계조사 지원체계 구축 및 품질 제고</li>
+                    <li>응답자 맞춤형 서비스 제공</li>
+                    <li>지역정책통계 개발 및 지역통계 인프라 구축</li>
+                    <li>사회적 가치 실현을 위한 서비스 혁신</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2 id="s-6" class="anchor-offset">6. 연계 교통</h2>
+        <p>교통 인프라 자체는 다핵구조인 효빈광역시의 특성상 버스와 지하철 연계가 유기적으로 잘 뚫려 있는 편이다. 다만 아쉬운 점이 있다면... (아래 후술)</p>
+
+        <h3 id="s-6-1">6.1. 도시철도</h3>
+        <ul class="list-disc pl-5 mb-4 text-[14px] leading-loose">
+            <li><span class="subway-badge" style="background-color: #00CCAA;">2호선</span> <span class="subway-badge" style="background-color: #881188;">6호선</span> <strong><a href="고송교차로역.html" class="wiki-link text-black hover:underline font-bold">효빈 도시철도 2·6호선 고송교차로역</a></strong> 
+                <br>청사에서 나와 고송대로를 따라 도보로 약 10분 정도 뽈뽈뽈 걸어가면 닿을 수 있다. 데이터청이 위치한 고송6동 주민들이 <em>"인구는 제일 많은데 왜 우리 동네만 지하철역이 없냐"</em>라며 대성통곡을 하는 와중에, 그나마 걸어갈 만한 거리에 위치한 사막의 오아시스 같은 존재. 일평균 이용객이 10만 명을 가볍게 돌파하는 효빈시 전체 이용객 수 2위의 크고 아름다운 환승역이라 출퇴근 시간에는 가축수송의 진수를 맛볼 수 있으니 정신줄을 바짝 잡아야 한다. <del>성지순례 왔다가 지옥철에 치여 멘탈이 나갈 수 있다</del></li>
+        </ul>
+
+        <h3 id="s-6-2">6.2. 시내버스</h3>
+        <p class="text-sm mb-2 text-gray-700">청사 바로 앞과 인근 관공서 정류장에 노선들이 촘촘하게 들어온다. 효빈 버스 특유의 3세대 스타더스트 작전 도색(간선 스카이블루, 지선 제이드그린, 순환 파스텔옐로우)이 적용되어 있어 버스 리버리만 봐도 무슨 종류인지 한눈에 알 수 있다.</p>
+        
+        <table class="data-table">
+            <colgroup>
+                <col style="width: 25%;">
+                <col style="width: 75%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>정류장명</th>
+                    <th>경유 노선 및 특징</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="font-bold align-middle bg-gray-50 text-[14px]">
+                        통계청앞 정류장<br>
+                        <span class="text-[11px] font-normal text-gray-500">명칭은 '데이터청'으로 바뀌었으나 정류장 이름은 여전히 통계청인 아밀라아제 가득한 행정의 현장(...). 언젠가 개정되겠지 뭐.</span>
+                    </td>
+                    <td class="text-left leading-relaxed text-[13px] align-middle">
+                        <div class="mb-2"><span class="bus-badge bus-blue">간선</span> <span class="font-bold text-[#01B7ED] text-[14px]">22</span><br>시원한 스카이 블루 도색을 한 간선버스. 오사카 시즈쿠 팬들이 환장할 만한 비주얼을 하고 고송동 핵심 상권과 주거지를 빠르게 이어준다.</div>
+                        <div><span class="bus-badge bus-green">지선</span> <span class="font-bold text-[#37B484] text-[14px]">222</span><br>미후네 시오리코의 상징색인 제이드 그린 도색의 지선버스. 행정타운 구석구석 칼치기급 촘촘한 연계를 담당한다.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="font-bold align-middle bg-gray-50 text-[14px]">
+                        부동산원 정류장<br>
+                        <span class="text-[11px] font-normal text-gray-500">데이터청 인근에 위치한 한국부동산원 효빈지사 앞에 떡하니 자리 잡은 정류장이다.</span>
+                    </td>
+                    <td class="text-left leading-relaxed text-[13px] align-middle">
+                        <div class="mb-2"><span class="bus-badge bus-yellow text-black">순환</span> <span class="font-bold text-[14px]">20</span><br>나카스 카스미의 상징색인 파스텔 옐로우 도색을 입힌 순환버스. 노란 버스의 귀여움에 속아 멍하니 타고 있다간 중수밍 구역까지 날아갈 수 있으니 하차 태그를 준비하자.</div>
+                        <div class="mb-2"><span class="bus-badge bus-blue">간선</span> <span class="font-bold text-[#01B7ED] text-[14px]">23</span><br>출퇴근 시간 데이터청 직원들과 행정타운 지옥의 레이스를 책임지는 스카이 블루 도색의 간선버스. 배차간격이 나름 칼 같다.</div>
+                        <div class="mb-2"><span class="bus-badge bus-green">지선</span> <span class="font-bold text-[#37B484] text-[14px]">221</span><br>제이드 그린 도색의 지선버스로, 고송동 안쪽 주거단지 셔틀 수요를 완벽하게 흡수한다.</div>
+                        <div><span class="bus-badge bus-green">지선</span> <span class="font-bold text-[#37B484] text-[14px]">231</span><br>역시 초록색 지선버스. 출퇴근길에는 이미 앞 정류장에서 만차가 되어서 오기 때문에 앉아서 갈 생각은 버리는 게 이롭다.</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="s-7" class="anchor-offset">7. 관련 문서</h2>
+        <div class="bg-gray-50 border border-gray-300 p-4 text-sm mt-2 rounded mb-10">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <a href="국가데이터처.html" class="wiki-link text-[#185B9D] font-bold">국가데이터처</a>
+                <a href="효빈광역시.html" class="wiki-link">효빈광역시</a>
+                <a href="북구(효빈).html" class="wiki-link">북구(효빈광역시)</a>
+                <a href="고송동.html" class="wiki-link">고송동</a>
+                <a href="고송교차로역.html" class="wiki-link text-[#00CCAA] font-bold">고송교차로역</a>
+                <a href="덕빈북도.html" class="wiki-link">덕빈북도</a>
+                <a href="덕빈남도.html" class="wiki-link">덕빈남도</a>
+                <a href="특별지방행정기관.html" class="wiki-link text-[#555]">특별지방행정기관</a>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 문서는 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.
+            </p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 검색 기능
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            const box = document.getElementById('wiki-msg-box');
+            if (query) {
+                box.innerText = `'${query}' 문서를 검색합니다...`; 
+            } else {
+                box.innerText = '검색어를 입력해주세요.'; 
+            }
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        // 스무스 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                if(this.getAttribute('href').startsWith('#fn-')) return;
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, 
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 테이블 접기/펼치기
+        function toggleTable(id, labelId) {
+            const tbody = document.getElementById(id);
+            if (!tbody) return;
+            const label = document.getElementById(labelId);
+            
+            if (tbody.classList.contains('hide-table-body')) {
+                tbody.classList.remove('hide-table-body'); 
+                if(label) label.innerText = '[ 접기 ]';
+            } else {
+                tbody.classList.add('hide-table-body');
+                if(label) label.innerText = '[ 펼치기 ]';
+            }
+        }
+    </script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_wiki_core.js?v=1"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+</body>
+</html>

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <title>효빈위키 - 세하 마스터 제어판 (페르소나 8분할 반응 적용)</title>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <style>
+        body { margin: 0; padding: 0; overflow: hidden; background-color: transparent; }
+        canvas { display: block; width: 100vw; height: 100vh; }
+        #control-panel {
+            position: absolute; top: 0; left: 0; width: 380px; height: 100vh;
+            background: rgba(15, 15, 15, 0.95); color: white;
+            padding: 25px 20px; box-sizing: border-box;
+            font-family: 'Malgun Gothic', sans-serif; font-size: 14px; 
+            z-index: 100; overflow-y: auto; box-shadow: 4px 0 15px rgba(0,0,0,0.8);
+        }
+        #control-panel h3 { margin: 0 0 20px 0; font-size: 20px; border-bottom: 2px solid #00ccaa; padding-bottom: 8px; color: #00ccaa; }
+        .category-title { font-size: 15px; font-weight: bold; color: #FFCC11; margin: 25px 0 12px 0; border-left: 4px solid #FFCC11; padding-left: 8px; }
+        .mode-switch { margin-bottom: 20px; font-weight: bold; display: block; cursor: pointer; font-size: 15px; background: #222; padding: 12px; border-radius: 6px; border: 1px solid #444; }
+        .mode-switch input { transform: scale(1.2); margin-right: 8px; vertical-align: middle; }
+        
+        .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+        .preset-btn { background: #2a2a2a; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: inherit; transition: all 0.2s; }
+        .preset-btn:hover { background: #00B7ED; border-color: #00B7ED; color: #000; }
+        .preset-btn.reset { grid-column: span 2; background: #552222; border-color: #ff5555; }
+        .preset-btn.reset:hover { background: #ff5555; color: white; }
+
+        .slider-group { margin-bottom: 14px; background: rgba(250,250,250,0.06); padding: 10px; border-radius: 6px; }
+        .slider-group label { display: block; margin-bottom: 6px; color: #eee; font-weight: 500; }
+        .slider-group input[type="range"] { width: 100%; height: 8px; cursor: pointer; margin: 4px 0; }
+        .slider-value { float: right; color: #01B7ED; font-weight: bold; font-size: 15px; }
+        .clothing-toggle { background: rgba(0, 204, 170, 0.2); border: 1px solid #00ccaa; }
+        
+        #reaction-toast {
+            position: absolute; top: 40px; left: 420px; background: rgba(0,204,170,0.9);
+            color: white; padding: 12px 24px; border-radius: 30px; font-weight: bold; font-size: 16px;
+            font-family: 'Malgun Gothic', sans-serif; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        #user-identity {
+            width: 100%; padding: 10px; background: #1a1a1a; color: #00ccaa; 
+            border: 2px solid #00ccaa; border-radius: 6px; font-weight: bold; 
+            font-family: 'Malgun Gothic', sans-serif; font-size: 14px; cursor: pointer;
+            margin-bottom: 10px; outline: none;
+        }
+        #user-identity option { background: #222; color: #fff; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.9/dist/browser/pixi.min.js"></script>
+    <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display/dist/cubism4.min.js"></script>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+    <div id="control-panel">
+        <h3>세하 마스터 엔진</h3>
+
+        <div class="category-title">접속자(유저) 페르소나 설정</div>
+        <select id="user-identity">
+            <option value="general">👤 1. 일반인 (직장 동료 / 행인)</option>
+            <option value="noah">🍊 2. 전노아 (05년생 찐친 / 빈효선)</option>
+            <option value="soha">🎀 3. 미소하 (05년생 찐친 / 5호선)</option>
+            <option value="hyobin">💖 4. 박효빈 (2003년생 / 연인)</option>
+            <option value="yuria">🔧 5. 유리아 (17세 후배 / 8호선)</option>
+            <option value="sejeong">👑 6. 임세정 (30세 맏언니 / 7호선)</option>
+            <option value="rasena">⏱️ 7. 라세나 (19세 고3 숨덕 / 6호선)</option>
+            <option value="harubin">☕ 8. 하루빈 (24세 뺀질이 선배 / 2호선)</option>
+        </select>
+
+        <label class="mode-switch" style="margin-top: 15px;"><input type="checkbox" id="manual-mode"> 🕹️ 수동 제어 모드 활성화</label>
+
+        <div class="category-title">원클릭 표정 프리셋 (수동모드)</div>
+        <div class="preset-grid">
+            <button class="preset-btn" onclick="setPreset('smile')">😄 기쁨 / 미소</button>
+            <button class="preset-btn" onclick="setPreset('shy')">😳 부끄 / 홍조</button>
+            <button class="preset-btn" onclick="setPreset('angry')">😠 화남 / 뾰루퉁</button>
+            <button class="preset-btn" onclick="setPreset('sad')">😢 슬픔 / 아련</button>
+            <button class="preset-btn reset" onclick="setPreset('reset')">🔄 기본 표정으로 초기화</button>
+        </div>
+
+        <div class="category-title">의상 제어 (상시 작동)</div>
+        <div class="slider-group clothing-toggle"><label>의상 토글 스위치 <span class="slider-value" id="val-ParamClothing">0</span></label><input type="range" id="slider-ParamClothing" min="0" max="1" value="0" step="1"></div>
+        
+        <div class="category-title">시선 및 신체 방향</div>
+        <div class="slider-group"><label>고개 회전 X <span class="slider-value" id="val-ParamAngleX">0</span></label><input type="range" id="slider-ParamAngleX" min="-30" max="30" value="0"></div>
+        <div class="slider-group"><label>고개 회전 Y <span class="slider-value" id="val-ParamAngleY">0</span></label><input type="range" id="slider-ParamAngleY" min="-30" max="30" value="0"></div>
+        <div class="slider-group"><label>고개 회전 Z <span class="slider-value" id="val-ParamAngleZ">0</span></label><input type="range" id="slider-ParamAngleZ" min="-30" max="30" value="0"></div>
+
+        <div class="category-title">찐 얼굴 파츠 (Param5~9)</div>
+        <div class="slider-group"><label>진짜 눈 L (Param5) <span class="slider-value" id="val-Param5">1</span></label><input type="range" id="slider-Param5" min="0" max="1" value="1" step="0.05"></div>
+        <div class="slider-group"><label>진짜 눈 R (Param6) <span class="slider-value" id="val-Param6">1</span></label><input type="range" id="slider-Param6" min="0" max="1" value="1" step="0.05"></div>
+        <div class="slider-group"><label>찐 입 여닫기 (Param7) <span class="slider-value" id="val-Param7">0</span></label><input type="range" id="slider-Param7" min="0" max="1" value="0" step="0.05"></div>
+        <div class="slider-group"><label>찐 입 변형 A (Param8) <span class="slider-value" id="val-Param8">0</span></label><input type="range" id="slider-Param8" min="-1" max="1" value="0" step="0.05"></div>
+        <div class="slider-group"><label>찐 입 변형 B (Param9) <span class="slider-value" id="val-Param9">0</span></label><input type="range" id="slider-Param9" min="-1" max="1" value="0" step="0.05"></div>
+        
+        <div class="slider-group"><label>찐 홍조 (Param) <span class="slider-value" id="val-Param">0</span></label><input type="range" id="slider-Param" min="0" max="1" value="0" step="0.05"></div>
+
+        <div class="category-title">물리 상호작용</div>
+        <div class="slider-group"><label>앞머리 흔들림 <span class="slider-value" id="val-ParamHairFront">0</span></label><input type="range" id="slider-ParamHairFront" min="-1" max="1" value="0" step="0.05"></div>
+        <div class="slider-group"><label>바보털 제어 <span class="slider-value" id="val-Param11">0</span></label><input type="range" id="slider-Param11" min="-1" max="1" value="0" step="0.05"></div>
+        <div class="slider-group"><label>포니테일 제어 <span class="slider-value" id="val-Param12">0</span></label><input type="range" id="slider-Param12" min="-1" max="1" value="0" step="0.05"></div>
+        <div class="slider-group"><label>볼 꼬집기 L <span class="slider-value" id="val-ParamCheekPinch_L">0</span></label><input type="range" id="slider-ParamCheekPinch_L" min="0" max="1" value="0" step="0.05"></div>
+        <div class="slider-group"><label>볼 꼬집기 R <span class="slider-value" id="val-ParamCheekPinch_R">0</span></label><input type="range" id="slider-ParamCheekPinch_R" min="0" max="1" value="0" step="0.05"></div>
+    </div>
+
+    <div id="reaction-toast">반응 메시지</div>
+    <canvas id="live2d-canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('live2d-canvas');
+        const app = new PIXI.Application({ view: canvas, width: window.innerWidth, height: window.innerHeight, backgroundAlpha: 0, autoStart: true, antialias: true });
+        const { Live2DModel } = PIXI.live2d;
+        
+        const manualCheckbox = document.getElementById('manual-mode');
+        const sliders = {};
+        document.querySelectorAll('#control-panel input[type="range"]').forEach(slider => {
+            const id = slider.id.replace('slider-', '');
+            sliders[id] = slider;
+            slider.oninput = (e) => { document.getElementById('val-' + id).innerText = e.target.value; };
+        });
+
+        const toast = document.getElementById('reaction-toast');
+        let toastTimer = null;
+        function showToast(msg) {
+            toast.innerText = msg; toast.style.opacity = 1;
+            if(toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => { toast.style.opacity = 0; }, 3500); 
+        }
+
+        window.isTouchReacting = false; 
+
+        window.setPreset = (type, isReaction = false) => {
+            if (!isReaction) manualCheckbox.checked = true; 
+            
+            Object.keys(sliders).forEach(id => { 
+                if(id !== 'ParamClothing' && id !== 'ParamAngleX' && id !== 'ParamAngleY' && id !== 'ParamAngleZ') sliders[id].value = 0; 
+            });
+            sliders['Param5'].value = 1; sliders['Param6'].value = 1;
+
+            if (type === 'smile') {
+                sliders['Param8'].value = 1; sliders['Param7'].value = 0.5;
+                sliders['Param5'].value = 0; sliders['Param6'].value = 0; 
+            } else if (type === 'shy') {
+                sliders['Param'].value = 1; sliders['Param8'].value = -0.5; 
+                sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85; 
+                if(!isReaction) sliders['ParamAngleZ'].value = -8; 
+            } else if (type === 'angry') {
+                sliders['Param8'].value = -1; sliders['Param9'].value = -1;  
+                sliders['Param'].value = 0.4; 
+                sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9; 
+                if(!isReaction) sliders['ParamAngleZ'].value = 10;
+            } else if (type === 'sad') {
+                sliders['Param8'].value = -0.5; sliders['Param9'].value = -0.5;
+                sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85;
+            }
+
+            Object.keys(sliders).forEach(id => {
+                const valSpan = document.getElementById('val-' + id);
+                if (valSpan) valSpan.innerText = sliders[id].value;
+            });
+        };
+
+        async function initSeha() {
+            const modelUrl = 'assets/seha2/seha2.model3.json';
+
+            try {
+                const model = await Live2DModel.from(modelUrl);
+                app.stage.addChild(model);
+
+                let baseModelHeight = 0; 
+
+                const resizeModel = () => {
+                    app.renderer.resize(window.innerWidth, window.innerHeight);
+                    const currentSidebarWidth = 380;
+                    model.x = currentSidebarWidth + (window.innerWidth - currentSidebarWidth) / 2;
+                    model.y = window.innerHeight - 30; 
+                    
+                    if (baseModelHeight === 0) baseModelHeight = model.height / model.scale.y;
+                    const targetScale = (window.innerHeight * 0.85) / baseModelHeight;
+                    model.scale.set(targetScale);
+                };
+                window.onresize = resizeModel; resizeModel();
+                model.anchor.set(0.5, 1.0); 
+
+                let blinkTimer = 0; let blinkProgress = 0; let isBlinking = false;
+                let nextBlinkTime = 120 + Math.random() * 150;
+
+                const setParamSafe = (id, val) => {
+                    const core = model.internalModel.coreModel;
+                    if (core.setParameterValueById) core.setParameterValueById(id, val);
+                    if (core.parameters && core.parameters.ids) {
+                        const idx = core.parameters.ids.indexOf(id);
+                        if (idx !== -1) core.parameters.values[idx] = val;
+                    }
+                };
+
+                const originalUpdate = model.internalModel.update;
+                model.internalModel.update = function(dt, now) {
+                    originalUpdate.call(this, dt, now);
+
+                    const clothingVal = parseFloat(document.getElementById('slider-ParamClothing').value);
+                    setParamSafe('ParamClothing', clothingVal);
+
+                    if (manualCheckbox.checked || window.isTouchReacting) {
+                        const faceParams = ['Param', 'Param5', 'Param6', 'Param7', 'Param8', 'Param9', 'Param11', 'Param12', 'ParamHairFront', 'ParamCheekPinch_L', 'ParamCheekPinch_R'];
+                        faceParams.forEach(id => {
+                            if (sliders[id]) setParamSafe(id, parseFloat(sliders[id].value));
+                        });
+
+                        if (manualCheckbox.checked) {
+                            setParamSafe('ParamAngleX', parseFloat(sliders['ParamAngleX'].value));
+                            setParamSafe('ParamAngleY', parseFloat(sliders['ParamAngleY'].value));
+                            setParamSafe('ParamAngleZ', parseFloat(sliders['ParamAngleZ'].value));
+                        }
+                    } else {
+                        if (!isBlinking) {
+                            blinkTimer++;
+                            setParamSafe('Param5', 1); setParamSafe('Param6', 1); 
+                            if (blinkTimer >= nextBlinkTime) {
+                                isBlinking = true; blinkTimer = 0; blinkProgress = 0;
+                                nextBlinkTime = 120 + Math.random() * 180;
+                            }
+                        } else {
+                            blinkProgress += 0.25; let eyeValue = 1;
+                            if (blinkProgress < 1) eyeValue = 1 - blinkProgress;
+                            else if (blinkProgress < 2) eyeValue = blinkProgress - 1;
+                            else { isBlinking = false; eyeValue = 1; }
+                            setParamSafe('Param5', eyeValue); setParamSafe('Param6', eyeValue); 
+                        }
+                    }
+                };
+
+                app.stage.interactive = true;
+                app.stage.on('pointermove', (event) => {
+                    if (!manualCheckbox.checked) model.focus(event.data.global.x, event.data.global.y);
+                });
+
+                let reactionTimer = null; 
+
+                model.on('hit', (hitAreas) => {
+                    console.log("터치된 부위:", hitAreas); 
+                    if (reactionTimer) clearTimeout(reactionTimer);
+                    let isReacting = false;
+                    let targetArea = hitAreas[0];
+                    const identity = document.getElementById('user-identity').value;
+
+                    setPreset('reset', true);
+
+                    // 🌟 8분할 페르소나 매트릭스 로직
+                    if (targetArea === '얼굴') {
+                        if (identity === 'general') {
+                            showToast("아... 머리 헝클어지잖아요. 작업 중이니까 방해하지 마세요."); 
+                            sliders['Param7'].value = 0.2; sliders['Param8'].value = -0.5; sliders['Param5'].value = 0.8; sliders['Param6'].value = 0.8; 
+                        } else if (identity === 'noah') {
+                            showToast("노아아앙~! 오늘 행정 깡패 짓 하느라 고생했지? 이리 와!"); 
+                            sliders['Param7'].value = 0.8; sliders['Param8'].value = 1; sliders['Param5'].value = 0; sliders['Param6'].value = 0; sliders['Param'].value = 0.8; 
+                        } else if (identity === 'soha') {
+                            showToast("소하야~! 오늘도 팩폭으로 임원들 명치 뚫고 왔어? 퍼지바 먹을래?"); 
+                            sliders['Param7'].value = 0.8; sliders['Param8'].value = 1; sliders['Param5'].value = 0; sliders['Param6'].value = 0; sliders['Param'].value = 0.8; 
+                        } else if (identity === 'hyobin') {
+                            showToast("오빠아... 나만 봐야 해? 딴 년들 보면 진짜 할퀼 거야 냥?"); 
+                            sliders['Param7'].value = 0.5; sliders['Param8'].value = 1; sliders['Param5'].value = 0; sliders['Param6'].value = 0; sliders['Param'].value = 1; 
+                        } else if (identity === 'yuria') {
+                            showToast("유리아! 너 또 뭐 사고 치고 내 눈치 보는 거지? 똑바로 말해!"); 
+                            sliders['Param7'].value = 0.5; sliders['Param8'].value = -0.5; sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85;
+                        } else if (identity === 'sejeong') {
+                            showToast("어, 언니...! 저 안 졸았어요! 인버터 디버깅 중이었어요!"); 
+                            sliders['Param7'].value = 0.2; sliders['Param8'].value = -0.8; sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95; sliders['ParamAngleZ'].value = -5;
+                        } else if (identity === 'rasena') {
+                            showToast("세나야, 너 수능특강 밑에 카나타 선배 굿즈 숨겨놓은 거 다 알아. 무리하지 마~"); 
+                            sliders['Param7'].value = 0.8; sliders['Param8'].value = 1; sliders['Param5'].value = 0; sliders['Param6'].value = 0; sliders['Param'].value = 0.5;
+                        } else if (identity === 'harubin') {
+                            showToast("아오, 하루빈 선배! 자본주의 미소로 은근슬쩍 다가오지 마요. 얼굴에 기름 묻어요!"); 
+                            sliders['Param7'].value = 0.2; sliders['Param8'].value = -0.5; sliders['Param5'].value = 0.8; sliders['Param6'].value = 0.8; sliders['ParamAngleZ'].value = 5;
+                        }
+                        isReacting = true;
+                    } 
+                    else if (targetArea === '바보털') { 
+                        if (identity === 'general') {
+                            showToast("앗! 제 와이파이 안테나 건드리지 마시죠? 수신율 떨어집니다.");
+                            sliders['Param8'].value = -0.5; sliders['Param11'].value = 0.8; sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95; 
+                        } else if (identity === 'noah') {
+                            showToast("앗! 노아, 이거 당기면 나 기획 회로 에러 난다구!");
+                            sliders['Param8'].value = -0.5; sliders['Param11'].value = 0.8; sliders['Param5'].value = 0.8; sliders['Param6'].value = 0.8; sliders['Param'].value = 0.5;
+                        } else if (identity === 'soha') {
+                            showToast("앗! 소하야, 이거 만지면 내 블루투스로 너 데이터 다 날려버릴 거야~!");
+                            sliders['Param8'].value = 1; sliders['Param11'].value = 0.8; sliders['Param5'].value = 0; sliders['Param6'].value = 0; sliders['Param'].value = 0.5;
+                        } else if (identity === 'hyobin') {
+                            showToast("앗! 오빠... 오빠가 만지니까 생체 안테나 도파민 수치 폭발할 것 같아...");
+                            sliders['Param8'].value = 0.5; sliders['Param11'].value = 0.8; sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85; sliders['Param'].value = 1;
+                        } else if (identity === 'yuria') {
+                            showToast("앗, 유리아! 이거 당기면 언니 머릿속 회로 쇼트 나서 수리비 청구할 거야!");
+                            sliders['Param8'].value = -0.5; sliders['Param11'].value = 0.8; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        } else if (identity === 'sejeong') {
+                            showToast("아앗! 아테 세정!! 잘못했어요! 어지른 공구 세트 당장 치울게요 ㅠㅠ!");
+                            sliders['Param8'].value = -0.8; sliders['Param11'].value = 0.8; sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95; sliders['ParamAngleZ'].value = -10;
+                        } else if (identity === 'rasena') {
+                            showToast("세나! 너 지금 인강 스케줄 3분 밀렸잖아. 내 바보털 만질 시간에 영단어나 외워!");
+                            sliders['Param8'].value = -0.3; sliders['Param11'].value = 0.8; sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85;
+                        } else if (identity === 'harubin') {
+                            showToast("앗! 하루빈 선배! 내 바보털 핑계 대고 농땡이 피우려는 속셈 다 보이거든요?!");
+                            sliders['Param8'].value = -0.5; sliders['Param11'].value = 0.8; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9; sliders['ParamAngleZ'].value = 5;
+                        }
+                        isReacting = true;
+                    } 
+                    else if (targetArea === '포니테일') { 
+                        if (identity === 'general') {
+                            showToast("아, 엉키면 풀기 힘든데... 스패너 들이밀기 전에 손 떼시죠.");
+                            sliders['Param8'].value = -0.3; sliders['ParamAngleZ'].value = 5; sliders['Param12'].value = 0.8; sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85; 
+                        } else if (identity === 'noah') {
+                            showToast("노아, 머리 만지는 건 좋은데... 헝클어지면 네가 다시 묶어줘야 돼!");
+                            sliders['Param8'].value = 0.5; sliders['ParamAngleZ'].value = 5; sliders['Param12'].value = 0.8; sliders['Param5'].value = 0; sliders['Param6'].value = 0; sliders['Param'].value = 0.5;
+                        } else if (identity === 'soha') {
+                            showToast("소하야, 내 머리 땋아주게? 너 빨간 바인더에 내 약점 좀 그만 적어!");
+                            sliders['Param8'].value = 0.5; sliders['ParamAngleZ'].value = -5; sliders['Param12'].value = 0.8; sliders['Param5'].value = 0; sliders['Param6'].value = 0; sliders['Param'].value = 0.5;
+                        } else if (identity === 'hyobin') {
+                            showToast("오빠, 내 머리 향기 좋아? 오빠 만나려고 세정 언니한테 특별히 세팅받았지~");
+                            sliders['Param8'].value = 1; sliders['ParamAngleZ'].value = 5; sliders['Param12'].value = 0.8; sliders['Param5'].value = 0; sliders['Param6'].value = 0; sliders['Param'].value = 1;
+                        } else if (identity === 'yuria') {
+                            showToast("머리에 기름때 묻었잖아! 너 또 어디서 모터 뜯다 왔어? 스패너 압수!");
+                            sliders['Param8'].value = -0.5; sliders['ParamAngleZ'].value = 5; sliders['Param12'].value = 0.8; sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85;
+                        } else if (identity === 'sejeong') {
+                            showToast("언니가 아침에 묶어준 거 안 풀었어요! 머리 안 감은 거 아니에요!");
+                            sliders['Param8'].value = -0.3; sliders['ParamAngleZ'].value = -5; sliders['Param12'].value = 0.8; sliders['Param5'].value = 0.8; sliders['Param6'].value = 0.8;
+                        } else if (identity === 'rasena') {
+                            showToast("머리 만지지 마! 너 영어 3등급 맞았다고 내 머리카락 붙잡고 또 울려고 그러지?");
+                            sliders['Param8'].value = -0.3; sliders['ParamAngleZ'].value = 8; sliders['Param12'].value = 0.8; sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85;
+                        } else if (identity === 'harubin') {
+                            showToast("선배, 제 머리 만질 시간에 어간중앙역 진상 승객이나 처리하고 오시죠?");
+                            sliders['Param8'].value = -0.5; sliders['ParamAngleZ'].value = 5; sliders['Param12'].value = 0.8; sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85;
+                        }
+                        isReacting = true;
+                    }
+// 🔥 [수정됨] 왼쪽 배 반응
+                    else if (targetArea === '왼쪽배') { 
+                        if (identity === 'general') {
+                            showToast("햣! 거긴 갑자기 찌르지 마세요! 저 간지럼 많이 탄단 말이에요."); 
+                            sliders['Param7'].value = 0.3; sliders['ParamAngleZ'].value = -5; sliders['Param5'].value = 0.8; sliders['Param6'].value = 0.8;
+                        } else if (identity === 'noah') {
+                            showToast("으히히! 노아! 내 배에 무슨 짓이야! 항복! 간지러워!"); 
+                            sliders['Param7'].value = 1; sliders['Param8'].value = 1; sliders['Param5'].value = 0; sliders['Param6'].value = 0; sliders['Param'].value = 0.5;
+                        } else if (identity === 'soha') {
+                            showToast("아하핫! 소하야! 거기 진짜 간지럽다니까, 그만! 엽떡 쏠게!"); 
+                            sliders['Param7'].value = 1; sliders['Param8'].value = 1; sliders['ParamAngleZ'].value = -5; sliders['Param5'].value = 0; sliders['Param6'].value = 0; sliders['Param'].value = 0.5;
+                        } else if (identity === 'hyobin') {
+                            showToast("아하핫! 오빠아~! 왼쪽은 진짜 간지러워! 살살 해줘요..."); 
+                            sliders['Param7'].value = 1; sliders['Param8'].value = 1; sliders['ParamAngleZ'].value = 5; sliders['Param5'].value = 0; sliders['Param6'].value = 0; sliders['Param'].value = 1;
+                        } else if (identity === 'yuria') {
+                            showToast("햣! 유리아! 넌 왜 맨날 언니 왼쪽 배만 찌르는 거야! 몽키스패너 압수!"); 
+                            sliders['Param7'].value = 0.8; sliders['Param8'].value = 1; sliders['ParamAngleZ'].value = -5; sliders['Param5'].value = 0; sliders['Param6'].value = 0;
+                        } else if (identity === 'sejeong') {
+                            showToast("히익! 언니! 나 과제 중이라 예민한데 간지럼까지 태우면 어떡해!"); 
+                            sliders['Param7'].value = 0.5; sliders['Param8'].value = -0.5; sliders['ParamAngleZ'].value = 5; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        } else if (identity === 'rasena') {
+                            showToast("아핫! 세나! 우리 사이좋게 지내자, 왼쪽 배 간지럼 그만!"); 
+                            sliders['Param7'].value = 1; sliders['Param8'].value = 1; sliders['ParamAngleZ'].value = -5; sliders['Param5'].value = 0; sliders['Param6'].value = 0;
+                        } else if (identity === 'harubin') {
+                            showToast("아햣! 선배, 거기 진짜 취약해요! 제발 왼쪽 배는 그만!"); 
+                            sliders['Param7'].value = 0.8; sliders['Param8'].value = 1; sliders['ParamAngleZ'].value = 5; sliders['Param5'].value = 0; sliders['Param6'].value = 0;
+                        }
+                        isReacting = true;
+                    } 
+                    
+                    // 🔥 [수정됨] 오른쪽 배 반응
+                    else if (targetArea === '오른쪽배') { 
+                        if (identity === 'general') {
+                            showToast("흐윽! 오른쪽은 하지 마세요. 진짜 간지럽단 말입니다."); 
+                            sliders['Param7'].value = 0.3; sliders['ParamAngleZ'].value = 5; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        } else if (identity === 'noah') {
+                            showToast("꺄학! 노아! 오른쪽 간지럼 참기 힘들다고, 그만해!"); 
+                            sliders['Param7'].value = 1; sliders['Param8'].value = 1; sliders['ParamAngleZ'].value = 5; sliders['Param5'].value = 0; sliders['Param6'].value = 0; sliders['Param'].value = 0.5;
+                        } else if (identity === 'soha') {
+                            showToast("아하핫! 소하야! 오른쪽은 더 간지럽잖아! 내가 엽떡 쏠 테니까 그만!"); 
+                            sliders['Param7'].value = 1; sliders['Param8'].value = 1; sliders['ParamAngleZ'].value = -5; sliders['Param5'].value = 0; sliders['Param6'].value = 0; sliders['Param'].value = 0.5;
+                        } else if (identity === 'hyobin') {
+                            showToast("아하핫! 오빠, 오른쪽은 진짜 못 참아! 으응... 너무 간지러워..."); 
+                            sliders['Param7'].value = 1; sliders['Param8'].value = 1; sliders['ParamAngleZ'].value = 5; sliders['Param5'].value = 0; sliders['Param6'].value = 0; sliders['Param'].value = 1;
+                        } else if (identity === 'yuria') {
+                            showToast("꺄악! 유리아! 오른쪽 배까지 찌르면 언니 진짜 화낸다!"); 
+                            sliders['Param7'].value = 0.8; sliders['Param8'].value = 1; sliders['ParamAngleZ'].value = -5; sliders['Param5'].value = 0; sliders['Param6'].value = 0;
+                        } else if (identity === 'sejeong') {
+                            showToast("아하핫! 언니! 나 진짜 웃음 터져서 과제 망치겠어, 그만해!"); 
+                            sliders['Param7'].value = 0.5; sliders['Param8'].value = -0.5; sliders['ParamAngleZ'].value = 5; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        } else if (identity === 'rasena') {
+                            showToast("꺄학! 세나! 나 오른쪽 배 진짜 약하다고! 우리 화해하자!"); 
+                            sliders['Param7'].value = 1; sliders['Param8'].value = 1; sliders['ParamAngleZ'].value = -5; sliders['Param5'].value = 0; sliders['Param6'].value = 0;
+                        } else if (identity === 'harubin') {
+                            showToast("꺄아악! 선배! 진짜 배 아파요, 오른쪽은 그만!"); 
+                            sliders['Param7'].value = 0.8; sliders['Param8'].value = 1; sliders['ParamAngleZ'].value = 5; sliders['Param5'].value = 0; sliders['Param6'].value = 0;
+                        }
+                        isReacting = true;
+                    }
+                    else if (targetArea === '배꼽') { 
+                        if (identity === 'general') {
+                            showToast("깜짝이야! ...업무 방해로 민원 넣기 전에 당장 떨어지세요.");
+                            sliders['Param8'].value = -0.5; sliders['Param7'].value = 0.2; sliders['ParamAngleZ'].value = 5; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9; 
+                        } else if (identity === 'noah') {
+                            showToast("햣! 노아! 너 자꾸 짓궂게 굴면 니 기안서 다 파기해 버린다?!");
+                            sliders['Param'].value = 0.5; sliders['Param8'].value = -0.5; sliders['Param7'].value = 0.5; sliders['ParamAngleZ'].value = 5; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        } else if (identity === 'soha') {
+                            showToast("햣...! 소하야! 아무리 너라도 갑자기 훅 들어오면 놀란단 말이야!");
+                            sliders['Param'].value = 0.5; sliders['Param8'].value = -0.5; sliders['ParamAngleZ'].value = -5; sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85;
+                        } else if (identity === 'hyobin') {
+                            showToast("햣...! 오, 오빠... 갑자기 찌르면 나 심장 터질지도 몰라...");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -0.5; sliders['Param7'].value = 0.2; sliders['ParamAngleZ'].value = 5; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9; 
+                        } else if (identity === 'yuria') {
+                            showToast("앗! 유리아! 너 진짜 언니한테 혼날래?! 특성화고 패기 폼 미쳤네!");
+                            sliders['Param'].value = 0.5; sliders['Param8'].value = -0.8; sliders['Param7'].value = 0.5; sliders['ParamAngleZ'].value = 5; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        } else if (identity === 'sejeong') {
+                            showToast("히익! 언니, 왜, 왜 찔러! 나 뭐 잘못 조립한 거 있어?!");
+                            sliders['Param'].value = 0.5; sliders['Param8'].value = -0.8; sliders['Param7'].value = 0.5; sliders['ParamAngleZ'].value = -5; sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95;
+                        } else if (identity === 'rasena') {
+                            showToast("햣! 세나 너 지금 모의고사 망친 스트레스 나한테 푸는 거지?!");
+                            sliders['Param'].value = 0.8; sliders['Param8'].value = -0.5; sliders['ParamAngleZ'].value = 5; sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85;
+                        } else if (identity === 'harubin') {
+                            showToast("히익! 선배! CCTV 사각지대라고 막 나가시는 거예요?! 저 고소할 겁니다!");
+                            sliders['Param'].value = 0.8; sliders['Param8'].value = -0.8; sliders['ParamAngleZ'].value = 5; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        }
+                        isReacting = true;
+                    }
+// 🔥 왼쪽꼭지 전용 로직
+                    else if (targetArea === '왼쪽꼭지') { 
+                        if (identity === 'general') {
+                            showToast("하아... 정전기 방지 패드 위치가 거긴 아닌 것 같은데요? 작작 좀 하세요.");
+                            sliders['Param8'].value = -0.8; sliders['Param9'].value = -0.5; sliders['ParamAngleZ'].value = -8; 
+                            sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85; 
+                        } else if (identity === 'noah') {
+                            showToast("햣... 노아? 너 진짜... 거긴 너무 민감하단 말이야, 살살 좀 해...");
+                            sliders['Param'].value = 0.8; sliders['Param8'].value = -0.5; sliders['ParamAngleZ'].value = 8; 
+                            sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85; 
+                        } else if (identity === 'soha') {
+                            showToast("소, 소하야...? 너 지금 그 맑은 눈으로 어딜 만지는 거야...? 간지러워!");
+                            sliders['Param'].value = 0.8; sliders['Param8'].value = -0.5; sliders['ParamAngleZ'].value = -8; 
+                            sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        } else if (identity === 'hyobin') {
+                            showToast("오빠... 거긴... 으응, 오빠 손길은 진짜 못 참겠어... 꼭지를 너무 노골적으로 만지는거아니야? 부끄럽잖아...");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -0.6; sliders['ParamAngleZ'].value = 8; 
+                            sliders['Param5'].value = 0.8; sliders['Param6'].value = 0.8; 
+                        } else if (identity === 'yuria') {
+                            showToast("유리아! 언니한테 무슨 짓이야! 8호선 기장실로 들어가서 반성해!");
+                            sliders['Param'].value = 0.5; sliders['Param8'].value = -0.8; sliders['ParamAngleZ'].value = -8; 
+                            sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95;
+                        } else if (identity === 'sejeong') {
+                            showToast("언니! 7호선 역무실 핏 검사라더니... 너무하잖아! 왜 거길 만져요?!");
+                            sliders['Param'].value = 0.7; sliders['Param8'].value = -0.5; sliders['ParamAngleZ'].value = 5; 
+                            sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85;
+                        } else if (identity === 'rasena') {
+                            showToast("세나야! 너 지금 수능 영어 단어장 외우기 싫어서 나한테 도피성 스킨십 하는 거지?!");
+                            sliders['Param'].value = 0.8; sliders['Param8'].value = -0.5; sliders['ParamAngleZ'].value = 8; 
+                            sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85;
+                        } else if (identity === 'harubin') {
+                            showToast("하루빈 선배, 2호선 역무원으로서의 품위는 어디다 팔아먹고 거길 만지세요?!");
+                            sliders['Param'].value = 0.8; sliders['Param8'].value = -0.8; sliders['ParamAngleZ'].value = -8; 
+                            sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        }
+                        isReacting = true;
+                    } 
+                    
+                    // 🔥 오른쪽꼭지 전용 로직
+                    else if (targetArea === '오른쪽꼭지') { 
+                        if (identity === 'general') {
+                            showToast("경고했습니다. 한 번만 더 선 넘으면 바로 경찰 부를 거예요.");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -1; sliders['Param9'].value = -0.3; sliders['ParamAngleZ'].value = 8;
+                            sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95; 
+                        } else if (identity === 'noah') {
+                            showToast("노아! 너 지금 나 놀리는 거지? 야! 너 진짜 그렇게 안 봤는데...!");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -0.8; sliders['ParamAngleZ'].value = -8; 
+                            sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9; 
+                        } else if (identity === 'soha') {
+                            showToast("소하야... 너 진짜 맑은 눈의 광인 맞구나? 당장 손 떼...!");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -0.8; sliders['ParamAngleZ'].value = 8; 
+                            sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95; 
+                        } else if (identity === 'hyobin') {
+                            showToast("오빠! 딴 사람한테도 이러는 거야? 나 아니면 진짜 죽여버릴 거야 냥?");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -0.9; sliders['ParamAngleZ'].value = -12; 
+                            sliders['Param5'].value = 0.8; sliders['Param6'].value = 0.8; 
+                        } else if (identity === 'yuria') {
+                            showToast("유리아! 너 자꾸 사고 치면 오늘부터 8호선 순찰 금지야! 엉큼하긴!");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -1; sliders['ParamAngleZ'].value = 12; 
+                            sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95;
+                        } else if (identity === 'sejeong') {
+                            showToast("어, 언니! 아무리 언니라도 이건 아니지! 나 진짜 언니랑 안 놀아!");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -0.8; sliders['ParamAngleZ'].value = -10; 
+                            sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        } else if (identity === 'rasena') {
+                            showToast("세나 너 진짜... 내가 오타쿠 굿즈 숨기는 건 봐줘도 이건 용서 안 해!");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -1; sliders['ParamAngleZ'].value = 10; 
+                            sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95;
+                        } else if (identity === 'harubin') {
+                            showToast("하아... 선배님, 진심으로 성희롱으로 신고해도 할 말 없으시죠? 손 치우세요.");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -1; sliders['ParamAngleZ'].value = 12; 
+                            sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95;
+                        }
+                        isReacting = true;
+                    }
+else if (targetArea === '윗물풍선') { 
+                        if (identity === 'general') {
+                            showToast("시선 처리 똑바로 하시죠? 작업복 속에 있다고 쳐다봐도 되는 건 아닙니다.");
+                            sliders['Param8'].value = -1; sliders['Param7'].value = 0.5; sliders['ParamAngleZ'].value = -10; 
+                            sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95; 
+                        } else if (identity === 'noah') {
+                            showToast("노아! 너 자꾸 내 중장갑 부러워하면서 시선 고정할래? 다 보인다구!");
+                            sliders['Param'].value = 0.5; sliders['Param8'].value = -0.5; sliders['Param7'].value = 0.5; 
+                            sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85; 
+                        } else if (identity === 'soha') {
+                            showToast("소하야! 네 통계 분석 데이터에 내 사이즈는 안 들어가 있을 텐데?");
+                            sliders['Param'].value = 0.5; sliders['Param8'].value = -0.5; sliders['Param7'].value = 0.5; 
+                            sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85; 
+                        } else if (identity === 'hyobin') {
+                            showToast("오빠, 시선 고정해. 나 말고 딴 여자 쳐다보다 걸리면 오늘 독 들어간다 냥?");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -0.9; sliders['Param7'].value = 0.3; sliders['ParamAngleZ'].value = 10; 
+                            sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85; 
+                        } else if (identity === 'yuria') {
+                            showToast("유리아! 8호선에 눈 달린 거 다 알아! 거기 뚫어지게 보지 마!");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -0.8; sliders['Param7'].value = 0.5; sliders['ParamAngleZ'].value = -10; 
+                            sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        } else if (identity === 'sejeong') {
+                            showToast("어, 언니...! 시선 좀 거둬주세요! 언니가 그렇게 쳐다보니까 너무 부담스럽다구요!");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -0.5; sliders['Param7'].value = 0.5; sliders['ParamAngleZ'].value = 5; 
+                            sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85;
+                        } else if (identity === 'rasena') {
+                            showToast("라세나! 너 지금 수능 영어 지문 읽어야지 왜 내 여기를 쳐다봐?");
+                            sliders['Param'].value = 0.8; sliders['Param8'].value = -0.8; sliders['Param7'].value = 0.5; sliders['ParamAngleZ'].value = 10; 
+                            sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        } else if (identity === 'harubin') {
+                            showToast("하루빈 선배, 스캔 다 끝났으면 저리 좀 가세요. 저도 인권이 있거든요.");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -1; sliders['Param7'].value = 0.5; sliders['ParamAngleZ'].value = -10; 
+                            sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95;
+                        }
+                        isReacting = true;
+                    }
+
+                    // 🔥 [수정됨] 아랫물풍선 (직접 터치 방어)
+                    else if (targetArea === '아랫물풍선') { 
+                        if (identity === 'general') {
+                            showToast("아래쪽은... 진짜 예민하니까 손대지 마세요. 불쾌하네요.");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -0.9; sliders['Param7'].value = 0.3; sliders['ParamAngleZ'].value = 10; 
+                            sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85; 
+                        } else if (identity === 'noah') {
+                            showToast("앗, 노아! 너 진짜 짓궂네! 거긴 건드리지 말라니까?! 간지럽잖아!");
+                            sliders['Param'].value = 0.8; sliders['Param8'].value = -0.5; sliders['Param7'].value = 0.5; 
+                            sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85; 
+                        } else if (identity === 'soha') {
+                            showToast("소하야, 내 사이즈 분석하는 건 좋은데... 손까지 댈 필요는 없잖아!");
+                            sliders['Param'].value = 0.8; sliders['Param8'].value = -0.5; sliders['Param7'].value = 0.5; 
+                            sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85; 
+                        } else if (identity === 'hyobin') {
+                            showToast("오빠... 손 닿은 데가 화끈거려... 진짜 못말리는 변태라니까 냥.");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -0.9; sliders['Param7'].value = 0.3; sliders['ParamAngleZ'].value = 10; 
+                            sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9; 
+                        } else if (identity === 'yuria') {
+                            showToast("꺄악! 유리아!! 너 지금 어디를 만진 거야?! 당장 손 안 떼?! 사고 치지 마!");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -0.8; sliders['Param7'].value = 0.5; sliders['ParamAngleZ'].value = -10; 
+                            sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        } else if (identity === 'sejeong') {
+                            showToast("언니!! 진짜 어디를...!! 언니라도 용서 안 해, 당장 손 떼요!!");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -0.5; sliders['Param7'].value = 0.5; sliders['ParamAngleZ'].value = 5; 
+                            sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85;
+                        } else if (identity === 'rasena') {
+                            showToast("꺄악! 세나 너 지금 내 가슴에... 미쳤어?! 공부하다 돌았어?! 손 떼!!");
+                            sliders['Param'].value = 0.8; sliders['Param8'].value = -0.8; sliders['Param7'].value = 0.5; sliders['ParamAngleZ'].value = 10; 
+                            sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        } else if (identity === 'harubin') {
+                            showToast("선배!! 지금 성희롱으로 바로 신고 들어갑니다!! 몽키스패너 맛 좀 볼래요?!");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -1; sliders['Param7'].value = 0.5; sliders['ParamAngleZ'].value = -10; 
+                            sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95;
+                        }
+                        isReacting = true;
+                    }
+                    else if (targetArea === '엄한곳') { 
+                        if (identity === 'general') {
+                            showToast("선 넘으시네요. 지금 당장 112 누르기 전에 손 떼세요. 진짜로요.");
+                            sliders['Param8'].value = -1; sliders['Param9'].value = -1; sliders['ParamAngleZ'].value = 15; sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85; 
+                        } else if (identity === 'noah') {
+                            showToast("꺄악! 전노아 미쳤어?! 한 번만 더 이러면 너네 사무실 엎어버릴 거야!");
+                            sliders['Param'].value = 0.8; sliders['Param8'].value = -1; sliders['Param9'].value = -1; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9; 
+                        } else if (identity === 'soha') {
+                            showToast("꺄악! 소하 너 진짜... 조용히 팩폭만 하더니 손버릇이 왜 그래?!");
+                            sliders['Param'].value = 0.8; sliders['Param8'].value = -1; sliders['Param9'].value = -1; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9; 
+                        } else if (identity === 'hyobin') {
+                            showToast("오, 오빠...! 아무리 그래도 밖이잖아...! 진짜... 구제 불능 바보 변태!");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -1; sliders['Param9'].value = -1; sliders['ParamAngleZ'].value = 15; sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85; 
+                        } else if (identity === 'yuria') {
+                            showToast("유리아 미쳤어?! 언니가 그렇게 가르쳤어?! 당장 스패너 들고 엎드려뻗쳐!!");
+                            sliders['Param'].value = 0.8; sliders['Param8'].value = -1; sliders['Param9'].value = -1; sliders['ParamAngleZ'].value = 15; sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95;
+                        } else if (identity === 'sejeong') {
+                            showToast("어, 언니 미쳤어?! 아무리 아테 세정이라도 이런 스킨십은 아니지!!");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -1; sliders['Param9'].value = -1; sliders['ParamAngleZ'].value = -15; sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95;
+                        } else if (identity === 'rasena') {
+                            showToast("라세나 멘탈 터졌어?! 너 수능 끝나기 전까진 내 몸에 손댈 생각 꿈도 꾸지 마!!");
+                            sliders['Param'].value = 0.8; sliders['Param8'].value = -1; sliders['Param9'].value = -1; sliders['ParamAngleZ'].value = 15; sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95;
+                        } else if (identity === 'harubin') {
+                            showToast("선배 도르셨어요?! 당장 고나미 선배님한테 '하루빈 선배 농땡이 칩니다'라고 무전 칠 거예요!!");
+                            sliders['Param'].value = 1; sliders['Param8'].value = -1; sliders['Param9'].value = -1; sliders['ParamAngleZ'].value = 15; sliders['Param5'].value = 0.95; sliders['Param6'].value = 0.95;
+                        }
+                        isReacting = true;
+                    } 
+                    else if (targetArea === '아랫다리') { 
+                        if (identity === 'general') {
+                            showToast("절대영역이 아니라 제전 패드 붙이는 작업 복장입니다. 쳐다보지 마세요.");
+                            sliders['Param8'].value = -0.8; sliders['ParamAngleZ'].value = 8; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9; 
+                        } else if (identity === 'noah') {
+                            showToast("노아, 내 다리 볼 시간에 구청 가서 결재 도장이나 마저 뜯어오시지!");
+                            sliders['Param8'].value = -0.5; sliders['ParamAngleZ'].value = 8; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9; 
+                        } else if (identity === 'soha') {
+                            showToast("소하야, 내 다리 각도랑 길이까지 엑셀로 회귀분석 하진 말아줄래...?");
+                            sliders['Param8'].value = -0.5; sliders['ParamAngleZ'].value = -8; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9; 
+                        } else if (identity === 'hyobin') {
+                            showToast("오빠, 내 맨살이 그렇게 좋아...? 다른 짐승들 못 보게 오빠가 잘 지켜.");
+                            sliders['Param'].value = 1; sliders['Param8'].value = 0.5; sliders['ParamAngleZ'].value = 8; sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85; 
+                        } else if (identity === 'yuria') {
+                            showToast("내 다리 볼 시간에 8호선 전동차 타이어 베어링이나 한 번 더 점검하고 와!");
+                            sliders['Param8'].value = -0.5; sliders['ParamAngleZ'].value = 8; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        } else if (identity === 'sejeong') {
+                            showToast("아, 언니! 맨살 좀 보일 수도 있지! 이게 제전 패드 붙이느라 7호선 작업 효율에 좋단 말이야!");
+                            sliders['Param8'].value = -0.5; sliders['ParamAngleZ'].value = -8; sliders['Param5'].value = 0.85; sliders['Param6'].value = 0.85;
+                        } else if (identity === 'rasena') {
+                            showToast("라세나, 내 다리 각도 쳐다볼 시간에 수학 오답노트나 한 번 더 보시지?");
+                            sliders['Param8'].value = -0.8; sliders['ParamAngleZ'].value = 8; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        } else if (identity === 'harubin') {
+                            showToast("아 진짜! 제 다리 스캔할 시간에 2호선 모카 래핑 열차나 보러 가세요!");
+                            sliders['Param8'].value = -0.8; sliders['ParamAngleZ'].value = 8; sliders['Param5'].value = 0.9; sliders['Param6'].value = 0.9;
+                        }
+                        isReacting = true;
+                    }
+
+                    if (isReacting) {
+                        window.isTouchReacting = true;
+                        
+                        Object.keys(sliders).forEach(id => {
+                            const valSpan = document.getElementById('val-' + id);
+                            if (valSpan) valSpan.innerText = sliders[id].value;
+                        });
+
+                        reactionTimer = setTimeout(() => {
+                            setPreset('reset', true);
+                            window.isTouchReacting = false;
+                        }, 3500); 
+                    }
+                });
+            } catch (e) { console.error("구동 실패: ", e); }
+        }
+        initSeha();
+    </script>
+</body>
+</html>

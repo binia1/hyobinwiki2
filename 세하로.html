@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>세하로 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        /* 1. 전역 스타일 및 변수 */
+        :root { 
+            /* [고정] 효빈위키 브랜드 컬러 */
+            --wiki-fixed: #7777AA; 
+            
+            /* [변동] 도로 퍼스널 컬러 (임세하 및 7호선 상징색 분홍색) */
+            --wiki-main: #FF8899; 
+            
+            /* [변동] 포인트 컬러 (임세하의 정비공 기믹을 상징하는 스틸 그레이) */
+            --wiki-point: #607D8B; 
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+
+            /* [고정] 버스 노선 색상 */
+            --bus-ganseon: #01B7ED;
+            --bus-sunhwan: #E7D600;
+            --bus-jiseon: #37B484;
+            --bus-maeul: #A664A0;
+            --bus-geuphaeng: #D81C2F;
+            --bus-gwangyeok: #485EC6;
+            --bus-jwaseok: #FF5800;
+            --bus-gonghang: #84C36E;
+
+            /* [고정] 지하철 노선 색상 */
+            --line-1: #0077DD;
+            --line-2: #00CCAA;
+            --line-3: #FFCC11;
+            --line-4: #FF5522;
+            --line-5: #EE0022;
+            --line-6: #881188;
+            --line-7: #FF8899;
+            --line-8: #9856FF;
+            --line-bh: #6677CC;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-fixed: #555588;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #88bbff; 
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            word-break: keep-all; 
+            margin: 0; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .wiki-container { 
+            max-width: 1152px; 
+            margin: 0 auto; 
+            padding: 20px 40px; 
+            border-left: 1px solid var(--wiki-border); 
+            border-right: 1px solid var(--wiki-border); 
+            min-height: 100vh; 
+            background-color: var(--wiki-bg);
+            display: block; 
+        }
+
+        .clearfix::after { content: ""; display: table; clear: both; }
+
+        /* 표 스타일 */
+        table { 
+            border-collapse: collapse !important; 
+            width: 100% !important; 
+            margin: 15px 0; 
+            border: 1px solid var(--wiki-border) !important; 
+            table-layout: fixed !important; 
+        }
+
+        th, td { 
+            border: 1px solid var(--wiki-border) !important; 
+            padding: 8px 6px; 
+            text-align: center; 
+            vertical-align: middle; 
+            font-size: 0.9rem;
+        }
+
+        th { 
+            background-color: var(--wiki-table-header); 
+            color: var(--wiki-table-header-text); 
+            font-weight: bold; 
+            text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+        }
+
+        .wiki-link { color: var(--wiki-link); cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-link-bold { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link-bold:hover { text-decoration: underline; }
+
+        /* 제목 스타일 */
+        h1 { font-size: 2.2rem !important; font-weight: 700 !important; margin-bottom: 1rem; border-bottom: 2px solid var(--wiki-main); padding-bottom: 10px; }
+        h2 { font-size: 1.7rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; clear: left; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.6rem; background: var(--wiki-main); }
+        h3 { font-size: 1.3rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: var(--wiki-point); border-left: 4px solid var(--wiki-main); padding-left: 10px; }
+        h4 { font-size: 1.1rem !important; font-weight: 700; margin-top: 1.5rem; padding-left: 10px; border-left: 3px solid #ccc; }
+
+        /* =========================================
+           목차 & 인포박스 상단 그룹 (본문과 상하 분리)
+           ========================================= */
+        .wiki-top-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid var(--wiki-border);
+        }
+        
+        @media (min-width: 1024px) {
+            .wiki-top-meta {
+                flex-direction: row;
+                align-items: flex-start;
+                justify-content: space-between;
+            }
+        }
+
+        /* 인포박스 스타일 */
+        .infobox { 
+            width: 100%; 
+            border: 1px solid var(--wiki-main); 
+            background-color: var(--wiki-gray-bg); 
+            font-size: 0.85rem; 
+            border-radius: 4px; 
+            overflow: hidden; 
+            margin: 0; 
+        }
+        @media (min-width: 1024px) {
+            .infobox {
+                width: 380px;
+                flex-shrink: 0;
+            }
+        }
+
+        .infobox-top-label { background-color: var(--wiki-main); color: #fff; padding: 8px 5px; text-align: center; font-weight: bold; font-size: 1.1em; line-height: 1.3; text-shadow: 0 1px 1px rgba(0,0,0,0.3); }
+        
+        .infobox-image-area { width: 100%; background: #fff; display: block; border-bottom: 1px solid var(--wiki-border); }
+        [data-theme='dark'] .infobox-image-area { background: #2d2f34; }
+        .infobox-image-area img { width: 100%; display: block; height: auto; margin: 0; padding: 0; }
+        
+        .infobox-caption { padding: 10px; text-align: center; font-size: 0.8rem; opacity: 0.8; font-weight: bold; color: var(--wiki-text); background: #fff; border-bottom: 1px solid var(--wiki-border); }
+        [data-theme='dark'] .infobox-caption { background: #2d2f34; color: #fff; }
+
+        .infobox table { border-collapse: collapse; width: 100%; margin: 0; border: none; }
+        .infobox th { background: var(--wiki-main); color: #fff; width: 110px; text-align: center; padding: 7px 8px; font-weight: bold; border: 1px solid var(--wiki-border); border-left: none; text-shadow: 0 1px 1px rgba(0,0,0,0.3); }
+        .infobox td { padding: 7px 8px; text-align: left; border: 1px solid var(--wiki-border); border-right: none; }
+        .infobox tr:last-child th, .infobox tr:last-child td { border-bottom: none; }
+
+        /* 목차 박스 */
+        .toc { 
+            display: inline-block; 
+            width: 100%;
+            border: 1px solid #a2a9b1; 
+            background: var(--wiki-gray-bg); 
+            padding: 15px 20px; 
+            border-radius: 4px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+            margin: 0; 
+        }
+        @media (min-width: 1024px) {
+            .toc {
+                flex: 1;
+                max-width: 400px;
+            }
+        }
+        [data-theme='dark'] .toc { border: 1px solid #666; background: #2d2f34; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid #a2a9b1; margin-bottom: 10px; padding-bottom: 8px; font-size: 1.1rem; }
+        [data-theme='dark'] .toc-title { border-bottom: 1px solid #666; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; line-height: 1.7; }
+        .toc .lvl-2 { padding-left: 15px; }
+        .toc .lvl-3 { padding-left: 30px; }
+
+        del { color: #999; text-decoration: line-through; }
+        .gray-text { color: #888; font-size: 0.85em; }
+
+        /* 분류 박스 */
+        .category-box { background: #fff; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.85rem; margin: 15px 0; border-radius: 4px; }
+        [data-theme='dark'] .category-box { background: #2d2f34; border-color: #444; }
+
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn:hover { background-color: #eee; }
+        .wiki-tool-btn.active { background-color: var(--wiki-main); color: white !important; font-weight: bold; text-shadow: 0 1px 1px rgba(0,0,0,0.3); }
+
+        /* 인용구 스타일 */
+        .wiki-quote { border-left: 4px solid var(--wiki-point); padding: 10px 15px; background-color: var(--wiki-gray-bg); margin: 15px 0; color: #555; font-style: italic; }
+        [data-theme='dark'] .wiki-quote { color: #aaa; border-left: 4px solid var(--wiki-point); }
+
+        /* 버스 및 지하철 뱃지 */
+        .bus-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.75rem; margin: 2px; }
+        .bus-ganseon { background-color: var(--bus-ganseon); }
+        .bus-geuphaeng { background-color: var(--bus-geuphaeng); }
+        .bus-sunhwan { background-color: var(--bus-sunhwan); color: #000; }
+        .bus-jiseon { background-color: var(--bus-jiseon); }
+        .bus-gwangyeok { background-color: var(--bus-gwangyeok); }
+        .bus-jwaseok { background-color: var(--bus-jwaseok); }
+        .bus-gonghang { background-color: var(--bus-gonghang); }
+        .bus-maeul { background-color: var(--bus-maeul); }
+        
+        .subway-badge { display: inline-block; padding: 2px 6px; border-radius: 50px; color: white; font-weight: bold; font-size: 0.75rem; margin: 2px; text-shadow: 0 1px 1px rgba(0,0,0,0.3); }
+        .line-7 { background-color: var(--line-7); }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <!-- 상단바 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-fixed);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 또는 번호 검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg clearfix">
+        <!-- 1. 제목 및 버튼 -->
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">세하로</h1>
+            <div class="wiki-btn-group shadow-sm mb-4">
+                <a href="토론.html" class="wiki-tool-btn">토론</a>
+                <a href="수정.html" class="wiki-tool-btn active">편집</a>
+                <a href="역사.html" class="wiki-tool-btn">역사</a>
+                <div class="wiki-tool-btn">★</div>
+            </div>
+        </div>
+
+        <!-- 2. 카테고리 박스 -->
+        <div class="category-box">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="효빈광역시의_도로.html" class="wiki-link">효빈광역시의 도로</a> | 
+            <a href="북구(효빈광역시)의_도로.html" class="wiki-link">효빈광역시 북구의 도로</a> | 
+            <a href="덕빈북도의_도로.html" class="wiki-link">덕빈북도의 도로</a> | 
+            <a href="7호선.html" class="wiki-link" style="color: var(--wiki-main);">효빈 도시철도 7호선</a> |
+            <a href="임세하.html" class="wiki-link">임세하</a> |
+            <a href="효빈효빈전차.html" class="wiki-link">효빈전차</a>
+        </div>
+
+        <!-- 3. 내비게이션 박스 (둘러보기 틀 영역) -->
+        <div id="wiki-navbox-area" class="mb-8 clear-both"></div>
+
+        <!-- =========================================
+             목차 & 인포박스 상단 그룹 (본문과 확실히 분리)
+             ========================================= -->
+        <div class="wiki-top-meta">
+            <!-- 왼쪽: 목차 -->
+            <div id="toc-box" class="toc shadow-sm">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">역사와 전차의 흔적</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">특징 및 관련 밈</a>
+                        <ul class="lvl-2">
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">중장갑 피지컬과 룸피아 폭주 이론(...)</a></li>
+                            <li>3.2. <a href="#s-3-2" class="wiki-link">완벽한 상징색 고증</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">상세 제원 및 경유지</a>
+                        <ul class="lvl-2">
+                            <li>4.1. <a href="#s-4-1" class="wiki-link">주요 통과 구간</a></li>
+                            <li>4.2. <a href="#s-4-2" class="wiki-link">대중교통</a></li>
+                            <li>4.3. <a href="#s-4-3" class="wiki-link">주요 연선 시설물</a></li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5" class="wiki-link">여담 및 일화</a></li>
+                </ul>
+            </div>
+
+            <!-- 오른쪽: 인포박스 -->
+            <aside class="infobox shadow-sm">
+                <div class="infobox-top-label">세하로<br><span style="font-size: 0.8em; font-weight: normal; color: #fff;">洗河路 | Seha-ro</span></div>
+                
+                <div class="infobox-image-area">
+                    <img src="이미지/세하로.png" alt="세하로 도로명판 이미지">
+                </div>
+                <div class="infobox-caption">
+                    30km를 뻗어나가는 7호선 정비공의 소울 로드
+                </div>
+
+                <table>
+                    <tr><th>노선 상징색</th><td>■ #FF8899</td></tr>
+                    <tr><th>연장</th><td>29,696m (약 29.7km)</td></tr>
+                    <tr><th>기점</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구.html" class="wiki-link">북구</a> 소조동</td></tr>
+                    <tr><th>종점</th><td><a href="덕빈북도.html" class="wiki-link">덕빈북도</a> <a href="선곡군.html" class="wiki-link">선곡군</a> 우목면 우목리</td></tr>
+                    <tr><th>형태</th><td>초장거리 중/대형 간선도로</td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <!-- =========================================
+             본문 영역 (전체 너비 100% 사용)
+             ========================================= -->
+        <div class="wiki-body">
+            <h2 id="s-1">1. 개요</h2>
+            <div class="wiki-quote">
+                <strong>"이 길은 마치 내 공구함처럼 끝이 없어. 달리면 달릴수록 더 튼튼해지는 기분이야!"</strong>
+            </div>
+            <p>
+                <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> 북구 소조동에서 시작하여 무려 안천구와 탄성군을 거쳐 덕빈북도 선곡군 우목면까지 끝없이 이어지는, 길이 약 <strong>29.7km</strong>의 거대한 도로.
+            </p>
+            <p>
+                <a href="유리아로.html" class="wiki-link">유리아로</a>나 <a href="전노아로.html" class="wiki-link">전노아로</a>처럼 악성 민원 폭탄을 맞고 캐릭터 이름으로 강제 '개명'된 도로들과 달리, 이 도로는 아주 먼 옛날부터 원래 이름이 <strong>'세하로(洗河路)'</strong>였다. <a href="7호선.html" class="wiki-link font-bold" style="color: var(--line-7);">효빈 도시철도 7호선</a>의 마스코트이자 천재 정비공인 <a href="임세하.html" class="wiki-link font-bold">임세하</a>가 데뷔하기 훨씬 전부터 존재했던 유서 깊은 도로다. 어쩌다 보니 이름의 한자(洗河)와 영문 표기(Seha)까지 100% 완벽하게 일치하는 바람에, 현재는 철덕과 씹덕들에게 임세하의 <strong>'소울 메인 도로'</strong> 취급을 받으며 찬양받고 있다. <del>진정한 성골 이름 알박기</del>
+            </p>
+
+            <h2 id="s-2">2. 역사와 전차의 흔적</h2>
+            <p>
+                지금은 평범한 아스팔트 도로망이지만, 과거 <a href="효빈효빈전차.html" class="wiki-link">효빈전차</a> 시절에는 이 도로 근처를 전차 노선인 <strong>'사능선'</strong>이 나란히 스쳐 지나갔던 찬란한 역사가 있다.
+            </p>
+            <p>
+                당시에는 세하로 인근에 사능동2가역, 해서종점 등 주요 전차역들이 촘촘하게 박혀 있어 주민들의 든든한 발이 되어주었으나, 1969년 11월 30일 군사정권의 무자비한 강제 노선 정리로 인해 사능선 중심부 구간이 통째로 칼질당해 철거되는 비극을 맞이했다.
+            </p>
+            <p>
+                이 사능선 철거의 여파 때문에, 명색이 7호선 마스코트인 임세하와 이름이 겹치는 도로임에도 불구하고 <strong>현재 세하로 근처에는 7호선 전철역이나 트램 정류장이 단 하나도 없다.</strong> <a href="전노아로.html" class="wiki-link">전노아로</a>는 전철역이 아예 멀어서 개그 요소로 놀림받는다면, 세하로는 <strong>과거의 영광을 빼앗긴 눈물 없인 볼 수 없는 역사의 피해자</strong>인 셈이다. <del>사능의 눈물이 도로에 흐른다</del>
+            </p>
+
+            <h2 id="s-3">3. 특징 및 관련 밈</h2>
+
+            <h3 id="s-3-1">3.1. 중장갑 피지컬과 룸피아 폭주 이론(...)</h3>
+            <p>
+                위키러들과 팬덤 사이에서 가장 핫한 밈. 분명 분류상으로는 '중형 간선도로'인데, 도로의 무지막지한 길이(약 30km)와 매일 버텨내는 교통량 하중은 거의 초거대 <strong>대로급</strong>이다. 이를 두고 팬들은 <strong>"마스코트 임세하의 '정비복 속에 봉인되어 있던 폭발적인 중장갑 피지컬(B87)'이 도로 하중 및 연장 설계에 그대로 고증된 것"</strong>이라는 우스갯소리를 던지곤 한다.
+            </p>
+            <p>
+                실제로 세하로의 스펙과 가해지는 압박을 보면 이 밈이 장난으로 안 보이기 시작한다. 아무리 대형 트럭과 전공 서적을 가득 실은 공대생들의 통학 버스가 짓밟고 지나가도 거뜬히 버텨내는 벙커급 내구도를 자랑한다. 일설에는 임세하가 밤새워 설계한 수제 고강도 제전 아스팔트 공법이 섞여 들어갔다는 카더라가 있다.
+            </p>
+            <p>
+                또한, 가축수송 급행버스들이 도로를 짓이기고 다니는 모습은 어릴 적 감속비 계산 오류로 <a href="룸피아_자동_롤링_머신.html" class="wiki-link">룸피아 자동 롤링 머신</a>이 폭주해 생고기 룸피아를 발사했던 아찔한 에피소드와 겹쳐 보인다. 짓궂은 팬들은 <strong>"세하로의 급행버스 역시 승객을 가득 실은 채 시속 30km로 폭주하며 거대한 인간 룸피아를 연성하고 있다"</strong> 라며 처절한 출퇴근 현실을 웃음으로 승화시키고 있다.
+            </p>
+
+            <h3 id="s-3-2">3.2. 완벽한 상징색 고증</h3>
+            <p>
+                원래 효빈시 통합도로대장에는 다른 평범한 도로들처럼 칙칙한 네이비색(<code>#7777AA</code>)으로 등록되어 있었으나, 임세하와의 운명적인 이름 일치가 조명된 이후 남구청의 <a href="임세정로.html" class="wiki-link">임세정로</a>처럼 7호선의 공식 아이덴티티 컬러인 <strong>분홍색(<code>#FF8899</code>)</strong> 버프를 강하게 받게 되었다. 
+            </p>
+            <p>
+                너드 같은 정비복 속에 숨겨진 반전 피지컬처럼, 칙칙한 구도심 주거지와 외곽 도로 풍경 사이에 화사한 핑크빛 라인과 안내판이 무려 30km나 뻗어 있는 모습이 상당히 묘한 갭 모에를 연출한다.
+            </p>
+
+            <h2 id="s-4">4. 상세 제원 및 경유지</h2>
+            <p>
+                워낙 길이가 길다 보니 3개 구(북구, 안천구)와 1개 군(탄성군), 심지어 효빈시 경계를 넘어 덕빈북도(선곡군)까지 거침없이 뚫고 나가는 엄청난 스케일을 자랑한다.
+            </p>
+
+            <h3 id="s-4-1">4.1. 주요 통과 구간</h3>
+            <p>무려 23개의 법정동/행정동 및 리(里)를 관통한다. 초행길이라면 길을 잃어버리기 딱 좋은 수준이다.</p>
+            <ul class="list-disc pl-5 mt-2 space-y-1 text-sm bg-gray-50 p-4 border border-gray-200 rounded">
+                <li><strong>효빈광역시 북구:</strong> 소조동 → 사능2동(사능동2가) → 천왕사동 → 오내2동(오내동) → 남전동 → 채산동(실본동) → 채산동(신영동) → 천왕사동(해서동) → 오내1동(오내동) → 채산동</li>
+                <li><strong>효빈광역시 안천구:</strong> 당가2동(당가동) → 악부동(타천동) → 이십기동(심회동) → 이십기동(리의동) → 이자1동(이자동) → 이자4동(이자동) → 칠채동(융문동) → 이자2동(이자동) → 칠채동(월삼동)</li>
+                <li><strong>효빈광역시 탄성군:</strong> 고해읍 이와리 → 고해읍 은진원리 → 도향면 벽천리</li>
+                <li><strong>덕빈북도 선곡군:</strong> 우목면 우목리</li>
+            </ul>
+
+            <h3 id="s-4-2">4.2. 대중교통</h3>
+            <p>
+                도로 하중을 짓이기고 다니는 무시무시한 가축수송 버스들의 총집합소다. <strong>세하로를 밟고 지나가는 버스 노선만 무려 67개에 달하며</strong>, 효빈시 버스의 절반은 여기서 볼 수 있다고 해도 과언이 아니다.
+            </p>
+            <div class="bg-gray-50 border border-gray-200 rounded p-4 mt-2 mb-4">
+                <div class="mb-2">
+                    <strong style="color: var(--bus-geuphaeng);">■ 급행버스:</strong> 
+                    <div class="mt-1 flex flex-wrap gap-1">
+                        <span class="bus-badge bus-geuphaeng">02</span> <span class="bus-badge bus-geuphaeng">03</span> <span class="bus-badge bus-geuphaeng">04</span> <span class="bus-badge bus-geuphaeng">05</span>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <strong style="color: #b5a800;">■ 순환버스:</strong> 
+                    <div class="mt-1 flex flex-wrap gap-1">
+                        <span class="bus-badge bus-sunhwan">10</span> <span class="bus-badge bus-sunhwan">30</span> <span class="bus-badge bus-sunhwan">40</span> <span class="bus-badge bus-sunhwan">50</span>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <strong style="color: var(--bus-gwangyeok);">■ 광역버스:</strong> 
+                    <div class="mt-1 flex flex-wrap gap-1">
+                        <span class="bus-badge bus-gwangyeok">2000</span> <span class="bus-badge bus-gwangyeok">6000</span> <span class="bus-badge bus-gwangyeok">7000</span> <span class="bus-badge bus-gwangyeok">8000</span>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <strong style="color: var(--bus-jwaseok);">■ 좌석버스:</strong> 
+                    <span class="bus-badge bus-jwaseok">7777</span>
+                </div>
+                <div class="mb-2">
+                    <strong style="color: var(--bus-gonghang);">■ 공항버스:</strong> 
+                    <span class="bus-badge bus-gonghang">A01</span> <span class="bus-badge bus-gonghang">A02</span>
+                </div>
+                <div class="mb-2">
+                    <strong style="color: var(--bus-ganseon);">■ 간선버스:</strong> 
+                    <div class="mt-1 flex flex-wrap gap-1">
+                        <span class="bus-badge bus-ganseon">13</span> <span class="bus-badge bus-ganseon">15</span> <span class="bus-badge bus-ganseon">19</span> <span class="bus-badge bus-ganseon">24</span> <span class="bus-badge bus-ganseon">25</span> <span class="bus-badge bus-ganseon">26</span> <span class="bus-badge bus-ganseon">33</span> <span class="bus-badge bus-ganseon">34</span> <span class="bus-badge bus-ganseon">35</span> <span class="bus-badge bus-ganseon">36</span> <span class="bus-badge bus-ganseon">37</span> <span class="bus-badge bus-ganseon">39</span> <span class="bus-badge bus-ganseon">45</span> <span class="bus-badge bus-ganseon">47</span> <span class="bus-badge bus-ganseon">48</span> <span class="bus-badge bus-ganseon">57</span> <span class="bus-badge bus-ganseon">58</span> <span class="bus-badge bus-ganseon">59</span>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <strong style="color: var(--bus-jiseon);">■ 지선버스:</strong> 
+                    <div class="mt-1 flex flex-wrap gap-1">
+                        <span class="bus-badge bus-jiseon">123</span> <span class="bus-badge bus-jiseon">132</span> <span class="bus-badge bus-jiseon">151</span> <span class="bus-badge bus-jiseon">154</span> <span class="bus-badge bus-jiseon">241</span> <span class="bus-badge bus-jiseon">251</span> <span class="bus-badge bus-jiseon">252</span> <span class="bus-badge bus-jiseon">261</span> <span class="bus-badge bus-jiseon">262</span> <span class="bus-badge bus-jiseon">271</span> <span class="bus-badge bus-jiseon">292</span> <span class="bus-badge bus-jiseon">331</span> <span class="bus-badge bus-jiseon">334</span> <span class="bus-badge bus-jiseon">341</span> <span class="bus-badge bus-jiseon">351</span> <span class="bus-badge bus-jiseon">361</span> <span class="bus-badge bus-jiseon">362</span> <span class="bus-badge bus-jiseon">391</span> <span class="bus-badge bus-jiseon">471</span> <span class="bus-badge bus-jiseon">482</span> <span class="bus-badge bus-jiseon">492</span> <span class="bus-badge bus-jiseon">522</span> <span class="bus-badge bus-jiseon">551</span> <span class="bus-badge bus-jiseon">552</span> <span class="bus-badge bus-jiseon">571</span> <span class="bus-badge bus-jiseon">572</span> <span class="bus-badge bus-jiseon">581</span> <span class="bus-badge bus-jiseon">582</span> <span class="bus-badge bus-jiseon">591</span> <span class="bus-badge bus-jiseon">592</span> <span class="bus-badge bus-jiseon">831</span>
+                    </div>
+                </div>
+                <div>
+                    <strong style="color: var(--bus-maeul);">■ 마을버스:</strong> 
+                    <div class="mt-1 flex flex-wrap gap-1">
+                        <span class="bus-badge bus-maeul">도향02</span> <span class="bus-badge bus-maeul">고해01</span> <span class="bus-badge bus-maeul">채산01</span> <span class="bus-badge bus-maeul">악부01</span> <span class="bus-badge bus-maeul">칠채01</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 id="s-4-3">4.3. 주요 연선 시설물</h3>
+            <p>주거 단지부터 학교, 공공기관, 대학교까지 도로 연장만큼이나 빼곡하게 들어차 있다.</p>
+            <ul class="list-disc pl-5 mt-2 space-y-1">
+                <li><strong>주거 시설:</strong> 천왕사 래미안 아파트 (2029년 예정), 오내 미래모아도 2단지, 오내사랑으로 부영 아파트 1·2단지, 당가아쿠아아파트, 당가안단테아파트, 안천구영아파트, 당가아파트, 당가북부아파트, 당가레인보우아파트, 이자주공, 영색무아파트</li>
+                <li><strong>교육 시설:</strong> 해서중, 오내초등학교, 채산중, 낭화학교, 성택대(성택대서문), 이자여중</li>
+                <li><strong>행정/공공 기관:</strong> 오내1동행정복지센터, 당가2동행정복지센터, 이자4동행정복지센터, 효빈북부준법지원센터, 효빈지방국세청</li>
+                <li><strong>상업/기타 시설:</strong> 버거킹 천왕사점, 버거킹 당가점, 영색무역 (※주의: 7호선 전철역 아님)</li>
+            </ul>
+
+            <h2 id="s-5">5. 여담 및 일화</h2>
+            <div class="bg-gray-50 border-l-4 p-4 mt-3 mb-4 text-sm leading-relaxed" style="border-color: var(--wiki-main);">
+                <ul class="list-none space-y-4">
+                    <li>
+                        <strong class="text-base" style="color: var(--wiki-point);"><i class="fa-solid fa-wrench mr-2"></i>WD-40 냄새와 초코빵 냄새 괴담</strong><br>
+                        도로 이름이 '세하로'이다 보니, 새벽이나 늦은 밤에 이 도로를 걷다 보면 묘하게 <strong>공업용 윤활유(WD-40) 냄새와 찐득한 초코빵 냄새가 섞여서 난다는 도시전설</strong>이 있다. 이는 천재 정비공 임세하가 소울 간식인 퍼지바(초코바)를 입에 물고 WD-40을 뿌리며 밤새 도로 보수 설계를 했기 때문이라는 그럴싸한 카더라가 지배적이다.
+                    </li>
+                    <li>
+                        <strong class="text-base" style="color: var(--wiki-point);"><i class="fa-solid fa-music mr-2"></i>'아논선' 밈 활용</strong><br>
+                        7호선의 상징색인 분홍색(<code>#FF8899</code>)이 묘하게 뱅드림 MyGO!!!!!의 기타리스트 <strong><a href="치하야_아논.html" class="wiki-link">치하야 아논</a></strong>의 이미지 컬러와 똑같다는 점 때문에, 서브컬처 팬덤 사이에서는 이 도로를 슬쩍 <strong>'아논선'</strong>이라 부르기도 한다. 심지어 야심한 밤에 도로 표지판 근처에서 <em>"아논쨩이라고 불러줘!"</em>라는 환청이 들린다는 오싹한 제보가 잇따르고 있다. <del>물론 진짜로 들린다면 즉시 이비인후과나 정신건강의학과 진료를 권장한다.</del>
+                    </li>
+                    <li>
+                        <strong class="text-base" style="color: var(--wiki-point);"><i class="fa-solid fa-satellite-dish mr-2"></i>GPS 신호 기현상 카더라</strong><br>
+                        세하로 연선에는 성택대, 성택대서문 등 대학교 시설이 유독 많은데, 공대생들이 득실거리는 이 주변을 걷다 보면 스마트폰의 <strong>GPS 신호가 비정상적으로 빵빵하게 잘 잡히고</strong>, 지도 앱을 켜면 다른 05년생 마스코트들(<a href="전노아.html" class="wiki-link">전노아</a>, <a href="미소하.html" class="wiki-link">미소하</a>)의 위치가 실시간으로 지도에 표시되는 알 수 없는 기현상이 발생한다는 썰이 돈다. 팬들은 이것이 임세하가 친구들에게 선물한 <a href="수제_GPS_우정_팔찌.html" class="wiki-link">수제 GPS 우정 팔찌</a>의 기운이 도로 전역에 퍼져 있기 때문이라는 과학적(?)인 분석을 내놓고 있다.
+                    </li>
+                </ul>
+            </div>
+
+        </div> <!-- // 본문 영역 끝 -->
+
+        <footer class="mt-12 border-t pt-6 text-center text-xs pb-10 leading-relaxed text-[#373a3c] bg-white clear-both">
+            <p class="mb-4">
+                이 저작물은 <strong>CC BY-NC-SA 2.0 KR</strong>에 따라 이용할 수 있습니다. <br>
+                기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.
+            </p>
+            <p class="text-gray-500">
+                효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.
+            </p>
+            <div class="mt-4 text-[10px] text-gray-400 font-mono">
+                Powered by HyobinWiki Engine
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+    </script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+    <script src="assets/auto_navbox.js"></script>
+</body>
+</html>

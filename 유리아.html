@@ -1,0 +1,618 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유리아 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #9856FF; /* 8호선 연보라색 */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #9856FF;
+            --wiki-table-header-text: #ffffff;
+            --wiki-alert-border: #a2a9b1;
+            --wiki-alert-bg: #f8f9fa;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.1rem !important; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; }
+
+        /* 위키 요소 */
+        del { color: #7f7f7f; text-decoration: line-through; cursor: help; }
+        .wiki-drip { color: #aaa; font-size: 0.85em; }
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .namu-strike { text-decoration: line-through; color: gray; }
+
+        /* 분류 박스 스타일 */
+        .category-box { 
+            border: 1px solid var(--wiki-border); 
+            padding: 10px; 
+            border-radius: 4px; 
+            margin-bottom: 30px; 
+        }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+
+        /* 테이블 스타일 */
+        table.wiki-table-custom { border-collapse: collapse !important; width: 100%; margin: 15px 0; border: 1px solid #ddd !important; font-size: 0.9rem; }
+        table.wiki-table-custom th, table.wiki-table-custom td { border: 1px solid #ddd !important; padding: 6px 10px; vertical-align: middle; }
+        table.wiki-table-custom th { background-color: var(--wiki-table-header); color: white; font-weight: bold; text-align: center; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 380px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.3rem !important; font-weight: bold; }
+        .infobox-image { text-align: center; padding: 10px; border-bottom: 1px solid #ddd; background: white; }
+        .infobox table { border: none !important; margin: 0 !important; width: 100% !important; }
+        .infobox th { background-color: var(--wiki-gray-bg); text-align: center; padding: 8px 5px; border: 1px solid #ddd; width: 30%; font-weight: bold; vertical-align: middle;}
+        .infobox td { padding: 8px 5px; border: 1px solid #ddd; text-align: left; vertical-align: middle;}
+
+        /* 상단 버튼 */
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; }
+
+        /* 각주 & 호버보드 */
+        .footnote-ref { color: var(--wiki-link); font-size: 0.8em; vertical-align: super; cursor: pointer; text-decoration: none; font-weight: bold; }
+        .footnotes-area { margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px; font-size: 0.85rem; color: #555; }
+        
+        /* 각주 툴팁 (호버보드) */
+        #footnote-tooltip {
+            position: fixed;
+            display: none;
+            background-color: #fff;
+            border: 1px solid #999;
+            padding: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            z-index: 9999; 
+            max-width: 400px;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            line-height: 1.4;
+            pointer-events: none; 
+        }
+
+        /* 굿즈 카드 */
+        .goods-card { transition: transform 0.2s; border: 1px solid #eee; border-radius: 8px; overflow: hidden; text-align: center; background: white; }
+        .goods-card:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .goods-card img { width: 100%; height: 200px; object-fit: contain; background-color: #f8f9fa; padding: 10px; }
+        .goods-card-info { padding: 15px; text-align: left; border-top: 1px solid #eee; }
+
+        /* 둘러보기 틀 (nw-box) */
+        .nw-box { border: 2px solid; margin-bottom: 30px; border-radius: 4px; overflow: hidden; font-size: 0.9rem; background: white; }
+        .nw-box summary { padding: 10px; text-align: center; font-weight: bold; cursor: pointer; display: block; }
+        .nw-tbl { width: 100%; border-collapse: collapse; text-align: center; }
+        .nw-tbl th, .nw-tbl td { border: 1px solid var(--wiki-border); padding: 8px; vertical-align: middle; }
+        .nw-th-col { font-weight: bold; background-color: var(--wiki-gray-bg); }
+        .nw-link { color: inherit; text-decoration: none; display: block; }
+        .nw-img { width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: block; margin: 0 auto 5px; background-color: #f8f9fa; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <!-- 각주 툴팁 컨테이너 -->
+    <div id="footnote-tooltip"></div>
+
+    <!-- 상단 내비게이션 -->
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+<div class="flex items-center gap-2">
+  <input
+    id="searchInput"
+    type="text"
+    placeholder="문서 검색"
+    class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner"
+    autocomplete="off"
+    data-hb-search="input"
+  >
+  <button
+    id="searchBtn"
+    type="button"
+    class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner font-bold"
+    data-hb-search="button"
+  >검색</button>
+
+  <button
+    type="button"
+    class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner"
+    onclick="document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';"
+  >다크모드</button>
+</div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <!-- 문서 제목 -->
+        <div class="title-area">
+            <div class="txt-lvl-1">유리아</div>
+            <div class="flex gap-2 mb-1">
+<button onclick="location.href='토론.html'" style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">토론</button>
+<button onclick="location.href='수정.html'" style="background-color:#0275d8; color:#ffffff; border:1px solid #0275d8 !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">편집</button>
+<button onclick="location.href='역사.html'" style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">역사</button>
+
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="효빈철도캐릭터사업.html" class="wiki-link">효빈메트로/캐릭터사업</a> | 
+            <a href="8호선.html" class="wiki-link">효빈 도시철도 8호선</a> | 
+            <a href="학생.html" class="wiki-link">학생 캐릭터</a> | 
+            <a href="특성화고.html" class="wiki-link">특성화고 캐릭터</a> |
+            <a href="혼혈 캐릭터.html" class="wiki-link">혼혈 캐릭터</a> | 
+            <a href="다문화 가정 캐릭터.html" class="wiki-link">다문화 가정 캐릭터</a>
+        </div>
+
+        <!-- 효빈교통공사 캐릭터들 둘러보기 틀 -->
+        <details class="nw-box" style="border-color:#555588;" open>
+            <summary style="background-color:#555588; color: white;" class="outline-none">
+                <a href="효빈교통공사.html" class="text-white text-lg hover:underline"><span class="font-bold">효빈교통공사 캐릭터들</span></a>
+            </summary>
+            <table class="nw-tbl">
+                <tr>
+                    <th rowspan="4" class="w-[10%] nw-th-col text-[#555588]">등<br>장<br>인<br>물</th>
+                    <td class="font-bold text-white w-[15%]" style="background-color: #0077DD;"><a href="1호선.html" class="nw-link hover:underline">1호선</a></td>
+                    <td class="font-bold text-white w-[15%]" style="background-color: #00CCAA;"><a href="2호선.html" class="nw-link hover:underline">2호선</a></td>
+                    <td class="font-bold text-[#333] w-[15%]" style="background-color: #FFCC11;"><a href="3호선.html" class="nw-link hover:underline">3호선</a></td>
+                    <td class="font-bold text-white w-[15%]" style="background-color: #FF5522;"><a href="4호선.html" class="nw-link hover:underline">4호선</a></td>
+                    <td class="font-bold text-white w-[15%]" style="background-color: #EE0022;"><a href="5호선.html" class="nw-link hover:underline">5호선</a></td>
+                    <td class="font-bold text-[#333] w-[15%]" style="background-color: #33aaff;"><a href="창전선.html" class="nw-link hover:underline">창전선</a></td>
+                </tr>
+                <tr>
+                    <td><a href="고나미.html" class="nw-link hover:underline"><img src="이미지/고나미 로고.png" class="nw-img" onerror="this.style.display='none'">고나미</a></td>
+                    <td><a href="하루빈.html" class="nw-link hover:underline"><img src="이미지/하루빈 로고.png" class="nw-img" onerror="this.style.display='none'">하루빈</a></td>
+                    <td><a href="박라미.html" class="nw-link hover:underline"><img src="이미지/박라미 로고.png" class="nw-img" onerror="this.style.display='none'">박라미</a></td>
+                    <td><a href="다로나.html" class="nw-link hover:underline"><img src="이미지/다로나 로고.png" class="nw-img" onerror="this.style.display='none'">다로나</a></td>
+                    <td><a href="미소하.html" class="nw-link hover:underline"><img src="이미지/미소하 로고.png" class="nw-img" onerror="this.style.display='none'">미소하</a></td>
+                    <td><a href="심세이.html" class="nw-link hover:underline"><img src="이미지/심세이_로고.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/33aaff/FFFFFF?text=Se-i'">심세이</a></td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-white" style="background-color: #881188;"><a href="6호선.html" class="nw-link hover:underline">6호선</a></td>
+                    <td colspan="2" class="font-bold text-[#333]" style="background-color: #FF8899;"><a href="7호선.html" class="nw-link hover:underline">7호선</a></td>
+                    <td class="font-bold text-white" style="background-color: #9856FF;"><a href="8호선.html" class="nw-link hover:underline">8호선</a></td>
+                    <td colspan="2" class="font-bold text-white" style="background-color: #6677CC;"><a href="빈효광역선.html" class="nw-link hover:underline">빈효선*</a></td>
+                </tr>
+                <tr>
+                    <td><a href="라세나.html" class="nw-link hover:underline"><img src="이미지/라세나 로고.png" class="nw-img" onerror="this.style.display='none'">라세나</a></td>
+                    <td><a href="임세정.html" class="nw-link hover:underline"><img src="이미지/임세정 로고.png" class="nw-img" onerror="this.style.display='none'">임세정</a></td>
+                    <td><a href="임세하.html" class="nw-link hover:underline"><img src="이미지/임세하 로고.png" class="nw-img" onerror="this.style.display='none'">임세하</a></td>
+                    <td><a href="유리아.html" class="nw-link hover:underline"><img src="이미지/유리아 로고.png" class="nw-img" onerror="this.style.display='none'">유리아</a></td>
+                    <td colspan="2"><a href="전노아.html" class="nw-link hover:underline"><img src="이미지/전노아 로고.png" class="nw-img" onerror="this.style.display='none'">전노아</a></td>
+                </tr>
+                <tr>
+                    <td colspan="7" class="text-left text-xs text-gray-600 bg-gray-50 px-3 py-2 border-t border-gray-300" style="text-align: left;">
+                        * <strong>빈효선</strong>: 노선 운영은 효빈교통공사가 아닌 코레일(한국철도공사)이 담당하지만, 지역 인프라 특성상 같이 묶여서 캐릭터 사업으로 진행됨.<br>
+                        * <strong>창전선</strong> (본 문서 캐릭터 소속) 등 신규 노선은 개통 및 캐릭터 정식 데뷔 시점에 맞춰 틀에 추가될 예정입니다. (현재 심세이 정식 등재 완료)
+                    </td>
+                </tr>
+            </table>
+        </details>
+
+<!-- 인포박스 -->
+        <aside class="infobox">
+            <div class="infobox-title">유리아<br><span class="text-sm font-normal">Yu Ria | 柳利娥</span><br><span class="text-xs font-normal">Yanagi Ria | 柳利娥</span></div>
+            <div class="infobox-image">
+                <img src="이미지/유리아.png" alt="유리아 공식 일러스트" style="width:100%; height:auto;" onerror="this.src='https://placehold.co/300x400/9856FF/FFFFFF?text=Yu+Ria'">
+                <div class="text-xs text-gray-500 mt-1">효빈교통공사 8호선 공식 마스코트</div>
+                <img src="이미지/유리아sd.png" alt="유리아 SD" style="width:70%; height:auto; display: block; margin: 10px auto 0;">
+                <div class="text-xs text-gray-500 mt-1">SD 캐릭터 버전 <del>(8호선 비상버튼 컬렉터의 윙크)</del></div>
+            </div>
+            <table>
+                <tr><th>나이</th><td>17세 (2008년생)</td></tr>
+                <tr><th>생일</th><td>3월 4일<sup id="fn-ref-1"><a href="#fn-1" class="footnote-ref">[1]</a></sup></td></tr>
+                <tr><th>신분</th><td><a href="효빈기계공업고등학교.html" class="wiki-link">효빈기계공업고등학교</a><br>철도관리과 1학년 (재학)</td></tr>
+                <tr><th>신체 사이즈</th><td>156cm / B86-W58.5-H86 (D컵)</td></tr>
+                <tr><th>출신지</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> 남구 평당동</td></tr>
+                <tr><th>학력</th><td>상원대초등학교 (졸업)<br>평당중학교 (졸업)<br><a href="효빈기계공업고등학교.html" class="wiki-link">효빈기계공업고등학교</a> (재학)</td></tr>
+                <tr><th>가족 관계</th><td>부모님 (한국인 아버지, 일본인 어머니 / 맞벌이)</td></tr>
+                <tr><th>MBTI</th><td>ISTP (만능 재주꾼)</td></tr>
+                <tr><th>강점 과목</th><td>기계조립/배선 실습(1등급)<br><span class="text-xs text-gray-500">※ 실습 몰빵 성장형</span></td></tr>
+                <tr><th>약점 과목</th><td>수학·과학(4등급), 국어·영어(6등급 이하)</td></tr>
+                <tr><th>좋아하는 음식</th><td>들깨가루 팍팍 넣은 뼈해장국 특 사이즈 (K-아재 입맛)</td></tr>
+                <tr><th>싫어하는 음식</th><td>가만히 앉아있어야 하는 격식 있는 코스 요리</td></tr>
+                <tr><th>별명</th><td>호기심 대마왕, <strong>슈카 텐션</strong><sup id="fn-ref-2"><a href="#fn-2" class="footnote-ref">[2]</a></sup>, 사고뭉치(성장형), <del>걸어다니는 몽키스패너</del></td></tr>
+                <tr><th>성우</th><td><a href="https://namu.wiki/w/%EC%82%AC%EC%9D%B4%ED%86%A0%20%EC%8A%88%EC%B9%B4" class="wiki-link" target="_blank" rel="noopener noreferrer">사이토 슈카</a> (日)<sup id="fn-ref-3"><a href="#fn-3" class="footnote-ref">[3]</a></sup><br><a href="https://namu.wiki/w/%EC%9E%A5%EC%98%88%EB%82%98" class="wiki-link" target="_blank" rel="noopener noreferrer">장예나</a> (韓)</td></tr>
+                <tr><th>관련 노선</th><td><span style="color:var(--wiki-main); font-weight:bold;">●</span> <a href="8호선.html" class="wiki-link">효빈 도시철도 8호선</a></td></tr>
+                <tr><td colspan="2" style="text-align: center; padding: 15px 0; background-color: #f9f9f9;">
+                    <img src="이미지/효빈_8호선_유리아_퍼스널_아이콘.svg" alt="유리아 퍼스널 아이콘" style="width:50px; height:auto; display: block; margin: 0 auto 5px;">
+                    <span class="text-xs text-gray-500 font-bold">퍼스널 아이콘</span>
+                </td></tr>
+            </table>
+        </aside>
+        <!-- 목차 -->
+        <div class="toc">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">상세 설정</a>
+                    <ul>
+                        <li>2.1. <a href="#s-2-1" class="wiki-link">성격 및 특징</a></li>
+                        <li>2.2. <a href="#s-2-2" class="wiki-link">학력 및 능력</a></li>
+                        <li>2.3. <a href="#s-2-3" class="wiki-link">정치 성향</a></li>
+                        <li>2.4. <a href="#s-2-4" class="wiki-link">디자인 및 외형</a></li>
+                        <li>2.5. <a href="#s-2-5" class="wiki-link">성우 및 음성</a></li>
+                    </ul>
+                </li>
+                <li>3. <a href="#s-3" class="wiki-link">가족 관계 (대환장 한일 다문화 가정)</a></li>
+                <li>4. <a href="#s-4" class="wiki-link">인간 관계</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">관련 굿즈</a></li>
+                <li>6. <a href="#s-6" class="wiki-link">여담 및 사건 사고</a>
+                    <ul>
+                        <li>6.1. <a href="#s-6-1" class="wiki-link">혼란의 긴 생머리</a></li>
+                        <li>6.2. <a href="#s-6-2" class="wiki-link">러닝 개그: 한일 혼혈 특성화고생의 비애</a></li>
+                        <li>6.3. <a href="#s-6-3" class="wiki-link">운명적 만남: vs 임세하 (제1차 철덕 동맹)</a></li>
+                        <li>6.4. <a href="#s-6-4" class="wiki-link">곽암해수욕장역 지하기지 침투 사건 (vs 고나미)</a></li>
+                        <li>6.5. <a href="#s-6-5" class="wiki-link">기타 여담 (밈 등)</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 1. 개요 -->
+<h2 id="s-1">1. 개요</h2>
+        <div class="wiki-quote relative">
+            "헉, 대박! 이거 8호선 신형 AGT 무인운전 제어반 맞죠? <strong>...진짜 딱 한 번만 뜯어보면 안 돼요?!</strong>"<br>
+            <span class="wiki-drip text-sm block mt-2 text-gray-500">호기심이 이성을 지배해 버린, 걸어 다니는 시한폭탄이자 효빈메트로의 비글 막내.</span>
+        </div>
+        <p>
+            <a href="효빈권 광역전철.html" class="wiki-link">효빈권 광역전철</a> <a href="8호선.html" class="wiki-link">8호선</a>을 상징하는 마스코트 캐릭터. 효빈시 유일의 철도 특성화고인 <a href="효빈기계공업고등학교.html" class="wiki-link">효빈기계공업고등학교</a> 철도관리과 1학년에 재학 중인 <strong>효빈교통공사의 무법자 막내</strong>다. 효빈시의 다문화 특성을 보여주는 한일 혼혈(한국인 아버지, 일본인 어머니) 설정이기도 하다.
+        </p>
+        <p>
+            유리아의 가장 큰 특징은 <strong>'노선 개통보다 캐릭터가 먼저 세상에 나왔다'</strong>는 전무후무한 데뷔 이력에 있다. 통상적으로 노선 개통 시기에 맞춰 마스코트가 공개되는 다른 선배들과 달리, 유리아는 8호선이 개통(2024년 3월)하기 무려 3년 전인 <strong>2021년 4분기 애니메이션(<a href="달려라! 레일루미네 1기.html" class="wiki-link">달려라! 레일루미네 1기</a>)을 통해 '선행 발매(?)'</strong>되었다. 이는 신규 노선 홍보를 극대화하려던 김성민 전 시장의 강력한 푸시 덕분이었는데, 결과적으로 이 3년간의 선행 덕질 기간이 8호선의 폐선을 막아내는 기적의 스노우볼이 되었다. 
+        </p>
+
+                <h2 id="s-2">2. 상세 설정</h2>
+
+        <h3 id="s-2-1">2.1. 성격 및 특징 (걸어 다니는 몽키스패너)</h3>
+        <p>
+            <strong>ISTP (만능 재주꾼)</strong> 성향의 호기심 덩어리. 새로운 기계나 정체불명의 버튼, 복잡한 배전반을 보면 도파민이 폭발하며 <strong>"대박! 한 번만요!"</strong>를 외친다. <del>물론 그 '한 번'이 종합관제실 사이렌을 울리게 한 적이 한두 번이 아니다.</del> 이론보다 손이 먼저 나가는 극단적인 실전파라서, 무언가를 이해하기 위해선 일단 드라이버를 꽂아 분해부터 하고 봐야 직성이 풀린다.
+        </p>
+        <p>
+            유독 금지 표지를 보면 더 궁금해하는 심각한 청개구리 기질이 있다. <strong>'관계자 외 출입 금지'</strong>나 <strong>'작동 금지'</strong> 팻말은 그녀에게 <strong>'제발 나를 한 번만 찰지게 눌러주세요'</strong>라는 환청으로 들리는 모양이다. 하지만 의외로 청각이 짐승 수준으로 발달하여, 멀리서 들리는 무전기 노이즈나 모터 작동음만 듣고도 "어? 저거 베어링 나갔는데요?"라며 기계공학적 천재성을 뽐내기도 한다.
+        </p>
+        <p>
+            대형 사고를 치고 나서 엄격한 언니들(특히 <a href="임세정.html" class="wiki-link">임세정</a>)에게 걸리면, 조건반사적으로 바닥에 납작 엎드리며 <strong>"고, 고멘나사이!!(죄송합니다!!)"</strong>를 외친다. 세상에서 가장 억울하고 청순한 강아지 표정으로 사과하는 것이 특기인데, 이 발연기가 은근히 타율이 좋아서 번번이 꿀밤 한 대로 위기를 넘긴다. 리액션이 엄청나게 크고 칭찬을 받으면 텐션이 대기권을 뚫는 '칭찬으로 크는 아이'다.
+        </p>
+
+        <h3 id="s-2-2">2.2. 학력 및 능력</h3>
+        <p>
+            남구 평당동의 상원대초, 평당중을 거쳐 <strong><a href="효빈기계공업고등학교.html" class="wiki-link">효빈기계공업고등학교</a> 철도관리과</strong>에 진학했다. 중학교 때는 수업 시간에 맨날 졸기만 하는 평범 이하의 학생이었으나, 기계와 철도(특히 최신 AGT 무인 경전철 시스템)에 눈을 뜬 후 특성화고에 진학하면서 물 만난 고기처럼 전공 실습을 씹어 먹고 있다.
+        </p>
+
+        <h4>학업 성취도</h4>
+        <p>전형적인 '몸으로 배우는' 실습 몰빵형 인재. 책상머리에 앉아 펜을 굴리는 짓은 5분을 못 버틴다.</p>
+        <table class="wiki-table-custom" style="width: 100%; margin: 10px 0;">
+             <tr>
+                <th style="width:15%">과목</th>
+                <th style="width:15%">등급 (내신)</th>
+                <th>비고</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">전공 실습</td>
+                <td style="text-align:center;"><span class="grade-box grade-1">1등급</span></td>
+                <td>배선, 기계 조립, 정비 실습은 타의 추종을 불허한다. 선생님이 "이거 뜯어볼 사람?" 하면 이미 분해를 끝내놓고 해맑게 웃고 있다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">수학/과학</td>
+                <td style="text-align:center;"><span class="grade-box grade-3">4등급</span></td>
+                <td>이론에는 처참할 정도로 약하다. <span class="text-[#9856FF] font-bold">"공식은 모르겠고, 일단 전선 이어보면 불 들어오던데요?"</span>라는 감각파.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-red-600">국어/영어</td>
+                <td style="text-align:center;"><span class="grade-box grade-4">6등급 이하</span></td>
+                <td>긴 글을 읽는 것을 극도로 혐오한다. 기계 매뉴얼을 줘도 글씨는 안 보고 그림만 보고 조립한다. <del>이중언어(한/일) 능력자인데 학교 영어 성적은 왜 이 모양인지 미스터리다.</del></td>
+            </tr>
+        </table>
+
+        <h3 id="s-2-3">2.3. 정치 성향</h3>
+        <p>
+            아직 미성년자(고1)라 거시적인 정치판은 잘 모르지만, 자신과 자신의 노선(8호선)을 건드리는 자에겐 확실한 이빨을 드러낸다.
+        </p>
+        <p>
+            <strong>對 우신면 (전 남구 갑 국회의원): 내 직장을 부수려 한 악당. (극혐)</strong><br>
+            본인 펜트하우스 조망권을 위해 이제 막 지어지고 있던 8호선 고가 철도를 전면 백지화하려 했던 최악의 빌런. 아직 취업(8호선 개통)도 안 했는데 실업자가 될 위기에 처했던 유리아는 그를 철천지원수로 여긴다. 팬덤에서 만든 <strong>'몽키스패너로 우신면의 선거 현수막을 부수는 유리아 밈'</strong>을 본인도 몰래 카카오톡 프로필 배경으로 해놨었다는 소문이 있다.
+        </p>
+        <p>
+            <strong>對 김성민 (전 시장) / 고정민 (현 국회의원): 생명의 은인. (무한 호감)</strong><br>
+            김성민 전 시장은 8호선이 개통하기도 전에 유리아를 애니메이션에 꽂아 넣어 '아이돌급 인지도'를 만들어준 창조주이며, 고정민 의원은 우신면을 탄핵하고 8호선 선로를 끝까지 지켜낸 수호자다. 유리아는 이 둘의 이름만 나오면 양손을 번쩍 들며 "만세!"를 외친다.
+        </p>
+
+        <h3 id="s-2-4">2.4. 외형 및 디자인 (청순 교복핏과 오버니삭스)</h3>
+        <p>
+            공식 일러스트를 보면, 효빈기계공고 학생이라는 투박한 설정과는 정반대로 <strong>미연시 게임의 메인 히로인</strong> 뺨치는 청순 발랄한 비주얼을 자랑한다. 찰랑거리는 긴 자연 갈색 머리카락을 어깨 뒤로 넘기고, 한일 혼혈 특유의 또렷하고 큰 눈망울로 어딘가를 흥미롭게 응시하며 한쪽 손을 내밀고 있다. <span class="wiki-drip">당장이라도 "같이 땡땡이 칠래?"라고 말할 것 같은 표정이지만, 사실은 "저 제어반 같이 뜯어볼래?"라고 꼬시는 중이다.</span>
+        </p>
+        <p>
+            복장은 단정함과 서브컬처의 로망이 완벽하게 결합되어 있다. 상의는 몸에 예쁘게 핏되는 <strong>네이비색 블레이저(마이)</strong>와 짙은 색 넥타이를 착용하여 모범생 같은 단정함을 준다. 하지만 하의는 발랄함을 강조하는 <strong>회색 타탄체크 무늬의 짧은 플리츠스커트</strong>에, 허벅지 중간까지 쫀쫀하게 올라오는 <strong>새하얀 오버니삭스(오버니하이 삭스)</strong>를 매치하여 이른바 <strong>'절대영역'</strong>을 완벽하게 구현해 냈다. 
+        </p>
+        <div class="mb-4 p-4 border-l-4 border-[#9856FF] bg-[#f9f5ff]">
+            <span class="font-bold text-[#9856FF]">✨ 극강의 갭 모에 (Visual vs Reality)</span><br>
+            네이비 블레이저에 하얀 오버니삭스, 그리고 청순한 갈색 머리. 길거리에서 캐스팅 명함을 받아도 이상하지 않을 비주얼이지만, 그녀 곁에 1미터만 다가가도 코를 찌르는 강렬한 <strong>공업용 WD-40 냄새와 납땜용 송진 냄새</strong>가 풍긴다. 게다가 저 단정한 블레이저의 안주머니에는 항상 무거운 <strong>육각 렌치와 몽키스패너</strong>가 들어 있어서, 걸을 때마다 쇳덩이가 부딪히는 '짤그랑' 소리가 난다는 것이 학계의 정설이다.
+        </div>
+
+        <h3 id="s-2-5">2.5. 목소리 및 성우 연기 (슈카 텐션의 지배자)</h3>
+        <p>
+            얌전해 보이는 외모를 배신하는, 비글미 넘치는 미친 하이 텐션 연기가 일품이다.
+        </p>
+        <ul class="list-disc pl-5 space-y-4">
+            <li>
+                <strong>일본판 성우: <a href="https://namu.wiki/w/%EC%82%AC%EC%9D%B4%ED%86%A0%20%EC%8A%88%EC%B9%B4" class="wiki-link" target="_blank">사이토 슈카</a></strong><br>
+                성우 본인의 평소 성격인 통제 불능의 <strong>'슈카 텐션'</strong>을 캐릭터에 200% 이식했다. 기계를 보고 흥분했을 때 특유의 높은 피치로 <strong>"우와앗! 야바이야바이!!"</strong>라며 펄쩍펄쩍 뛰는 연기를 듣고 있으면 절로 웃음이 난다. 특히 성우의 대표 배역(러브라이브! 선샤인!!의 와타나베 요우)의 밈을 살려, 8호선 무인 경전철을 출발시킬 때 자신도 모르게 오른손을 번쩍 들고 <strong>"요소로~!! (출발!!)"</strong>를 외치는 대사가 팬들에게 엄청난 환호를 받았다. 사고를 치고 나서 콧소리를 섞어 애교 부리듯 "에헤헤... 고멘나사이~" 하는 톤은 밉상이 아니라 그저 귀여울 따름이다.
+            </li>
+            <li>
+                <strong>한국판 성우: <a href="https://namu.wiki/w/%EC%9E%A5%EC%98%88%EB%82%98" class="wiki-link" target="_blank">장예나</a></strong><br>
+                어디로 튈지 모르는 10대 특성화고 여고생의 통통 튀는 발랄함을 찰지게 소화했다. 평소엔 한없이 해맑은 목소리지만, <a href="임세정.html" class="wiki-link">임세정</a> 대리에게 스패너를 들키거나 대형 사고를 치기 직전에는 <strong>"어어어? 잠깐만요! 이거 왜 이래! 으아아악!!"</strong> 하며 영혼까지 털리는 리얼한 비명 연기를 보여준다. 이 다급한 비명 소리가 너무나 찰져서 유튜브 쇼츠 알고리즘을 탔을 정도. 
+            </li>
+        </ul>
+ <!-- 3. 가족 관계 -->
+ <h3 id="s-3" class="text-xl font-bold mt-8 mb-4">3. 가족 관계 (평당동 한일 다문화 저택)</h3>
+
+        <div class="mb-6 p-4 border border-[#9856FF] rounded-lg shadow-sm">
+            <h4 class="text-lg font-bold text-gray-900 border-b pb-2 mb-3">👴 친할아버지: 유만성 (Yu Man-seong)</h4>
+            <div class="text-sm text-gray-700 bg-gray-50 p-3 rounded mb-3">
+                <strong>나이/신장:</strong> 76세 (1950년생) / 174cm<br>
+                <strong>학력/경력:</strong> 효빈대학교 법학과 / 전직 효빈지방법원 부장판사 (퇴임)<br>
+                <strong>담당 성우:</strong> <a href="민응식.html" class="wiki-link">민응식</a> (韓) / <a href="하시_타카야.html" class="wiki-link">하시 타카야</a> (日)
+            </div>
+            <ul class="list-disc pl-5 space-y-2 text-sm text-gray-800">
+                <li>손녀 리아가 기계를 다 부수고 다녀도 "창의력이 뛰어나다"며 허허 웃으시는 손녀바보.</li>
+                <li><s>리아가 8호선 액자를 서재 명당자리에 걸어두었을 때 가장 뿌듯해하셨다.</s></li>
+            </ul>
+        </div>
+
+        <div class="mb-6 p-4 border border-[#9856FF] rounded-lg shadow-sm">
+            <h4 class="text-lg font-bold text-gray-900 border-b pb-2 mb-3">👵 친할머니: 권명자 (Kwon Myeong-ja)</h4>
+            <div class="text-sm text-gray-700 bg-gray-50 p-3 rounded mb-3">
+                <strong>나이/신장:</strong> 73세 (1953년생) / 160cm<br>
+                <strong>학력/경력:</strong> 엽월여자대학교 가정학 / 평당동 전통문화보존회 고문<br>
+                <strong>담당 성우:</strong> <a href="손정아.html" class="wiki-link">손정아</a> (韓) / <a href="요코오_마리.html" class="wiki-link">요코오 마리</a> (日)
+            </div>
+            <ul class="list-disc pl-5 space-y-2 text-sm text-gray-800">
+                <li>일본에서 시집온 며느리를 친딸처럼 아끼고, 손녀가 WD-40 냄새를 풍겨도 향수보다 낫다고 감싸주심.</li>
+                <li><s>특기: 리아가 밥솥 분해 사건으로 쫓겨났을 때 별채에 숨겨주고 갈비찜 먹이기.</s></li>
+            </ul>
+        </div>
+
+        <div class="mb-6 p-4 border border-[#9856FF] rounded-lg shadow-sm">
+            <h4 class="text-lg font-bold text-gray-900 border-b pb-2 mb-3">👨 아버지: 유태진 (Yu Tae-jin)</h4>
+            <div class="text-sm text-gray-700 bg-gray-50 p-3 rounded mb-3">
+                <strong>나이/신장:</strong> 48세 (1978년생) / 181cm<br>
+                <strong>학력/경력:</strong> 효빈과학기술원(HIST) / 대기업 선임 연구원(엔지니어)<br>
+                <strong>담당 성우:</strong> <a href="신용우.html" class="wiki-link">신용우</a> (韓) / <a href="나카무라_유이치.html" class="wiki-link">나카무라 유이치</a> (日)
+            </div>
+            <ul class="list-disc pl-5 space-y-2 text-sm text-gray-800">
+                <li>유리아의 정비 본능 제1호 공범. 도서관 간다고 뻥치고 공구 상가로 직행해 드릴을 사주는 아빠.</li>
+                <li><s>코타츠 마개조 사건 때도 내심 딸의 콘덴서 직렬 연결 실력에 감탄했다.</s></li>
+            </ul>
+        </div>
+
+        <div class="mb-6 p-4 border border-[#9856FF] rounded-lg shadow-sm">
+            <h4 class="text-lg font-bold text-gray-900 border-b pb-2 mb-3">👩 어머니: 야나기 에미 (Yanagi Emi)</h4>
+            <div class="text-sm text-gray-700 bg-gray-50 p-3 rounded mb-3">
+                <strong>나이/신장:</strong> 46세 (1980년생) / 165cm<br>
+                <strong>출신/경력:</strong> 일본 누마즈시 / 주한 일본대사관 문화원 선임 전문관<br>
+                <strong>담당 성우:</strong> <a href="이계윤.html" class="wiki-link">이계윤</a> (韓) / <a href="사와시로_미유키.html" class="wiki-link">사와시로 미유키</a> (日)
+            </div>
+            <ul class="list-disc pl-5 space-y-2 text-sm text-gray-800">
+                <li>집안 기계를 뜯어놓는 리아 때문에 하루도 조용할 날 없는 최고의 피해자. 분노하면 일본어 잔소리 랩을 시전함.</li>
+                <li><s>IH 밥솥 사건 이후 주방에 '공구 소지 불허' 경고문을 타갈로그어급 속도로 써 붙였다.</s></li>
+            </ul>
+        </div>
+
+        <div class="mb-8 p-4 border border-[#9856FF] rounded-lg shadow-sm">
+            <h4 class="text-lg font-bold text-gray-900 border-b pb-2 mb-3">👦 남동생: 유리혁 (Yu Rihyeok / Yanagi Riku)</h4>
+            <div class="text-sm text-gray-700 bg-gray-50 p-3 rounded mb-3">
+                <strong>나이/신장:</strong> 14세 (2012년생) / 162cm<br>
+                <strong>학력/경력:</strong> 평당중학교 1학년 / 축구부 미드필더<br>
+                <strong>담당 성우:</strong> <a href="김지율.html" class="wiki-link">김지율</a> (韓) / <a href="야마시타_다이키.html" class="wiki-link">야마시타 다이키</a> (日)
+            </div>
+            <ul class="list-disc pl-5 space-y-2 text-sm text-gray-800">
+                <li>이과 성향 전혀 없는 예체능파 축구 소년. 누나를 'Ria'라고 부르며 깐족거림.</li>
+                <li><s>누나가 만든 전동차로 거실 벽을 뚫을 뻔한 후로 누나 방 근처에 안 감.</s></li>
+            </ul>
+        </div>
+        
+        <h4 class="mt-4 font-bold text-purple-700">🏠 전설의 사건사고</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 mb-6">
+            <div class="p-3 border border-purple-200 bg-purple-50 rounded">
+                <strong>🔥 전기밥솥 완전 분해 사건:</strong> 중학교 2학년 시절, 어머니의 최고급 IH 압력밥솥의 취사 원리가 궁금했던 유리아가 어머니가 마트 간 사이에 밥솥을 나사 하나까지 역순 분해해 버린 사건. 아파트 단지 전체에 어머니의 "안타 와타시노 스이항키니 나니시따노!!(너 내 밥솥에 무슨 짓을 한 거야!!)"라는 극대노가 울려 퍼졌고, 일주일 내내 햇반만 먹어야 했다. <s>이후 주방 문에 타갈로그어급 속도로 써 갈긴 '유리아 출입 금지' 경고문이 붙었다.</s>
+            </div>
+            <div class="p-3 border border-purple-200 bg-purple-50 rounded">
+                <strong>❄️ 겨울철 코타츠 마개조:</strong> 어머니가 일본에서 가져온 코타츠의 발열 효율이 떨어진다며, 공업용 열풍기 부품과 고용량 콘덴서를 이식해 버렸다. 결과는 대참사. 전원을 켜자마자 코타츠가 한증막 수준으로 달아오르며 거실 장판을 구웠고 두꺼비집이 펑 내려갔다. <s>이때 아버지 유태진은 속으로 딸의 콘덴서 직렬 연결 실력에 감탄했다가 장판 값으로 비상금이 털렸다.</s>
+            </div>
+        </div>
+
+        <!-- 4. 인간 관계 -->
+        <h2 id="s-4">4. 인간 관계</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li>
+                <strong><a href="라세나.html" class="wiki-link">라세나</a> (6호선):</strong> 유리아가 <strong>유일하게 "언니"라고 부르며 따르는 절대적인 존재</strong>. (다른 선배들은 '선배님' 혹은 '언니'가 섞여 나옴). 라세나가 은근슬쩍 챙겨주는 것을 굉장히 좋아하며, 틈만 나면 졸졸 따라다닌다. <del>거의 어미 새를 쫓아다니는 아기 새 수준이다.</del>
+            </li>
+            <li>
+                <strong><a href="임세정.html" class="wiki-link">임세정</a> (7호선):</strong> <strong>유리아 전용 억제기이자 공포의 대상.</strong> 유리아가 사고를 칠 낌새가 보일 때 임세정이 뒤에서 <strong>"유리아."</strong> 하고 낮게 세 글자만 읊조리면 그 자리에서 석상이 되어버린다. 어머니의 훈련 덕에 반사적으로 "고멘나사이!!"를 외친다.
+            </li>
+            <li>
+                <strong><a href="임세하.html" class="wiki-link">임세하</a> (7호선):</strong> 기계 덕후 동지이자 1차 방어선. 유리아가 호기심에 눈이 멀어 정체불명의 버튼을 누르려 하면 임세하가 기겁하며 백허그로 말리는 패턴이 자주 보인다. 하지만 기계 원리에 대해 물어보면 서로 신나서 외계어(공학용어)를 남발하며 밤을 새는 좋은 언니(?)다.
+            </li>
+            <li>
+                <strong><a href="고나미.html" class="wiki-link">고나미</a> (1호선):</strong> 인간계 최강 철덕 선배. 깐깐한 FM 원칙주의자인 고나미 선배에게 자주 "특별 교육"을 받지만, 의외로 아날로그 기계음(릴레이 타격음) 취향이 맞아 은근히 유리아를 기특해하는(?) 묘한 관계다.
+            </li>
+        </ul>
+
+        <!-- 5. 관련 굿즈 -->
+        <h2 id="s-5">5. 관련 굿즈</h2>
+        <p>주로 <a href="운양중앙역.html" class="wiki-link">운양중앙역점</a>(8호선)과 본점에서 구할 수 있다. 효빈메트로 굿즈 중에서도 실용성이 미쳐 날뛰는(...) 공구 세트나 안전모 모양의 굿즈가 인기다.</p>
+        
+
+<h2 id="s-6">6. 여담 및 사건 사고</h2>
+        
+        <h3 id="s-6-1">6.1. 혼란의 긴 생머리</h3>
+        <p>
+            "갈색 긴 머리가 기계에 말려들어가면 어쩌려고 저러나?" 싶지만, ISTP답게 실습할 때만 대충 돌돌 말아 묶고 평소엔 찰랑거리게 놔둔다는 설정이다. 가끔 7호선 <a href="임세하.html" class="wiki-link">임세하</a>가 "너 머리카락에 또 회로도 잉크 묻었다!!"라고 경악해도 <strong>"에? 대박. 이건 이것대로 유니크한 염색 아님?"</strong>이라며 쿨하게 넘긴다.
+        </p>
+
+        <h3 id="s-6-2">6.2. 러닝 개그: 한일 혼혈 특성화고생의 비애</h3>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>한국어 + 일본어 + 기계공학어 콜라보:</strong> 흥분하면 "와, 모터 출력 장난 아니다!" 대신 <strong>"야바이!! 이 IGBT 인버터 토크 스고이데스!!"</strong> 같은 국적 불명의 괴상한 감탄사를 내뱉어 주변을 얼어붙게 만든다. 식탁에서도 "오카아산(엄마)! 이 돈가스 튀김기 온도 센서 고장 난 것 같은데 바이패스 회로 하나 짜 올까?"라며 공대생의 광기를 보인다.</li>
+            <li><strong>위기 탈출 생존형 이중언어:</strong> <a href="고나미.html" class="wiki-link">고나미</a>나 <a href="임세정.html" class="wiki-link">임세정</a>에게 사고를 치다 걸리면 갑자기 한국어를 전혀 모르는 일본인 관광객인 척 <strong>"아노... 스미마센... 와타시와 니혼진데스..."</strong>라며 발연기를 시전한다. <del>물론 임세정의 싸늘한 눈빛 한 방에 1초 만에 엎드려 뻗친다.</del></li>
+            <li><strong>"요소로(출발)!"</strong> 성우(<a href="https://namu.wiki/w/%EC%82%AC%EC%9D%B4%ED%86%A0%20%EC%8A%88%EC%B9%B4" class="wiki-link" target="_blank">사이토 슈카</a>)의 대표 캐릭터 밈을 흡수하여, 기계를 작동시킬 때 자신도 모르게 오른손을 번쩍 들며 "요소로! (출발!)"를 외치는 버릇이 있다.</li>
+        </ul>
+
+        <h3 id="s-6-3">6.3. 운명적 만남: vs 임세하 (제1차 철덕 동맹)</h3>
+        <p>
+            유리아가 차량기지 견학을 왔을 때, 인솔 교사를 무시하고 배회하다가 <a href="임세하.html" class="wiki-link">임세하</a>가 뜯어보고 있던 7호선 신형 트램 모터 감속기에 난입했다. 유리아가 스패너를 빼 들며 <strong>"대박! 이 IGBT 인버터 완전 신형이네요! 한 번만 뜯어봐도 돼요?!"</strong>라고 외치자 세하는 태클을 걸며 제지하려 했다. 
+        </p>
+        <p>
+            그러나 유리아가 <strong>"구동 테스트할 때 고주파 소리가 완전 야바이하던데요?"</strong>라고 말하는 순간 세하의 공대생 레이더가 반응했고, 세하는 유리아를 쫓아내는 대신 <strong>개인용 WD-40과 테스터기</strong>를 꺼내 들었다. 둘이 구석에 박혀 3시간 동안 외계어로 마개조 토론을 벌이다가 순찰을 돌던 언니 <a href="임세정.html" class="wiki-link">임세정</a>에게 적발되었다. 세정의 차가운 <strong>"임.세.하."</strong> 한 마디에 세하는 굳어버렸고, 분위기를 파악한 유리아는 바닥에 납작 엎드려 <strong>"고, 고멘나사이!!!"</strong>를 외치며 츤데레 콤비의 전설이 시작되었다.
+        </p>
+
+        <h3 id="s-6-4">6.4. 곽암해수욕장역 지하기지 침투 사건 (vs 고나미)</h3>
+        <p>
+            8호선 자체 차량기지가 없어 1호선의 <strong>곽산차량기지(<a href="곽암해수욕장역.html" class="wiki-link">곽암해수욕장역</a> 내부)</strong>를 공용으로 쓰던 시절. 호기심을 못 참은 유리아가 구석에 보존된 <strong>1호선 초창기(1984년식) 아날로그 릴레이 제어반</strong>의 덮개를 스패너로 풀고 있었다. 
+        </p>
+        <p>
+            이때 빙하기를 몰고 오며 등장한 1호선 군기반장 <a href="고나미.html" class="wiki-link">고나미</a>. 고나미가 <strong>"지금부터, 특별 교육입니다."</strong>라며 철도안전법 암송을 시켰는데, 엎드린 유리아가 눈치 없이 <em>"근데 84년식 릴레이 물리적 접점 소리가 진짜 예술이던데..."</em>라고 덕후 발언을 해버렸다. 이에 철덕 본능이 깨어난 고나미는 당황하며 유리아를 쫓아냈지만, 혼자 남아 유리아가 조여놓은 스위치 타격음을 몰래 고음질로 녹음했다는 괴담이 있다.
+        </p>
+<h3 id="s-6-5" class="text-xl font-bold mb-3">6.5. 기타 여담</h3>
+        <ul class="list-disc pl-5 space-y-4 text-gray-800">
+            <li>
+                <strong>슈카 텐션:</strong> 리액션이 워낙 크고 목소리 톤이 높아서 붙은 별명. 성우의 평소 텐션과 소름 돋게 똑같다는 평이 많다. "한 번만요!"라고 조를 때 갈색 긴 생머리와 파란 옷이 찰랑거리는 모습이 유튜브 합성 밈(Meme)으로 대유행했다.
+            </li>
+            <li>
+                <strong>이중인격(?) 보이스:</strong> 혼나고 나서 시무룩하게 "죄송합니다..."라고 사과할 때 목소리가 갑자기 청순 가련형의 히로인 톤으로 변한다. 이걸 직관한 임세하가 <strong>"너 이중인격이야!?"</strong>라며 경악했다. <del>사실은 혼나기 싫어서 나오는 본능적인 생존 애교다.</del>
+            </li>
+            <li class="p-4 bg-purple-50 border-l-4 border-[#9856FF] rounded-lg shadow-sm">
+                <strong>[비주얼] 효빈철도 공인 '완성형 아이돌'의 위엄 (v1.2):</strong> 전 마스코트 중 유일하게 애니메이션 선행 데뷔를 거친 만큼, 비주얼과 피지컬 밸런스는 이미 '현역 아이돌' 그 자체라는 평이 지배적이다. 최근 해변 휴가 사진에서 공개된 쓰리사이즈는 <strong>B86 - W58.5 - H86</strong>으로, 과하지 않으면서도 세련된 굴곡이 돋보이는 <strong>'우아한 곡선미'</strong>를 뽐냈다. 특히 사진 속 <strong>트로피컬 나뭇잎 패턴의 비키니</strong>와 청록색 하이웨이스트 바텀은 유리아 특유의 화사한 텐션을 200% 끌어올려 "8호선은 유리아가 살렸다"는 찬사를 이끌어냈다.
+            </li>
+            <li class="p-4 border border-[#ddd] rounded-lg bg-[#f0f8ff]">
+                <strong>[비주얼 밈] 시부야 카논 + 이마이 리사 혼종설:</strong> 워낙 청순하고 발랄한 외형 탓에 타 장르 팬덤에서는 얼굴 이목구비와 앞머리 스타일은 영락없는 <strong>시부야 카논</strong>(러브라이브! 슈퍼스타!!), 머리 색깔과 찰랑거리는 생머리 분위기는 <strong>이마이 리사</strong>(뱅드림!)를 반반 섞어 놓았다는 비유가 흥하고 있다. 재밌는 건 정작 여기서 시부야 카논의 성우(<a href="https://namu.wiki/w/%EB%8B%A4%ED%85%8C%20%EC%82%AC%EC%9C%A0%EB%A6%AC" class="wiki-link" target="_blank" rel="noopener noreferrer">다테 사유리</a>)는 유리아의 철덕 동지인 7호선 <a href="임세하.html" class="wiki-link">임세하</a>의 배역을 맡고 있다는 점이다. <del>카논의 얼굴을 한 유리아가 카논 목소리를 내는 세하와 몽키스패너를 들고 밤새도록 기계 수다를 떠는 대환장 멀티버스.</del>
+            </li>
+            <li>
+                8호선의 상징색이 연보라색(#9856FF)이다 보니, 옆 동네 밴드 애니메이션의 <a href="와카미야 이브.html" class="wiki-link text-[#9856FF] hover:underline">와카미야 이브</a>와 묘하게 엮이는 밈이 있다. 색깔 톤은 미묘하게 다르지만 텐션이 닮았다는 평. 팬아트에서는 스패너와 목검을 교환하고 있다. <del>무사도! 대신 AGT! 를 외칠 기세다.</del>
+            </li>
+            <li>
+                <strong>전무후무한 선행 발매의 진실과 '덕후 시장' 김성민의 사심:</strong> 
+                <br>
+                담당 노선인 <a href="효빈 도시철도 8호선.html" class="wiki-link text-[#9856FF] hover:underline text-nowrap">8호선</a>은 당초 2023년 개통을 목표로 하고 있었으나, 마스코트인 유리아는 옴니버스 애니메이션 <a href="달려라! 레일루미네 1기.html" class="wiki-link text-gray-500 hover:underline">달려라! 레일루미네 1기</a>(2021년 4분기 방영)에 맞춰 무려 2년이나 일찍 세상에 데뷔했다. 다른 캐릭터들이 모두 노선 개통 이후에 데뷔한 것에 비하면 엄청난 특혜를 받은 셈이다.
+                <br><br>
+                이 파격적인 선행 푸시의 이면에는, 부패한 도시공사로부터 2016년 <a href="효빈교통공사.html" class="wiki-link text-gray-500 hover:underline">효빈교통공사</a>를 강단 있게 독립 출범시킨 '철도의 수호자' <a href="김성민.html" class="wiki-link text-gray-500 hover:underline font-bold">김성민</a> 당시 시장의 막대한 자부심이 얽혀 있었다. 8호선은 온전히 교통공사 체제하에서 처음부터 굴려가는 최초의 신규 노선이었고, 중증 러브라이버이기도 한 김 시장은 8호선의 상징인 유리아의 디자인을 보자마자 <em>"이 스바라시한 교통공사의 미래를 2023년까지 묵혀둘 수 없다! 당장 애니메이션에 데뷔시켜라!"</em>라며 권한을 남용(?)해 조기 투입을 밀어붙였다. 특히 <strong>애니메이션 4화에서 유리아가 신형 스크린도어 제어반에 몽키스패너를 들이대는 '통제 불능의 사고뭉치' 이미지</strong>는 방영 직후 전국 철도 동호인들과 덕후들에게 완벽하게 각인되었다.
+            </li>
+            <li>
+                <strong>우신면의 치명적인 오판과 몽키스패너 밈(Meme)의 진화:</strong> 
+                <br>
+                하지만 2022년, 남구 갑 국회의원이었던 <a href="우신면.html" class="wiki-link text-red-600 hover:underline">우신면</a>이 본인 펜트하우스 조망권을 위해 '8호선 백지화 및 전면 지하화 억지'를 부리면서 걷잡을 수 없는 나비효과가 터진다. 우신면은 <em>"어차피 아직 개통도 안 한 노선인데, 좀 늦춘다고 무슨 큰일이 나겠어? 정 막히면 버스 타라고 하지 뭐."</em>라고 안일하게 생각했다.
+                <br><br>
+                그러나 우신면이 건드린 것은 단순한 철도 계획이 아니라, <strong>이미 2021년 애니메이션 방영으로 전국구 대스타가 된 유리아의 '직장'이자 설정의 근간</strong>이었다. 만약 8호선이 공중분해 되면 유리아는 <strong>'담당 노선 자체가 존재하지 않는 미아 캐릭터'</strong>가 되어 폐기될 운명이었다. 애먼 2D 캐릭터가 정치꾼의 탐욕에 희생될 위기에 처하자, 애니메이션 팬덤 전체의 역린이 제대로 찔려버린 것이다.
+                <br><br>
+                이에 극대노한 전국의 덕후들은 <strong>레일루미네 4화에 등장했던 '몽키스패너를 든 유리아' 장면을 캡처하여, 유리아가 몽키스패너로 우신면의 선거 현수막과 남구 버스 정류장 BIT 기판을 모조리 철거해버리는 살벌한 고퀄리티 합성 밈(Meme)</strong>을 공장처럼 찍어내어 인터넷에 살포하기 시작했다. 우신면을 공격할 가장 완벽하고 파괴적인 '밈의 화력'을 애니메이션이 선제적으로 쥐여준 셈이다.
+            </li>
+            <li>
+                <strong>기적의 평당맘-오타쿠 대통합과 고정민의 확인사살:</strong> 
+                <br>
+                이 '유리아 몽키스패너 밈'은 삽시간에 남구 최대 지역 커뮤니티인 '평당맘' 카페에 흘러 들어갔고, 기적적인 화학작용을 일으켰다. 우신면의 트롤링에 분노해 있던 평당 주민들이 <strong>"저 파란 옷 입은 예쁜 학생(유리아) 말대로 우신면 현수막을 다 뜯어버리자"</strong>며 밈에 1000% 공감한 것. 나아가 덕후들은 <strong>"가챠 돌릴 돈을 유리아의 직장(8호선)을 짓는 데 보태겠다"</strong>며 분담금 모금 운동에 화력을 쏟아부었고, '강남 좌파 성향의 맘카페'와 '서브컬처 오타쿠'가 <strong>우신면 타도</strong>라는 깃발 아래 하나로 뭉치는 진풍경이 벌어졌다.
+                <br><br>
+                그리고 이 거대한 사태를 예의주시하던 정치인이 있었으니, 바로 당시 남구 을 지역구였던 <a href="고정민.html" class="wiki-link text-blue-600 hover:underline font-bold text-nowrap">고정민</a> 의원이었다. 평소 진성 오타쿠 아들 덕분에 레일루미네 애니메이션을 챙겨보며 유리아 피규어를 사다 나르던 고정민은, 집에서 아들이 <em>"아빠!! 레일루미네 4화에 나온 우리 유리아가 우신면 때문에 평생 스크린도어 제어반 한 번 못 만져보고 백수가 되게 생겼어!!"</em>라며 길길이 날뛰는 것을 보고 민심의 뇌관을 정확히 간파했다.
+                <br><br>
+                이 거대한 애니메이션발(發) 팬덤의 분노와 지역 주민의 8호선 인프라 니즈가 완벽히 일치한다는 것을 깨달은 고정민은, 기꺼이 자객이 되어 남구 갑으로 출격했다. 유세 단상에 오른 그는 <em>"우신면이 망친 8호선, 제가 뚫겠습니다! <strong>그리고 우리 유리아가 달릴 8호선의 궤도, 제가 기필코 사수하겠습니다!!</strong>"</em>라고 포효했고, 투표 결과 우신면을 15.50%라는 처참한 득표율로 짓밟으며 75.96%의 압승을 거둔다. 
+                <br><br>
+                김성민 시장이 2021년에 억지로 밀어붙인 '애니메이션 선공개'가 결과적으로 우신면의 숨통을 끊는 가장 치명적인 카운터펀치로 작용한 이 사건은, 한국 정치 및 서브컬처 역사상 영원히 회자될 전설이 되었다.
+            </li>
+        </ul>
+        <!-- 하단 각주 영역 -->
+        <div class="footnotes-area">
+            <h3 style="margin-top:0; font-size:1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px;">각주</h3>
+            <div id="fn-1" class="footnote-content">[1] 8호선 최초 개통일(2024년 3월 4일)과 동일하다.</div>
+            <div id="fn-2" class="footnote-content">[2] 성우 사이토 슈카의 높은 텐션이 캐릭터에 반영된 것.</div>
+            <div id="fn-3" class="footnote-content">[3] 러브라이브 선샤인의 와타나베 요우 성우. '요소로!' 대신 '출발!'을 외친다.</div>
+        </div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-400 text-xs pb-10">
+            <p>이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)</p>
+            <p>기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            <br>
+            <p>효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</p>
+            <p>효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.</p>
+        </footer>
+    </div>
+
+    <script>
+        // 각주 호버보드 (툴팁) 기능
+        document.addEventListener('DOMContentLoaded', () => {
+            const refs = document.querySelectorAll('.footnote-ref');
+            const tooltip = document.getElementById('footnote-tooltip');
+
+            refs.forEach(ref => {
+                ref.addEventListener('mouseenter', (e) => {
+                    e.preventDefault(); 
+                    const targetId = ref.getAttribute('href').substring(1); 
+                    const targetContent = document.querySelector(`.footnote-content[id="${targetId}"]`);
+                    
+                    if (targetContent) {
+                        tooltip.innerHTML = targetContent.innerHTML;
+                        tooltip.style.display = 'block';
+                        moveTooltip(e);
+                    }
+                });
+
+                ref.addEventListener('mousemove', (e) => {
+                    moveTooltip(e);
+                });
+
+                ref.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+            });
+
+            function moveTooltip(e) {
+                const x = e.clientX + 15;
+                const y = e.clientY + 15;
+                
+                const tooltipRect = tooltip.getBoundingClientRect();
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+
+                let finalX = x;
+                let finalY = y;
+
+                if (x + tooltipRect.width > windowWidth) {
+                    finalX = x - tooltipRect.width - 20;
+                }
+                if (y + tooltipRect.height > windowHeight) {
+                    finalY = y - tooltipRect.height - 20;
+                }
+
+                tooltip.style.left = finalX + 'px';
+                tooltip.style.top = finalY + 'px';
+            }
+        });
+    </script>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

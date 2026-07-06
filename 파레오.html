@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>파레오 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        :root { 
+            /* 상단바 및 검색창 배경색 무조건 #7777aa */
+            --wiki-nav: #7777aa; 
+            
+            /* 모든 헤더 및 항목열 배경색 (파레오 퍼스널 컬러 - 핑크색 #FF99BB) */
+            --wiki-header: #FF99BB;
+            --wiki-header-text: #551133; /* 연분홍 배경을 위한 짙은 자주색 텍스트 */
+            
+            /* 테마 컬러 */
+            --wiki-main: #FF99BB; 
+            --wiki-point: #DD5588; /* 가독성과 대비를 위한 진한 분홍/자주색 */
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #fff5f8; /* 연한 핑크빛 틴트 */
+            --wiki-link: #0062cc; 
+            
+            /* 노선 색상 (효빈시 규격 절대 엄수) */
+            --line-1: #0077DD; /* 서목역, 승남해수욕장역 */
+            --line-2: #00CCAA; 
+            --line-3: #FFCC11; 
+            --line-4: #FF5522; 
+            --line-5: #EE0022; 
+            --line-6: #881188; 
+            --line-7: #FF8899;
+            --line-8: #9856FF;
+            --line-binhyo: #6677CC; 
+            --line-changjeon: #33AAFF; 
+
+            /* 버스 색상 (효빈시 규격) */
+            --bus-trunk: #01B7ED;
+            --bus-circular: #E7D600;
+            --bus-branch: #37B484;
+            --bus-wide: #485EC6;
+            --bus-seat: #FF5800;
+            --bus-village: #A664A0;
+            --bus-airport: #84C36E;
+            --bus-citytour: #7777AA;
+            --bus-express: #D81C2F;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-nav: #555588;
+            --wiki-header: #CC6688; 
+            --wiki-header-text: #ffffff;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2b1f24; 
+            --wiki-link: #ff99bb; 
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; margin: 0; }
+        .wiki-container { max-width: 1152px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); display: flex; flex-direction: column; }
+
+        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: fixed !important; }
+        th { background-color: var(--wiki-header) !important; color: var(--wiki-header-text) !important; font-weight: bold; border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        td { border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: left; vertical-align: middle; font-size: 0.9rem; }
+        td.text-center { text-align: center; }
+        
+        .item-label { background-color: var(--wiki-header) !important; color: var(--wiki-header-text) !important; font-weight: bold; width: 120px; text-align: center; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 2px solid var(--wiki-point); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-point); }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: var(--wiki-point); border-left: 4px solid var(--wiki-point); padding-left: 12px; }
+        h4 { font-size: 1.15rem !important; font-weight: bold !important; margin-top: 1.2rem; margin-bottom: 0.5rem; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-point); background-color: var(--wiki-gray-bg); width: 100%; max-width: 360px; font-size: 0.82rem; margin-bottom: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-top-label { background-color: var(--wiki-header); color: var(--wiki-header-text); padding: 5px; text-align: center; font-weight: bold; }
+        .infobox-title-row { display: flex; border-bottom: 1px solid var(--wiki-border); background: #fff; color: #000; align-items: center; }
+        [data-theme='dark'] .infobox-title-row { background: #2b2d31; color: #fff; }
+        .infobox-logo { width: 100%; border-bottom: 1px solid var(--wiki-border); display: flex; align-items: center; justify-content: center; padding: 0; background: #fff; overflow: hidden; max-height: 350px; }
+        .infobox-logo img { width: 100%; height: auto; object-fit: contain; }
+        .infobox-name { flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 10px; background-color: var(--wiki-gray-bg); }
+        
+        .infobox th { background-color: var(--wiki-header) !important; color: var(--wiki-header-text) !important; width: 100px; text-align: left; padding: 5px 8px; font-size: 0.75rem; }
+        .infobox td { padding: 5px 8px; text-align: left; }
+
+        nav { background-color: var(--wiki-nav) !important; }
+
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn.active { background-color: var(--wiki-header); color: var(--wiki-header-text) !important; font-weight: bold; }
+
+        /* 인용구 박스 */
+        .quote-box { border-left: 4px solid var(--wiki-point); background-color: #fff5f8; padding: 10px 15px; margin: 10px 0; color: #555; font-weight: bold; border-radius: 0 8px 8px 0; }
+        [data-theme='dark'] .quote-box { background-color: #2b1f24; color: #ccc; }
+
+        /* 하이라이트 박스 (파레오 전용) */
+        .pareo-box { border: 2px solid var(--wiki-point); background-color: #fff5f8; color: #333; padding: 15px; border-radius: 8px; margin-top: 10px; font-size: 0.95rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
+        .pareo-box::before { content: "🎀"; position: absolute; top: -12px; left: 10px; font-size: 22px; background: #fff; padding: 0 5px; border-radius: 50%; }
+        [data-theme='dark'] .pareo-box { background-color: #2b1f24; color: #eee; }
+        [data-theme='dark'] .pareo-box::before { background: #121212; }
+        
+        [data-theme='dark'] .wiki-btn-group { background: #2b2d31; }
+        [data-theme='dark'] .infobox-logo { background: #2b2d31; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        
+        /* 가독성 패치 */
+        .category-box, #toc-box { background-color: var(--wiki-gray-bg); border-color: var(--wiki-border); }
+        [data-theme='dark'] .category-box, [data-theme='dark'] #toc-box { background-color: #2b2d31 !important; border-color: #444 !important; color: #e5e7eb !important; }
+
+        /* 각주 툴팁 스타일 */
+        .wiki-fn { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; font-size: 0.8em; vertical-align: super; }
+        .wiki-tooltip { position: absolute; background: white; border: 1px solid var(--wiki-border); padding: 10px; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 9999; display: none; max-width: 320px; font-size: 0.85rem; line-height: 1.4; color: var(--wiki-text); word-break: keep-all; }
+        [data-theme='dark'] .wiki-tooltip { background: #2b2d31; border-color: #444; color: #eee; }
+        
+        del { color: #aaa; text-decoration: line-through; }
+        [data-theme='dark'] del { color: #777; }
+        
+        .pareo-text { color: var(--wiki-point); font-weight: bold; }
+        .script-box { background-color: #f0f0f0; border-left: 4px solid var(--wiki-point); padding: 10px; margin: 10px 0; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap; word-break: break-all; }
+        [data-theme='dark'] .script-box { background-color: #2b2d31; border-color: #DD5588; color: #ddd; }
+
+        .wiki-table tbody tr:nth-child(even) { background-color: var(--wiki-gray-bg); }
+        .wiki-table tbody tr:nth-child(odd) { background-color: var(--wiki-bg); }
+
+        .subway-badge { display: inline-flex; justify-content: center; align-items: center; padding: 0 6px; height: 1.6em; border-radius: 4px; color: white; font-size: 0.8rem !important; font-weight: bold; margin-right: 4px; vertical-align: middle; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-tooltip-container" class="wiki-tooltip"></div>
+
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black dark:text-white dark:bg-gray-700 dark:placeholder-gray-400 text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[rgba(0,0,0,0.2)] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="text-xs text-gray-500 dark:text-gray-400 text-right mb-2">최근 수정 시각: 2026-03-17 23:29:40</div>
+        
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">파레오(BanG Dream!)</h1>
+            <div class="wiki-btn-group shadow-sm mb-4">
+                <a href="토론.html" class="wiki-tool-btn">토론</a>
+                <a href="수정.html" class="wiki-tool-btn">편집</a>
+                <a href="역사.html" class="wiki-tool-btn">역사</a>
+                <div class="px-3 py-1 text-[11px] cursor-pointer hover:bg-gray-100" onclick="showMsg('즐겨찾기에 추가됨')">★</div>
+            </div>
+        </div>
+
+        <!-- 분류 박스 -->
+        <div class="category-box border p-2 mb-4 text-xs rounded">
+            <span class="font-bold pareo-text">분류:</span> 
+            <a href="BanG Dream!.html" class="wiki-link">BanG Dream!/등장인물</a> |
+            <a href="RAISE A SUILEN.html" class="wiki-link">RAISE A SUILEN</a> |
+            <a href="서목읍.html" class="wiki-link">서목읍(효빈광역시)</a> |
+            <a href="파래리.html" class="wiki-link">탄성군 파래리(효빈광역시)</a> |
+            <a href="가상인물.html" class="wiki-link">효빈광역시 명예시민</a>
+        </div>
+
+        <!-- ==========================================
+             내비게이션 박스 삽입 위치
+        =========================================== -->
+        <div class="no-autolink" id="bangdream-nav-zone">
+    <div id="bangdream-nav-container"></div>
+    <script src="assets/bangdream-nav.js"></script>
+    <script>
+        // 파일 읽자마자 0.01초 단위로 감시해서 즉시 그려버리기!
+        (function() {
+            var checkExist = setInterval(function() {
+                // bangdream-nav.js 내부에 정의된 렌더링 함수 이름을 확인해 주세요.
+                // 만약 함수 이름이 다르다면 아래 'renderBangdreamNav' 부분을 수정하시면 됩니다.
+                if (typeof renderBangdreamNav === 'function') {
+                    renderBangdreamNav('bangdream-nav-container');
+                    clearInterval(checkExist);
+                }
+            }, 10);
+            setTimeout(function() { clearInterval(checkExist); }, 3000);
+        })();
+    </script>
+</div>
+
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4 flex-grow">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 md:order-1 w-full md:w-auto border p-4 rounded">
+                <div class="text-center font-bold border-b border-gray-300 dark:border-gray-600 mb-2 pb-1">목차</div>
+                <ul class="text-sm list-none p-0 m-0">
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">특징</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">성격</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">비주얼</a>
+                        <ul>
+                            <li>4.1. <a href="#s-4-1" class="wiki-link">머리카락 색</a></li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5" class="wiki-link">다른 캐릭터와의 관계</a>
+                        <ul>
+                            <li>5.1. <a href="#s-5-1" class="wiki-link">커플링</a></li>
+                        </ul>
+                    </li>
+                    <li>6. <a href="#s-6" class="wiki-link">매체별 행적</a>
+                        <ul>
+                            <li>6.1. <a href="#s-6-1" class="wiki-link">애니메이션</a></li>
+                            <li>6.2. <a href="#s-6-2" class="wiki-link">이벤트 스토리</a>
+                                <ul>
+                                    <li>6.2.1. <a href="#s-6-2-1" class="wiki-link">시즌 2</a></li>
+                                    <li>6.2.2. <a href="#s-6-2-2" class="wiki-link">시즌 3</a></li>
+                                </ul>
+                            </li>
+                            <li>6.3. <a href="#s-6-3" class="wiki-link">연극</a></li>
+                        </ul>
+                    </li>
+                    <li>7. <a href="#s-7" class="wiki-link">호칭</a></li>
+                    <li>8. <a href="#s-8" class="wiki-link">게임 대사집</a></li>
+                    <li>9. <a href="#s-9" class="wiki-link">뱅드림! 걸즈 밴드 파티! 카드 일람</a></li>
+                    <li>10. <a href="#s-10" class="wiki-link">기타</a></li>
+                    <li>11. <a href="#s-11" class="wiki-link pareo-text">효빈광역시와의 관계 (서목읍·파래리 유니버스)</a>
+                        <ul>
+                            <li>11.1. <a href="#s-11-1" class="wiki-link">탄성군 서목읍(西木邑): 츄츄 님의 영지</a></li>
+                            <li>11.2. <a href="#s-11-2" class="wiki-link">파래리(波來里): 파레오의 이름을 딴 해조류 특산지</a></li>
+                            <li>11.3. <a href="#s-11-3" class="wiki-link">록구리(祿九里) & 잠금리(蠶琴里): 더블 LOCK 성지</a></li>
+                            <li>11.4. <a href="#s-11-4" class="wiki-link">1호선 탄성지선 서목역과 승남해수욕장역</a></li>
+                            <li>11.5. <a href="#s-11-5" class="wiki-link">음일리(陰一里) & 일회리(一回里): 섀도우 댄스(카게이로마이) 마을</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded order-1 md:order-2">
+                <div class="infobox-top-label">RAISE A SUILEN 소속</div>
+                <div class="infobox-logo">
+                    <img src="이미지/파레오.png" alt="파레오 이미지" onerror="this.parentNode.innerHTML='<div style=\'padding: 50px; text-align: center; color: #888;\'><br><span style=\'font-size: 10px;\' class=\'dark:text-gray-400\'>이미지/파레오.png</span></div>'">
+                </div>
+                <div class="infobox-name">
+                    <div class="text-xl font-bold">파레오</div>
+                    <div class="text-xs font-bold mt-1 text-gray-600 dark:text-gray-300">パレオ | PAREO</div>
+                </div>
+                <table class="wiki-table">
+                    <tr><th class="item-label">예명</th><td>파레오 (パレオ)</td></tr>
+                    <tr><th class="item-label">본명</th><td>뉴바라 레오나 (鳰原 令王那)</td></tr>
+                    <tr><th class="item-label">밴드</th><td><a href="RAISE A SUILEN.html" class="wiki-link">RAISE A SUILEN</a></td></tr>
+                    <tr><th class="item-label">파트</th><td>키보드</td></tr>
+                    <tr><th class="item-label">사용 악기</th><td class="text-xs">Roland FA-06 2대 & FA-08 1대<br>Roland AX-09 Lucina</td></tr>
+                    <tr><th class="item-label">학적</th><td class="text-xs">카모가와 중앙중학교<a href="#fn-1" id="rfn-1" class="wiki-fn" data-note="fn-1">[1]</a><br>(중2 2-7<a href="#fn-3" id="rfn-3" class="wiki-fn" data-note="fn-3">[3]</a> -> 중3 3-7)</td></tr>
+                    <tr><th class="item-label">생일</th><td>3월 25일<a href="#fn-4" id="rfn-4" class="wiki-fn" data-note="fn-4">[4]</a><a href="#fn-5" id="rfn-5" class="wiki-fn" data-note="fn-5">[5]</a><a href="#fn-6" id="rfn-6" class="wiki-fn" data-note="fn-6">[6]</a> (양자리)</td></tr>
+                    <tr><th class="item-label">신장</th><td>162cm<a href="#fn-7" id="rfn-7" class="wiki-fn" data-note="fn-7">[7]</a><a href="#fn-8" id="rfn-8" class="wiki-fn" data-note="fn-8">[8]</a></td></tr>
+                    <tr><th class="item-label">좋아하는 음식</th><td class="text-xs">양배추</td></tr>
+                    <tr><th class="item-label">싫어하는 음식</th><td class="text-xs">고수<a href="#fn-9" id="rfn-9" class="wiki-fn" data-note="fn-9">[9]</a>, 생양파</td></tr>
+                    <tr><th class="item-label">취미</th><td>아이돌</td></tr>
+                    <tr><th class="item-label">이미지 컬러</th><td><span style="color:#FF99BB; font-weight:bold; text-shadow: 1px 1px 1px #000;">✦</span> 핑크색 (#FF99BB)<a href="#fn-10" id="rfn-10" class="wiki-fn" data-note="fn-10">[10]</a></td></tr>
+                    <tr><th class="item-label">성우</th><td class="text-xs">🇯🇵 <a href="쿠라치 레오.html" class="wiki-link">쿠라치 레오</a><br>🇺🇸 테일러 포노<a href="#fn-11" id="rfn-11" class="wiki-fn" data-note="fn-11">[11]</a></td></tr>
+                    <tr><th class="item-label">사인</th><td class="text-xs">파레오 사인</td></tr>
+                    <tr>
+                        <th class="item-label">직함 (효빈시 한정)</th>
+                        <td class="text-xs">
+                            <span class="pareo-text">효빈광역시 명예시민</span><br>
+                            <strong>탄성군 서목읍(西木邑) 명예 읍장</strong><br>
+                            <strong>탄성군 파래리(波來里) 특산물 홍보대사</strong>
+                        </td>
+                    </tr>
+                </table>
+            </aside>
+        </div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <div class="quote-box">
+            ジャーキーをお持ちしました！<br>
+            육포를 가져왔어요!
+        </div>
+        <p>1분으로 알 수 있는 파레오의 궤적 ↓</p>
+        <p class="text-sm italic text-gray-600 dark:text-gray-400 mb-4 border-l-2 border-gray-400 pl-3">
+        “かわいい”に強いこだわりがある、RAISE A SUILENのキーボード担当。Pastel＊Palettesの大ファンで、ライブやラジオは必ずチェックしている。自分の新しい一面を見つけてくれたチュチュのことが大好きで、チュチュのことになると我を忘れることも。<br>
+        “귀여움”에 강한 고집이 있는, RAISE A SUILEN의 키보드 담당. Pastel＊Palettes의 열렬한 팬으로, 라이브나 라디오 방송은 반드시 체크하고 있다. 자신의 새로운 일면을 발견해 준 츄츄를 너무 좋아해서, 츄츄에 관한 일이라면 넋이 나가는 일도 있다.
+        </p>
+        <p>BanG Dream! 2nd Season에서 처음 등장한 밴드인 RAISE A SUILEN의 키보드 담당.<a href="#fn-13" id="rfn-13" class="wiki-fn" data-note="fn-13">[13]</a> 7th Live의 팜플렛에서 처음으로 본명이 공개되었다.</p>
+        <p>한국(2022년 3월 25일)에서는 애니플러스샵에서 배포한 파레오 생일 기념 렌티큘러 카드가 0분만에 전부 재고가 소진될 정도로 매우 높은 인기를 자랑하고 있으며<a href="#fn-14" id="rfn-14" class="wiki-fn" data-note="fn-14">[14]</a>, 특히 화려하고 아기자기한 디자인과 귀여운 캐릭터성 덕분에 마루야마 아야와 더불어 남여 불문하고 인기가 많다.<a href="#fn-15" id="rfn-15" class="wiki-fn" data-note="fn-15">[15]</a></p>
+
+        <h2 id="s-2">2. 특징</h2>
+        <p>엘렉톤을 배우던 경험을 살려 키보드로 픽업되었다. '귀엽다'는 것에 대한 고집이 있고 이 소질을 살려 RAS의 의상과 메이크업을 전담하고 있다. 좋아하는 밴드는 Pastel*Palettes. 이브의 언급으로는 항상 파스파레의 팬 사인회에 오면서 분위기에 맞게 머리색도 맞춰서 온다고 할 정도.<a href="#fn-16" id="rfn-16" class="wiki-fn" data-note="fn-16">[16]</a></p>
+        <p>애니 3기 10화에서 밝혀진 출신지는 치바현 카모가와시로, 작중 현 시점에서도 거주중이다. 참고로 파레오의 집은 도쿄도 근처 시골 마을에 있는 가정집을 모티브로 했다.</p>
+        <p>'뉴바라'는 워낙 특이한 성씨지만 실제 존재하는 성씨로, 일본에서 50명 정도만 쓰는 희성이다. 이름 '레오나'는 다른 RAS 멤버들과 마찬가지로 담당 성우(쿠라치 레오)의 이름에서 따온 것으로 추정.</p>
+        <p>상술하였듯이 키가 162cm인데, Roselia의 최장신인 사요보다 1cm 크기 때문에 Roselia 전원보다 키가 크다. 2019년 기준 일본의 성인 여성의 평균 신장이 158cm 정도라는 것을 생각해 보면 성인 기준으로도 나름대로 장신이다. 뱅드림 캐릭터 중에서는 비슷한 키인 와카미야 이브(163cm), 하나조노 타에(164cm)처럼 밴드 내에서 최장신도 맡을 수 있을 만큼 키가 작지 않은 편에 속하지만, 170cm인 마스킹과 172cm인 레이야가 자신과 같은 밴드라 밴드 내에서의 키는 중간인 편이다.</p>
+        <p>사용 휴대폰은 아이폰 8로 추정.</p>
+        <p>2차 창작에서는 역시 츄츄와 많이 엮이며, 라스 멤버 이외에는 파레오가 좋아한다는 점을 살려 파스파레와도 많이 엮인다. 걸파 합류 이후부터는 키보드 멤버들과도 엮인다.</p>
+        <p>에이리어 아이템 정렬<a href="#fn-17" id="rfn-17" class="wiki-fn" data-note="fn-17">[17]</a>에서 순서가 애매해지긴 했어도 Backstage Pass 5(전편)<a href="#fn-18" id="rfn-18" class="wiki-fn" data-note="fn-18">[18]</a>에서 츄츄를 픽업 멤버로 선정할 수도 있는 상황에서 파레오를 냈으며, 2022년 핀즈에서 츄츄가 베이스조 멤버들과 같이 나온 것으로 보아, 사실상 공식적으로 RAS에서는 파레오가 키보드조, 츄츄가 베이스조로 인정되었다.<a href="#fn-19" id="rfn-19" class="wiki-fn" data-note="fn-19">[19]</a></p>
+        <p>주역 밴드 멤버 중 가장 나이가 어리고 순수한 성격 탓인지 유니콘으로 상징되기도 한다. 초기에는 충견이라는 별명 때문에 주로 강아지로 표현됐지만 [언제까지나, 정말 좋아해] 특훈 후에서 유니콘이 처음으로 나오더니 [해피니스 샷]의 의상에서 유니콘 장식이 나오고 2022년 생일 카드에서 유니콘이 나오고 마스킹의 4성 카드 [그런 점이]에서 유니콘으로 비유되어 나온다. 그리고 제4회 걸즈 밴드 총선거에서 대만 서버 1위 일러로 유니콘 컨셉으로 나오기도 했다.</p>
+        <p>굿즈가 매우 잘 팔리는 캐릭터 중 하나이다. 인기가 워낙 많기도 하고 알록달록하고 다양한 머리 색과 스타일, 동글동글 귀여운 외모의 시너지 때문에 굿즈가 예쁘고 다양하게 나오는 편이기 때문인 듯하다.</p>
+
+        <h2 id="s-3">3. 성격</h2>
+        <p>Roselia의 이마이 리사와 마찬가지로 튀는 외모와 다르게 천사표에 가까운 예의 바르고 나긋나긋한 성격을 가졌다. 모나지 않고 둥글둥글한 성격 덕분에 인간관계가 폐쇄적인 편이긴 하지만 대부분 무난하게 잘 지낸다.</p>
+        <p>이런 천사같은 귀여운 캐릭터이지만, 츄츄와 함께 있을 때는 살짝 과격한 성격도 보여진다. 실제로 츄츄와 파스파레 그리고 하나조노 타에, 히로마치 나나미를 제외한 다른 캐릭터들과의 상호대사 및 접점은 거의 없으며<a href="#fn-20" id="rfn-20" class="wiki-fn" data-note="fn-20">[20]</a><a href="#fn-21" id="rfn-21" class="wiki-fn" data-note="fn-21">[21]</a>, 츄츄에게 지나치게 집착하는 모습이 많이 보인다.<a href="#fn-22" id="rfn-22" class="wiki-fn" data-note="fn-22">[22]</a> 다만 츠구미처럼 성격이나 인간관계가 나쁘지 않은데도 상호대사나 특히 친한 캐릭터가 없는 것일 수도 있고, 설령 전자가 맞아도 극복할 가능성도 있으므로 이 부분은 지켜봐야 하는 부분이다.</p>
+        <p>거짓말과 악담을 싫어한다. 3기 11화에서는 마스키가 파레오를 설득할 때 츄츄도 파레오를 걱정하고 있다고 하자<a href="#fn-23" id="rfn-23" class="wiki-fn" data-note="fn-23">[23]</a> 레오나가 거짓말은 싫다고 말하기도 했다.</p>
+        <p>행실이 성숙하고 어른스러워서인지 작중에서 다른 캐릭터들에게 레이야만큼은 아니지만 연령대가 높을 것이란 인식이 있다. 실제로 린코와 나나미가 파레오가 중학교 3학년(시즌 3 기준)이란 사실을 알자, 놀라기도 했다.<a href="#fn-24" id="rfn-24" class="wiki-fn" data-note="fn-24">[24]</a></p>
+
+        <h2 id="s-4">4. 비주얼</h2>
+        <p>머리는 주인인 츄츄처럼 매우 긴 생머리다. 기본적으로 트윈 빔이며 긴 옆머리가 있고 적안에 땡그란 눈인데<a href="#fn-25" id="rfn-25" class="wiki-fn" data-note="fn-25">[25]</a><a href="#fn-26" id="rfn-26" class="wiki-fn" data-note="fn-26">[26]</a> 코코로처럼 상삼백안이다. 또 뱅드림 캐릭터 대부분이 머리가 짧고 곱슬머리에 눈이 뾰족한데 파레오는 흔치 않게 눈이 매우 땡그랗고 머리도 긴 생머리이다. 전체적으로 순하고 예쁘장한 외모이다.</p>
+        <p>원래 모습인 레오나일 때는 평범한 흑발이며 안경을 착용한다. 긴 트윈 빔에 땡그란 적안은 스튜디오로 출근하는 파레오일 때와 동일하다.</p>
+        <p>일본 기준으로 나이에 비해 키가 큰 편이다.<a href="#fn-27" id="rfn-27" class="wiki-fn" data-note="fn-27">[27]</a> 162cm로 일본 여성 평균 신장을 넉넉히 웃도며 심지어 현 뱅드림 8개 밴드 멤버들 중 유이한 중학생<a href="#fn-28" id="rfn-28" class="wiki-fn" data-note="fn-28">[28]</a>에 나이순으로도 라나와 함께 최연소<a href="#fn-29" id="rfn-29" class="wiki-fn" data-note="fn-29">[29]</a>임에도 키가 이정도로 크다. 여기에 평소에 제법 높은 통굽형 신발을 신다보니 키가 더 커보여서, 170cm대 장신인 레이야나 마스킹과 함께 있어도 크게 차이나지 않아보이는 수준. 이 때문에 다른 밴드 멤버들이 중학생이라는 것을 신기해한다. 직접적인 언급으로는 시로카네 린코가 파레오가 고등학생인 줄 알았다고 말하기도 했다.</p>
+        <p>라스가 걸파에 추가된 이후 레이야는 SD 모션이 호불호가 갈리는 경우가 많은데, 파레오는 호평이 대다수다.<a href="#fn-30" id="rfn-30" class="wiki-fn" data-note="fn-30">[30]</a> Live 2D 역시 청순발랄한 느낌으로 예쁘게 나왔다.</p>
+
+        <h3 id="s-4-1">4.1. 머리카락 색</h3>
+        <p>상황에 따라 머리색을 바꾸는데, 지금까지 나온 종류는 다음과 같다.</p>
+        
+        <h4 class="font-bold mt-2 text-[#DD5588]">애니 및 걸파 통상 머리카락 색</h4>
+        <ul class="list-disc pl-5 space-y-1 text-sm">
+            <li><strong>분홍 - 하늘:</strong> 일상생활에서 주로 하는 머리색.<a href="#fn-31" id="rfn-31" class="wiki-fn" data-note="fn-31">[31]</a></li>
+            <li><strong>검정 - 하양:</strong> 라이브에서 자주 사용하는 색상. 걸파 기본의상도 이 머리색이다. 키보드의 건반을 형상화한 듯.</li>
+            <li><strong>검정:</strong> 본래의 머리색으로, 학교와 집에서는 평범한 흑발이다. 현재까지 공개된 머리색 중에서 유일한 단일 색이며, 이때는 안경도 착용한다. 본인 말에 의하면 이때의 자신은 '파레오'가 아닌 '뉴바라 레오나'라는 듯. 다른 때와 RAS로서 활동할 때를 구분짓고 있는 모습을 보인다. 후에 걸파 첫 4성의 특훈 전 일러스트에서 이 모습으로 나왔다.</li>
+        </ul>
+
+        <h4 class="font-bold mt-2 text-[#DD5588]">애니메이션 및 라이브 한정 머리카락 색</h4>
+        <ul class="list-disc pl-5 space-y-1 text-sm">
+            <li><strong>보라 - 하양:</strong> 애니메이션 3기 라이브와 「EXPOSE ‘Burn out!!!’」의 MV에서 나온다. 추가로 군청색 렌즈도 착용했다. BanG Dream! FILM LIVE 2nd Stage에서는 이 색으로 나오며, 앙코르 무대에서는 렌즈 색을 유지하면서 머리카락의 흰 부분을 노랗게 바꾼 바리에이션도 나왔다.</li>
+            <li><strong>하양 - 하늘:</strong> 히나와 만났을 때 팬으로서 머리색을 맞춘 것. 추가로 하늘색 렌즈도 착용했다.</li>
+            <li><strong>노랑 - 분홍:</strong> Roselia와의 합동 라이브인 「Rausch und/and Craziness」홍보 이미지에 등장.</li>
+            <li><strong>주황 - 빨강:</strong> 극장판 BanG Dream! 팝핀' 드림!에서 괌으로 여행갔을 때 등장. 하늘색 렌즈도 착용했다.</li>
+            <li><strong>회색 - 연보라:</strong> 극장판 BanG Dream! 팝핀' 드림!에서 공개된 신규 비주얼. 연보라색 렌즈도 착용했다.</li>
+        </ul>
+
+        <h4 class="font-bold mt-2 text-[#DD5588]">걸파 한정 머리카락 색</h4>
+        <ul class="list-disc pl-5 space-y-1 text-sm">
+            <li><strong>청록 - 연두:</strong> 첫 3성 카드의 특훈 후 일러스트 및 라이브 의상에서 공개되었다. 이후 Roselia와의 합동 라이브인 「Rausch und/and Craziness II」홍보 이미지에서도 등장.</li>
+            <li><strong>노랑 - 하늘:</strong> 카가미네 린/렌 콜라보 수록곡 열등상등 자켓 일러스트 및 라이브 의상에서 공개. 카가미네 린/렌의 머리색과 눈동자 색깔. 이 버전의 경우 색 변화 외에도 머리카락에 웨이브를 주고 옆머리를 없애는 등 헤어스타일의 변화도 있다.</li>
+            <li><strong>보라 - 청록:</strong> 첫 4성 카드의 특훈 후 일러스트 및 라이브 의상에서 공개되었다. RAS의 로고에 있는 상징색들을 가져온 듯 하다. 헤어스타일도 바뀌었는데 세일러 문처럼 만두머리와 병행된 트윈테일이다.</li>
+            <li><strong>하양 - 연두:</strong> 걸파 1컷만화에서 등장. 연두색 렌즈도 착용했다. 마야의 색상을 맞춘 것이며, 마스키의 해석으로는 '정중한 연주로 철저하게 보조해준다'는 뜻으로 나온다.</li>
+            <li><strong>분홍 - 노랑:</strong> 3성 카드 [자애의 눈길] 특훈 전 일러스트에서 등장했다. 앞서 언급된 「Rausch und/and Craziness」 때의 머리색과 색조합은 동일하지만 색의 위치배열이 다른 경우.</li>
+            <li><strong>분홍 - 연노랑:</strong> 3성 카드 [자애의 눈길] 특훈 후 일러스트에서 등장했다. 헤어스타일은 흔히 똥머리라고 불리는 올림머리로 바뀌었다. 9th ☆ LIVE "Mythology"(모르포니카와의 합동 라이브) 홍보 일러스트에도 등장.</li>
+            <li><strong>연노랑 - 연분홍:</strong> 3성 카드 [커플 밥] 특훈 후 일러스트에서 등장했다. 캡모자를 쓰고 머리를 양쪽으로 땋아내렸다.</li>
+            <li><strong>하양 - 보라:</strong> 4성 카드 [쭉, 좋아해] 특훈 전 일러스트에서 등장했다. 이브와 함께 4성으로 나온 이벤트인 만큼 이브의 색상에 맞춘 머리색. 보라색 렌즈도 착용했다.</li>
+            <li><strong>보라 - 노랑:</strong> 4성 카드 [쭉, 좋아해] 특훈 후 일러스트에서 등장했다. 헤어스타일 어레인지와 함께 하늘색 렌즈도 착용했다.</li>
+            <li><strong>연분홍 - 연보라:</strong> 생일 기념 4성 카드 [Special birthday!] 일러스트에서 등장했다. 헤어스타일은 만두머리를 하고 머리를 풀어내려 웨이브를 넣었고 연한 하늘색 렌즈도 착용했다.</li>
+            <li><strong>자주 - 연노랑:</strong> 2성 카드 [스위트한 배려]에서 등장했다. 헤어스타일은 웨이브가 들어간 포니테일로 바뀌었다.</li>
+            <li><strong>회색 - 연분홍:</strong> 4성 카드 [마음이 넘치는 여름]에서 등장했다. 머리카락에 웨이브를 넣어 반은 풀어내리고 반은 옆으로 묶어올렸다. 또한 왼쪽 눈에는 청록색, 오른쪽 눈엔 진분홍색 렌즈를 착용하였다.</li>
+            <li><strong>베이지 - 보라:</strong> 3성 카드 [주인님의 어머님!?]에서 등장했다. 보라색 렌즈도 착용했다.</li>
+            <li><strong>코랄 - 하늘:</strong> 키라페스 한정 4성 카드 [Today's]에서 등장했다. 일상생활에서 주로 사용하는 머리색과 조합이 매우 유사하지만 색감이 약간 다른 경우. 통상적인 머리색이 쿨톤에 가깝다면 이쪽이 좀 더 웜톤에 가깝다.</li>
+            <li><strong>연보라 - 연분홍:</strong> 3성 카드 [해피니스 샷♡]에서 등장. 웨이브 머리를 양갈래로 내려묶었으며 연보라색 렌즈도 착용했다.</li>
+            <li><strong>회색 - 주황:</strong> 5주년 기본 의상(2성 카드 [Dog Fight!])에서 등장했다.</li>
+            <li><strong>연노랑 - 분홍:</strong> 생일 기념 4성 카드 [Precious birthday!] 일러스트에서 등장했다. 헤어스타일은 만두머리를 하고 분홍색 렌즈를 착용했다.</li>
+            <li><strong>노랑 - 하양 - 갈색:</strong> 도쿄 리벤저스 콜라보 3성 카드 [선율대 키보드]에서 등장했다. 마츠노 치후유가 모티브로, 뒤로 묶은 머리인데 앞머리는 노랑-하양으로 되어 있으며 뒷머리가 갈색인 조합이다. 녹색 렌즈도 꼈다.</li>
+            <li><strong>주황 - 노랑:</strong> 4성카드 [∞서프라이즈!]에서 등장. 앞머리 가운데에 가르마를 타고 뒷머리를 풀어내린 헤어스타일이다. 오른쪽 눈에 에메랄드색 렌즈를 껴 오드아이가 되었다.</li>
+            <li><strong>회색 - 하양:</strong> 이벤트 [CRUSH ON THE DRUM!!!]에서 등장. 머리카락에 웨이브가 들어가있다. 하늘색 렌즈를 착용했다.</li>
+        </ul>
+
+        <h4 class="font-bold mt-2 text-[#DD5588]">기타 머리카락 색</h4>
+        <ul class="list-disc pl-5 space-y-1 text-sm">
+            <li><strong>보라 - 주황:</strong> 2020 할로윈 기념으로 공식 트위터 계정에 업로드 된 일러스트에 등장하였다.</li>
+            <li><strong>빨강 - 초록:</strong> 2020 크리스마스 기념으로 공식 트위터 계정에 업로드 된 영상에 등장하였다.</li>
+            <li><strong>분홍 - 청록:</strong> 후지큐 콜라보 일러스트에서 등장하였다. 연노랑 - 연분홍처럼 머리를 양쪽으로 땋아내렸으나 좀 더 헐렁하고 옆머리도 있다.</li>
+        </ul>
+
+        <p>머리 색깔을 단시간에 어떻게 바꾸느냐가 팬들 사이에서는 가장 논쟁으로 꼽힌다. 염색약을 사용하는 건 시간이 많이 걸리는데다 머릿결 및 두피까지 다 상하게 만들기 때문에 가능성이 낮다고 보는 편이며 가발, 붙임머리, 헤어스프레이설이 유력하게 꼽히고 있다. 혹은 염색염색 열매 능력자 라든가. 참고로 만화 측에선 가발로 해석하였고 이후 FeelxHeatxBeat! 이벤트에서도 파레오가 직접 가발을 쓴다고 언급을 했다.<a href="#fn-32" id="rfn-32" class="wiki-fn" data-note="fn-32">[32]</a><a href="#fn-33" id="rfn-33" class="wiki-fn" data-note="fn-33">[33]</a><a href="#fn-34" id="rfn-34" class="wiki-fn" data-note="fn-34">[34]</a></p>
+
+        <h2 id="s-5">5. 다른 캐릭터와의 관계</h2>
+        
+        <h4 class="font-bold mt-4 text-[#DD5588]">RAISE A SUILEN 멤버들과의 관계</h4>
+        <p>자신을 스카우트 해준 츄츄에게 은혜를 느끼고 있다. 그래서인지 "츄츄님", "주인님" 이라고 부르며 자신을 키보드 메이드라고 하며 일종의 메이드, 비서 포지션을 자처하며 따르고 있다. 또한 작중에서 츄츄가 말은 좀 못 되게 해도 보는 눈은 확실하다고 하면서 어둠에서 파레오라는 나를 발견해줬다 라는 언급을 해서 파레오의 배경 사정에 무언가 있음을 암시하기도 했다. 그러다보니 걸파피코 곱빼기에서 소개된 이명이 '충견 파레공'.<a href="#fn-35" id="rfn-35" class="wiki-fn" data-note="fn-35">[35]</a></p>
+        <p>3기 후반에 츄츄가 다른 캐릭터들에게 빡빡한 연습 일정을 강요해서 다른 멤버들이 혼자 가버릴 때도 츄츄의 편을 들었으나, 결국 츄츄의 폭언으로 파레오마저 연락을 끊었다. 결국 츄츄의 진심어린 사과로 화해했다.</p>
+        <p>이 때문인지 발랄한 성격과 다르게 언니 3명과의 관계는 그다지 깊진 않은 편. 같은 밴드로 활동할 때도 다른 캐릭터들 입장에서 파레오는 츄츄 비서 그 이상도 그 이하도 아니었기 때문에 탈주 전까지 나머지 멤버들이 파레오의 사정이나 상황에 대해 아무도 모를 정도로 교류가 없었던 모양이다. 그러나 스토리가 진행되면서 이벤트에서 롯카, 마스킹과 사이가 좋아지기도 했지만, 여전히 다른 멤버들간의 사이에 비해서는 아직 접점이나 이런 편에서 진행이 더딘 편이다.<a href="#fn-36" id="rfn-36" class="wiki-fn" data-note="fn-36">[36]</a></p>
+
+        <h4 class="font-bold mt-4 text-[#DD5588]">다른 밴드 멤버들과의 관계</h4>
+        <ul class="list-disc pl-5 space-y-2 text-sm">
+            <li><strong>Pastel*Palettes:</strong> 가장 좋아하는 멤버는 걸파에서 마스킹과의 대화에서 아야의 포즈를 장황하게 설명하는 장면에서 보면 아야를 가장 좋아하는 것으로 보이기는 하지만 파스파레 그룹 자체를 좋아하는 올팬인 듯.<a href="#fn-37" id="rfn-37" class="wiki-fn" data-note="fn-37">[37]</a> 실제로도 첫 등장인 애니 2기 5화에서도 파스파레의 라이브 중에서 관객들을 비추었을 때 파레오가 짧게나마 비추어졌으며 공연 시작 전에 1등으로 기다리는 모습도 보인다.<br>
+            3기 6화에서 사요, 히나가 츄츄의 스튜디오에 불쑥 들어왔을 때도 히나의 색으로 맞추러 잠깐 다녀온다는 등 파스파레의 엄청난 팬임을 증명하고 있다. 그 히카와 히나가 얼굴과 이름을 알고 있을 정도.<a href="#fn-38" id="rfn-38" class="wiki-fn" data-note="fn-38">[38]</a> 3기 11화에서 나온 장면 중에서 본인의 방이 공개되었는데, 갖가지 파스파레의 굿즈들이 있었고, 자신의 방에 설치되어 있는 키보드로 어떤 곡을 연주하는데, 이때 연주한 곡이 흔들・흔들 Ring-Dong-Dance였고 그 이외에도 파스파레의 여러 곡을 연주한 영상을 업로드한 듯 하다.<a href="#fn-39" id="rfn-39" class="wiki-fn" data-note="fn-39">[39]</a> 머리카락 색도 앞에서 말한 히나의 색과 걸파 1컷 만화에서 나온 마야의 색과 '꿈 빛깔♪ 파스텔 팬 로드' 이벤트에서 나온 이브의 색이 있는 것으로 보아 아야, 치사토의 색을 맞춘 머리카락 색도 조만간 공개될 듯 하다. 또한 에어리어 대화에서 히나와 함께 쇼핑을 하는 모습을 보면 파스파레와 많이 친해진 듯하다. 당장 라이브 상호대사만 봐도 서로 친근하게 대한다. 비단 히나뿐만이 아니라, 3성 자애의 눈길 파레오 스토리에서는 아야 역시 친근하게 대해주는거 보면 이미 성공한 덕후가 된건 확정이다. 다만, 아야가 사진을 같이 찍자는 요청을 파레오는 완곡히 거절하는데, 이유가 걸작이다. 좋아하는 스타랑 사적으로 사진을 찍는게 너무 황송하다나. 공식 4컷 만화 259화 에서는 이브에게 귀엽다는 말을 듣자 감격스럽다며 실신하기까지도 한다. '꿈 빛깔♪ 파스텔 팬 로드' 이벤트에서는 곤경에 처한 이브를 응원하였으며 2021년 생일에서는 아야, 치사토와 같이 노래방을 가기도 한다.</li>
+            <li><strong>그 이외의 밴드:</strong> Poppin'Party의 하나조노 타에, 이치가야 아리사와 접점이 있으나, 이 둘과 접점이 깊진 않은 편이다.<a href="#fn-40" id="rfn-40" class="wiki-fn" data-note="fn-40">[40]</a> 그 외에 우시고메 리미는 파레오의 생일을 축하해주기도 했다.<br>
+            Roselia의 이마이 리사와 카드 에피소드에서 접점이 생겼고, 시로카네 린코와 웨딩 이벤트에서 접점이 한 번 생겼다.<br>
+            Afterglow의 우에하라 히마리와는 생일 에어리어 대화에서 히나의 생일을 같이 축하해주었다.<br>
+            Morfonica 멤버와는 갤럭시 웨딩 이벤트에서 히로마치 나나미와 직접적인 접점이 생겼다. 이로 인해 당시 나나미와 더블 픽업이 아니었음에도 해당 이벤트 열람 시 상호 대사가 추가되기도 했다.<a href="#fn-41" id="rfn-41" class="wiki-fn" data-note="fn-41">[41]</a><br>
+            헬로, 해피 월드!의 마츠바라 카논과는 생일 에어리어 대화에서 이브의 생일을 같이 축하해주었다.</li>
+        </ul>
+        <p>활발하고 친절한 성격과는 반대로 파스파레나 츄츄를 제외하면 츄츄 의존증이 의심될 정도로 인간관계가 굉장히 폐쇄적이다. 심지어 같은 밴드 멤버들 사이에서의 교류마저도 거의 없다.<a href="#fn-42" id="rfn-42" class="wiki-fn" data-note="fn-42">[42]</a> 아마 선을 칼같이 긋는 성격이거나 발랄한 성격에 반대되게 친화력이 없는 듯하다. 실제로 학교에서도 친구가 많이 없었다.<a href="#fn-43" id="rfn-43" class="wiki-fn" data-note="fn-43">[43]</a></p>
+
+        <h3 id="s-5-1">5.1. 커플링</h3>
+        <ul class="list-disc pl-5 space-y-3 text-sm">
+            <li><strong><a href="츄츄.html" class="wiki-link">츄츄</a> (파레츄츄 / 츄츄파레):</strong> 파레오의 커플링 중에서 가장 메이저한 커플링이며, 통칭 파레츄츄. 만난 지 별로 되지 않았고, 연주자와 프로듀서 사이라 그렇게 돈독하지 않을 것 같은 관계인데도 파레오는 츄츄가 자신을 스카우트해주었다는 사실을, 츄츄는 자신의 음악을 믿고 자신을 지지해준다는 사실을 기둥삼아 관계를 더 돈독하게 하고 있다. 자취를 하는 츄츄의 집에 이따금 들러 식사를 차려주거나 잠을 자고가기도 하는 등, 주종관계로서는 상당히 특이한 관계이다. 파레오의 본 모습을 인정해주고, 학생 뉴바라 레오나가 아닌 파레오라는 신분을 만들어준, 파레오의 구원자이자 유일하게 지지할 수 있는 사람. 또한, 파레오의 3성 보상 카드 자애의 눈길의 에피소드에서는, 파레오가 츄츄의 멘션에서 자고갈 수 있을정도로 친분이 깊다는 말을 했다. 그리고 시즌 3에서는 고등학교 진학 시 츄츄의 멘션에 동거를 예정하기까지 한다.<a href="#fn-44" id="rfn-44" class="wiki-fn" data-note="fn-44">[44]</a></li>
+            <li><strong><a href="마루야마 아야.html" class="wiki-link">마루야마 아야</a> (아야파레)</strong></li>
+            <li><strong><a href="와카미야 이브.html" class="wiki-link">와카미야 이브</a> (이브파레)</strong></li>
+            <li><strong><a href="히카와 히나.html" class="wiki-link">히카와 히나</a> (히나파레):</strong> 츄츄파레를 제외하면 파스파레 팬이라서 엮이는 커플링들로 주로 ~언니(~ちゃん)라고 부르는<a href="#fn-45" id="rfn-45" class="wiki-fn" data-note="fn-45">[45]</a> 아야, 히나, 이브와 자주 엮인다.</li>
+            <li><strong>그 외:</strong> 이외에는 같은 밴드 멤버인 레이야, 록, 마스킹이나 좋아하는 밴드인 Pastel*Palettes의 시라사기 치사토, 야마토 마야와도 엮인다.</li>
+        </ul>
+
+        <h2 id="s-6">6. 매체별 행적</h2>
+        
+        <h3 id="s-6-1">6.1. 애니메이션</h3>
+        <p>파스파레가 메인인 2기 5화에서 첫등장하며, 파스파레의 라이브 관객 중 한 명으로 나온다. 이후 7화에서 등장하여 처음부터 츄츄를 따르고 있는 모습을 보여준다. 2기 10화에서 마야와 이브의 언급에 의하면 파스파레의 라이브나 팬미팅 때마다 항상 참석했을 수준의 팬이었다고 했다.</p>
+        <p>3기에서는 기타 멤버 영입 오디션에서 탈락한 사람을 배웅해준다. 츄츄가 Roselia의 영상들을 계속해서 보고있자 사실은 Roselia를 좋아하는게 아니냐고 묻고, 츄츄가 육포나 가져오라고 하자 육포를 가지러 나간다. 이후 포피파, Roselia, 롯카를 라스의 단독 공연에 초대하는데 롯카를 초대할 때 롯카의 학교, 생일, 혈액형, 하루 일과까지 외워서 읊는 무서운 모습을 보여준다(...). 여담으로 1화에서는 평상시의 핑크-블루의 모습과 공연할 때의 블랙-화이트 모습이 둘 다 나온다.</p>
+        <p>라스의 라이브에서 롯카를 스카우트 선언하지만 롯카는 이는 거절하고, 롯카를 영입하기 위해 츄츄와 함께 하네오카에 찾아와 롯카를 쫓아다닌다. 이때 츄츄가 "Go, 파레오!"라고 하고 파레오가 멍멍 거리는 건 덤 강아지처럼 헥헥 거리면서 지치지 않고 뛰어다니는데 참고로 10cm가 넘는 굽이 있는 신발을 신고서 뛰어다닌 거다(!). 롯카가 집으로 도망쳐오고 설마 여기까지 쫓아왔겠냐면서 창문을 기웃거리던 도중 바로 뒤에 혼자 나타나서 롯카를 놀래킨다.<a href="#fn-46" id="rfn-46" class="wiki-fn" data-note="fn-46">[46]</a> 롯카를 설득하기 위해 밴드가 하고싶지 않냐면서 츄츄는 롯카의 재능을 원하고있고, 모두가 롯카를 환영할 거라면서 롯카를 설득한다. 이후 마스킹에게 잡혀 온 롯카를 환영해주며 롯카의 오디션으로 R・I・O・T을 세션한다. 이후 레이야와 함께 롯카를 긍정적으로 평가해준다.<a href="#fn-47" id="rfn-47" class="wiki-fn" data-note="fn-47">[47]</a></p>
+        <p>3기 4화에서의 언급에 따르면 레이, 마스키보다 먼저 가입한 것이 밝혀졌고, 출신지에 대한 떡밥이 살짝 뿌려졌다.</p>
+        <p>3기 8화에선 갑자기 벌어진 밴드들의 온천 여행 이벤트 때 롯카가 참가 여부를 전화로 물었으나, "서두르면 3시간 반 안에는 도착할 거 같다"라고 대답했고 롯카가 무리해서 올 거 없다고 하여 거절시켰다. 파스파레랑 같은 숙소에서 묵는다는 걸 알았다면<a href="#fn-48" id="rfn-48" class="wiki-fn" data-note="fn-48">[48]</a> 날아서라도 왔을 텐데</p>
+        <p>3기 9화에서는 Roselia와의 라이브 대결에서 승리를 거두고도 1위를 다시 Roselia에게 빼앗긴 후<a href="#fn-49" id="rfn-49" class="wiki-fn" data-note="fn-49">[49]</a> 츄츄의 독선적인 태도에<a href="#fn-50" id="rfn-50" class="wiki-fn" data-note="fn-50">[50]</a> 츄츄와 멤버들 간의 불화가 폭발하면서 밴드가 분열될 위기에 처한다. 화가 난 마스킹이 스튜디오 밖으로 나가버리고 록은 마스킹을 쫓아 나서고 츄츄는 방 안에 틀어박혔는데, 파레오가 "자신만은 츄츄의 옆에 쭉 있겠다."고 하지만, 츄츄는 그런 파레오에게 "너 하나만 있어선 안된다."며 폭언을 해버리고 파레오는 충격을 받는다.</p>
+        <p>그 후 10화에서는 연락을 모두 단절한 채 잠적하는데, 그녀가 연락을 받지 않자 츄츄는 파레오의 파트를 음원으로 떼우고 라이브를 강행하지만<a href="#fn-51" id="rfn-51" class="wiki-fn" data-note="fn-51">[51]</a>, 멤버들 모두 초조한 모습을 감추지 못한다. 그리고 갑작스러운 파레오의 이탈이라는 의문과 이대로는 RAS가 붕괴된다는 위기감에 멤버들은 파레오를 찾아나서기로 한다.<a href="#fn-52" id="rfn-52" class="wiki-fn" data-note="fn-52">[52]</a><a href="#fn-53" id="rfn-53" class="wiki-fn" data-note="fn-53">[53]</a><a href="#fn-54" id="rfn-54" class="wiki-fn" data-note="fn-54">[54]</a></p>
+        <p>11화에서는 카모가와까지 당일치기로 달려온 마스키와 롯카가 길을 지나가던 중학생들을 붙잡고 무작정 수소문을 하다가 근처에 있는 학교에 가보는데 이곳이 운좋게도 파레오가 다니는 카모가와 중앙중학교였다. 마침 하교중이던 여학생 2인방에게 사진을 보여주는데, 그녀들이 파레오와 같은 반이라 "뉴바라 상?"이라며 알아보며 그간 숨겨져 있던 파레오의 평소 모습이 공개된다. 그녀의 본명은 뉴바라 레오나로 공부도 굉장히 잘하고 운동신경도 좋은<a href="#fn-55" id="rfn-55" class="wiki-fn" data-note="fn-55">[55]</a> 조용한 성격의 범생이 위원장(반장)으로 유명한 학생이었는데, 특히 밴드를 하거나 귀여운 것을 좋아하는 파레오 버전의 모습은 학교에서 철저히 비밀로 하고 있었는지 같은반 여학생 2인방이 '이거 진짜야? 실화?'란 식의 반응이었다.</p>
+        <p>그렇게해서 파레오의 집(뉴바라 건어물이라고 적혀 있다.)을 찾아내고 지켜보다 하교하던 파레오, 정확히는 뉴바라 레오나를 발견한다. 평소 파레오와는 전혀 다른 수수한 안경캐 여중생의 모습. 파레오는 둘을 보고 오지 말아달라며 도망치지만 마스키와 롯카가 쫓아와 사정을 물으며 레오나의 과거가 일부 드러난다. 문무겸비 위원장으로 유명세를 타고 있지만, 본인이 주목받는 걸 부담스러워하는 성격이라 관심을 보이는 학생들하고는 제대로 대화를 주고 받는 일도 없었을만큼 거리를 뒀던 모양. 게다가 집에서는 어업에 종사하는 양친이 항상 바쁜 관계로 집에서 혼자 파스파레 덕질을 하는 것으로 외로움을 달래왔다고 한다. 참고로 방에 파스파레 굿즈가 한쪽 방면에 도배수준으로 전시되어 있다.<a href="#fn-56" id="rfn-56" class="wiki-fn" data-note="fn-56">[56]</a> 그리고 독학으로 배운 키보드를 이용해 レオナ라는 명의로 파스파레의 곡을 커버하는 영상을 유튜브에 올리는 활동도 하고 있었는데, 이를 우연히 접한 츄츄가 좋은 연주라는 댓글을 달고 이메일로 키보디스트를 구하는 중이니 한 번 오디션 보러오라는 제안을 한다. 그런데 오디션 당일 츄츄는 레오나를 연주를 듣고 "우등생은 필요 없어. (사실은)너도 지긋지긋했던거 아냐?"라는 지적을 하는데, 평소의 범생이 활동으로 이래저래 마음속으로 따분함과 외로움을 느끼고 있던 그녀에겐 본래 성격을 겉으로 드러내라는 말이었기에 큰 충격을 받는다. 츄츄는 본성을 숨기고 있는 점을 염두에 둬 '파레오'라는<a href="#fn-57" id="rfn-57" class="wiki-fn" data-note="fn-57">[57]</a> 예명을 붙여줌과 동시에 멋대로 보내준 귀여운 스타일의 옷을 츄츄에게 입어보라고 권하는데, 레오나의 말 그대로 어둠 속에 묻혀있던 파레오라는 새로운 모습을 츄츄가 이끌어 내준 셈.</p>
+        <p>파레오를 설득하는 마스키와 롯카에게 레오나는 "더 이상 파레오는 없다, 파레오는 존재 의의를 잃어버렸다."며 다시 돌아와 달라는 멤버들의 회유에도 담담한 모습을 보인다. 파레오일 때의 하이텐션 목소리가 아닌 뉴바라 레오나로서의 어둡고 냉정한 목소리는 서로 극과 극이다라는 생각이 들 정도로 180도 다르다. 그만큼 그녀의 본래 성격이 어두웠다는 얘기. 그러나 레이야와 함께 죽어라 뒤따라온 츄츄의 진심어린 사과를 받고, 이제까지 연락 안받아서 미안하다며 마음을 돌린다.<a href="#fn-58" id="rfn-58" class="wiki-fn" data-note="fn-58">[58]</a></p>
+        <p>참고로 파레오가 츄츄를 "츄츄님"이라고 부르며 깍듯이 존댓말을 하는 것은 딱히 츄츄가 시킨 것이 아니라 파레오가 스스로 본인이 좋아서 부른 것으로 밝혀졌다. 처음 주인님 소리를 들었을 때 츄츄의 당황한 모습이 포인트 이에 팬덤에서는 "파레오 마조히스트 아니냐"라는 농담이 돌기도 했다.<a href="#fn-59" id="rfn-59" class="wiki-fn" data-note="fn-59">[59]</a></p>
+        <p>13화에서는 밴드 전체가 베스트 퍼포먼스상을 수상하게 되었고 아리사와 교대로 꿈을 꿰뚫는 순간에!의 2절 파트를 연주했다.</p>
+        <p>걸파피코 곱빼기에선 7화에서 멤버들과 함께 나온 것 이외에는 별다른 행적이 없었으나, 13화에서 파스파레 라이브의 실시간 댓글로 짤막하게 나오고, 17화에서는 마법전대 파스텔*레인저를 봤다(...). 22화에서는 츄츄와 같이 유성당에 펼쳐진 정글에서 덩굴에 묶여버린다. 26화에서는 다른 멤버들과 같이 기존 5밴드의 라이브를 봤다.</p>
+        <p>극장판 세컨드 필름라이브에서는 하필 라스의 공연 순서가 파스파레 바로 다음인지라 자기소개 시간 때 라스의 이야기는 안 하고 파스파레 공연에 대한 평가를 열창하며 폭주해버린다. 결국 츄츄에게 머리색을 파스파레 색상으로 해도 되냐고 했다가<a href="#fn-60" id="rfn-60" class="wiki-fn" data-note="fn-60">[60]</a> 츄츄에게 까였다. 옆에서 포피파 밴드 이야기를 하는 포피파 덕후는 덤.</p>
+        <p>걸파피코 피버(3기) 12화에서는 츄츄가 육포가 맛이 없다고 하자, 파레오가 진짜 맛있는 육포를 찾겠다며 미국 캘리포니아와 인도를 갔다 온다!</p>
+        <p>BanG Dream! 팝핀' 드림!에서는 무도관 공연이 끝나고 모두가 모여서 뒤풀이하는 장면에서 파스파레와 같이 있는 찐덕후의 모습을 보여줬다. 이후 가발때문인지는 몰라도 혼자서 많은 여행가방을 끌고오는 모습을 보여주고 츄츄가 기내식에서 야채만 골라먹자 편식하면 안된다고 하지만 츄츄는 그런 파레오를 쌩까고 바로 잤는데 이후 바베큐파티에서는 기내식에서 안먹은 것도 포함이라면서 츄츄에게만 야채 꼬치를 챙겨줘서 츄츄에게 절망감을 안겨주었다. 포피파의 어쿠스틱 연주를 듣고 감성터져서 바닷가로 나갔다 해삼밟고 염좌가 생긴 마스킹이 진통제를 맞으러 병원에 가서 행방불명이 되자 걱정하지만 이후 돌아온 마스킹을 보고 안심하는 모습을 보여줬다.</p>
+
+        <h3 id="s-6-2">6.2. 이벤트 스토리</h3>
+        <h4 class="font-bold mt-2 text-[#DD5588]">6.2.1. 시즌 2</h4>
+        <ul class="list-disc pl-5 space-y-2 text-sm">
+            <li><strong>NO LIMIT!!!:</strong> 밴드스토리 1장(애니메이션 3기) 이후 시점으로, 파레오의 첫 이벤트 등장이다.</li>
+            <li><strong>From the Past</strong></li>
+            <li><strong>꿈 빛깔♪ 파스텔 팬 로드:</strong> 이브의 첫 라디오 방송을 듣고는 이브가 평소보다 위축된 것을 알아차린다. 이는 이브가 방송사의 압력으로 대본대로만 했기 때문인데 이브의 라디오 방송에 대한 인터넷 평이 안좋은 것을 알고는 불안해 한다. 악수회에서 히나에게 사연을 듣고는 SNS에서 파스파레, 특히 이브를 응원하는 캠페인을 생각해 냈고 SNS에서의 응원으로 용기를 얻은 이브는 자신이 생각한 프로그램 기획서를 프로그램 스태프에 제안한다. 이브의 기획서는 통과가 되었고 저번 방송보다 훨씬 상태가 좋아진 이브의 방송을 듣는데 이브가 자신의 닉네임인 '레오레오'에게 감사한다는 말을 한 것을 듣고는 감동하며 '파레오'가 되기 이전에 파스파레 덕질로 외로움을 달랬던 시절을 회상한다. 이후에는 라스 멤버들과 함께 참석한 라디오 공개수록 이벤트에서 이브와 눈이 마주치고는 행복해 한다.</li>
+            <li><strong>outside/inside</strong></li>
+            <li><strong>FeelxHeatxBeat!</strong></li>
+        </ul>
+
+        <h4 class="font-bold mt-2 text-[#DD5588]">6.2.2. 시즌 3</h4>
+        <ul class="list-disc pl-5 space-y-2 text-sm">
+            <li><strong>갤럭시 웨딩!</strong></li>
+            <li><strong>Reach for twinkling stars:</strong> 밴드 활동과 장래 문제에 대해서 걱정하는 이야기가 나왔다.</li>
+            <li><strong>Bless your ReBirthday:</strong> 밴드 활동과 장래 문제 사이에 갈등하다가 결국 RAS의 키보드를 그만두고 매니저를 하기로 한다. 그러나 파레오가 안나오게 된 날에 다른 멤버들이 걱정을 하게 되고 츄츄의 폰을 통해 연락하게 된다. 영상 통화를 통해 이번에는 츄츄가 혼자 카모가와에 가서 파레오를 만나려고 하는 것을 전하게 된다. 카모가와에서 츄츄와 진솔한 대화를 나누고는 RAS의 키보드로 복귀하고 츄츄가 파레오의 부모님과 상의하기로 결정한다. [놓지 말아주세요] 카드 스토리에서는 도쿄에 있는 고등학교로 진학과 츄츄의 아파트에 동거를 결정하기도 한다.</li>
+        </ul>
+
+        <h3 id="s-6-3">6.3. 연극</h3>
+        <p>연극 We are RAISE A SUIREN에서는 멤버들과 함께 새해에 파레오가 살고 있는 카모가와의 산을 오르는 것을 중심으로 이야기가 전개된다.</p>
+
+        <h2 id="s-7">7. 호칭</h2>
+        <div class="overflow-x-auto my-4">
+            <table class="wiki-table text-xs w-full">
+                <thead>
+                    <tr><th class="w-1/3 text-center">인물</th><th class="w-1/3 text-center">부르는 호칭</th><th class="w-1/3 text-center">불리는 호칭</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td class="font-bold bg-gray-50 dark:bg-gray-800 text-center">1인칭</td><td colspan="2" class="text-center">나(私)<a href="#fn-61" id="rfn-61" class="wiki-fn" data-note="fn-61">[레오나]</a>, 파레오(パレオ)</td></tr>
+                    <tr><td class="font-bold text-center">레이야</td><td class="text-center">레이야 씨(レイヤさん)</td><td class="text-center">파레오(パレオ)</td></tr>
+                    <tr><td class="font-bold text-center">록</td><td class="text-center">롯카 님(六花様) → 록 씨(ロックさん)</td><td class="text-center">파레오 씨(パレオさん)</td></tr>
+                    <tr><td class="font-bold text-center">마스킹</td><td class="text-center">맛스 씨(まっすーさん)<a href="#fn-62" id="rfn-62" class="wiki-fn" data-note="fn-62">[62]</a></td><td class="text-center">파레오(パレオ)</td></tr>
+                    <tr><td class="font-bold text-center">츄츄</td><td class="text-center">츄츄 님(チュチュ様), 주인님(ご主人様)<a href="#fn-63" id="rfn-63" class="wiki-fn" data-note="fn-63">[63]</a>,<br>치유(ちゆ)<a href="#fn-61" id="rfn-61" class="wiki-fn" data-note="fn-61">[레오나]</a></td><td class="text-center">파레오(パレオ)</td></tr>
+                    <tr><td class="font-bold text-center">토야마 카스미</td><td class="text-center">카스미 씨(香澄さん)</td><td class="text-center">파레오 쨩(パレオちゃん)</td></tr>
+                    <tr><td class="font-bold text-center">하나조노 타에</td><td class="text-center">하나 씨(ハナさん)</td><td class="text-center">파레오(パレオ)</td></tr>
+                    <tr><td class="font-bold text-center">우시고메 리미</td><td class="text-center">-</td><td class="text-center">파레오 쨩(パレオちゃん)</td></tr>
+                    <tr><td class="font-bold text-center">이치가야 아리사</td><td class="text-center">아리사 씨(有咲さん)</td><td class="text-center">파레오(パレオ)</td></tr>
+                    <tr><td class="font-bold text-center">우에하라 히마리</td><td class="text-center">히마리 씨(ひまりさん)</td><td class="text-center">-</td></tr>
+                    <tr><td class="font-bold text-center">마루야마 아야</td><td class="text-center">아야 쨩(彩ちゃん)</td><td class="text-center">파레오 쨩(パレオちゃん)</td></tr>
+                    <tr><td class="font-bold text-center">히카와 히나</td><td class="text-center">히나 쨩(日菜ちゃん)</td><td class="text-center">레오나 쨩(れおなちゃん)<a href="#fn-65" id="rfn-65" class="wiki-fn" data-note="fn-65">[65]</a><br>→ 파레 쨩(パレちゃん)</td></tr>
+                    <tr><td class="font-bold text-center">시라사기 치사토</td><td class="text-center">치사토 씨(千聖さん), 치사토 님(千聖様)</td><td class="text-center">파레오 쨩(パレオちゃん)</td></tr>
+                    <tr><td class="font-bold text-center">야마토 마야</td><td class="text-center">마야 씨(麻弥さん)</td><td class="text-center">파레오 씨(パレオさん)</td></tr>
+                    <tr><td class="font-bold text-center">와카미야 이브</td><td class="text-center">이브 쨩(イヴちゃん)</td><td class="text-center">파레오 씨(パレオさん)</td></tr>
+                    <tr><td class="font-bold text-center">이마이 리사</td><td class="text-center">리사 씨(リサさん)</td><td class="text-center">파레오(パレオ)</td></tr>
+                    <tr><td class="font-bold text-center">우다가와 아코</td><td class="text-center">-</td><td class="text-center">파레오(パレオ)</td></tr>
+                    <tr><td class="font-bold text-center">시로카네 린코</td><td class="text-center">린코 씨(燐子さん)</td><td class="text-center">파레오 씨(パレオさん)</td></tr>
+                    <tr><td class="font-bold text-center">세타 카오루</td><td class="text-center">카오루 씨(薫さん)</td><td class="text-center">-</td></tr>
+                    <tr><td class="font-bold text-center">마츠바라 카논</td><td class="text-center">카논 씨(花原さん)</td><td class="text-center">파레오 쨩(パレオちゃん)</td></tr>
+                    <tr><td class="font-bold text-center">오쿠사와 미사키</td><td class="text-center">미셸 씨(ミッシェルさん),<br>미사키 씨(美咲さん)</td><td class="text-center">-</td></tr>
+                    <tr><td class="font-bold text-center">히로마치 나나미</td><td class="text-center">나나미 씨(七深さん)<br>→ 맛치 씨(まっちーさん)</td><td class="text-center">파레오 쨩(パレオちゃん)<br>→ 파레파레(パレパレ)</td></tr>
+                    <tr><td class="font-bold text-center">야시오 루이</td><td class="text-center">루이 씨(瑠唯さん)</td><td class="text-center">-</td></tr>
+                    <tr><td class="font-bold text-center">카나메 라나</td><td class="text-center">라나 씨(楽柰さん)</td><td class="text-center">-</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 id="s-8">8. 게임 대사집</h2>
+        
+        <h4 class="font-bold mt-4 text-[#DD5588]">※ 캐릭터 도감, 밴드 및 라이브 선택 화면 대사</h4>
+        <div class="script-box">다음 라이브에서는 어떤 퍼포먼스를 할까~
+오늘의 화장은 어떤가요? 귀엽게 보일까요?
+귀여움을 추구하는 데에 한계는 없어요! 좀 더 힘내겠습니다!</div>
+
+        <h4 class="font-bold mt-4 text-[#DD5588]">※ 스토리 선택 화면 대사</h4>
+        <div class="script-box">하아⋯⋯ 파스파레의 라이브, 또 가고 싶다~
+제 꿈은 츄츄 님의 꿈을 이루는 거예요♪
+연습이라도 키보드는 즐겁고 귀엽게 쳐야 해요!</div>
+
+        <h4 class="font-bold mt-4 text-[#DD5588]">※ 라이브 의상 교체시 대사</h4>
+        <div class="script-box">짜잔~. 에헤헤, 어때요? 귀엽게 보이나요?
+후훗, 머리색이랑 화장도 의상에 맞춰 봤어요!
+귀여워~! 이 의상, 마음에 들어요~!</div>
+
+        <h4 class="font-bold mt-4 text-[#DD5588]">※ 계절별 대사</h4>
+        <div class="script-box text-sm"><strong>[봄]</strong>
+전철 안도 따끈따끈해서 기분 좋아요♪
+봄이니까 방의 커튼도 밝은 색으로 바꿔봤어요~
+가다랑어, 득템해버렸어요~ 오늘은 회파티네요!
+
+<strong>[여름]</strong>
+매일 덥지만 츄츄 님의 스튜디오는 시원하고 쾌적해요~
+매미 소리가 들리면 한층 덥게 느껴지네요~
+장어라고 하면 여름철 보양식이지만, 진짜 제철은 가을에서 겨울이에요.
+
+<strong>[가일]</strong>
+가을색 머리도 귀엽단 말이죠~, 라벤더 라든지 버건디색이라든지!
+가을 옷을 많이 샀어요! 입는게 기대되네요.
+지내기 쉬운 계절이 되었네요. 파레오도 들뜨게 돼요!
+
+<strong>[겨울]</strong>
+다른 분이 도착하기 전에 스튜디오를 따뜻하게 해볼까요.
+귀여운 귀마개를 사서 이제 추위도 두렵지 않아요!
+어제는 맛스 씨가 라멘 먹으러 데려가 줬어요♪</div>
+
+        <h4 class="font-bold mt-4 text-[#DD5588]">※ 생일축하 대사</h4>
+        <div class="script-box text-sm"><strong>[2020년]</strong>
+오늘은 아야 쨩의 생일! 최강 아이돌이 태어난 날이에요♪
+마야 씨, 생축이에요~♪ 매월 칼럼 스크랩하고 있어요!
+이브 쨩의 생일을 축하해줄 수 있다니, 파레오는 행운아네요♪
+록 씨의 생일 선물은 손수 만든 슈슈입니다~♪
+츄츄 님, 생일 축하드려요. 정말 좋아해요!
+
+<strong>[2021년]</strong>
+모두에게 생일을 축하받았습니다. 파레오, 감격이에요!
+오늘은 히나 쨩의 생일! 제단의 준비도 완벽해요!
+생일 축하드려요 레이야 씨! 오늘은 축하 파티에요!
+오늘은 치사토 씨의 생일인데, 어째서 축일이 아닌 거죠?<a href="#fn-66" id="rfn-66" class="wiki-fn" data-note="fn-66">[66]</a>
+이브 쨩...... 태어나 줘서 고맙습니다......!
+오늘은 록 씨의 생일, 모두 함께 축하해요!
+마야 씨, 생축이에요♪ 마야 씨의 모든것이 너무 좋아요
+맛스 씨의 생일 파티는 역시 금발로 가는 게 좋을까요?
+오늘은 츄츄 님의 생일. 파레오는 평생 따르겠어요!
+오늘은 아야 쨩의 생일! 눈부신 미소, 고귀해요~~!!
+
+<strong>[2022년]</strong>
+여러분이 생일을 축하해 주시다니, 파레오는 감사 감격이에요!
+오늘은 치사토 씨의 생일! 분명 최고의 하루가 될 거예요!
+
+<strong>[2024년]</strong>
+여러분들에게 생일 축하를 받아서 파레오는 정말로 행운아에요.
+오늘은 아리사 씨의 생일. 또 같이 놀러가고 싶어요♪</div>
+
+        <h4 class="font-bold mt-4 text-[#DD5588]">※ 기념일 대사</h4>
+        <div class="script-box text-sm"><strong>[할로윈]</strong>
+귀여운 할로윈 의상! RAS 다 같이 입고 싶어요! (2021년)
+할로윈이에요! 귀여운 괴물 씨라면 대환영이랍니다♪ (2022년)
+츄츄 님, 올해야말로 고양이 변장을! 부디~! (2024년)
+
+<strong>[만우절]</strong>
+거짓말은 좋아하지 않습니다만, 재밌는 거짓말이라면 괜찮아요♪
+사실은 파레오, 머리색만큼 본체도 존재하고 있어요!! (2024년)
+
+<strong>[발렌타인 데이]</strong>
+발렌타인 초콜릿은 물론 RAS 여러분들께 준비했답니다♪
+물론 발렌타인 초콜릿은 포장까지 신경 써요♪
+
+<strong>[화이트 데이]</strong>
+화이트데이니까 오늘은 하얀 옷을 입고 가볼까♪</div>
+
+        <h2 id="s-9">9. 뱅드림! 걸즈 밴드 파티! 카드 일람</h2>
+        <p>자세한 내용은 <a href="파레오(BanG Dream!)/카드.html" class="wiki-link">파레오(BanG Dream!)/카드</a> 문서를 참고하십시오.</p>
+
+        <h2 id="s-10">10. 기타</h2>
+        <ul class="list-disc pl-5 mt-2 space-y-2 text-sm">
+            <li>걸파의 오리지널 곡을 새로운 조합으로 가창하는 신규 기획 패럴렐 보컬의 일환으로 리미, 마야, 마스킹 함께 제4탄 유닛 「(スキを貫け♡)」 멤버가 되었다. 가창 악곡은 내 마음은 초코소라빵, 큐～마이＊flower, UNSTOPPABLE, THE WAY OF LIFE 총 4곡의 후보 악곡 중에서 투표에 들어간다. 평소에 힘들었던 파레오의 솔로 파트를 듣게 될 전망이다.</li>
+        </ul>
+
+        <!-- 효빈광역시 유니버스 (서목·파래 편) -->
+        <h2 id="s-11">11. 효빈광역시와의 관계 (서목읍·파래리 유니버스)</h2>
+        <div class="pareo-box mb-5">
+            <div class="font-bold text-lg mb-2 border-b border-[#DD5588] pb-1">
+                🎀 이 마을은 츄츄 님의 영지입니다!
+            </div>
+            <p class="text-sm">"파레리(波來里)에 파레오가 왔어요! 츄츄 님 만세!"<br><span class="text-xs text-gray-500 dark:text-gray-400">— <a href="서목읍.html" class="wiki-link">서목읍</a> 파래리를 방문한 성지순례객의 일성</span></p>
+        </div>
+
+        <h3 id="s-11-1">11.1. 탄성군 서목읍(西木邑): 츄츄 님의 영지</h3>
+        <p>효빈광역시 탄성군 서부에 위치한 인구 3.5만 명의 <strong><a href="서목읍.html" class="wiki-link">서목읍(西木邑)</a></strong>. 이 평화롭던 해안가 마을은 최근 뱅드림 팬덤, 특히 <strong>RAISE A SUILEN(RAS)</strong> 팬들에게 완벽하게 점령당하며 <strong>'츄츄 님의 영지'</strong>라는 무시무시한 별칭을 얻게 되었다.</p>
+        <p>놀라운 것은 서목읍 내에 파레오와 록(LOCK) 등 RAS 멤버들과 소름 돋게 이름이 겹치는 법정리가 무더기로 존재한다는 점이다. 이 기막힌 우연 덕분에 서목읍장은 아예 읍내 행사 때마다 <em>"우리 서목읍은 락(Rock)의 고장"</em>이라고 대놓고 덕후 친화적인 발언을 쏟아내고 있으며, 읍내 곳곳에 성지순례객을 노린 알록달록한 벽화와 캡슐 호텔이 성업 중이다.</p>
+
+        <h3 id="s-11-2">11.2. 파래리(波來里): 파레오의 이름을 딴 해조류 특산지</h3>
+        <p>서목읍에는 <strong><a href="파래리.html" class="wiki-link">파래리(波來里)</a></strong>라는 마을이 있다. 원래는 파도가 밀려오는 해조류(파래) 특산지였지만, 이름의 발음이 '파레오'와 비슷하다는 이유 하나만으로 졸지에 파레오 성지가 되어버렸다.</p>
+        <p>마을 어르신들은 물 들어올 때 노를 젓다 못해 모터를 달아버렸다. <strong>"파레오 짱 그림이 그려진 파래 김"</strong>(일명 '파레오 김')을 특산물로 출시했는데, 이게 오타쿠들 사이에서 전설의 굿즈로 입소문이 나며 없어서 못 파는 품귀 현상을 빚고 있다. 마을 벽화 역시 파레오의 트윈테일처럼 알록달록한 핑크와 파스텔 톤으로 칠해져 있어 마을 전체가 거대한 팝아트 작품처럼 보인다.</p>
+
+        <h3 id="s-11-3">11.3. 록구리(祿九里) & 잠금리(蠶琴里): 더블 LOCK 성지</h3>
+        <p>파레오의 절친인 록(LOCK, 아사히 롯카)과 엮이는 마을도 있다. <strong>록구리</strong>는 롯카의 이름과 발음이 비슷하고, <strong>잠금리</strong>는 한글 '잠금'을 영어로 번역하면 'LOCK'이 된다는 이유로 <strong>'더블 LOCK 성지'</strong>로 묶였다. 두 마을은 아예 자매결연을 맺고 '락 페스티벌'을 공동 개최하고 있으며, 부시로드 측에서 음향 장비를 지원해 줬다는 도시전설 같은 실화가 존재한다. 잠금리 마을회관에는 록이 쓰는 스트랜드버그 기타 모형이 모셔져 있다.</p>
+
+        <h3 id="s-11-4">11.4. 1호선 탄성지선 서목역과 승남해수욕장역</h3>
+        <p>서목읍의 관문인 <span class="subway-badge" style="background-color:var(--line-1)">1</span> <strong>서목역</strong>은 옆 동네 '야진읍'과 합쳐져 <strong>'니시키노 마키(西木野)'</strong> 성지로도 불리며 러브라이브 팬들과 뱅드림 팬들이 기묘하게 공존하는 혼종의 역이다. 역무원들은 <em>"니시키노 종합병원 가나요?"</em>라는 장난 전화에 <em>"병원은 없고 토마토 농장 가는 버스만 있습니다"</em>라고 능숙하게 받아치는 경지에 이르렀다.</p>
+        <p>종점인 <strong>승남해수욕장역</strong>은 승강장에 내리자마자 바다 냄새가 나는 낭만적인 역으로, 마을버스 서목01, 02번 기사님들은 <em>"파래리(파레오) 가려면 어디서 내려요?"</em>라고 묻는 덕후들에게 츄츄 님의 영지로 가는 길을 친절히 안내해주신다.</p>
+
+        <h3 id="s-11-5">11.5. 음일리(陰一里) & 일회리(一回里): 섀도우 댄스(카게이로마이) 마을</h3>
+        <p>인구는 적지만 <strong>음일리</strong>와 <strong>일회리</strong>의 앞 글자를 따면 '음일(陰一)'이 되는데, 이것이 MyGO!!!!!의 수록곡 <strong>&lt;음-실루엣 댄스(影色舞, 카게이로마이)&gt;</strong>와 한자 형태가 비슷하다는 다소 억지스러운(?) 밈으로 성지화되었다. 팬들은 일회리 마을회관에 들러 <em>"한 번만(一回) 더 들어보세요"</em>라며 카게이로마이를 포교하고 간다고 한다.</p>
+
+        <!-- 각주 데이터 전체 복원 -->
+        <div id="fn-1" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[1] 유일하게 도쿄도가 아닌 치바현에 거주하고 학교를 다닌다. 그것도 도쿄에 근접한 지역이 아니라, 도쿄에서 전철로 몇 시간을 가야 하는 카모가와시. 지도를 보면 남쪽 끝자락에 있어서 나리타 국제공항을 기준으로도 대중교통만 이용 시 3시간 이상 소요되는 지역이다.</div>
+        <div id="fn-2" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[2] 동갑내기인 츄츄는 11학년으로 월반을 하였기 때문에 학년은 카나메 라나와 함께 뱅드림의 모든 밴드 멤버 중 가장 낮다.</div>
+        <div id="fn-3" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[3] 유일하게 반이 숫자로 되어 있다.</div>
+        <div id="fn-4" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[4] THE THIRD(仮) 1st Live의 공연 날짜이기도 하다.</div>
+        <div id="fn-5" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[5] 모든 뱅드림 멤버들 중 출생이 가장 느린 최연소 멤버.</div>
+        <div id="fn-6" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[6] 애니메이션 한정으로는 2006년생</div>
+        <div id="fn-7" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[7] 동갑인 츄츄보다 22cm 더 크며, 최연소 캐릭터임에도 키보디스트 중 두 번째로, 키보드조 중에서는 세 번째로 키가 크다.</div>
+        <div id="fn-8" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[8] 이전에 161cm로 야마토 마야, 히카와 사요와 키가 같았으나, 걸파 합류 발표 이후로 키가 162cm로 공개되면서 1cm 커졌다.</div>
+        <div id="fn-9" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[9] 미사키 역시 고수를 싫어한다.</div>
+        <div id="fn-10" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[10] 아야의 이미지 컬러와 매우 비슷한데, 이쪽이 약간 더 연한 색상이다.</div>
+        <div id="fn-11" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[11] 애니메이션 2기 한정</div>
+        <div id="fn-13" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[13] 현실 밴드 RAISE A SUILEN이 밝은 곡의 노래를 부르게 되면 쿠라치 레오가 보컬을 맡기도 한다.</div>
+        <div id="fn-14" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[14] 인기가 높기로 유명한 사요와 히나, 심지어 그 마시로 조차도 재고가 소진되기까지에는 시간이 조금 걸렸다.</div>
+        <div id="fn-15" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[15] 특히 지뢰계 층에서 절대다수 인기를 차지하고 있다. 타키, 무츠미 등과 함께 지뢰계 층에서는 다섯 손가락 안에 드는 인기를 자랑할 정도.</div>
+        <div id="fn-16" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[16] 평소에는 하늘색 + 분홍색의 조합이며, RAS의 라이브에서는 블랙과 화이트의 조합이다.</div>
+        <div id="fn-17" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[17] 에이리어 아이템 진열 순서에 파레오의 키보드가 베이스 담당 멤버 악기들과 같이 있었기 때문이다. 필름 라이브 2 특전의 경우는 논외로, 악기대로 모은 것이 아닌, 밴드 멤버 소개 순서로 정렬해서 마스킹이 다른 밴드의 베이스 멤버들과 나오고 파레오가 드럼 멤버들과 같이 나왔다.</div>
+        <div id="fn-18" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[18] 전편은 일곱 밴드의 키보드조 멤버를 1명씩, 후편은 토우코, 나나미, 롯카 3인과 파레오와 츄츄 중 전편에 픽업하지 않은 캐릭터가 등장할 예정이었다.</div>
+        <div id="fn-19" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[19] 다만, 보통은 츄츄와 파레오 둘 다 키보드조 멤버로 인정하는 경우가 많지만 Backstage Pass처럼 꼭 1명만을 골라야 하는 상황이라면 파레오가 선정되는 것으로 보인다.</div>
+        <div id="fn-20" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[20] 파스파레의 팬이지만, 파스파레와 나온 이벤트가 겨우 1개밖에 없다.</div>
+        <div id="fn-21" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[21] 타에도 타에 생일 한정 대사는 없다. 다른 라스 멤버는 전부 갖고 있는데도 말이다.</div>
+        <div id="fn-22" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[22] 츄츄의 2성 카드 <샤이니 스텝> 카드 에피소드에서는 츄츄에게 친구가 늘어나면 자신이 육포를 준비할 필요가 없어진다면서 살짝 상심하는 얀데레스러운 모습을 보이기도 한다.</div>
+        <div id="fn-23" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[23] 물론 츄츄도 마음 속으로는 걱정하고 있었지만 멤버들 앞에서 직접 말하지는 않았다. 레이와 츄츄 둘만 남았을 때 레이가 츄츄에게 이대로라면 라스는 끝이라며 그래도 좋냐는 말에 싫다고 한 정도이다.</div>
+        <div id="fn-24" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[24] 해당 시점에서 파레오가 중3이라는 사실은 현재 공식적으로는 RAS 멤버들과 포피파, 파스파레 멤버들만 알고 있다. 다만, 본인이 숨겼다기보단 딱히 공개적으로 드러내지 않아서 다른 멤버들이 모르고 있었다는 정도에 가깝다. 비슷한 사례로 라나 또한 마이고 애니메이션 6화 시점까지는 다른 멤버들도 라나가 몇 살인지를 모르고 있었던 눈치였다.</div>
+        <div id="fn-25" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[25] 순한 인상인 다른 캐릭터들과 비교해봐도 그냥 동그란 게 아니라 땡그란 모양이다.</div>
+        <div id="fn-26" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[26] 다만 머리색을 바꿀때 렌즈를 착용하는 데다 헤어 스타일도 헤어 컬러를 바꿀 때 같이 바뀔 때도 많기 때문에 고정된 스타일이 아니긴 하지만 걸파와 애니 통상 모습에서는 트윈 빔에 옆머리가 항상 있다.</div>
+        <div id="fn-27" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[27] 한국에는 160대 초반인 여중생들이 많지만 일본은 우리나라보다 평균키가 작기 때문에 이 정도 키인 아이들이 많지 않다. 또 우리나라에서도 여중생이 160cm가 넘으면 평균 이상인 키이다.</div>
+        <div id="fn-28" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[28] 다른 1명은 6.5주년에 합류한 MyGO!!!!!의 카나메 라나. 10밴드로 확장해도 전원이 고등부 1학년으로 밝혀진 Ave Mujica는 물론, 무겐다이 뮤타입 또한 설정상 전원 고등학생이여서 유이한 중학생임은 변함없다.</div>
+        <div id="fn-29" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[29] 파레오와 라나가 빠른년생이기에 츄츄보다는 1살 어리다.</div>
+        <div id="fn-30" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[30] 츄츄의 경우도 혹평은 적은 편이나, 크게 눈에 띄지 않아서 무난한 정도이다.</div>
+        <div id="fn-31" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[31] 분홍색은 파레오 본인의 퍼스널 컬러, 하늘색은 츄츄의 퍼스널 컬러이다.</div>
+        <div id="fn-32" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[32] 물론 가발이라고 쳐도 종류가 너무 많은 게 이상하다는 의견이 많다. 거기다 가발이면 머리색이 바뀔 때 눈썹 색까지 바뀌는 것도 설명이 불가능하다. 아이브로우 펜슬이나 헤어컬러에 맞는 섀도우로 한 메이크업이 존재하긴 하지만 이만큼 뚜렷하고 다양한 색이 나오기는 어렵다.</div>
+        <div id="fn-33" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[33] 정황상 이 부분까진 세세하게 설정을 짜두지 않았을 가능성이 높다. 캐릭터성을 위해 현실성을 포기하고 머리색 바꾸는 설정을 넣은 것.</div>
+        <div id="fn-34" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[34] 하지만 필름라이브 2에서는 본인의 머리를 파스파레 색으로 염색한다고 하였다.</div>
+        <div id="fn-35" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[35] 실제로 RAS 멤버 5명 중에서 가정 출신이나 과거가 가장 미스테리한 편이었으며, 3기 엔딩에서는 RAS 멤버들이 다른 밴드의 멤버들과 사이좋게 어울리는 모습을 보여줄 때 혼자서 교복 차림으로 학교의 옥상에 서있는 모습이 나온 바 있다. 코믹스 RAiSe! The story of my music에서 등장한 모습을 보면 염색을 하지 않은 검은색 머리의 파레오가 보이는데, 일코 상태이거나 츄츄에게 발견되기 전의 과거 모습으로 추정되었다.</div>
+        <div id="fn-36" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[36] 특히 마스킹과의 관계가 유독 이런 편이다. 귀여운 것을 좋아한다 정도를 제외하면 서로 어울릴 만한 요소가 없기 때문.</div>
+        <div id="fn-37" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[37] 게임 에어리어 대화에서는 이브가 최애라고 말한것으로 보아 이브를 가장좋아하는 듯</div>
+        <div id="fn-38" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[38] 사실 파스파레 멤버들이 모두 파레오를 알고 있긴 하다.</div>
+        <div id="fn-39" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[39] 츄츄가 이 영상을 보고 파레오를 스카웃하게 된 계기가 된다.</div>
+        <div id="fn-40" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[40] 특히 타에의 경우에는 타에가 RAS 멤버들 중에서 가장 접점이 적은 멤버가 파레오이기도 하다.</div>
+        <div id="fn-41" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[41] 여담으로 파레오의 생일을 축하해주는 타 밴드 멤버 중 파스파레가 아닌 멤버 중에서는 리미를 제외하면 나나미가 최초이다.</div>
+        <div id="fn-42" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[42] 타 밴드와의 접점마저도 대타 기타리스트로 왔던 타에나 최애 밴드인 파스파레, 나나미를 제외하면 아예 없다고 봐도 무방하다.</div>
+        <div id="fn-43" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[43] 그래도 이 문제점은 나나미와의 접점이 생기면서 이를 필두로 차차 개선될 가능성이 생겼다.</div>
+        <div id="fn-44" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[44] 이 경우 하네오카 여학원으로 진학할 가능성이 높은데 하나사키가와, 하네오카, 츠키노모리 중 하네오카만 유일하게 장학생 제도가 있고, 동갑내기 멤버 중 카나메 라나가 하나사키가와 중등부로 진학 중인데 중고일관으로 고등부 또한 하나사키가와로 진학할 가능성이 가장 높기 때문에 학교를 겹치게 다닐 이유가 없다면 하네오카 여학원이 가장 적절하다.</div>
+        <div id="fn-45" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[45] 치사토, 마야에게는 ~상이라고 부른다.</div>
+        <div id="fn-46" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[46] 참고로 이 때 츄츄는 자판기에서 밀크티를 뽑아 마시려다 손이 닿지 않고 현금이 없어서 음료수 하나 못 뽑다가 유키나와 마주쳐 유키나에게 블랙커피를 얻어먹고 있었다.</div>
+        <div id="fn-47" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[47] 이와 다르게 마스킹은 이 실력이 아니라고 생각해서 부정적인 반응을 보였고 츄츄는 롯카에게 폭언을 내뱉으면서 불합격시킨다.</div>
+        <div id="fn-48" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[48] 롯카는 전화 당시 파스파레의 참가 여부를 몰랐고 실제로도 파스파레는 일 때문에 불참했다. 우연히 숙소가 같아서 현장에서 합류했다.</div>
+        <div id="fn-49" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[49] 이 기간 동안 레이야, 롯카, 마스킹이 타 밴드 멤버들과 온천여행을 다녀오거나 포피파의 라이브를 찾아 하나조노 타에의 생일을 함께 축하하는 등 친목을 쌓고 있었고, 츄츄는 이를 못마땅하게 여기고 있었다.</div>
+        <div id="fn-50" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[50] 유명한 RAS의 인기를 이용해 이미 거점으로 삼고 있었던 dub 뿐만 아니라 다른 라이브 하우스에서도 공연을 해서 경쟁 밴드들을 사퇴시키려는 매너에 반하는 계획을 세운데다가 이를 위해 멤버들의 일정과 사생활까지 모두 통제하려고 들었다.</div>
+        <div id="fn-51" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[51] 파레오가 라이브에 없었음에도 팬들은 그녀의 부재를 조금 아쉬워 할 뿐 한결같이 좋은 라이브였다는 반응을 보이고 이에 파레오는 자신이 없어도 RAS는 잘 해나간다며 씁쓸해하는 모습을 보인다. 하지만 한편으로는 하나조노 타에가 "그냥 날뛰는 걸로 밖에 안보인다"고 평한걸 보면 일반 관객들이 아닌 다른 밴드 멤버들에게는 분명 평소보다 못한 라이브였다고 느껴진 듯 하다.</div>
+        <div id="fn-52" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[52] 마스키와 롯카가 츄츄에게 파레오가 사는 곳을 물어보자 츄츄는 카모가와(鴨川)라고 대답하고 이에 그 둘은 바이크를 타고 카모가와로 이동한다. 카모가와 시는 도쿄 근방에 있는 치바현에서도 제일 남족 끄트머리에 있는 바다를 접한 곳이며, 마스키와 롯카가 처음으로 주변 학생들에게 파레오 어딨냐고 물어보는 곳은 배경으로 보건대 아와카모가와역이다. 여기서 시종착하는 JR 동일본 와카시오를 타고 끝까지 가면 거리상으로는 도쿄까지 132.5㎞에 시간으로는 도쿄까지 2시간은 훨씬 더 걸린다. 파레오는 매번 그렇게 집과 스튜디오 사이를 왕래했던 것이다. 뱅드림 갤러리의 한 갤러가 파레오의 통근거리를 실제로 계산해 본 글을 올렸다.</div>
+        <div id="fn-53" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[53] 사실 파레오의 집이 도쿄에서 굉장히 멀다는 떡밥은 8화에서 뿌려졌었는데, 롯카가 함께 온천 여행을 가자고 전화로 권했을 때, 파레오가 "상점가까지 가는데 3시간 반은 걸린다."고 했다. 현실적으로 학교와 집 사이의 거리가 극단적으로 멀 가능성은 낮고, 멤버들의 학교와 상점가 간의 거리가 멀지 않다고 가정해보면 3시간 반은 이상할 만큼 오래 걸리는 시간이다. 도쿄 내에 있는 츄츄의 스튜디오에서 출발한다고 가정해봐도, 설령 스튜디오와 학교가 도쿄의 끝과 끝에 위치한다고 해도 3시간 반까지 걸릴 일은 아니다.</div>
+        <div id="fn-54" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[54] 132.5㎞가 어떤 거리냐 하면 KTX 기준 광명-대전 구간 거리가 이보다 조금 더 긴 137.7㎞(기존선 구간 포함)인데 해당 구간은 중간 정차역이 없는 편성을 타도 35~40분은 잡고 가야 하는 구간이다. 고속철도로도 이 정도 시간이 걸리는데, 하물며 전철+버스+도보로 이동하는데다 직선 거리도 아니라는 점을 감안하면 결코 작은 거리가 아닌 셈.</div>
+        <div id="fn-55" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[55] 키가 크고 체력도 좋아서 학교 배구팀의 에이스로도 활약한듯. 그 증거로 에이스들에게 부여되는 등번호 12번을 달고 뛴다.</div>
+        <div id="fn-56" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[56] 앞서 첫 등장도 2기 5화때 파스파레의 첫 공연 때 관객으로 등장한 것이었고, 3기 6화에서 츄츄네 집에 쳐들어간 히나가 파레오를 보고 레오나짱이라고 얼굴과 이름을 다 알아볼 정도. 파레오는 감격해서 눈물까지 살짝 날 정도. 그리고 히카와 자매와 츄츄가 자리 잡는 동안 순식간에 머리를 히나 컬러로 바꾸었다(...). 그정도로 열성적이었던 것.</div>
+        <div id="fn-57" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[57] 하반신을 두르는 랩 스커트 형태의 수영복을 의미한다. 감정이나 욕망을 덮어버리고 있는 '뉴바라 레오나'에겐 그야말로 적절한 작명.</div>
+        <div id="fn-58" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[58] 돌아가는 길에 전차를 타고가는 츄츄는 "(파레오는)이렇게 멀리서 다니고 있었구나"라고 말한다. 위 각주가 진짜였던 것. 이전까지 키보디스트가 아닌 RAS의 멤버로써는 파레오에 대해 크게 관심이 없었던 듯.</div>
+        <div id="fn-59" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[59] 사실 마조히즘이 의심되는 장면은 이게 처음이 아닌 게, 2기 12화에서는 츄츄가 타에에게 스카웃 건을 완전히 거절하자 빡쳐서 포피파랑 헤어진 후 근처에 있던 고깔을 발로 차려고 했는데 파레오가 츄츄를 말리는 장면 역시 만만치 않게 파레오의 M기질이 의심되는 장면이다. 일반적이라면 당연히 츄츄를 말리는 게 맞는데, 문제는 말리는 대사가 "찰 거면 차라리 저를 차세요". 이 때 역시도 츄츄는 매우 당황하여 파레오에게 "나를 대체 뭐라고 생각하는 거야?!"라고 따진다.</div>
+        <div id="fn-60" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[60] 당시에는 흑백 컬러였다.</div>
+        <div id="fn-61" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[61] 레오나 시점의 1인칭</div>
+        <div id="fn-62" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[62] 마스키가 처음 오디션에 합격했을 때 잠깐 마스키 님(ますき様)이라고 부르기도 했었다.</div>
+        <div id="fn-63" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[63] 츄츄 님(チュチュ様)보다는 덜 사용된다.</div>
+        <div id="fn-65" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[65] 현재까지는 유일하게 파레오를 본명으로 불렀었다. 파스파레의 행사에서 만났던 것을 기억하고 파레오를 본명으로 불렀으며, 파레오는 자신을 기억해준 것에 감동하지만 '지금은 파레오라고 합니다' 라며 정정한다.</div>
+        <div id="fn-66" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">[66] 치사토의 이름에 聖(성)이 들어간걸 활용한 대사</div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-500 dark:text-gray-400 text-xs pb-10 leading-relaxed dark:border-gray-700">
+            <div class="font-bold text-lg mb-3">HyobinWiki</div>
+            <div class="mb-4">
+                <span class="font-bold">크리에이티브 커먼즈 라이선스</span><br>
+                이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다.<br>
+                기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.
+            </div>
+            <div>
+                효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+                효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </div>
+        </footer>
+    </div>
+
+    <!-- 네비게이션 및 위키 코어 JS 불러오기 -->
+    <script src="assets/bangdream-nav.js"></script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/jana.js"></script>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+        
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
+        };
+        
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                location.href = this.value.trim() + ".html";
+            }
+        });
+
+        // 각주 툴팁 기능 구현
+        document.querySelectorAll('.wiki-fn').forEach(el => {
+            el.addEventListener('mouseover', function(e) {
+                const noteId = this.getAttribute('data-note');
+                const noteEl = document.getElementById(noteId);
+                if (noteEl) {
+                    const tooltip = document.getElementById('wiki-tooltip-container');
+                    tooltip.innerHTML = noteEl.innerHTML;
+                    
+                    tooltip.style.display = 'block';
+                    
+                    const rect = this.getBoundingClientRect();
+                    
+                    let left = e.pageX + 10;
+                    let top = e.pageY + 10;
+
+                    if (left + 320 > window.innerWidth) {
+                        left = window.innerWidth - 330;
+                    }
+
+                    tooltip.style.left = left + 'px';
+                    tooltip.style.top = top + 'px';
+                }
+            });
+            el.addEventListener('mouseout', function() {
+                document.getElementById('wiki-tooltip-container').style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

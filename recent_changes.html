@@ -1,0 +1,263 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>최근 변경 내역 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #7777AA;
+            --wiki-table-header-text: #ffffff;
+            --wiki-box-bg: #ffffff;
+        }
+
+        /* 다크 모드 변수 (메인 페이지와 동일) */
+        body.dark-mode {
+            --wiki-main: #8888CC;
+            --wiki-border: #444;
+            --wiki-bg: #1f2023;
+            --wiki-text: #ddd;
+            --wiki-gray-bg: #2a2d30;
+            --wiki-link: #6699ff;
+            --wiki-table-header: #444477;
+            --wiki-table-header-text: #eee;
+            --wiki-box-bg: #2a2d30;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; transition: background-color 0.3s, color 0.3s; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 헤더 스타일 */
+        .page-title { font-size: 2rem !important; font-weight: 700; color: var(--wiki-text); border-bottom: 2px solid var(--wiki-border); margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 최근 변경 테이블 스타일 */
+        .rc-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 10px; }
+        .rc-table th, .rc-table td { border: 1px solid var(--wiki-border); padding: 10px; text-align: left; }
+        .rc-table th { background-color: var(--wiki-gray-bg); color: var(--wiki-text); font-weight: bold; text-align: center; }
+        .rc-table tr:hover { background-color: rgba(119, 119, 170, 0.05); }
+        
+        /* 변경 크기 색상 */
+        .diff-pos { color: #008800; font-weight: bold; font-size: 0.85rem; }
+        .diff-neg { color: #cc0000; font-weight: bold; font-size: 0.85rem; }
+        .diff-neu { color: #888; font-size: 0.85rem; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* 상단 네비게이션 스타일 (메인과 통일) */
+        .nav-logo-box {
+            width: 30px; height: 30px; background: white; color: var(--wiki-main);
+            border-radius: 4px; font-weight: 900; display: flex; align-items: center;
+            justify-content: center; font-size: 1.2rem;
+        }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body id="body">
+
+    <div id="wiki-msg-box"></div>
+
+    <!-- 상단 네비게이션 -->
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <div class="nav-logo-box">H</div>
+            <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white">HyobinWiki</a>
+            <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+                <a href="index.html" class="hover:underline font-bold text-white no-underline">대문</a>
+                <a href="recent_changes.html" class="hover:underline text-white no-underline font-bold">최근 변경</a>
+                <a href="recent_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
+            </div>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2">
+                <input type="text" id="headerSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" onkeypress="if(event.keyCode==13) { location.href = this.value + '.html'; }">
+                <button class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <h1 class="page-title">최근 변경 내역</h1>
+        
+        <div class="mb-4 text-sm text-right">
+            <button class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 text-black" onclick="location.reload()">새로고침</button>
+        </div>
+
+        <table class="rc-table shadow-sm">
+            <colgroup>
+                <col style="width: 40%;">
+                <col style="width: 20%;">
+                <col style="width: 25%;">
+                <col style="width: 15%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>문서명</th>
+                    <th>수정자</th>
+                    <th>수정 시간</th>
+                    <th>크기</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 최근 변경 목록 -->
+                <tr>
+                    <td><a href="윤대환.html" class="wiki-link">윤대환</a> <span class="text-xs bg-red-100 text-red-600 px-1 rounded ml-1">주의</span></td>
+                    <td>121.168.***.***</td>
+                    <td>방금 전</td>
+                    <td class="diff-neg">-1,240</td>
+                </tr>
+                <tr>
+                    <td><a href="효빈국제공항.html" class="wiki-link">효빈국제공항</a></td>
+                    <td>AirportLover</td>
+                    <td>1분 전</td>
+                    <td class="diff-pos">+528</td>
+                </tr>
+                <tr>
+                    <td><a href="4호선.html" class="wiki-link">효빈도시철도 4호선</a></td>
+                    <td>MetroFan</td>
+                    <td>2분 전</td>
+                    <td class="diff-pos">+32</td>
+                </tr>
+                <tr>
+                    <td><a href="박현만.html" class="wiki-link">박현만</a></td>
+                    <td>211.33.***.***</td>
+                    <td>4분 전</td>
+                    <td class="diff-neu">0</td>
+                </tr>
+                <tr>
+                    <td><a href="안천구.html" class="wiki-link">안천구</a></td>
+                    <td>HBCitybot</td>
+                    <td>5분 전</td>
+                    <td class="diff-pos">+112</td>
+                </tr>
+                <tr>
+                    <td><a href="효빈교통공사.html" class="wiki-link">효빈교통공사</a></td>
+                    <td>Worker01</td>
+                    <td>8분 전</td>
+                    <td class="diff-pos">+845</td>
+                </tr>
+                <tr>
+                    <td><a href="고송동.html" class="wiki-link">고송동</a></td>
+                    <td>GosongLife</td>
+                    <td>10분 전</td>
+                    <td class="diff-pos">+45</td>
+                </tr>
+                <tr>
+                    <td><a href="2호선.html" class="wiki-link">효빈도시철도 2호선</a></td>
+                    <td>MetroFan</td>
+                    <td>12분 전</td>
+                    <td class="diff-pos">+156</td>
+                </tr>
+                <tr>
+                    <td><a href="중구.html" class="wiki-link">중구(효빈광역시)</a></td>
+                    <td>Admin03</td>
+                    <td>15분 전</td>
+                    <td class="diff-pos">+22</td>
+                </tr>
+                <tr>
+                    <td><a href="1호선.html" class="wiki-link">효빈도시철도 1호선</a></td>
+                    <td>MetroFan</td>
+                    <td>18분 전</td>
+                    <td class="diff-neg">-56</td>
+                </tr>
+                <tr>
+                    <td><a href="청엽구.html" class="wiki-link">청엽구</a></td>
+                    <td>GreenLeaf</td>
+                    <td>22분 전</td>
+                    <td class="diff-pos">+330</td>
+                </tr>
+                <tr>
+                    <td><a href="오내동.html" class="wiki-link">오내동</a></td>
+                    <td>118.235.***.***</td>
+                    <td>25분 전</td>
+                    <td class="diff-pos">+67</td>
+                </tr>
+                <tr>
+                    <td><a href="창전구.html" class="wiki-link">창전구</a></td>
+                    <td>ChangJeon</td>
+                    <td>31분 전</td>
+                    <td class="diff-neu">0</td>
+                </tr>
+                <tr>
+                    <td><a href="중수동.html" class="wiki-link">중수동</a></td>
+                    <td>WaterCenter</td>
+                    <td>35분 전</td>
+                    <td class="diff-pos">+120</td>
+                </tr>
+                <tr>
+                    <td><a href="산고동.html" class="wiki-link">산고동</a></td>
+                    <td>MountainGo</td>
+                    <td>40분 전</td>
+                    <td class="diff-pos">+89</td>
+                </tr>
+                <tr>
+                    <td><a href="북구.html" class="wiki-link">북구(효빈광역시)</a></td>
+                    <td>NorthStar</td>
+                    <td>45분 전</td>
+                    <td class="diff-pos">+210</td>
+                </tr>
+                <tr>
+                    <td><a href="서구.html" class="wiki-link">서구(효빈광역시)</a></td>
+                    <td>WestSide</td>
+                    <td>48분 전</td>
+                    <td class="diff-neg">-12</td>
+                </tr>
+                <tr>
+                    <td><a href="동구.html" class="wiki-link">동구(효빈광역시)</a></td>
+                    <td>EastWind</td>
+                    <td>55분 전</td>
+                    <td class="diff-pos">+405</td>
+                </tr>
+                <tr>
+                    <td><a href="남구.html" class="wiki-link">남구(효빈광역시)</a></td>
+                    <td>SouthGate</td>
+                    <td>1시간 전</td>
+                    <td class="diff-pos">+98</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="mt-8 text-center">
+            <button class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                더 보기
+            </button>
+        </div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-400 text-xs pb-10">
+            <p class="mb-2">모든 문서는 크리에이티브 커먼즈 저작자표시-동일조건변경허락 4.0에 따라 사용할 수 있습니다.</p>
+            본 문서의 저작권은 효빈위키에 있습니다.
+        </footer>
+    </div>
+
+    <script>
+        // 초기 로드 시 저장된 설정 적용 (다크모드 등)
+        window.onload = function() {
+            const isDark = localStorage.getItem('hb_dark_mode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+            }
+            const fontSize = localStorage.getItem('hb_font_size');
+            if (fontSize) {
+                document.body.style.fontSize = fontSize + '%';
+            }
+        }
+    </script>
+
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

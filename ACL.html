@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACL 관리 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root {
+            --wiki-main: #7777AA;
+            --wiki-border: #ccc;
+            --wiki-bg: #ffffff;
+            --wiki-text: #373a3c;
+            --wiki-gray-bg: #f9f9f9;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f4f5f7; color: var(--wiki-text); line-height: 1.6; margin: 0; }
+        
+        .wiki-container { max-width: 1000px; margin: 30px auto; background: white; padding: 40px; border: 1px solid var(--wiki-border); box-shadow: 0 4px 6px rgba(0,0,0,0.05); min-height: 80vh; }
+        
+        .wiki-title { font-size: 2rem; font-weight: 900; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--wiki-main); color: var(--wiki-text); }
+        .wiki-title .sub { font-size: 1.2rem; color: #666; font-weight: normal; }
+
+        /* 경고 및 정보 박스 */
+        .alert-box { border: 1px solid #ffeeba; background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 4px; margin-bottom: 25px; font-size: 0.9rem; }
+        .info-box { border: 1px solid #b8daff; background-color: #cce5ff; color: #004085; padding: 15px; border-radius: 4px; margin-bottom: 25px; font-size: 0.9rem; }
+
+        /* ACL 테이블 스타일 */
+        table.acl-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-bottom: 30px; border: 1px solid var(--wiki-border); }
+        table.acl-table th, table.acl-table td { border: 1px solid var(--wiki-border); padding: 10px; text-align: left; }
+        table.acl-table th { background-color: var(--wiki-gray-bg); font-weight: bold; color: var(--wiki-text); }
+        table.acl-table tr:hover { background-color: #fdfdfd; }
+        
+        /* 뱃지 */
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; color: white; }
+        .badge-action { background-color: #17a2b8; }
+        .badge-allow { background-color: #28a745; }
+        .badge-deny { background-color: #dc3545; }
+        .badge-gotourl { background-color: #6c757d; }
+
+        /* 추가 폼 영역 */
+        .acl-form { background: var(--wiki-gray-bg); border: 1px solid var(--wiki-border); padding: 20px; border-radius: 4px; }
+        .acl-form h3 { font-size: 1.2rem; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; }
+        .form-row { margin-bottom: 15px; display: flex; align-items: center; gap: 15px; }
+        .form-row label { font-weight: bold; width: 100px; }
+        .form-row select, .form-row input[type="text"] { flex: 1; padding: 8px; border: 1px solid var(--wiki-border); border-radius: 4px; font-size: 0.9rem; max-width: 400px; }
+        .form-row input[type="radio"] { margin-right: 5px; }
+        .submit-btn { background-color: var(--wiki-main); color: white; border: none; padding: 10px 20px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
+        .submit-btn:hover { background-color: #555588; }
+
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+    <nav class="bg-[#7777AA] text-white p-3 shadow-md sticky top-0 z-50">
+        <div class="max-w-[1300px] mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="nav-logo-box">H</div>
+                <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white hover:opacity-90 transition">HyobinWiki</a>
+                <div class="hidden md:flex gap-4 text-sm opacity-90 ml-6">
+                    <a href="index.html" class="hover:underline text-white no-underline">대문</a>
+                    <a href="최근_변경.html" class="hover:underline text-white no-underline">최근 변경</a>
+                    <a href="최근_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="goToDoc()" class="bg-[#555588] hover:bg-[#444477] text-white px-4 py-1.5 rounded text-sm font-bold transition flex items-center gap-2 shadow-inner border-none cursor-pointer">
+                    <i class="fa-solid fa-file-lines"></i> 문서로 돌아가기
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container relative">
+        <h1 class="wiki-title">
+            <span id="docTitleMain" class="text-[#7777AA]">...</span> <span class="sub">(ACL)</span>
+        </h1>
+
+        <div class="info-box">
+            <i class="fa-solid fa-circle-info"></i> <strong>ACL(Access Control List)</strong>은 문서에 대한 접근 권한을 관리하는 기능입니다. 
+            상단에 있는 규칙일수록 우선순위가 높습니다. (위에서부터 아래로 적용)
+        </div>
+
+        <div class="alert-box" id="aclAlertArea" style="display: none;">
+            <!-- 권한 경고 메시지가 JS로 삽입됩니다 -->
+        </div>
+
+        <table class="acl-table">
+            <colgroup>
+                <col width="8%">
+                <col width="15%">
+                <col width="20%">
+                <col width="15%">
+                <col width="22%">
+                <col width="20%">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>조건 (Condition)</th>
+                    <th>동작 (Action)</th>
+                    <th>허용 여부</th>
+                    <th>만료일 (Expiration)</th>
+                    <th>관리</th>
+                </tr>
+            </thead>
+            <tbody id="aclTableBody">
+                <!-- JS 동적 렌더링 -->
+            </tbody>
+        </table>
+
+        <div class="acl-form">
+            <h3><i class="fa-solid fa-plus"></i> 새 규칙 추가</h3>
+            <div class="form-row">
+                <label>조건 (Condition)</label>
+                <select id="aclCondition">
+                    <option value="Any">Any (모든 사용자)</option>
+                    <option value="Member">Member (가입된 사용자)</option>
+                    <option value="Admin">Admin (관리자)</option>
+                    <option value="Match">Match (특정 IP/유저)</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label>동작 (Action)</label>
+                <select id="aclAction">
+                    <option value="read">read (읽기)</option>
+                    <option value="edit">edit (편집)</option>
+                    <option value="move">move (이동)</option>
+                    <option value="delete">delete (삭제)</option>
+                    <option value="discuss">discuss (토론)</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label>권한</label>
+                <div>
+                    <label style="font-weight: normal; margin-right: 15px;"><input type="radio" name="aclAllow" value="Allow" checked> Allow (허용)</label>
+                    <label style="font-weight: normal; margin-right: 15px;"><input type="radio" name="aclAllow" value="Deny"> Deny (거부)</label>
+                    <label style="font-weight: normal;"><input type="radio" name="aclAllow" value="Goto"> Goto (다른 문서로 넘김)</label>
+                </div>
+            </div>
+            <div class="form-row">
+                <label>만료 기한</label>
+                <select id="aclExpire">
+                    <option value="0">영구 (Permanent)</option>
+                    <option value="86400">1일</option>
+                    <option value="604800">1주일</option>
+                    <option value="2592000">1개월</option>
+                </select>
+            </div>
+            <div class="form-row" style="margin-top: 20px;">
+                <label></label>
+                <button class="submit-btn" onclick="alert('권한이 부족하여 ACL 규칙을 추가할 수 없습니다.');">추가하기</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 1. 역추적 앵커 시스템 
+        const urlParams = new URLSearchParams(window.location.search);
+        let docName = urlParams.get("doc"); 
+        
+        if (!docName && window.location.hash) {
+            docName = window.location.hash.substring(1); 
+        }
+        
+        if (!docName && document.referrer) {
+            try {
+                let refUrl = new URL(document.referrer);
+                let pathName = refUrl.pathname.split('/').pop(); 
+                if (pathName && pathName.endsWith('.html') && !pathName.includes('ACL') && !pathName.includes('index')) {
+                    docName = pathName.replace('.html', ''); 
+                }
+            } catch (e) {}
+        }
+        
+        if (docName) {
+            docName = decodeURIComponent(docName);
+        } else {
+            docName = "효빈광역시"; 
+        }
+        
+        document.title = `${docName} (ACL) - 효빈위키`;
+        document.getElementById("docTitleMain").innerText = docName;
+
+        window.goToDoc = function() {
+            location.href = `${docName.replace(/ /g, "_")}.html`;
+        };
+
+        // 2. 관리자 보호 문서(보호 템플릿) 설정
+        const protectedDocs = ["윤대환", "박효빈", "효빈광역시", "1호선", "Admin_01"];
+        
+        // 3. ACL 데이터 동적 생성
+        function generateAclData() {
+            const tbody = document.getElementById('aclTableBody');
+            const alertArea = document.getElementById('aclAlertArea');
+            let rows = '';
+            let ruleCount = 1;
+
+            // 3-1. 공통 기본 권한 (모든 문서는 읽기, 토론은 누구나 가능)
+            const defaultRules = [
+                { cond: "Any", action: "read", allow: "Allow", expire: "0" },
+                { cond: "Any", action: "discuss", allow: "Allow", expire: "0" }
+            ];
+
+            // 3-2. 보호 문서 처리 (윤대환, 박효빈 등 반달 잦은 문서)
+            if (protectedDocs.includes(docName)) {
+                alertArea.style.display = "block";
+                alertArea.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> 이 문서는 잦은 반달리즘 및 훼손으로 인해 <strong>관리자(Admin)</strong>만 편집 및 삭제가 가능하도록 보호 조치되었습니다.`;
+
+                // 보호 문서 규칙 (Any 거부, Admin 허용)
+                const protectRules = [
+                    { cond: "Any", action: "edit", allow: "Deny", expire: "0" },
+                    { cond: "Any", action: "move", allow: "Deny", expire: "0" },
+                    { cond: "Any", action: "delete", allow: "Deny", expire: "0" },
+                    { cond: "Admin", action: "edit", allow: "Allow", expire: "0" },
+                    { cond: "Admin", action: "move", allow: "Allow", expire: "0" },
+                    { cond: "Admin", action: "delete", allow: "Allow", expire: "0" }
+                ];
+                
+                renderRows(protectRules);
+            } else {
+                // 3-3. 일반 문서 규칙 (로그인한 멤버만 편집/이동 가능, 삭제는 관리자만)
+                const normalRules = [
+                    { cond: "Member", action: "edit", allow: "Allow", expire: "0" },
+                    { cond: "Member", action: "move", allow: "Allow", expire: "0" },
+                    { cond: "Any", action: "edit", allow: "Deny", expire: "0" }, // IP유저 편집 막음(난수 발생)
+                    { cond: "Admin", action: "delete", allow: "Allow", expire: "0" },
+                    { cond: "Any", action: "delete", allow: "Deny", expire: "0" }
+                ];
+                renderRows(normalRules);
+            }
+
+            renderRows(defaultRules);
+
+            // 행 렌더링 헬퍼 함수
+            function renderRows(rules) {
+                rules.forEach(rule => {
+                    let badgeClass = "badge-allow";
+                    if (rule.allow === "Deny") badgeClass = "badge-deny";
+                    
+                    rows += `
+                        <tr>
+                            <td class="text-center font-bold text-gray-500">${ruleCount++}</td>
+                            <td class="font-bold">${rule.cond}</td>
+                            <td><span class="badge badge-action">${rule.action}</span></td>
+                            <td><span class="badge ${badgeClass}">${rule.allow}</span></td>
+                            <td class="text-gray-500 text-sm">${rule.expire === "0" ? "영구 (Permanent)" : "제한 있음"}</td>
+                            <td>
+                                <button class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded font-bold border border-gray-300 cursor-pointer" onclick="alert('관리자 권한이 필요합니다.')">삭제</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            tbody.innerHTML = rows;
+        }
+
+        window.addEventListener('DOMContentLoaded', generateAclData);
+    </script>
+        <script src="assets/wiki_index.js"></script>
+    <script src="secret_search.js"></script>
+    <script src="assets/hb_wiki_core.js?v=2"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

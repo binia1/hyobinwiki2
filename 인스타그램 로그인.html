@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Noto Sans KR";
+            background-color: #fafafa;
+            color: #262626;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .auth-box {
+            background-color: white;
+            border: 1px solid #dbdbdb;
+            border-radius: 1px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .auth-input {
+            width: 100%;
+            background: #fafafa;
+            border: 1px solid #dbdbdb;
+            border-radius: 3px;
+            padding: 9px 8px 7px;
+            font-size: 12px;
+            margin-bottom: 6px;
+            outline: none;
+            transition: border 0.1s ease;
+        }
+
+        .auth-input:focus { border-color: #a8a8a8; }
+
+        .auth-btn {
+            width: 100%;
+            background-color: #4cb5f9;
+            color: white;
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 7px 16px;
+            margin-top: 8px;
+            transition: background-color 0.2s;
+        }
+        
+        .auth-btn.active { background-color: #0095f6; cursor: pointer; }
+        .auth-btn.active:hover { background-color: #1877f2; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body class="items-center justify-center relative">
+
+    <div id="toast-message" class="fixed top-10 left-1/2 transform -translate-x-1/2 -translate-y-5 opacity-0 bg-[#ed4956] text-white text-sm px-6 py-3 rounded shadow-lg z-[100] pointer-events-none transition-all duration-300">
+        <span id="toast-text">오류 메시지</span>
+    </div>
+
+    <main class="w-full max-w-[350px] flex flex-col gap-3 animate-fade-in my-10">
+        
+        <!-- [1] 회원가입 섹션 -->
+        <div id="signup-section" class="auth-box hidden">
+            <img src="이미지/인스타그램.svg" alt="Instagram" class="h-14 mb-4 object-contain" onerror="this.outerHTML='<h1 class=\'text-4xl font-[cursive] mb-4 font-bold\'>Instagram</h1>'">
+            
+            <h2 class="text-[#737373] text-[16px] font-bold text-center mb-6 leading-5">친구들의 사진과 동영상을 보려면 가입하세요.</h2>
+
+            <div class="flex flex-col items-center justify-center mb-6 w-full">
+                <div class="relative w-20 h-20 rounded-full bg-[#efefef] border border-[#dbdbdb] flex items-center justify-center cursor-pointer overflow-hidden group" onclick="document.getElementById('signup-profile-pic').click()">
+                    <img id="preview-pic" src="" class="w-full h-full object-cover hidden">
+                    <i id="default-pic-icon" class="fas fa-user text-4xl text-[#c7c7c7]"></i>
+                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i class="fas fa-camera text-white text-xl"></i>
+                    </div>
+                </div>
+                <span class="text-[12px] text-blue-500 font-bold mt-2 cursor-pointer" onclick="document.getElementById('signup-profile-pic').click()">프로필 사진 추가</span>
+                <input type="file" id="signup-profile-pic" accept="image/*" class="hidden" onchange="previewImage(event)">
+            </div>
+
+            <form onsubmit="handleSignUp(event)" class="w-full flex flex-col items-center">
+                <input type="text" id="signup-username" class="auth-input" placeholder="사용자 이름 (ID)" required oninput="checkSignUpForm()">
+                <input type="text" id="signup-fullname" class="auth-input" placeholder="성명" required oninput="checkSignUpForm()">
+                <input type="password" id="signup-password" class="auth-input" placeholder="비밀번호" required oninput="checkSignUpForm()">
+                
+                <p class="text-[12px] text-[#737373] text-center my-4 leading-4">
+                    데이터 정책 및 쿠키 정책에 동의하게 됩니다.
+                </p>
+
+                <button type="submit" id="signup-btn" class="auth-btn" disabled>가입</button>
+            </form>
+        </div>
+
+        <!-- [2] 로그인 섹션 -->
+        <div id="login-section" class="auth-box hidden">
+            <img src="이미지/인스타그램.svg" alt="Instagram" class="h-14 mb-8 object-contain" onerror="this.outerHTML='<h1 class=\'text-4xl font-[cursive] mb-8 font-bold\'>Instagram</h1>'">
+            
+            <div id="welcome-back" class="flex flex-col items-center mb-6 hidden">
+                <img id="login-profile-pic" src="" class="w-20 h-20 rounded-full border border-[#dbdbdb] object-cover mb-3">
+                <p class="text-[14px] text-[#262626]">환영합니다, <span id="login-display-name" class="font-bold"></span>님!</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="w-full flex flex-col items-center">
+                <input type="text" id="login-username" class="auth-input" placeholder="사용자 이름" required oninput="checkLoginForm()">
+                <input type="password" id="login-password" class="auth-input" placeholder="비밀번호" required oninput="checkLoginForm()">
+                
+                <button type="submit" id="login-btn" class="auth-btn" disabled>로그인</button>
+            </form>
+
+            <div class="flex items-center w-full my-5">
+                <div class="flex-1 h-[1px] bg-[#dbdbdb]"></div>
+                <div class="px-4 text-[13px] font-bold text-[#737373]">또는</div>
+                <div class="flex-1 h-[1px] bg-[#dbdbdb]"></div>
+            </div>
+        </div>
+
+        <div class="bg-white border border-[#dbdbdb] py-5 text-center text-[14px]">
+            <span id="toggle-text"></span>
+            <button id="toggle-btn" class="text-[#0095f6] font-bold hover:text-[#1877f2] transition ml-1" onclick="toggleMode()"></button>
+        </div>
+
+        <div class="text-center mt-6">
+            <button onclick="resetData()" class="text-xs text-red-500 hover:underline">
+                <i class="fas fa-trash-alt mr-1"></i>데이터 초기화 (전체 초기화)
+            </button>
+        </div>
+    </main>
+
+    <script>
+        const DB_NAME = 'InstagramDB';
+        const DB_VERSION = 1;
+        const USERS_STORE = 'users';
+        const SETTINGS_STORE = 'settings';
+
+        async function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(USERS_STORE)) db.createObjectStore(USERS_STORE, { keyPath: 'username' });
+                    if (!db.objectStoreNames.contains(SETTINGS_STORE)) db.createObjectStore(SETTINGS_STORE, { keyPath: 'id' });
+                };
+                request.onsuccess = (e) => resolve(e.target.result);
+                request.onerror = (e) => reject(e.target.error);
+            });
+        }
+
+        // 데이터베이스 쓰기/읽기 헬퍼
+        async function saveUser(user) {
+            const db = await initDB();
+            const tx = db.transaction(USERS_STORE, 'readwrite');
+            tx.objectStore(USERS_STORE).put(user);
+        }
+
+        async function getUser(username) {
+            const db = await initDB();
+            return new Promise((resolve) => {
+                const req = db.transaction(USERS_STORE, 'readonly').objectStore(USERS_STORE).get(username);
+                req.onsuccess = () => resolve(req.result);
+            });
+        }
+
+        async function setActiveUser(user) {
+            const db = await initDB();
+            db.transaction(SETTINGS_STORE, 'readwrite').objectStore(SETTINGS_STORE).put({ id: 'active_user', data: user });
+        }
+
+        async function getActiveUser() {
+            const db = await initDB();
+            return new Promise((resolve) => {
+                const req = db.transaction(SETTINGS_STORE, 'readonly').objectStore(SETTINGS_STORE).get('active_user');
+                req.onsuccess = () => resolve(req.result ? req.result.data : null);
+            });
+        }
+
+        let currentMode = 'signup'; 
+        let uploadedImageData = null;
+
+        window.onload = async () => {
+            const activeUser = await getActiveUser();
+            if (activeUser) {
+                setMode('login');
+                document.getElementById('login-profile-pic').src = activeUser.profilePic;
+                document.getElementById('login-display-name').innerText = activeUser.fullname;
+                document.getElementById('welcome-back').classList.remove('hidden');
+                document.getElementById('login-username').value = activeUser.username;
+                checkLoginForm();
+            } else {
+                setMode('signup');
+            }
+        };
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('signup-section').classList.toggle('hidden', mode !== 'signup');
+            document.getElementById('login-section').classList.toggle('hidden', mode !== 'login');
+            document.getElementById('toggle-text').innerText = mode === 'signup' ? '계정이 있으신가요?' : '계정이 없으신가요?';
+            document.getElementById('toggle-btn').innerText = mode === 'signup' ? '로그인' : '가입하기';
+        }
+
+        function toggleMode() { setMode(currentMode === 'signup' ? 'login' : 'signup'); }
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    uploadedImageData = e.target.result;
+                    document.getElementById('preview-pic').src = uploadedImageData;
+                    document.getElementById('preview-pic').classList.remove('hidden');
+                    document.getElementById('default-pic-icon').classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function checkSignUpForm() {
+            const valid = document.getElementById('signup-username').value && document.getElementById('signup-fullname').value && document.getElementById('signup-password').value;
+            const btn = document.getElementById('signup-btn');
+            btn.disabled = !valid;
+            btn.classList.toggle('active', valid);
+        }
+
+        function checkLoginForm() {
+            const valid = document.getElementById('login-username').value && document.getElementById('login-password').value;
+            const btn = document.getElementById('login-btn');
+            btn.disabled = !valid;
+            btn.classList.toggle('active', valid);
+        }
+
+        async function handleSignUp(event) {
+            event.preventDefault();
+            const userData = {
+                username: document.getElementById('signup-username').value,
+                fullname: document.getElementById('signup-fullname').value,
+                password: document.getElementById('signup-password').value,
+                profilePic: uploadedImageData
+            };
+
+            await saveUser(userData);
+            await setActiveUser(userData);
+            
+            showToast('가입이 완료되었습니다!', true);
+            setTimeout(() => location.reload(), 1000);
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const inputId = document.getElementById('login-username').value;
+            const inputPw = document.getElementById('login-password').value;
+            const user = await getUser(inputId);
+            
+            if (user && user.password === inputPw) {
+                await setActiveUser(user);
+                window.location.href = '효빈광역시청 인스타그램.html';
+            } else {
+                showToast('로그인 실패: 정보를 확인하세요.');
+            }
+        }
+
+        async function resetData() {
+            if (confirm("모든 데이터를 삭제하시겠습니까?")) {
+                const req = indexedDB.deleteDatabase(DB_NAME);
+                req.onsuccess = () => location.reload();
+            }
+        }
+
+        function showToast(message, isSuccess = false) {
+            const toast = document.getElementById('toast-message');
+            document.getElementById('toast-text').innerText = message;
+            toast.className = `fixed top-10 left-1/2 transform -translate-x-1/2 -translate-y-5 opacity-100 bg-${isSuccess ? '[#0095f6]' : '[#ed4956]'} text-white text-sm px-6 py-3 rounded shadow-lg z-[100] transition-all duration-300`;
+            setTimeout(() => { toast.classList.add('opacity-0', '-translate-y-5'); }, 3000);
+        }
+    </script>
+</body>
+</html>

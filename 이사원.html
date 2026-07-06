@@ -1,0 +1,551 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이사원 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        /* 1. 전역 스타일 및 변수 - 정의당 옐로우 테마 */
+        :root { 
+            --wiki-main: #FFD400; /* 정의당 노란색 */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #CCAA00; /* 가독성을 위해 링크는 조금 더 어두운 노란/골드색 */
+            --wiki-table-header: #FFD400;
+            --wiki-table-header-text: #000000; /* 노란 배경엔 검은 글씨 */
+            --wiki-alert-border: #FFD400;
+            --wiki-alert-bg: #FFFDF0;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-main: #D4AF37; 
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #FFD700; 
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            word-break: keep-all; 
+            margin: 0; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .wiki-container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px 40px; 
+            border-left: 1px solid var(--wiki-border); 
+            border-right: 1px solid var(--wiki-border); 
+            min-height: 100vh; 
+            background-color: var(--wiki-bg);
+        }
+
+        /* 표 스타일 */
+        table { 
+            border-collapse: collapse !important; 
+            width: 100% !important; 
+            margin: 15px 0; 
+            border: 1px solid var(--wiki-border) !important; 
+            table-layout: auto !important; 
+            font-size: 0.9rem;
+        }
+        th, td { 
+            border: 1px solid var(--wiki-border) !important; 
+            padding: 6px 10px; 
+            vertical-align: middle; 
+        }
+        th { 
+            background-color: var(--wiki-table-header); 
+            color: var(--wiki-table-header-text); 
+            font-weight: bold; 
+            text-align: center;
+        }
+        .table-center td { text-align: center; }
+
+        /* 제목 스타일 */
+        h1 { 
+            font-size: 3.0rem !important; 
+            font-weight: 900 !important; 
+            margin-bottom: 1.5rem; 
+            line-height: 1.1; 
+            border-bottom: 2px solid var(--wiki-border); 
+            padding-bottom: 10px;
+            letter-spacing: -1px;
+            color: var(--wiki-text);
+        }
+        h2 { 
+            font-size: 2.0rem !important; 
+            font-weight: 700 !important; 
+            margin-top: 2.5rem; 
+            margin-bottom: 1rem; 
+            border-bottom: 1px solid var(--wiki-border); 
+            padding-bottom: 0.3rem; 
+            color: var(--wiki-text); /* 노란색은 눈아파서 텍스트색 유지 */
+            display: flex;
+            align-items: center;
+        }
+        h2::before { content: ""; display: inline-block; width: 8px; height: 2.0rem; background: var(--wiki-main); margin-right: 10px; border-radius: 2px; }
+        
+        h3 { 
+            font-size: 1.5rem !important; 
+            font-weight: 700 !important; 
+            margin-top: 1.8rem; 
+            margin-bottom: 0.8rem; 
+            border-left: 5px solid #ccc;
+            padding-left: 10px;
+        }
+
+        /* 인포박스 */
+        .infobox { 
+            border: 2px solid var(--wiki-main); 
+            background-color: #fff; 
+            width: 100%; max-width: 340px; 
+            font-size: 0.9rem; 
+            border-radius: 4px; 
+            overflow: hidden; 
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+        }
+        [data-theme='dark'] .infobox { background-color: #2d2f34; }
+        .infobox-title { background-color: var(--wiki-main); color: #000; padding: 12px; text-align: center; font-size: 1.3rem !important; font-weight: bold; }
+        .infobox-image { text-align: center; padding: 15px; border-bottom: 1px solid var(--wiki-border); background: white; }
+        .infobox th { background-color: var(--wiki-gray-bg); color: #333; width: 100px; text-align: center; padding: 6px 10px; font-weight: bold; border: 1px solid var(--wiki-border) !important; }
+        .infobox td { text-align: left; padding: 6px 10px; border: 1px solid var(--wiki-border) !important; }
+
+        /* 링크 & 유틸리티 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        del { color: #aaa; text-decoration: line-through; cursor: help; transition: 0.2s; }
+        del:hover { text-decoration: none; color: #888; }
+        
+        /* 뱃지 */
+        .wiki-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.75rem; vertical-align: middle; }
+        .badge-independent { background-color: #999999; }
+        .badge-peace { background-color: #00A562; } /* 민주평화당 녹색 */
+        .badge-justice { background-color: #FFED00; color: black; } /* 정의당 노란색 */
+        .badge-minju { background-color: #004ea2; }
+        .badge-gukhim { background-color: #E61E2B; } /* 국민의힘 빨간색 */
+
+        /* 목차 */
+        .toc { 
+            display: inline-block; 
+            min-width: 320px; 
+            border: 1px solid var(--wiki-border); 
+            background: var(--wiki-gray-bg); 
+            padding: 15px; 
+            border-radius: 4px; 
+        }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
+        .toc .lvl-2 { padding-left: 20px; }
+
+        /* 인용구 */
+        .quote-box { background-color: #f8f9fa; border-left: 5px solid var(--wiki-main); padding: 15px 20px; margin: 15px 0; font-style: italic; color: #555; }
+        [data-theme='dark'] .quote-box { background-color: #333; color: #ccc; }
+        
+        /* 일화 박스 */
+        .episode-box {
+            background-color: #FFFDF0;
+            border: 1px solid #FFD400;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            position: relative;
+        }
+        .episode-title {
+            font-weight: bold;
+            color: #B7950B;
+            margin-bottom: 8px;
+            display: block;
+            border-bottom: 1px dashed #FFD400;
+            padding-bottom: 5px;
+        }
+
+        /* 각주 툴팁 */
+        .wiki-fn-link { cursor: pointer; color: var(--wiki-link); vertical-align: super; font-size: 0.7em; font-weight: bold; text-decoration: none; margin-left: 2px; }
+        #wiki-tooltip { display: none; position: absolute; background: white; border: 1px solid #999; padding: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); max-width: 350px; z-index: 9999; font-size: 0.85rem; border-radius: 4px; color: #333; line-height: 1.4; }
+
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+        [data-theme='dark'] .wiki-btn-group { background: #2d2f34; }
+        .wiki-tool-btn { padding: 6px 14px; font-size: 12px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; font-weight: bold; }
+        .wiki-tool-btn:hover { background-color: #f0f0f0; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <div id="wiki-msg-box" style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none;"></div>
+    <div id="wiki-tooltip"></div>
+
+    <!-- 상단바 -->
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">이사원</h1>
+            <div class="wiki-btn-group shadow-sm">
+                <div class="wiki-tool-btn">토론</div>
+                <div class="wiki-tool-btn">편집</div>
+                <div class="wiki-tool-btn">역사</div>
+                <div class="wiki-tool-btn" onclick="showMsg('즐겨찾기에 추가되었습니다.')">★</div>
+            </div>
+        </div>
+
+        <div class="category-box border border-[#ccc] p-2 bg-gray-50 mb-4 rounded text-sm">
+            <span class="font-bold text-[#FFD400]">분류:</span> 
+            <a href="효빈광역시.html" class="wiki-link">효빈광역시의 정치인</a> | 
+            <a href="1975년.html" class="wiki-link">1975년 출생</a> | 
+            <a href="정의당.html" class="wiki-link">정의당 소속 정치인</a> | 
+            <a href="민주평화당.html" class="wiki-link">민주평화당 출신</a> | 
+            <a href="노동운동가.html" class="wiki-link">노동운동가</a> |
+            <a href="제9회_전국동시지방선거_낙선자.html" class="wiki-link">제9회 전국동시지방선거 낙선자</a>
+        </div>
+
+        <!-- 상단 레이아웃 분리 -->
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            <!-- 목차 -->
+            <div class="toc shrink-0 shadow-sm h-fit order-2 md:order-1">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">생애</a>
+                        <ul>
+                            <li>2.1. <a href="#s-2-1" class="wiki-link">노동 운동가 시절</a></li>
+                            <li>2.2. <a href="#s-2-2" class="wiki-link">2018년: 민주평화당의 '노란 돌풍'</a></li>
+                            <li>2.3. <a href="#s-2-3" class="wiki-link">정의당 이적과 2022년의 참패</a></li>
+                            <li>2.4. <a href="#s-2-4" class="wiki-link">2026년 제9회 지방선거: 2.99%의 굴욕</a></li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3" class="wiki-link">정치 성향</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">타 인물과의 관계</a>
+                        <ul>
+                            <li>4.1. <a href="#s-4-1" class="wiki-link">신방선과의 인연</a></li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5" class="wiki-link">선거 이력</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">여담</a></li>
+                    <li>7. <a href="#s-7" class="wiki-link">둘러보기</a></li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
+                <div class="infobox-title">이사원<br><span class="text-sm font-normal">Lee Sa-won | 李社員</span></div>
+                <div class="infobox-image">
+                    <img src="이미지/이사원.png" alt="이사원 후보" style="width: 100%; height: auto; display: block;" onerror="this.src='https://placehold.co/300x400/FFD400/000000?text=Lee+Sa-won'">
+                    <div class="mt-2 text-xs text-gray-500">2022년 효빈시장 선거 벽보<br><span class="text-[10px] text-gray-400">"일하는 사람들의 시장"</span></div>
+                </div>
+                <table>
+                    <tr><th>출생</th><td>1975년 5월 1일 (만 51세)<br><span class="text-xs">효빈직할시 서구 (현 <span class="wiki-link" onclick="location.href='서구.html'">효빈광역시 서구</span>)</span></td></tr>
+                    <tr><th>거주지</th><td><span class="wiki-link" onclick="location.href='서구.html'">효빈광역시 서구</span> 공단동</td></tr>
+                    <tr><th>학력</th><td>효빈공업고등학교 (졸업)<br>방송통신대학교 (법학 / 학사)</td></tr>
+                    <tr><th>병역</th><td>면제 (수형)<sup class="wiki-fn-link" title="노동쟁의 관련 집시법 위반 등">[1]</sup></td></tr>
+                    <tr><th>소속 정당</th><td><span class="wiki-badge badge-justice">정의당</span><br><span class="text-xs text-gray-400">(前 민주평화당)</span></td></tr>
+                    <tr><th>현직</th><td>정의당 효빈시당 위원장<br>효빈 노동권익센터 소장</td></tr>
+                    <tr><th>경력</th><td>민주평화당 효빈시당 대변인<br>효빈금속 노조위원장<br>제9회 지방선거 정의당 효빈시장 후보</td></tr>
+                    <tr><th>별명</th><td>효빈의 심상정, <strong>14%의 기적</strong>,<br><del>만년 과장</del>, 뚝심맨, <strong>3.01%</strong></td></tr>
+                    <tr><th>MBTI</th><td>ENFJ</td></tr>
+                </table>
+            </aside>
+        </div>
+        <!-- // 상단 레이아웃 분리 끝 -->
+
+        <!-- 본문 시작 -->
+        <h2 id="s-1">1. 개요</h2>
+        <div class="quote-box">
+            <strong>"거대 양당이 싸울 때, 저는 노동자의 땀을 닦겠습니다."</strong>
+        </div>
+        <p>
+            <a href="효빈광역시.html" class="wiki-link">효빈광역시</a>의 정치인이자 노동운동가. 
+            <strong><span class="wiki-badge badge-peace">민주평화당</span>에서 정치를 시작해 <span class="wiki-badge badge-justice">정의당</span>으로 이적</strong>한 독특한 이력을 가지고 있다. 
+            보통 진보 정당에서 민주당계 정당으로 넘어가는 경우는 많아도, 호남계 정당에서 진보 정당으로 '좌클릭'한 케이스는 드물기 때문.
+        </p>
+        <p>
+            2018년 지방선거 당시 효빈시에서 <strong>14.10%</strong>라는 경이로운 득표율을 기록하며 
+            <a href="자유한국당.html" class="wiki-link">자유한국당</a> 후보를 꺾고 2위를 차지하는 파란을 일으켰다. 
+            그러나 2022년 선거에서는 <a href="박효빈.html" class="wiki-link">박효빈</a> 돌풍에 휩쓸려 3.20%로 추락했고, 2026년 제9회 지방선거에서는 <strong>3.01%</strong>라는 처참한 득표율로 또다시 낙선하며 냉혹한 현실을 맛봐야 했다. <del>이름이 이사원이라 만년 사원이라는 드립이 있다.</del>
+        </p>
+
+        <h2 id="s-2">2. 생애</h2>
+
+        <h3 id="s-2-1">2.1. 노동 운동가 시절</h3>
+        <p>
+            1975년 효빈시 서구 공단동의 노동자 가정에서 태어났다. 공업고등학교 졸업 후 곧바로 산업 현장에 뛰어들었으며, 
+            효빈금속에서 노조위원장을 지내며 임금 체불 문제 해결에 앞장섰다. 
+            이 과정에서 구속되기도 했으나, 현장 노동자들 사이에서는 '뚝심 있는 형님'으로 통했다.
+        </p>
+
+        <h3 id="s-2-2">2.2. 2018년: 민주평화당의 '노란 돌풍'</h3>
+        <p>
+            2018년 제7회 지방선거를 앞두고, 당시 <a href="국민의당.html" class="wiki-link">국민의당</a> 분당 사태 속에서 창당한 
+            <span class="wiki-badge badge-peace">민주평화당</span>의 영입 제안을 받았다. 
+            당시 평화당은 호남 색채가 강했지만, 효빈시 내 호남 향우회와 노동계의 연대를 꾀했고, 
+            그 적임자로 이사원을 택한 것.
+        </p>
+        <p>
+            결과는 대성공이었다. 거대 정당인 <a href="더불어민주당.html" class="wiki-link">더불어민주당</a> <a href="김성민.html" class="wiki-link">김성민</a> 시장의 독주 속에서도, 
+            그는 <strong>14.10%(334,263표)</strong>를 득표하며 
+            제1야당인 <a href="자유한국당.html" class="wiki-link">자유한국당</a> 우신면 후보(10.10%)를 4%p 차이로 따돌리고 
+            <strong>2위</strong>를 기록했다. 이는 효빈시 정치사에서 군소 정당 후보가 보수 정당 후보를 꺾은 최초의 사례로 기록된다.
+        </p>
+
+        <h3 id="s-2-3">2.3. 정의당 이적과 2022년의 참패</h3>
+        <p>
+            선거 후 민주평화당이 지리멸렬해지자, 그는 "노동의 가치를 더 선명하게 대변하겠다"며 
+            2020년 탈당 후 <span class="wiki-badge badge-justice">정의당</span>에 입당했다. 
+            기존 지지층(호남 향우회) 일부가 이탈했지만, 진보 진영의 결집을 기대했다.
+        </p>
+        <p>
+            그러나 2022년 제8회 지방선거는 그에게 악몽이었다. 
+            <a href="박효빈.html" class="wiki-link">박효빈</a>이라는 '괴물 신인'이 등장하여 진보, 중도, 청년 표를 싹쓸이해버렸기 때문. 
+            결국 그는 <strong>3.20%(47,465표)</strong>라는 초라한 성적표를 받으며 
+            <a href="윤재훈.html" class="wiki-link">윤재훈</a>(9.99%)은 물론 무소속 강성택(4.20%)에게도 밀린 5위로 추락했다. 
+            <sup class="wiki-fn-link" title="2018년의 영광은 어디로...">[2]</sup>
+        </p>
+
+        <h3 id="s-2-4">2.4. 2026년 제9회 지방선거: 3.01%의 굴욕</h3>
+        <p>
+            2026년 제9회 전국동시지방선거에서 정의당 소속으로 효빈광역시장 선거에 세 번째 도전을 선언했다. "양당의 기득권 정치를 깨고 노동자의 삶을 지키겠다"며 유세에 나섰으나, 현직 시장 박효빈의 압도적인 지지세(76.79%)와 무소속 유성민(15.27%)의 보수표 결집 속에서 철저히 소외되었다.
+        </p>
+        <p>
+            개표 결과, 득표율 <strong>3.01%(52,438표)</strong>라는 역대 최악의 성적표를 받으며 <strong>4위</strong>로 낙선했다. 선거비용 보전선인 10%는커녕 간신히 3%를 넘긴 충격적인 참패였다. 무엇보다 가장 뼈아픈 굴욕은, 온갖 기행을 일삼으며 보수 표를 다 깎아먹은 국민의힘 <a href="윤재훈.html" class="wiki-link">윤재훈</a>(4.11%, 71,633표) 후보에게마저 밀려 4위로 추락했다는 점이다. <del>이젠 3등도 못한다.</del>
+        </p>
+
+        <h2 id="s-3">3. 정치 성향</h2>
+        <p>
+            <strong>현장 중심의 생활 진보.</strong><br>
+            거창한 이념보다는 "버스 기사님들 쉬는 시간 보장", "편의점 알바 의자 설치" 같은 생활 밀착형 노동 이슈에 집중한다. 
+            이 때문에 <a href="박효빈.html" class="wiki-link">박효빈</a> 시장의 '효빈 패스'나 '노동 정책'에 대해서는 
+            "방향은 맞지만 디테일이 부족하다"며 건전한 비판자 역할을 자처하고 있다.
+        </p>
+
+        <h2 id="s-4">4. 타 인물과의 관계</h2>
+        
+        <h3 id="s-4-1">4.1. 신방선과의 인연</h3>
+        <div class="episode-box">
+            <span class="episode-title">🤝 [일화] "신 과장, 그 깡다구 다 어디 갔어!"</span>
+            <p>
+                2018년 지방선거 출마를 결심한 이사원은 당시 시청 과장이었던 <a href="신방선.html" class="wiki-link">신방선</a>을 찾아갔다. 
+                신방선이 1981년생으로 자신보다 6살이나 어리지만, 과거 2006년(25세)에 무소속으로 시장 선거에 출마해 1.8%를 얻었던 그 패기를 높이 샀기 때문. 
+                이사원은 <strong>"신 과장, 자네 2006년에 그 깡다구 다 어디 갔어? 공무원 뱃지 달고 썩기엔 아깝지 않나? 나랑 같이 세상을 뒤집어보자고!"</strong>라며 
+                호기롭게 구청장 출마를 권유했다.
+            </p>
+            <p class="mt-2">
+                하지만 2006년의 트라우마(3표 차 패배의 원죄)에 시달리던 신방선은 기겁을 하며 손사래를 쳤다.
+                <strong>"형님(위원장님), 제발 저 좀 살려주세요. 전 그때 생각만 하면 자다가도 이불을 찹니다. 그냥 조용히 서류나 결재할랍니다."</strong>
+                <br>
+                이사원은 "이 사람이 간이 콩알만 해졌구만"이라며 혀를 찼으나, 
+                나중에 신방선이 묵묵히 교통 행정을 개선해 나가는 모습을 보며 
+                "저 친구는 저 자리에서 자기만의 정치를 하고 있었구나"라며 인정하게 되었다고 한다. 
+                지금도 가끔 만나면 동생인 신방선이 "형님, 고생 많으십니다"라며 밥을 산다고.
+            </p>
+        </div>
+
+        <h2 id="s-5">5. 선거 이력</h2>
+        <table class="text-center w-full">
+            <thead>
+                <tr><th>연도</th><th>선거명</th><th>선거구</th><th>정당</th><th>후보</th><th>득표수</th><th>득표율</th><th>결과</th><th>비고</th></tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom: 2px solid #00A562;">
+                    <td rowspan="6" style="vertical-align: middle;">2018</td>
+                    <td rowspan="6" style="vertical-align: middle;">제7회 지방선거</td>
+                    <td rowspan="6" style="vertical-align: middle;">효빈광역시장</td>
+                    <td><span class="wiki-badge badge-minju">더불어민주당</span></td>
+                    <td><a href="김성민.html" class="wiki-link">김성민</a></td>
+                    <td>1,615,134</td><td>68.13%</td><td><strong>당선 (1위)</strong></td>
+                    <td></td>
+                </tr>
+                <tr style="background-color: #e8f5e9;">
+                    <td><span class="wiki-badge badge-peace">민주평화당</span></td>
+                    <td><strong>이사원</strong></td>
+                    <td><strong>334,263</strong></td><td><strong>14.10%</strong></td>
+                    <td><span style="color:blue">낙선 (2위)</span></td>
+                    <td><strong>선거비용 반액 보전</strong></td>
+                </tr>
+                <tr>
+                    <td><span class="wiki-badge badge-gukhim" style="background-color: #C9151E;">자유한국당</span></td>
+                    <td>우신면</td>
+                    <td>239,437</td><td>10.10%</td><td>낙선 (3위)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><span class="wiki-badge badge-justice">정의당</span></td>
+                    <td>권인영</td>
+                    <td>115,688</td><td>4.88%</td><td>낙선 (4위)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><span class="wiki-badge badge-independent" style="background-color:#00B2B4">바른미래당</span></td>
+                    <td><a href="강성택.html" class="wiki-link">강성택</a></td>
+                    <td>49,783</td><td>2.10%</td><td>낙선 (5위)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><span class="wiki-badge badge-independent" style="background-color:#0b2f67">대한애국당</span></td>
+                    <td><a href="윤재훈.html" class="wiki-link">윤재훈</a></td>
+                    <td>16,357</td><td>0.69%</td><td>낙선 (6위)</td>
+                    <td></td>
+                </tr>
+
+                <!-- 2022년 -->
+                <tr style="border-top: 3px double #ccc;">
+                    <td rowspan="5" style="vertical-align: middle;">2022</td>
+                    <td rowspan="5" style="vertical-align: middle;">제8회 지방선거</td>
+                    <td rowspan="5" style="vertical-align: middle;">효빈광역시장</td>
+                    <td><span class="wiki-badge badge-minju">더불어민주당</span></td>
+                    <td><a href="박효빈.html" class="wiki-link">박효빈</a></td>
+                    <td>1,008,290</td><td>67.89%</td><td><strong>당선 (1위)</strong></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><span class="wiki-badge badge-independent" style="background-color: #888888;">무소속</span></td>
+                    <td><a href="유성민.html" class="wiki-link">유성민</a></td>
+                    <td>218,604</td><td>14.72%</td><td>낙선 (2위)</td>
+                    <td>보수 성향</td>
+                </tr>
+                <tr>
+                    <td><span class="wiki-badge badge-gukhim">국민의힘</span></td>
+                    <td><a href="윤재훈.html" class="wiki-link">윤재훈</a></td>
+                    <td>148,403</td><td>9.99%</td><td>낙선 (3위)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><span class="wiki-badge badge-independent" style="background-color: #888888;">무소속</span></td>
+                    <td><a href="강성택.html" class="wiki-link">강성택</a></td>
+                    <td>62,323</td><td>4.20%</td><td>낙선 (4위)</td>
+                    <td>진보 성향</td>
+                </tr>
+                <tr style="background-color: #fffde7;">
+                    <td><span class="wiki-badge badge-justice">정의당</span></td>
+                    <td><strong>이사원</strong></td>
+                    <td><strong>47,465</strong></td><td><strong>3.20%</strong></td>
+                    <td><span style="color:red">낙선 (5위)</span></td>
+                    <td></td>
+                </tr>
+
+                <!-- 2026년 -->
+                <tr style="border-top: 3px double #ccc; background-color: #fffde7;">
+                    <td rowspan="1" style="vertical-align: middle;">2026</td>
+                    <td rowspan="1" style="vertical-align: middle;">제9회 지방선거</td>
+                    <td rowspan="1" style="vertical-align: middle;">효빈광역시장</td>
+                    <td><span class="wiki-badge badge-justice">정의당</span></td>
+                    <td><strong>이사원</strong></td>
+                    <td><strong>52,438</strong></td><td><strong>3.01%</strong></td>
+                    <td><span style="color:red">낙선 (4위)</span></td>
+                    <td><strong>선거비용 전액 미보전</strong><br><span class="text-xs">국민의힘 윤재훈에게도 밀림</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="s-6">6. 여담</h2>
+        <ul class="list-disc pl-5 mt-2 space-y-2">
+            <li>
+                <strong>이름 개그:</strong> 이름이 '이사원(Lee Employee)'이라 선거 운동 때 
+                "이사원이 일 잘합니다!", "사장님(시민)을 모시는 이사원입니다!" 같은 드립을 적극 활용했다. 
+                정작 본인은 노조 위원장 출신이라 사측과는 거리가 멀다(...)
+            </li>
+            <li>
+                <strong>14.10%의 아쉬움:</strong> 2018년 선거 당시 득표율 14.10%로 선거비용 전액 보전 기준인 15%에 단 <strong>0.9%p</strong>가 모자라 반액 보전(50%)에 그쳤다. 
+                당시 캠프에서는 "천추의 한"이라며 땅을 쳤지만, 본인은 "절반이라도 시민들이 채워주신 게 어디냐"며 쿨하게 넘겼다고 한다. 
+                하지만 술자리에서는 가끔 "아... 그때 그 유세 한번만 더 할걸..."이라며 0.9%를 아쉬워한다고 한다.
+            </li>
+            <li>
+                <strong>박효빈과의 관계:</strong> 2022년 토론회에서 <a href="박효빈.html" class="wiki-link">박효빈</a> 후보에게 
+                "덕질도 좋지만 노동권 공부도 좀 하시죠"라고 훈수를 뒀다가, 
+                박효빈이 "제가 알바 3개 뛰면서 노동법 달달 외웠습니다. 근로기준법 54조 휴게시간 조항 읊어볼까요?"라고 받아치자 
+                꿀 먹은 벙어리가 되었다고 한다. 이후로는 박효빈을 '준비된 청년'이라며 인정하는 분위기.
+            </li>
+            <li>
+                <strong>노란 조끼의 사나이:</strong> 선거철이 아니어도 항상 노란색 점퍼나 조끼를 입고 다닌다. 
+                정의당 상징색이기도 하지만, 노동 현장에서의 안전 조끼를 상징한다고 한다. 
+                여름에는 <strong>노란색 쿨토시</strong>를 착용하는 충격적인 패션 센스를 보여주기도 한다.
+            </li>
+            <li>
+                2018년 선거에서 자유한국당을 3위로 밀어내고 2위를 차지했을 때, 
+                선거 사무소에서 <strong><a href="https://namu.wiki/w/임을%20위한%20행진곡" target="_blank" class="wiki-link">임을 위한 행진곡</a></strong>을 
+                떼창하며 눈물을 흘렸다고 한다. 
+                효빈시 진보 정당 역사상 최고의 순간으로 꼽힌다.
+            </li>
+        </ul>
+
+        <h2 id="s-7">7. 둘러보기</h2>
+        <div class="border border-[#ccc] p-3 rounded bg-white text-sm text-center">
+            <a href="효빈광역시장 선거.html" class="wiki-link">효빈광역시장 선거</a> · 
+            <a href="박효빈.html" class="wiki-link">박효빈</a> · 
+            <a href="유성민.html" class="wiki-link">유성민</a> · 
+            <a href="윤재훈.html" class="wiki-link">윤재훈</a> · 
+            <a href="강성택.html" class="wiki-link">강성택</a> · 
+            <a href="신방선.html" class="wiki-link">신방선</a>
+        </div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-400 text-xs pb-10">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다.</p>
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        // 각주 툴팁 기능
+        const tooltip = document.getElementById('wiki-tooltip');
+        document.querySelectorAll('.wiki-fn-link').forEach(link => {
+            link.addEventListener('mouseenter', (e) => {
+                tooltip.innerHTML = link.getAttribute('title');
+                tooltip.style.display = 'block';
+                tooltip.style.left = (e.pageX + 15) + 'px';
+                tooltip.style.top = (e.pageY + 15) + 'px';
+            });
+            link.addEventListener('mousemove', (e) => {
+                tooltip.style.left = (e.pageX + 15) + 'px';
+                tooltip.style.top = (e.pageY + 15) + 'px';
+            });
+            link.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+    <script src="js/전체효빈광역시장.js"></script>
+    <div id="hyobin-all-mayors-nav" style="display:none;"></div> <!-- 스크립트 로드용 더미 -->
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>활동기준원가계산 (ABC) - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #881188; /* 다품종 소량생산의 복잡함과 세련됨을 상징하는 6호선 보라색 채택 */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #881188;
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 및 문단 제목 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.1rem !important; font-weight: 700; margin-top: 1.5rem; margin-bottom: 1rem; }
+
+        /* 위키 요소 */
+        del { color: #7f7f7f; text-decoration: line-through; cursor: help; }
+        .wiki-drip { color: #aaa; font-size: 0.85em; }
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-quote { background-color: #f8f9fa; border-left: 4px solid var(--wiki-main); padding: 15px; margin: 10px 0; font-style: italic; color: #555; position: relative; }
+
+        /* 특수 박스 (킬러, 예시, RP) */
+        .killer-box { background-color: #fff5f5; border: 2px solid #ff4444; border-radius: 8px; padding: 15px; margin: 20px 0; box-shadow: 0 4px 6px rgba(255, 68, 68, 0.1); }
+        .killer-box-title { color: #cc0000; font-weight: 900; font-size: 1.2rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        
+        .example-box { background-color: #f0f7ff; border: 2px solid var(--wiki-main); border-radius: 8px; padding: 15px; margin: 20px 0; }
+        .example-box-title { color: var(--wiki-main); font-weight: 900; font-size: 1.1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;}
+
+        .rp-box { background-color: #f4f4f8; border: 1px solid #dcdcdc; border-radius: 12px; padding: 20px; margin: 10px 0; display: flex; flex-direction: column; gap: 15px; }
+        .rp-msg { display: flex; gap: 15px; align-items: flex-start; }
+        .rp-avatar { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 3px solid #ccc; background-color: #fff; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .rp-bubble { background: #fff; border: 1px solid #ccc; border-radius: 12px; padding: 10px 15px; position: relative; max-width: 85%; font-size: 0.95rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .rp-name { font-weight: bold; font-size: 0.85rem; margin-bottom: 4px; display: block; }
+        
+        /* 캐릭터 색상별 아바타 보더 */
+        .avatar-1 { border-color: #0077DD; }     /* 1호선 */
+        .avatar-2 { border-color: #00CCAA; }    /* 2호선 */
+        .avatar-3 { border-color: #FFCC11; }   /* 3호선 */
+        .avatar-4 { border-color: #FF5522; }  /* 4호선 */
+        .avatar-5 { border-color: #EE0022; }     /* 5호선 */
+        .avatar-6 { border-color: #881188; }  /* 6호선 */
+        .avatar-7 { border-color: #FF8899; }    /* 7호선 */
+        .avatar-8 { border-color: #9856FF; }     /* 8호선 */
+        .avatar-빈 { border-color: #6677CC; } /* 빈효선 */
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+
+        /* 테이블 스타일 */
+        table.wiki-table-custom { border-collapse: collapse !important; width: 100%; margin: 15px 0; border: 1px solid #ddd !important; font-size: 0.9rem; }
+        table.wiki-table-custom th, table.wiki-table-custom td { border: 1px solid #ddd !important; padding: 8px 12px; vertical-align: middle; }
+        table.wiki-table-custom th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; text-align: center; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 420px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.3rem !important; font-weight: bold; }
+        .infobox table { border: none !important; margin: 0 !important; width: 100% !important; }
+        .infobox th { background-color: var(--wiki-gray-bg); text-align: center; padding: 8px 5px; border: 1px solid #ddd; width: 35%; font-weight: bold; vertical-align: middle;}
+        .infobox td { padding: 8px 5px; border: 1px solid #ddd; text-align: left; vertical-align: middle;}
+        
+        /* 둘러보기 틀 */
+        .nw-box { border: 2px solid; margin-bottom: 30px; border-radius: 4px; overflow: hidden; font-size: 0.9rem; background: white; }
+        .nw-box summary { padding: 10px; text-align: center; font-weight: bold; cursor: pointer; display: block; }
+        .nw-tbl { width: 100%; border-collapse: collapse; text-align: center; }
+        .nw-tbl th, .nw-tbl td { border: 1px solid #ccc; padding: 8px; vertical-align: middle; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+<nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+        <span class="font-bold text-xl">HyobinWiki</span>
+    </div>
+    <div class="flex items-center gap-2">
+        <input type="text" id="searchInput" placeholder="문서 검색" class="p-1.5 px-3 rounded text-black text-sm w-48 focus:outline-none shadow-inner">
+        
+        <button type="button" onclick="검색실행함수()" class="bg-[#0055AA] p-1.5 px-4 rounded text-sm shadow-inner font-bold">검색</button>
+    </div>
+</nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">활동기준원가계산 (ABC)</div>
+        </div>
+
+        <div class="category-box border border-[#ccc] p-3 rounded mb-6">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="재경관리사.html" class="wiki-link">재경관리사</a> | 
+            <a href="원가관리회계.html" class="wiki-link">원가관리회계</a> | 
+            <a href="자본주의의 꽃.html" class="wiki-link">자본주의의 꽃</a> | 
+            <a href="효빈대학교.html" class="wiki-link">효빈대학교 회계학과</a> |
+            <a href="공기업 프리패스.html" class="wiki-link">공기업 프리패스</a>
+        </div>
+
+        <aside class="infobox">
+            <div class="infobox-title">활동기준원가계산<br><span class="text-sm font-normal">Activity-Based Costing (ABC)</span></div>
+            <table>
+                <tr><th>과목명</th><td><a href="재경관리사.html" class="wiki-link">재경관리사</a> - 원가관리회계</td></tr>
+                <tr><th>주요 쟁점</th><td>전통적인 '노동시간' 빵빠이가 만든 원가 왜곡을 어떻게 찢어서 고칠 것인가?</td></tr>
+                <tr><th>최종 보스</th><td>활동의 4가지 분류 (특히 <b>'배치(Batch)수준활동'</b>) 암기</td></tr>
+                <tr><th>효빈시 연관 인프라</th><td><a href="효빈공단.html" class="wiki-link">효빈공단</a> (다품종 소량 스마트팩토리), <a href="청엽구청.html" class="wiki-link">청엽구청</a></td></tr>
+                <tr><th>담당자 코멘트</th><td><span class="text-xs text-gray-600">"1996년생 남성, <a href="효빈대학교.html" class="wiki-link">효빈대학교</a> 회계학과 4점대 초반 A+ 폭격기이신 <b>박효빈 시장님</b>께서는 원가동인(Cost Driver)을 배부하실 때마다 취미이신 '데이터 분석' 툴을 활용해 원가 왜곡을 완벽히 제거하셨다고 전해진다. 시장님이 구워주신 고기와 빵을 먹으며 이 단원을 마스터하자."</span></td></tr>
+            </table>
+        </aside>
+
+        <div class="toc">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">활동기준원가계산의 개념</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">🔥 도입 배경 (전통적 원가계산의 팩트폭력)</a>
+                    <ul>
+                        <li>2.1. <a href="#s-2-1" class="wiki-link">전통적 배부기준의 한계 (원가 왜곡)</a></li>
+                        <li>2.2. <a href="#s-2-2" class="wiki-link">제조환경 변화 (다품종 소량)</a></li>
+                        <li>2.3. <a href="#s-2-3" class="wiki-link">직접노무원가의 감소, 제조간접원가의 증가</a></li>
+                        <li>2.4. <a href="#s-2-4" class="wiki-link">원가개념의 확대 (수명주기원가계산)</a></li>
+                        <li>2.5. <a href="#s-2-5" class="wiki-link">정보수집기술의 발달 (ERP)</a></li>
+                    </ul>
+                </li>
+                <li>3. <a href="#s-3" class="wiki-link">🔥 활동기준원가계산의 절차 (5단계)</a>
+                    <ul>
+                        <li>3.1. <a href="#s-3-1" class="wiki-link">[1단계] 활동분석과 4가지 활동 분류 (수험생 킬러)</a></li>
+                        <li>3.2. <a href="#s-3-2" class="wiki-link">[2~5단계] 원가 집계부터 제품 배부까지</a></li>
+                    </ul>
+                </li>
+                <li>4. <a href="#s-4" class="wiki-link">전통적 원가계산 vs 활동기준원가계산 비교표</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">장점과 단점 (빛과 그림자)</a>
+                    <ul>
+                        <li>5.1. <a href="#s-5-1" class="wiki-link">활동기준원가계산의 5가지 장점</a></li>
+                        <li>5.2. <a href="#s-5-2" class="wiki-link">활동기준원가계산의 4가지 단점 및 한계</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="clear-both"></div>
+
+        <h2 id="s-1">1. 활동기준원가계산의 개념</h2>
+        <div class="wiki-quote relative">
+            "제품이 스스로 원가를 빨아먹는 게 아니야. <b>제품은 '활동'을 소비하고, 그 '활동'이 '자원(원가)'을 빨아먹는 거라고.</b> 이 기초적인 철학을 모르면 넌 평생 제조간접비나 노동시간으로 N빵 치는 하수다."<br>
+            <span class="wiki-drip text-sm block mt-2 text-gray-500">- <a href="효빈공단.html" class="wiki-link">효빈공단</a>의 전설, 7호선 임세하 주임</span>
+        </div>
+        <p><b>활동기준원가계산 (Activity-Based Costing, ABC)</b>이란 보다 정확한 원가계산을 위해 기업의 기능을 여러 가지 <b>'활동(Activity)'</b>으로 구분하고, 그 활동을 기본적인 원가대상으로 삼아 원가를 집계한 뒤, 이를 토대로 다른 원가대상들(제품, 고객, 서비스 등)의 원가를 계산하는 방법이다.</p>
+        <p>핵심 사고방식은 <b><span class="text-[#881188] font-bold">"제품은 활동을 소비하고, 활동은 자원을 소비한다"</span></b>는 것이다. 제품을 생산하기 위해 소비된 '활동'을 정밀하게 측정함으로써, 전통적인 주먹구구식 방식보다 제품원가를 훨씬 더 정확하게 계산해 낸다.</p>
+
+        <div class="example-box" style="border-color: #0077DD; background-color: #f0f7ff;">
+            <div class="example-box-title" style="color: #0055AA;"><i class="fas fa-brain"></i> [대환장 RP] 고나미 기장의 ABC 철학 강의</div>
+            <div class="rp-box mt-2" style="background-color: #fff;">
+                <div class="rp-msg">
+                    <img src="이미지/유리아.png" alt="유리아" class="rp-avatar avatar-8">
+                    <div>
+                        <span class="rp-name" style="color: #9856FF;">유리아 (8호선 엮임, 단순무식)</span>
+                        <div class="rp-bubble shadow-sm">
+                            "고나미 선배님! 1호선 열차 수리하는 데 원가가 100만 원 들었어요! 열차 1대가 원가 100만 원을 꿀꺽 먹어치운 거네요! 계산 끝!"
+                        </div>
+                    </div>
+                </div>
+                <div class="rp-msg" style="flex-direction: row-reverse;">
+                    <img src="이미지/고나미.png" alt="고나미" class="rp-avatar avatar-1">
+                    <div style="text-align: right;">
+                        <span class="rp-name" style="color: #0077DD;">고나미 (1호선 공식, 원리원칙주의자)</span>
+                        <div class="rp-bubble shadow-sm" style="background-color: #f0f7ff;">
+                            "열차가 돈을 씹어 먹냐? <b>[활동기준원가계산]</b>의 기본을 잊었군. 열차가 원가를 발생시킨 게 아니라, 수리를 위해 '부품을 주문하는 활동', '엔진을 테스트하는 활동', '납땜하는 활동'을 거쳤기 때문에 그 '활동들'이 인건비와 부품값(자원)을 소비한 거다. 원가를 정확히 알고 싶으면 열차가 아니라 <b>'활동'</b>을 쪼개서 봐라."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 id="s-2">2. 🔥 도입 배경 (전통적 원가계산의 팩트폭력)</h2>
+        <p>왜 멀쩡히 쓰던 방식을 버리고 굳이 복잡한 ABC를 도입하게 되었을까? 시험의 단골 출제 포인트인 5가지 배경을 완벽히 이해해야 한다. 객관식 보기로 자주 출제된다.</p>
+
+        <h3 id="s-2-1">2.1. ① 전통적 배부기준의 한계 (원가 왜곡)</h3>
+        <p>전통적 방법은 오직 <b>'조업도(노무시간, 기계시간 등 생산량과 비례관계에 있는 기준)'</b>에 의해서만 제조간접원가를 빵빠이(배부) 쳤다. <br>
+        ➔ <b>결과:</b> 생산량이 많은 단순 제품에는 상대적으로 엄청나게 많은(과대) 제조간접원가가 배부되고, 생산량이 적은 복잡한 제품에는 제조간접원가가 쥐꼬리만큼(과소) 배부되는 치명적인 <b><span class="text-red-600 font-bold">원가 왜곡(Cost Distortion)</span></b> 현상이 발생했다.</p>
+
+        <div class="example-box" style="border-color: #881188; background-color: #f8e8f8;">
+            <div class="example-box-title" style="color: #660066;"><i class="fas fa-balance-scale-left"></i> [RP] 유키나의 팩트폭력: "카스미, 네가 원가 왜곡의 주범이야."</div>
+            <div class="rp-box mt-2" style="background-color: #fff;">
+                <div class="rp-msg">
+                    <img src="이미지/토야마 카스미.png" alt="토야마 카스미" class="rp-avatar avatar-4">
+                    <div>
+                        <span class="rp-name" style="color: #FF5522;">토야마 카스미 (4호선 엮임, 소품 공장 알바)</span>
+                        <div class="rp-bubble shadow-sm">
+                            "유키나 선배! 나 오늘 엄청 단순한 별 모양 스티커 10만 개나 기계로 찍어냈어요! 기계시간을 엄청 많이 썼죠! 에헷!"
+                        </div>
+                    </div>
+                </div>
+                <div class="rp-msg" style="flex-direction: row-reverse;">
+                    <img src="이미지/미나토 유키나.png" alt="미나토 유키나" class="rp-avatar avatar-6">
+                    <div style="text-align: right;">
+                        <span class="rp-name" style="color: #881188;">미나토 유키나 (6호선 엮임, 로젤리아 기어 엔지니어)</span>
+                        <div class="rp-bubble shadow-sm" style="background-color: #f3e8f8;">
+                            "그래. 난 오늘 품질검사랑 세팅만 100번 넘게 해야 하는 초정밀 음향 기어(복잡한 다품종 소량)를 딱 10개 만들었어. 그런데 회계팀에서 전통적인 <b>[기계시간 기준]</b>으로 제조간접비 월세 1,000만 원을 배분해 버리니까, 기계를 오래 돌린 네 싸구려 스티커에 간접원가가 990만 원이 붙고, 내 복잡한 정밀 기어엔 10만 원만 붙는 <b><span class="text-red-600 font-bold">원가 왜곡(단순 제품 과대 / 복잡 제품 과소)</span></b>이 발생하잖아. 당장 활동별로 집계하고 원가동인을 기준으로 배분하는 ABC로 갈아엎어."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 id="s-2-2">2.2. ② 제조환경 변화 (다품종 소량생산)</h3>
+        <p>산업 고도화와 고객 요구 다양화로 제조환경이 <b>다품종 소량생산 체제</b>로 전환되었다. 이에 따라 <b>품질검사, 작업준비, 주문처리 등 (생산량과 무관한) 활동이 급증</b>했다. 하지만 전통적 원가계산제도는 이런 활동이 원가에 미치는 영향을 무시하고 조업도(직접노동시간 등)로만 퉁치려다 원가 왜곡을 키웠다. ABC는 각각의 활동별로 원가를 집계하고 '원가동인'을 배부기준으로 삼아 소비된 활동에 따라 제조간접원가를 제품에 배부하여 왜곡을 줄인다.</p>
+
+        <h3 id="s-2-3">2.3. ③ 직접노무원가의 감소, 제조간접원가의 증가</h3>
+        <p>유연생산시스템, 컴퓨터통합생산시스템 등 생산기술의 발달과 제조과정 자동화로 인해 로봇이 다 일하게 되었다. 제품에 직접 꼬리표를 달 수 있는 <b>인건비(직접노무원가) 비중은 박살 난 반면, 유지비나 감가상각비 같은 제조간접원가 비중은 과거 대비 폭발적으로 증가</b>했다. 이 거대한 간접원가를 전통적 배부기준(직접노동시간 등)으로 배부하면 제품원가를 정확히 계산하기 힘들어 새로운 제도가 대두되었다.</p>
+
+        <div class="example-box" style="border-color: #00CCAA; background-color: #f0fdfa;">
+            <div class="example-box-title" style="color: #008f77;"><i class="fas fa-robot"></i> [RP] 이브의 자동화 로봇공장 사태 (직접노무비의 종말)</div>
+            <div class="rp-box mt-2" style="background-color: #fff;">
+                <div class="rp-msg">
+                    <img src="이미지/와카미야 이브.png" alt="와카미야 이브" class="rp-avatar avatar-8">
+                    <div>
+                        <span class="rp-name" style="color: #9856FF;">와카미야 이브 (8호선 엮임, 무사도! 로봇공학자)</span>
+                        <div class="rp-bubble shadow-sm">
+                            "사아야 사장님! 제가 <a href="동곡.html" class="wiki-link">동곡</a> 베이커리를 무사도 정신으로 <b>완전 자동화(CIMS)</b> 시켰어요! 이제 빵 굽는 알바생(직접노무원가)은 0명이랍니다! 대신 로봇 유지비랑 감가상각비(제조간접원가)가 한 달에 1억 원씩 나와요!"
+                        </div>
+                    </div>
+                </div>
+                <div class="rp-msg" style="flex-direction: row-reverse;">
+                    <img src="이미지/야마부키 사아야.png" alt="야마부키 사아야" class="rp-avatar avatar-3">
+                    <div style="text-align: right;">
+                        <span class="rp-name" style="color: #cca300;">야마부키 사아야 (3호선 엮임, 구식 회계 사장)</span>
+                        <div class="rp-bubble shadow-sm" style="background-color: #fffdf0;">
+                            "뭐?! 난 평생 간접원가 배부할 때 <b>'직접노동시간'</b> 기준으로 배분해 왔는데, 노동시간이 '0'이면 저 1억 원짜리 제조간접원가는 어떻게 배부하라고?! 분모가 0이잖아!! 아아... 이래서 <b>제조간접원가 비중이 큰 자동화 기업엔 ABC가 필수</b>구나..."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 id="s-2-4">2.4. ④ 원가개념의 확대 - 수명주기원가계산의 등장</h3>
+        <p>종전엔 제품 제조과정이 기업활동의 대부분을 차지해 제조원가만으로 제품원가를 계산했다. 하지만 최근엔 <b>연구개발(R&D), 설계, 마케팅, 유통, 고객서비스(A/S)</b> 등의 기타원가가 제품원가 내에서 큰 비중을 차지한다. 제조원가만 따지면 원가가 실제보다 과소평가되어 의사결정과 성과평가가 부정확해지는 문제가 발생했다.<br>
+        ➔ 해결: 제조원가뿐만 아니라 연구개발단계에서 폐기까지 <b>원가를 종합적으로 고려하는 수명주기원가(Life Cycle Costing)가 등장</b>하며 원가를 정확히 파악하려는 욕구가 증가했다.</p>
+
+        <h3 id="s-2-5">2.5. ⑤ 정보수집기술의 발달 (ERP 등)</h3>
+        <p>컴퓨터통합생산시스템의 도입으로 제조와 관련된 여러 활동에 대한 정보망(ERP 등)이 구축되었다. 옛날처럼 영수증을 일일이 분류할 필요 없이, <b>활동의 분석 및 활동과 관련된 원가를 저비용으로 손쉽게 수집·이용</b>할 수 있게 되어 활동 단위로 원가 추적이 가능해졌다. (ABC 성공의 필수적 요소)</p>
+
+        <h2 id="s-3">3. 🔥 활동기준원가계산의 절차 (5단계)</h2>
+        <p>수험생들이 반드시 달달 외워야 하는 5단계. 특히 <b>1단계의 '활동분류 4가지'</b>는 객관식 단골 킬러 문항이다.</p>
+
+        <h3 id="s-3-1">3.1. [1단계] 활동분석과 4가지 활동 분류 (수험생 킬러)</h3>
+        <p>기업의 기능을 여러 가지 <b>'활동 단위(Activity: 자원을 사용하여 가치를 창출하는 작업)'</b>로 쪼갠다.</p>
+        
+        <div class="killer-box border-[#EE0022] bg-[#fff0f0] mt-4" style="box-shadow: 0 4px 6px rgba(238, 0, 34, 0.1);">
+            <div class="killer-box-title" style="color: #cc0000;"><i class="fas fa-sitemap"></i> [표 5-1] 활동분류 4가지 (무조건 암기)</div>
+            <table class="wiki-table-custom mt-2 bg-white text-sm">
+                <tr>
+                    <th style="width: 20%;">활동중심점</th>
+                    <th style="width: 35%;">설명 (정의)</th>
+                    <th style="width: 20%;">원가동인</th>
+                    <th>추적가능한 원가 예시</th>
+                </tr>
+                <tr>
+                    <td class="font-bold text-center bg-gray-50 text-blue-600">① 단위수준활동<br>(Unit-level)</td>
+                    <td><b>제품 생산량</b> 단위에 따라 비례하여 수행되는 활동. (제품 1개를 만들 때마다 늘어남)</td>
+                    <td>기계시간, 노동시간, <b>생산량</b></td>
+                    <td>직접재료원가 투입, <b>동력원가, 공장소모품비</b>, 기계/직접노무활동</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-center bg-gray-50 text-green-600">② 배치수준활동<br>(Batch-level)</td>
+                    <td><b>일정량(Batch, 묶음)</b>에 대한 생산이 이루어질 때마다 1번씩 수행되는 활동. (100개를 굽든 1,000개를 굽든 '한 판' 굽기 전 준비 세팅)</td>
+                    <td><b>주문횟수, 작업준비횟수</b>, 검사시간</td>
+                    <td><b>작업준비원가(Setup), 품질검사원가(표본)</b>, 주문원가, 재료취급원가, 금형교환</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-center bg-gray-50 text-purple-600">③ 제품유지활동<br>(Product-sustaining)</td>
+                    <td><b>제품 종류별</b>로 특정 제품을 회사의 생산 품목으로 유지하기 위해 수행되는 활동. (아이폰16 이라는 '라인업'을 유지하기 위한 설계비)</td>
+                    <td>시험횟수, 시험시간, 부품종류수</td>
+                    <td><b>제품설계원가, 연구개발(R&D), A/S활동</b>, 부품관리원가, 설비시험원가</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-center bg-gray-50 text-red-600">④ 설비유지활동<br>(Facility-sustaining)</td>
+                    <td>다양한 제품 생산을 위해 <b>공장 전체의 기본적인 설비를 유지</b>하기 위한 활동. (어떤 제품을 얼마나 만들든 무관하게 그냥 공장 숨만 쉬어도 나감)</td>
+                    <td><span class="text-red-500 font-bold">전통적 기준 사용</span><br>(종업원수, 기계/노동시간)</td>
+                    <td><b>공장 감가상각비, 건물임차료, 공장감독자 급여</b>, 종업원훈련원가, 안전유지</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="example-box" style="border-color: #00CCAA; background-color: #f0fdfa;">
+            <div class="example-box-title" style="color: #008f77;"><i class="fas fa-cookie-bite"></i> [대환장 RP] 동곡 베이커리의 '배치(Batch)수준활동' 완벽 이해</div>
+            <div class="rp-box mt-2" style="background-color: #fff;">
+                <div class="rp-msg">
+                    <img src="이미지/아오바 모카.png" alt="아오바 모카" class="rp-avatar avatar-2">
+                    <div>
+                        <span class="rp-name" style="color: #00CCAA;">아오바 모카 (2호선 엮임, 알바생)</span>
+                        <div class="rp-bubble shadow-sm">
+                            "사아야 사장님~ 나 오늘 초코빵 100개 굽기 전에 오븐 예열하고 초코 시럽 세팅<b>(작업준비활동)</b> 한 번 쫙~ 했어. 근데 갑자기 손님이 500개 더 구워달라네? 그럼 예열이랑 세팅 비용도 5배 늘려서 <b>[단위수준활동]</b>처럼 제품 1개당 원가로 다 때려 박으면 되는 거지? 에헷~"
+                        </div>
+                    </div>
+                </div>
+                <div class="rp-msg" style="flex-direction: row-reverse;">
+                    <img src="이미지/야마부키 사아야.png" alt="야마부키 사아야" class="rp-avatar avatar-3">
+                    <div style="text-align: right;">
+                        <span class="rp-name" style="color: #cca300;">야마부키 사아야 (3호선 엮임, 빵집 마스터)</span>
+                        <div class="rp-bubble shadow-sm" style="background-color: #fffdf0;">
+                            "(밀대 몽둥이를 들며) 모카 빵 압수. 오븐 예열이랑 세팅은 빵을 100개 굽든 600개 굽든 <b>'오븐을 한 번 돌릴 때마다(1 Batch)'</b> 딱 한 번만 발생하는 <b><span class="text-red-600 font-bold">[배치(Batch)수준활동]</span></b>이잖아!! 제품 생산량(단위)에 비례해서 늘어나는 밀가루값(단위수준활동)이랑 착각하면 원가 왜곡이 발생한다고!! 오븐 세팅비는 '작업준비횟수'를 배부기준으로 삼아야지!"
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 id="s-3-2">3.2. [2~5단계] 원가 집계부터 제품 배부까지</h3>
+        <ul class="list-decimal pl-5 space-y-3 text-gray-800 font-bold">
+            <li><b>2단계 (각 활동별로 제조간접원가 집계):</b> 파악된 각 활동의 바구니에 관련 비용들을 쓸어 담는다.</li>
+            <li><b>3단계 (활동별 원가동인/배부기준의 결정):</b> 원가를 가장 직접적으로 변동시키는 '찐 원인'이 무엇인지 파악한다. (ex. 품질검사활동 ➔ 검사시간)</li>
+            <li><b>4단계 (활동별 제조간접원가 배부율 계산):</b>
+                <div class="bg-gray-100 p-2 my-1 rounded border border-gray-300 font-mono text-center text-blue-700">
+                    활동별 배부율 = 활동별 제조간접원가 총액 ÷ 활동별 배부기준(원가동인) 총수량
+                </div>
+            </li>
+            <li><b>5단계 (원가대상별 원가계산 배부):</b> 제품, 고객, 서비스 등 최종 원가대상에 원가를 뿌려준다. <b>개별원가계산은 물론 종합원가계산 사용 기업이나 서비스업에도 적용이 가능</b>하다.
+                <div class="bg-gray-100 p-2 my-1 rounded border border-gray-300 font-mono text-center text-red-600">
+                    원가대상별 배부액 = Σ (소비된 활동수 × 활동별 제조간접원가 배부율)
+                </div>
+            </li>
+        </ul>
+
+        <h2 id="s-4">4. 전통적 원가계산제도와 활동기준원가계산제도의 차이점</h2>
+        <p>전통적 방식의 무식한 '노동시간 N빵'과 ABC의 섬세한 '활동별 핀셋 배부'의 차이를 완벽히 숙지하자.</p>
+        <table class="wiki-table-custom">
+            <tr>
+                <th style="width: 20%;">구분 [표 5-2]</th>
+                <th style="width: 40%;">전통적 원가계산제도</th>
+                <th style="width: 40%;">활동기준원가계산제도 (ABC)</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center bg-gray-50">원가집합과<br>배부기준의 수</td>
+                <td>공장전체 또는 부문 같은 <b>하나 또는 소수의 제조간접원가 집합</b>과 배부기준이 존재함.</td>
+                <td>활동 분야들이 많기 때문에 <b>다수의 제조간접원가 집합 및 다양한 배부기준</b>이 존재함.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center bg-gray-50">배부기준과<br>원가요인</td>
+                <td>제조간접원가 배부기준이 원가동인일 수도 있고 아닐 수도 있음. <b>(인과관계가 매우 약함)</b></td>
+                <td>활동별 원가동인을 핀셋으로 집어 제조간접원가 배부기준으로 삼음. <b>(인과관계가 강함)</b></td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center bg-gray-50 text-blue-600">배부기준의 성격</td>
+                <td>제조간접원가의 배부기준은 주로 직접노무비 등 <b><span class="text-blue-600">재무적인 측정치</span></b>에 국한됨.</td>
+                <td>제조간접원가의 배부기준은 주로 부품의 수, 검사횟수, 작업준비시간 등과 같은 <b><span class="text-red-600">비재무적인 측정치</span></b>를 광범위하게 사용함.</td>
+            </tr>
+        </table>
+
+        <div class="example-box" style="border-color: #333; background-color: #f9f9f9;">
+            <div class="example-box-title" style="color: #333;"><i class="fas fa-search-dollar"></i> [RP] 1호선 기장 고나미의 전통적 원가계산 팩트폭력</div>
+            <div class="rp-box mt-2" style="background-color: #fff;">
+                <div class="rp-msg">
+                    <img src="이미지/고나미.png" alt="고나미" class="rp-avatar avatar-1" style="border-color: #333;">
+                    <div>
+                        <span class="rp-name" style="color: #333;">고나미 (1호선 공식, 원리원칙주의자)</span>
+                        <div class="rp-bubble shadow-sm">
+                            "어이 효빈공단 관리부. <b>전통적 방식</b>은 인과관계도 없는 <b>'재무적 측정치(직접노무비 등)'</b> 하나로만 전체 간접비를 퉁치니까 원가가 왜곡되는 거다. <b>ABC 체제</b>로 넘어가서, '검사횟수'나 '부품의 수' 같은 <b>비재무적인 측정치(원가동인)</b>를 다양하게 도입해. 인과관계가 강해져야 진정한 원가통제가 가능하다."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <h2 id="s-5">5. 장점과 단점 (빛과 그림자)</h2>
+        <p>모든 기업이 완벽해 보이는 ABC를 도입하지 못하는 데는 다 이유가 있다. 객관식 말문제에서 보기로 섞어 내기 딱 좋은 파트다.</p>
+
+        <h3 id="s-5-1">5.1. 활동기준원가계산의 5가지 장점 (빛)</h3>
+        <ul class="list-decimal pl-5 space-y-3 mb-6 text-gray-800 font-bold text-sm">
+            <li><b>원가계산의 정확화 (제조간접원가 추적):</b> 종전엔 뭉뚱그려지던 간접비(동력비, 작업준비비, 품질검사비 등)도 세분화된 활동별 원가동인을 통해 <b>특정제품별로 직접원가처럼 꼬리표를 달아 추적 가능</b>해져 정확도가 수직 상승한다.</li>
+            <li><b>비부가가치 활동의 식별 및 제거 (원가절감):</b> 활동 분석 과정에서 가치 창출 여부로 활동을 구분하여, 시간만 잡아먹는 <b>'비부가가치 활동'을 찾아내 척결</b>할 수 있다. (생산 시간 단축 및 상대적으로 많은 원가 발생 활동 감소 가능)</li>
+            <li><b>의사결정 및 성과평가 유용:</b> 정확한 원가대상(제품/고객/부문/서비스)의 원가계산이 가능해져 각 제품 수익성에 대한 제대로 된 의사결정이 진행되며, <b>성과평가도 '활동별'로 공정하게 가능해 불만이 감소</b>한다.</li>
+            <li><b>고객도 원가대상 취급:</b> 개별 고객별 수익성을 정확히 판별 가능하여 <b>주요 우수고객 판별 및 고객서비스 가격 적절 결정</b>이 가능하다.</li>
+            <li><b>장기적 회사 전체 효율성 향상 및 관리회계 정보:</b> 부품 수, 품질검사기간 등 <b>'비재무적 측정치'</b>를 강조하므로, 과거 이익/원가 등 재무적 수치만 들이밀 때보다 현장 관리자들의 <b>이해와 수용이 용이해져 의사소통이 원활화</b>된다. 종래의 재무회계 목적뿐만 아니라 관리회계 목적의 유용한 정보 활용이 가능하다.</li>
+        </ul>
+
+        <div class="example-box" style="border-color: #881188; background-color: #f8e8f8;">
+            <div class="example-box-title" style="color: #660066;"><i class="fas fa-trash-alt"></i> [일화] 유키나의 비부가가치 활동 숙청 (장점 2번)</div>
+            <div class="rp-box mt-2" style="background-color: #fff;">
+                <div class="rp-msg">
+                    <img src="이미지/미타케 란.png" alt="미타케 란" class="rp-avatar avatar-5">
+                    <div>
+                        <span class="rp-name" style="color: #EE0022;">미타케 란 (5호선 엮임, 비효율 생산자)</span>
+                        <div class="rp-bubble shadow-sm" style="background-color: #fff0f0;">
+                            "유키나 선배. 나 오늘 굿즈 생산 라인에서 부품 창고까지 왕복 20번 걸어 다니느라(재료 이동 활동) 3시간 썼고, 기계 고장 나서 대기시간으로 2시간 보냈어. 내 인건비 전부 제조원가에 넣어줘."
+                        </div>
+                    </div>
+                </div>
+                <div class="rp-msg" style="flex-direction: row-reverse;">
+                    <img src="이미지/미나토 유키나.png" alt="미나토 유키나" class="rp-avatar avatar-6" style="border-color: #881188;">
+                    <div style="text-align: right;">
+                        <span class="rp-name" style="color: #881188;">미나토 유키나 (6호선 엮임, 원가통제 매니저)</span>
+                        <div class="rp-bubble shadow-sm" style="background-color: #f3e8f8;">
+                            "<b>[활동기준원가계산]</b>으로 분석해보니, 네가 하루 종일 한 짓은 제품의 가치를 1도 올리지 못하는 전형적인 <b>'비부가가치 활동(대기, 이동)'</b>이야. 난 이 쓰레기 같은 활동을 시스템에서 완전히 제거할 거야. 내일부터 창고 위치를 생산 라인 옆으로 옮기고 대기시간 없애. 원가절감을 위해 비부가가치 활동은 로젤리아에 필요 없어."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 id="s-5-2">5.2. 활동기준원가계산의 4가지 단점 및 한계 (그림자)</h3>
+        <p>ABC는 만능 치트키가 아니다. 중소기업이 함부로 손댔다간 배보다 배꼽이 커진다.</p>
+        <div class="killer-box border-[#EE0022] bg-[#fff0f0] mt-4" style="box-shadow: 0 4px 6px rgba(238, 0, 34, 0.1);">
+            <div class="killer-box-title" style="color: #cc0000;"><i class="fas fa-skull-crossbones"></i> 완벽함을 추구하다 털리는 4가지 한계</div>
+            <ul class="list-decimal pl-5 space-y-2 text-gray-800 text-sm font-bold">
+                <li>활동분석 및 원가동인을 일일이 파악하는 데 <b>엄청난 시간과 정보수집 비용</b>이 소요된다.</li>
+                <li><span class="text-blue-600">모든 간접비에 원가동인 적용 불가:</span> 원가동인 파악이 불가한 <b>[설비유지활동] (예: 공장의 감독자급여, 공장 감가상각비)에 대해서는 결국 직접노무원가/기계시간 등 '전통적 배부기준'을 혼용해서 배부해야만 하는 한계</b>가 남는다.</li>
+                <li>제조간접원가를 발생시키는 기업 활동을 명확히 <b>정의하고 구분할 객관적 기준이 부족</b>하다.</li>
+                <li>새로운 체제로 전환 시, 기존 체제에 익숙한 <b>구성원들의 강력한 반발</b>이 발생할 수 있다.</li>
+            </ul>
+        </div>
+
+        <div class="example-box" style="border-color: #FF5522; background-color: #fff5f0;">
+            <div class="example-box-title" style="color: #d84315;"><i class="fas fa-building"></i> [RP] 다로나의 설비유지활동 팩트폭력 (단점 2번)</div>
+            <div class="rp-box mt-2" style="background-color: #fff;">
+                <div class="rp-msg">
+                    <img src="이미지/다로나.png" alt="다로나" class="rp-avatar avatar-4" style="border-color: #333;">
+                    <div>
+                        <span class="rp-name" style="color: #333;">다로나 (4호선 공식, 낭비 빌런)</span>
+                        <div class="rp-bubble shadow-sm">
+                            "세하 주임님! ABC 도입하면 모든 원가를 원가동인 찾아서 완벽하게 배분할 수 있다면서요? 근데 왜 <b>'공장장님 월급'이랑 '공장 건물 감가상각비'</b>는 원가동인을 못 찾고 옛날처럼 '노동시간' 기준으로 N빵 치고 있어요? ABC 완벽한 거 아니었어?!"
+                        </div>
+                    </div>
+                </div>
+                <div class="rp-msg" style="flex-direction: row-reverse;">
+                    <img src="이미지/임세하.png" alt="임세하" class="rp-avatar avatar-7" style="border-color: #FF8899;">
+                    <div style="text-align: right;">
+                        <span class="rp-name" style="color: #FF8899;">임세하 (7호선 공식, 공대 너드)</span>
+                        <div class="rp-bubble shadow-sm" style="background-color: #fff0f5;">
+                            "크윽... 정곡을 찔렸군. 공장 숨만 쉬어도 나가는 <b>[설비유지활동]</b> 비용은 제품 1개를 만들든 100만 개를 만들든 인과관계를 찾을 수가 없어... 결국 그 부분만큼은 <b>전통적 배부기준을 섞어 써야 하는 게 ABC의 뼈아픈 한계</b>다. 알아들었으면 조용히 해."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 효빈교통공사 캐릭터들 둘러보기 틀 -->
+        <details class="nw-box mt-8" style="border-color:#555588;" open>
+            <summary style="background-color:#555588; color: white;" class="outline-none">
+                <span class="text-white text-lg font-bold hover:underline">효빈교통공사 마스코트 캐릭터 (Hyobin Metro)</span>
+            </summary>
+            <table class="nw-tbl">
+                <tr>
+                    <th rowspan="4" class="w-[10%] nw-th-col text-[#555588]">등<br>장<br>인<br>물</th>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #0077DD;"><a href="1호선.html" class="nw-link hover:underline text-white">1호선</a></td>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #00CCAA;"><a href="2호선.html" class="nw-link hover:underline text-white">2호선</a></td>
+                    <td class="font-bold text-[#333] w-[18%]" style="background-color: #FFCC11;"><a href="3호선.html" class="nw-link hover:underline text-[#333]">3호선</a></td>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #FF5522;"><a href="4호선.html" class="nw-link hover:underline text-white">4호선</a></td>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #EE0022;"><a href="5호선.html" class="nw-link hover:underline text-white">5호선</a></td>
+                </tr>
+                <tr>
+                    <td><a href="고나미.html" class="nw-link hover:underline text-gray-800"><img src="이미지/고나미.png" class="nw-img" onerror="this.style.display='none'">고나미</a></td>
+                    <td><a href="하루빈.html" class="nw-link hover:underline text-gray-800"><img src="이미지/하루빈.png" class="nw-img" onerror="this.style.display='none'">하루빈</a></td>
+                    <td><a href="박라미.html" class="nw-link hover:underline text-gray-800"><img src="이미지/박라미.png" class="nw-img" onerror="this.style.display='none'">박라미</a></td>
+                    <td><a href="다로나.html" class="nw-link hover:underline text-gray-800"><img src="이미지/다로나.png" class="nw-img" onerror="this.style.display='none'">다로나</a></td>
+                    <td><a href="미소하.html" class="nw-link hover:underline text-gray-800"><img src="이미지/미소하.png" class="nw-img" onerror="this.style.display='none'">미소하</a></td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-white" style="background-color: #881188;"><a href="6호선.html" class="nw-link hover:underline text-white">6호선</a></td>
+                    <td colspan="2" class="font-bold text-[#333]" style="background-color: #FF8899;"><a href="7호선.html" class="nw-link hover:underline text-[#333]">7호선</a></td>
+                    <td class="font-bold text-white" style="background-color: #9856FF;"><a href="8호선.html" class="nw-link hover:underline text-white">8호선</a></td>
+                    <td class="font-bold text-white" style="background-color: #6677CC;"><a href="빈광역선.html" class="nw-link hover:underline text-white">빈효선</a></td>
+                </tr>
+                <tr>
+                    <td><a href="라세나.html" class="nw-link hover:underline text-gray-800"><img src="이미지/라세나.png" class="nw-img" onerror="this.style.display='none'">라세나</a></td>
+                    <td><a href="임세정.html" class="nw-link hover:underline text-gray-800"><img src="이미지/임세정.png" class="nw-img" onerror="this.style.display='none'">임세정</a><br><a href="임세하.html" class="nw-link hover:underline text-gray-800"><img src="이미지/임세하.png" class="nw-img" onerror="this.style.display='none'">임세하</a></td>
+                    <td><a href="유리아.html" class="nw-link hover:underline text-gray-800"><img src="이미지/유리아.png" class="nw-img" onerror="this.style.display='none'">유리아</a></td>
+                    <td><a href="전노아.html" class="nw-link hover:underline text-gray-800"><img src="이미지/전노아.png" class="nw-img" onerror="this.style.display='none'">전노아</a></td>
+                </tr>
+            </table>
+        </details>
+
+        <!-- 뱅드림 캐릭터 연동 세계관 -->
+        <details class="nw-box" style="border-color:#e6004b;">
+            <summary style="background-color:#e6004b; color: white;" class="outline-none">
+                <span class="text-white text-lg font-bold hover:underline">효빈위키 밈 연동 캐릭터 (BanG Dream!)</span>
+            </summary>
+            <div class="p-3 bg-white text-sm text-center border-b border-gray-200">
+                <strong>주의:</strong> 아래 캐릭터들은 효빈도시철도 각 노선의 '상징 색상'이 일치하여 위키 내에서 밈(Meme)으로 엮이는 뱅드림 캐릭터들일 뿐, 공식 마스코트와는 철저히 별개의 인물입니다.
+            </div>
+            <table class="nw-tbl">
+                <tr>
+                    <td class="font-bold text-white w-[11%]" style="background-color: #0077DD;">1호선 엮임</td>
+                    <td class="font-bold text-white w-[11%]" style="background-color: #00CCAA;">2호선 엮임</td>
+                    <td class="font-bold text-[#333] w-[11%]" style="background-color: #FFCC11;">3호선 엮임</td>
+                    <td class="font-bold text-white w-[11%]" style="background-color: #FF5522;">4호선 엮임</td>
+                    <td class="font-bold text-white w-[11%]" style="background-color: #EE0022;">5호선 엮임</td>
+                    <td class="font-bold text-white w-[11%]" style="background-color: #881188;">6호선 엮임</td>
+                    <td class="font-bold text-[#333] w-[11%]" style="background-color: #FF8899;">7호선 엮임</td>
+                    <td class="font-bold text-white w-[11%]" style="background-color: #9856FF;">8호선 엮임</td>
+                    <td class="font-bold text-white w-[11%]" style="background-color: #6677CC;">빈효선 엮임</td>
+                </tr>
+                <tr>
+                    <td class="text-xs">하나조노 타에</td>
+                    <td class="text-xs">아오바 모카</td>
+                    <td class="text-xs">야마부키 사아야</td>
+                    <td class="text-xs">토야마 카스미</td>
+                    <td class="text-xs">미타케 란</td>
+                    <td class="text-xs">미나토 유키나</td>
+                    <td class="text-xs">치하야 아논</td>
+                    <td class="text-xs">와카미야 이브</td>
+                    <td class="text-xs">쿠라타 마시로</td>
+                </tr>
+            </table>
+        </details>
+
+    </div>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

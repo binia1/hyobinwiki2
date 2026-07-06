@@ -1,0 +1,569 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>임세정 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #FF8899; /* 7호선 분홍색 */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #FF8899;
+            --wiki-table-header-text: #ffffff;
+            --wiki-alert-border: #a2a9b1;
+            --wiki-alert-bg: #f8f9fa;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.1rem !important; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; }
+
+        /* 위키 요소 */
+        del { color: #7f7f7f; text-decoration: line-through; cursor: help; }
+        .wiki-drip { color: #aaa; font-size: 0.85em; }
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-quote { background-color: #f8f9fa; border-left: 4px solid var(--wiki-main); padding: 15px; margin: 10px 0; font-style: italic; color: #555; position: relative; }
+
+        /* 분류 박스 스타일 */
+        .category-box { background: #f9f9f9; border: 1px solid #ccc; padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+
+        /* 테이블 스타일 */
+        table.wiki-table-custom { border-collapse: collapse !important; width: 100%; margin: 15px 0; border: 1px solid #ddd !important; font-size: 0.9rem; }
+        table.wiki-table-custom th, table.wiki-table-custom td { border: 1px solid #ddd !important; padding: 6px 10px; vertical-align: middle; }
+        table.wiki-table-custom th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; text-align: center; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 380px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.3rem !important; font-weight: bold; }
+        .infobox-image { text-align: center; padding: 10px; border-bottom: 1px solid #ddd; background: white; }
+        .infobox table { border: none !important; margin: 0 !important; width: 100% !important; }
+        .infobox th { background-color: var(--wiki-gray-bg); text-align: center; padding: 8px 5px; border: 1px solid #ddd; width: 30%; font-weight: bold; vertical-align: middle;}
+        .infobox td { padding: 8px 5px; border: 1px solid #ddd; text-align: left; vertical-align: middle;}
+
+        /* 상단 버튼 */
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; }
+
+        /* 각주 & 호버보드 */
+        .footnote-ref { color: var(--wiki-link); font-size: 0.8em; vertical-align: super; cursor: pointer; text-decoration: none; font-weight: bold; }
+        .footnotes-area { margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px; font-size: 0.85rem; color: #555; }
+        
+        /* 각주 툴팁 (호버보드) */
+        #footnote-tooltip {
+            position: fixed;
+            display: none;
+            background-color: #fff;
+            border: 1px solid #999;
+            padding: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            z-index: 9999; 
+            max-width: 400px;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            line-height: 1.4;
+            pointer-events: none; 
+        }
+
+        /* 굿즈 카드 */
+        .goods-card { transition: transform 0.2s; border: 1px solid #eee; border-radius: 8px; overflow: hidden; text-align: center; background: white; }
+        .goods-card:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .goods-card img { width: 100%; height: 200px; object-fit: contain; background-color: #f8f9fa; padding: 10px; }
+        .goods-card-info { padding: 15px; text-align: left; border-top: 1px solid #eee; }
+
+        /* 등급표 스타일 (추가됨) */
+        .grade-box { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; font-weight: bold; color: white; margin-right: 4px; }
+        .grade-1 { background-color: #FFD700; color: black; border: 1px solid #d4af37; } /* 1등급: 금색 */
+        .grade-2 { background-color: #C0C0C0; color: black; border: 1px solid #a0a0a0; } /* 2등급: 은색 */
+        .grade-3 { background-color: #CD7F32; border: 1px solid #a66324; } /* 3등급: 동색 */
+        .grade-4 { background-color: #8B4513; border: 1px solid #5c2e0b; } /* 4-5등급: 갈색 */
+
+        /* 특수 텍스트 강조 */
+        .text-highlight { background: linear-gradient(to top, #ffd6e0 50%, transparent 50%); font-weight: bold; }
+
+        /* 둘러보기 틀 (nw-box) */
+        .nw-box { border: 2px solid; margin-bottom: 30px; border-radius: 4px; overflow: hidden; font-size: 0.9rem; background: white; }
+        .nw-box summary { padding: 10px; text-align: center; font-weight: bold; cursor: pointer; display: block; }
+        .nw-tbl { width: 100%; border-collapse: collapse; text-align: center; }
+        .nw-tbl th, .nw-tbl td { border: 1px solid #ccc; padding: 8px; vertical-align: middle; }
+        .nw-th-col { font-weight: bold; background-color: #f9f9f9; }
+        .nw-link { color: inherit; text-decoration: none; display: block; }
+        .nw-img { width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: block; margin: 0 auto 5px; background-color: #f8f9fa; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <!-- STREAMING_CHUNK:Rendering navigation bar... -->
+    <!-- 각주 툴팁 컨테이너 -->
+    <div id="footnote-tooltip"></div>
+
+    <!-- 상단 내비게이션 -->
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+<div class="flex items-center gap-2">
+  <input
+    id="searchInput"
+    type="text"
+    placeholder="문서 검색"
+    class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner"
+    autocomplete="off"
+    data-hb-search="input"
+  >
+  <button
+    id="searchBtn"
+    type="button"
+    class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner font-bold"
+    data-hb-search="button"
+  >검색</button>
+
+  <button
+    type="button"
+    class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner"
+    onclick="document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';"
+  >다크모드</button>
+</div>
+    </nav>
+
+    <!-- STREAMING_CHUNK:Initializing main layout container... -->
+    <div class="wiki-container shadow-lg">
+        <!-- 문서 제목 -->
+        <div class="title-area">
+            <div class="txt-lvl-1">임세정</div>
+            <div class="flex gap-2 mb-1">
+<button onclick="location.href='토론.html'" style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">토론</button>
+<button onclick="location.href='수정.html'" style="background-color:#0275d8; color:#ffffff; border:1px solid #0275d8 !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">편집</button>
+<button onclick="location.href='역사.html'" style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">역사</button>
+
+            </div>
+        </div>
+
+        <div class="category-box border border-[#ccc] p-3 rounded mb-6">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="효빈철도캐릭터사업.html" class="wiki-link">효빈메트로/캐릭터사업</a> | 
+            <a href="7호선.html" class="wiki-link">효빈 도시철도 7호선</a> | 
+            <a href="역무원.html" class="wiki-link">역무원 캐릭터</a> |
+            <a href="장녀.html" class="wiki-link">장녀 캐릭터</a> |
+            <a href="생존왕.html" class="wiki-link">생존왕</a> |
+            <a href="고인물.html" class="wiki-link">고인물</a>
+        </div>
+
+        <!-- 효빈교통공사 캐릭터들 둘러보기 틀 -->
+        <details class="nw-box" style="border-color:#555588;" open>
+            <summary style="background-color:#555588; color: white;" class="outline-none">
+                <a href="효빈교통공사.html" class="text-white text-lg hover:underline"><span class="font-bold">효빈교통공사 캐릭터들</span></a>
+            </summary>
+            <table class="nw-tbl">
+                <tr>
+                    <th rowspan="4" class="w-[10%] nw-th-col text-[#555588]">등<br>장<br>인<br>물</th>
+                    <td class="font-bold text-white w-[15%]" style="background-color: #0077DD;"><a href="1호선.html" class="nw-link hover:underline">1호선</a></td>
+                    <td class="font-bold text-white w-[15%]" style="background-color: #00CCAA;"><a href="2호선.html" class="nw-link hover:underline">2호선</a></td>
+                    <td class="font-bold text-[#333] w-[15%]" style="background-color: #FFCC11;"><a href="3호선.html" class="nw-link hover:underline">3호선</a></td>
+                    <td class="font-bold text-white w-[15%]" style="background-color: #FF5522;"><a href="4호선.html" class="nw-link hover:underline">4호선</a></td>
+                    <td class="font-bold text-white w-[15%]" style="background-color: #EE0022;"><a href="5호선.html" class="nw-link hover:underline">5호선</a></td>
+                    <td class="font-bold text-[#333] w-[15%]" style="background-color: #33aaff;"><a href="창전선.html" class="nw-link hover:underline">창전선</a></td>
+                </tr>
+                <tr>
+                    <td><a href="고나미.html" class="nw-link hover:underline"><img src="이미지/고나미 로고.png" class="nw-img" onerror="this.style.display='none'">고나미</a></td>
+                    <td><a href="하루빈.html" class="nw-link hover:underline"><img src="이미지/하루빈 로고.png" class="nw-img" onerror="this.style.display='none'">하루빈</a></td>
+                    <td><a href="박라미.html" class="nw-link hover:underline"><img src="이미지/박라미 로고.png" class="nw-img" onerror="this.style.display='none'">박라미</a></td>
+                    <td><a href="다로나.html" class="nw-link hover:underline"><img src="이미지/다로나 로고.png" class="nw-img" onerror="this.style.display='none'">다로나</a></td>
+                    <td><a href="미소하.html" class="nw-link hover:underline"><img src="이미지/미소하 로고.png" class="nw-img" onerror="this.style.display='none'">미소하</a></td>
+                    <td><a href="심세이.html" class="nw-link hover:underline"><img src="이미지/심세이_로고.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/33aaff/FFFFFF?text=Se-i'">심세이</a></td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-white" style="background-color: #881188;"><a href="6호선.html" class="nw-link hover:underline">6호선</a></td>
+                    <td colspan="2" class="font-bold text-[#333]" style="background-color: #FF8899;"><a href="7호선.html" class="nw-link hover:underline">7호선</a></td>
+                    <td class="font-bold text-white" style="background-color: #9856FF;"><a href="8호선.html" class="nw-link hover:underline">8호선</a></td>
+                    <td colspan="2" class="font-bold text-white" style="background-color: #6677CC;"><a href="빈효광역선.html" class="nw-link hover:underline">빈효선*</a></td>
+                </tr>
+                <tr>
+                    <td><a href="라세나.html" class="nw-link hover:underline"><img src="이미지/라세나 로고.png" class="nw-img" onerror="this.style.display='none'">라세나</a></td>
+                    <td><a href="임세정.html" class="nw-link hover:underline"><img src="이미지/임세정 로고.png" class="nw-img" onerror="this.style.display='none'">임세정</a></td>
+                    <td><a href="임세하.html" class="nw-link hover:underline"><img src="이미지/임세하 로고.png" class="nw-img" onerror="this.style.display='none'">임세하</a></td>
+                    <td><a href="유리아.html" class="nw-link hover:underline"><img src="이미지/유리아 로고.png" class="nw-img" onerror="this.style.display='none'">유리아</a></td>
+                    <td colspan="2"><a href="전노아.html" class="nw-link hover:underline"><img src="이미지/전노아 로고.png" class="nw-img" onerror="this.style.display='none'">전노아</a></td>
+                </tr>
+                <tr>
+                    <td colspan="7" class="text-left text-xs text-gray-600 bg-gray-50 px-3 py-2 border-t border-gray-300" style="text-align: left;">
+                        * <strong>빈효선</strong>: 노선 운영은 효빈교통공사가 아닌 코레일(한국철도공사)이 담당하지만, 지역 인프라 특성상 같이 묶여서 캐릭터 사업으로 진행됨.<br>
+                        * <strong>창전선</strong> (본 문서 캐릭터 소속) 등 신규 노선은 개통 및 캐릭터 정식 데뷔 시점에 맞춰 틀에 추가될 예정입니다. (현재 심세이 정식 등재 완료)
+                    </td>
+                </tr>
+            </table>
+        </details>
+
+<!-- 인포박스 -->
+        <aside class="infobox">
+            <div class="infobox-title">임세정<br><span class="text-sm font-normal">Im Sejeong | 林洗正</span><br><span class="text-xs font-normal">Hayashi Sei | 林洗正</span></div>
+            <div class="infobox-image">
+                <img src="이미지/임세정.png" alt="임세정 공식 일러스트" style="width:100%; height:auto;" onerror="this.src='https://placehold.co/300x400/FF8899/FFFFFF?text=Im+Sejeong'">
+                <div class="text-xs text-gray-500 mt-1">효빈교통공사 7호선 공식 마스코트 (언니)</div>
+                <img src="이미지/임세정sd.png" alt="임세정 SD" style="width:70%; height:auto; display: block; margin: 10px auto 0;">
+                <div class="text-xs text-gray-500 mt-1">SD 캐릭터 버전 <del>(선임의 위엄을 잃지 않은 뽀짝함)</del></div>
+            </div>
+            <table>
+                <tr><th>나이</th><td>30세 (1995년생)</td></tr>
+                <tr><th>생일</th><td>4월 5일<a href="#fn-1" class="footnote-ref">[1]</a></td></tr>
+                <tr><th>소속</th><td><a href="효빈교통공사.html" class="wiki-link">효빈교통공사</a> 역무본부<br>7호선(트램) 역무원 (대리)</td></tr>
+                <tr><th>신체 사이즈</th><td>167cm / B85.5-W58-H85 (C컵)</td></tr>
+                <tr><th>출신지</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> 중구 중보로</td></tr>
+                <tr><th>학력</th><td>효빈초등학교 (졸업)<br><a href="내조중학교.html" class="wiki-link">내조중학교</a> (졸업)<br><a href="다판고등학교.html" class="wiki-link">다판고등학교</a> (졸업)<br><a href="효빈과학대학교.html" class="wiki-link">효빈과학대학교</a> (철도운영과 / 전문학사)</td></tr>
+                <tr><th>가족 관계</th><td>부모님(어머니 필리핀인), 남동생(임세현), 여동생(임선아, <a href="임세하.html" class="wiki-link">임세하</a>, 임세연, 임세빈)<br><span class="text-xs text-gray-500">※ 6남매 중 장녀</span></td></tr>
+                <tr><th>MBTI</th><td>ESTJ (엄격한 관리자)</td></tr>
+                <tr><th>강점/특기</th><td>혼잡·안전 관리, 현장 통제 최상위</td></tr>
+                <tr><th>좋아하는 음식</th><td>제육볶음, 국밥 등 든든한 한식 (K-장녀의 밥심)</td></tr>
+                <tr><th>싫어하는 음식</th><td>마카롱 등 배는 안 차면서 예쁘기만 한 간식</td></tr>
+                <tr><th>별명</th><td>전차 언니, 억척 가장, 생존왕, <strong>인간 확성기</strong>, <del>기강반장</del></td></tr>
+                <tr><th>성우</th><td>일본판: <a class="wiki-link" href="https://namu.wiki/w/%EC%8A%A4%EC%A6%88%ED%82%A4%20%EC%95%84%EC%9D%B4%EB%82%98" target="_blank" rel="noopener noreferrer">스즈키 아이나</a> (日)<a href="#fn-2" class="footnote-ref">[2]</a><br>한국판: <a class="wiki-link" href="https://namu.wiki/w/%EC%9C%A4%EB%AF%B8%EB%82%98" target="_blank" rel="noopener noreferrer">윤미나</a> (韓)</td></tr>
+                <tr><th>관련 노선</th><td><span style="color:#FF8899; font-weight:bold;">●</span> <a href="7호선.html" class="wiki-link">효빈 도시철도 7호선</a> (무가선 트램)</td></tr>
+                <tr><td colspan="2" style="text-align: center; padding: 15px 0; background-color: #f9f9f9;">
+                    <img src="이미지/효빈_7호선_임세정_퍼스널_아이콘.svg" alt="임세정 퍼스널 아이콘" style="width:50px; height:auto; display: block; margin: 0 auto 5px;">
+                    <span class="text-xs text-gray-500 font-bold">퍼스널 아이콘</span>
+                </td></tr>
+            </table>
+        </aside>
+        <!-- STREAMING_CHUNK:Rendering Table of Contents... -->
+        <!-- 목차 -->
+        <div class="toc">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">상세 설정</a>
+                    <ul>
+                        <li>2.1. <a href="#s-2-1" class="wiki-link">성격 및 특징 (현장 통제의 화신과 K-장녀)</a></li>
+                        <li>2.2. <a href="#s-2-2" class="wiki-link">학력 및 능력 (실전 압축 근육형 스펙)</a></li>
+                        <li>2.3. <a href="#s-2-3" class="wiki-link">정치 성향 (생존과 4.01 지성의 맹신)</a></li>
+                        <li>2.4. <a href="#s-2-4" class="wiki-link">외형 및 디자인</a></li>
+                        <li>2.5. <a href="#s-2-5" class="wiki-link">목소리 및 성우 연기</a></li>
+                    </ul>
+                </li>
+                <li>3. <a href="#s-3" class="wiki-link">인간 관계 (동료와 가족)</a></li>
+                <li>4. <a href="#s-4" class="wiki-link">과거의 족쇄와 심판: '개인성' 대토벌전</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">러닝 개그 및 특수 설정</a></li>
+                <li>6. <a href="#s-6" class="wiki-link">여담 및 미디어 믹스</a></li>
+            </ul>
+        </div>
+        <div class="clear-both"></div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <div class="wiki-quote relative">
+            "안전선 뒤로 한 걸음 물러서. 변명은 나중에 듣는다."<br>
+            "이 노면전차는 단순한 고철 덩어리가 아니야. 1931년부터 달린 우리 도시의 심장이자, 내 청춘을 바친 밥줄이야. 함부로 뜯어내라 마라 지껄이지 마!"<br>
+            <span class="wiki-drip text-sm block mt-2 text-gray-500">효빈시 대중교통 역사상 가장 치열했던 투쟁의 산증인이자, 효빈메트로 마스코트계의 살아있는 화석.</span>
+        </div>
+        <p>
+            <a href="효빈권 광역전철.html" class="wiki-link">효빈권 광역전철</a> <a href="7호선.html" class="wiki-link">7호선</a>(친환경 무가선 트램)을 상징하는 마스코트 캐릭터 중 언니. 직업은 효빈교통공사 역무본부 소속의 역무원이며, 산전수전 다 겪은 압도적인 짬바(경력)를 바탕으로 현재 현장직 <strong>'대리'</strong> 직급을 달고 있다.
+        </p>
+        <p>
+            타 호선의 어린 마스코트들과는 뼈대부터가 다르다. 그녀는 무려 <strong>2004년</strong>, 과거 민간 기업이었던 <strong>'회주공업' 전차사업부 시절에 최초로 제작</strong>되어 지금까지 살아남은 <strong>근본 중의 근본이자 고인물 캐릭터</strong>다. 7호선의 상징색인 화사한 분홍색(#FF8899) 테마를 담당하고 있지만, 그 속에는 절대 꺾이지 않는 강철 같은 멘탈(스틸 마인드 블루)과 야생의 생존 본능이 숨겨져 있다. 
+        </p>
+        <p>
+            <strong>2010년</strong>, <a href="윤대환.html" class="wiki-link">윤대환</a> 전 시장에 의해 구시대의 유물로 취급받으며 폐선 직전까지 갔던 7호선 전차가 장기적인 운영 안정성 확보를 위해 <a href="효빈교통공사.html" class="wiki-link">효빈교통공사</a>로 전격 공영화되면서, 10살 어린 동생 <a href="임세하.html" class="wiki-link">임세하</a>와 함께 현재의 세련된 모습으로 리뉴얼되었다. 잔혹한 트램 폐지 시도에 맞서 맨몸으로 싸우며 노선과 가족의 생존권을 지켜낸 눈물겨운 역사가 캐릭터 설정 전반에 깊게 배어 있다. 
+        </p>
+
+        <!-- STREAMING_CHUNK:Rendering document content details... -->
+        <h2 id="s-2">2. 상세 설정</h2>
+
+        <h3 id="s-2-1">2.1. 성격 및 특징 (현장 통제의 화신과 K-장녀)</h3>
+        <p>
+            <strong>"자비 없는 현장 통제의 대가"</strong>이자 <strong>"뼛속까지 억척스러운 K-장녀"</strong>. 
+            필리핀 이주민 출신인 공장 노동자 어머니와 현장을 전전하는 용접공 아버지를 대신해, 나이 차이가 크게 나는 5명의 동생들(세현, 선아, 세하, 세연, 세빈)을 사실상 본인의 역무원 월급으로 기강을 잡으며 혼자 키우다시피 했다. 그 덕분에 생활력이 잡초 수준으로 강하며, 밥줄이 끊길 뻔했던 수많은 위기 상황에서도 무능한 어른들에게 기대지 않고 정면 돌파해 낸 무시무시한 강인함을 지녔다. 매사에 철두철미하고 규정을 중시하는 전형적인 <strong>ESTJ (엄격한 관리자)</strong> 성향이다.
+        </p>
+        <p>
+            그녀의 억센 성격은 사실 <strong>'상처받은 동생들과 내 사람들을 지키기 위해 스스로 기꺼이 악역을 자처한 방어 기제'</strong>에 가깝다. 트램 특성상 도로와 인도가 혼재된 복잡한 상황이 발생할 때, 마이크 하나만 들고 튀어나와 아수라장을 10초 만에 정리하는 <strong>'압도적 통제력'</strong>은 그녀가 세상을 살아온 방식 그 자체다. 무개념 시민들이 선로를 막고 있으면 <span class="font-bold text-[#FF8899]">"비켜. 죽기 싫으면."</span> 한마디로 모세의 기적을 일으킨다. <span class="wiki-drip">효빈교통공사 신입 역무원 연수 때 '진상 대처법' 교보재로 임세정 대리의 현장 바디캠 영상이 쓰인다는 건 공공연한 비밀이다.</span>
+        </p>
+        <p>
+            현실 감각 역시 하늘을 찌른다. 감성파인 3호선 <a href="박라미.html" class="wiki-link text-[#FFCC11] hover:underline font-bold">박라미</a>가 노면전차를 보고 "아아... 낭만적인 도시의 오르골..." 따위의 감성 멘트를 치면, 옆에서 쓰레기통을 비우며 <strong>"낭만은 좋고, 비 오는 날 선로 미끄럼 주의해. 낙상사고로 합의금 나가면 우리 관할이야."</strong>라며 팩트 폭격기를 가동한다. 
+        </p>
+
+        <h3 id="s-2-2">2.2. 학력 및 능력 (실전 압축 근육형 스펙)</h3>
+        <p>
+            효빈초-내조중-다판고를 거쳐 <strong>효빈과학대학교(전문대) 철도운영과</strong>를 졸업했다. 4년제 국립대(효빈대)나 명문 사립대(엽월대)를 나온 다른 어린 캐릭터들(<a href="고나미.html" class="wiki-link text-[#0077DD] hover:underline font-bold">고나미</a>, <a href="하루빈.html" class="wiki-link text-[#00CCAA] hover:underline font-bold">하루빈</a> 등)에 비해 표면적인 학력 스펙은 낮아 보일지 모른다. 하지만 2004년 회주공업 시절부터 현장에서 먼지 마시며 구른 <strong>압도적인 20년 차 짬밥(경력)과 실무 대처 능력 앞에서는 스카이(SKY) 출신 본사 기획실 엘리트 직원들도 서류를 덮고 깍듯이 고개를 숙인다.</strong>
+        </p>
+        <p>
+            회주공업 사철 시절의 구형 전차부터, 현재의 배터리 탑재 최신형 무가선 저상 트램까지 모든 차량의 흥망성쇠를 맨몸으로 겪었다. 이 때문에 그녀의 철도 덕력은 단순한 취미를 넘어선 <strong>'생존형 운영 스킬'</strong>에 가깝다. 대규모 축제 기간 동안 혼잡한 인파를 사고 없이 뚫고 트램을 정시 운행시키는 현장 다이아(운행표) 조율 능력, 진상 승객의 멱살을 물리적으로 제압하는 전투력은 공사 내에서 전설로 통한다.
+        </p>
+
+        <h3 id="s-2-3">2.3. 정치 성향 (생존과 4.01 지성의 맹신)</h3>
+        <p>
+            <strong>對 윤대환 (전 시장): 찢어 죽여도 시원찮을 원수 (생존권 위협).</strong><br>
+            임세정에게 윤대환 전 시장은 단순한 비호감 정치인이 아니라 <strong>'내 청춘이 담긴 직장을 공중분해 시키고 우리 6남매의 밥줄을 끊으려 했던 불구대천의 원수'</strong>다. 윤 시장이 재임 시절 "7호선 구형 전차는 도로 교통 흐름을 방해하는 흉물이니 당장 노선을 폐지하라"라고 지시했을 때, 세정은 머리에 붉은 띠를 두르고 시청 앞 최선봉에 서서 바리케이드를 치고 반대 시위를 주도했던 <strong>강성 노조의 투사</strong>였다. 
+        </p>
+        <p>
+            <strong>對 박효빈 (현 시장): 빛, 소금, 구원자, 그리고 종교.</strong><br>
+            피 말리는 투쟁 끝에 당선된 박효빈 현 시장은, 전차를 없애는 대신 대규모 시 예산을 투입해 '최신형 무가선 트램'으로 전면 교체하여 7호선을 화려하게 부활시켰다. 박 시장은 7호선을 효빈교통공사 소속으로 전격 공영화하여 <strong>완벽한 장기적 노선 안정성</strong>을 보장해 준 데다가, 기존 사철 직원들을 정규직으로 100% 고용 승계해 주었다. 게다가 박 시장은 경영/회계/재무를 복수전공하며 <strong>4.01</strong>이라는 괴물 같은 학점을 찍은 행정의 달인이다. 세정은 박 시장의 그 냉철한 데이터 기반 행정과 자신들을 구원해 준 결단력 앞에 무한한 충성을 맹세한다.
+        </p>
+
+        <h3 id="s-2-4">2.4. 외형 및 디자인</h3>
+        <p>
+            머리를 대충 묶고 셔츠를 풀어헤치고 다니는 공대생 동생(<a href="임세하.html" class="wiki-link">임세하</a>)과 달리, 언니인 임세정의 일러스트는 <strong>단정함과 프로페셔널함의 극치</strong>를 보여준다. 길고 풍성한 흑남색 머리카락을 깔끔하게 반묶음(하프업)으로 정리하여 대중교통 서비스직 특유의 신뢰감을 주며, 동생들과 유전자를 공유한다는 증거인 <strong>작은 바보털(아호게)</strong> 하나가 정수리에 튀어나와 있어 엄격한 이미지 속에 묘한 귀여움을 더한다.
+        </p>
+        <p>
+            복장은 군더더기 없이 몸에 딱 떨어지는 핏의 하얀색 블라우스에 남색 플리츠스커트, 그리고 무릎 아래까지 오는 까만색 반스타킹(니삭스)과 단정한 로퍼를 착용하고 있다. 블라우스 단추를 목 끝까지 꼼꼼하게 채우고 소매도 손목까지 완벽하게 내려 입은 모습에서, 산전수전 다 겪은 역무원의 철저한 자기 관리와 기강이 엿보인다. 팬들 사이에서는 이 빈틈없는 제복 핏에서 뿜어져 나오는 <strong>'30대 직장인 특유의 어른스러운 분위기(어른의 여유)'</strong>가 다른 파릇파릇한 어린 캐릭터들과 차별화되는 최고의 매력 포인트로 꼽힌다.
+        </p>
+        <div class="mb-4 p-4 border-l-4 border-[#FF8899] bg-[#fff0f5]">
+            <span class="font-bold text-[#FF8899]">✨ 일러스트 포즈의 진실 (프로의 '자본주의 미소')</span><br>
+            공식 일러스트 속 세정은 한쪽 팔을 가볍게 내리고, 누구보다 맑고 환한 미소로 어딘가를 응시하고 있다. 투쟁의 산증인이자 호랑이 대리님이라는 살벌한 설정과는 전혀 매치되지 않는 이 청순한 모습에 수많은 뉴비들이 속아 넘어간다. <br>
+            하지만 <span class="wiki-drip text-gray-500">효빈위키러</span>들이 분석한 바에 따르면, 저 표정은 <strong>"VIP(박효빈 시장 혹은 본사 임원)가 7호선 시찰을 나왔을 때 반사적으로 장착되는 완벽한 '100% 자본주의 영업용 미소'"</strong>임이 틀림없다. 입은 환하게 웃고 있지만, 진상 승객이 나타나면 0.1초 만에 저 미소를 지우고 눈빛만으로 사람을 제압할 수 있는 것이 바로 20년 차 직장인의 무서운 내공이다.
+        </div>
+
+        <h3 id="s-2-5">2.5. 목소리 및 성우 연기 (안내방송과 사자후의 갭 모에)</h3>
+        <p>
+            친절한 '영업용 안내방송 톤'과 극대노했을 때 튀어나오는 '인간 확성기 톤'의 극단적인 온도 차이가 캐릭터의 정체성을 완성한다. 한일 양국 성우 모두 30대 K-장녀의 애환을 기가 막히게 살려냈다.
+        </p>
+        <ul class="list-disc pl-5 space-y-4">
+            <li>
+                <strong>일본판 성우: <a href="https://namu.wiki/w/%EC%8A%A4%EC%A6%88%ED%82%A4%20%EC%95%84%EC%9D%B4%EB%82%98" class="wiki-link" target="_blank">스즈키 아이나</a></strong><br>
+                평상시 고객 응대를 할 때는 콧소리가 살짝 섞인 굉장히 상냥하고 높은 하이톤을 유지한다. 그러나 무개념 승객이 선로를 침범하는 순간, <strong>성우 본인의 전매특허(민요 챔피언 출신)인 미친 폐활량과 발성</strong>이 봉인 해제된다. 마이크를 쓰지 않아도 트램 플랫폼 전체를 쩌렁쩌렁 울리게 만드는 <strong>"거기 안 물러서!!!!"</strong>라는 복식호흡 사자후는 가히 전술 병기 수준. 
+            </li>
+            <li>
+                <strong>한국판 성우: <a href="https://namu.wiki/w/%EC%9C%A4%EB%AF%B8%EB%82%98" class="wiki-link" target="_blank">윤미나</a></strong><br>
+                회주공업 시절부터 산전수전 다 겪은 베테랑의 연륜을 완벽하게 살려냈다. 평소에는 따뜻한 동네 큰누나 톤이지만, 동생 임세하가 기계 부품을 빼돌리거나 진상 승객을 상대할 때는 목소리의 피치가 확 낮아지며 <strong>"선생님. 밖으로 나가시죠. (극저음)"</strong>라며 오금을 저리게 만드는 서늘한 톤으로 돌변한다. 
+            </li>
+        </ul>
+
+        <!-- STREAMING_CHUNK:Rendering character relationships... -->
+        <!-- 3. 인간 관계 -->
+        <h2 id="s-3">3. 인간 관계 (동료와 가족)</h2>
+        <ul class="list-disc pl-5 space-y-4">
+            <li class="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
+                <strong class="text-blue-800 text-lg">김 주임 (시설관리팀, 31세): 폭풍을 견뎌낸 거목이자 완벽한 안식처</strong><br>
+                매일 진상들과 싸우며 가시를 세우고 사는 세정의 유일한 브레이크이자 <strong>사내 썸남</strong>. 김 주임은 어린 시절 '베트남 혼혈'이라는 이유로 동네와 학교에서 무지한 차별과 괴롭힘을 당했던 깊은 상처를 가지고 있다. 하지만 그는 그 아픔을 삐뚤어지게 풀지 않고 내면을 단단하게 다져 '외유내강'의 표본으로 성장했다. 세정이 진상 승객 때문에 멘탈이 흔들릴 때면 말없이 다가와 모과차를 건네고, 위험한 순간에는 <strong>"대리님은 뒤에 계십시오. 이건 제가 처리합니다."</strong>라며 가장 단단한 방패가 되어준다. 상처를 극복해 본 사람만이 줄 수 있는 그 깊은 다정함 덕분에, 세정은 그 앞에서만큼은 억척스러운 가장의 짐을 내려놓고 수줍은 여자가 된다.
+            </li>
+            <li>
+                <strong>임세현 (둘째 남동생):</strong> 기 센 5자매 사이에서 살아남은 유일한 청일점. 원래는 평범한 문과생인 줄 알았으나, 최근 <strong>애니메이션(특히 일상물)</strong>에 심하게 빠져 방구석 오타쿠로 전직했다. 심지어 <strong>데이터 분석과 확률 통계</strong>에 천재적인 재능을 가지고 있으면서 그 머리를 모바일 게임 가챠 기댓값 계산에나 낭비하고 있어 세정의 혈압을 수직 상승시킨다. 세정은 "이 집구석은 기계 씹덕(세하) 하나로도 모자라서 이제 투디 씹덕까지 나타나냐!!"라며 등짝을 때리지만, 몰래 극장판 예매권을 찔러주는 츤데레 누나다.
+            </li>
+            <li>
+                <strong><a href="임세하.html" class="wiki-link">임세하</a> (7호선 마스코트 넷째 동생):</strong> 10살이나 어린 눈에 넣어도 안 아픈 공대생 늦둥이 동생. 세하가 전공(C언어)에서 F학점을 맞았을 때 분노의 <strong>'등짝 스매싱 5연타'</strong>를 날렸지만, 밤새워 코딩하는 동생 책상에 손수 싼 고퀄리티 도시락과 홍삼액을 올려둔다. 김 주임과 언니의 썸을 가장 적극적으로 밀어주며 "언니, 당장 혼인신고서에 도장부터 찍어!"라고 부추기는 든든한 아군이다.
+            </li>
+            <li>
+                <strong><a href="고나미.html" class="wiki-link text-[#0077DD] hover:underline font-bold">고나미</a> (1호선 기관사):</strong> 고나미(99년생)가 공채 엘리트 출신이라 묘한 직급 텐션이 있지만, 고나미가 세정의 산전수전 겪은 현장 경력을 깊이 존중하여 깍듯이 "세정 언니"라고 모신다. 둘이 휴게실에 앉으면 효빈시 대중교통의 10년 전 흑역사를 씹어 돌리는 <strong>사내 최강 '고인물 라인'</strong>이다.
+            </li>
+        </ul>
+
+        <!-- STREAMING_CHUNK:Rendering historical and running gags sections... -->
+        <!-- 4. 과거의 족쇄와 심판 -->
+        <h2 id="s-4" class="text-2xl font-bold border-b-2 border-red-500 text-red-700 mt-8 mb-4 pb-1">4. 과거의 족쇄와 심판: '개인성' 대토벌전</h2>
+        
+        <div class="mb-6 p-5 border-2 border-red-400 rounded-xl bg-white shadow-lg">
+            <h4 class="mt-0 text-xl font-black text-red-600 mb-4">🚨 최악의 흑역사이자 효빈시 공식 공공재 샌드백</h4>
+            <p class="mb-4 leading-relaxed">
+                세정의 20대 시절을 통째로 갉아먹을 뻔했던 최악의 오물이자, 세정이 확성기를 들고 각성하게 만든 만악의 근원. 현실의 범죄자 <strong>'이인성'</strong>을 모티브로 한 이 캐릭터는, 여자애와 팔씨름을 해도 지는 처참한 <strong>'수수깡 피지컬'</strong>을 가졌음에도 허세와 강약약강으로 똘똘 뭉친 구제 불능의 쓰레기다. 과거 세정은 그의 교묘한 가스라이팅에 속아 그를 짝사랑하는 뼈아픈 흑역사를 생성했었다.
+            </p>
+            <div class="bg-gray-100 p-4 rounded-lg mb-4 border-l-4 border-gray-500">
+                <strong class="text-gray-800">📖 [Fact Check] 전설의 '과학쌤 사자후' 사건</strong><br>
+                이 수수깡 찌질이는 중학교 시절 친구들 사이에서 허세를 부리다 <strong>"과학쌤 여친 내가 OOO(SEX) 한다"</strong>라는 경악스러운 성희롱 망언을 내뱉었다. 이를 듣고 극대노한 과학 선생님이 참지 못하고 의자를 집어 던지며 사자후를 터뜨린 사건은 그의 찌질함이 전교에 까발려진 결정적 계기였다. 이후 그는 대안학교로 쫓겨나고 차량 절도까지 저지르며 소년원 테크트리를 탔다.
+            </div>
+            
+            <h4 class="mt-6 text-lg font-bold text-red-600 mb-2">⚖️ 4.01 지성이 주도한 피의 재판과 붉은 확성기</h4>
+            <p class="mb-4 leading-relaxed">
+                개인성은 세정을 괴롭힌 것도 모자라 시장님에게 씻을 수 없는 성추행과 모욕을 가했다. 이 악연은 효빈시 대법원에서 열린 세기의 재판을 통해 완벽하게 분쇄된다. 재판 내내 "배상할 돈이 없다"고 뻔뻔하게 발뺌하는 개인성을 향해, <strong>경영/회계/재무 복수전공 평점 4.01에 빛나는 박효빈 시장</strong>이 직접 등판했다. 박 시장은 '중급회계 A+'와 '재무관리 Ao'의 악마 같은 지식을 총동원하여 개인성의 은닉 자금 흐름을 소수점 단위까지 추적해 영혼까지 털어버렸다. 이어서 5호선 수석 <strong>미소하</strong>가 형법 제297조와 제301조를 읊으며 팩트 폭격을 꽂아 넣어 그의 퇴로를 완전히 차단했다.
+            </p>
+            
+            <div class="bg-red-50 p-4 rounded-lg mb-4 border border-red-300 text-center">
+                <p class="text-sm font-bold text-gray-600 mb-1">재판의 클라이맥스, 증인석에 선 임세정 대리의 일갈</p>
+                <p class="text-2xl font-black text-red-600 italic">"넌 그냥 입만 산 수수깡 찌질이일 뿐이야!!!!"</p>
+                <p class="text-xs text-gray-500 mt-2">확성기 최대 볼륨으로 터져 나온 이 사자후와 함께, 세정은 과거의 족쇄를 완전히 박살 냈다.</p>
+            </div>
+
+            <h4 class="mt-6 text-lg font-bold text-red-600 mb-2">🚽 최종 엔딩: 효빈교도소의 '4차 소변러'</h4>
+            <p class="mb-4 leading-relaxed">
+                성범죄, 절도, 횡령 등 모든 죄목이 병합되어 <strong>징역 25년</strong>을 선고받은 개인성은 효빈교도소의 흉악범 감방으로 던져졌다. 그곳의 부방장이 신입인 그에게 아주 기초적인 질문인 <strong>"변수(Variable)와 상수(Constant)의 차이가 뭐냐?"</strong>라고 묻자, 기초 지식조차 없던 그는 대답하지 못하고 먼지 나게 두들겨 맞았다. 공포에 질린 그는 그 자리에서 무려 <strong>4번이나 소변을 지리는(4차 소변)</strong> 굴욕을 겪으며, 시장님이 창조한 세계관의 영원한 장난감이자 샌드백으로 전락했다.
+            </p>
+
+            <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500 mt-4">
+                <strong class="text-green-800">🌸 [행정의 정석] 사비 횡령 리스크 제로! 적극행정 표창과 로맨스의 완성</strong><br>
+                개인성 같은 흉악한 진상을 물리치고 7호선의 평화를 지켜낸 세정. 박효빈 시장은 그녀를 위로하기 위해 사비로 성과급을 주려다 <strong>'김영란법 위반 및 횡령 리스크'</strong>를 감지하고, 행정 마스터답게 합법적인 <strong>'효빈광역시 적극행정 우수공무원 표창'</strong>을 수여한다. 
+                <br>명예로운 시장 표창과 두둑한 포상금을 받은 날, 늘 그녀를 지켜보던 김 주임이 다가와 말한다. <br><span class="italic font-bold text-gray-700">"국가에서 받은 포상금은 대리님을 위해 쓰십시오. 오늘 축하 파티는 제가 모십니다."</span> <br>완벽한 공과 사의 분리 속에서, 세정은 길고 길었던 흑역사의 종지부를 찍고 진정한 사랑을 시작하게 된다.
+            </div>
+        </div>
+
+        <!-- 5. 러닝 개그 및 특수 설정 -->
+        <h2 id="s-5" class="mt-8">5. 러닝 개그 및 특수 설정</h2>
+        
+        <div class="mb-6 p-4 border border-[#FF8899] rounded-lg bg-pink-50 relative shadow-sm">
+            <h4 style="margin-top:0; color:#b33b52; font-weight:800;">📢 인간 확성기 (물리적 음파 병기)</h4>
+            <p>
+                단호하게 안내방송을 하거나 혼잡 구역에서 소리를 지를 때, 그 엄청난 성량과 폐활량이 마치 <strong>무대용 대형 스피커(MC 마이크)</strong>를 방불케 하여 시장바닥 같던 트램 승강장이 1초 만에 쥐 죽은 듯 정숙해지는 마법을 부린다. 
+            </p>
+            <p class="mt-2 text-sm text-gray-700">
+                가끔 출근길 지옥철 상황에서 기합을 빡 넣고 "뒤로 한 걸음 물러서주시기 바랍니다!!"라고 외치면, 승객들이 <span class="text-[#FF8899] font-bold">"어? 밴드 라이브 공연 시작하나? 발성 미쳤는데?"</span> 하고 착각한다고. 일본어판 성우 <a href="https://namu.wiki/w/%EC%8A%A4%EC%A6%88%ED%82%A4%20%EC%95%84%EC%9D%B4%EB%82%98" class="wiki-link" target="_blank">스즈키 아이나</a> 특유의 <strong>민요 창법으로 단련된 경이로운 폭발적 성량</strong>에서 유래한 이 '확성기' 설정 덕분에, 회식 자리에서 세정이 마이크를 잡고 노래를 부르면 스피커 앰프가 터진다는 괴담이 존재한다.
+            </p>
+        </div>
+
+        <div class="mb-6 p-4 border border-[#FF8899] rounded-lg bg-pink-50 shadow-sm">
+            <h4 style="margin-top:0; color:#b33b52; font-weight:800;">🍱 투박하지만 완벽한 K-장녀의 '단백질 벤토'</h4>
+            <p>
+                어린 시절부터 부모님 대신 동생들을 먹여 살린 짬바 덕분에 요리 실력이 요리사 뺨치는 수준급이다. 매일 새벽같이 일어나 넷째 동생 임세하를 비롯한 5남매의 도시락을 싸는 것이 일상이다. 특히 밤샘 코딩을 하는 공대생 세하와, 방구석에서 가챠 확률을 돌리는 오타쿠 세현을 먹여 살리기 위해 <strong>무지막지한 양의 고기 반찬과 단백질</strong> 위주로 식단을 구성하여 공대생들 사이에서 엄청난 부러움을 산다.
+            </p>
+            <p class="mt-2 text-sm text-gray-700">
+                공식 넨도로이드 굿즈에 뜬금없이 '도시락 파츠'가 포함된 것도 바로 이 철저한 엄마 포지션(K-장녀)을 반영한 것이다. 가끔 동생들이 말썽을 피우면 반찬이 콩자반과 멸치볶음으로 도배되는 징벌적 도시락이 배달된다. 세정 대리의 퇴근 후 가장 힐링되는 시간은 김 주임이 조용히 건네는 따뜻한 모과차를 마시며 내일 동생들에게 먹일 반찬거리를 고민하는 시간이다.
+            </p>
+        </div>
+
+        <!-- STREAMING_CHUNK:Injecting new Setsuna meme section... -->
+        <h2 id="s-6" class="text-2xl font-bold border-b-2 border-[#FF8899] mb-4 pb-1 mt-8">6. 여담 및 미디어 믹스</h2>
+        
+        <div class="mb-6 p-4 border-2 border-purple-400 rounded-lg bg-purple-50 relative shadow-md">
+            <span class="absolute top-0 right-0 bg-purple-400 text-white font-bold px-2 py-1 text-xs rounded-bl-lg">Deep Lore</span>
+            <h4 style="margin-top:0; color:#4a148c; font-weight:900;">🧬 창조주의 평행이론 (K-장남 자아의 완벽한 투영)</h4>
+            <p class="mb-2 text-sm md:text-base leading-relaxed text-gray-800">
+                세정의 억척스럽고 당당한 캐릭터성은 단순히 만들어진 것이 아니다. 창조주인 박효빈 시장이 현실에서 필리핀 혼혈로서 겪었던 차별, 그리고 <strong>어린 시절부터 아픈 가족과 동생들을 지키기 위해 무능한 어른들과 맞서 싸워야 했던 실질적인 '가장(K-장남)'으로서의 치열한 삶</strong>이 세정이라는 K-장녀 캐릭터에 100% 투영된 것이다.<br>
+                과거의 상처를 극복하고 김 주임(베트남 혼혈 서사)을 만나 안식처를 얻는 세정의 로맨스는, 험난한 세상을 버텨낸 창조주 스스로에게 내리는 가장 따뜻한 '심리적 보상'이자 완벽한 구원 서사로 평가받는다.
+            </p>
+        </div>
+
+        <div class="mb-6 p-4 border-2 border-gray-800 rounded-lg bg-gray-50 relative shadow-md">
+            <span class="absolute top-0 right-0 bg-gray-800 text-white font-bold px-2 py-1 text-xs rounded-bl-lg">Webtoon</span>
+            <h4 style="margin-top:0; color:#1a202c; font-weight:900;">📱 인터넷 연재 웹툰 &lt;효빈툰: 붉은 확성기&gt;</h4>
+            <p class="mb-2 text-sm md:text-base leading-relaxed text-gray-800">
+                애니메이션의 역동적인 분위기와 달리, 세정의 딥하고 시리어스한 과거(개인성 재판 등)와 법정 복수극, 그리고 김 주임과의 슬로우 번(Slow-burn) 로맨스를 다루기 위해 <strong>인터넷 연재 웹툰(Webtoon) 형식</strong>으로 제작이 기획되었다.<br>
+                웹툰 특유의 세로 스크롤을 활용하여, 과거의 끔찍했던 흑역사 시절은 채도가 낮은 흑백톤으로 매운맛(고구마)을 연출하다가, 4.01 지성의 재판 팩트 폭격과 확성기 사자후가 터지는 순간 강렬한 <span class="font-bold" style="color:#4682B4;">'스틸 마인드 블루'</span>와 <span class="font-bold text-red-500">'스칼렛 레드'</span>가 폭발하며 사이다 절벽 엔딩(Cliffhanger)을 선사하는 연출이 극찬을 받고 있다.
+            </p>
+        </div>
+
+        <div class="mb-6 p-4 border-2 border-pink-400 rounded-lg bg-[#fff0f5] relative shadow-md">
+            <span class="absolute top-0 right-0 bg-pink-400 text-white font-bold px-2 py-1 text-xs rounded-bl-lg">Meme</span>
+            <h4 style="margin-top:0; color:#b33b52; font-weight:900;">🎸 [밈] 정점을 노리는(?) 보라색이 아닌 분홍색 이사장님</h4>
+            <p class="mb-2 text-sm md:text-base leading-relaxed">
+                언니인 임세정은 담당 성우 스즈키 아이나의 대표작인 <strong><a href="러브 라이브! 선샤인!!.html" class="wiki-link text-[#FF8899] hover:underline">러브라이브! 선샤인!!</a>의 오하라 마리</strong>와 엮이는 밈이 흥하고 있다. 
+            </p>
+            <ul class="list-disc pl-5 space-y-2 text-sm text-gray-800">
+                <li>엄격하고 진지하며 5명의 동생들 챙기느라 바쁜 K-장녀 임세정이 강제로 헬기를 타고 <span class="text-[#FF8899] font-bold">"샤이니~~~~!!!"</span>를 외치며 자본주의적 환호를 지르는 합성 영상은 효빈철도 팬덤 내 조회수 100만을 가뿐히 돌파했다.</li>
+                <li>팬아트에서는 평소의 깐깐한 정비복이나 사무복 대신, 마리의 화려한 의상을 입고 "It's joke!"를 외치는 세정과 그 뒤에서 조용히 방문을 잠그고 코딩에 열중하는 동생 세하의 모습이 대비되어 그려진다. <del>세하: "우리 큰언니가 미쳤어요."</del></li>
+                <li>시장님이 직접 내려준 7호선 분홍색(#FF8899) 이미지 컬러와 마리의 이미지 컬러가 묘하게 겹치면서, 사실은 세정이 효빈메트로의 숨겨진 재벌 3세 이사장이라는 억지 설정 밈도 존재한다.</li>
+            </ul>
+        </div>
+
+        <!-- 새롭게 추가된 유키 세츠나 비주얼 밈 영역 -->
+        <div class="mb-6 p-4 border-2 border-red-500 rounded-lg bg-red-50 relative shadow-md">
+            <span class="absolute top-0 right-0 bg-red-500 text-white font-bold px-2 py-1 text-xs rounded-bl-lg">Meme</span>
+            <h4 style="margin-top:0; color:#c62828; font-weight:900;">🎤 [밈] 진정한 비주얼 도플갱어, '유키 세츠나' 싱크로율</h4>
+            <p class="mb-2 text-sm md:text-base leading-relaxed">
+                기존에는 7호선 상징색 때문에 오하라 마리와 엮이는 밈이 강했지만, 팬들이 <strong>실제 외형(비주얼)</strong>을 뜯어보면서 새롭게 급부상한 절대적인 도플갱어는 따로 있었으니... 바로 <strong><a href="니지가사키 학원 스쿨 아이돌 동호회.html" class="wiki-link text-red-600 hover:underline">니지가사키 학원 스쿨 아이돌 동호회</a>의 유키 세츠나</strong>다.
+            </p>
+            <ul class="list-disc pl-5 space-y-2 text-sm text-gray-800">
+                <li><strong>'흑남색 장발 + 반묶음(하프업) + 노란색(호박색) 눈동자 + 바보털 + 특유의 에너제틱하고 당찬 미소'</strong>까지, 화면상에 나타난 시각적 요소가 스쿨 아이돌 모드의 유키 세츠나와 소름 돋을 정도로 완벽하게 일치하여 비주얼 싱크로율 100%를 자랑한다.</li>
+                <li>흥미롭게도 넷째 동생인 <a href="임세하.html" class="wiki-link">임세하</a> 역시 비슷한 흑발 스타일이나 특정 속성 때문에 세츠나(혹은 본체인 나카가와 나나)와 약간 닮아 엮이는 편인데, 언니인 임세정은 아예 세츠나 본인이 등판했다고 해도 믿을 정도의 압도적인 싱크로율이라 <strong>자매가 쌍으로 니지가사키와 엮이는</strong> 진풍경이 벌어지고 있다.</li>
+                <li>이 때문에 진상 승객이 나타나면 확성기 대신 마이크를 쥐고 <span class="font-bold text-red-600">"CHASE!"</span>나 <span class="font-bold text-red-600">"DIVE!"</span>를 열창하며 물리적인 록(Rock) 스피릿으로 진상을 날려버릴 것 같다는 드립이 자주 흥한다. <del>세정: "선생님, 제 노래(물리)를 들어주세요!!"</del></li>
+            </ul>
+        </div>
+
+        <ul class="list-disc pl-5 space-y-4 text-gray-800">
+            <li class="p-4 bg-pink-50 border-l-4 border-[#FF8899] rounded-lg shadow-sm">
+                <strong>[비주얼] 유니폼이 숨겨온 '슬림 탄력'의 정석 (v1.2):</strong> 넷째 동생 임세하가 유니폼 속에 '폭발적인 중장갑'을 숨기고 있었다면, 큰언니 임세정은 <strong>군살 하나 없이 탄탄하게 잡힌 슬림한 바디라인</strong>을 숨기고 있었다. v1.2 공식 설정상 <strong>B85.5 - W58 - H85</strong>로, 과하지 않으면서도 운동으로 다져진 직각 어깨와 매끄러운 다리 라인이 포인트. <br>
+                최근 해변 사진에서 착용한 <strong>별무늬 네이비 원피스 수영복</strong>은 평소 7호선의 단정한 핑크 유니폼으로는 도저히 짐작할 수 없었던 '에너제틱 스포티' 체형을 가감 없이 드러내며, "역시 모델 출신 아니냐"는 의혹을 낳게 했다. <del>동생 세하가 묵직한 한 방이라면, 큰언니 세정은 날렵하고 탄탄한 완벽 밸런스라는 평.</del>
+            </li>
+            <li class="leading-relaxed">
+                <strong>박제된 영광의 흑역사:</strong> 과거 윤대환 시장 시절, 전차 폐지 반대 시위의 최전선에서 분홍색 유니폼에 빨간 머리띠를 두르고 <strong>확성기를 쥔 채 피 토하듯 연설하던 투사 시절의 사진</strong>이 효빈시 역사박물관에 전시 중이다. 본인은 흑역사라며 부끄러워하지만, 팬들에게는 '7호선을 지켜낸 분홍색 잔다르크'로 추앙받는 전설의 짤이다.
+            </li>
+            <li class="leading-relaxed">
+                <strong>효빈철도의 최종 해결사(Ate):</strong> 캐릭터 중 실무 경력이 가장 긴 베테랑이다 보니, 다른 캐릭터들이 해결하지 못하는 물리적 오류나 진상 민원이 생기면 최종 보스로 등판한다. <a href="다로나.html" class="wiki-link text-[#FF5522] hover:underline font-bold text-xs">다로나</a>가 매뉴얼로 제압하지 못하는 '미친 진상'이 나타나면, 세정이 조용히 다가가 <strong>"선생님, 좋은 말 할 때 밖으로 나가시죠"</strong>라는 차가운 한 마디로 상황을 종료시키는 듬직한 모습을 보여준다.
+            </li>
+        </ul>
+
+        <!-- STREAMING_CHUNK:Rendering footnotes and footer... -->
+        <!-- 하단 각주 영역 -->
+        <div class="footnotes-area mt-8">
+            <h3 style="margin-top:0; font-size:1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px;">각주</h3>
+            <div id="fn-1" class="footnote-content">[1] 실제 7호선 전신인 민간 '효빈전차'의 최초 개업시기(1931년 4월 5일)와 생일이 같다. 7호선의 가장 오래된 역사와 뿌리를 상징하는 언니 캐릭터다운 생일 설정이다.</div>
+            <div id="fn-2" class="footnote-content">[2] 성우 스즈키 아이나(러브라이브 선샤인 - 오하라 마리 役)의 미칠듯한 가창력(민요 챔피언 출신의 발성)과 마이크를 찢어버릴 듯한 성량에서 유래한 '인간 확성기' 설정이 반영되었다.</div>
+        </div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-400 text-xs pb-10">
+            <p>이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)</p>
+            <p>기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            <br>
+            <p>효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</p>
+            <p>효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.</p>
+        </footer>           </div>    <script>
+        // 각주 호버보드 (툴팁) 기능
+        document.addEventListener('DOMContentLoaded', () => {
+            // .footnote-ref 클래스를 가진 요소만 정확하게 선택하여 툴팁 발동
+            const refs = document.querySelectorAll('.footnote-ref');
+            const tooltip = document.getElementById('footnote-tooltip');
+
+            refs.forEach(ref => {
+                ref.addEventListener('mouseenter', (e) => {
+                    e.preventDefault(); 
+                    
+                    // href 속성에서 id 추출 (예: #fn-1 -> fn-1)
+                    let href = ref.getAttribute('href');
+                    if (!href) return;
+                    
+                    const targetId = href.substring(1); 
+                    const targetContent = document.querySelector(`.footnote-content[id="${targetId}"]`);
+                    
+                    if (targetContent) {
+                        tooltip.innerHTML = targetContent.innerHTML;
+                        tooltip.style.display = 'block';
+                        moveTooltip(e);
+                    }
+                });
+
+                ref.addEventListener('mousemove', (e) => {
+                    moveTooltip(e);
+                });
+
+                ref.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+            });
+
+            function moveTooltip(e) {
+                const x = e.clientX + 15;
+                const y = e.clientY + 15;
+                
+                const tooltipRect = tooltip.getBoundingClientRect();
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+
+                let finalX = x;
+                let finalY = y;
+
+                // 툴팁이 화면을 벗어나지 않도록 위치 조정
+                if (x + tooltipRect.width > windowWidth) {
+                    finalX = x - tooltipRect.width - 20;
+                }
+                if (y + tooltipRect.height > windowHeight) {
+                    finalY = y - tooltipRect.height - 20;
+                }
+
+                tooltip.style.left = finalX + 'px';
+                tooltip.style.top = finalY + 'px';
+            }
+        });
+    </script>
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

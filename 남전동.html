@@ -1,0 +1,568 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>남전동 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        /* [핵심 설정] 위키 테마 변수 - 북구(Blue Grey Theme) */
+        :root { 
+            /* 브랜드 컬러 */
+            --wiki-fixed: #7777AA; 
+            
+            /* 북구 상징색 (#5D75A0) */
+            --wiki-main: #5D75A0; 
+            
+            /* 포인트 컬러 (전자상가 그린 / 쿠스다 그린) */
+            --wiki-point: #2E7D32; 
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+            
+            /* 각주 툴팁 스타일 변수 */
+            --wiki-tooltip-bg: #ffffff;
+            --wiki-tooltip-border: #aaaaaa;
+            --wiki-tooltip-text: #333333;
+            
+            /* 노선 색상 */
+            --line-2: #00CCAA;
+            
+            /* 노조미 퍼스널 컬러 (서브컬처 파트용) */
+            --nozomi-color: #742C9E;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-fixed: #9999CC;
+            --wiki-main: #4A5D80; 
+            --wiki-point: #4CAF50;
+            
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+            --wiki-table-header-text: #ffffff; 
+            
+            --wiki-tooltip-bg: #2d2f34;
+            --wiki-tooltip-border: #666666;
+            --wiki-tooltip-text: #eeeeee;
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            margin: 0; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .wiki-container { 
+            max-width: 1152px; 
+            margin: 0 auto; 
+            padding: 20px 40px; 
+            border-left: 1px solid var(--wiki-border); 
+            border-right: 1px solid var(--wiki-border); 
+            min-height: 100vh; 
+            background-color: var(--wiki-bg); 
+            display: flex; 
+            flex-direction: column; 
+            position: relative;
+        }
+
+        /* 기본 표 스타일 */
+        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: fixed !important; }
+        th { background-color: var(--wiki-main) !important; color: #ffffff !important; font-weight: bold; border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        td { border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; background-color: var(--wiki-bg); color: var(--wiki-text); }
+        
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 2px solid var(--wiki-main); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: var(--wiki-point); border-left: 4px solid var(--wiki-main); padding-left: 12px; }
+
+        /* 상단바 및 네비게이션 */
+        nav { background-color: var(--wiki-fixed) !important; }
+        
+        .category-box { background: var(--wiki-bg); border: 1px solid var(--wiki-border); padding: 5px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc li { margin-bottom: 4px; }
+
+        .wiki-btn-group { display: flex; background: var(--wiki-bg); border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn.active { background-color: var(--wiki-main); color: white !important; font-weight: bold; }
+        
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+
+        /* 각주 및 툴팁 스타일 */
+        sup.wiki-fn { font-size: 0.75rem; vertical-align: super; font-weight: normal; cursor: pointer; color: var(--wiki-link); }
+        sup.wiki-fn:hover { text-decoration: underline; }
+        
+        .wiki-footnote-area { margin-top: 40px; border-top: 1px solid var(--wiki-border); padding-top: 10px; font-size: 0.85rem; color: var(--wiki-text); }
+        .wiki-footnote-area ol { padding-left: 25px; }
+        .wiki-footnote-area li { margin-bottom: 5px; }
+        .wiki-footnote-area li:target { background-color: rgba(93, 117, 160, 0.2); transition: background-color 0.5s; }
+
+        #wiki-tooltip {
+            position: absolute; display: none; background-color: var(--wiki-tooltip-bg); border: 1px solid var(--wiki-tooltip-border); color: var(--wiki-tooltip-text);
+            padding: 10px 12px; font-size: 0.85rem; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 9999; max-width: 320px; line-height: 1.4; pointer-events: none;
+        }
+        #wiki-tooltip::after {
+            content: ''; position: absolute; top: 100%; left: 20px; margin-left: -5px; border-width: 5px; border-style: solid; border-color: var(--wiki-tooltip-border) transparent transparent transparent;
+        }
+        
+        /* 정당 배지 스타일 (오류 완벽 수정 및 색상 보장) */
+        .party-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; color: white !important; font-weight: bold; font-size: 0.75rem; margin-right: 4px; vertical-align: middle; text-decoration: none !important; }
+        .badge-minju { background-color: #004EA2; border: 1px solid #004EA2; } /* 더불어민주당 */
+        .badge-jinbo { background-color: #D6001C; border: 1px solid #D6001C; } /* 진보당 */
+        .badge-choguk { background-color: #0073CF; border: 1px solid #0073CF; } /* 당 */
+        
+        /* 인용구 스타일 */
+        .wiki-quote { border-left: 4px solid var(--wiki-main); background-color: rgba(93, 117, 160, 0.05); padding: 10px 15px; margin: 10px 0; font-style: italic; color: var(--wiki-text); }
+
+        del { text-decoration: line-through; color: #999; }
+
+        /* 푸터 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid var(--wiki-border); padding: 20px; text-align: left; font-size: 0.8rem; color: var(--wiki-text); background-color: var(--wiki-gray-bg); line-height: 1.5; }
+        .anchor-offset { scroll-margin-top: 70px; }
+        
+        details > summary { list-style: none; outline: none; }
+        details > summary::-webkit-details-marker { display: none; }
+
+        /* 네비게이션 박스 기본 스타일 */
+        .nav-box { border: 1px solid var(--wiki-main); margin-bottom: 15px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; clear: both; }
+        .nav-box-header { background-color: var(--wiki-main); color: #fff; padding: 8px 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; }
+        .nav-toggle-btn { position: absolute; right: 12px; font-size: 10px; background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px; }
+
+        /* 하위 행정구역 표 (북구 스타일) */
+        .admin-dong-grid { width: 100%; border-collapse: collapse; background: var(--wiki-bg); table-layout: fixed; margin: 0 !important; border: none !important; }
+        .admin-dong-grid td, .admin-dong-grid th { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; font-size: 0.9rem; text-align: center; vertical-align: middle; }
+        .admin-dong-grid th { background-color: var(--wiki-main) !important; color: white !important; font-weight: bold; }
+        .admin-dong-grid td.admin-name-cell { font-weight: bold; background-color: var(--wiki-gray-bg) !important; color: var(--wiki-main) !important; }
+        [data-theme='dark'] .admin-dong-grid td.admin-name-cell { background-color: #383b40 !important; color: #6b8fd4 !important; }
+        .legal-dong-cell { text-align: left; padding-left: 10px; background-color: var(--wiki-bg) !important; color: var(--wiki-text) !important; }
+
+        /* [핵심 1] 법정동 전용 미니 인포박스 스타일 (중화산동2가 재현) */
+        .legal-infobox { float: right; width: 100%; max-width: 320px; margin-left: 20px; margin-bottom: 15px; border: 1px solid var(--wiki-border); background-color: var(--wiki-bg); border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .legal-infobox-header { text-align: center; padding: 12px 5px; border-bottom: 1px solid var(--wiki-border); background-color: var(--wiki-bg); color: var(--wiki-text); }
+        .legal-infobox table { width: 100% !important; margin: 0 !important; border: none !important; }
+        .legal-infobox th { background-color: var(--wiki-main) !important; color: #fff !important; border: 1px solid var(--wiki-border) !important; padding: 8px; width: 38%; font-size: 0.85rem; text-align: center; }
+        .legal-infobox td { background-color: var(--wiki-bg) !important; color: var(--wiki-text) !important; border: 1px solid var(--wiki-border) !important; padding: 8px; text-align: center; font-size: 0.85rem; }
+
+        /* [핵심 2] 행정동 전용 상세 인포박스 (중앙동 재현) */
+        .admin-infobox { float: right; width: 100%; max-width: 360px; margin-left: 20px; margin-bottom: 20px; border: 1px solid var(--wiki-border); background-color: var(--wiki-bg); border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-size: 0.85rem; }
+        .admin-infobox-header { text-align: center; padding: 15px 5px; border-bottom: 1px solid var(--wiki-border); background-color: var(--wiki-bg); color: var(--wiki-text); }
+        .admin-infobox-logo { display: flex; justify-content: center; padding: 10px; background-color: var(--wiki-bg); }
+        .admin-infobox-logo img { width: 80px; height: auto; }
+        .admin-infobox table { width: 100%; border-collapse: collapse; margin: 0; }
+        .admin-infobox th, .admin-infobox td { border: 1px solid var(--wiki-border); padding: 7px 10px; vertical-align: middle; }
+        .admin-infobox .th-main { background-color: var(--wiki-main) !important; color: #fff !important; width: 30%; font-weight: bold; text-align: center; }
+        .admin-infobox .td-main { background-color: var(--wiki-bg) !important; color: var(--wiki-text) !important; text-align: center; }
+        
+        .admin-infobox .th-politics { background-color: #1ea15a !important; color: #fff !important; width: 20%; font-weight: bold; text-align: center; }
+        .admin-infobox .th-center { background-color: #245096 !important; color: #fff !important; width: 20%; font-weight: bold; text-align: center; }
+        
+        .admin-infobox .pol-title { color: #fff !important; font-weight: bold; text-align: center; font-size: 0.8em; padding: 4px; }
+        .admin-infobox .pol-nat { background-color: #5b1016 !important; }
+        .admin-infobox .pol-metro { background-color: #003478 !important; }
+        .admin-infobox .pol-local { background-color: #e65d0f !important; }
+        .admin-infobox .pol-party { background-color: var(--wiki-bg) !important; text-align: center; width: 30%; padding: 4px; }
+        .admin-infobox .pol-name { background-color: var(--wiki-bg) !important; color: var(--wiki-text) !important; text-align: left; padding-left: 10px; width: 50%; }
+
+        /* 노조미(쿠스다) 밈 박스 */
+        .nozomi-box {
+            border: 2px solid var(--nozomi-color);
+            background-color: rgba(116, 44, 158, 0.05);
+            color: var(--wiki-text);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.95rem;
+            position: relative;
+        }
+        .nozomi-box::before { content: "🔮"; position: absolute; top: -10px; left: 10px; font-size: 20px; background: var(--wiki-bg); padding: 0 5px; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-tooltip"></div>
+
+    <!-- 상단바 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색 (Enter)" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">남전동</h1>
+            <div class="wiki-btn-group shadow-sm mb-4">
+                <button onclick="location.href='토론.html'" style="background-color:var(--wiki-bg); color:var(--wiki-text); border:1px solid var(--wiki-border); border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">토론</button>
+                <button onclick="location.href='수정.html'" style="background-color:var(--wiki-main); color:#ffffff; border:1px solid var(--wiki-main); border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">편집</button>
+                <button onclick="location.href='역사.html'" style="background-color:var(--wiki-bg); color:var(--wiki-text); border:1px solid var(--wiki-border); border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">역사</button>
+                <div class="wiki-tool-btn" onclick="showMsg('★ 즐겨찾기에 추가됨')" style="background-color:var(--wiki-bg); color:var(--wiki-text); border:1px solid var(--wiki-border); border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">★</div>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold text-[var(--wiki-main)]">분류:</span> 
+            <a href="북구.html" class="wiki-link">북구(효빈광역시)</a> | 
+            <a href="행정동.html" class="wiki-link">행정동</a> |
+            <a href="법정동.html" class="wiki-link">법정동</a> |
+            <a href="효빈광역시.html" class="wiki-link">효빈광역시의 전자상가</a>
+        </div>
+
+        <!-- 북구 내비게이션 -->
+        <div class="no-autolink">
+            <div class="hb-bukgu-nav"></div>
+            <script src="js/북구행정.js"></script>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4 flex-grow">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 md:order-1 w-full md:w-auto">
+                <div class="toc-title">목차</div>
+                <ul class="text-sm list-none p-0 m-0 space-y-1">
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">역사</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">관할 행정동 상세</a>
+                        <ul class="pl-4 mt-1 space-y-1">
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">남전동</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">관할 법정동 상세</a>
+                        <ul class="pl-4 mt-1 space-y-1">
+                            <li>4.1. <a href="#s-4-1" class="wiki-link">남전동</a></li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5" class="wiki-link">효빈의 용산: 전자상가</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">주요 시설</a></li>
+                    <li>7. <a href="#s-7" class="wiki-link">교통</a></li>
+                    <li>8. <a href="#s-8" class="wiki-link">서브컬처: 쿠스다의 가호</a></li>
+                    <li>9. <a href="#s-9" class="wiki-link">정치</a></li>
+                    <li>10. <a href="#s-10" class="wiki-link">여담</a></li>
+                    <li>11. <a href="#s-11" class="wiki-link">각주</a></li>
+                </ul>
+            </div>
+
+            <!-- 법정동(남전동) 통합 인포박스 -->
+            <aside class="legal-infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
+                <div class="legal-infobox-header">
+                    <div class="text-[0.7rem] font-bold" style="color: var(--wiki-text);">효빈광역시 북구의 법정동</div>
+                    <div class="text-lg font-bold my-1" style="color: var(--wiki-text);">남전동</div>
+                    <div class="text-[0.65rem] opacity-80" style="color: var(--wiki-text);">楠田洞 | Namjeon-dong</div>
+                </div>
+                <table>
+                    <tbody>
+                        <tr><th>광역자치단체</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></td></tr>
+                        <tr><th>기초자치단체</th><td><a href="북구.html" class="wiki-link">북구</a></td></tr>
+                        <tr><th>행정표준코드</th><td>7914010300</td></tr>
+                        <tr><th>관할 행정동</th><td><a href="남전동.html" class="wiki-link">남전동</a></td></tr>
+                        <tr><th>면적</th><td>2.11㎢</td></tr>
+                        <tr><th>인구</th><td>13,244명</td></tr>
+                        <tr><th>인구밀도</th><td>6,289.21명/㎢</td></tr>
+                    </tbody>
+                </table>
+            </aside>
+        </div>
+
+        <!-- 본문 내용 -->
+        <h2 id="s-1">1. 개요</h2>
+        <p>
+            <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구.html" class="wiki-link">북구</a>의 중심부에 위치한 행정동이자 법정동이다. <a href="중수동.html" class="wiki-link">중수동</a> 남쪽과 인접해 있으며, 효빈시 최대의 <strong>전자제품 및 컴퓨터 도매상가</strong>가 형성되어 있는 상업 요충지다.
+        </p>
+        <p class="mt-2">
+            인구는 약 1만 3천 명으로 많지 않으나, 전자상가와 도매시장을 찾는 유동인구가 매우 많아 북구 경제의 한 축을 담당하고 있다. 최근에는 동 이름의 한자(楠田)가 일본 성우 '쿠스다 아이나'의 성씨와 같다는 점이 알려지며, 전자상가를 찾는 '컴덕'들과 서브컬처 팬들이 어우러지는 독특한 문화를 형성하고 있다.
+        </p>
+
+        <h2 id="s-2">2. 역사</h2>
+        <p>본래 효빈군 중수면 남전리 지역이었다. 1973년 북구에 편입되면서 동으로 승격되었다. 과거에는 넓은 밭(田)이 있던 농촌이었으나, 1990년대 초반 컴퓨터 및 전자 부품 상가가 조성되면서 급격히 도시화되었다.</p>
+        
+        <h2 id="s-3">3. 관할 행정동 상세</h2>
+
+        <!-- [핵심] 행정동 전용 상세 인포박스 -->
+        <h3 id="s-3-1">3.1. 남전동 (楠田洞)</h3>
+        <aside class="admin-infobox clear-both">
+            <div class="admin-infobox-header">
+                <div class="text-[0.7rem] font-bold" style="color: var(--wiki-text);">효빈광역시 북구의 행정동</div>
+                <div class="text-xl font-bold my-1" style="color: var(--wiki-text);">남전동</div>
+                <div class="text-[0.65rem] opacity-80" style="color: var(--wiki-text);">楠田洞 | Namjeon-dong</div>
+            </div>
+            <div class="admin-infobox-logo">
+                <img src="이미지/북구.png" alt="북구 로고" onerror="this.parentNode.innerHTML='<span class=\'text-[10px] text-gray-400 font-bold\'>북구(효빈)<br>LOGO</span>'">
+            </div>
+            <table>
+                <tbody>
+                    <tr><th class="th-main">광역자치단체</th><td colspan="2" class="td-main"><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></td></tr>
+                    <tr><th class="th-main">기초자치단체</th><td colspan="2" class="td-main"><a href="북구.html" class="wiki-link">북구</a></td></tr>
+                    <tr><th class="th-main">행정표준코드</th><td colspan="2" class="td-main">79040080</td></tr>
+                    <tr>
+                        <th class="th-main">관할 법정동</th>
+                        <td colspan="2" class="td-main p-0">
+                            <details class="w-full">
+                                <summary class="cursor-pointer text-center p-1 text-xs font-bold transition hover:opacity-70" style="background-color: var(--wiki-gray-bg); color: var(--wiki-text);">
+                                    [ 펼치기 · 접기 ]
+                                </summary>
+                                <div class="p-2 text-xs text-left leading-relaxed border-t border-[#ccc]" style="background-color: var(--wiki-bg); color: var(--wiki-text);">
+                                    <a href="남전동.html" class="wiki-link">남전동</a> (전역)
+                                </div>
+                            </details>
+                        </td>
+                    </tr>
+                    <tr><th class="th-main">면적</th><td colspan="2" class="td-main">2.10㎢</td></tr>
+                    <tr><th class="th-main">인구</th><td colspan="2" class="td-main">13,244명<sup id="ref-1" class="wiki-fn" data-target="fn-1">[1]</sup></td></tr>
+                    <tr><th class="th-main">인구밀도</th><td colspan="2" class="td-main">6,306.67명/㎢</td></tr>
+                    
+                    <!-- 주요 시설 섹션 -->
+                    <tr>
+                        <th class="th-main">주요 시설</th>
+                        <td colspan="2" class="td-main p-0">
+                            <details class="w-full group">
+                                <summary class="cursor-pointer text-center p-1 text-xs font-bold transition hover:opacity-70" style="background-color: var(--wiki-gray-bg); color: var(--wiki-text);">
+                                    [ 펼치기 · 접기 ]
+                                </summary>
+                                <div class="p-2 text-[0.75rem] text-left leading-relaxed border-t border-[#ccc]" style="background-color: var(--wiki-bg); color: var(--wiki-text);">
+                                    <strong>상업:</strong> 남전전자종합상가<br>
+                                    <strong>교육:</strong> <a href="월남초등학교.html" class="wiki-link">월남초</a>, <a href="남전초등학교.html" class="wiki-link">남전초</a>, <a href="수포중학교.html" class="wiki-link">수포중</a>, <a href="남전고등학교.html" class="wiki-link">남전고</a><br>
+                                    <strong>기타:</strong> 북효빈우체국
+                                </div>
+                            </details>
+                        </td>
+                    </tr>
+
+                    <!-- 정치 섹션 -->
+<tr>
+    <th rowspan="6" class="th-politics">정치</th>
+    <td colspan="2" class="pol-title pol-nat">국회의원 | 북구 병</td>
+</tr>
+<tr>
+    <td class="pol-party"><span class="party-badge badge-minju">더불어민주당</span></td>
+    <td class="pol-name"><a href="이찬대.html" class="wiki-link">이찬대</a> <span class="text-[0.7rem]" style="color: var(--wiki-fixed);">(3선)</span></td>
+</tr>
+<tr>
+    <td colspan="2" class="pol-title pol-metro">효빈광역시의원 | 북구 6</td>
+</tr>
+<tr>
+    <td class="pol-party"><span class="party-badge badge-jinbo">진보당</span></td>
+    <td class="pol-name"><a href="박성임.html" class="wiki-link">박성임</a> <span class="text-[0.7rem]" style="color: var(--wiki-fixed);">(재선)</span></td>
+</tr>
+<tr>
+    <td colspan="2" class="pol-title pol-local">북구의원 | 자 선거구</td>
+</tr>
+<tr>
+    <td class="pol-party">
+        <span class="party-badge bg-[#0073CF] text-white">조국혁신당</span><br>
+        <span class="party-badge badge-minju mt-1">더불어민주당</span><br>
+        <span class="party-badge badge-jinbo mt-1">진보당</span>
+    </td>
+    <td class="pol-name">
+        <a href="신현국.html" class="wiki-link">신현국</a> <span class="text-[0.7rem]" style="color: var(--wiki-fixed);">(초선)</span><br>
+        <a href="우상민.html" class="wiki-link mt-1 inline-block">우상민</a> <span class="text-[0.7rem]" style="color: var(--wiki-fixed);">(3선)</span><br>
+        <a href="민서연.html" class="wiki-link mt-1 inline-block">민서연</a> <span class="text-[0.7rem]" style="color: var(--wiki-fixed);">(재선)</span>
+    </td>
+</tr>
+
+                    <!-- 행정복지센터 -->
+                    <tr>
+                        <th class="th-center">행정복지센터</th>
+                        <td colspan="2" class="td-main text-xs leading-tight py-3">
+                            효빈광역시 북구 남전동 63<br>
+                            <a href="남전동_주민센터.html" class="wiki-link mt-1 inline-block" style="color: var(--wiki-point);">🏢 남전동 행정복지센터</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </aside>
+        <p>
+            법정동과 행정동이 100% 일치한다. 지역의 절반을 전자상가가 덮고 있어 상업의 비중이 압도적으로 높지만, <a href="남전고등학교.html" class="wiki-link">남전고</a>, <a href="수포중학교.html" class="wiki-link">수포중</a>을 비롯해 다수의 초등학교가 있어 주거지로서의 역할도 충실히 해내고 있다.
+        </p>
+
+        <h2 id="s-4">4. 관할 법정동 상세</h2>
+        <p>해당 문단의 <strong><a href="#s-3-1" class="wiki-link">3.1. 남전동</a></strong> 미니 인포박스를 참조.</p>
+
+        <h2 id="s-5">5. 효빈의 용산: 전자상가</h2>
+        <p><strong>남전전자종합상가</strong>는 '효빈의 용산'이라 불리는 곳으로, 컴퓨터 조립 PC, 주변기기, 게임기, 음향기기 등을 취급하는 수백 개의 매장이 밀집해 있다.</p>
+        <ul class="list-disc pl-5 mt-2">
+            <li><strong>특징:</strong> 호객 행위가 비교적 적고 정찰제가 정착되어 있어 효빈 시민들의 신뢰도가 높다.</li>
+            <li><strong>변화:</strong> 최근 온라인 쇼핑의 강세로 위기를 겪었으나, 체험형 매장과 서브컬처 굿즈샵을 유치하며 재도약을 꾀하고 있다.</li>
+        </ul>
+
+        <h2 id="s-6">6. 주요 시설</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>북효빈우체국:</strong> 북구의 거점 우체국으로, 전자상가의 막대한 택배 물류를 책임지고 있다.</li>
+            <li><strong>교육:</strong> <a href="월남초등학교.html" class="wiki-link">월남초등학교</a>, 토모초등학교, <a href="남전초등학교.html" class="wiki-link">남전초등학교</a>, <a href="수포중학교.html" class="wiki-link">수포중학교</a>, <a href="남전고등학교.html" class="wiki-link">남전고등학교</a> 등 학교가 많아 주거 기능도 충실하다.</li>
+        </ul>
+
+        <h2 id="s-7">7. 교통</h2>
+        <p><strong><a href="남전역.html" class="wiki-link" style="color:var(--line-2);">● 2호선</a> 남전역</strong>이 동의 정중앙에 위치하여 교통이 매우 편리하다. 역세권을 중심으로 상가와 아파트 단지가 빽빽하게 형성되어 있다.</p>
+
+        <h2 id="s-8">8. 서브컬처: 쿠스다의 가호</h2>
+        <div class="nozomi-box">
+            <div class="flex flex-col gap-2">
+                <div class="font-bold text-lg text-[#742C9E] border-b border-purple-300 pb-1 mb-1">
+                    🔮 남전(楠田) = 쿠스다(楠田)의 땅
+                </div>
+                <div>
+                    지명 한자가 <a href="러브_라이브!.html" class="wiki-link">러브라이브!</a>의 <strong>토죠 노조미</strong> 성우 <strong><a href="https://namu.wiki/w/%EC%BF%A0%EC%8A%A4%EB%8B%A4%20%EC%95%84%EC%9D%B4%EB%82%98" class="wiki-link" target="_blank">쿠스다 아이나</a>(楠田 亜衣奈)</strong>와 같습니다.<br>
+                    <span class="text-xs opacity-70">이곳 전자상가에서 가챠를 돌리면 노조미의 영적 파워(?)로 대박이 난다는 전설이 있습니다.</span>
+                </div>
+            </div>
+        </div>
+        <p class="mt-4">
+            남전동 상인들은 이러한 밈을 적극 활용하여, 매장에 노조미 타로카드를 부적처럼 붙여놓거나 "가챠 대박 기원 PC" 같은 상품을 판매하기도 한다. 실제로 이곳 PC방에서 게임 아이템 강화 성공 확률이 높다는 미신(?) 때문에 원정 오는 게이머들도 있다.
+        </p>
+
+        <h2 id="s-9">9. 정치</h2>
+        <div class="p-4 rounded mb-4" style="background-color: rgba(93, 117, 160, 0.1); border: 1px solid var(--wiki-main); color: var(--wiki-text);">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="party-badge badge-minju">더불어민주당</span>
+                <span class="party-badge badge-jinbo">진보당</span>
+                <span class="font-bold text-lg">실리적 진보 지지</span>
+            </div>
+            <p class="text-sm leading-relaxed">
+                국회의원 선거구는 <strong>북구 병</strong>(<a href="이찬대.html" class="wiki-link">이찬대</a> 의원)에 속한다. 자영업자와 상인 비율이 높아 경제 정책에 민감하게 반응하며, 실리적인 투표 성향을 보인다. 
+                특기할 점은 광역의원(박성임)과 기초의원(민서연)에서 <strong>진보당</strong> 당선자가 배출될 정도로 풀뿌리 조직력이 강하다는 것이다.
+            </p>
+        </div>
+
+        <h2 id="s-10">10. 여담</h2>
+        <ul class="list-disc pl-5 space-y-2 text-sm">
+            <li><a href="남전역.html" class="wiki-link">남전역</a> 인근 떡볶이 골목이 유명하다. 전자상가 쇼핑 후 들르는 것이 필수 코스.</li>
+            <li>동네 이름인 '남전'은 본래 '남쪽 밭'이 아니라 '녹나무(楠) 밭'이라는 뜻이다.</li>
+        </ul>
+
+        <h2 id="s-11">11. 각주</h2>
+        <div class="wiki-footnote-area">
+            <ol>
+                <li id="fn-1">2025년 <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> 주민등록인구 통계 기준. <a href="#ref-1" title="본문으로 이동">↑</a></li>
+            </ol>
+        </div>
+
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+
+        function toggleNav(id, labelId) {
+            const content = document.getElementById(id);
+            const label = document.getElementById(labelId);
+            if (content.style.maxHeight === '0px') {
+                content.style.maxHeight = '2000px';
+                label.innerText = '[접기]';
+            } else {
+                content.style.maxHeight = '0px';
+                label.innerText = '[펼치기]';
+            }
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                document.getElementById('themeBtn').innerText = '라이트모드';
+            }
+            initFootnoteTooltips();
+        };
+        
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                location.href = this.value.trim() + ".html";
+            }
+        });
+
+        function initFootnoteTooltips() {
+            const footnotes = document.querySelectorAll('.wiki-fn');
+            const tooltip = document.getElementById('wiki-tooltip');
+
+            footnotes.forEach(fn => {
+                fn.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('data-target');
+                    const contentEl = document.getElementById(targetId);
+                    
+                    if (contentEl) {
+                        let text = contentEl.innerHTML;
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = text;
+                        const backLink = tempDiv.querySelector('a:last-child'); 
+                        if(backLink && backLink.innerText.includes('↑')) backLink.remove();
+                        
+                        tooltip.innerHTML = tempDiv.innerHTML;
+                        tooltip.style.display = 'block';
+                        
+                        const rect = this.getBoundingClientRect();
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        
+                        tooltip.style.top = (rect.bottom + scrollTop + 5) + 'px';
+                        tooltip.style.left = rect.left + 'px';
+                    }
+                });
+
+                fn.addEventListener('mouseleave', function() {
+                    tooltip.style.display = 'none';
+                });
+                
+                fn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    const targetEl = document.getElementById(targetId);
+                    if(targetEl) {
+                        targetEl.scrollIntoView({behavior: 'smooth', block: 'center'});
+                        targetEl.style.backgroundColor = "rgba(93, 117, 160, 0.3)";
+                        setTimeout(() => targetEl.style.backgroundColor = "transparent", 1500);
+                    }
+                });
+            });
+        }
+    </script>
+
+    <!-- [핵심] 누락 100% 방지, 필수 코어 스크립트 4종 완벽 복원 -->
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

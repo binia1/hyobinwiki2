@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>김소빈 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #C455F6; /* 빈주 2호선 보라색 */
+            --wiki-text-main: #8A2BE2; /* 텍스트 가독성을 위한 어두운 보라색 */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #C455F6;
+            --wiki-table-header-text: #ffffff;
+            --wiki-alert-border: #a2a9b1;
+            --wiki-alert-bg: #f8f9fa;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-text-main); }
+        h4 { font-size: 1.1rem !important; font-weight: 700; margin-top: 1.5rem; margin-bottom: 1rem; }
+
+        /* 위키 요소 */
+        del { color: #7f7f7f; text-decoration: line-through; cursor: help; }
+        .wiki-drip { color: #aaa; font-size: 0.85em; }
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-quote { background-color: #f8f9fa; border-left: 4px solid var(--wiki-main); padding: 15px; margin: 10px 0; font-style: italic; color: #555; position: relative; }
+
+        /* 분류 박스 스타일 */
+        .category-box { background: #f9f9f9; border: 1px solid #ccc; padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 380px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .infobox-title { background-color: var(--wiki-main); color: #fff; padding: 10px; text-align: center; font-size: 1.3rem !important; font-weight: bold; }
+        .infobox-image { text-align: center; padding: 10px; border-bottom: 1px solid #ddd; background: white; }
+        .infobox table { border: none !important; margin: 0 !important; width: 100% !important; }
+        .infobox th { background-color: var(--wiki-gray-bg); text-align: center; padding: 8px 5px; border: 1px solid #ddd; width: 30%; font-weight: bold; vertical-align: middle;}
+        .infobox td { padding: 8px 5px; border: 1px solid #ddd; text-align: left; vertical-align: middle;}
+
+        /* 각주 & 호버보드 */
+        .footnote-ref { color: var(--wiki-link); font-size: 0.8em; vertical-align: super; cursor: pointer; text-decoration: none; font-weight: bold; }
+        .footnotes-area { margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px; font-size: 0.85rem; color: #555; }
+        
+        #footnote-tooltip {
+            position: fixed;
+            display: none;
+            background-color: #fff;
+            border: 1px solid #999;
+            padding: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            z-index: 9999; 
+            max-width: 400px;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            line-height: 1.4;
+            pointer-events: none; 
+        }
+
+        .anecdote-box { border-left: 4px solid var(--wiki-main); background: linear-gradient(to right, #fbf2ff, #ffffff); padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        .nw-box { border: 2px solid; margin-bottom: 30px; border-radius: 4px; overflow: hidden; font-size: 0.9rem; background: white; }
+        .nw-box summary { padding: 10px; text-align: center; font-weight: bold; cursor: pointer; display: block; }
+        .nw-tbl { width: 100%; border-collapse: collapse; text-align: center; }
+        .nw-tbl th, .nw-tbl td { border: 1px solid #ccc; padding: 8px; vertical-align: middle; }
+        .nw-th-col { font-weight: bold; background-color: #f9f9f9; }
+        .nw-link { color: inherit; text-decoration: none; display: block; }
+        .nw-img { width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: block; margin: 0 auto 5px; background-color: #f8f9fa; }
+        
+        .text-highlight { background: linear-gradient(to top, #f4dbff 50%, transparent 50%); font-weight: bold; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <div id="footnote-tooltip"></div>
+
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input id="searchInput" type="text" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner" autocomplete="off" data-hb-search="input">
+            <button id="searchBtn" type="button" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner font-bold" data-hb-search="button">검색</button>
+            <button type="button" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner" onclick="document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">김소빈</div>
+            <div class="flex gap-2 mb-1">
+                <button onclick="location.href='토론.html'" style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc; border-radius:4px; padding:6px 12px; font-size:14px; cursor:pointer;">토론</button>
+                <button onclick="location.href='수정.html'" style="background-color:#0275d8; color:#ffffff; border:1px solid #0275d8; border-radius:4px; padding:6px 12px; font-size:14px; cursor:pointer;">편집</button>
+                <button onclick="location.href='역사.html'" style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc; border-radius:4px; padding:6px 12px; font-size:14px; cursor:pointer;">역사</button>
+            </div>
+        </div>
+
+        <div class="category-box border border-[#ccc] p-3 rounded mb-6">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="덕빈권마스코트.html" class="wiki-link">덕빈권 마스코트</a> | 
+            <a href="빈주도시철도공사.html" class="wiki-link">빈주도시철도공사</a> | 
+            <a href="빈주2호선.html" class="wiki-link">빈주 2호선</a> | 
+            <a href="역무원캐릭터.html" class="wiki-link">역무원 캐릭터</a> | 
+            <a href="맑은눈의광인.html" class="wiki-link">맑은 눈의 광인</a> |
+            <a href="MZ세대.html" class="wiki-link">MZ세대</a> |
+            <a href="막내딸.html" class="wiki-link">막내딸</a> |
+            <a href="합법적진상퇴치기.html" class="wiki-link">합법적 진상 퇴치기</a>
+        </div>
+
+        <details class="nw-box" style="border-color:#C455F6;" open>
+            <summary style="background-color:#C455F6; color: white;" class="outline-none">
+                <span class="text-white text-lg hover:underline font-bold">덕빈권 (빈주/효빈) 대중교통 마스코트</span>
+            </summary>
+            <table class="nw-tbl">
+                <tr>
+                    <th rowspan="2" class="w-[15%] nw-th-col text-[#000]" style="background-color: #f9f9f9;">빈주도시철도공사<br>& 코레일</th>
+                    <td class="font-bold text-black w-[28%]" style="background-color: #CFBA0F;"><a href="빈주1호선.html" class="nw-link hover:underline">빈주 1호선</a></td>
+                    <td class="font-bold text-white w-[28%]" style="background-color: #C455F6;"><a href="빈주2호선.html" class="nw-link hover:underline">빈주 2호선</a></td>
+                    <td class="font-bold text-white w-[28%]" style="background-color: #005BAC;"><a href="빈주권광역철도.html" class="nw-link hover:underline">빈효선 (코레일)</a></td>
+                </tr>
+                <tr>
+                    <td><a href="박빛나.html" class="nw-link hover:underline font-bold"><img src="이미지/박빛나_로고.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/cccccc/ffffff?text=Bitna'">박빛나</a><br><span class="text-xs text-gray-500">(1호선 및 총괄)</span></td>
+                    <td><a href="김소빈.html" class="nw-link hover:underline font-bold"><img src="이미지/김소빈_로고.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/cccccc/ffffff?text=Sobin'">김소빈</a><br><span class="text-xs text-gray-500">(2호선 전담 신입)</span></td>
+                    <td><a href="전노아.html" class="nw-link hover:underline font-bold"><img src="이미지/전노아 로고.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/cccccc/ffffff?text=Noah'">전노아</a><br><span class="text-xs text-gray-500">(코레일 협력)</span></td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="text-left text-xs text-gray-600 bg-gray-50 px-3 py-2 border-t border-gray-300" style="text-align: left;">
+                        * <strong>빈주도시철도공사(BURC)</strong>는 그동안 마스코트 한 명(<a href="박빛나.html" class="wiki-link">박빛나</a>)이 전 노선을 전담하는 혹사를 겪었으나, 2026년 4월 <a href="김소빈.html" class="wiki-link">김소빈</a>이 합류하며 마침내 2호선 독박에서 벗어났습니다!
+                    </td>
+                </tr>
+            </table>
+        </details>
+
+<!-- 인포박스 -->
+        <aside class="infobox">
+            <div class="infobox-title">김소빈<br><span class="text-sm font-normal">Kim Sobin | 金笑彬</span></div>
+            <div class="infobox-image">
+                <img src="이미지/김소빈.png" alt="김소빈 공식 일러스트" style="width:100%; height:auto;" onerror="this.src='https://placehold.co/300x400/C455F6/ffffff?text=Kim+Sobin'">
+                <div class="text-xs text-gray-500 mt-1">빈주도시철도공사 2호선 전담 마스코트</div>
+                <img src="이미지/김소빈sd.png" alt="김소빈 SD" style="width:70%; height:auto; display: block; margin: 10px auto 0;">
+                <div class="text-xs text-gray-500 mt-1">SD 캐릭터 버전 <del>(맑은 눈의 광인 텐션이 200% 응축됨)</del></div>
+            </div>
+            <table>
+                <tr><th>나이</th><td>23세 (2003년생)</td></tr>
+                <tr><th>생일</th><td>12월 1일<a href="#fn-1" class="footnote-ref">[1]</a></td></tr>
+                <tr><th>소속</th><td><a href="빈주도시철도공사.html" class="wiki-link">빈주도시철도공사</a><br>역무직 (OJT 수습사원)</td></tr>
+                <tr><th>신체 사이즈</th><td>154cm / <strong>B76-W56-H80 (B컵)</strong><a href="#fn-4" class="footnote-ref">[4]</a></td></tr>
+                <tr><th>출신지</th><td><strong>덕빈북도 <a href="빈주시.html" class="wiki-link">빈주시</a></strong> 가원구</td></tr>
+                <tr><th>학력</th><td>빈주제일여고 (졸업)<br><strong>덕북대 심리학과</strong> (학사 졸업)</td></tr>
+                <tr><th>가족 관계</th><td>부모님, 오빠 3명, <strong>본인(막내딸)</strong></td></tr>
+                <tr><th>MBTI</th><td>ENFP (재기발랄한 활동가)</td></tr>
+                <tr><th>강점 과목</th><td>국어(1~2등급), 사회·윤리(1등급)<br><span class="text-xs text-gray-500">※ 언어 및 심리학 기반 팩폭 천재</span></td></tr>
+                <tr><th>약점 과목</th><td>영어(4등급), 수학·통계(2~3등급)</td></tr>
+                <tr><th>좋아하는 음식</th><td>마라탕 3단계, 아샷추 벤티, 통귤 탕후루, 제로 콜라</td></tr>
+                <tr><th>싫어하는 음식</th><td>냄새 배는 싸구려 돼지고기 회식</td></tr>
+                <tr><th>별명</th><td>맑눈광, 보라돌이, <strong>MZ 역무원</strong>, 심리술사, 빛나의 애착인형, <a href="합법적진상퇴치기.html" class="wiki-link">합법적 진상 퇴치기</a></td></tr>
+                <tr><th>성우</th><td><a href="https://namu.wiki/w/%ED%95%98%EB%82%98%EC%9E%90%EC%99%80%20%EC%B9%B4%EB%82%98" class="wiki-link" target="_blank">하나자와 카나</a> (日)<a href="#fn-2" class="footnote-ref">[2]</a><br><strong><a href="https://namu.wiki/w/%EA%B9%80%EC%97%B0%EC%9A%B0(%EC%84%B1%EC%9A%B0)" class="wiki-link" target="_blank">김연우</a></strong> (韓)<a href="#fn-3" class="footnote-ref">[3]</a></td></tr>
+                <tr><th>활동 시기</th><td>2026년 4월 (디자인 공개)<br><strong>2026년 10월 (공식 활동 예정)</strong></td></tr>
+                <tr><th>관련 노선</th><td><span style="color:#C455F6; font-weight:bold;">●</span> <a href="빈주2호선.html" class="wiki-link">빈주 2호선</a></td></tr>
+                <tr><td colspan="2" style="text-align: center; padding: 15px 0; background-color: #f9f9f9;">
+                    <img src="이미지/빈주_2호선_김소빈_퍼스널_아이콘.svg" alt="김소빈 퍼스널 아이콘" style="width:50px; height:auto; display: block; margin: 0 auto 5px;">
+                    <span class="text-xs text-gray-500 font-bold">퍼스널 아이콘</span>
+                </td></tr>
+            </table>
+        </aside>
+
+        <div class="toc">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">상세 설정</a>
+                    <ul>
+                        <li>2.1. <a href="#s-2-1" class="wiki-link">성격 및 특징 (합법적 광기와 심리술사)</a></li>
+                        <li>2.2. <a href="#s-2-2" class="wiki-link">업무 능력 (QR 스나이퍼)</a></li>
+                        <li>2.3. <a href="#s-2-3" class="wiki-link">외형 및 신체 (아담하지만 탄탄한 피지컬)</a></li>
+                        <li>2.4. <a href="#s-2-4" class="wiki-link">취향 (아샷추와 탕후루 릴스의 융합)</a></li>
+                    </ul>
+                </li>
+                <li>3. <a href="#s-3" class="wiki-link">목소리 및 성우 연기 (공포의 연애 서큘레이션)</a></li>
+                <li>4. <a href="#s-4" class="wiki-link">가족 관계 (무적의 늦둥이 막내딸)</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">인간 관계 (효빈 ↔ 덕빈 생태계 파괴자)</a>
+                    <ul>
+                        <li>5.1. <a href="#s-5-1" class="wiki-link">박빛나 (하늘 같은 선배님 겸 애착인형)</a></li>
+                        <li>5.2. <a href="#s-5-2" class="wiki-link">전노아 (ENFP들의 끔찍한 조우)</a></li>
+                        <li>5.3. <a href="#s-5-3" class="wiki-link">하루빈 (월급루팡과 근로기준법의 대결)</a></li>
+                        <li>5.4. <a href="#s-5-4" class="wiki-link">김철수 사장 (천적을 넘어선 조련사)</a></li>
+                    </ul>
+                </li>
+                <li>6. <a href="#s-6" class="wiki-link">사건 사고 및 재미있는 일화</a></li>
+                <li>7. <a href="#s-7" class="wiki-link">공개 및 팬덤 반응 (2026년 4월의 기적)</a></li>
+                <li>8. <a href="#s-8" class="wiki-link">여담 (TMI)</a></li>
+            </ul>
+        </div>
+        <div class="clear-both"></div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <div class="wiki-quote">
+            "선배님! 2호선 <a href="민산역.html" class="wiki-link">민산역</a>에서 반대편 승강 넘어가겠다고 떼쓰는 진상 민원인은 제가 규정대로 싹 다 쳐내(?)버렸으니 걱정 마세요! 헤헤!"<br>
+            <a href="박빛나.html" class="wiki-link">박빛나</a>: "(경악) ...너 민원인한테 대체 무슨 짓을 한 거야..."<br>
+            <span class="wiki-drip text-sm block mt-2 text-gray-500">빈주도시철도공사에 강림한 맑은 눈의 광인.</span>
+        </div>
+        <p>
+            빈주도시철도공사(BURC) 소속 <strong><a href="빈주2호선.html" class="wiki-link">빈주 2호선</a>의 공식 전담 마스코트</strong>. 2025년 12월 2호선 개통 이후 살인적인 업무량에 시달리던 <a href="박빛나.html" class="wiki-link">박빛나</a>를 구원(?)하기 위해 2026년 4월 전격 공개된 신규 캐릭터다.
+        </p>
+        <p>
+            이름인 **김소빈(金笑彬)**은 '웃을 소(笑)'에 '빛날 빈(彬)'을 써서 **"빈주의 밝은 미소"**라는 뜻을 담고 있다. 하지만 현장에서는 그 '밝은 미소'를 유지한 채로 규정을 칼같이 들이밀며 진상들을 합법적으로 두들겨 패는 <strong>'맑은 눈의 광인(맑눈광)'</strong> 기질을 여과 없이 뽐내고 있다. 현재는 박빛나 밑에서 OJT(실무 수습)를 받고 있으며, 다가오는 <strong>2026년 10월부터 공식적인 단독 홍보 활동을 시작</strong>할 예정이다. <del>빛나 주임의 사표를 유예시킨 공신이자 동시에 새로운 위장병의 근원.</del>
+        </p>
+
+        <h2 id="s-2">2. 상세 설정</h2>
+
+        <h3 id="s-2-1">2.1. 성격 및 특징 (합법적 광기와 심리술사)</h3>
+        <p>
+            전형적인 <strong>ENFP(재기발랄한 활동가)</strong>이자 <strong>MZ세대 신입사원</strong>의 표본이다. 눈치 백단에 속을 앓는 ISFJ 박빛나와는 정반대로, '본인이 하고 싶은 말은 웃으면서 다 하는' 무서운 멘탈의 소유자다. 그녀의 광기는 무질서한 것이 아니라 <strong>철저히 사규와 법에 기반한 '합법적 광기'</strong>라는 점에서 더욱 무섭다.
+        </p>
+        <ul class="list-disc pl-5 space-y-2 mt-2 text-sm text-gray-700">
+            <li><strong>해맑은 팩폭기:</strong> 고객센터에 전화를 걸어 "내가 누군지 알아?!"라며 호통치는 악성 민원인에게, 세상 상냥한 목소리로 <strong>"네~ 고객님은 방금 역무원에게 폭언을 하신 철도안전법 위반 피의자십니다~ 500만 원 이하의 과태료 대상이신데 경찰 부를까요? 헤헤^^"</strong>라고 응수한다.</li>
+            <li><strong>심리학과 전공자의 위엄:</strong> 덕북대 심리학과 출신답게 상대방의 심리를 교묘하게 파고든다. 억지를 부리는 취객에게 "고객님, 지금 화가 나신 건 2호선 배차 간격 때문이 아니라 직장 상사에게 받은 내재된 억압과 자존감 하락 때문 아닐까요?"라고 진지하게 상담(?)을 해줘서 취객이 그 자리에 주저앉아 첫사랑 이름을 부르며 오열하게 만든 전적이 있다. <del>상담을 빙자한 정신 공격</del></li>
+            <li><strong>노동법 마스터:</strong> 회사 내규와 근로기준법을 달달 외우고 다닌다. 김철수 사장이 퇴근 10분 전에 일을 던져주면, 수첩을 꺼내 들며 <strong>"사장님! 연장근로수당은 통상임금의 50% 가산인 거 아시죠? 사장님 법인카드로 결제 올려도 될까요?"</strong>라고 맑은 눈으로 되묻는다.</li>
+        </ul>
+
+        <h3 id="s-2-2">2.2. 업무 능력 (QR 스나이퍼)</h3>
+        <p>
+            선배 박빛나가 묵직한 결제 단말기를 '물리 타격용(건카타)'으로 쓴다면, 소빈은 <strong>최신 V2000 역무원 단말기</strong>를 스마트폰처럼 자유자재로 다루는 디지털 네이티브다.
+        </p>
+        <p>
+            그녀의 단말기 화면을 자세히 보면, 빈주 2호선의 기점인 <strong><a href="풍은역.html" class="wiki-link">V201 풍은역</a></strong>의 각종 데이터와 횡단 불가역인 <a href="민산역.html" class="wiki-link">민산역</a> 정보가 실시간으로 띄워져 있다. 복잡한 2호선의 시스템을 손바닥 들여다보듯 꿰고 있는 스마트한 신입. 특히 무임승차자를 잡아내는 동체 시력이 타의 추종을 불허하는데, 개찰구 50m 밖에서도 학생용/경로우대용 카드의 불빛 패턴을 스캔해내어 <strong>"어머! 고객님! 아버님 카드로 타시면 부가 운임 30배예요!"</strong>라며 달려가 단말기로 QR을 찍어버리는 일명 '단말기 스나이핑' 기술을 구사한다.
+        </p>
+
+        <h3 id="s-2-3">2.3. 외형 및 신체 (아담하지만 탄탄한 피지컬)</h3>
+        <p>
+            빈주 2호선의 테마색인 <strong>보라색</strong> 제복을 입고 있다. 1호선 선배인 빛나의 네이비색 블레이저가 중후한 느낌이라면, 소빈의 보라색 제복은 통통 튀는 발랄함을 강조한다. 목에는 넥타이 대신 보라색 체크무늬 리본을 단정하게 맸으며, 어깨까지 내려오는 찰랑거리는 짙은 갈색 머리를 예쁘게 땋아 내리기도 한다.
+        </p>
+        <div class="anecdote-box mt-3">
+            <h4 style="margin-top:0; color:var(--wiki-text-main); font-weight:800;">📏 신체 스펙: 154cm의 요정 체형과 아슬아슬한 B컵</h4>
+            <p class="text-sm text-gray-800">
+                선배 박빛나가 163cm / D컵의 글래머러스한 체형 때문에 매일 블레이저 단추가 터질까 봐 스판덱스를 덧대며 고통(?)받는 반면, 김소빈은 <strong>154cm / B76-W56-H80 (B컵)</strong>의 요정같이 아담하고 슬림한 체형을 당당하게 드러낸다. 첫 출근 날 치수 수선을 통해 제복을 자신의 핏에 완벽하게 맞춰 입고 나타나 빛나의 부러움을 샀다.<br>
+                다만 프로필상 기재된 'B컵'에 대해서는 논란(?)이 많은데, 본인은 당당하게 B컵이라고 주장하지만 동료들이나 팬들 사이에서는 <strong>"A컵에 가까운 아슬아슬한 B컵 아니냐"</strong>, <strong>"영혼까지 끌어모은 팩트 조작"</strong>이라는 합리적 의심을 받고 있다. <del>이 이야기를 본인 앞에서 꺼내면 심리학과 전공을 살린 무자비한 멘탈 공격이 들어오니 주의하자.</del><br>
+                여리여리하고 쪼그마해 보이지만, 옷 핏을 살리기 위해 매주 퇴근 후 <strong>기구 필라테스 3회</strong>를 절대 빼먹지 않아 코어 근육이 장난이 아니다. 한번은 난동을 부리는 취객이 빛나 주임의 멱살을 잡으려 하자, 옆에 있던 154cm의 소빈이 해맑게 웃으며 취객의 손목을 단숨에 제압해 비틀어버리고 <strong>"어머! 고객님! 방금 폭행 미수셨어요! 경찰서 가실래요, 아니면 얌전히 개찰구 밖으로 나가실래요?"</strong>라며 압도적인 악력으로 쫓아낸 전설적인 피지컬을 자랑한다. <del>이것이 자본주의가 낳은 코어다.</del>
+            </p>
+        </div>
+
+        <h3 id="s-2-4">2.4. 취향 (아샷추와 탕후루 릴스의 융합)</h3>
+        <p>
+            살기 위해 구내식당 제육볶음과 믹스커피를 들이붓는 빛나와 달리, 철저하게 <strong>'나를 위한 소비와 트렌드'</strong>를 좇는 전형적인 20대 초반이다.
+        </p>
+        <ul class="list-disc pl-5 space-y-3 mt-3 text-gray-800">
+            <li><strong>👍 좋아하는 음식: 마라탕 3단계, 아샷추, 통귤 탕후루</strong><br>점심시간만 되면 배달 앱으로 빈주역 앞 마라탕 맛집에서 가장 매운 맛을 시켜 먹는다. 출근길 한 손에는 항상 '아샷추(아이스티에 에스프레소 샷 추가)' 벤티 사이즈가 들려 있으며, 혈당 스파이크를 막하겠다며 식후 탕후루를 먹으면서도 제로 콜라를 마시는 기적의 논리를 펼친다.</li>
+            <li><strong>📱 취미: 인스타 릴스 촬영, 브이로그 편집</strong><br>업무 중간 쉬는 시간이나 퇴근 직후에 역사 구석 전신거울에서 <strong>'지하철 역무원 출근룩 OOTD'</strong>, <strong>'진상 대처법 썰푼다 ㅋㅋㅋ'</strong> 같은 릴스를 찍어 올리는 게 취미다. 사장님이 이를 발견하고 회사 홍보용으로 공짜로 써먹으려 제재하려 하자, <strong>"사장님, 제 초상권과 편집 저작물은 회사 소유가 아니에요! 외주 단가표 보내드릴 테니 건당 50만 원 입금해 주시면 올려드릴게요!"</strong>라고 완벽한 철벽을 쳐버렸다.</li>
+        </ul>
+
+        <h2 id="s-3">3. 목소리 및 성우 연기 (공포의 연애 서큘레이션)</h2>
+        <div class="space-y-4 mt-3">
+            <div class="p-3 border-l-4 border-[#C455F6] bg-[#fbf2ff]">
+                <strong class="text-lg">한국판: 김연우 (CV)</strong><br>
+                <span class="text-sm text-gray-600 block mb-2">오버워치 '솜브라', 스마일 프리큐어! '황보미(큐어 피스)' 역</span>
+                <p class="text-sm text-gray-800">
+                    김연우 성우 특유의 얄미우면서도 당돌하고, 에너지가 넘치는 통통 튀는 하이톤 연기가 일품이다. 솜브라처럼 얄밉게 씩 웃으면서 <strong>"꺄르르! 그건 제 업무가 아닌데요?!"</strong>를 시전하여 부장님과 사장님의 멘탈을 해킹(?)해버리는 연기는 김연우 성우의 전매특허다. 빛나가 오열할 때 옆에서 해맑게 코러스(?)를 넣는 연기가 백미.
+                </p>
+            </div>
+            <div class="p-3 border-l-4 border-[#C455F6] bg-[#fbf2ff]">
+                <strong class="text-lg">일본판: 하나자와 카나 (CV)</strong><br>
+                <span class="text-sm text-gray-600 block mb-2">바케모노가타리 '센고쿠 나데코', 귀멸의 칼날 '칸로지 미츠리' 역</span>
+                <p class="text-sm text-gray-800">
+                    일본 서브컬처계의 전설 '연애 서큘레이션' 급의 극한으로 달콤하고 애교 섞인 톤으로 무장했다. 하지만 그 솜사탕 같은 목소리로 내뱉는 대사가 <strong>"고객님~ 지금 하신 욕설은 모욕죄에 해당해서 200만 원 이하의 벌금을 내실 수 있어요오~♡"</strong> 같은 살벌한 법적 고지라서, 일본 팬들에게 '공포의 미츠리', '합법적 얀데레(?)'라 불리며 엄청난 화제를 모았다.
+                </p>
+            </div>
+        </div>
+
+<!-- ========================================== -->
+<!-- 2. 김소빈 (빈주 2호선) 가족 관계 업데이트 -->
+<!-- ========================================== -->
+        <!-- 4. 가족 관계 -->
+        <h2 id="s-4" class="text-xl font-bold mt-8 mb-4">4. 가족 관계 (인간 흉기 3형제와 무적의 늦둥이 막내딸)</h2>
+        <div class="anecdote-box mb-6 border-l-4 border-[#C455F6] pl-4 py-2 bg-gray-50 rounded">
+            <h4 style="margin-top:0; color:var(--wiki-text-main); font-weight:800;">👑 3남 1녀 집안의 무적의 고명딸</h4>
+            <p class="text-sm text-gray-700">
+                헬스 매니아인 큰오빠, 유도 선수 출신 둘째 오빠, 해병대 수색대 출신 셋째 오빠 사이에서 나이 차이가 크게 나는 <strong>늦둥이 막내딸</strong>로 태어났다. 오빠들이 전부 덩치가 산만한 인간 흉기들이라 학창 시절 소빈이를 건드리는 학생은 단 한 명도 없었다. 부당한 일이 생기면 절대 참지 않는 '무적의 멘탈'은 바로 이 금강불괴 같은 배경에서 비롯되었다.
+            </p>
+        </div>
+
+        <!-- 아버지: 김대호 -->
+        <div class="mb-6 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h4 class="text-lg font-bold text-gray-900 border-b pb-2 mb-3">
+                👨 아버지: 김대호 (金大虎, Kim Dae-ho)
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-700 mb-4 bg-gray-50 p-3 rounded">
+                <p><strong>나이:</strong> 58세 (1968년생 / 생일: 2월 20일)</p>
+                <p><strong>신장:</strong> 185cm (한 덩치 하시는 피지컬)</p>
+                <p><strong>학력/경력:</strong> 빈주경찰서 강력계 형사 (강력1팀장)</p>
+                <p class="col-span-1 md:col-span-2"><strong>담당 성우:</strong> <a href="최낙윤.html" class="wiki-link">최낙윤</a> (韓) / <a href="이나다_테츠.html" class="wiki-link">이나다 테츠</a> (日)</p>
+            </div>
+            <ul class="list-disc pl-5 space-y-2 text-gray-700 text-sm">
+                <li>인간 흉기 3형제 유전자의 근원이자, 아들들이 사고 치면 몽둥이를 들지만 막내딸 앞에서는 혀가 반토막 나는 마초 아빠.</li>
+                <li>소빈이 역무원으로 발령받자, "진상 만나면 112보다 아빠한테 먼저 전화해라"라며 직통 번호를 세팅해 주었다.</li>
+            </ul>
+        </div>
+
+        <!-- 어머니: 최영란 -->
+        <div class="mb-6 p-4 border border-gray-200 rounded-lg shadow-sm">
+            <h4 class="text-lg font-bold text-gray-900 border-b pb-2 mb-3">
+                👩 어머니: 최영란 (崔英蘭, Choi Yeong-ran)
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-700 mb-4 bg-gray-50 p-3 rounded">
+                <p><strong>나이:</strong> 54세 (1972년생 / 생일: 10월 9일)</p>
+                <p><strong>신장:</strong> 163cm</p>
+                <p><strong>학력/경력:</strong> 빈주 시내 대형 '무한리필 한식뷔페' 사장님</p>
+                <p class="col-span-1 md:col-span-2"><strong>담당 성우:</strong> <a href="정미숙.html" class="wiki-link">정미숙</a> (韓) / <a href="타카야마_미나미.html" class="wiki-link">타카야마 미나미</a> (日)</p>
+            </div>
+            <ul class="list-disc pl-5 space-y-2 text-gray-700 text-sm">
+                <li>밥 먹는 스케일이 식기세척기 급인 아들 셋을 먹여 살리다 보니 아예 뷔페를 차려버린 서열 0위의 여장부. 소빈의 맑눈광 멘탈의 원조.</li>
+                <li>오빠들이 소빈이의 탕후루를 뺏어 먹고 도망가면, 등짝에 정확하게 국자를 투척하여 참교육을 시전하신다.</li>
+            </ul>
+        </div>
+
+        <!-- 3형제 (성빈, 상빈, 서빈) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="p-3 border border-gray-200 rounded-lg shadow-sm bg-gray-50">
+                <p class="font-bold text-gray-900 border-b pb-1 mb-2">💪 첫째: 김성빈 (32세)</p>
+                <p class="text-xs text-gray-700 mb-2">188cm / 체지방 8% / 피트니스 대표</p>
+                <p class="text-xs text-blue-600 mb-2"><strong>CV:</strong> 시영준 / 미야케 켄타</p>
+                <p class="text-xs text-gray-800">소빈이 인스타 릴스를 찍을 때 배경에서 강제로 광배근을 펼치고 덤벨을 들어 올려 조회수를 훔쳐 가는 관종. "진상 오면 1일권 줘라. 하체 털어버리게."</p>
+            </div>
+            <div class="p-3 border border-gray-200 rounded-lg shadow-sm bg-gray-50">
+                <p class="font-bold text-gray-900 border-b pb-1 mb-2">🥋 둘째: 김상빈 (29세)</p>
+                <p class="text-xs text-gray-700 mb-2">182cm / 유도 국가대표 상비군 출신</p>
+                <p class="text-xs text-blue-600 mb-2"><strong>CV:</strong> 안효민 / 키무라 스바루</p>
+                <p class="text-xs text-gray-800">전설의 봉고차 강림 사건 주동자. 소빈의 단축번호 2번이며 호출 시 불도저처럼 등장한다. 소빈이 마카롱을 훔쳐 먹으면 말없이 도복 깃을 잡고 메치기를 시전한다.</p>
+            </div>
+            <div class="p-3 border border-gray-200 rounded-lg shadow-sm bg-gray-50">
+                <p class="font-bold text-gray-900 border-b pb-1 mb-2">🪖 셋째: 김서빈 (27세)</p>
+                <p class="text-xs text-gray-700 mb-2">180cm / 해병대 수색대 병장 만기 전역</p>
+                <p class="text-xs text-blue-600 mb-2"><strong>CV:</strong> 민승우 / 오카모토 노부히코</p>
+                <p class="text-xs text-gray-800">탕후루 갈취범이자 단축번호 1번. 소빈이 야간 당직을 서는 날이면 역 근처 PC방에서 기다렸다가 같이 퇴근해 주는 츤데레 5분 대기조다.</p>
+            </div>
+        </div>
+
+        <h3 id="s-4-1" class="text-xl font-bold mt-8 mb-4">4.1. 👨‍👦‍👦 김씨 3형제(성·상·서)의 '내로남불' 케어 시스템</h3>
+        <div class="wiki-quote">
+            "아 진짜 오빠들 개킹받네!! ㅡㅡ ...어? 저기요 아저씨 지금 뭐라고 하셨어요? 잠깐만, 오빠아아앙!!!"
+        </div>
+        <p class="mb-4">
+            이들 남매의 행동 원리는 아주 단순하면서도 지독하다. 일명 <strong>'나만 패 프로토콜'</strong>.
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-gray-800">
+            <li><strong>외부인 접근 시:</strong> <span class="font-bold text-[#C455F6]">"우리 소빈이 눈에 눈물 나면 네 눈에는 피눈물 난다."</span> (실전 압축 근육 장착 완료)</li>
+            <li><strong>자기들끼리 있을 때:</strong> "야 김소빈, 탕후루 한 입만. 싫어? 그럼 네 인스타 릴스 찍을 때 뒤에서 배경으로 헬스 할 거임." <del>이게 진짜 오빠다.</del></li>
+            <li><strong>김소빈의 반응:</strong> 평소엔 오빠들의 장난에 "킹받는다"며 진심으로 짜증을 내지만, 정작 외부의 위협이나 진상이 발생하면 1초의 망설임도 없이 단축번호 1, 2, 3번을 순서대로 누르는 전형적인 'K-막내딸'의 생존 전략을 구사한다.</li>
+        </ul>
+
+        <h2 id="s-5">5. 인간 관계 (효빈 ↔ 덕빈 생태계 파괴자)</h2>
+        <ul class="list-disc pl-5 space-y-3 text-gray-800 mt-2">
+            <li>
+                <strong><a href="박빛나.html" class="wiki-link">박빛나</a> (하늘 같은 선배님 겸 애착인형):</strong> 소빈에게 빛나는 아이돌 그 자체다. "선배님 제가 언능 커서 2호선은 다 씹어먹을게요!"라며 매일 뒤를 졸졸 따라다니며 어깨를 주물러준다. 반면 빛나는 소빈이 너무 예쁘고 고맙지만, 이 해맑은 후배가 언제 진상이나 사장님한테 팩폭을 날릴지 몰라 항상 대기 상태다. 소빈이 웃으면서 "고객님^^" 하고 입을 여는 순간, 빛나가 빛의 속도로 튀어나와 소빈의 입을 틀어막는 게 빈주역의 일상 풍경이 되었다.
+            </li>
+            <li>
+                <strong><a href="전노아.html" class="wiki-link text-[#0054A6]">전노아</a> (ENFP들의 끔찍한 조우):</strong> 코레일 빈효선 마스코트이자 극강의 인싸 불도저인 전노아(ENFP)와 김소빈(ENFP)이 만나는 날은 빈주역 대합실의 데시벨이 3배로 폭발하는 날이다. 둘이 만나면 10분 만에 릴스 댄스 챌린지를 찍고 마라탕을 먹으러 사라진다. 빛나는 이 둘이 모여 작당 모의를 할 때마다 회사의 예산이 털리거나 본인의 야근이 늘어난다는 사실을 알고 있기에 멀리서 식은땀만 흘린다.
+            </li>
+            <li>
+                <strong><a href="하루빈.html" class="wiki-link text-[#00CCAA]">하루빈</a> (효빈 2호선 / 월급루팡과 근로기준법의 만남):</strong> '2호선' 포지션 선배인 효빈교통공사의 하루빈. 하루빈이 합동 행사에서 소빈에게 "야, 너도 대충 사각지대 숨어서 농땡이 치는 법 알려줄까?"라고 꼬드기자, 소빈은 단호하게 고개를 저으며 <strong>"선배님! 왜 몰래 쉬세요? 저는 당당하게 사장님한테 휴게 시간 보장 안 하시면 고용노동부에 찌르겠다고 말해서 합법적으로 쉬는데요? 꺄르르!"</strong>라고 답해 농땡이 만렙 하루빈마저 경악하게 만들었다.
+            </li>
+        </ul>
+
+        <h3 id="s-5-4" class="mt-6 mb-2">5.4. 김철수 사장 (천적을 넘어선 조련사)</h3>
+        <p class="text-sm text-gray-800 mb-3">
+            빛나를 소고기로 길들였던 빈주도시철도의 짠돌이 김철수 사장에게 <strong>최초로 등장한 완벽한 하드 카운터.</strong> 
+        </p>
+        <div class="anecdote-box bg-[#f8f9fa] border-gray-400">
+            <ul class="list-disc pl-5 space-y-2 text-sm text-gray-800">
+                <li><strong>법인카드 강탈 사건:</strong> 회식 자리에서 사장님이 늘 가던 '싸구려 돼지고깃집'으로 향하려 하자, 소빈이 앞장서서 <strong>"사장님! 요새 MZ 신입 환영회를 누가 냄새 배는 고깃집에서 해요! 마라탕이랑 꿔바로우에 고량주 까시죠!"</strong>라며 부서원 전체를 이끌고 역 앞 마라탕 집으로 쳐들어갔다. 김 사장은 땀을 뻘뻘 흘리며 마라탕 3단계를 억지로 삼키며 눈물을 흘렸으나, 속으로는 <strong>'소고기보다 회식비가 적게 나왔네...? 이 녀석 예산 절감의 천재인가?'</strong> 하고 감탄했다고 한다.</li>
+                <li><strong>절대 통하지 않는 가스라이팅:</strong> 사장이 "라떼는 말이야~ 주말에도 나와서 역 청소하고 그랬어~"라고 운을 띄우면, 빛나는 고개를 숙이고 한숨을 쉬지만 소빈은 <strong>"우와! 사장님 시대에는 근로기준법이 없었군요! 진짜 미개... 아니, 야만의 시대였네요! 지금은 2026년이라 다행이에요! 헤헤!"</strong>라고 해맑게 웃으며 사장님의 말문을 막아버린다.</li>
+            </ul>
+        </div>
+
+        <h2 id="s-6">6. 사건 사고 및 재미있는 일화</h2>
+        <div class="anecdote-box mb-4">
+            <h4 style="margin-top:0; color:var(--wiki-text-main); font-weight:800;">🎧 에어팟 노이즈 캔슬링 대참사</h4>
+            <p class="text-sm text-gray-700">
+                수습 첫 달, 탕비실에서 휴식을 취하던 소빈이 에어팟 프로의 '노이즈 캔슬링'을 켜고 아이돌 뮤직비디오를 보고 있었다. 이때 하필 김철수 사장이 탕비실에 들어와 "김 주임! 커피 한 잔만 타줄래?"라고 세 번이나 불렀으나 소빈은 해맑게 릴스만 보고 있었다. <br>
+                결국 빡친 사장님이 어깨를 툭 치자, 소빈이 에어팟을 한쪽만 빼며 <strong>"앗 사장님! 제가 업무 집중력을 높이려고 노캔을 켰더니 못 들었네요! 커피는 저기 자판기가 더 맛있어요!"</strong>라고 해맑게 윙크를 날렸다. 김 사장님은 뒷목을 잡고 나갔고, 빛나는 그날 위경련으로 조퇴했다.
+            </p>
+        </div>
+        
+        <div class="anecdote-box mb-4">
+            <h4 style="margin-top:0; color:var(--wiki-text-main); font-weight:800;">🚪 사장실 문짝 파괴 미수 사건</h4>
+            <p class="text-sm text-gray-700">
+                소빈이 주말에 빈주 2호선 관련 긴급 포스터 수정 건으로 3시간 출근한 적이 있었다. 월요일 아침이 되자마자 소빈은 사장실 문을 벌컥 열고 들어가 (문짝이 부서질 뻔했다) <strong>"사장님! 주말 특근 수당 결재 서류 여기요! 3시간이니까 점심값 포함해서 6만 원 입금해 주시면 됩니다!"</strong>라고 당당하게 외쳤다. 김 사장이 "김 주임, 우리 가족 같은 공기업에서 너무 야박한 거 아니야?"라고 하자, <strong>"제 가족은 아빠랑 엄마, 오빠 셋뿐인데요? 사장님 저 입양하실 건가요?"</strong>라고 응수해 결국 1시간 만에 입금을 받아냈다.
+            </p>
+        </div>
+
+        <div class="anecdote-box mb-4">
+            <h4 style="margin-top:0; color:var(--wiki-text-main); font-weight:800;">😭 민산역 심리치료(?) 오열 사건</h4>
+            <p class="text-sm text-gray-700">
+                반대편 승강장 횡단이 불가능한 <a href="민산역.html" class="wiki-link">민산역</a>에서 개찰구를 잘못 찍은 40대 취객이 "역 구조가 이따위냐! 당장 문 열어!"라며 난동을 피웠다. 소빈이 다가가 <strong>"고객님, 역 구조에 화내시는 척하지만 사실은 오늘 직장에서 인정받지 못한 억울함과 가정에서의 소외감이 투사된 거 맞으시죠? 집에 가서 사모님한테 따뜻한 말 한마디 못 들어서 여기서 이러시는 거잖아요."</strong>라고 심리학과 출신의 날카로운 프로파일링 팩폭을 꽂아 넣었다.<br>
+                정곡을 찔린 취객은 그 자리에서 무릎을 꿇고 "맞아... 내 인생은 실패했어..."라며 엉엉 울기 시작했고, 소빈은 그를 달래며 자연스럽게 파출소 경찰관들에게 인계했다. 이 사건 이후 소빈은 '민산역의 보라색 사신 겸 심리술사'로 불리게 되었다.
+            </p>
+        </div>
+
+        <h2 id="s-7">7. 공개 및 팬덤 반응 (2026년 4월의 기적)</h2>
+        <div class="anecdote-box mb-4">
+            <h4 style="margin-top:0; color:var(--wiki-text-main); font-weight:800;">🎉 2026년 4월, "드디어 우리 빛나가 퇴근한다!"</h4>
+            <p class="text-sm text-gray-700">
+                2026년 4월, 빈주도시철도공사 공식 홈페이지에 <strong>"빈주 2호선에 새로운 바람이 붑니다"</strong>라는 문구와 함께 김소빈의 일러스트가 최초 공개되자, 철도 동호인 커뮤니티와 직장인 커뮤니티가 말 그대로 폭발했다. <br>
+                팬들의 반응은 캐릭터 자체의 외모 찬양보다 <strong>"드디어 박빛나 주임님이 2호선 독박에서 해방됐다!!"</strong>는 축하가 9할을 차지했다. 일부 극성 팬들은 빈주 본사 앞으로 "김소빈 채용 결재를 승인해 주신 김철수 사장님 감사합니다"라는 화환을 보내기도 했다. <del>물론 김 사장은 소빈의 맑눈광 기질을 맛본 후 내가 왜 채용했을까 후회 중이다.</del>
+            </p>
+        </div>
+
+        <h2 id="s-8">8. 여담 (TMI)</h2>
+        <ul class="list-disc pl-5 space-y-4 text-gray-800">
+            <li class="leading-relaxed">
+                <strong><span class="text-highlight">러브라이브! 스피리추얼 밈 (노조미의 재림?)</span>:</strong> 그녀가 전담하는 <a href="빈주2호선.html" class="wiki-link text-[#C455F6]">빈주 2호선</a>의 상징색인 보라색(<span style="color:#C455F6">■</span>)이 하필이면 《<a href="러브라이브!.html" class="wiki-link">러브라이브!</a>》의 <strong><a href="토죠 노조미.html" class="wiki-link">토죠 노조미</a></strong> 상징색과 완전히 똑같다! 게다가 소빈의 대학 전공이 사람의 마음을 꿰뚫어 보는 <strong>심리학</strong>이라는 점이 절묘하게 엮여, 진상 민원인의 심리를 탈탈 터는 그녀의 능력을 두고 팬덤에서는 <strong>"스피리추얼 파워(Spiritual Power)"</strong>라 부르며 열광하고 있다. 팬아트에서는 타로 카드 대신 <strong>단말기를 뽑아 들고 "스피리추얼 파워 주입!"을 외치며 무임승차자를 응징</strong>하는 모습으로 찰지게 그려진다. <del>탕비실에서 김철수 사장님의 앞날(주로 위장병과 탈모)을 타로 카드로 점쳐준다는 흉흉한 소문이 있다. <s>와시와시(주물주물)는 고소당할까 봐 참는다고 카더라.</s></del>
+            </li>
+            <li class="leading-relaxed">
+                <strong><span class="text-highlight">마리나 씨와 시오리코의 혼종? (외형적 유사성 논란)</span>:</strong> 일러스트 공개 직후 서브컬처 팬덤 사이에서 외형을 두고 재미있는 토론이 벌어지기도 했다. 단정한 짙은 색 중단발과 보라색 테마 덕분에 《<strong>BanG Dream!</strong>》의 <strong><a href="https://namu.wiki/w/%EC%B8%A0%ED%82%A4%EC%8B%9C%EB%A7%88%20%EB%A7%88%EB%A6%AC%EB%82%98" class="wiki-link" target="_blank">츠키시마 마리나</a></strong>(CiRCLE 스태프)나 《<strong>러브라이브! 니지가사키 학원 스쿨 아이돌 동호회</strong>》의 <strong><a href="https://namu.wiki/w/%EB%AF%B8%ED%9B%84%EB%84%A4%20%EC%8B%9C%EC%98%A4%EB%A6%AC%EC%BD%94" class="wiki-link" target="_blank">미후네 시오리코</a></strong>와 닮았다는 의견이 쏟아졌다. 특히 시오리코 특유의 <strong>'원칙을 따지는 깐깐한 성격과 보라색 눈망울'</strong>이 소빈의 <strong>'합법적 광기로 사규를 들이미는 모습'</strong>과 겹치면서, 일부 팬들은 <strong>"시오리코가 한국 지하철 공기업에 취업해서 흑화한 모습 아니냐"</strong>는 우스갯소리를 던지기도 했다.
+            </li>
+            <li class="leading-relaxed">
+                <strong>박빛나 성덕(성공한 덕후):</strong> 빛나 선배의 전설적인 '단말기 퀵드로우(건카타)' 영상을 고등학생 때 유튜브에서 보고 반해서, 빈주도시철도공사에 지원했다. 면접 때 가장 존경하는 인물로 이순신 장군님 대신 '박빛나 주임님'을 꼽아 면접관들을 벙찌게 만들었다.
+            </li>
+            <li class="leading-relaxed">
+                <strong>출근룩의 완성은 에어팟 맥스:</strong> 제복을 입고 출근할 때 목에 항상 커다란 은색 '에어팟 맥스'를 걸치고 온다. 빛나가 "소빈아, 단정하게 출근해야지..."라고 지적하면 "선배님! 이건 헤드폰이 아니라 제 패션 아이덴티티이자 외부 소음으로부터 저를 보호하는 '귀마개' 의료기기예요!"라고 우겨서 결국 허락(?)을 받아냈다.
+            </li>
+            <li class="leading-relaxed">
+                <strong>2026년 10월 본격 데뷔 대기 중:</strong> 현재(2026년 4월)는 디자인만 선공개된 채 빛나 선배 곁에서 6개월간의 OJT(실무 수습)를 받고 있는 상태다. 2026년 10월이 되면 수습 딱지를 떼고 빈주 2호선의 전 역에 소빈의 단독 등신대와 안내 음성이 깔릴 예정이다. 팬들은 10월이 오기만을 손꼽아 기다리고 있다.
+            </li>
+        </ul>
+
+        <div class="footnotes-area">
+            <h3 style="margin-top:0; font-size:1.1rem; color: var(--wiki-text-main);">각주</h3>
+            <div id="fn-1" class="footnote-content">[1] 빈주 2호선 1단계 구간의 공식 개통일(2025.12.01)에서 기인했다.</div>
+            <div id="fn-2" class="footnote-content">[2] 센고쿠 나데코의 극한 귀여움과 칸로지 미츠리의 엉뚱함을 오가며, 가장 달콤한 목소리로 가장 살벌한 팩트 폭행을 날리는 연기의 대명사다.</div>
+            <div id="fn-3" class="footnote-content">[3] 솜브라(오버워치)와 같은 당당하고 영리한 톤, 그리고 무한 긍정의 하이톤으로 김소빈의 '맑은 눈의 광인' 기질을 한국어 패치로 완벽 소화해 냈다는 호평이다.</div>
+            <div id="fn-4" class="footnote-content">[4] 본인의 강력한 주장에 의해 B컵으로 공식 기재되었으나, 실질적으로는 A컵과 B컵의 경계선에 있는 아슬아슬한 수치다.</div>
+        </div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-400 text-xs pb-10">
+            <p>이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)</p>
+            <p>기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            <br>
+            <p>효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</p>
+            <p>효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const refs = document.querySelectorAll('.footnote-ref');
+            const tooltip = document.getElementById('footnote-tooltip');
+
+            refs.forEach(ref => {
+                ref.addEventListener('mouseenter', (e) => {
+                    e.preventDefault();
+                    const targetId = ref.getAttribute('href').substring(1);
+                    const targetContent = document.getElementById(targetId);
+                    if (targetContent) {
+                        tooltip.innerHTML = targetContent.innerHTML;
+                        tooltip.style.display = 'block';
+                        tooltip.style.left = (e.clientX + 15) + 'px';
+                        tooltip.style.top = (e.clientY + 15) + 'px';
+                    }
+                });
+                ref.addEventListener('mouseleave', () => tooltip.style.display = 'none');
+            });
+        });
+    </script>
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

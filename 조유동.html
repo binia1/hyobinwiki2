@@ -1,0 +1,584 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>조유동 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* 브랜드 컬러 */
+            --wiki-fixed: #7777AA; 
+            /* 중구 상징색 (#BB9955) */
+            --wiki-main: #BB9955; 
+            /* 포인트 컬러 */
+            --wiki-point: #997733; 
+            
+            --wiki-border: #cccccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            
+            --wiki-tooltip-bg: #ffffff;
+            --wiki-tooltip-border: #aaaaaa;
+            --wiki-tooltip-text: #333333;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-fixed: #9999CC;
+            --wiki-border: #444444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+            
+            --wiki-tooltip-bg: #2d2f34;
+            --wiki-tooltip-border: #666666;
+            --wiki-tooltip-text: #eeeeee;
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            margin: 0; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* 전체 컨테이너 (Flex 제거, 기본 Block 구조 유지) */
+        .wiki-container { 
+            max-width: 1152px; 
+            margin: 0 auto; 
+            padding: 20px 40px; 
+            border-left: 1px solid var(--wiki-border); 
+            border-right: 1px solid var(--wiki-border); 
+            min-height: 100vh; 
+            background-color: var(--wiki-bg);
+            position: relative;
+        }
+
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 2px solid var(--wiki-main); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; scroll-margin-top: 70px; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: var(--wiki-point); border-left: 4px solid var(--wiki-main); padding-left: 12px; scroll-margin-top: 70px; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        del { text-decoration: line-through; color: #999; }
+        
+        .quote-box { border-left: 4px solid var(--wiki-main); background-color: var(--wiki-gray-bg); padding: 10px 15px; margin: 10px 0; font-style: italic; color: #555; }
+        [data-theme='dark'] .quote-box { color: #ccc; }
+        .category-box { background: var(--wiki-gray-bg); border: 1px solid var(--wiki-border); padding: 5px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+
+        /* 효빈위키 스타일 인포박스 핵심 CSS (절대 깨지지 않는 Float 방식) */
+        .namu-infobox {
+            float: right;
+            width: 350px;
+            margin: 0 0 20px 20px;
+            border: 2px solid var(--wiki-border);
+            background-color: var(--wiki-bg);
+            font-size: 0.85rem;
+            border-collapse: collapse;
+            clear: right;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        @media (max-width: 768px) {
+            .namu-infobox { float: none; width: 100%; margin: 0 0 20px 0; }
+        }
+        .namu-infobox th, .namu-infobox td {
+            border: 1px solid var(--wiki-border);
+            padding: 6px 8px;
+            vertical-align: middle;
+        }
+        /* 상단 타이틀 영역 */
+        .namu-infobox .top-title { border-bottom: none !important; font-size: 0.8rem; font-weight: bold; background-color: var(--wiki-bg); color: var(--wiki-text); text-align: center; }
+        .namu-infobox .main-title { font-size: 1.5rem; font-weight: bold; border-top: none !important; border-bottom: none !important; background-color: var(--wiki-bg); color: var(--wiki-text); text-align: center; }
+        .namu-infobox .sub-title { font-size: 0.8rem; color: #888; border-top: none !important; background-color: var(--wiki-bg); color: var(--wiki-text); text-align: center; }
+        
+        /* 테마 컬러 헤더 (사진 완벽 고증, 너비 32% 통일로 지그재그 방지) */
+        .namu-infobox .th-orange { background-color: #E65100 !important; color: white !important; font-weight: bold; width: 32%; text-align: center; border: 1px solid var(--wiki-border) !important; }
+        .namu-infobox .th-green { background-color: #2E7D32 !important; color: white !important; font-weight: bold; text-align: center; width: 32%; border: 1px solid var(--wiki-border) !important; }
+        .namu-infobox .th-blue { background-color: #1565C0 !important; color: white !important; font-weight: bold; text-align: center; width: 32%; border: 1px solid var(--wiki-border) !important; }
+        
+        /* 법정동 미니 인포박스 (우측 플로팅 유지) */
+        .mini-infobox {
+            float: right;
+            width: 300px;
+            margin: 0 0 15px 15px;
+            border: 2px solid var(--wiki-border);
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            background-color: var(--wiki-bg);
+            clear: right;
+        }
+        @media (max-width: 768px) {
+            .mini-infobox { float: none; width: 100%; margin: 0 0 15px 0; }
+        }
+
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; clear: left; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+
+        .wiki-btn-group { display: flex; background: var(--wiki-bg); border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; float: right; margin-top: -50px; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        
+        .party-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.75rem; margin-right: 4px; vertical-align: middle; text-decoration: none !important; }
+        .party-minju { background-color: #004EA2; border: 1px solid #00306b; }
+        .party-ppp { background-color: #E61E2B; border: 1px solid #b71c1c; }
+
+        sup.wiki-fn { font-size: 0.75rem; vertical-align: super; font-weight: normal; cursor: pointer; color: var(--wiki-link); }
+        sup.wiki-fn:hover { text-decoration: underline; }
+        .wiki-footnote-area { margin-top: 40px; border-top: 1px solid var(--wiki-border); padding-top: 10px; font-size: 0.85rem; color: var(--wiki-text); clear: both; }
+        .wiki-footnote-area ol { padding-left: 25px; }
+        
+        #wiki-tooltip { position: absolute; display: none; background-color: var(--wiki-tooltip-bg); border: 1px solid var(--wiki-tooltip-border); color: var(--wiki-tooltip-text); padding: 10px 12px; font-size: 0.85rem; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 9999; max-width: 320px; line-height: 1.4; pointer-events: none; }
+        
+        /* 본문 흐름 정리 (Float 해제 필수 클래스) */
+        .clearfix::after { content: ""; display: block; clear: both; }
+        .wiki-footer { margin-top: 40px; border-top: 1px solid var(--wiki-border); padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: var(--wiki-gray-bg); line-height: 1.5; clear: both; }
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-tooltip"></div>
+
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-fixed);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색 (Enter)" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner hover:bg-[#444477] transition">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <h1>조유동</h1>
+        <div class="wiki-btn-group shadow-sm">
+            <a href="토론.html" class="wiki-tool-btn">토론</a>
+            <a href="수정.html" class="wiki-tool-btn">편집</a>
+            <a href="역사.html" class="wiki-tool-btn">역사</a>
+            <div class="wiki-tool-btn" onclick="showMsg('★ 즐겨찾기에 추가됨')">★</div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="중구.html" class="wiki-link">중구(효빈광역시)</a> | 
+            <a href="중구(효빈광역시)의_행정동.html" class="wiki-link">중구(효빈광역시)의 행정동</a> |
+            <a href="중구(효빈광역시)의_법정동.html" class="wiki-link">중구(효빈광역시)의 법정동</a>
+        </div>
+
+        <!-- 중구행정.js 연동 스크립트 (Float 영역 바깥에 두어 전체 너비 차지하게 함) -->
+        <div class="no-autolink mb-4">
+            <div class="hb-junggu-nav"></div>
+            <script src="js/중구행정.js"></script>
+        </div>
+
+        <!-- 본문 흐름 래퍼 (이 안에서만 float: right가 작동하도록 가둠) -->
+        <div class="wiki-content-wrapper clearfix">
+            
+            <!-- 우측 메인 행정동 인포박스 -->
+            <table class="namu-infobox">
+                <tr><th colspan="2" class="top-title">효빈광역시 중구의 행정동</th></tr>
+                <tr><th colspan="2" class="main-title">조유동</th></tr>
+                <tr><th colspan="2" class="sub-title">助有洞 | Joyu-dong</th></tr>
+                <tr><td colspan="2" style="background-color: var(--wiki-bg); padding: 15px 0;"><img src="이미지/중구.png" alt="중구" onerror="this.parentNode.innerHTML='<span style=\'font-weight:bold; font-size:1.2rem; color:#E65100;\'>효빈광역시 중구</span>'" style="max-height:80px; margin:0 auto; display:block;"></td></tr>
+                <tr><th class="th-orange">광역자치단체</th><td class="text-center"><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></td></tr>
+                <tr><th class="th-orange">기초자치단체</th><td class="text-center"><a href="중구.html" class="wiki-link">중구</a></td></tr>
+                <tr><th class="th-orange">일반구</th><td class="text-center">-</td></tr>
+                <tr><th class="th-orange">행정표준코드</th><td class="text-center">79010090</td></tr>
+                <tr>
+                    <th class="th-orange">관할 법정동</th>
+                    <td>
+                        <div class="flex justify-center items-center text-xs font-bold text-gray-600 cursor-pointer" onclick="toggleNav('beop-list-content', 'beop-list-label')">
+                            <span id="beop-list-label">[ 펼치기 · 접기 ]</span>
+                        </div>
+                        <div id="beop-list-content" style="max-height: 2000px; overflow: hidden; transition: max-height 0.3s; text-align: center; font-size: 0.8rem; margin-top: 5px;">
+                            조유동1가, 조유동2가, 조유동3가, 조유동4가, 조유동5가,<br>천석동1가, 천석동2가, 천석동3가, 서남동
+                        </div>
+                    </td>
+                </tr>
+                <tr><th class="th-orange">면적</th><td class="text-center">1.22㎢</td></tr>
+                <tr><th class="th-orange">인구</th><td class="text-center">8,089명<sup class="wiki-fn" data-target="fn-1">[1]</sup></td></tr>
+                <tr><th class="th-orange">인구밀도</th><td class="text-center">6,630.32명/㎢</td></tr>
+                
+                <!-- 정치 섹션 (표 병합 버그 원천 차단: 내부 중첩 테이블 활용) -->
+                <tr>
+                    <th class="th-green">정치</th>
+                    <td style="padding:0; border:none !important; border-left: 1px solid var(--wiki-border) !important;">
+                        <table style="width:100%; margin:0; border:none !important; border-collapse: collapse; table-layout: fixed;">
+                            <tr><td colspan="2" style="background-color: #7A0000 !important; color: white !important; font-weight: bold; font-size: 0.8rem; text-align: center; padding: 5px; border:none !important; border-bottom: 1px solid var(--wiki-border) !important;">국회의원 | 중구·동구</td></tr>
+                            <tr>
+                                <td style="width:40%; border:none !important; border-right:1px solid var(--wiki-border) !important; border-bottom: 1px solid var(--wiki-border) !important; background-color: var(--wiki-bg); text-align: center; padding: 6px;"><span class="party-badge party-minju">더불어민주당</span></td>
+                                <td style="border:none !important; border-bottom: 1px solid var(--wiki-border) !important; background-color: var(--wiki-bg); text-align: center; padding: 6px;"><a href="김성민.html" class="wiki-link">김성민</a> <span class="text-xs">(재선)</span></td>
+                            </tr>
+                            <tr><td colspan="2" style="background-color: #00479D !important; color: white !important; font-weight: bold; font-size: 0.8rem; text-align: center; padding: 5px; border:none !important; border-bottom: 1px solid var(--wiki-border) !important;">효빈광역시의원 | 중구선거구</td></tr>
+                            <tr>
+                                <td style="border:none !important; border-right:1px solid var(--wiki-border) !important; border-bottom: 1px solid var(--wiki-border) !important; background-color: var(--wiki-bg); text-align: center; padding: 6px;"><span class="party-badge party-minju">더불어민주당</span></td>
+                                <td style="border:none !important; border-bottom: 1px solid var(--wiki-border) !important; background-color: var(--wiki-bg); text-align: center; padding: 6px;"><a href="조청남.html" class="wiki-link">조청남</a> <span class="text-xs">(재선)</span></td>
+                            </tr>
+                            <tr><td colspan="2" style="background-color: #E65100 !important; color: white !important; font-weight: bold; font-size: 0.8rem; text-align: center; padding: 5px; border:none !important; border-bottom: 1px solid var(--wiki-border) !important;">중구의원 | 가 선거구</td></tr>
+                            <tr>
+                                <td style="border:none !important; border-right:1px solid var(--wiki-border) !important; border-bottom: 1px solid var(--wiki-border) !important; background-color: var(--wiki-bg); text-align: center; padding: 6px;"><span class="party-badge party-minju">더불어민주당</span></td>
+                                <td style="border:none !important; border-bottom: 1px solid var(--wiki-border) !important; background-color: var(--wiki-bg); text-align: center; padding: 6px;"><a href="원석준.html" class="wiki-link">원석준</a> <span class="text-xs">(7선)</span></td>
+                            </tr>
+                            <tr>
+                                <td style="border:none !important; border-right:1px solid var(--wiki-border) !important; border-bottom: 1px solid var(--wiki-border) !important; background-color: var(--wiki-bg); text-align: center; padding: 6px;"><span class="party-badge party-minju">더불어민주당</span></td>
+                                <td style="border:none !important; border-bottom: 1px solid var(--wiki-border) !important; background-color: var(--wiki-bg); text-align: center; padding: 6px;"><a href="채유나.html" class="wiki-link">채유나</a> <span class="text-xs">(초선)</span></td>
+                            </tr>
+                            <tr>
+                                <td style="border:none !important; border-right:1px solid var(--wiki-border) !important; background-color: var(--wiki-bg); text-align: center; padding: 6px;"><span class="party-badge party-ppp">국민의힘</span></td>
+                                <td style="border:none !important; background-color: var(--wiki-bg); text-align: center; padding: 6px;"><a href="조동욱.html" class="wiki-link">조동욱</a> <span class="text-xs">(재선)</span></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="th-blue">행정복지센터</th>
+                    <td class="text-sm leading-relaxed text-center" style="padding: 10px;">
+                        조유동5가 411-2<br>
+                        <a href="#" class="inline-block mt-1 bg-green-600 text-white px-3 py-1 rounded text-xs no-underline hover:bg-green-700 font-bold" target="_blank">🔗 조유동 행정복지센터</a>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- 목차 -->
+            <div class="toc mb-6">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">역사 및 변천</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">관할 법정동 및 상세</a>
+                        <ul class="pl-4">
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">조유동1가</a></li>
+                            <li>3.2. <a href="#s-3-2" class="wiki-link">조유동2가</a></li>
+                            <li>3.3. <a href="#s-3-3" class="wiki-link">조유동3가</a></li>
+                            <li>3.4. <a href="#s-3-4" class="wiki-link">조유동4가</a></li>
+                            <li>3.5. <a href="#s-3-5" class="wiki-link">조유동5가</a></li>
+                            <li>3.6. <a href="#s-3-6" class="wiki-link">천석동1가</a></li>
+                            <li>3.7. <a href="#s-3-7" class="wiki-link">천석동2가</a></li>
+                            <li>3.8. <a href="#s-3-8" class="wiki-link">천석동3가</a></li>
+                            <li>3.9. <a href="#s-3-9" class="wiki-link">서남동</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">교육 및 주요 시설</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">정치</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">여담</a></li>
+                    <li>7. <a href="#s-7" class="wiki-link">각주</a></li>
+                </ul>
+            </div>
+
+            <h2 id="s-1">1. 개요</h2>
+            <div class="quote-box">
+                "중구 행정의 심장이자, 구도심의 영광과 쇠퇴를 모두 간직한 거대 행정동"
+            </div>
+            <p>
+                <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="중구.html" class="wiki-link">중구</a>의 행정동. 
+                관내에 <strong><a href="중구청.html" class="wiki-link">중구청</a></strong> 본청이 위치하고 있어 명실상부한 중구 1번지 역할을 수행하고 있다. 
+            </p>
+            <p>
+                과거 번화가였던 상업지구(1~3가)와 주거지구(4~5가, 천석동 일대)가 혼재된 전형적인 구도심의 모습을 띄고 있다. 지속적인 인구 감소로 인해 여러 차례의 뼈아픈 행정동 통폐합을 거쳤으며, 그 결과 <strong>현재 관할하고 있는 법정동 개수만 무려 9개</strong>에 달하는 거대한 행정동이 탄생했다. 낮에는 구청을 찾는 민원인과 직장인들로 발 디딜 틈 없이 북적이지만, 밤이 되면 아파트가 있는 주거지구를 제외한 구청 주변은 쥐죽은 듯 고요해지는 극심한 공동화 현상을 겪고 있다.
+            </p>
+
+            <h2 id="s-2">2. 역사 및 변천</h2>
+            <p>
+                1980~90년대까지만 해도 중구 최대의 상권을 자랑했으나, 외곽 신도시 개발로 인해 상권과 인구가 썰물처럼 빠져나가며 기나긴 침체기를 겪었다. 이후 행정 효율화를 명분으로(...) 동들이 무한 통폐합되는 수모를 겪었다.
+            </p>
+            <ul class="list-disc pl-5 mb-4 text-sm space-y-1">
+                <li><strong>1914년 4월 1일</strong>: 일제의 부군면 통폐합에 따라 조정정(助町), 유천정(有川町) 등이 신설됨.</li>
+                <li><strong>1946년 10월 1일</strong>: 일제 잔재 청산을 위해 일본식 지명을 조유동(助有洞), 천석동(千石洞) 등으로 개칭함.</li>
+                <li><strong>1958년 2월 3일</strong>: 효빈시 행정동제 실시에 따라 당시에는 인구가 넘쳐나 <strong>조유1,5가동</strong>, <strong>조유2,3,4가동</strong>, <strong>천석동</strong>(서남동 포함)으로 각각 분리 설치됨. <del>이때가 조유동의 황금기였다</del></li>
+                <li><strong>1990년대 중반</strong>: 중구청 주변으로 관공서와 오피스텔이 우후죽순 들어서며 '조유동 직장인 시대'가 열림.</li>
+                <li><strong>2010년 1월 5일</strong>: 구도심 쇠퇴로 인한 인구 감소 크리를 맞고 <strong>조유1,5가동</strong>과 <strong>조유2,3,4가동</strong>이 <strong>조유동</strong>으로 통합됨.</li>
+                <li><strong>2015년</strong>: 인구가 더 쪼그라든 <strong>천석동</strong>마저 <strong>조유동</strong>에 흡수 통합되며, 현재의 거대 행정동 체제가 완성됨. <strong>서남동</strong> 역시 조유동의 식구가 됨.</li>
+            </ul>
+            
+            <h2 id="s-3">3. 관할 법정동 및 상세</h2>
+            <p>행정동 조유동 산하에는 총 9개의 법정동이 있다. 화려한 유흥가부터 낡은 빌라촌, 대단지 아파트까지 스펙트럼이 매우 넓어 동네별 분위기 차이가 극심하다.</p>
+
+            <h3 id="s-3-1">3.1. 조유동1가</h3>
+            <table class="namu-infobox mini-infobox">
+                <tr><th colspan="2" class="top-title">효빈광역시 중구의 법정동</th></tr>
+                <tr><th colspan="2" class="main-title">조유동1가</th></tr>
+                <tr><th colspan="2" class="sub-title">助有洞一街 | Joyu-dong 1(il)-ga</th></tr>
+                <tr><th class="th-orange">행정표준코드</th><td class="text-center">7911013600</td></tr>
+                <tr><th class="th-orange">면적</th><td class="text-center">0.188㎢</td></tr>
+                <tr><th class="th-orange">인구</th><td class="text-center">1,222명 (142위)</td></tr>
+            </table>
+            <p>
+                <strong>상업 및 유흥, 숙박의 중심지.</strong> 과거의 영광을 잃었다고는 하나 여전히 <strong><a href="조유동1가역.html" class="wiki-link">조유동1가역</a></strong>을 중심으로 먹자골목과 유흥가가 형성되어 있어 주말 밤만 되면 취객들로 불야성을 이룬다. 주거 시설로는 노후된 오피스텔이 대부분이라 가족 단위 거주자는 거의 없다. 특히 서브컬쳐 덕후들의 절대적인 성지로 추앙받는 <strong><a href="토치만호텔.html" class="wiki-link">토치만호텔</a></strong>이 이곳 대로변에 떡하니 자리 잡고 있다.
+            </p>
+            <div class="clearfix"></div>
+
+            <h3 id="s-3-2">3.2. 조유동2가</h3>
+            <table class="namu-infobox mini-infobox">
+                <tr><th colspan="2" class="top-title">효빈광역시 중구의 법정동</th></tr>
+                <tr><th colspan="2" class="main-title">조유동2가</th></tr>
+                <tr><th colspan="2" class="sub-title">助有洞二街 | Joyu-dong 2(i)-ga</th></tr>
+                <tr><th class="th-orange">행정표준코드</th><td class="text-center">7911013700</td></tr>
+                <tr><th class="th-orange">면적</th><td class="text-center">0.106㎢</td></tr>
+                <tr><th class="th-orange">인구</th><td class="text-center">112명 (219위)</td></tr>
+            </table>
+            <p>
+                <strong>중구청 원툴 동네.</strong> 인구 112명으로 중구 내 최하위권의 처참한 상주인구를 자랑한다. 동네 면적의 8할을 <strong><a href="중구청.html" class="wiki-link">중구청</a></strong> 본청과 <strong><a href="중구청역.html" class="wiki-link">중구청역</a></strong>, <strong><a href="조유동2가역.html" class="wiki-link">조유동2가역</a></strong> 인프라가 잡아먹고 있다. 낮에는 쏟아지는 민원인과 공무원, 직장인들로 점심시간마다 백반집에 줄이 길게 늘어서지만, 오후 6시 30분 퇴근시간만 넘어가면 거짓말처럼 거리에 개미 한 마리 보이지 않는 <strong>공동화 현상의 끝판왕</strong>을 보여준다.
+            </p>
+            <div class="clearfix"></div>
+
+            <h3 id="s-3-3">3.3. 조유동3가</h3>
+            <table class="namu-infobox mini-infobox">
+                <tr><th colspan="2" class="top-title">효빈광역시 중구의 법정동</th></tr>
+                <tr><th colspan="2" class="main-title">조유동3가</th></tr>
+                <tr><th colspan="2" class="sub-title">助有洞三街 | Joyu-dong 3(sam)-ga</th></tr>
+                <tr><th class="th-orange">행정표준코드</th><td class="text-center">7911013800</td></tr>
+                <tr><th class="th-orange">면적</th><td class="text-center">0.111㎢</td></tr>
+                <tr><th class="th-orange">인구</th><td class="text-center">332명 (190위)</td></tr>
+            </table>
+            <p>
+                1가와 2가의 상권을 뒷받침하는 배후 상업지 성격이 강하다. 낡은 인쇄소나 철물점, 그리고 30년 전통을 자랑하는 허름한 뼈해장국 집 같은 노포들이 골목골목 숨어있는 중구 아재들의 핫플레이스다. 재개발이 더뎌 80년대 풍경이 그대로 남아있는 골목이 많아 영화 촬영지로 가끔 쓰이기도 한다.
+            </p>
+            <div class="clearfix"></div>
+
+            <h3 id="s-3-4">3.4. 조유동4가</h3>
+            <table class="namu-infobox mini-infobox">
+                <tr><th colspan="2" class="top-title">효빈광역시 중구의 법정동</th></tr>
+                <tr><th colspan="2" class="main-title">조유동4가</th></tr>
+                <tr><th colspan="2" class="sub-title">中區廳(助有) | Joyu-dong 4(sa)-ga</th></tr>
+                <tr><th class="th-orange">행정표준코드</th><td class="text-center">7911013900</td></tr>
+                <tr><th class="th-orange">면적</th><td class="text-center">0.105㎢</td></tr>
+                <tr><th class="th-orange">인구</th><td class="text-center">1,232명 (140위)</td></tr>
+            </table>
+            <p>
+                <strong>특이하게도 한자 표기가 助有洞四街가 아니라 '中區廳(助有)'로 등록되어 있다.</strong> 행정 전산망에 왜 저따위로 들어갔는지는 불명확하나, <del>어느 공무원의 치명적인 오타가 수정되지 않고 정사가 되었다는 썰이 유력하다.</del> 여기서부터 상업시설이 줄어들고 주거지 비율이 훅 올라간다. <strong><a href="조유종합사회복지관.html" class="wiki-link">조유종합사회복지관</a></strong>을 중심으로 어르신 비율이 높은 구형 <strong><a href="조유아파트.html" class="wiki-link">조유아파트</a></strong> 단지가 크게 자리잡고 있어 묘하게 시간이 느리게 가는 듯한 평화로운 분위기를 풍긴다.
+            </p>
+            <div class="clearfix"></div>
+
+            <h3 id="s-3-5">3.5. 조유동5가</h3>
+            <table class="namu-infobox mini-infobox">
+                <tr><th colspan="2" class="top-title">효빈광역시 중구의 법정동</th></tr>
+                <tr><th colspan="2" class="main-title">조유동5가</th></tr>
+                <tr><th colspan="2" class="sub-title">助有洞五街 | Joyu-dong 5(o)-ga</th></tr>
+                <tr><th class="th-orange">행정표준코드</th><td class="text-center">7911014000</td></tr>
+                <tr><th class="th-orange">면적</th><td class="text-center">0.238㎢</td></tr>
+                <tr><th class="th-orange">인구</th><td class="text-center">2,322명 (103위)</td></tr>
+            </table>
+            <p>
+                <strong>조유동의 실질적인 인구 캐리 지역.</strong> 조유동 본류 법정동들 중 <strong>면적(0.238㎢)과 인구(2,322명)가 가장 크다.</strong> 현재 조유동행정복지센터 통합 청사가 이곳(411-2번지)에 번듯하게 위치해 있으며, <strong><a href="조유주공아파트.html" class="wiki-link">조유주공아파트 남부</a></strong>, <strong><a href="천석주공아파트.html" class="wiki-link">천석주공 서부</a></strong> 등 매머드급 대단지 아파트가 들어서 있어 학군과 상권이 가장 안정적으로 형성되어 있다. 조유동 관할 내에서 유일하게 길거리에 유모차와 잼민이들이 쏟아져 나오는 활기찬 구역이다.
+            </p>
+            <div class="clearfix"></div>
+
+            <h3 id="s-3-6">3.6. 천석동1가</h3>
+            <table class="namu-infobox mini-infobox">
+                <tr><th colspan="2" class="top-title">효빈광역시 중구의 법정동</th></tr>
+                <tr><th colspan="2" class="main-title">천석동1가</th></tr>
+                <tr><th colspan="2" class="sub-title">千石洞一街 | Cheonseok-dong 1(il)-ga</th></tr>
+                <tr><th class="th-orange">행정표준코드</th><td class="text-center">7911015700</td></tr>
+                <tr><th class="th-orange">면적</th><td class="text-center">0.250㎢</td></tr>
+                <tr><th class="th-orange">인구</th><td class="text-center">1,723명 (128위)</td></tr>
+            </table>
+            <p>
+                면적으로는 조유동 전체 관할 내에서 가장 넓다(0.250㎢). 동네 한가운데에 <strong>천석초등학교</strong>가 든든하게 버티고 있는 이른바 '초품아' 구역. 덕분에 반경 내 유해시설이 전무하며, 조용하고 평화로운 주택가와 소형 아파트가 넓게 펼쳐져 있어 거주 만족도가 꽤 높은 편이다.
+            </p>
+            <div class="clearfix"></div>
+
+            <h3 id="s-3-7">3.7. 천석동2가</h3>
+            <table class="namu-infobox mini-infobox">
+                <tr><th colspan="2" class="top-title">효빈광역시 중구의 법정동</th></tr>
+                <tr><th colspan="2" class="main-title">천석동2가</th></tr>
+                <tr><th colspan="2" class="sub-title">千石洞二街 | Cheonseok-dong 2(i)-ga</th></tr>
+                <tr><th class="th-orange">행정표준코드</th><td class="text-center">7911015800</td></tr>
+                <tr><th class="th-orange">면적</th><td class="text-center">0.069㎢</td></tr>
+                <tr><th class="th-orange">인구</th><td class="text-center">322명 (192위)</td></tr>
+            </table>
+            <p>
+                오래된 다세대 빌라와 원룸촌이 빽빽하게 모여 있는 곳. 주변 산단이나 구청 중심가에 직장을 둔 청년층 1인 가구가 싼 월세를 찾아 많이 거주한다. 밤길이 다소 어둡고 골목 주차난이 그야말로 헬게이트 수준이라, 구청 민원게시판의 주차 단속 요구 지분을 가장 많이 차지하고 있는 애증의 동네다.
+            </p>
+            <div class="clearfix"></div>
+
+            <h3 id="s-3-8">3.8. 천석동3가</h3>
+            <table class="namu-infobox mini-infobox">
+                <tr><th colspan="2" class="top-title">효빈광역시 중구의 법정동</th></tr>
+                <tr><th colspan="2" class="main-title">천석동3가</th></tr>
+                <tr><th colspan="2" class="sub-title">千石洞三街 | Cheonseok-dong 3(sam)-ga</th></tr>
+                <tr><th class="th-orange">행정표준코드</th><td class="text-center">7911015900</td></tr>
+                <tr><th class="th-orange">면적</th><td class="text-center">0.086㎢</td></tr>
+                <tr><th class="th-orange">인구</th><td class="text-center">124명 (215위)</td></tr>
+            </table>
+            <p>
+                천석동 중 인구가 124명으로 가장 적다. 산동네 비탈길을 따라 형성된 노후 주택가로, 빈집이 많아 우범지대화 우려가 꾸준히 제기된다. 10년째 '천석3구역 주택재개발정비사업' 떡밥만 돌고 길거리에 플래카드가 걸렸다 찢어졌다를 반복하고 있으나, 조합원 간 이견으로 첫 삽도 못 뜨고 있는 안타까운 상황.
+            </p>
+            <div class="clearfix"></div>
+
+            <h3 id="s-3-9">3.9. 서남동 (Seonam-dong)</h3>
+            <p>
+                <strong>인구: 922명</strong><br>
+                천석동3가 바로 밑에 붙어있는 동네. 과거 행정 편의상 억지로 조유동으로 편입되었다. 동네 경제를 멱살 잡고 끌고 가는 <strong><a href="서남시장.html" class="wiki-link">서남시장</a></strong>이 있어 주말이면 장을 보러 온 차량들로 왕복 2차선 도로가 마비된다. 불법주차 단속 차량과 상인들 간의 눈치싸움 숨바꼭질이 매일 벌어지는 혼돈의 카오스. 다행히 최근 시장 뒤편 공터에 <strong><a href="효빈행복주택.html" class="wiki-link">효빈행복주택</a></strong>이 크게 들어서면서 신혼부부 등 젊은 층 인구가 유입되어 낡은 동네에 생기가 조금씩 돌고 있다.
+            </p>
+
+            <h2 id="s-4">4. 교육 및 주요 시설</h2>
+            <ul class="list-disc pl-5 space-y-2 mb-6">
+                <li><strong>교육시설</strong>: 천석초등학교, <a href="효빈고등학교.html" class="wiki-link">효빈고등학교</a>, <a href="효빈여자고등학교.html" class="wiki-link">효빈여자고등학교</a></li>
+                <li><strong>관공서</strong>: <a href="중구청.html" class="wiki-link">중구청</a> (조유동2가), <a href="조유동행정복지센터.html" class="wiki-link">조유동행정복지센터</a> (조유동5가 411-2)</li>
+                <li><strong>주거시설</strong>: <a href="조유아파트.html" class="wiki-link">조유아파트</a>, <a href="조유주공아파트.html" class="wiki-link">조유주공아파트</a>, <a href="천석주공아파트.html" class="wiki-link">천석주공아파트</a>, <a href="효빈행복주택.html" class="wiki-link">효빈행복주택</a></li>
+                <li><strong>기타 명소</strong>: <a href="토치만호텔.html" class="wiki-link">토치만호텔</a> (덕후 성지), 조유종합사회복지관, 서남시장</li>
+            </ul>
+
+            <h2 id="s-5">5. 정치</h2>
+            <p>
+                관할 선거구는 <strong>중구·동구</strong>이며, 현역 국회의원은 <span class="party-badge party-minju">더불어민주당</span> <a href="김성민.html" class="wiki-link">김성민</a> 의원이다. 광역의원과 기초의원 대부분도 민주당이 꽉 잡고 있다.
+            </p>
+            <p>
+                과거에는 서남시장 상인들과 구도심 토박이 어르신들의 굳건한 영향력으로 보수 정당 지지세가 만만치 않아 '중구의 TK' 소리까지 들었으나, 조유주공아파트 재건축과 서남동 행복주택 대거 입주로 3040 세대가 쏟아져 들어오면서 분위기가 완전히 반전되었다. 현재는 명실상부한 <strong>더불어민주당의 탄탄한 콘크리트 텃밭</strong>으로 분류된다. 선거철만 되면 중구청 앞 사거리는 여야 유세 차량들의 최대 격전지가 되어 로고송 스피커 테러로 고통받는다.
+            </p>
+
+            <h2 id="s-6">6. 여담</h2>
+            <ul class="list-disc pl-5 space-y-4 mb-8">
+                <li>
+                    <strong>러브라이브 성지, 토치만호텔의 진실:</strong><br>
+                    조유동1가 번화가에 있는 <strong><a href="토치만호텔.html" class="wiki-link">토치만호텔</a></strong>의 이름이 일본 아이돌 애니메이션 <a href="러브라이브_선샤인.html" class="wiki-link">Love Live! Sunshine!!</a>의 주인공 <a href="타카미 치카.html" class="wiki-link">타카미 치카</a>의 본가 료칸 이름과 똑같다는 글이 커뮤니티에 올라온 적이 있다. 처음엔 다들 "설마 우연의 일치겠지ㅋㅋ" 하고 넘겼으나...
+                    <div class="mt-2 text-sm text-gray-700 bg-gray-100 dark:bg-gray-800 dark:text-gray-300 p-3 rounded border border-gray-300 dark:border-gray-600">
+                        얼마 뒤 지역 인터넷 언론과의 인터뷰에서 사장님이 <strong>"맞다. 딸이 보여준 그 애니메이션을 보고 감명받아 호텔 이름을 그대로 지었다"</strong>고 대놓고 커밍아웃을 해버렸다! 이 소식이 퍼지자 전국 각지에서 알음알음 찾아오던 <del>폭도</del><a href="러브라이버.html" class="wiki-link">러브라이버</a>들의 공식 성지가 되어버렸고, 주말 예약은 꽉꽉 들어차게 되었다. 호텔 로비 소파에서 귤색 머리 <a href="네소베리.html" class="wiki-link">네소베리</a>를 꺼내놓고 인증샷을 찍어도 프론트 직원이 제지하기는커녕 <strong>매우 흐뭇한 표정으로 바라본다</strong>고.
+                        <br><br>
+                        <strong>하지만 충격적인 반전이 있었으니...</strong><br>
+                        정작 사장님의 <a href="오시.html" class="wiki-link">오시(최애캐)</a>는 치카가 아니라 <strong><a href="마츠우라 카난.html" class="wiki-link">마츠우라 카난</a></strong>이라고 한다.(...) <del>호텔 이름은 남의 집으로 지어놓고 양심 상태가?</del> 실제로 프론트 데스크 뒤쪽 달력 옆에 작게 카난 넨도로이드 피규어가 장식되어 있는 것이 여러 숙박객들에게 목격되며 확인사살.
+                    </div>
+                </li>
+                <li>
+                    <strong>지옥의 조유사거리:</strong> 출퇴근 시간대 조유동2가와 5가를 잇는 중구청 앞 '조유사거리'의 교통 체증은 악명이 매우 높다. 무리하게 꼬리물기를 시전하는 얌체 차량들과, 이를 필사적으로 막으려는 모범운전자회 어르신들의 격렬한 호각 소리가 매일 아침 교향곡처럼 울려 퍼진다.
+                </li>
+            </ul>
+
+            <h2 id="s-7">7. 각주</h2>
+            <div class="wiki-footnote-area">
+                <ol>
+                    <li id="fn-1">2025년 기준 조유동 관할 법정동 총 인구 합산 데이터.</li>
+                </ol>
+            </div>
+            
+        </div> <!-- End of wiki-content-wrapper -->
+
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 1. 테마 토글 기능
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            const themeBtn = document.getElementById('themeBtn');
+            if (themeBtn) themeBtn.innerText = isDark ? '다크모드' : '라이트모드';
+        }
+
+        // 2. 내비게이션 접기/펼치기
+        function toggleNav(id, labelId) {
+            const content = document.getElementById(id);
+            const label = document.getElementById(labelId);
+            if (!content || !label) return;
+            
+            if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
+                content.style.maxHeight = '2000px';
+                label.innerText = '[접기]';
+            } else {
+                content.style.maxHeight = '0px';
+                label.innerText = '[펼치기]';
+            }
+        }
+
+        // 3. 메시지 박스 표시
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            if (!box) return;
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        // 4. 초기 로드 및 설정
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                const themeBtn = document.getElementById('themeBtn');
+                if (themeBtn) themeBtn.innerText = '라이트모드';
+            }
+            initFootnoteTooltips();
+        };
+
+        // 5. 검색창 기능
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && this.value.trim()) {
+                    const target = this.value.trim();
+                    location.href = target + ".html";
+                }
+            });
+        }
+
+        // 6. 각주 툴팁 기능
+        function initFootnoteTooltips() {
+            const footnotes = document.querySelectorAll('.wiki-fn');
+            const tooltip = document.getElementById('wiki-tooltip');
+            if (!tooltip) return;
+
+            footnotes.forEach(fn => {
+                fn.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('data-target');
+                    const contentEl = document.getElementById(targetId);
+                    if (contentEl) {
+                        let text = contentEl.innerHTML;
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = text;
+                        const backLink = tempDiv.querySelector('a:last-child'); 
+                        if(backLink && backLink.innerText.includes('↑')) backLink.remove();
+                        tooltip.innerHTML = tempDiv.innerHTML;
+                        tooltip.style.display = 'block';
+                        const rect = this.getBoundingClientRect();
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        tooltip.style.top = (rect.bottom + scrollTop + 5) + 'px';
+                        tooltip.style.left = rect.left + 'px';
+                    }
+                });
+                fn.addEventListener('mouseleave', function() {
+                    tooltip.style.display = 'none';
+                });
+                fn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    const targetEl = document.getElementById(targetId);
+                    if(targetEl) {
+                        targetEl.scrollIntoView({behavior: 'smooth', block: 'center'});
+                        targetEl.style.backgroundColor = "rgba(187, 153, 85, 0.3)";
+                        setTimeout(() => targetEl.style.backgroundColor = "transparent", 1500);
+                    }
+                });
+            });
+        }
+    </script>
+
+    <!-- 사용자 요구사항: 절대 지우면 안되는 하단 스크립트 4개 완벽 복구 -->
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

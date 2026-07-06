@@ -1,0 +1,705 @@
+﻿<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>효빈은행 - 효빈위키</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        :root { 
+            /* 효빈위키 공통 테마 */
+            --wiki-nav: #7777AA; 
+            --wiki-header: #BBFF64; /* 효빈시 메인 컬러 */
+            --wiki-header-text: #000000;
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            
+            /* 은행 문서 전용 테마 (효빈은행 리프레시 블루) */
+            /* 기존 전북은행색(#001e49)에서 변경: 청량한 옅은 푸른색 */
+            --bank-primary: #0092CA;
+            --bank-secondary: #007AA6;
+            --bank-accent: #FFD700; /* 액센트는 노란색 계열로 변경하여 청량감 유지 */
+            
+            /* 지하철 노선 색상 */
+            --line-7: #FF8899;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-nav: #444477;
+            --wiki-header: #88AA33;
+            --wiki-header-text: #ffffff;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+            --bank-primary: #33AADD;
+            --bank-secondary: #2288BB;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; margin: 0; }
+        .wiki-container { max-width: 1280px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); display: flex; flex-direction: column; }
+
+        /* 테이블 공통 스타일 */
+        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: fixed !important; }
+        th, td { border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; word-break: break-word; }
+        
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        del { color: #aaa; text-decoration: line-through; }
+        [data-theme='dark'] del { color: #777; }
+        
+        /* 각주 스타일 */
+        .footnote { color: var(--wiki-link); font-size: 0.8em; vertical-align: super; cursor: pointer; }
+
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 2px solid var(--wiki-header); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-header); }
+        
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: #000000; border-left: 4px solid var(--wiki-header); padding-left: 12px; }
+        h4 { font-size: 1.2rem !important; font-weight: 700 !important; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #333; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--bank-primary); background-color: var(--wiki-gray-bg); width: 100%; max-width: 400px; font-size: 0.85rem; margin-bottom: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-top-label { background: var(--bank-primary); color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 1.4rem; }
+        .infobox-title-row { display: flex; border-bottom: 1px solid var(--wiki-border); background: #fff; align-items: center; justify-content: center; padding: 20px; }
+        .infobox th { background-color: #eee !important; color: #333 !important; width: 100px; text-align: center; font-weight: bold; }
+        [data-theme='dark'] .infobox th { background-color: #333 !important; color: #eee !important; }
+        .infobox td { text-align: left; padding: 5px 10px; }
+
+        /* 틀 스타일 */
+        .frame-box { border-radius: 5px; overflow: hidden; margin-bottom: 10px; border-width: 1px; border-style: solid; }
+        .frame-header { color: white; padding: 5px 10px; font-weight: bold; font-size: 0.9rem; text-align: center; }
+        .frame-content { padding: 10px; background-color: #fff; }
+        [data-theme='dark'] .frame-content { background-color: #222; }
+
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        
+        /* 은행 틀 전용 스타일 */
+        .bank-nav-header { background-image: linear-gradient(120deg, #fff 5%, #000 5.1% 9%, #fff 9.1% 10%, #000 10.1% 14%, #fff 14.1% 15%, #000 15.1% 19%, #fff 19.1% 81%, #cd313a 81.1% 90%, #0047a0 90.1%); padding: 7px 10px; text-align: center; font-weight: bold; border: 1px solid #ccc; }
+        .bank-nav-section { background-color: #eaeaea; color: #000; font-weight: bold; width: 20%; }
+        [data-theme='dark'] .bank-nav-section { background-color: #444; color: #fff; }
+        
+        blockquote { border-left: 4px solid var(--bank-primary); padding-left: 15px; margin: 15px 0; color: #555; font-style: italic; }
+        [data-theme='dark'] blockquote { color: #aaa; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+<div id="wiki-msg-box"></div>
+<nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav);">
+<div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+<span class="font-bold text-xl">HyobinWiki</span>
+</div>
+<div class="flex items-center gap-2">
+<input autocomplete="off" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner" data-hb-search="input" id="searchInput" placeholder="문서 검색" type="text"/>
+<button class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner font-bold" data-hb-search="button" id="searchBtn" type="button">검색</button>
+<button class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner" onclick="document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';" type="button">다크모드</button>
+</div>
+</nav>
+<div class="wiki-container shadow-lg">
+<div class="flex justify-between items-end mb-4">
+<h1 class="m-0 border-none p-0">효빈은행</h1>
+<div class="flex bg-white border rounded overflow-hidden shadow-sm mb-4">
+<a class="wiki-tool-btn" href="토론.html">토론</a>
+<a class="wiki-tool-btn" href="수정.html">편집</a>
+<a class="wiki-tool-btn" href="역사.html">역사</a>
+<div class="px-3 py-1 text-[11px] cursor-pointer hover:bg-gray-100" onclick="showMsg('즐겨찾기에 추가됨')">★</div>
+</div>
+</div>
+<div class="category-box bg-white border p-2 mb-4 text-xs">
+<span class="font-bold text-[#7777AA]">분류:</span>
+<a class="wiki-link" href="대한민국의_은행.html">대한민국의 은행</a> | 
+            <a class="wiki-link" href="1967년_설립.html">1967년 설립</a> |
+            <a class="wiki-link" href="HB금융그룹.html">HB금융그룹</a> |
+            <a class="wiki-link" href="효빈광역시의_기업.html">효빈광역시의 기업</a>
+</div>
+<!-- 대한민국의 은행 틀 (둘러보기 틀/은행) -->
+<div class="mb-4 border border-[#ccc] shadow-sm" style="font-size: 0.9em;">
+<div class="bank-nav-header text-white" style="background-image: linear-gradient(120deg, #fff 5%, #000 5.1% 9%, #fff 9.1% 10%, #000 10.1% 14%, #fff 14.1% 15%, #000 15.1% 19%, #fff 19.1% 81%, #cd313a 81.1% 90%, #0047a0 90.1%); color: black; text-shadow: 0px 0px 2px rgba(255,255,255,0.8);">
+<span style="display: inline-flex; width: 27px; padding: 1px; background: rgba(45,47,52,.2); vertical-align: middle; margin-right: 5px;">
+<img alt="태극기" onerror="this.style.display='none'" src="이미지/대한민국_국기.png" style="width: 100%;"/>
+</span>
+<a class="text-black no-underline hover:underline font-bold" href="대한민국.html">대한민국</a>의 <a class="text-black no-underline hover:underline font-bold" href="은행.html">은행</a>
+</div>
+<div class="bg-[#f9f9f9]">
+<div class="cursor-pointer text-center p-1 text-xs text-gray-500 hover:bg-gray-200 transition-colors select-none" onclick="toggleNav('bank-nav', 'bank-label')">
+                    [<span id="bank-label">펼치기</span>]
+                </div>
+<div id="bank-nav" style="max-height: 0px; overflow: hidden; transition: max-height 0.3s ease-out;">
+<table class="w-full text-center m-0 border-collapse text-xs">
+<!-- 중앙은행 -->
+<tr>
+<td class="bg-black text-white font-bold border border-white" colspan="2">중앙은행</td>
+<td class="text-left pl-2 border border-[#ccc]" colspan="4">
+<a class="wiki-link" href="한국은행.html">한국은행</a><span class="text-[9px] align-super">⊛</span>
+</td>
+</tr>
+<!-- 국내은행 -->
+<tr>
+<td class="bg-[#cd313a] text-white font-bold w-[10%] border border-white" rowspan="5">국내<br/>은행</td>
+<td class="bank-nav-section border border-[#ccc]">시중은행</td>
+<td class="text-left pl-2 border border-[#ccc]" colspan="4">
+<a class="wiki-link" href="신한은행.html">신한은행</a> · 
+                                <a class="wiki-link" href="우리은행.html">우리은행</a> · 
+                                <a class="wiki-link" href="SC제일은행.html">SC제일은행</a> · 
+                                <a class="wiki-link" href="하나은행.html">하나은행</a> · 
+                                <a class="wiki-link" href="KB국민은행.html">KB국민은행</a> · 
+                                <a class="wiki-link" href="한국씨티은행.html">한국씨티은행</a><span class="text-[9px] align-super">⊛</span> · 
+                                <a class="wiki-link" href="iM뱅크.html">iM뱅크</a>
+</td>
+</tr>
+<tr>
+<td class="bank-nav-section border border-[#ccc]">국책은행</td>
+<td class="text-left pl-2 border border-[#ccc]" colspan="4">
+<a class="wiki-link" href="한국산업은행.html">한국산업은행</a> · 
+                                <a class="wiki-link" href="IBK기업은행.html">IBK기업은행</a> · 
+                                <a class="wiki-link" href="한국수출입은행.html">한국수출입은행</a><span class="text-[9px] align-super">⊛</span>
+</td>
+</tr>
+<tr>
+<td class="bank-nav-section border border-[#ccc]">특수은행</td>
+<td class="text-left pl-2 border border-[#ccc]" colspan="4">
+<a class="wiki-link" href="NH농협은행.html">NH농협은행</a> · 
+                                <a class="wiki-link" href="Sh수협은행.html">Sh수협은행</a>
+</td>
+</tr>
+<tr>
+<td class="bank-nav-section border border-[#ccc]">지방은행</td>
+<td class="text-left pl-2 border border-[#ccc]" colspan="4">
+<a class="wiki-link" href="BNK부산은행.html">BNK부산은행</a> · 
+                                <a class="wiki-link" href="광주은행.html">광주은행</a> · 
+                                <a class="wiki-link" href="제주은행.html">제주은행</a> · 
+                                <a class="wiki-link" href="전북은행.html">전북은행</a> · 
+                                <a class="wiki-link" href="BNK경남은행.html">BNK경남은행</a> · 
+                                <strong><a class="wiki-link" href="효빈은행.html">효빈은행</a></strong>
+</td>
+</tr>
+<tr>
+<td class="bank-nav-section border border-[#ccc]">인터넷<br/>전문은행</td>
+<td class="text-left pl-2 border border-[#ccc]" colspan="4">
+<a class="wiki-link" href="케이뱅크.html">케이뱅크</a> · 
+                                <a class="wiki-link" href="카카오뱅크.html">카카오뱅크</a> · 
+                                <a class="wiki-link" href="토스뱅크.html">토스뱅크</a>
+</td>
+</tr>
+<!-- 외국은행 -->
+<tr>
+<td class="bg-[#0047a0] text-white font-bold border border-white" colspan="2">외국은행의<br/>국내지점</td>
+<td class="border border-[#ccc] p-0" colspan="4">
+<table class="w-full text-left text-xs m-0 border-none">
+<tr class="border-b border-[#ccc]">
+<td class="bank-nav-section w-[15%] text-center border-r border-[#ccc]">미국</td>
+<td class="pl-2">
+<a class="wiki-link" href="JP모간_체이스.html">JP모간 체이스</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="모건_스탠리.html">모건 스탠리</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="뱅크_오브_아메리카.html">뱅크 오브 아메리카</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="웰스_파고.html">웰스 파고</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="BNY멜론.html">BNY멜론</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="스테이트_스트리트.html">스테이트 스트리트</a><span class="text-[9px] align-super">⊛</span>
+</td>
+</tr>
+<tr class="border-b border-[#ccc]">
+<td class="bank-nav-section text-center border-r border-[#ccc]">유럽</td>
+<td class="pl-2">
+<a class="wiki-link" href="도이체방크.html">도이체방크</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="UBS.html">UBS</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="HSBC.html">HSBC</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="BNP_파리바.html">BNP 파리바</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="크레디_아그리콜.html">크레디 아그리콜</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="소시에테_제네랄.html">소시에테 제네랄</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="ING(기업).html">ING</a> · 
+                                            <a class="wiki-link" href="바덴뷔르템베르크_주립은행.html">LBBW</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="유바프은행.html">유바프은행</a><span class="text-[9px] align-super">⊛</span>
+</td>
+</tr>
+<tr class="border-b border-[#ccc]">
+<td class="bank-nav-section text-center border-r border-[#ccc]">일본</td>
+<td class="pl-2">
+<a class="wiki-link" href="미즈호은행.html">미즈호은행</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="미쓰비시_UFJ_은행.html">미쓰비시 UFJ 은행</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="미쓰이스미토모은행.html">미쓰이스미토모은행</a><span class="text-[9px] align-super">⊛</span>
+</td>
+</tr>
+<tr class="border-b border-[#ccc]">
+<td class="bank-nav-section text-center border-r border-[#ccc]">중국</td>
+<td class="pl-2">
+<a class="wiki-link" href="중국공상은행.html">중국공상은행</a> · 
+                                            <a class="wiki-link" href="중국농업은행.html">중국농업은행</a> · 
+                                            <a class="wiki-link" href="중국건설은행.html">중국건설은행</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="중국은행.html">중국은행</a> · 
+                                            <a class="wiki-link" href="교통은행.html">교통은행</a> · 
+                                            <a class="wiki-link" href="중국광대은행.html">중국광대은행</a>
+</td>
+</tr>
+<tr>
+<td class="bank-nav-section text-center border-r border-[#ccc]">기타</td>
+<td class="pl-2">
+<a class="wiki-link" href="싱가포르개발은행.html">DBS</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="OCBC.html">OCBC</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="대화은행.html">대화은행</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="인도네시아느가라은행.html">BNI</a> · 
+                                            <a class="wiki-link" href="스테이트_뱅크_오브_인디아.html">SBI</a> · 
+                                            <a class="wiki-link" href="ANZ_뱅크.html">ANZ</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="메트로은행.html">메트로은행</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="파키스탄국립은행.html">파키스탄국립은행</a><span class="text-[9px] align-super">⊛</span> · 
+                                            <a class="wiki-link" href="멜라트은행.html">멜라트은행</a><span class="text-[9px] align-super">⊛</span>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<!-- 주석 -->
+<tr>
+<td class="bg-[#203741] text-white text-left pl-4 text-[10px] border border-white" colspan="6">
+                                ⊛: <a class="text-white underline" href="소매금융.html">소매금융</a> 미취급 은행<br/>
+<a class="text-white underline" href="은행연합회.html">은행연합회</a> 사원은행 소개 기준
+                            </td>
+</tr>
+<!-- 같이보기 -->
+<tr>
+<td class="bg-black text-white font-bold border border-white p-1" colspan="6">
+                                같이 보기: 
+                                <a class="text-white hover:underline" href="대한민국의_비은행예금취급기관.html">대한민국의 비은행예금취급기관</a> | 
+                                <a class="text-white hover:underline" href="대한민국의_증권사.html">대한민국의 증권사</a> | 
+                                <a class="text-white hover:underline" href="대한민국의_없어진_은행.html">대한민국의 없어진 은행</a> | 
+                                <a class="text-white hover:underline" href="BIC.html">SWIFT 코드 보기</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<!-- 대한민국의 지방은행 틀 -->
+<div class="mb-4 border border-[#ccc] shadow-sm" style="font-size: 0.9em;">
+<div class="bank-nav-header" style="background-image: linear-gradient(120deg, #fff 5%, #000 5%, #000 9%, #fff 9%, #fff 10%, #000 10%, #000 14%, #fff 14%, #fff 15%, #000 15%, #000 19%, #fff 19%, #fff 81%, #cd313a 81%, #cd313a 90%, #0047a0 90%);">
+<span style="display: inline-flex; width: 27px; padding: 1px; background: rgba(45,47,52,.2); vertical-align: middle; margin-right: 5px;">
+<img alt="태극기" onerror="this.style.display='none'" src="이미지/대한민국_국기.png" style="width: 100%;"/>
+</span>
+<a class="text-black no-underline hover:underline font-bold" href="대한민국.html">대한민국</a>의 <a class="text-black no-underline hover:underline font-bold" href="지방은행.html">지방은행</a>
+</div>
+<div class="bg-[#f9f9f9]">
+<table class="w-full text-center m-0 border-collapse text-xs">
+<tr>
+<td class="w-[16.6%] border border-[#ccc] p-2"><a class="wiki-link" href="BNK부산은행.html">BNK부산은행</a></td>
+<td class="w-[16.6%] border border-[#ccc] p-2"><a class="wiki-link" href="광주은행.html">광주은행</a></td>
+<td class="w-[16.6%] border border-[#ccc] p-2"><a class="wiki-link" href="제주은행.html">제주은행</a></td>
+<td class="w-[16.6%] border border-[#ccc] p-2"><a class="wiki-link" href="전북은행.html">전북은행</a></td>
+<td class="w-[16.6%] border border-[#ccc] p-2"><a class="wiki-link" href="BNK경남은행.html">BNK경남은행</a></td>
+<td class="w-[16.6%] border border-[#ccc] p-2 bg-yellow-100 font-bold"><a class="wiki-link" href="효빈은행.html">효빈은행</a></td>
+</tr>
+<tr>
+<td class="bg-gray-100 text-gray-500 text-[10px] p-1 border border-[#ccc]" colspan="6">
+<a class="hover:underline" href="금융공동망.html">지로코드</a>순 정렬
+                        </td>
+</tr>
+</table>
+</div>
+</div>
+<!-- 토론 합의 사항 (효빈위키 스타일) -->
+<div class="border-2 border-red-500 bg-white p-3 mb-4 text-sm shadow-sm rounded">
+<div class="font-bold text-red-600 mb-1">
+<i class="fa-solid fa-circle-exclamation"></i> [토론 합의]
+            </div>
+<ul class="list-disc pl-5 space-y-1 text-xs">
+<li>이 틀에 은행법 및 특수은행법에 의거하여 설립된 은행 및 국내지점이 있는 외국은행을 제외한 금융기관을 추가하지 않는다.</li>
+<li>은행이 아니지만 은행과 비슷한 여수신업무를 취급하는 금융기관은 '틀:대한민국의 비은행예금취급기관'으로 분리한다.</li>
+<li>'틀:대한민국의 은행'과 '틀:대한민국의 비은행예금취급기관'은 서로 같이 보기 링크를 추가한다.</li>
+</ul>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4 flex-grow">
+<!-- 목차 -->
+<div class="toc shrink-0 shadow-sm h-fit order-2 md:order-1 w-full md:w-auto bg-[#f9f9f9] border border-gray-300 p-4 rounded" id="toc-box">
+<div class="text-center font-bold border-bottom border-gray-300 mb-2 pb-1">목차</div>
+<ul class="text-sm list-none p-0 m-0">
+<li>1. <a class="wiki-link" href="#s-1">개요</a></li>
+<li>2. <a class="wiki-link" href="#s-2">역사</a></li>
+<li>3. <a class="wiki-link" href="#s-3">지배 구조</a></li>
+<li>4. <a class="wiki-link" href="#s-4">역대 행장</a></li>
+<li>5. <a class="wiki-link" href="#s-5">은행의 정신</a>
+<ul>
+<li>5.1. <a class="wiki-link" href="#s-5-1">경영 이념</a></li>
+<li>5.2. <a class="wiki-link" href="#s-5-2">행훈</a></li>
+<li>5.3. <a class="wiki-link" href="#s-5-3">행가</a></li>
+</ul>
+</li>
+<li>6. <a class="wiki-link" href="#s-6">카드</a></li>
+<li>7. <a class="wiki-link" href="#s-7">애플리케이션</a></li>
+<li>8. <a class="wiki-link" href="#s-8">자회사</a></li>
+<li>9. <a class="wiki-link" href="#s-9">스포츠단</a>
+<ul>
+<li>9.1. <a class="wiki-link" href="#s-9-1">배드민턴단</a></li>
+<li>9.2. <a class="wiki-link" href="#s-9-2">양궁단</a></li>
+</ul>
+</li>
+<li>10. <a class="wiki-link" href="#s-10">기타</a></li>
+<li>11. <a class="wiki-link" href="#s-11">관련 문헌</a></li>
+<li>12. <a class="wiki-link" href="#s-12">둘러보기</a></li>
+</ul>
+</div>
+<!-- 인포박스 -->
+<aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
+<div class="infobox-top-label">
+                    효빈은행<br/>
+<span class="text-sm font-normal">HYOBIN BANK | 孝彬銀行</span>
+</div>
+<div class="infobox-title-row">
+<!-- 로고 이미지 -->
+<img alt="효빈은행 로고" class="w-full max-w-[200px]" onerror="this.src='https://via.placeholder.com/200x70?text=HYOBIN+BANK'" src="이미지/효빈은행_로고.png"/>
+</div>
+<div class="infobox-map border-b border-[#ccc]" style="width: 100%; height: 250px; overflow: hidden; position: relative; display: block !important;">
+<iframe src="https://binia1.github.io/mymap/" style="width: 160%; height: 160%; border: none; 
+                       position: absolute; top: 0; left: 0;
+                       transform: scale(0.625); transform-origin: 0 0;">
+</iframe>
+</div>
+
+<table>
+<tr>
+<th>설립일</th>
+<td>1967년 7월 22일</td>
+</tr>
+<tr>
+<th>업종명</th>
+<td>국내 은행 (지방은행)</td>
+</tr>
+<tr>
+<th>기업 규모</th>
+<td><a class="wiki-link" href="대기업.html">대기업</a></td>
+</tr>
+<tr>
+<th>상장 여부</th>
+<td><a class="wiki-link" href="상장폐지.html">상장폐지</a> <span class="text-[0.7rem] text-gray-500">(HB금융지주 편입)</span></td>
+</tr>
+<tr>
+<th>지배 구조</th>
+<td><a class="wiki-link" href="HB금융지주.html">HB금융지주</a>: <strong>100%</strong></td>
+</tr>
+<tr>
+<th>은행장</th>
+<td>최현석</td>
+</tr>
+<tr>
+<th>본점</th>
+<td>
+<a class="wiki-link" href="효빈광역시.html">효빈광역시</a> <a class="wiki-link" href="효빈_중구.html">중구</a><br/>
+                            조효로 23 (중보로 23)
+                        </td>
+</tr>
+<tr>
+<th class="bg-[#0092CA] text-white">은행코드</th>
+<td><strong>039</strong></td>
+</tr>
+<tr>
+<th class="bg-[#0092CA] text-white">SWIFT</th>
+<td>HYOBKRSE</td>
+</tr>
+<tr>
+<th class="bg-[#0092CA] text-white">취급 통화</th>
+<td class="text-xs">
+<div class="grid grid-cols-4 gap-1">
+<span>USD</span> <span>JPY</span> <span>EUR</span> <span>CNY</span>
+<span>CAD</span> <span>AUD</span> <span>GBP</span> <span>PHP</span>
+<span>NZD</span> <span>THB</span> <span>IDR</span> <span>INR</span>
+<span>TWD</span> <span>VND</span> <span>AED</span> <span>BHD</span>
+<span>CHF</span> <span>DKK</span> <span>HKD</span> <span>KWD</span>
+<span>MYR</span> <span>NOK</span> <span>SAR</span> <span>SEK</span>
+<span>SGD</span>
+</div>
+</td>
+</tr>
+<tr>
+<th>링크</th>
+<td>
+<a class="wiki-link" href="#"><i class="fa-solid fa-globe"></i> 홈페이지</a> |
+                            <a class="wiki-link" href="#"><i class="fa-brands fa-instagram"></i> 인스타</a>
+</td>
+</tr>
+<tr>
+<th>고객 센터</th>
+<td>1599-8888</td>
+</tr>
+<tr>
+<th>연계 교통</th>
+<td><span style="color:#FF8899; font-weight:bold;">●</span> <a class="wiki-link" href="7호선.html">효빈 7호선</a> <a class="wiki-link" href="효빈은행역.html">효빈은행역</a></td>
+</tr>
+<tr>
+<td class="bg-[#0092CA] text-white font-bold" colspan="2">
+                            국고수납대리점<br/>외국환은행
+                        </td>
+</tr>
+</table>
+</aside>
+</div>
+<h2 id="s-1">1. 개요</h2>
+<div class="flex justify-center mb-4">
+<figure class="text-center">
+<img alt="효빈은행 본점 전경" class="rounded shadow-md w-full max-w-[430px]" onerror="this.src='https://via.placeholder.com/430x250?text=Hyobin+Bank+HQ'" src="이미지/효빈은행역_승강장.webp"/>
+<figcaption class="text-xs text-gray-500 mt-1">효빈광역시 중구 조효로 23 (중보로 23)에 위치한 효빈은행 본점.</figcaption>
+</figure>
+</div>
+<blockquote>
+<strong>"덕빈을 넘어 세계로, HB 효빈은행"</strong>
+</blockquote>
+<p>
+<a class="wiki-link" href="HB금융그룹.html">HB금융그룹</a> 계열의 전국구 <a class="wiki-link" href="지방은행.html">지방은행</a>. 본점은 <a class="wiki-link" href="효빈광역시.html">효빈광역시</a> <a class="wiki-link" href="효빈_중구.html">중구</a> 조효로 23 (중보동)에 위치해 있다.
+        </p>
+<p>
+<a class="wiki-link" href="효빈광역시.html">효빈광역시</a>와 <a class="wiki-link" href="덕빈북도.html">덕빈북도</a>, <a class="wiki-link" href="덕빈남도.html">덕빈남도</a>를 아우르는 <strong>덕빈권</strong>의 대표 은행이다. 과거 <a class="wiki-link" href="1997년_외환_위기.html">IMF 사태</a> 당시 인근의 경쟁자였던 <strong>[<a class="wiki-link" href="덕남은행.html">덕남은행</a>]</strong>을 인수하며 덩치를 불렸다. 이 때문에 덕빈남도(특히 동부권) 어르신들은 아직도 "내 돈 뺏어간 놈들"이라며 효빈은행을 싫어하는 경향이 있다. <del>하지만 자식들이 용돈 보내주면 잘만 쓴다.</del>
+</p>
+<h2 id="s-2">2. 역사</h2>
+<div class="flex gap-4 mb-4">
+<div class="border p-2 text-center w-1/2">
+<div class="bg-gray-100 p-4 mb-2 font-bold text-gray-500">1967 ~ 1998</div>
+<div class="text-sm">구 로고 (녹색 비둘기)</div>
+</div>
+<div class="border p-2 text-center w-1/2">
+<div class="bg-[#0092CA] p-4 mb-2 font-bold text-white">1999 ~ 현재</div>
+<div class="text-sm">현 로고 (HB 워드마크)</div>
+</div>
+</div>
+<p>
+            1967년 7월 22일, "1도 1은행" 정책에 따라 효빈시와 덕빈도 지역 상공인들이 출자하여 설립되었다. 초기에는 자본금 부족으로 '효빈시민 1주 갖기 운동'을 벌이기도 했다.
+        </p>
+<ul class="list-disc pl-5 mt-2 space-y-2">
+<li><strong>1967년:</strong> 효빈은행 창립 (초대 행장 유언신).</li>
+<li><strong>1985년:</strong> 신용카드 업무 개시.</li>
+<li><strong>1998년:</strong> <a class="wiki-link" href="1997년_외환_위기.html">IMF 외환위기</a> 당시 퇴출된 <strong><a class="wiki-link" href="덕남은행.html">덕남은행</a></strong>(본점: 덕주시)을 P&amp;A(자산부채이전) 방식으로 인수했다. 이 과정에서 덕남은행 직원들에 대한 대규모 구조조정이 있었고, 이는 아직까지도 덕빈권 내 지역 감정의 불씨로 남아있다.</li>
+<li><strong>2013년:</strong> 포괄적 주식 이전을 통해 <a class="wiki-link" href="HB금융지주.html">HB금융지주</a>의 완전 자회사가 되면서 주식시장에서 상장폐지되었다.</li>
+<li><strong>2016년:</strong> 베트남 호치민의 현지 은행을 인수하며 동남아 진출을 본격화했다. <del>쌀국수국 진출</del></li>
+</ul>
+<h2 id="s-3">3. 지배 구조</h2>
+<p>2026년 1월 기준.</p>
+<table class="w-full md:w-1/2 mx-auto text-center">
+<tr class="bg-[#0092CA] text-white">
+<th>주주명</th>
+<th>지분율</th>
+</tr>
+<tr>
+<td><a class="wiki-link" href="HB금융지주.html">HB금융지주</a></td>
+<td>100%</td>
+</tr>
+</table>
+<h2 id="s-4">4. 역대 행장</h2>
+<div class="overflow-x-auto">
+<table class="w-full text-center text-sm">
+<tr class="bg-[#0092CA] text-white">
+<th>대수</th><th>이름</th><th>재임 기간</th>
+</tr>
+<tr><td>1</td><td>유언신</td><td>1967 ~ 1973</td></tr>
+<tr><td>2</td><td>이병석</td><td>1973 ~ 1979</td></tr>
+<tr><td>3</td><td>박정훈</td><td>1979 ~ 1985</td></tr>
+<tr><td>4</td><td>최영수</td><td>1985 ~ 1991</td></tr>
+<tr><td>5</td><td>정기영</td><td>1991 ~ 1997</td></tr>
+<tr><td>6</td><td>강성훈</td><td>1997 ~ 2002</td></tr>
+<tr><td>7</td><td>조민기</td><td>2002 ~ 2007</td></tr>
+<tr><td>8</td><td>유재훈</td><td>2007 ~ 2011</td></tr>
+<tr><td>9</td><td>김종훈</td><td>2011 ~ 2015</td></tr>
+<tr><td>10</td><td>박명훈</td><td>2015 ~ 2019</td></tr>
+<tr><td>11</td><td>정준호</td><td>2019 ~ 2023</td></tr>
+<tr class="bg-gray-100 font-bold"><td>12</td><td>최현석</td><td>2023 ~ 현재</td></tr>
+</table>
+</div>
+<h2 id="s-5">5. 은행의 정신</h2>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-5-1">5.1. 경영 이념</h3>
+<blockquote class="text-lg font-bold">"따뜻한 금융, 든든한 동반자, 세계로 뻗어가는 HB"</blockquote>
+<p>효빈은행은 고객 중심의 가치를 최우선으로 하며, 덕빈권을 넘어 글로벌 금융 그룹으로 도약하겠다는 의지를 담고 있다.</p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-5-2">5.2. 행훈</h3>
+<p class="text-center text-xl font-bold text-[#0092CA] my-4">正道 (정도) · 誠實 (성실) · 奉仕 (봉사)</p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-5-3">5.3. 행가</h3>
+<div class="bg-gray-100 p-4 text-sm border-l-4 border-[#0092CA] italic">
+            (1절)<br/>
+            서해의 푸른 물결 넘실거리는<br/>
+            기름진 덕빈 땅에 터전을 닦아<br/>
+            겨레의 살림살이 맡아나가는<br/>
+            우리는 자랑스런 효빈의 일꾼<br/>
+<br/>
+            (후렴)<br/>
+            아아 영광 있으라 우리의 전당<br/>
+            겨레의 등불 되어 영원하리라 HB 효빈은행
+        </div>
+<h2 id="s-6">6. 카드</h2>
+<div class="border-l-4 border-gray-400 bg-gray-100 p-2 mb-4 text-sm">
+<i class="fa-solid fa-arrow-right"></i> 자세한 내용은 <a class="wiki-link font-bold" href="효빈은행_카드.html">효빈은행/카드</a> 문서를 참고하십시오.
+        </div>
+<h2 id="s-7">7. 애플리케이션</h2>
+<p>
+            앱 이름은 <strong>'HB 웨이브(Wave)'</strong>. 원래는 '효빈은행 스마트뱅킹'이라는 구수한 이름이었으나 2023년 리브랜딩했다. 효빈시의 상징인 '바다'와 '금융의 새로운 물결'을 의미한다고 한다. UI가 직관적이고 속도가 빨라 지방은행 앱 치고는 평점이 매우 높다. 특히 <a class="wiki-link" href="오픈뱅킹.html">오픈뱅킹</a> 서비스 런칭 당시 서버가 터지지 않은 몇 안 되는 은행 중 하나.
+        </p>
+<p class="mt-2 text-sm text-gray-700">
+            앱 설정에서 <strong>'효빈 모드(Hyobin Mode)'</strong>를 활성화하면 로딩 화면에 효빈시 마스코트 <strong>한바다</strong>가 등장하여 "오늘도 맑음입니다!"라고 인사하거나, 송금 완료 시 "전속 전진! 송금 완료!"라는 <a class="wiki-link" href="한바다.html">조경이 성우</a>의 음성 안내가 나온다. <del>이 기능 때문에 타지방 오타쿠들이 굳이 효빈은행 계좌를 개설한다는 소문이 있다.</del> 최근 업데이트에서는 <a class="wiki-link" href="효빈도시철도.html">효빈 도시철도</a> 캐릭터인 '레일 루미네' 테마도 추가되어 선택의 폭이 넓어졌다.
+        </p>
+<div class="mt-2 p-2 border bg-blue-50 rounded">
+<strong>[HB 다이렉트]</strong><br/>
+            앱 전용 비대면 상품. 조건 없이 모든 은행 ATM 수수료를 면제해 주는 파격적인 혜택으로 <a class="wiki-link" href="뽐뿌.html">뽐뿌</a> 등지에서 '갓효빈'으로 찬양받았다. 역마진 우려로 2024년부터 신규 가입이 중단되었으나, 기존 가입자는 혜택이 유지된다.
+        </div>
+<h2 id="s-8">8. 자회사</h2>
+<p>
+            HB금융그룹 산하의 자회사들은 효빈시의 독특한 문화 산업과 밀접하게 연계되어 있다.
+        </p>
+<ul class="list-disc pl-5 mt-2 space-y-2">
+<li>
+<strong>HB캐피탈:</strong> 할부금융 및 리스 전문. 특이하게도 <strong>'덕질 할부 서비스'</strong>를 운영 중이다. 50만 원 이상의 고가 피규어나 굿즈를 구매할 때 12개월 무이자 할부를 제공하는 파격적인 상품으로, HAF(효빈 애니 페스티벌) 기간만 되면 서버가 폭주한다. <del>신용불량 양성소</del>
+</li>
+<li>
+<strong>HB자산운용:</strong> 펀드 운용 및 투자 자문. 효빈시 내 애니메이션 스타트업이나 서브컬처 관련 기업에 집중 투자하는 'HB 컬처 펀드'를 운용한다. 수익률이 의외로 쏠쏠하다고 한다.
+            </li>
+<li>
+<strong>HB저축은행:</strong> 서민 금융 전담. 구 '효빈상호저축은행'을 인수하여 출범했다. 지역 소상공인, 특히 효빈 굿즈샵 사장님들을 위한 저금리 대출 상품을 취급한다.
+            </li>
+<li>
+<strong>HB VINA:</strong> 베트남 현지 법인. 효빈은행의 글로벌 전초기지다.
+            </li>
+</ul>
+<h2 id="s-9">9. 스포츠단</h2>
+<p>지역 스포츠 발전을 위해 2개의 실업팀을 운영하고 있다. 팬 서비스가 남다르기로 유명하다.</p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-9-1">9.1. 배드민턴단</h3>
+<p>
+<strong>효빈은행 남자 배드민턴단</strong>. 1995년 창단되었다. 전국체전 단체전에서 여러 차례 금메달을 획득한 명문 구단이다.
+            응원단장이 무려 <a class="wiki-link" href="한바다.html">한바다</a>(물론 인형 탈 알바)이며, 경기 승리 시 선수들이 관중석을 향해 킹블레이드를 흔드는 세리머니를 펼친다. <del>상대 팀이 당황해서 제 실력을 못 낸다는 후문이 있다.</del>
+</p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-9-2">9.2. 양궁단</h3>
+<p>
+<strong>효빈은행 여자 양궁단</strong>. 2000년 창단. 올림픽 금메달리스트를 다수 보유하고 있다.
+            감독님이 <a class="wiki-link" href="러브_라이브!.html">러브 라이브!</a>의 팬이라, 훈련 구호가 "전속 전진(Yousoro)!"이다. 선수들이 활을 쏠 때 과녁 중앙을 '뮤즈(μ's)'라고 생각하고 쏜다는 도시전설이 전해진다. <del>10점 만점에 10점!</del>
+</p>
+<h2 id="s-10">10. 기타</h2>
+<ul class="list-disc pl-5 mt-2 space-y-3">
+<li>
+<strong>대학교 주거래:</strong> <a class="wiki-link" href="효빈대학교.html">효빈대학교</a>(본점 근처), <a class="wiki-link" href="덕북대학교.html">덕북대학교</a>, <a class="wiki-link" href="덕남대학교.html">덕남대학교</a> 등 덕빈권 주요 국립대의 학생증을 도맡아 발급하고 있다. 덕분에 덕빈권 대학생들은 반강제로 효빈은행 계좌를 하나씩은 가지고 있다. 학생증 디자인에 <a class="wiki-link" href="고나미.html">고나미</a>(효빈대 출신 캐릭터)를 넣을 수 있는 옵션이 있다.
+            </li>
+<li>
+<strong>효빈시 금고:</strong> <a class="wiki-link" href="효빈광역시.html">효빈광역시</a>의 제1금고다. 시청 공무원 월급이 다 여기서 나온다. 반면 <a class="wiki-link" href="덕빈남도.html">덕빈남도</a>는 아직도 과거 <strong>덕남은행</strong> 시절의 앙금이 남아있어, 도청 금고 쟁탈전 때마다 <a class="wiki-link" href="NH농협은행.html">농협</a>과 피 터지게 싸운다.
+            </li>
+<li>
+<strong>통장 디자인:</strong> 통장 디자인이 묘하게 촌스럽다는 평이 많았으나, 2022년 디자인 리뉴얼을 통해 <strong>'애니메이션 풍 풍경화'</strong>를 삽입하며 환골탈태했다. 효빈시의 '<a class="wiki-link" href="서브컬처.html">서브컬처</a> 성지' 이미지를 반영한 듯.
+            </li>
+<li>
+<strong>ATM의 비밀:</strong> 효빈시내 주요 거점(고송동, 중수동 등 성지)에 설치된 효빈은행 ATM은 <strong>캐릭터 보이스</strong>를 지원한다. 돈을 찾으면 <a class="wiki-link" href="하루빈.html">하루빈</a> 목소리로 "부자 되세요~!", 잔액이 부족하면 <a class="wiki-link" href="다로나.html">다로나</a> 목소리로 "잔액이... 부족합니다..."라고 팩트 폭격을 날린다. <del>이거 들으려고 일부러 잔액 비우고 가는 사람도 있다.</del>
+</li>
+<li>
+<strong>HAF 공식 후원사:</strong> 매년 열리는 <strong>효빈 애니메이션 페스티벌(HAF)</strong>의 메인 스폰서다. 행사 기간 동안 이동식 점포 'HB 뱅크트럭'을 운영하며, 현장에서 계좌를 개설하면 한정판 '한바다 금속 뱃지'를 증정한다. 이때만큼은 은행원들이 정장 대신 핫피(축제 의상)를 입고 근무한다.
+            </li>
+<li>
+<strong>IMF의 승자:</strong> 1997년 외환위기 당시, 덩치가 비슷했던 라이벌 <strong>덕남은행</strong>(덕주시 소재)이 부실 경영으로 무너지자 전격적으로 인수했다. 당시 효빈은행장이 "우리는 살고 쟤네는 죽었다"는 뉘앙스의 인터뷰를 했다가 덕주시민들에게 계란 세례를 맞은 흑역사가 있다. 지금도 덕주시 지점에 가면 어르신들이 창구 직원에게 "너네가 덕남은행 먹어서 좋냐?"라고 시비를 거는 모습을 종종 볼 수 있다. (...)
+            </li>
+<li>
+<strong>지점 분위기:</strong> 북구 고송동이나 중수동 같은 소위 '오타쿠 거리' 인근 지점에는, 지점장 재량으로 입구에 <strong>캐릭터 등신대</strong>가 세워져 있거나 창구에 피규어 장식장이 놓여있는 경우가 있다. 은행인지 굿즈샵인지 헷갈릴 지경.
+            </li>
+<li>
+<strong>주요 예금 상품:</strong>
+<ul class="list-[circle] pl-5 mt-1 text-sm text-gray-700">
+<li><strong>효빈사랑 통장:</strong> 효빈시민 인증 시 금리 우대.</li>
+<li><strong>철도왕 적금:</strong> <a class="wiki-link" href="효빈도시철도.html">효빈 도시철도</a>, KTX 이용 실적에 따라 금리를 더 주는 덕후 취향 저격 상품. <del>역시 철도의 왕국</del></li>
+<li><strong>아이꿈 통장:</strong> 미성년자 전용. 뽀로로가 아닌 효빈시 마스코트가 그려져 있다.</li>
+</ul>
+</li>
+<li>
+<strong>광고:</strong> <a class="wiki-link" href="전주월드컵경기장.html">효빈월드컵경기장</a>과 야구장에 광고판을 도배해놨다. 지역 스포츠 마케팅에 진심인 편.
+            </li>
+</ul>
+<h2 id="s-11">11. 관련 문헌</h2>
+<ul class="list-disc pl-5 mt-2 space-y-1 text-sm">
+<li>『효빈은행 30년사』 (1999) - 덕남은행 인수 비화가 수록되어 있다.</li>
+<li>『효빈은행 50년사: 덕빈을 넘어 세계로』 (2019)</li>
+<li><a class="wiki-link" href="#">HB금융그룹 지속가능경영보고서 (2025)</a></li>
+</ul>
+<h2 id="s-12">12. 둘러보기</h2>
+<!-- HB금융그룹 틀 -->
+<div class="mb-4 border border-[#ccc] shadow-sm" style="font-size: 0.9em;">
+<div class="bank-nav-header text-white" style="background-color: var(--bank-primary); color: white;">
+<span class="font-bold">HB금융그룹</span>
+</div>
+<div class="bg-[#f9f9f9]">
+<table class="w-full text-center m-0 border-collapse text-xs">
+<tr>
+<td class="bg-gray-200 font-bold w-[20%] border border-[#ccc]">지주회사</td>
+<td class="text-left pl-2 border border-[#ccc]">
+<a class="wiki-link" href="HB금융지주.html">HB금융지주</a>
+</td>
+</tr>
+<tr>
+<td class="bg-gray-200 font-bold border border-[#ccc]">은행</td>
+<td class="text-left pl-2 border border-[#ccc]">
+<strong><a class="wiki-link" href="효빈은행.html">효빈은행</a></strong> · 
+                            <a class="wiki-link" href="HB저축은행.html">HB저축은행</a>
+</td>
+</tr>
+<tr>
+<td class="bg-gray-200 font-bold border border-[#ccc]">비은행</td>
+<td class="text-left pl-2 border border-[#ccc]">
+<a class="wiki-link" href="HB캐피탈.html">HB캐피탈</a> · 
+                            <a class="wiki-link" href="HB자산운용.html">HB자산운용</a>
+</td>
+</tr>
+<tr>
+<td class="bg-gray-200 font-bold border border-[#ccc]">해외법인</td>
+<td class="text-left pl-2 border border-[#ccc]">
+<a class="wiki-link" href="HB_VINA.html">HB VINA</a> (베트남)
+                        </td>
+</tr>
+</table>
+</div>
+</div>
+<footer class="wiki-footer border-t border-gray-300 mt-10 pt-4">
+<div class="mb-2 font-bold text-lg">HyobinWiki</div>
+<p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br/>
+            이 저작물은 <a class="text-blue-600 hover:underline" href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다.<br/>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+<p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br/>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+</footer>
+</div>
+<script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
+        };
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                location.href = this.value.trim() + ".html";
+            }
+        });
+        
+        function toggleNav(id, labelId) {
+            const content = document.getElementById(id);
+            const label = document.getElementById(labelId);
+            if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
+                content.style.maxHeight = '2000px';
+                label.innerText = '[접기]';
+            } else {
+                content.style.maxHeight = '0px';
+                label.innerText = '[펼치기]';
+            }
+        }
+    </script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+</body>
+</html>

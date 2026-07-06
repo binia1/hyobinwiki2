@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>데이터 적재 및 저장 (Part 3) - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #00CCAA; 
+            --wiki-line-color: #00CCAA; 
+            
+            --wiki-header-bg: var(--wiki-line-color);
+            --wiki-header-text: #ffffff;
+            --wiki-table-header-bg: #e6faf6;
+            --wiki-table-header-text: #000000;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f8f9fa; 
+            --wiki-link: #008877; 
+            --wiki-footer-bg: #f0f0f0;
+            --wiki-footer-text: #777;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #33eebb; 
+            --wiki-table-header-bg: #222;
+            --wiki-table-header-text: #ffffff;
+            --wiki-footer-bg: #1a1a1a;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.7; word-break: keep-all; margin: 0; transition: background-color 0.3s, color 0.3s; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 30px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1.5px; border-bottom: 3px solid var(--wiki-main); padding-bottom: 15px;} 
+        
+        h2 { font-size: 2rem; font-weight: 900; border-bottom: 2px solid var(--wiki-line-color); padding-bottom: 8px; margin-top: 3.5rem; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; color: var(--wiki-text); }
+        h2::before { content: ""; display: inline-block; width: 6px; height: 2rem; background: var(--wiki-line-color); }
+        h3 { font-size: 1.5rem; font-weight: 800; margin-top: 2.5rem; margin-bottom: 15px; border-left: 6px solid var(--wiki-line-color); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 10px; color: var(--wiki-text); }
+
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; border: 1px solid var(--wiki-border); font-size: 0.95rem; }
+        th, td { border: 1px solid var(--wiki-border); padding: 10px 12px; text-align: left; vertical-align: middle; color: var(--wiki-text); }
+        th { background-color: var(--wiki-table-header-bg); font-weight: 800; text-align: center; border-bottom: 2px solid var(--wiki-main);}
+
+        .infobox { float: right; margin-left: 25px; margin-bottom: 20px; width: 350px; clear: right; border: 2px solid var(--wiki-main); border-radius: 4px; background-color: var(--wiki-bg); }        
+        .infobox-top { background-color: var(--wiki-main); padding: 20px 10px; text-align: center; border-bottom: 1px solid var(--wiki-border); color: #fff; }
+        .infobox-top b { font-size: 1.8rem; line-height: 1.2; letter-spacing: -1px; font-weight: 900; }
+
+        .toc { display: inline-block; min-width: 300px; margin-bottom: 25px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 20px; border-radius: 4px; }        
+        .toc-title { text-align: center; font-weight: 900; border-bottom: 1px solid var(--wiki-border); margin-bottom: 15px; padding-bottom: 10px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding: 0; margin: 0; line-height: 1.6; font-weight: 600;}
+        .toc li { margin-bottom: 4px; }
+        .toc .pl-5 { padding-left: 20px; font-weight: 400;}
+
+        .wiki-link { color: var(--wiki-link); font-weight: 700; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        .quote-box { background: var(--wiki-gray-bg); padding: 15px 20px; font-weight: 600; border-left: 5px solid var(--wiki-line-color); margin-bottom: 20px; color: var(--wiki-text); }
+        .exam-box { border: 2px solid #ff4444; background-color: #fffafa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        [data-theme='dark'] .exam-box { background-color: #2a1111; border-color: #cc3333; }
+        .exam-title { font-weight: 900; color: #ff4444; margin-bottom: 10px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;}
+        
+        .anime-box { border: 2px dashed; background-color: #fdf5fd; padding: 20px; border-radius: 8px; margin: 20px 0; color: #333; display: flex; gap: 15px; align-items: flex-start;}
+        [data-theme='dark'] .anime-box { background-color: #2a1a2a; color: #eee;}
+        .anime-box-title { font-weight: 900; font-size: 1.15rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;}
+        .anime-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid; flex-shrink: 0; background-color: #fff;}
+
+        .mermaid { background: var(--wiki-bg); padding: 15px; border-radius: 8px; margin: 15px 0; display: flex; justify-content: center; overflow-x: auto; border: 1px solid var(--wiki-border);}
+        
+        del { color: #999; text-decoration: line-through; }
+
+        /* 각주 및 툴팁 전용 CSS */
+        .fn-link { color: var(--wiki-link); font-size: 0.75em; vertical-align: super; margin: 0 1px; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .fn-link:hover { text-decoration: underline; }
+        
+        .wiki-footnotes { margin-top: 60px; padding-top: 20px; border-top: 2px solid var(--wiki-border); }
+        .wiki-footnotes h4 { font-size: 1.1rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 10px; }
+        .wiki-footnotes ul { list-style: none; padding: 0; margin: 0; }
+        .wiki-footnotes li { margin-bottom: 8px; font-size: 0.9rem; line-height: 1.6; padding: 4px 8px; border-radius: 4px; transition: background-color 0.3s; }
+        .wiki-footnotes li:target { background-color: rgba(0, 204, 170, 0.15); }
+
+        .wiki-tooltip {
+            position: absolute; background-color: var(--wiki-bg); color: var(--wiki-text); border: 1px solid var(--wiki-border);
+            border-radius: 6px; padding: 12px 16px; font-size: 0.85rem; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 0.2s ease-in-out, transform 0.2s ease;
+            transform: translateY(5px); z-index: 9999; word-break: keep-all; line-height: 1.6;
+        }
+        .wiki-tooltip.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+        [data-theme='dark'] .wiki-tooltip { box-shadow: 0 4px 15px rgba(0,0,0,0.6); background-color: #222; }
+    
+        /* 효빈위키 전용 하단 내비게이션 틀 CSS */
+        .wiki-nav-box { margin: 40px auto 10px; border: 1px solid var(--wiki-border); border-radius: 4px; background: var(--wiki-bg); overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .wiki-nav-header { display: flex; align-items: center; justify-content: center; padding: 12px; font-weight: 900; font-size: 1.1rem; color: #fff; background: linear-gradient(to right, #005BAC, #00CCAA); letter-spacing: 1px; }
+        .wiki-nav-toggle { text-align: center; padding: 6px; background: var(--wiki-gray-bg); border-bottom: 1px solid var(--wiki-border); border-top: 1px solid var(--wiki-border); cursor: pointer; font-size: 0.85rem; user-select: none; color: var(--wiki-text); font-weight: bold; }
+        .wiki-nav-toggle:hover { filter: brightness(0.95); }
+        .wiki-nav-content { display: none; }
+        .wiki-nav-content.active { display: block; }
+        .wiki-nav-table { width: 100%; border-collapse: collapse; text-align: center; margin: 0; font-size: 0.9rem; }
+        .wiki-nav-table th, .wiki-nav-table td { border: 1px solid var(--wiki-border); padding: 12px; }
+        .wiki-nav-table th { color: #fff; font-weight: bold; vertical-align: middle; }
+        .wiki-nav-table td { text-align: left; line-height: 1.8; word-break: keep-all; }
+        .bg-nav-red { background-color: #D81C2F; } /* 효빈 시내버스 급행 레드 */
+        .bg-nav-blue { background-color: #485EC6; } /* 효빈 시내버스 광역 블루 */
+        .wiki-nav-item { display: inline-block; margin-right: 12px; white-space: nowrap; }
+        .wiki-nav-item a { color: var(--wiki-link); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .wiki-nav-item a:hover { color: #FF4F91; text-decoration: underline; font-weight: bold; }
+
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <nav class="bg-[#00CCAA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50 border-b border-[#009988]">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl tracking-tight text-white">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1.5 px-4 rounded text-black text-sm w-64 focus:outline-none shadow-inner">
+            <button class="bg-[#008877] p-1.5 px-4 rounded text-sm hover:bg-[#006655] font-bold transition-colors text-white">검색</button>
+            <button onclick="document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')" class="bg-[#009988] p-1.5 px-3 rounded text-xs border border-[#006655] text-white shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="txt-lvl-1">데이터 적재 및 저장</div>
+
+        <div class="category-box bg-[#f9f9f9] border border-[#ccc] p-3 mb-5 rounded text-sm font-bold">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="빅데이터분석기사_필기.html" class="wiki-link">빅데이터분석기사 필기</a> | <a href="빅데이터분석기사.html" class="wiki-link">빅데이터분석기사</a> | <a href="데이터_전처리.html" class="wiki-link">데이터 전처리</a> | <a href="데이터_탐색.html" class="wiki-link">데이터 탐색</a> | <a href="분류_알고리즘.html" class="wiki-link">분류 알고리즘</a> | <a href="분석결과_활용.html" class="wiki-link">분석결과 활용</a> | <a href="효빈광역시_시내버스.html" class="wiki-link">효빈광역시 시내버스</a> | <a href="러브라이브!_시리즈.html" class="wiki-link">러브라이브! 시리즈</a> | <a href="니지가사키_스쿨_아이돌_동호회.html" class="wiki-link">니지가사키 스쿨 아이돌 동호회</a> | <a href="봇치_더_록!.html" class="wiki-link">봇치 더 록!</a> | <a href="결속밴드.html" class="wiki-link">결속밴드</a>
+        </div>
+        
+
+        <aside class="infobox shadow-sm">
+            <div class="infobox-top">
+                <b>빅데이터분석기사 필기</b><br>
+                <span class="text-sm opacity-80">PART 02. 데이터 분석 계획</span>
+            </div>
+            <table>
+                <tr><th>과목명</th><td>제2과목 빅데이터 탐색</td></tr>
+                <tr><th>섹션</th><td>SECTION 02. 데이터 적재 및 저장</td></tr>
+                <tr><th>문서 구분</th><td><b>Part 3</b></td></tr>
+                <tr><th>출제빈도</th><td>상 중 하 (★)</td></tr>
+                <tr><th>반복학습</th><td>[1] [2] [3] 회독</td></tr>
+                <tr><th>빈출태그</th><td>#적재 #플루언티드(Fluentd) #NoSQL DBMS #저장시스템 선정 #접근성 제어</td></tr>
+            </table>
+        </aside>
+
+        <div class="quote-box text-sm">
+            💡 분산된 여러 서버에서 데이터를 수집하는 플랫폼과 저장 방법의 중요성이 점점 더 커지고 있다.
+        </div>
+
+        <div class="toc shadow-sm">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li><a href="#s-1" class="wiki-link">1. 데이터 적재</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-1-1" class="wiki-link">1) 데이터 적재 도구</a></li>
+                        <li><a href="#s-1-2" class="wiki-link">2) 데이터 적재 완료 테스트</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-2" class="wiki-link">2. 데이터 저장</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-2-1" class="wiki-link">1) 빅데이터 저장시스템</a></li>
+                        <li><a href="#s-2-2" class="wiki-link">2) 분산 파일 시스템</a></li>
+                        <li><a href="#s-2-3" class="wiki-link">3) NoSQL의 기술적 특성과 분류</a></li>
+                        <li><a href="#s-2-4" class="wiki-link">4) 빅데이터 저장시스템 선정을 위한 분석</a></li>
+                        <li><a href="#s-2-5" class="wiki-link">5) 데이터 발생 유형 및 특성</a></li>
+                        <li><a href="#s-2-6" class="wiki-link">6) 안정성과 신뢰성 확보 및 접근성 제어계획 수립</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <h2 id="s-1">01 데이터 적재</h2>
+        <h3 id="s-1-1">1) 데이터 적재 도구</h3>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>수집한 데이터는 빅데이터 분석을 위한 저장 시스템에 적재해야 한다.</li>
+            <li>적재할 데이터의 유형과 실시간 처리 여부에 따라 관계형 데이터베이스, HDFS를 비롯한 분산파일시스템, NoSQL 저장 시스템에 데이터를 적재할 수 있다.</li>
+            <li>수집된 데이터를 저장시스템에 적재 시 <b>Fluentd, Flume, Scribe, Logstash</b> 와 같은 데이터 수집 도구들을 이용하여 적재하는 방법들도 있다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">① 데이터 수집 도구를 이용한 데이터 적재</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>로그 수집을 해야 하는 각 서버에 <b>Fluentd</b>를 설치하면, 서버에서 로그를 수집해서 중앙 로그 저장소로 전송한다.</li>
+            <li>Fluentd의 로그 수집 구조는 가장 간단한 구조로 Fluentd가 로그 수집 에이전트 역할만 수행하지만, 이에 더해 각 서버에서 Fluentd에서 수집한 로그를 <b>다른 Fluentd로 보내서 이 Fluentd가 최적으로 로그 저장소에 저장</b>하도록 설정할 수 있다.</li>
+            <li><b>중간에 Fluentd를 두는 이유:</b> 이 Fluentd가 먼저 들어오는 로그들을 수집해서 로그 저장소에 넣기 전에 <b>로그 트래픽을 속도 조절하고 로그저장소의 용량에 맞게 트래픽을 조정</b>할 수 있기 때문이다.</li>
+            <li>또한 로그를 여러 저장소에 복제해서 저장하거나 로그의 종류에 따라서 다른 로그 저장소로 라우팅할 수 있다.</li>
+            <li>Fluentd 로그 수집기는 로그화 시킬 소스 데이터에 대한 환경 설정, 추출한 데이터를 어디로 전달할 것인지에 대한 설정, 실행 주기 설정 등을 통하여 다양한 데이터 수집이 가능하다.</li>
+        </ul>
+
+        <div class="mermaid">
+        graph LR
+            subgraph 서버단
+            A[서버 A - Fluentd 에이전트]
+            B[서버 B - Fluentd 에이전트]
+            end
+
+            C((중간 Fluentd<br>속도 조절 & 라우팅))
+
+            subgraph 중앙 저장소
+            D[(저장소 1 - JSON)]
+            E[(저장소 2 - 백업용)]
+            end
+
+            A -->|로그 수집| C
+            B -->|로그 수집| C
+            C -->|용량/트래픽 조절| D
+            C -->|복제/라우팅| E
+            
+            style C fill:#f9f,stroke:#333,stroke-width:2px
+        </div>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">▣ 주요 데이터 수집 도구 요약 (★핵심 암기)</h4>
+        <table class="w-full">
+            <tr><th class="w-1/4">데이터 수집 도구</th><th>설명</th></tr>
+            <tr>
+                <td class="font-bold text-center">플루언티드<br>(Fluentd)</td>
+                <td>• 트레저 데이터(Treasure Data)에서 개발된 <b>크로스 플랫폼</b> 오픈 소스 데이터 수집 소프트웨어이다.<br>• 사용자의 로그를 다양한 형태로 입력받아 <b>JSON<a href="#fn1" id="rfn1" class="fn-link">[1]</a> 포맷</b>으로 변환한 뒤 다양한 형태로 출력한다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">플럼<br>(Flume)</td>
+                <td>• <b>많은 양의 로그 데이터</b>를 효율적으로 수집, 취합, 이동하기 위한 <b>분산형</b> 소프트웨어이다.<br>• 로그 데이터 수집과 네트워크 트래픽 데이터, 소셜 미디어 데이터, 이메일 메시지 데이터 등 다량의 이벤트 데이터 전송을 위해 사용한다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">스크라이브<br>(Scribe)</td>
+                <td>• 수많은 서버로부터 <b>실시간으로 스트리밍되는 로그 데이터</b>를 집약시키기 위한 서버이다.<br>• 클라이언트 사이드의 수정 없이 스케일링 가능하고 확장이 가능하다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">로그스태시<br>(Logstash)</td>
+                <td>• 다양한 소스에서 데이터를 수집하여 변환한 후 자주 사용하는 저장소이다.</td>
+            </tr>
+        </table>
+
+        <div class="anime-box" style="border-color: #FF66AA; background-color: #FFF0F5;">
+            <img src="이미지/봇치.png" alt="고토 히토리" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF66AA;">
+            <div>
+                <div class="anime-box-title" style="color: #DD2277;">🎸 [효빈위키 기적의 TIP] 결속밴드 봇치의 이펙터 랙으로 외우는 데이터 수집 도구!</div>
+                <ul class="list-disc pl-5 text-sm space-y-2 text-gray-800">
+                    <li>수집 도구 4대장(Fluentd, Flume, Scribe, Logstash)은 시험에서 아주 그냥 단골로 출제된다. <del>이거 안 외우고 시험장 가면 첫 라이브 때 골판지 박스 뒤집어쓴 봇치처럼 멘붕 온다 카더라.</del></li>
+                    <li>봇치가 라이브 클럽 '스태리'에서 공연할 때 발로 밟는 <b>'이펙터 페달'들</b>이 바로 각 서버에 흩어진 <b>에이전트</b>라고 생각하자. 여기서 발생하는 무수한 기타 소리(로그)들을 오디오 인터페이스(중간 <b>Fluentd</b>)로 싹 모아서 볼륨도 조절하고(트래픽 속도 조절), 최종적으로 커다란 앰프(중앙 저장소)로 보내주는 완벽한 아키텍처다!</li>
+                    <li>헷갈리지 않게 <b>Fluentd</b>는 <b>JSON</b>과 크로스 플랫폼, <b>Flume</b>은 <b>많은 양, 분산형</b>이라는 핵심 키워드를 머릿속에 욱여넣자. <b>로그스태시</b>는 앰프와 스피커처럼 <b>엘라스틱서치(Elasticsearch)</b>랑 영혼의 단짝이니 무조건 묶어서 기억해두면 개이득이다.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">② NoSQL DBMS가 제공하는 도구를 이용한 데이터 적재</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>로그 수집기를 이용한 방법처럼 많은 기능을 사용할 수는 없지만, 수집한 데이터가 CSV<a href="#fn2" id="rfn2" class="fn-link">[2]</a> 등의 텍스트 데이터라면 <b>mongoimport</b>와 같은 적재 도구를 사용하여 데이터 적재를 수행할 수 있다.</li>
+            <li>로그 수집 도구를 쓰는 방식처럼 데이터 수집 주기 등을 환경설정하여 사용할 수는 없다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">③ 관계형 DBMS의 데이터를 NoSQL DBMS에서 적재</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>기존의 운영 중이던 관계형 데이터베이스로부터 데이터를 추출하여 NoSQL 데이터베이스로 적재할 수도 있다.</li>
+            <li>데이터 변형이 많이 필요하다면, 데이터 적재를 위한 프로그램을 작성하여 적재할 수 있고, 큰 변화 없이 적재한다면 <b>SQLtoNoSQLimporter, Mongify</b> 등의 도구를 사용하여 적재할 수도 있다.</li>
+        </ul>
+
+        <div class="quote-box text-sm border-l-4 border-[#00CCAA] bg-teal-50 p-3 mb-4">
+            💡 적재하는 데이터(정형, 반정형, 비정형)의 유형과 특성에 따라 체크리스트를 작성한다.
+        </div>
+
+        <h3 id="s-1-2">2) 데이터 적재 완료 테스트</h3>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">① 데이터 적재 내용에 따라 체크리스트를 작성</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li><b>정형 데이터</b>인 경우에는 테이블의 개수와 속성의 개수 및 데이터 타입의 일치 여부, 레코드 수 일치 여부가 체크리스트가 될 수 있다.</li>
+            <li><b>반정형이나 비정형</b>인 경우에는 원천 데이터의 테이블이 목적지 저장시스템에 맞게 생성되었는지, 레코드 수가 일치하는지 등이 체크리스트에 포함될 수 있다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">② 데이터 테스트 케이스<a href="#fn3" id="rfn3" class="fn-link">[3]</a>를 개발</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>적재된 레코드 수를 확인하는 간단한 것 외에도 원천 데이터 중에 특정 데이터에 대해 <b>샘플링을 해서 목적지 저장시스템에서 조회하는 테스트 케이스를 개발</b>할 수 있다.</li>
+            <li>적재한 대량 데이터의 데이터 타입, 특별히 <b>한글 문자 등의 ASCII 코드가 아닌 문자들이 정상적으로 적재되는지 확인이 꼭 필요하다.</b></li>
+            <li>문자열이 숫자로 이루어지면 문자열로 적재되었는지 또는 숫자인데 문자열로 적재되지는 않았는지 확인해야 한다.</li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #EE2244; background-color: #FFFAFA;">
+            <img src="이미지/카스미.png" alt="토야마 카스미" class="anime-img" onerror="this.style.display='none'" style="border-color: #EE2244;">
+            <div>
+                <div class="anime-box-title" style="color: #CC1133;">⭐ [효빈위키 개념 해설] Poppin'Party 카스미로 보는 인코딩 대참사</div>
+                <p class="text-sm text-gray-800">
+                기껏 밤새서 파이프라인 구축하고 데이터를 퍼왔는데... 막상 DB를 열어보니 카스미가 입력한 <b>"반짝반짝 두근두근!"</b> 이라는 소중한 문자열이 <b>"뽠쨕뽠쨕 뜌군뜌군"</b> 처럼 외계어로 깨져 있다면? <del>옆에서 아리사가 분노의 츳코미를 날리며 키보드를 부술 것이다. 인코딩 오류는 개발자들의 영원한 주적이다.</del><br><br>
+                그래서 ASCII 범위를 벗어나는 문자(한글, 이모티콘 등)가 목적지 DB에 멀쩡히 들어갔는지, 숫자가 멋대로 문자열로 변환되지 않았는지 반드시 샘플링해서 테스트를 거쳐야 한다. 실무에서도 이 체크리스트를 대충 넘기면 나중에 데이터 전처리할 때 피를 토하게 되니 절대 주의하자!
+                </p>
+            </div>
+        </div>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">③ 체크리스트 검증 및 데이터 테스트 케이스 실행</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>이전 단계에서 작성된 체크리스트와 테스트 케이스에 대해 검증을 실행한다.</li>
+            <li>검증 결과를 분석하여 데이터 적재 결과 보고서를 작성한다.</li>
+        </ul>
+
+        <div class="exam-box">
+            <div class="exam-title">✔️ 개념 체크 (적재 파트)</div>
+            <p><b>Q1. 다음 소프트웨어 중에서 데이터 수집 목적으로 사용하기 어려운 것은?</b><br>
+            ① 플럼(Flume)<br>
+            ② 스쿱(Sqoop)<br>
+            ③ 플루언티드(Fluentd)<br>
+            <b>④ HDFS</b></p>
+            <p class="mt-2 text-sm mb-4"><b>[정답 및 해설] ④</b><br>
+            HDFS는 분산 파일 시스템으로 데이터 '수집'이 아닌 <b>데이터 '저장' 목적</b>으로 사용된다.</p>
+            
+            <hr class="border-red-200 my-4">
+
+            <p><b>Q2. 다음 빅데이터 관련 소프트웨어 중에서 그 성격이 다른 하나는?</b><br>
+            ① 플럼(Flume)<br>
+            ② 로그스태시(Logstash)<br>
+            ③ 플루언티드(Fluentd)<br>
+            <b>④ 하이브(Hive)</b></p>
+            <p class="mt-2 text-sm"><b>[정답 및 해설] ④</b><br>
+            ①, ②, ③은 '데이터 수집'을 위한 소프트웨어이고, Hive는 하둡 기반 저장소에 대한 질의 처리를 담당하는 <b>처리/분석 시스템</b>이다.<br>
+            <span class="text-blue-600 font-bold">※ 출제자의 함정 피하기:</span> 위 문제들처럼 뜬금없이 "데이터 수집 도구" 사이에 <b>"저장 도구(HDFS)"</b>나 <b>"처리/분석 도구(Hive, Pig 등)"</b>를 스파이처럼 끼워 넣고 고르라는 문제가 잊을 만하면 튀어나온다. 수집(Fluentd, Flume, Sqoop 등) / 저장(HDFS, NoSQL) / 처리(MapReduce, Hive) 이 3단계 카테고리만 확실히 분류해 둬도 객관식 보기는 다 지우고 시작할 수 있다!</p>
+        </div>
+
+
+        <h2 id="s-2">02 데이터 저장</h2>
+
+        <div class="quote-box text-sm border-l-4 border-[#00CCAA] bg-teal-50 p-3 mb-4">
+            💡 최근에는 전통적인 관계형 데이터베이스보다 NoSQL 데이터베이스를 활용하는 방식이 선호되고 있다.
+        </div>
+
+        <h3 id="s-2-1">1) 빅데이터 저장시스템</h3>
+        <p>대용량 데이터 집합을 저장하고 관리하는 시스템으로 사용자에게 데이터 제공 신뢰성과 가용성을 보장하는 시스템이다.</p>
+        
+        <h4 class="mt-4 text-[#00CCAA] font-bold">① 파일 시스템 저장방식</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>빅데이터를 확장 가능한 분산 파일의 형태로 저장하는 방식의 대표적인 예는 <b>Apache HDFS(Hadoop Distributed File System)</b>, 구글의 GFS(Google File System) 등을 들 수 있다.</li>
+            <li>파일 시스템 저장방식은 저사양 서버들을 활용하여 대용량, 분산, 데이터 집중형의 애플리케이션을 지원하며 사용자들에게 <b>고성능 fault-tolerance 환경을 제공</b>하도록 구현되어 있다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">② 데이터베이스 저장방식</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>빅데이터를 저장하는 방식에는 전통적인 관계형 데이터베이스 시스템을 이용하거나 <b>NoSQL 데이터베이스 시스템을 이용</b>하는 방식이 있다.</li>
+            <li>NoSQL 데이터베이스는 대용량 데이터 저장 측면에서 봤을 때, 관계형 데이터베이스보다 <b>수평적 확장성, 데이터 복제, 간편한 API 제공, 일관성 보장 등의 장점</b>이 있다.</li>
+        </ul>
+
+        <h3 id="s-2-2">2) 분산 파일 시스템</h3>
+        <h4 class="mt-4 text-[#00CCAA] font-bold">① 하둡 분산파일 시스템 (HDFS: Hadoop Distributed File System)<a href="#fn4" id="rfn4" class="fn-link">[4]</a></h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>하둡은 아파치 진영에서 분산 환경 컴퓨팅을 목표로 시작한 프로젝트로 분산 처리를 위한 파일 시스템이다.</li>
+            <li>HDFS는 대용량 파일을 클러스터에 <b>여러 블록으로 분산하여 저장</b>하며, 블록들은 마지막 블록을 제외하고 모두 크기가 동일하다(기본 크기 64MB).</li>
+            <li>HDFS는 <b>마스터(Master) 하나와 여러 개의 슬레이브(Slave)로 클러스터링</b>되어 구성된다.
+                <ul class="list-circle pl-6 mt-1 mb-2 text-sm text-gray-700">
+                    <li><b>마스터노드(Master Node):</b> <b>네임노드(Name Node)</b>라고 하며 슬레이브를 관리하는 메타데이터와 모니터링 시스템을 운영한다.</li>
+                    <li><b>슬레이브노드(Slave Node):</b> <b>데이터노드(Data Node)</b>라고 하며 데이터 블록을 분산처리한다.</li>
+                </ul>
+            </li>
+            <li>데이터 손상을 방지하기 위해서 <b>데이터 복제 기법</b>을 사용한다.</li>
+        </ul>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm">
+            <b>➕ 더 알아보기 TIP: 하둡의 장점</b><br>
+            <ul class="list-disc pl-5 mt-2 space-y-1">
+                <li>하둡의 DFS는 대용량의 비정형 데이터 저장 및 분석에도 효율적이다.</li>
+                <li>클러스터 구성을 통해 멀티 노드로 부하를 분산시켜 처리한다.</li>
+                <li>개별적인 서버에서 진행되는 병렬처리 결과를 하나로 묶어 시스템의 과부하나 병목 현상을 줄여준다.</li>
+                <li>하둡은 장비를 증가시킬 수록 성능이 향상된다.</li>
+                <li>오픈소스 하둡은 무료로 사용할 수 있다.</li>
+            </ul>
+        </div>
+
+        <div class="mermaid">
+        graph TD
+            subgraph Client [클라이언트]
+                C1(클라이언트)
+                C2(클라이언트)
+            end
+
+            NN[네임노드 / Master]
+            MetaInfo>메타데이터(파일명, 복제 개수, ...)<br>/home/foo/data, 3, ...]
+
+            NN -.-> MetaInfo
+
+            subgraph Rack1 [랙(Rack) 1]
+                DN1[데이터노드 / Slave]
+                DN2[데이터노드 / Slave]
+            end
+
+            subgraph Rack2 [랙(Rack) 2]
+                DN3[데이터노드 / Slave]
+            end
+
+            C1 -->|메타데이터 오퍼레이션| NN
+            C1 -->|데이터 읽기| DN1
+            C2 -->|데이터 쓰기| DN3
+            
+            NN <-->|데이터블록 오퍼레이션| DN1
+            NN <-->|데이터블록 오퍼레이션| DN2
+            NN <-->|데이터블록 오퍼레이션| DN3
+
+            DN2 -->|복제| DN3
+
+            style NN fill:#2c3e50,stroke:#333,stroke-width:2px,color:#fff
+            style DN1 fill:#3498db,stroke:#333,stroke-width:2px,color:#fff
+            style DN2 fill:#3498db,stroke:#333,stroke-width:2px,color:#fff
+            style DN3 fill:#3498db,stroke:#333,stroke-width:2px,color:#fff
+        </div>
+
+        <div class="anime-box" style="border-color: #22AA55; background-color: #F0FFF5;">
+            <img src="이미지/유우.png" alt="타카사키 유우" class="anime-img" onerror="this.style.display='none'" style="border-color: #22AA55;">
+            <div>
+                <div class="anime-box-title" style="color: #118844;">🎙️ [효빈위키 개념 해설] 니지가사키 '유우'로 이해하는 네임노드의 위엄!</div>
+                <ul class="list-disc pl-5 text-sm space-y-2 text-gray-800">
+                    <li>러브라이브 니지가사키 학원 스쿨 아이돌 동호회를 떠올려보자. 다이어그램을 보면 알겠지만, 클라이언트(팬)는 라이브 데이터를 읽고 쓰기 전에 무조건 짱(?)인 <b>타카사키 유우(네임노드/마스터)</b>한테 먼저 허락을 맡고 어느 무대로 가야 할지 스케줄 표(메타데이터)를 받아와야 한다.</li>
+                    <li>일개미인 멤버들(데이터노드/슬레이브)이 감기에 걸려 뻗는 건 다른 무대로 복제된 영상 데이터로 커버(fault-tolerance)가 되지만, <b>스케줄을 총괄하는 유우(네임노드)가 죽으면 동호회 생태계 전체가 그대로 뻗어버린다!</b> <del>팀플에서 자료 다 가지고 있는 조장이 잠수 탄 상황을 상상해 보자.</del></li>
+                    <li>이를 방지하기 위해 스케줄러를 백업하는 보조 네임노드(Secondary NameNode)를 두는 등의 대비책이 필수적이다.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 id="s-2-3">3) CAP 이론과 NoSQL의 기술적 특성</h3>
+        <h4 class="mt-4 text-[#00CCAA] font-bold">② CAP 이론 : 기존 데이터 저장 구조의 한계</h4>
+        <p>2000년 버클리 대학의 에릭 브루어 교수가 발표한 이론으로, 분산 컴퓨팅 환경의 특징을 일관성(Consistency), 가용성(Availability), 지속성(Partition Tolerance) 세 가지로 정의하고, <b>어떤 시스템이든 이 세 가지 특성을 동시에 만족하기 어렵다</b>고 설명한다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li><b>일관성 (Consistency):</b> 분산 환경에서 모든 노드가 같은 시점에 같은 데이터를 보여줘야 한다.</li>
+            <li><b>가용성 (Availability):</b> 일부 노드가 다운되어도 다른 노드에 영향을 주지 않아야 한다.</li>
+            <li><b>지속성 (Partition Tolerance):</b> 데이터 전송 중에 일부 데이터를 손실하더라도 시스템은 정상 동작해야 한다.</li>
+        </ul>
+
+        <div class="mermaid">
+        graph TD
+            Center(("세 가지 중<br>두 가지만<br>보장할 수 있다."))
+            
+            C[일관성<br>Consistency]
+            A[가용성<br>Availability]
+            P[지속성<br>Partition Tolerance]
+
+            C ---|RDBMS| A
+            C ---|Bigtable, HBase| P
+            A ---|Dynamo, Cassandra| P
+            
+            style Center fill:#f39c12,stroke:#e67e22,stroke-width:2px,color:#fff
+            style C fill:#3498db,stroke:#2980b9,stroke-width:2px,color:#fff
+            style A fill:#2ecc71,stroke:#27ae60,stroke-width:2px,color:#fff
+            style P fill:#9b59b6,stroke:#8e44ad,stroke-width:2px,color:#fff
+        </div>
+
+        <table class="w-full text-sm mt-4">
+            <tr><th class="w-1/4">구분</th><th>설명</th><th>적용 예</th></tr>
+            <tr>
+                <td class="font-bold text-center">RDBMS</td>
+                <td><b>일관성(C)과 가용성(A)</b>을 선택했다.</td>
+                <td>트랜잭션 ACID<a href="#fn7" id="rfn7" class="fn-link">[7]</a> 보장 (금융 서비스)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">NoSQL</td>
+                <td>일관성(C)이나 가용성(A) 중 하나를 포기하고, <b>지속성(P)을 보장한다.</b></td>
+                <td>- <b>C+P형:</b> 대용량 분산 파일 시스템 (성능 보장)<br>- <b>A+P형:</b> 비동기식 서비스 (아마존(Dynamo<a href="#fn5" id="rfn5_2" class="fn-link">[5]</a>), 트위터, Cassandra<a href="#fn6" id="rfn6_2" class="fn-link">[6]</a> 등)</td>
+            </tr>
+        </table>
+
+        <div class="anime-box" style="border-color: #0077DD; background-color: #E6F0FA;">
+            <img src="이미지/고나미.png" alt="고나미" class="anime-img" onerror="this.style.display='none'" style="border-color: #0077DD;">
+            <div>
+                <div class="anime-box-title" style="color: #0055AA;">🚇 [효빈위키 기적의 TIP] 1호선 고나미 사령관으로 보는 수험서의 함정!</div>
+                <p class="text-sm text-gray-800">
+                위 본문에서 Partition Tolerance를 <b>'지속성'</b>이라고 번역해 두었는데, 사실 전공자들 사이에서는 보통 <b>'분할 내성'</b> 또는 '네트워크 분할 허용성'이라고 부른다. 데이터베이스 ACID의 D(Durability)가 보통 '지속성'으로 번역되기 때문에 헷갈리기 딱 좋다. <del>번역기 돌린 출판사 나와!</del><br><br>
+                하지만 시험 문제에서는 고나미처럼 원칙(수험서의 용어)을 그대로 따라가는 경우가 많으므로, 빅분기 시험장에서는 "아, CAP에서 P를 지속성이라고 부르기도 하는구나(...)" 하고 유연하게 받아들이자. 절대 안 틀려야 하는 <b>은행(RDBMS)은 CA</b>를 택하고, 서비스가 무조건 안 뻗어야 하는 <b>트위터 같은 SNS(NoSQL)는 AP</b>를 택한다는 큰 그림만 외워두면 객관식은 무조건 맞힌다!
+                </p>
+            </div>
+        </div>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">③ NoSQL의 기술적 특성</h4>
+        <p>NoSQL은 고전적인 관계형 데이터베이스의 주요 특성을 보장하는 ACID특성 중 일부만을 지원하는 대신 성능과 확장성을 높이는 특성을 강조한다.</p>
+        <table class="w-full text-sm mt-4">
+            <tr><th class="bg-gray-100 w-1/5">특성</th><th>내용</th></tr>
+            <tr>
+                <td class="font-bold text-center">無 스키마<br>(Schema-less)</td>
+                <td>• 데이터를 모델링하는 고정된 데이터 스키마 없이 키 값을 이용하여 다양한 형태의 데이터 저장 및 접근 가능하다.<br>• 데이터 저장 방식은 크게 키-값, 칼럼, 문서, 그래프 등의 네 가지를 기반으로 구분한다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">탄력성<br>(Elasticity)</td>
+                <td>• 시스템 일부에 장애가 발생해도 클라이언트가 시스템에 접근 가능하다.<br>• 응용 시스템의 다운 타임이 없도록 하는 동시에 대용량 데이터의 생성 및 갱신한다.<br>• 질의에 대응할 수 있도록 시스템 규모와 성능 확장이 용이하며, 입출력의 부하를 분산시키는데도 용이한 구조이다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">질의(Query) 기능</td>
+                <td>• 수십 대에서 수천 대 규모로 구성된 시스템에서도 데이터의 특성에 맞게 효율적으로 데이터를 검색, 처리할 수 있는 질의 언어, 관련 처리 기술, API를 제공한다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">캐싱<br>(Caching)</td>
+                <td>• 대규모 질의에도 고성능 응답 속도를 제공할 수 있는 메모리 기반 캐싱 기술을 적용하는 것이 중요하다.<br>• 개발 및 운영에도 투명하고 일관되게 적용할 수 있는 구조이다.</td>
+            </tr>
+        </table>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">④ NoSQL의 데이터 모델 분류 및 제품 (★핵심 암기)</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>NoSQL의 데이터 저장 방식에 따라 키-값 구조, 칼럼기반 구조, 문서기반 구조로 구분할 수 있다.</li>
+        </ul>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li><b>키-값(Key-Value) 데이터베이스</b>
+                <ul class="list-circle pl-6 mt-1 text-sm text-gray-700">
+                    <li>데이터를 키와 그에 해당하는 값의 쌍으로 저장하는 데이터 모델에 기반을 둔다.</li>
+                    <li>단순한 데이터 모델에 기반을 두기 때문에 관계형 데이터베이스보다 확장성이 뛰어나고 질의 응답시간이 빠르다.</li>
+                    <li>아마존의 Dynamo 데이터베이스가 효시이며, Redis와 같은 In-memory 방식의 오픈소스 데이터베이스가 대표적이다.</li>
+                </ul>
+            </li>
+            <li><b>열기반(칼럼기반, Column-oriented) 데이터베이스</b>
+                <ul class="list-circle pl-6 mt-1 text-sm text-gray-700">
+                    <li>데이터를 로우가 아닌 칼럼기반으로 저장하고 처리하는 데이터베이스를 말한다.</li>
+                    <li>칼럼과 로우는 확장성을 보장하기 위하여 여러 개의 노드로 분할되어 저장되어 관리된다.</li>
+                    <li>구글의 Bigtable이 칼럼기반 데이터베이스의 효시이며, 이로부터 파생된 Cassandra, HBase, HyperTable 등이 대표적인 칼럼기반 데이터베이스이다.</li>
+                </ul>
+            </li>
+            <li><b>문서기반(Document-oriented) 데이터베이스</b>
+                <ul class="list-circle pl-6 mt-1 text-sm text-gray-700">
+                    <li>문서 형식의 정보를 저장, 검색, 관리하기 위한 데이터베이스이다.</li>
+                    <li>키-값 데이터베이스보다, 문서의 내부 구조에 기반을 둔 복잡한 형태의 데이터 저장을 지원하고 이에 따른 최적화가 가능하다는 장점이 있다.</li>
+                    <li>대표적으로 MongoDB, SimpleDB, CouchDB가 있다.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="mermaid">
+        graph LR
+            A[NoSQL 데이터 모델] --> B(키-값 저장 구조)
+            A --> C(열 기반 저장 구조)
+            A --> D(문서 저장 구조)
+            
+            B --> B1[DynamoDB]
+            B --> B2[Redis]
+            
+            C --> C1[Bigtable]
+            C --> C2[Cassandra]
+            C --> C3[HBase]
+            C --> C4[HyperTable]
+            
+            D --> D1[MongoDB]
+            D --> D2[CouchDB]
+            D --> D3[SimpleDB]
+
+            style A fill:#2c3e50,stroke:#333,stroke-width:2px,color:#fff
+            style B fill:#e67e22,stroke:#d35400,stroke-width:2px,color:#fff
+            style C fill:#27ae60,stroke:#2ecc71,stroke-width:2px,color:#fff
+            style D fill:#2980b9,stroke:#3498db,stroke-width:2px,color:#fff
+        </div>
+
+        <div class="anime-box" style="border-color: #FF8800; background-color: #FFF8F0;">
+            <img src="이미지/니나.png" alt="이세리 니나" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF8800;">
+            <div>
+                <div class="anime-box-title" style="color: #DD6600;">🧾 [효빈위키 개념 해설] 걸즈밴드크라이의 영수증 처리로 외우는 NoSQL 삼대장!</div>
+                <ul class="list-disc pl-5 text-sm space-y-2 text-gray-800">
+                    <li>걸즈밴드크라이 니나가 토게토게 밴드 운영을 위해 영수증을 모은다고 생각해보자.</li>
+                    <li><b>키-값 (Redis, Dynamo):</b> 포스트잇에 딱 <b>'식비 = 10만원'</b>(키-값 쌍)만 적어서 벽에 붙임. 딕셔너리처럼 이름(Key) 부르면 내용(Value) 튀어나오는 가장 단순무식하고 빠른 놈이다.</li>
+                    <li><b>문서 기반 (MongoDB):</b> <b>영수증 원본(JSON/XML) 자체</b>를 그냥 박스에 욱여넣음. 밥 먹은 식당, 메뉴 내용까지 다 적혀있어서 파악이 자유롭다. 개발자들이 사랑한다.</li>
+                    <li><b>열/칼럼 기반 (HBase, Cassandra):</b> 가계부에 '식비' 열(Column)만 세로로 쫙 찢어서 들고 다님. 표 전체를 안 읽고 필요한 '열'만 쏙쏙 뽑아 읽으니까 빅데이터 분석에 미친 성능을 보여준다.</li>
+                    <li>이 3가지는 각 모델의 <b>'대표 데이터베이스 이름'</b>과 짝지어서 외워두는 것이 컴활/빅분기 실점 방지의 핵심이다!</li>
+                </ul>
+            </div>
+        </div>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">▶ NoSQL 데이터베이스 제품 및 특징 (※ 교과서 내용 100% 반영)</h4>
+        <table class="w-full text-sm mt-4">
+            <tr><th class="bg-gray-100 w-1/5">제품(개발사)</th><th>주요기능 및 특징</th></tr>
+            <tr>
+                <td class="font-bold text-center">DynamoDB<br>(아마존)</td>
+                <td>• 하드웨어 프로비저닝, 복제, 설정 패치, 사용하는 응용 프로그램에 따른 DB 자동 분할 기능 등을 지원한다.<br>• DynamoDB의 기본 데이터 모델은 속성, 항목, 테이블로 구성된다.<br>• DynamoDB의 모든 데이터는 SSD에 저장한다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">Redis<br>(Redis Labs)</td>
+                <td>• 메모리 기반의 &lt;키, 값&gt; 저장 공간이다.<br>• NoSQL이나 인메모리 솔루션으로 분류한다.<br>• 다양한 데이터 구조를 지원한다.<br>• 메모리에 저장된 내용을 지속시키기 위해 파일로 싱크하는 기능을 제공한다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">MongoDB<br>(MongoDB)</td>
+                <td>• 크로스 플랫폼 문서기반 데이터베이스로 방대한 양의 데이터에서 낮은 관리 비용과 사용 편의성을 목표로 개발되었다.<br>• MongoDB에서 저장의 최소 단위는 문서로, 각 문서들은 RDBMS의 테이블과 비슷한 컬렉션이라는 곳에 수집한다.<br>• MongoDB는 자동-샤딩(Auto-Sharding)<a href="#fn9" id="rfn9" class="fn-link">[9]</a>을 이용한 분산 확장이 가능하다.<br>• 기존 DBMS의 범위 질의, 보조 인덱스, 정렬 등 연산과 맵리듀스 등 쉽게 연산을 함께 지원한다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">CouchDB<br>(아파치<a href="#fn8" id="rfn8" class="fn-link">[8]</a>)</td>
+                <td>• 인터페이스가 JavaScript로 구성된 문서 기반 데이터베이스로 데이터베이스는 독립된 도큐먼트들의 컬렉션으로 정의된다.<br>• MongoDB보다 제공 질의, 확장성, 버전 관리 등에서 성능이 더 우수하다.<br>• 문서단위의 ACID 속성을 지원하며, 데이터가 여러 시점에서 접근할 때 발생할 수 있는 문제점을 다중 버전 동시 동작 제어 기능으로 해결하였다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">SimpleDB<br>(아마존)</td>
+                <td>• SimpleDB는 아마존의 데이터 서비스 플랫폼으로, 웹애플리케이션에서 사용하는 데이터의 실시간 처리를 지원한다.<br>• Domain, Item, Attribute, Value로 구성되는 데이터 모델을 사용한다.<br>• 트랜잭션 종료 후 데이터가 모든 노드에 즉시 반영되지 않고 초 단위로 지연 동기화되는 <b>'Eventual Consistency'<a href="#fn10" id="rfn10" class="fn-link">[10]</a></b> 정책을 취하고 있다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">Cassandra<br>(아파치)</td>
+                <td>• &lt;키, 값&gt; 구조를 복잡하게 확장한 컬럼 패밀리 구조의 DBMS로 페이스북이 처음 개발하여 사용하고 있다.<br>• 토큰링 배경의 키 구간이 설정되어 있어 서버(노드)의 추가 및 제거만으로도 전체 저장 공간의 유연한 확장 및 축소가 가능하다.<br>• 다른 서버(노드)에 데이터 복제본을 구성하여 특정 노드에 장애가 발생해도 서비스 가능하다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">HBase<br>(아파치)</td>
+                <td>• Hadoop DataBase이다.<br>• 데이터 모델은 열 집합 기반의 저장소로 구성되며, 행, 열 그룹, 열 이름, 타임스탬프를 이용한 테이블 구조이다.<br>• 하둡 파일 시스템 위에 설치되며, 읽기와 수정은 즉시 실행되며, 맵리듀스 연산은 일괄 처리하는 방식을 지원한다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">Hypertable<br>(Zvents Inc.)</td>
+                <td>• C++ 언어로 개발되었으며, 열 그룹과 타임스탬프 개념을 사용한다.<br>• HQL이라는 SQL과 비슷한 명령어를 제공하여 RDBMS와 기능이 유사하다.<br>• C++ API를 완벽하게 제공하며, Java로 개발된 HBase보다 성능이 우수하다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">Bigtable<br>(구글)</td>
+                <td>• 구글 클라우드 플랫폼에서 사용하는 칼럼기반 데이터 저장 구조이다.<br>• 공유 디스크 방식으로 모든 노드가 데이터, 인덱스 파일을 공유한다.<br>• 하나의 로우는 n개의 칼럼-집합(Column-Family)을 가질 수 있다.</td>
+            </tr>
+        </table>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm mt-4">
+            <b>💡 [기적의 TIP: NoSQL 제품들 벼락치기 암기법]</b><br>
+            표가 미치도록 길어서 보기만 해도 현기증이 날 것이다. (...) 하지만 시험은 객관식이다! 구구절절 다 외울 필요 없이 핵심 키워드만 무지성으로 연결해 두자.
+            <ul class="list-disc pl-5 mt-2 space-y-1 text-gray-800">
+                <li><b>Redis:</b> 무조건 인메모리(In-memory)! 속도에 미친 캐시의 신이다.</li>
+                <li><b>MongoDB:</b> 문서(Document) 기반, 자동-샤딩. 가장 흔하게 굴러다니는 범용 NoSQL이다.</li>
+                <li><b>HBase:</b> Hadoop 위에서 돌아감. (이름부터 H가 하둡이다. 거저 주는 힌트 수준)</li>
+                <li><b>Cassandra:</b> 페이스북, 컬럼 패밀리, 단일 장애점(SPOF)이 없는 무적의 아키텍처.</li>
+                <li><b>DynamoDB:</b> 아마존(AWS), SSD.</li>
+            </ul>
+            이 정도 특징만 매칭해둬도 어지간한 오답 보기는 다 걸러낼 수 있다. <del>외계어 같아 보여도 결국 문제 은행의 노예들이다.</del>
+        </div>
+
+
+        <h3 id="s-2-4">4) 빅데이터 저장시스템 선정을 위한 분석</h3>
+        
+        <div class="quote-box text-sm border-l-4 border-[#00CCAA] bg-teal-50 p-3 mb-4">
+            💡 빅데이터 저장시스템을 선정할 때는 기존 시스템과의 연계성을 반드시 고려하여야 한다.
+        </div>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">① 기능성 비교분석 (전체 항목)</h4>
+        <table class="w-full text-sm mt-4">
+            <tr><th class="bg-gray-100 w-1/5">구분</th><th>내용</th></tr>
+            <tr>
+                <td class="font-bold text-center">데이터 모델</td>
+                <td>• 데이터를 테이블로 정리하고 사용하는데 무리가 없다면, RDBMS가 필요하고 NoSQL을 사용할 필요가 없다.<br>• MongoDB는 RDBMS보다 한층 유연한 스키마를 활용하는 것이 가능하므로 RDBMS에서 문서 중심의 데이터 모델로 전환하는 데 도움이 된다.<br>• Apache CouchDB는 데이터 저장소에 대한 인터페이스로 RESTful HTTP를 지원하므로 상대적으로 웹기반 시스템을 구축하는 데 장점이 있는 document 데이터베이스 시스템이다.<br>• 단순 key-value 쌍을 저장하여 대규모 사용자와 부하 분산을 위한 안정적인 분산 저장소가 필요할 경우, Dynamo나 Redis를 선택하면 된다.<br>• Cassandra, HyperTable, HBase는 column family 중심의 데이터베이스 시스템으로 극단적인 확장성을 보장할 수 있다는 장점이 있다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">확장성</td>
+                <td>• 확장성에서는 HBase, Cassandra, HyperTable과 같은 column-oriented 데이터베이스가 가장 뛰어난 것으로 알려져 있다.<br>• Redis와 같은 인메모리 방식의 데이터베이스와 MongoDB, CouchDB와 같은 document 데이터베이스가 약간 뒤처지는 것으로 알려져 있다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">트랜잭션 일관성</td>
+                <td>• 트랜잭션의 일관성은 데이터 수정, 삭제 등의 작업이 빈번하게 일어나는 환경에서는 중요도가 높지만, 배치중심의 하둡 기반 분석환경에서는 중요도가 그리 높지 않다.<br>• 트랜잭션의 일관성이 중요한 분야에서는 RDBMS를 선택해야 하며, 그렇지 않은 데에만 NoSQL을 선택하여야 한다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">질의 지원</td>
+                <td>• MongoDB는 SQL과 유사한 문법에 기반을 두어 쉽게 학습할 수 있는 우수한 질의 인터페이스를 지원한다.<br>• CouchDB도 MongoDB에 비해 뒤처지지 않으며, 뷰 개념을 이해하고 활용하면 간편하다.<br>• key-value 데이터베이스의 대표 격인 Redis도 풍부한 질의기능을 제공한다.<br>• HBase나 HyperTable은 자체 질의지원 기능은 제공하지 않으나 Hive를 통해 SQL과 유사한 형태의 질의기능을 사용할 수 있다는 장점이 있다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">접근성</td>
+                <td>• MongoDB를 접근하기 위한 드라이버는 아주 다양하며, 현존하는 주류 라이브러리용 드라이버를 대부분 지원하고 있다.<br>• CouchDB는 웹 통신을 지원하는 프로그래밍 언어라면 다 사용이 가능하다.<br>• Redis, HBase, HyperTable, Cassandra는 대부분의 프로그래밍 언어에서 연결이 가능하도록 언어 바인딩을 지원한다.</td>
+            </tr>
+        </table>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm mt-4">
+            <b>💡 [개념 해설: 궁극적 일관성 (Eventual Consistency)이 도대체 뭔데?]</b><br>
+            "결국엔 일관성을 맞추겠다"는 뜻이다. 쉽게 말해, 인스타에서 내가 프로필 사진을 바꿨을 때 내 폰에서는 바로 바뀐 프사가 보이지만, 내 친구 폰에서는 한 2~3초 동안 옛날 프사가 보일 수도 있다. 하지만 시간이 조금 지나면(Eventual) 결국 모든 서버의 데이터가 동기화되어 친구 폰에도 바뀐 프사가 뜬다. RDBMS처럼 은행 송금할 때 칼같이 일관성을 맞추는 것(ACID)보다, 약간의 딜레이는 참아주는 대신 서비스가 절대 안 터지는 확장성과 가용성에 몰빵한 NoSQL의 핵심 철학이다.
+        </div>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">② 분석방식 및 환경</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>빅데이터 저장 방식은 파일 시스템 형식으로 저장하는 방식, NoSQL 저장시스템을 사용하는 방식, RDBMS에 기반을 둔 데이터 웨어하우스 방식이 있다.</li>
+            <li>필요로 하는 분석 및 검색결과가 상시로 온라인 형식으로 필요한지, 분석가를 통해 별도의 프로세스를 거쳐 제공받는지 등을 구분하여 저장 방식과 환경을 선택한다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">③ 분석대상 데이터 유형</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>분석대상이 되는 데이터 유형이 기업 내외부에서 발생하는 기업 데이터인지, IoT 환경에서 발생하는 데이터인가 혹은 기타 다양한 과학, 바이오, 의학 분야에서 취급되는 데이터인가에 따라 데이터의 volume, velocity, variety, veracity 등을 고려하여 빅데이터 저장시스템을 선택한다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">④ 기존 시스템과의 연계</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>저장 대상 데이터의 유형이 대부분 테이블로 정의될 수 있는 형태이고 기존에 RDBMS 기반의 데이터 웨어하우스가 도입된 형태라면 <b>기존 시스템을 그대로 활용하여 저장</b>한다.</li>
+            <li>기존에 HDFS만을 활용하여 빅데이터 저장시스템이 구축되어 있으나, SQL-like 분석환경을 구축하고자 한다면 <b>HBase를 추가 도입</b>하는 것을 권장한다.</li>
+            <li>빅데이터 분석 애플리케이션이 키-값 쌍 처리 위주로 시스템이 구현되어 있다면 <b>Redis 등을 도입</b>하는 것이 좋다.</li>
+            <li>IoT 데이터처럼 다양한 데이터가 지속해서 실시간 발생하는 것을 수집하는 시스템 환경이라면 key-value 데이터베이스나 확장성이 중요한 요소라면 <b>Cassandra와 같이 확장성이 보장된 칼럼 기반 데이터베이스</b>를 선정하는 것이 좋다.</li>
+        </ul>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm mt-4">
+            <b>💡 [기적의 TIP: 기존 시스템 연계 꿀조합 암기]</b><br>
+            시험 문제에서 "기존에 OOO가 있는데 뭘 추가할까?" 식으로 자주 묻는다. 마치 햄버거 세트 고르듯이 딱딱 매칭해서 외워두자.
+            <ul class="list-disc pl-5 mt-2 space-y-1 text-gray-800">
+                <li>기존에 HDFS(하둡) ➡️ <b>HBase 추가</b> (같은 하둡 생태계니까 호환성 굿)</li>
+                <li>키-값(Key-Value) 위주 처리 ➡️ <b>Redis</b> (초고속 인메모리의 힘)</li>
+                <li>IoT 센서 데이터처럼 쏟아지는 확장성 ➡️ <b>Cassandra</b> (컬럼 기반 최강자)</li>
+            </ul>
+        </div>
+
+
+        <h3 id="s-2-5">5) 데이터 발생 유형 및 특성</h3>
+
+        <div class="quote-box text-sm border-l-4 border-[#00CCAA] bg-teal-50 p-3 mb-4">
+            💡 대용량 데이터를 실시간으로 처리하지 않을 때는 하둡 기반의 대용량 데이터 처리 시스템 등을 선택할 수 있다.<br>
+            💡 스트리밍 데이터의 수집과 처리에 특화된 시스템과의 연계가 필수적이다.
+        </div>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">① 대용량 실시간 서비스 데이터 개요</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>대상 데이터의 용량, 실시간 여부, 정형, 비정형 등 유형 및 요건을 파악하여 빅데이터 저장 계획 수립에 반영하여야 한다.</li>
+            <li>일반적으로 실시간으로 처리해야 하는 데이터를 <b>스트리밍 데이터<a href="#fn11" id="rfn11" class="fn-link">[11]</a></b>로 통칭하는데 대용량의 특성과 무중단 서비스를 보장하는 저장 체계를 구축해야 한다.</li>
+            <li>실시간 데이터 처리를 위해 사용되는 시스템으로는 대표적으로 <b>스파크(Spark), 스톰(Apache Storm<a href="#fn12" id="rfn12" class="fn-link">[12]</a>)</b> 등이 있으며 배치 기반의 대용량 데이터 처리에 특화된 하둡 시스템보다 실시간 대용량 데이터 처리에 특화되어 있다.</li>
+            <li>IoT(Internet of Things)에서 발생하는 센서 데이터, 네트워크 모니터링 데이터, 에너지 관리 분야 데이터, 통신 데이터, 웹 로그, 주식 데이터나 생산현장에서 발생하는 데이터 등이 이에 해당한다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">② 대용량 실시간 서비스 데이터 저장</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>실시간 빅데이터 처리를 위해 스톰(Storm)을 사용한다고 가정하면, <b>스톰은 저장소가 없으므로 외부 저장 시스템과의 연동이 필수적</b>이다.</li>
+            <li>다양한 소스의 로그로부터 데이터가 발생하는 환경에서는 스톰을 통하여 데이터를 전처리한 후 HDFS나 MongoDB, Cassandra, HBase와 같은 <b>NoSQL을 저장소로 사용</b>하거나, 데이터를 정규화하여 일반 <b>RDBMS를 저장소로 사용</b>할 수도 있다.</li>
+            <li>대표적인 실시간 데이터 처리 시스템인 스파크(Spark) 역시 <b>내장된 저장소를 제공하지 않기 때문에 외부 빅데이터 저장 시스템과의 연계가 필수적</b>이다.</li>
+            <li>실시간 서비스를 웹 페이지로 제공하는 것이 필요한 환경에서는 <b>Redis</b>와 같은 메인 메모리 저장 시스템을 저장소로 사용하기도 한다.</li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #DDCC33; background-color: #FFFEE0;">
+            <img src="이미지/료.png" alt="야마다 료" class="anime-img" onerror="this.style.display='none'" style="border-color: #DDCC33;">
+            <div>
+                <div class="anime-box-title" style="color: #998811;">🥁 [효빈위키 팩폭 해설] 봇치더락! 료(하둡) vs 니지카(스파크/스톰)</div>
+                <p class="text-sm text-gray-800">
+                <b>하둡(Hadoop - 배치 처리):</b> 베이스 치는 료를 생각해보자. 풀도 뜯어 먹으며 한참 존버하다가 <b>데이터(돈)가 이빠이 쌓이면 그제야 한 번에 크게 처리(결제)</b>하는 스타일이다. 무겁고 듬직하지만 즉각적인 대응은 안 된다.<br><br>
+                <b>스파크/스톰(Spark/Storm - 실시간 스트리밍):</b> 드럼 치는 니지카다. 데이터(비트)가 들어오는 족족 <b>인메모리에서 쉴 틈 없이 바로바로 쳐내는 성격 급한 행동파</b>다. 단! 여기서 명심해야 할 것은 니지카는 드럼스틱(처리 엔진)만 있지 지갑(저장소)이 없다는 것이다. 그래서 스파크/스톰은 데이터를 넣어둘 <b>'외부 저장소(HDFS, NoSQL 등)'가 무.조.건. 필요하다!</b> 
+                </p>
+            </div>
+        </div>
+
+        <h3 id="s-2-6">6) 안정성과 신뢰성 확보 및 접근성 제어계획 수립</h3>
+        <h4 class="mt-4 text-[#00CCAA] font-bold">① 빅데이터 저장시스템 안정성 및 신뢰성 확보</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>안정성 및 신뢰성을 확보하고 보장하기 위해 저장 계획 수립단계에서 용량산정이 필요하다.</li>
+            <li>조직의 빅데이터 활용목적에 부합하는 현재와 향후 증가 추세를 추정 반영한다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">② 접근성 제어계획 수립</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>저장 시스템의 사용자와 관리자 유형, 역할 및 기능을 정의하고 각각에 해당하는 제어계획을 수립한다.</li>
+        </ul>
+
+        <div class="exam-box">
+            <div class="exam-title">✔️ 개념 체크 (저장 파트)</div>
+            <p><b>Q1. 다음 NoSQL 데이터베이스 중 데이터 저장 구조가 나머지와 다른 하나는?</b><br>
+            ① HBase<br>
+            ② Cassandra<br>
+            ③ Bigtable<br>
+            <b>④ DynamoDB</b></p>
+            <p class="mt-2 text-sm mb-4"><b>[정답 및 해설] ④</b><br>
+            ①, ②, ③은 모두 데이터 분석에 미친 성능을 보여주는 <b>열(칼럼) 기반</b> 데이터베이스이며, 아마존의 DynamoDB는 아주 단순한 <b>키-값(Key-Value)</b> 모델을 사용합니다.<br>
+            <del>(효빈위키 코멘트: 앞 페이지 표에서 달달 외우라고 했던 그 녀석들이 바로 튀어나왔다. (...))</del></p>
+            
+            <hr class="border-red-200 my-4">
+
+            <p><b>Q2. 다음 NoSQL 데이터베이스의 특징으로 틀린 것은?</b><br>
+            ① 고정된 데이터 스키마가 존재하지 않고 데이터 저장을 위한 다양한 모델을 사용한다.<br>
+            <b>② 분산 컴퓨팅 환경에서 일관성, 가용성, 지속성을 동시에 지원한다.</b><br>
+            ③ 대용량 데이터를 처리하기 위해 입출력 부하를 분산시킨다.<br>
+            ④ 데이터 검색을 위한 질의언어나 API를 제공한다.</p>
+            <p class="mt-2 text-sm"><b>[정답 및 해설] ②</b><br>
+            NoSQL 데이터베이스는 대규모 데이터를 처리하기 위한 확장성, 가용성 및 높은 성능을 제공하지만, CAP이론에 따라 <b>일관성, 가용성, 지속성을 동시에 만족하는 시스템을 구현하기는 어렵습니다.</b><br>
+            <del>(효빈위키 코멘트: CAP 이론에서 세 마리 토끼를 다 잡는 건 물리적으로 불가능하다. 교수님도 못 한다. '동시에 지원한다'는 말은 빅분기에서 대표적인 오답 패턴이다.)</del></p>
+        </div>
+
+        <!-- 하단 각주 모음 영역 (날개 내용 100% 반영) -->
+        <div class="wiki-footnotes">
+            <h4>각주</h4>
+            <ul>
+                <li id="fn1"><a href="#rfn1" class="text-[var(--wiki-link)] font-bold mr-1">[1]</a> JSON (JavaScript Object Notation): 속성-값 쌍 또는 키-값 쌍으로 이루어진 데이터 오브젝트를 전달하기 위해 인간이 읽을 수 있는 텍스트를 사용하는 개방형 표준 포맷.</li>
+                <li id="fn2"><a href="#rfn2" class="text-[var(--wiki-link)] font-bold mr-1">[2]</a> CSV (Comma Separated Value): 쉼표를 기준으로 항목을 구분하여 저장한 데이터.</li>
+                <li id="fn3"><a href="#rfn3" class="text-[var(--wiki-link)] font-bold mr-1">[3]</a> 데이터 테스트 케이스: 적재가 정상적으로 완료되었는지 확인하는 시험.</li>
+                <li id="fn4"><a href="#rfn4" class="text-[var(--wiki-link)] font-bold mr-1">[4]</a> 하둡(Hadoop): 대용량 파일을 저장할 수 있는 기능을 제공하는 분산파일 시스템과, 저장된 데이터를 쉽고 빠르게 분석할 수 있는 컴퓨팅 플랫폼인 맵리듀스로 구성됨.</li>
+                <li id="fn5"><a href="#rfn5" class="text-[var(--wiki-link)] font-bold mr-1">[5]</a> 다이나모(Dynamo): 아마존에서 발표한 NoSQL DBMS.</li>
+                <li id="fn6"><a href="#rfn6" class="text-[var(--wiki-link)] font-bold mr-1">[6]</a> 카산드라(Cassandra): 아파치 재단의 자유-오픈소스 분산형 NoSQL DBMS.</li>
+                <li id="fn7"><a href="#rfn7" class="text-[var(--wiki-link)] font-bold mr-1">[7]</a> ACID(원자성, 일관성, 고립성, 지속성): 데이터베이스 트랜잭션이 안전하게 수행된다는 것을 보장하기 위한 성질.</li>
+                <li id="fn8"><a href="#rfn8" class="text-[var(--wiki-link)] font-bold mr-1">[8]</a> 아파치 소프트웨어 재단: 비영리 재단. 개발자들의 분산 커뮤니티, 개발된 소프트웨어는 아파치 라이선스 조항 아래 배포되며 오픈소스 소프트웨어여야 함.</li>
+                <li id="fn9"><a href="#rfn9" class="text-[var(--wiki-link)] font-bold mr-1">[9]</a> 샤딩(Sharding): 데이터를 분할하여 다른 서버에 나누어 저장하는 과정.</li>
+                <li id="fn10"><a href="#rfn10" class="text-[var(--wiki-link)] font-bold mr-1">[10]</a> 궁극적 일관성(Eventual Consistency): 분산 컴퓨팅에 쓰이는 일관성 모델의 하나. 데이터 항목에 새로운 업데이트가 없을 시 해당 항목에 대한 모든 접근들은 마지막 업데이트된 값을 반환되는 것을 비공식적으로 보장함.</li>
+                <li id="fn11"><a href="#rfn11" class="text-[var(--wiki-link)] font-bold mr-1">[11]</a> 스트리밍 데이터: 빠르고 연속적, 대용량, 다양한 장소에서 발생.</li>
+                <li id="fn12"><a href="#rfn12" class="text-[var(--wiki-link)] font-bold mr-1">[12]</a> 아파치 스톰(Apache Storm): 실시간 데이터 처리를 위해 개발된 분산형 스트림 프로세싱 프레임워크.</li>
+            </ul>
+        </div>
+    
+        <!-- 나무위키식 하단 내비게이션 틀 시작 -->
+        <div class="wiki-nav-box" id="bigbunNav">
+            <div class="wiki-nav-header">
+                📊 빅데이터분석기사 필기 전체 문서 목록
+            </div>
+            <div class="wiki-nav-toggle" onclick="document.getElementById('bigbunNavContent').classList.toggle('active')">
+                [ 펼치기 · 접기 ]
+            </div>
+            <div class="wiki-nav-content" id="bigbunNavContent">
+                <table class="wiki-nav-table">
+                    <tbody>
+                        <tr>
+                            <th class="bg-nav-red" style="width: 18%;">제1과목<br>빅데이터 분석 기획</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기1-1.html">빅분기1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-1.html">빅분기1-2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-2.html">빅분기1-2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-3.html">빅분기1-2-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-1.html">빅분기1-3-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-2.html">빅분기1-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-3.html">빅분기1-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-4.html">빅분기1-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-1.html">빅분기1-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-2.html">빅분기1-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-1.html">빅분기1-5-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-2.html">빅분기1-5-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-6.html">빅분기1-6</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제2과목<br>빅데이터 탐색</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기2-1.html">빅분기2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-2.html">빅분기2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-3.html">빅분기2-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-red">제3과목<br>빅데이터 모델링</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-1.html">빅분기3-1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-2.html">빅분기3-1-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-3.html">빅분기3-1-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-2.html">빅분기3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-2.html">빅분기3-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-3.html">빅분기3-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-4.html">빅분기3-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-1.html">빅분기3-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-2.html">빅분기3-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-3.html">빅분기3-4-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제4과목<br>빅데이터 결과 해석</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기4-1.html">빅분기4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-2.html">빅분기4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-3.html">빅분기4-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-4.html">빅분기4-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-5.html">빅분기4-5</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-6.html">빅분기4-6</a></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 나무위키식 하단 내비게이션 틀 끝 -->
+
+    </div> <!-- wiki-container end -->
+
+    <footer class="wiki-footer p-6 text-center border-t border-[var(--wiki-border)] bg-[var(--wiki-footer-bg)] text-[var(--wiki-footer-text)]">
+        <div class="font-bold text-sm">
+            이 저작물은 <span class="text-[var(--wiki-text)]">효빈위키</span> 규정에 따라 이용할 수 있습니다.<br>
+            ※ 본 문서는 빅데이터분석기사 필기 제2과목(데이터 분석 계획) - SECTION 02. 데이터 적재 및 저장의 내용입니다.
+        </div>
+    </footer>
+
+    <!-- 각주 툴팁 구동 JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'wiki-tooltip';
+            document.body.appendChild(tooltip);
+
+            const fnLinks = document.querySelectorAll('a.fn-link');
+            
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        const childNodes = Array.from(targetElement.childNodes);
+                        const tooltipContent = childNodes
+                            .filter(node => node.nodeName !== 'A')
+                            .map(node => node.nodeType === Node.TEXT_NODE ? node.textContent : node.outerHTML)
+                            .join('')
+                            .trim();
+                        
+                        tooltip.innerHTML = tooltipContent;
+                        tooltip.classList.add('visible');
+                        
+                        const rect = this.getBoundingClientRect();
+                        let topPos = rect.bottom + window.scrollY + 8;
+                        let leftPos = rect.left + window.scrollX;
+                        
+                        tooltip.style.display = 'block';
+                        if (leftPos + tooltip.offsetWidth > window.innerWidth) {
+                            leftPos = window.innerWidth - tooltip.offsetWidth - 20;
+                        }
+                        
+                        tooltip.style.left = leftPos + 'px';
+                        tooltip.style.top = topPos + 'px';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    tooltip.classList.remove('visible');
+                });
+            });
+        });
+    </script>
+    <!-- 명시된 외부 스크립트 4종 복원 완료 -->
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

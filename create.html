@@ -1,0 +1,319 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>새 문서 만들기 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f0f0f0; color: #333; }
+        .toolbar-btn { border: 1px solid #ccc; padding: 6px 10px; border-radius: 4px; background-color: #fff; font-size: 12px; cursor: pointer; color: #333; display: flex; align-items: center; gap: 5px; transition: 0.1s; }
+        .toolbar-btn:hover { background-color: #f5f5f5; border-color: #bbb; }
+        .guide-box { background-color: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .color-dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.1); cursor: pointer; transition: 0.1s; position: relative; }
+        .color-dot:hover { transform: scale(1.15); border-color: #555; z-index: 10; }
+        .color-dot::after { content: attr(title); position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 4px 6px; font-size: 11px; border-radius: 4px; white-space: nowrap; pointer-events: none; opacity: 0; transition: 0.2s; }
+        .color-dot:hover::after { opacity: 1; }
+        pre { background: #eee; padding: 2px 4px; border-radius: 3px; font-size: 12px; display: inline; color: #c7254e; }
+        .tab-btn { padding: 10px 20px; font-weight: bold; cursor: pointer; border-bottom: 2px solid transparent; color: #777; transition: 0.2s; }
+        .tab-btn.active { border-bottom: 3px solid #7777AA; color: #7777AA; background: white; }
+        .preview-area { background: white; border: 1px solid #ccc; padding: 40px; min-height: 600px; font-family: 'Noto Sans KR', sans-serif; line-height: 1.6; }
+        .preview-area h2 { background: linear-gradient(to right, var(--preview-main, #7777AA), white); color: white; padding: 8px 15px; font-weight: 700; font-size: 1.3rem; margin: 30px 0 15px 0; border-radius: 4px; }
+        .preview-area h3 { font-size: 1.1rem !important; font-weight: bold; border-left: 5px solid var(--preview-point, #555588); padding-left: 10px; margin: 20px 0 10px; }
+        .preview-area table { width: 100%; border-collapse: collapse; border: 1px solid #ccc; margin: 10px 0; }
+        .preview-area th { background: var(--preview-point, #555588); color: white; padding: 8px; border: 1px solid #ddd; }
+        .preview-area td { padding: 8px; border: 1px solid #ddd; }
+        .preview-area a { color: #00A2E8; text-decoration: none; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+    <nav class="bg-[#7777AA] text-white p-3 shadow-md flex items-center justify-between sticky top-0 z-50">
+        <a href="index.html" class="font-bold text-xl flex items-center gap-2 hover:opacity-80">
+            <i class="fa-solid fa-book-open"></i> HyobinWiki <span class="text-xs font-normal opacity-70 bg-white/20 px-2 py-0.5 rounded">Editor Pro</span>
+        </a>
+    </nav>
+
+    <div class="max-w-[1600px] mx-auto p-4 md:p-6 flex flex-col lg:flex-row gap-6">
+        <div class="flex-grow min-w-0">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-4 border-b-2 border-gray-300 pb-3 gap-3">
+                <h1 class="text-2xl font-bold flex items-center gap-2">
+                    <span class="text-[#7777AA]"><i class="fa-solid fa-pen-to-square"></i></span>
+                    <span id="displayTitle">제목 미정</span>
+                </h1>
+                <div class="flex items-center gap-2 bg-yellow-50 p-2 rounded border border-yellow-200">
+                    <span class="text-sm font-bold text-gray-700"><i class="fa-solid fa-wand-magic-sparkles text-yellow-600"></i> 양식 불러오기:</span>
+                    <select id="templateSelect" onchange="applyTemplate(this.value)" class="border border-gray-300 rounded p-1 text-sm bg-white focus:outline-none focus:border-[#7777AA] cursor-pointer">
+                        <option value="">(선택 안함 - 빈 문서)</option>
+                        <option value="general">📄 기본 범용 문서</option>
+                        <option value="station">🚇 지하철 역 (단일노선)</option>
+                        <option value="bus">🚌 버스 노선</option>
+                        <option value="person">👤 인물 / 프로필</option>
+                        <option value="facility">🏢 기관 / 시설 / 학교</option>
+                        <option value="admin_dong">🗺️ 행정구역 (읍면동)</option>
+                        <option value="incident">🚨 사건 / 사고</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bg-white border border-gray-300 p-4 rounded mb-4 shadow-sm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1">문서 제목 (파일명)</label>
+                        <input type="text" id="docTitle" class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:border-[#7777AA] text-sm font-bold" oninput="document.getElementById('displayTitle').innerText=this.value || '제목 미정'">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1">문서 분류 (상단 작은 글씨)</label>
+                        <input type="text" id="docCategory" class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:border-[#7777AA] text-sm" placeholder="예: 효빈광역시의 교통">
+                    </div>
+                </div>
+                <div class="border-t pt-3">
+                    <div class="flex justify-between items-center mb-2"><span class="text-xs font-bold text-gray-500">🎨 테마 색상 (클릭하여 적용)</span></div>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <div class="color-dot" style="background:#0077DD" title="1호선" onclick="setColors('#0077DD','#0055AA')"></div>
+                        <div class="color-dot" style="background:#00CCAA" title="2호선" onclick="setColors('#00CCAA','#009988')"></div>
+                        <div class="color-dot" style="background:#FFCC11" title="3호선" onclick="setColors('#FFCC11','#EEBB00')"></div>
+                        <div class="color-dot" style="background:#FF5522" title="4호선" onclick="setColors('#FF5522','#DD4411')"></div>
+                        <div class="color-dot" style="background:#EE0022" title="5호선" onclick="setColors('#EE0022','#CC0011')"></div>
+                        <div class="color-dot" style="background:#881188" title="6호선" onclick="setColors('#881188','#660066')"></div>
+                        <div class="color-dot" style="background:#FF8899" title="7호선" onclick="setColors('#FF8899','#EE6677')"></div>
+                        <div class="color-dot" style="background:#9856FF" title="8호선" onclick="setColors('#9856FF','#7733DD')"></div>
+                        <div class="color-dot" style="background:#6677CC" title="빈효선" onclick="setColors('#6677CC','#4455AA')"></div>
+                        <div class="w-px h-6 bg-gray-300 mx-1"></div>
+                        <div class="color-dot" style="background:#01B7ED" title="간선버스" onclick="setColors('#01B7ED','#0088CC')"></div>
+                        <div class="color-dot" style="background:#37B484" title="지선버스" onclick="setColors('#37B484','#229966')"></div>
+                        <div class="color-dot" style="background:#D81C2F" title="급행버스" onclick="setColors('#D81C2F','#B01020')"></div>
+                        <div class="color-dot" style="background:#E7D600" title="순환버스" onclick="setColors('#E7D600','#C5B500')"></div>
+                        <div class="color-dot" style="background:#485EC6" title="광역버스" onclick="setColors('#485EC6','#3344AA')"></div>
+                        <div class="color-dot" style="background:#FF5800" title="좌석버스" onclick="setColors('#FF5800','#CC4400')"></div>
+                        <div class="color-dot" style="background:#A664A0" title="마을버스" onclick="setColors('#A664A0','#884488')"></div>
+                        <div class="color-dot" style="background:#84C36E" title="공항버스" onclick="setColors('#84C36E','#66AA44')"></div>
+                        <div class="color-dot" style="background:#7777AA" title="기본/시티투어" onclick="setColors('#7777AA','#555588')"></div>
+                    </div>
+                    <div class="flex gap-4 items-center bg-gray-50 p-2 rounded">
+                        <span class="text-xs text-gray-500">현재 선택된 색상:</span>
+                        <div class="flex items-center gap-2"><span class="text-xs font-bold">Main</span><input type="color" id="cpMain" value="#7777AA" class="h-6 w-8 cursor-pointer border rounded"></div>
+                        <div class="flex items-center gap-2"><span class="text-xs font-bold">Point</span><input type="color" id="cpPoint" value="#555588" class="h-6 w-8 cursor-pointer border rounded"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex bg-gray-200 rounded-t-lg mt-6 border-b border-gray-300">
+                <div class="tab-btn active" onclick="switchTab('edit')"><i class="fa-solid fa-code"></i> 편집 모드</div>
+                <div class="tab-btn" onclick="switchTab('preview')"><i class="fa-solid fa-eye"></i> 실시간 미리보기</div>
+            </div>
+
+            <div id="editArea">
+                <div class="bg-gray-100 border border-gray-300 border-b-0 p-2 flex gap-1 flex-wrap items-center">
+                    <button class="toolbar-btn font-bold" onclick="tag("'''", "'''")">B</button>
+                    <button class="toolbar-btn italic" onclick="tag("''", "''")">I</button>
+                    <button class="toolbar-btn underline" onclick="tag('__', '__')">U</button>
+                    <button class="toolbar-btn line-through" onclick="tag('--', '--')">S</button>
+                    <div class="w-px h-6 bg-gray-300 mx-1"></div>
+                    <button class="toolbar-btn text-blue-600" onclick="tag('[[', ']]')"><i class="fa-solid fa-link"></i> 링크</button>
+                    <button class="toolbar-btn" onclick="tag('== ', ' ==')">H2</button>
+                    <button class="toolbar-btn" onclick="tag('=== ', ' ===')">H3</button>
+                    <button class="toolbar-btn" onclick="tag('* ', '')"><i class="fa-solid fa-list"></i> 목록</button>
+                    <div class="w-px h-6 bg-gray-300 mx-1"></div>
+                    <button class="toolbar-btn text-purple-600" onclick="insertTable()"><i class="fa-solid fa-table"></i> 표</button>
+                    <button class="toolbar-btn text-green-600" onclick="insertImage()"><i class="fa-regular fa-image"></i> 이미지</button>
+                    <button class="toolbar-btn text-red-600" onclick="insertYoutube()"><i class="fa-brands fa-youtube"></i> 유튜브</button>
+                    <button class="toolbar-btn" onclick="tag('[include(틀:상위 문서, 문서명1=', ')]')"><i class="fa-solid fa-sitemap"></i> 상위문서</button>
+                    <button class="toolbar-btn" onclick="tag('[각주]', '')"><i class="fa-solid fa-quote-right"></i> 각주</button>
+                </div>
+                <textarea id="docContent" class="w-full h-[600px] border border-gray-300 p-4 font-mono text-sm leading-relaxed focus:outline-none focus:border-[#7777AA] rounded-b shadow-inner resize-y" spellcheck="false" placeholder="내용을 입력하거나 상단의 '양식 불러오기'를 사용하여 시작하세요."></textarea>
+            </div>
+
+            <div id="previewArea" class="preview-area hidden rounded-b border-t-0 shadow-inner">
+                <div class="text-gray-400 text-center mt-20 flex flex-col items-center">
+                    <i class="fa-solid fa-eye fa-3x mb-4 opacity-50"></i>
+                    <span>상단의 [미리보기] 탭을 눌러 작성 중인 문서를 확인하세요.</span>
+                </div>
+            </div>
+
+            <div class="mt-4 flex justify-between items-center p-4 bg-white border border-gray-300 rounded shadow-sm">
+                <p class="text-xs text-red-500 font-bold"><i class="fa-solid fa-circle-exclamation"></i> 주의: 저장된 HTML 파일을 반드시 위키 폴더에 넣어야 합니다.</p>
+                <div class="flex gap-2">
+                    <button onclick="history.back()" class="px-6 py-2 bg-gray-500 text-white font-bold rounded hover:bg-gray-600 transition text-sm">취소</button>
+                    <button onclick="save()" class="px-8 py-2 bg-[#0099cc] text-white font-bold rounded hover:bg-[#0077aa] shadow-md flex items-center gap-2 text-sm">
+                        <i class="fa-solid fa-download"></i> HTML 파일 생성
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full lg:w-80 shrink-0 hidden lg:block">
+            <div class="guide-box sticky top-24">
+                <h3 class="font-black text-lg mb-3 border-b pb-2 text-[#7777AA]"><i class="fa-solid fa-circle-question"></i> 편집 도우미</h3>
+                <div class="space-y-5 text-sm">
+                    <section><h4 class="font-bold text-blue-600 mb-1">📄 텍스트 꾸미기</h4><ul class="space-y-1 text-gray-600"><li><pre>'''굵게'''</pre> → <b>굵게</b></li><li><pre>''기울임''</pre> → <i>기울임</i></li><li><pre>__밑줄__</pre> → <u>밑줄</u></li><li><pre>--취소선--</pre> → <strike>취소선</strike></li></ul></section>
+                    <section><h4 class="font-bold text-blue-600 mb-1">🔗 링크 및 구조</h4><ul class="space-y-1 text-gray-600"><li><pre>[[문서명]]</pre> → 기본 링크</li><li><pre>[[링크|출력명]]</pre> → 이름 변경</li><li><pre>== 제목 ==</pre> → 대문단</li><li><pre>=== 제목 ===</pre> → 중문단</li><li><pre>* 내용</pre> → 점 목록</li></ul></section>
+                    <section><h4 class="font-bold text-blue-600 mb-1">🧩 고급 기능</h4><ul class="space-y-1 text-gray-600"><li><pre>[각주]</pre> → 맨 아래 각주 표시</li><li><pre>&lt;br&gt;</pre> → 줄바꿈</li><li>우측 상단 <b>양식 불러오기</b>를 쓰면 복잡한 표를 쉽게 만들 수 있습니다.</li></ul></section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function(){
+            const params = new URLSearchParams(location.search);
+            const docName = params.get("doc");
+            if(docName) { document.getElementById("docTitle").value = docName; document.getElementById("displayTitle").innerText = docName; }
+        })();
+
+        function switchTab(tab) {
+            const editArea = document.getElementById('editArea'); const previewArea = document.getElementById('previewArea'); const tabs = document.querySelectorAll('.tab-btn');
+            if(tab === 'edit') { editArea.style.display = 'block'; previewArea.style.display = 'none'; tabs[0].classList.add('active'); tabs[1].classList.remove('active'); }
+            else { editArea.style.display = 'none'; previewArea.style.display = 'block'; tabs[0].classList.remove('active'); tabs[1].classList.add('active'); updatePreview(); }
+        }
+        function setColors(main, point) { document.getElementById("cpMain").value = main; document.getElementById("cpPoint").value = point; }
+        function tag(s, e) {
+            const el = document.getElementById("docContent"); const start = el.selectionStart; const end = el.selectionEnd; const val = el.value;
+            el.value = val.substring(0, start) + s + val.substring(start, end) + e + val.substring(end);
+            el.focus(); el.selectionStart = start + s.length; el.selectionEnd = start + s.length + (end-start);
+        }
+        function insertTable() { tag('\n<table class="wiki-table" style="width:100%;">\n    <tr>\n        <th>헤더 1</th>\n        <th>헤더 2</th>\n    </tr>\n    <tr>\n        <td>내용 1</td>\n        <td>내용 2</td>\n    </tr>\n</table>\n', ""); }
+        function insertImage() { tag('<div style="text-align:center; margin:10px;"><img src="이미지/파일명.png" alt="설명" style="max-width:100%; border-radius:4px;"></div>', ""); }
+        function insertYoutube() { tag('<div style="text-align:center; margin:10px;"><iframe width="560" height="315" src="https://www.youtube.com/embed/영상ID" frameborder="0" allowfullscreen></iframe></div>', ""); }
+
+        function applyTemplate(type) {
+            if(!type) return; const el = document.getElementById("docContent");
+            if(el.value.length > 20 && !confirm("작성 중인 내용이 사라집니다. 양식을 적용하시겠습니까?")) return;
+            let content = "";
+            if(type === 'general') { content = `[include(틀:상위 문서, 문서명1=상위문서)]\n\n== 개요 ==\n내용을 입력하세요.\n\n== 특징 ==\n* 특징 1\n* 특징 2\n\n== 상세 ==\n상세한 내용을 입력하세요.\n\n== 여담 ==\n* 관련 정보\n\n[각주]`; } 
+            else if(type === 'station') { content = `[include(틀:상위 문서, 문서명1=효빈도시철도)]\n\n== 개요 ==\n효빈광역시의 도시철도 역.\n\n<table class="wiki-table" style="width:100%; text-align:center;">\n    <tr><th colspan="2" style="background:var(--wiki-point); color:white; font-size:1.2em;">역 정보</th></tr>\n    <tr><th>운영 기관</th><td>효빈교통공사</td></tr>\n    <tr><th>노선</th><td>[[1호선]]</td></tr>\n    <tr><th>역 번호</th><td>000</td></tr>\n    <tr><th>위치</th><td>효빈광역시 XX구 XX대로</td></tr>\n    <tr><th>승강장 구조</th><td>2면 2선 상대식</td></tr>\n</table>\n\n== 역 구조 ==\n내용을 입력하세요.\n\n== 일평균 이용객 ==\n<table class="wiki-table" style="width:100%; text-align:center;">\n    <tr><th>연도</th><th>승차</th><th>하차</th><th>비고</th></tr>\n    <tr><td>2024년</td><td>00,000</td><td>00,000</td><td></td></tr>\n</table>\n\n[각주]`; } 
+            else if(type === 'bus') { content = `[include(틀:상위 문서, 문서명1=효빈광역시 시내버스)]\n\n== 개요 ==\n효빈광역시의 시내버스 노선.\n\n<table class="wiki-table" style="width:100%;">\n    <tr><th colspan="2" style="background:var(--wiki-point); color:white; text-align:center; font-size:1.2em;">노선 정보</th></tr>\n    <tr><th style="width:30%">노선 번호</th><td>000번</td></tr>\n    <tr><th>운수사</th><td>XX여객</td></tr>\n    <tr><th>기점</th><td>XX동</td></tr>\n    <tr><th>종점</th><td>XX동</td></tr>\n    <tr><th>배차간격</th><td>10~15분</td></tr>\n    <tr><th>첫차/막차</th><td>05:00 / 23:00</td></tr>\n</table>\n\n== 주요 경유지 ==\n* 기점 - A - B - C - 종점\n\n== 특징 ==\n* 내용을 입력하세요.\n\n[각주]`; } 
+            else if(type === 'person') { content = `[include(틀:상위 문서, 문서명1=분류:인물)]\n\n<table class="wiki-table" style="float:right; width:300px; margin-left:20px; border: 2px solid var(--wiki-point);">\n    <tr><th colspan="2" style="background:var(--wiki-point); color:white; font-size:1.2em; text-align:center;">이름 (Name)</th></tr>\n    <tr><td colspan="2" style="text-align:center; padding:20px;"><div style="width:100%; height:150px; background:#eee; display:flex; align-items:center; justify-content:center; color:#888;">(사진 공간)</div></td></tr>\n    <tr><th>출생</th><td>YYYY년 MM월 DD일</td></tr>\n    <tr><th>국적</th><td>[[대한민국]]</td></tr>\n    <tr><th>소속</th><td>[[효빈광역시]]</td></tr>\n    <tr><th>직업</th><td>직업 입력</td></tr>\n</table>\n\n== 개요 ==\n대한민국의 인물.\n\n== 생애 ==\n* YYYY년: 출생\n* YYYY년: 주요 사건\n\n== 평가 ==\n내용을 입력하세요.\n\n== 여담 ==\n* 내용\n\n[각주]`; } 
+            else if(type === 'facility') { content = `[include(틀:상위 문서, 문서명1=효빈광역시)]\n\n<table class="wiki-table" style="float:right; width:300px; margin-left:20px; border:2px solid var(--wiki-point);">\n    <tr><th colspan="2" style="background:var(--wiki-point); color:white; text-align:center; font-size:1.2em;">기관 정보</th></tr>\n    <tr><td colspan="2" style="text-align:center; padding:20px;">(로고/사진)</td></tr>\n    <tr><th>정식 명칭</th><td>기관명</td></tr>\n    <tr><th>분류</th><td>공공기관 / 사설</td></tr>\n    <tr><th>주소</th><td>효빈광역시 XX구 XX로</td></tr>\n    <tr><th>전화번호</th><td>000-0000-0000</td></tr>\n    <tr><th>웹사이트</th><td>[[홈페이지 주소]]</td></tr>\n</table>\n\n== 개요 ==\n해당 기관/시설에 대한 소개입니다.\n\n== 주요 업무/시설 ==\n* 업무 내용 1\n* 시설 현황\n\n== 여담 ==\n* 내용\n\n[각주]`; } 
+            else if(type === 'admin_dong') { content = `[include(틀:상위 문서, 문서명1=효빈광역시)]\n\n<table class="wiki-table" style="float:right; width:300px; margin-left:20px; border:2px solid var(--wiki-point);">\n    <tr><th colspan="2" style="background:var(--wiki-point); color:white; text-align:center; font-size:1.2em;">행정구역 정보</th></tr>\n    <tr><td colspan="2" style="text-align:center; padding:20px;">(지도/위치)</td></tr>\n    <tr><th>광역자치단체</th><td>[[효빈광역시]]</td></tr>\n    <tr><th>기초자치단체</th><td>[[XX구]]</td></tr>\n    <tr><th>행정동</th><td>XX동</td></tr>\n    <tr><th>관할 법정동</th><td>XX동, YY동</td></tr>\n    <tr><th>인구</th><td>00,000명</td></tr>\n    <tr><th>면적</th><td>0.00km²</td></tr>\n</table>\n\n== 개요 ==\n효빈광역시 XX구의 행정동/법정동.\n\n== 역사 ==\n* 연혁 내용\n\n== 주요 시설 ==\n* 관공서: XX주민센터\n* 학교: XX초등학교\n* 주거: XX아파트\n\n== 교통 ==\n* 지하철: [[1호선]] XX역\n* 버스: \n\n[각주]`; } 
+            else if(type === 'incident') { content = `[include(틀:상위 문서, 문서명1=사건사고)]\n\n<table class="wiki-table" style="float:right; width:300px; margin-left:20px; border:2px solid var(--wiki-point);">\n    <tr><th colspan="2" style="background:var(--wiki-point); color:white; text-align:center; font-size:1.2em;">사건 개요</th></tr>\n    <tr><th>발생 일시</th><td>YYYY년 MM월 DD일</td></tr>\n    <tr><th>발생 장소</th><td>[[장소]]</td></tr>\n    <tr><th>유형</th><td>유형 입력</td></tr>\n    <tr><th>원인</th><td>원인 입력</td></tr>\n    <tr><th>인명 피해</th><td>없음 / 0명</td></tr>\n    <tr><th>결과</th><td>수습 중 / 종료</td></tr>\n</table>\n\n== 개요 ==\n사건의 전반적인 내용을 서술합니다.\n\n== 상세 ==\n사건의 상세 경위를 시간순으로 서술합니다.\n\n== 원인 ==\n사건이 발생하게 된 원인을 분석합니다.\n\n== 반응 및 여파 ==\n* 사회적 반응\n* 후속 조치\n\n[각주]`; }
+            el.value = content;
+        }
+
+        function updatePreview() {
+            const raw = document.getElementById("docContent").value;
+            const mainColor = document.getElementById("cpMain").value;
+            const pointColor = document.getElementById("cpPoint").value;
+            const previewBox = document.getElementById("previewArea");
+            previewBox.style.setProperty('--preview-main', mainColor);
+            previewBox.style.setProperty('--preview-point', pointColor);
+            let html = raw.replace(/</g, "&lt;").replace(/>/g, "&gt;") 
+                .replace(/&lt;table/g, "<table").replace(/&lt;\/table&gt;/g, "</table>")
+                .replace(/&lt;tr/g, "<tr").replace(/&lt;\/tr&gt;/g, "</tr>")
+                .replace(/&lt;th/g, "<th").replace(/&lt;\/th&gt;/g, "</th>")
+                .replace(/&lt;td/g, "<td").replace(/&lt;\/td&gt;/g, "</td>")
+                .replace(/&lt;div/g, "<div").replace(/&lt;\/div&gt;/g, "</div>")
+                .replace(/&lt;img/g, "<img").replace(/&lt;\/img&gt;/g, "</img>")
+                .replace(/&lt;iframe/g, "<iframe").replace(/&lt;\/iframe&gt;/g, "</iframe>")
+                .replace(/== (.+?) ==/g, '<h2>$1</h2>').replace(/=== (.+?) ===/g, '<h3>$1</h3>')
+                .replace(/'''(.+?)'''/g, '<b>$1</b>').replace(/''(.+?)''/g, '<i>$1</i>')
+                .replace(/__((?:(?!__).)+)__/g, '<u>$1</u>').replace(/--((?:(?!--).)+)--/g, '<strike>$1</strike>')
+                .replace(/\[\[(.+?)\|(.+?)\]\]/g, '<a href="#">$2</a>').replace(/\[\[(.+?)\]\]/g, '<a href="#">$1</a>')
+                .replace(/\n/g, '<br>');
+            previewBox.innerHTML = html;
+        }
+
+        function save() {
+            const title = document.getElementById("docTitle").value.trim();
+            const category = document.getElementById("docCategory").value.trim();
+            const mainColor = document.getElementById("cpMain").value;
+            const pointColor = document.getElementById("cpPoint").value;
+            let content = document.getElementById("docContent").value;
+            if(!title) { alert("문서 제목을 입력해주세요!"); return; }
+
+            content = content.replace(/== (.+?) ==/g, '<h2 class="wiki-h2">$1</h2>')
+                .replace(/=== (.+?) ===/g, '<h3 class="wiki-h3">$1</h3>')
+                .replace(/'''(.+?)'''/g, '<b>$1</b>').replace(/''(.+?)''/g, '<i>$1</i>')
+                .replace(/__((?:(?!__).)+)__/g, '<u>$1</u>').replace(/--((?:(?!--).)+)--/g, '<strike>$1</strike>')
+                .replace(/\[\[(.+?)\|(.+?)\]\]/g, '<a href="$1.html" class="text-blue-600 hover:underline">$2</a>')
+                .replace(/\[\[(.+?)\]\]/g, '<a href="$1.html" class="text-blue-600 hover:underline">$1</a>')
+                .replace(/\[include\(틀:상위 문서, 문서명1=(.+?)\)\]/g, '<div class="mb-4 p-2 bg-gray-100 border border-l-4 border-l-[#7777AA] text-sm">📁 상위 문서: <a href="$1.html" class="font-bold text-blue-600">$1</a></div>')
+                .replace(/\[각주\]/g, '<div class="mt-8 border-t pt-4 text-sm text-gray-500 font-bold">각주</div>')
+                .replace(/\n/g, '<br>');
+
+            // [중요] 저장되는 문서에서도 편집 버튼은 '수정.html', 토론은 '토론.html'로 연결
+            const template = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title} - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"><\/script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        :root { --wiki-fixed: #7777AA; --wiki-main: ${mainColor}; --wiki-point: ${pointColor}; --wiki-border: #ccc; --wiki-bg: #fff; --wiki-text: #373a3c; }
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f9f9f9; color: var(--wiki-text); line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+        header { background-color: var(--wiki-fixed); color: white; height: 50px; display: flex; align-items: center; padding: 0 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 1000; }
+        .logo-area { font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+        .container { display: flex; max-width: 1400px; margin: 20px auto; gap: 20px; padding: 0 10px; align-items: flex-start; }
+        .main-content { flex: 1; background: white; border: 1px solid var(--wiki-border); padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); min-height: 80vh; }
+        .wiki-title { border-bottom: 2px solid var(--wiki-border); padding-bottom: 10px; margin-bottom: 20px; }
+        .wiki-title h1 { font-size: 2.2rem !important; font-weight: 900; color: #000; margin: 0; line-height: 1.2; }
+        .wiki-category { font-size: 0.9rem; color: var(--wiki-point); margin-bottom: 5px; font-weight: bold; }
+        .wiki-buttons { float: right; display: flex; gap: 5px; margin-top: -30px; }
+        .w-btn { font-size: 0.8rem; padding: 4px 10px; border: 1px solid #ccc; border-radius: 4px; background: white; color: #555; transition: 0.2s; }
+        .w-btn:hover { background: #eee; }
+        .wiki-h2 { background: linear-gradient(to right, var(--wiki-main), white); color: white; padding: 8px 15px; font-weight: 700; font-size: 1.3rem; margin: 30px 0 15px 0; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .wiki-h3 { font-size: 1.1rem !important; font-weight: bold; border-left: 5px solid var(--wiki-point); padding-left: 10px; margin: 20px 0 10px; color: #333; }
+        .wiki-table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 0.95rem; border: 1px solid var(--wiki-border); }
+        .wiki-table th { background-color: var(--wiki-point); color: white; padding: 10px; border: 1px solid rgba(0,0,0,0.1); font-weight: bold; text-align: center; }
+        .wiki-table td { padding: 10px; border: 1px solid var(--wiki-border); background: white; }
+        .search-box { position: relative; }
+        .search-box input { padding: 5px 10px; border-radius: 4px; border: none; outline: none; color: black; font-size: 0.9rem; width: 200px; transition: 0.3s; }
+        .search-box input:focus { width: 280px; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo-area"><i class="fa-solid fa-book-open"></i> 효빈위키</a>
+        <div style="flex-grow:1"></div>
+        <div class="search-box hidden sm:block" id="hb-header-search-wrap">
+            <input type="text" id="headerSearchInput" placeholder="여기서 검색..." onkeydown="if(event.key==='Enter') window.handleSearch('headerSearchInput')">
+            <i class="fa-solid fa-magnifying-glass absolute right-2 top-1.5 text-gray-500 cursor-pointer" onclick="window.handleSearch('headerSearchInput')"></i>
+        </div>
+    </header>
+    <div class="container">
+        <main class="main-content">
+            <div class="wiki-title">
+                <div class="wiki-category">${category}</div>
+                <h1>${title}</h1>
+                <div class="wiki-buttons">
+                    <button class="w-btn"><i class="fa-solid fa-star"></i></button>
+                    <a href="토론.html?doc=${encodeURIComponent(title)}" class="w-btn"><i class="fa-solid fa-comments"></i> 토론</a>
+                    <a href="수정.html?doc=${encodeURIComponent(title)}" class="w-btn"><i class="fa-solid fa-pen"></i> 편집</a>
+                </div>
+            </div>
+            <div id="wiki-body">${content}</div>
+        </main>
+    </div>
+    <script src="assets/wiki_index.js"><\/script>
+    <script src="assets/hb_wiki_core.js"><\/script>
+    <script src="assets/hb_index_scripts.js"></script>
+</body>
+</html>`;
+
+            const blob = new Blob([template], { type: "text/html;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            let filename = title.replace(/ /g, "_") + ".html";
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js?v=1"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

@@ -1,0 +1,824 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비후동 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        /* 1. 전역 스타일 및 변수 (천성구 테마) */
+        :root { 
+            --wiki-fixed: #7777AA; 
+            --wiki-main: #8B4993; /* 천성구 메인 컬러 (청록색) */
+            --wiki-point: #8B4993;
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-fixed: #9999CC;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+            --wiki-table-header-text: #000000;
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            margin: 0; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .wiki-container { 
+            max-width: 1152px; 
+            margin: 0 auto; 
+            padding: 20px 40px; 
+            border-left: 1px solid var(--wiki-border); 
+            border-right: 1px solid var(--wiki-border); 
+            min-height: 100vh; 
+            background-color: var(--wiki-bg);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 테이블 기본 스타일 */
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin: 15px 0; 
+            border: 1px solid var(--wiki-border); 
+            table-layout: fixed; 
+        }
+
+        th, td { 
+            border: 1px solid var(--wiki-border); 
+            padding: 8px 6px; 
+            text-align: center; 
+            vertical-align: middle; 
+            font-size: 0.9rem;
+        }
+
+        th { 
+            background-color: var(--wiki-table-header); 
+            color: var(--wiki-table-header-text); 
+            font-weight: bold; 
+        }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* [중요] 제목(H1) 스타일: 크고 굵게 강제 적용 */
+        h1 { 
+            font-size: 3.5rem !important; 
+            font-weight: 900 !important; 
+            margin-bottom: 1.5rem !important; 
+            border-bottom: 3px solid var(--wiki-main) !important; 
+            padding-bottom: 15px !important; 
+            line-height: 1.1 !important; 
+            color: var(--wiki-text) !important; 
+            margin-top: 10px !important; 
+            letter-spacing: -1px; 
+        }
+
+        h2 { font-size: 1.8rem; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.5rem; margin-top: 2.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ""; display: inline-block; width: 6px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem; font-weight: 700; margin-top: 1.8rem; color: var(--wiki-point); border-left: 4px solid var(--wiki-main); padding-left: 12px; margin-bottom: 0.8rem; }
+        h4 { font-size: 1.1rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.5rem; padding-left: 8px; border-left: 3px solid #ccc; }
+
+        /* 인포박스 구조 */
+        .infobox { 
+            border: 1px solid var(--wiki-main); 
+            background-color: var(--wiki-gray-bg); 
+            width: 100%; max-width: 350px; 
+            font-size: 0.85rem; 
+            margin-bottom: 20px; 
+            float: right; 
+            margin-left: 20px; 
+            border-radius: 4px; 
+            overflow: hidden; 
+        }
+        .infobox-top-label { background-color: var(--wiki-main); color: #fff; padding: 10px; text-align: center; font-weight: bold; font-size: 1.2rem; }
+        .infobox th { background: #f0f0f0; color: #333; width: 100px; text-align: left; padding: 5px 8px; font-weight: bold; border-right: 1px solid #ddd; }
+        [data-theme='dark'] .infobox th { background: #383b40; color: #eee; border-right: 1px solid #555; }
+        .infobox td { padding: 5px 8px; text-align: left; background: #fff; }
+        [data-theme='dark'] .infobox td { background: #121212; }
+
+        .nav-box { border: 1px solid var(--wiki-main); margin-bottom: 15px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; clear: both; }
+        .nav-box-header { background-color: var(--wiki-main); color: #fff; padding: 6px 12px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .nav-table th { background-color: var(--wiki-main); color: white; border: 1px solid white; }
+        
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; margin-left: auto; }
+        [data-theme='dark'] .wiki-btn-group { background: #2d2f34; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn:hover { background-color: #eee; }
+        .wiki-tool-btn.active { background-color: var(--wiki-main); color: white !important; font-weight: bold; }
+
+        .wiki-badge { display: inline-block; padding: 2px 6px; border-radius: 3px; color: white; font-weight: bold; font-size: 0.75rem; vertical-align: middle; }
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc .lvl-2 { padding-left: 15px; }
+
+        /* 교통 수단 색상 (효빈광역시 규정) */
+        .subway-line { display: inline-block; padding: 2px 6px; border-radius: 3px; color: white; font-weight: bold; font-size: 0.8rem; margin-right: 4px; }
+        .line-binhyo { background-color: #6677CC; } 
+        
+        .bus-badge { display: inline-block; padding: 1px 5px; border-radius: 2px; color: white; font-weight: bold; font-size: 0.75rem; margin-right: 2px; text-shadow: 1px 1px 1px rgba(0,0,0,0.4); }
+        .bus-trunk { background-color: #01B7ED; }
+        .bus-branch { background-color: #37B484; }
+        .bus-express { background-color: #D81C2F; }
+        .bus-town { background-color: #F7E600; color: #000; text-shadow: none; }
+        .bus-circular { background-color: #FFBF00; color: #000; text-shadow: none; }
+
+        .img-caption { font-size: 0.8rem; color: #666; margin-top: 5px; }
+        [data-theme='dark'] .img-caption { color: #aaa; }
+
+        /* 정치 인포박스 빈공간 제거 및 완벽 정렬 */
+        .nested-table { width: 100%; height: 100%; border-collapse: collapse; margin: 0; border: none; background-color: var(--wiki-bg); }
+        .nested-table td { padding: 6px 8px; border: none; border-bottom: 1px solid var(--wiki-border); background-color: var(--wiki-bg); color: var(--wiki-text); text-align: center; vertical-align: middle; }
+        .nested-table tr:last-child td { border-bottom: none; }
+        .flex-row { display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; }
+        .party-badge { color: white; padding: 2px 5px; border-radius: 2px; font-size: 11px; font-weight: bold; display: inline-block; }
+        .rep-name { color: var(--wiki-text); font-weight: 500; }
+        .rep-badge { font-size: 10px; opacity: 0.7; font-weight: normal; margin-left: 2px; }
+        del { color: #999; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+
+    <!-- 상단바 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-fixed);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 또는 번호 검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <!-- 제목 및 툴박스 -->
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">비후동</h1>
+            <div class="wiki-btn-group shadow-sm mb-4">
+                <a href="비후동_토론.html" class="wiki-tool-btn">토론</a>
+                <a href="비후동_편집.html" class="wiki-tool-btn active">편집</a>
+                <a href="비후동_역사.html" class="wiki-tool-btn">역사</a>
+            </div>
+        </div>
+
+        <div class="category-box bg-gray-50 p-2 border border-gray-300 rounded mb-4 text-sm">
+             <span class="font-bold text-[#7777AA]">분류:</span> 
+             <a href="category_천성구_행정동.html" class="wiki-link">천성구의 행정동</a> | 
+             <a href="category_천주시_동.html" class="wiki-link">천주시의 동</a>
+        </div>
+
+        <!-- 상위 행정구역 내비게이션 -->
+        <div class="wiki-table-container my-6 border-2" style="border-color: var(--wiki-main); background-color: var(--wiki-main);">
+            <div class="text-center p-2 text-white font-bold text-lg flex items-center justify-center gap-2">
+                <img src="이미지/천주시.png" class="h-10 bg-white rounded p-1" alt="로고" onerror="this.style.display='none'">
+                <div class="text-left">
+                    <div class="text-sm opacity-80 leading-none">천주시 천성구</div>
+                    <div class="text-xl leading-tight">행정구역</div>
+                </div>
+            </div>
+            
+            <details open class="bg-white">
+                <summary class="cursor-pointer p-2 text-center font-bold text-sm bg-[#f0f0f0] hover:bg-[#e0e0e0] select-none list-none text-gray-600">
+                    [ 펼치기 · 접기 ]
+                </summary>
+                <div class="p-1 bg-[#fff]">
+                    <table class="admin-dong-grid w-full text-center">
+                        <colgroup>
+                            <col class="w-1/4">
+                            <col class="w-1/4">
+                            <col class="w-1/4">
+                            <col class="w-1/4">
+                        </colgroup>
+                        <tr class="text-white">
+                            <th class="border border-[#ccc] p-2" style="background-color: var(--wiki-point); color: var(--wiki-text);">행정동/읍/면</th>
+                            <th colspan="3" class="border border-[#ccc] p-2" style="background-color: var(--wiki-point); color: var(--wiki-text);">법정동/읍/면</th>
+                        </tr>
+                        
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2 font-bold bg-[#f5f5f5]">읍</td>
+                            <td colspan="3" class="legal-dong-cell border border-[#ccc] p-2"><a href="인자읍.html" class="wiki-link">인자읍</a></td>
+                        </tr>
+
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2 font-bold bg-[#f5f5f5]">면</td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2"><a href="호산면.html" class="wiki-link">호산면</a></td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2"><a href="엽월면.html" class="wiki-link">엽월면</a></td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2"><a href="백로면.html" class="wiki-link">백로면</a></td>
+                        </tr>
+
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2" rowspan="2"><a href="관아동.html" class="wiki-link">관아동</a></td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">관아동1~3가</td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">중앙로1~3가</td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">산민동</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="legal-dong-cell border border-[#ccc] p-2">장방동</td>
+                        </tr>
+
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2" rowspan="2"><a href="유원동.html" class="wiki-link">유원동</a></td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">유동</td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">원동1가</td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">원동2가</td>
+                        </tr>
+                        <tr>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">본동</td>
+                            <td colspan="2" class="legal-dong-cell border border-[#ccc] p-2">천동동</td>
+                        </tr>
+
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2" rowspan="2"><a href="세지동.html" class="wiki-link">세지동</a></td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">세지동</td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">한지동</td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">정법동</td>
+                        </tr>
+                        <tr>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">윤사동</td>
+                            <td colspan="2" class="legal-dong-cell border border-[#ccc] p-2">사문동</td>
+                        </tr>
+
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2"><a href="대뢰1동.html" class="wiki-link">대뢰1동</a></td>
+                            <td rowspan="3" colspan="3" class="legal-dong-cell border border-[#ccc] p-2 align-middle">대뢰동</td>
+                        </tr>
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2"><a href="대뢰2동.html" class="wiki-link">대뢰2동</a></td>
+                        </tr>
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2"><a href="대뢰3동.html" class="wiki-link">대뢰3동</a></td>
+                        </tr>
+
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2"><a href="빈전1동.html" class="wiki-link">빈전1동</a></td>
+                            <td rowspan="2" colspan="3" class="legal-dong-cell border border-[#ccc] p-2 align-middle">빈전동</td>
+                        </tr>
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2"><a href="빈전2동.html" class="wiki-link">빈전2동</a></td>
+                        </tr>
+
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2"><a href="팔호동.html" class="wiki-link">팔호동</a></td>
+                            <td colspan="3" class="legal-dong-cell border border-[#ccc] p-2">팔호동</td>
+                        </tr>
+
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2"><a href="비후동.html" class="wiki-link">비후동</a></td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">비원동</td>
+                            <td colspan="2" class="legal-dong-cell border border-[#ccc] p-2">후촌동</td>
+                        </tr>
+
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2" rowspan="3"><a href="천성동.html" class="wiki-link">천성동</a></td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">천성동</td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">평온동</td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">녹하동</td>
+                        </tr>
+                        <tr>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">지굴동</td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">방상동</td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">상좌동</td>
+                        </tr>
+                        <tr>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">하좌동</td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">관일동</td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">호수동</td>
+                        </tr>
+
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2"><a href="마야동.html" class="wiki-link">마야동</a></td>
+                            <td colspan="3" class="legal-dong-cell border border-[#ccc] p-2">마야동</td>
+                        </tr>
+
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2"><a href="복주동.html" class="wiki-link">복주동</a></td>
+                            <td class="legal-dong-cell border border-[#ccc] p-2">복천동</td>
+                            <td colspan="2" class="legal-dong-cell border border-[#ccc] p-2">주언동</td>
+                            <td class="bg-[#f9f9f9] border border-[#ccc] p-2"></td>
+                        </tr>
+
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2"><a href="육갑1동.html" class="wiki-link">육갑1동</a></td>
+                            <td rowspan="2" colspan="3" class="legal-dong-cell border border-[#ccc] p-2 align-middle">육갑동</td>
+                        </tr>
+                        <tr>
+                            <td class="admin-name-cell border border-[#ccc] p-2"><a href="육갑2동.html" class="wiki-link">육갑2동</a></td>
+                        </tr>
+                    </table>
+                </div>
+            </details>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4 flex-grow">
+            <!-- 목차 -->
+            <div class="toc shrink-0 shadow-sm h-fit order-2 md:order-1">
+                <div class="text-center font-bold border-b pb-2 mb-2">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">역사</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">소속 법정동</a>
+                        <ul class="lvl-2">
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">비원동</a></li>
+                            <li>3.2. <a href="#s-3-2" class="wiki-link">후촌동</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">주요 시설</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">교통</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">여담</a></li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
+                <div class="infobox-top-label">비후동 (행정동)</div>
+                <div class="text-center bg-white p-4 border-b border-[#ccc]">
+                    <!-- 인포박스 제목 크기 확대 -->
+                    <div class="text-3xl font-extrabold mb-1">비후동</div>
+                    <div class="text-sm text-gray-500">Bihu-dong / 飛後洞</div>
+                </div>
+                
+                <div style="border-bottom: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); text-align: center;">
+                    <div class="infobox-map" style="width: 100%; height: 250px; overflow: hidden; position: relative;">
+                        <iframe src="https://binia1.github.io/mymap/?name=비후동" 
+                                style="width: 160%; height: 160%; border: none; 
+                                       position: absolute; top: 0; left: 0;
+                                       transform: scale(0.625); transform-origin: 0 0;">
+                        </iframe>
+                    </div>
+                    <div style="padding: 6px; font-size: 0.8rem; color: #666; background-color: #eee; border-top: 1px solid var(--wiki-border);">
+                        비후동 지도 (인터랙티브)
+                    </div>
+                    <div class="img-caption" style="padding: 6px; background-color: var(--wiki-bg); border-top: 1px solid var(--wiki-border);">
+                        천성구청의 든든한 배후 주거지
+                    </div>
+                </div>
+
+                <table>
+                    <tr><th>국가</th><td><img src="이미지/대한민국_국기.png" class="h-4 inline" onerror="this.outerHTML='🇰🇷'"> 대한민국</td></tr>
+                    <tr><th>광역자치단체</th><td><a href="덕빈북도.html" class="wiki-link">덕빈북도</a></td></tr>
+                    <tr><th>기초자치단체</th><td><a href="천주시.html" class="wiki-link">천주시</a></td></tr>
+                    <tr><th>일반구</th><td><a href="천성구.html" class="wiki-link">천성구</a></td></tr>
+                    <tr><th>관할 법정동</th><td><a href="비원동.html" class="wiki-link">비원동</a>, <a href="후촌동.html" class="wiki-link">후촌동</a></td></tr>
+                    <tr><th>인구</th><td>12,031명 <span class="text-[0.8em] text-gray-500">(2025년 기준)</span><br><span class="text-[0.7em] text-gray-400">(비원: 8,241 / 후촌: 3,790)</span></td></tr>
+
+                    <!-- 완벽한 정치 인포박스 레이아웃 (colspan 제거, 1단 꽉 채움) -->
+                    <tr>
+                        <th style="background-color: #2ca65a; color: white; font-weight: bold; padding: 7px; border: 1px solid var(--wiki-border); width: 25%; vertical-align: middle;">정치</th>
+                        <td style="padding: 0; border: 1px solid var(--wiki-border); background-color: var(--wiki-bg); vertical-align: top; height: 1px;">
+                            <table class="nested-table">
+                                <tr>
+                                    <td style="background-color: #6a0000; color: white; font-weight: bold; padding: 6px; font-size: 12px;">국회의원 | 천주시 갑</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex-row">
+                                            <span class="party-badge" style="background-color: #004ea2;">더불어민주당</span>
+                                            <span class="rep-name">김태호<span class="rep-badge">(3선)</span></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #003478; color: white; font-weight: bold; padding: 6px; font-size: 12px; border-top: 1px solid var(--wiki-border);">덕빈북도도의원 | 천주9 선거구</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex-row">
+                                            <span class="party-badge" style="background-color: #004ea2;">더불어민주당</span>
+                                            <span class="rep-name">정하준<span class="rep-badge">(초선)</span></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: var(--wiki-main); color: white; font-weight: bold; padding: 6px; font-size: 12px; border-top: 1px solid var(--wiki-border);">천주시의원 | 타 선거구</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex-row">
+                                            <span class="party-badge" style="background-color: #004ea2;">더불어민주당</span>
+                                            <span class="rep-name">손본석</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex-row">
+                                            <span class="party-badge" style="background-color: #004ea2;">더불어민주당</span>
+                                            <span class="rep-name">배성훈</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex-row">
+                                            <span class="party-badge" style="background-color: #004ea2;">더불어민주당</span>
+                                            <span class="rep-name">조재영</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <!-- 행정복지센터 파란색 블록 -->
+                    <tr>
+                        <th style="background-color: #3366cc; color: white; font-weight: bold; padding: 7px; border: 1px solid var(--wiki-border); vertical-align: middle;">행정복지센터</th>
+                        <td style="padding: 7px; border: 1px solid var(--wiki-border); background-color: var(--wiki-bg); font-size: 0.8rem; color: var(--wiki-text);">
+                            비원로 45 (비원동)<br>
+                            <span style="color: #2ca65a; font-weight: bold; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px;">
+                                <i class="fas fa-link"></i> 비후동 행정복지센터
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </aside>
+        </div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <p>
+            <a href="덕빈북도.html" class="wiki-link">덕빈북도</a> <a href="천주시.html" class="wiki-link">천주시</a> <a href="천성구.html" class="wiki-link">천성구</a>의 행정동.
+        </p>
+        <p>
+            관할 법정동인 '비원동(飛院洞)'과 '후촌동(厚村洞)'의 앞 글자를 따서 만든 이름이다. 
+            바로 옆 동네인 <a href="관아동.html" class="wiki-link">관아동</a>(천성구청 소재지)의 든든한 배후 주거지 역할을 수행하며, 비교적 연식이 있는 아파트 단지와 붉은 벽돌의 다세대 주택이 오밀조밀하게 섞여 있다. 
+            상업 시설이나 번화가는 빈약한 편이지만, 그만큼 유해 시설이 없어 <strong>천성구 내에서도 손꼽히게 조용하고 쾌적한 주거 환경</strong>을 자랑한다. <del>다르게 말하면 놀 데가 없다는 뜻이다</del>
+        </p>
+
+        <h2 id="s-2">2. 역사</h2>
+        <ul class="list-disc pl-5 my-2">
+            <li><strong>조선시대:</strong> 천성군 서면 비원리, 후촌리 지역. 비원리는 과거 큰 서원(院)이 있었다고 하여 붙여진 이름이며, 후촌리는 인심이 후한 마을이라 하여 붙여진 이름이다.</li>
+            <li><strong>1914년:</strong> 일제의 부군면 통폐합으로 천성면 관할이 되었다.</li>
+            <li><strong>1949년:</strong> 천주시 승격과 함께 비원동, 후촌동으로 각각 분리되었다.</li>
+            <li><strong>1998년:</strong> 행정 효율을 위해 두 법정동을 묶어 <strong>행정동 비후동</strong>을 설치하였다. (이때 이름이 비염을 연상시킨다는 작은 논란이 있었다.)</li>
+            <li><strong>2017년:</strong> 천성구 신설로 <strong>천주시 천성구 비후동</strong>이 되었다.</li>
+        </ul>
+
+        <h2 id="s-3">3. 소속 법정동</h2>
+        <p>비후동 행정복지센터는 비원동과 후촌동, 두 개의 법정동을 관할한다.</p>
+
+        <div style="margin-bottom: 20px; overflow: hidden;">
+            <h3 id="s-3-1" style="border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; display: flex; justify-content: space-between; align-items: flex-end;">
+                <span>3.1. 비원동 (飛院洞)</span>
+                <span style="font-size: 12px; color: var(--wiki-link); cursor: pointer; font-weight: normal; border: none; padding: 0;">[편집]</span>
+            </h3>
+
+            <!-- 1단 정치표가 적용된 하위 행정동 인포박스 -->
+            <table style="float: right; margin: 0 0 15px 15px; border-collapse: collapse; border: 1px solid var(--wiki-border); width: 330px; font-size: 13px; text-align: center; background-color: var(--wiki-bg); color: var(--wiki-text);">
+                <tbody>
+                    <tr>
+                        <th colspan="2" style="padding: 10px; background-color: var(--wiki-gray-bg); border-bottom: 1px solid var(--wiki-border); color: var(--wiki-text);">
+                            <div style="font-size: 11px; opacity: 0.8; margin-bottom: 3px;">천주시 천성구의 법정동</div>
+                            <div style="font-size: 17px; font-weight: bold; margin-bottom: 3px;">비원동</div>
+                            <div style="font-size: 11px; opacity: 0.6;">飛院洞 | Biwon-dong</div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td style="background-color: var(--wiki-main); color: white; font-weight: bold; padding: 7px; width: 32%; border: 1px solid var(--wiki-border);">광역자치단체</td>
+                        <td style="padding: 7px; border: 1px solid var(--wiki-border);"><a href="덕빈북도.html" class="wiki-link">덕빈북도</a></td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: var(--wiki-main); color: white; font-weight: bold; padding: 7px; border: 1px solid var(--wiki-border);">기초자치단체</td>
+                        <td style="padding: 7px; border: 1px solid var(--wiki-border);"><a href="천주시.html" class="wiki-link">천주시</a></td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: var(--wiki-main); color: white; font-weight: bold; padding: 7px; border: 1px solid var(--wiki-border);">일반구</td>
+                        <td style="padding: 7px; border: 1px solid var(--wiki-border);"><a href="천성구.html" class="wiki-link">천성구</a></td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: var(--wiki-main); color: white; font-weight: bold; padding: 7px; border: 1px solid var(--wiki-border);">행정표준코드</td>
+                        <td style="padding: 7px; border: 1px solid var(--wiki-border);">7811011427</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: var(--wiki-main); color: white; font-weight: bold; padding: 7px; border: 1px solid var(--wiki-border);">관할 행정동</td>
+                        <td style="padding: 7px; border: 1px solid var(--wiki-border);">[ 펼치기 · 접기 ]<br><span style="font-size:11px;">비후동(일부)</span></td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: var(--wiki-main); color: white; font-weight: bold; padding: 7px; border: 1px solid var(--wiki-border);">인구</td>
+                        <td style="padding: 7px; border: 1px solid var(--wiki-border);">8,241명</td>
+                    </tr>
+                    
+                    <tr>
+                        <th style="background-color: #2ca65a; color: white; font-weight: bold; padding: 7px; border: 1px solid var(--wiki-border); width: 25%; vertical-align: middle;">정치</th>
+                        <td style="padding: 0; border: 1px solid var(--wiki-border); background-color: var(--wiki-bg); vertical-align: top; height: 1px;">
+                            <table class="nested-table">
+                                <tr>
+                                    <td style="background-color: #6a0000; color: white; font-weight: bold; padding: 6px; font-size: 12px;">국회의원 | 천주시 갑</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex-row">
+                                            <span class="party-badge" style="background-color: #004ea2;">더불어민주당</span>
+                                            <span class="rep-name">김태호<span class="rep-badge">(3선)</span></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #003478; color: white; font-weight: bold; padding: 6px; font-size: 12px; border-top: 1px solid var(--wiki-border);">덕빈북도도의원 | 천주9 선거구</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex-row">
+                                            <span class="party-badge" style="background-color: #004ea2;">더불어민주당</span>
+                                            <span class="rep-name">정하준<span class="rep-badge">(초선)</span></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: var(--wiki-main); color: white; font-weight: bold; padding: 6px; font-size: 12px; border-top: 1px solid var(--wiki-border);">천주시의원 | 타 선거구</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex-row">
+                                            <span class="party-badge" style="background-color: #004ea2;">더불어민주당</span>
+                                            <span class="rep-name">손본석</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex-row">
+                                            <span class="party-badge" style="background-color: #004ea2;">더불어민주당</span>
+                                            <span class="rep-name">배성훈</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex-row">
+                                            <span class="party-badge" style="background-color: #004ea2;">더불어민주당</span>
+                                            <span class="rep-name">조재영</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p>
+                비후동 전체 인구의 과반수가 거주하는 핵심 지역이다. 
+                1990년대 후반부터 중소형 아파트 단지가 꽤 많이 들어서면서 구도심의 낡은 이미지를 벗고 나름 쾌적한 주거 환경을 갖추게 되었다. 
+                특히 동네 중앙에 위치한 <strong>비원 근린공원</strong>은 저녁 식사 후 산책을 나오거나 강아지를 데리고 나온 주민들로 북적인다. 행정복지센터도 이곳에 위치해 있어 실질적인 비후동의 본진 역할을 한다.
+            </p>
+        </div>
+
+        <div style="margin-bottom: 20px; overflow: hidden;">
+            <h3 id="s-3-2" style="border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; display: flex; justify-content: space-between; align-items: flex-end;">
+                <span>3.2. 후촌동 (厚村洞)</span>
+                <span style="font-size: 12px; color: var(--wiki-link); cursor: pointer; font-weight: normal; border: none; padding: 0;">[편집]</span>
+            </h3>
+
+            <table style="float: right; margin: 0 0 15px 15px; border-collapse: collapse; border: 1px solid var(--wiki-border); width: 330px; font-size: 13px; text-align: center; background-color: var(--wiki-bg); color: var(--wiki-text);">
+                <tbody>
+                    <tr>
+                        <th colspan="2" style="padding: 10px; background-color: var(--wiki-gray-bg); border-bottom: 1px solid var(--wiki-border); color: var(--wiki-text);">
+                            <div style="font-size: 11px; opacity: 0.8; margin-bottom: 3px;">천주시 천성구의 법정동</div>
+                            <div style="font-size: 17px; font-weight: bold; margin-bottom: 3px;">후촌동</div>
+                            <div style="font-size: 11px; opacity: 0.6;">厚村洞 | Huchon-dong</div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td style="background-color: var(--wiki-main); color: white; font-weight: bold; padding: 7px; width: 32%; border: 1px solid var(--wiki-border);">광역자치단체</td>
+                        <td style="padding: 7px; border: 1px solid var(--wiki-border);"><a href="덕빈북도.html" class="wiki-link">덕빈북도</a></td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: var(--wiki-main); color: white; font-weight: bold; padding: 7px; border: 1px solid var(--wiki-border);">기초자치단체</td>
+                        <td style="padding: 7px; border: 1px solid var(--wiki-border);"><a href="천주시.html" class="wiki-link">천주시</a></td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: var(--wiki-main); color: white; font-weight: bold; padding: 7px; border: 1px solid var(--wiki-border);">일반구</td>
+                        <td style="padding: 7px; border: 1px solid var(--wiki-border);"><a href="천성구.html" class="wiki-link">천성구</a></td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: var(--wiki-main); color: white; font-weight: bold; padding: 7px; border: 1px solid var(--wiki-border);">행정표준코드</td>
+                        <td style="padding: 7px; border: 1px solid var(--wiki-border);">7811011428</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: var(--wiki-main); color: white; font-weight: bold; padding: 7px; border: 1px solid var(--wiki-border);">관할 행정동</td>
+                        <td style="padding: 7px; border: 1px solid var(--wiki-border);">[ 펼치기 · 접기 ]<br><span style="font-size:11px;">비후동(일부)</span></td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: var(--wiki-main); color: white; font-weight: bold; padding: 7px; border: 1px solid var(--wiki-border);">인구</td>
+                        <td style="padding: 7px; border: 1px solid var(--wiki-border);">3,790명</td>
+                    </tr>
+                    
+                    <tr>
+                        <th style="background-color: #2ca65a; color: white; font-weight: bold; padding: 7px; border: 1px solid var(--wiki-border); width: 25%; vertical-align: middle;">정치</th>
+                        <td style="padding: 0; border: 1px solid var(--wiki-border); background-color: var(--wiki-bg); vertical-align: top; height: 1px;">
+                            <table class="nested-table">
+                                <tr>
+                                    <td style="background-color: #6a0000; color: white; font-weight: bold; padding: 6px; font-size: 12px;">국회의원 | 천주시 갑</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex-row">
+                                            <span class="party-badge" style="background-color: #004ea2;">더불어민주당</span>
+                                            <span class="rep-name">김태호<span class="rep-badge">(3선)</span></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #003478; color: white; font-weight: bold; padding: 6px; font-size: 12px; border-top: 1px solid var(--wiki-border);">덕빈북도도의원 | 천주9 선거구</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex-row">
+                                            <span class="party-badge" style="background-color: #004ea2;">더불어민주당</span>
+                                            <span class="rep-name">정하준<span class="rep-badge">(초선)</span></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: var(--wiki-main); color: white; font-weight: bold; padding: 6px; font-size: 12px; border-top: 1px solid var(--wiki-border);">천주시의원 | 타 선거구</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex-row">
+                                            <span class="party-badge" style="background-color: #004ea2;">더불어민주당</span>
+                                            <span class="rep-name">손본석</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex-row">
+                                            <span class="party-badge" style="background-color: #004ea2;">더불어민주당</span>
+                                            <span class="rep-name">배성훈</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex-row">
+                                            <span class="party-badge" style="background-color: #004ea2;">더불어민주당</span>
+                                            <span class="rep-name">조재영</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p>
+                아파트가 꽤 있는 비원동과 달리, 후촌동은 전형적인 저층 빌라와 단독주택 위주의 구도심이다. 
+                동네 한 바퀴를 도는 데 20분이 채 걸리지 않을 정도로 면적이 좁고 인구(3,790명)도 적다. 
+                최근 노후화된 주택가를 밀어내고 소규모 가로주택정비사업(미니 재건축) 논의가 활발하게 진행 중이라 동네 곳곳에 건설사 플래카드가 나부끼는 모습을 볼 수 있다.
+            </p>
+        </div>
+
+        <h2 id="s-4">4. 주요 시설</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>관공서:</strong> 비후동 행정복지센터, 비후파출소</li>
+            <li><strong>교육:</strong> <a href="비후초등학교.html" class="wiki-link">비후초등학교</a> (동네 안에 중·고등학교가 없어 학생들은 인근 동네로 통학해야 한다.)</li>
+            <li><strong>공원:</strong> 비원 근린공원, 후촌 어린이공원</li>
+        </ul>
+
+        <h2 id="s-5">5. 교통</h2>
+        <p>대로변을 살짝 비껴가 있는 동네 특성상 시내버스보다는 마을버스 의존도가 높은 편이다.</p>
+
+        <h4 class="mt-4 border-l-4 border-[#009688] pl-2 font-bold">버스</h4>
+        <div class="wiki-table-container my-4 overflow-x-auto">
+            <table class="w-full text-center text-[0.85rem] whitespace-nowrap">
+                <thead>
+                    <tr>
+                        <th>분류</th>
+                        <th>번호</th>
+                        <th>기점</th>
+                        <th>종점</th>
+                        <th class="w-1/3">주요 경유지 (비후동 관련)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="bus-badge bus-trunk">간선</span></td>
+                        <td class="font-bold">105</td>
+                        <td>평온동</td>
+                        <td>천성남초교</td>
+                        <td class="text-left text-xs px-2 truncate max-w-xs" title="천성구청 - 비후동(비원)">천성구청 - <span class="font-bold text-[var(--wiki-main)]">비후동(비원)</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="bus-badge bus-trunk">간선</span></td>
+                        <td class="font-bold">116</td>
+                        <td>천주역</td>
+                        <td>팔호동</td>
+                        <td class="text-left text-xs px-2 truncate max-w-xs" title="유동 - 비후동(후촌)">유동 - <span class="font-bold text-[var(--wiki-main)]">비후동(후촌)</span> - 팔호동</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bus-badge bus-trunk">간선</span></td>
+                        <td class="font-bold">122</td>
+                        <td>평온동</td>
+                        <td>복천동</td>
+                        <td class="text-left text-xs px-2 truncate max-w-xs" title="비후동 - 주언동"><span class="font-bold text-[var(--wiki-main)]">비후동</span> - 주언동</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bus-badge bus-trunk">간선</span></td>
+                        <td class="font-bold">127</td>
+                        <td>천주중앙역</td>
+                        <td>팔호동</td>
+                        <td class="text-left text-xs px-2 truncate max-w-xs" title="천성구청 - 비후동">천성구청 - <span class="font-bold text-[var(--wiki-main)]">비후동</span> - 팔호동</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bus-badge bus-trunk">간선</span></td>
+                        <td class="font-bold">134</td>
+                        <td>비원동</td>
+                        <td>천주중앙역</td>
+                        <td class="text-left text-xs px-2 truncate max-w-xs" title="후촌동 - 관아동"><span class="font-bold text-[var(--wiki-main)]">비원동 기점 - 후촌동</span> - 관아동</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bus-badge bus-trunk">간선</span></td>
+                        <td class="font-bold">506</td>
+                        <td>천주시청역</td>
+                        <td>과림역</td>
+                        <td class="text-left text-xs px-2 truncate max-w-xs" title="비후동 - 팔호동 - 서팔1동"><span class="font-bold text-[var(--wiki-main)]">비후동</span> - 팔호동 - 서팔1동</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bus-badge bus-branch">지선</span></td>
+                        <td class="font-bold">433</td>
+                        <td>비후동(비원)</td>
+                        <td>산민동</td>
+                        <td class="text-left text-xs px-2 truncate max-w-xs" title="후촌동 - 관아동"><span class="font-bold text-[var(--wiki-main)]">비원동 기점 - 후촌동</span> - 관아동</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bus-badge bus-town">마을</span></td>
+                        <td class="font-bold">천성 12</td>
+                        <td>비원동</td>
+                        <td>비원동</td>
+                        <td class="text-left text-xs px-2 truncate max-w-xs" title="후촌동 - 관아동 - 중앙로"><span class="font-bold text-[var(--wiki-main)]">비원동 기점 - 후촌동</span> - 관아동 - 중앙로</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h4 class="mt-4 border-l-4 border-[#009688] pl-2 font-bold">철도</h4>
+        <ul class="list-disc pl-5 my-2">
+            <li>
+                <span class="subway-line line-binhyo">● 빈효선</span> 지하철 혜택을 받지 못하는 사각지대다. 가장 가까운 역인 <a href="천주역.html" class="wiki-link">천주역</a>이나 <a href="천주시청역.html" class="wiki-link">천주시청역</a>으로 가려면 무조건 버스로 환승해야 한다.
+            </li>
+        </ul>
+
+        <h2 id="s-6">6. 여담</h2>
+        <ul class="list-disc pl-5 my-2">
+            <li>
+                동 이름 '비후'가 의학 용어인 '비후(肥厚, 두꺼워짐)'나 흔한 코 질환인 '비후성 비염'을 연상케 하여, 타 지역 사람들에게 동네 이름을 말하면 십중팔구 "아, 그 비염이요?"라는 썰렁한 농담을 듣게 된다. <del>그래서인지 동네 이비인후과가 유독 장사가 잘 된다 카더라</del>
+            </li>
+            <li>
+                비원동의 '비원(飛院)'이 서울 창덕궁의 비원(후원)과 이름이 같아, 아주 가끔 "여기에 조선시대 왕이 살았냐"고 묻는 순진한 외지인이나 학생들이 있다. (물론 그냥 동음이의어일 뿐이다.)
+            </li>
+            <li>
+                <a href="관아동.html" class="wiki-link">관아동</a>(천성구청)과 바로 맞닿아 있어 구청 공무원들이 자취나 전세를 구하기 위해 이 동네로 꽤 많이 흘러들어온다. '구청 뒷마당' 포지션을 톡톡히 하고 있는 셈.
+            </li>
+        </ul>
+        
+        <footer class="mt-20 border-t pt-10 text-center text-gray-500 text-xs pb-10 leading-relaxed">
+            <p class="mb-4">
+                이 저작물은 <strong>CC BY-NC-SA 2.0 KR</strong>에 따라 이용할 수 있다. <br>
+                (단, 라이선스가 명시된 일부 문서 및 삽화 제외)
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+
+        function toggleNav(id) {
+            const content = document.getElementById(id);
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        }
+    </script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js?v=1"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

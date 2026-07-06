@@ -1,0 +1,770 @@
+﻿<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>마잡동 - 효빈위키</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        /* [핵심 설정] 위키 테마 변수 - 청엽구 테마 */
+        :root { 
+            --wiki-fixed: #7777AA; 
+            --wiki-main: #006699; 
+            --wiki-point: #004EA2; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+            --wiki-tooltip-bg: #ffffff;
+            --wiki-tooltip-border: #aaaaaa;
+            --wiki-tooltip-text: #333333;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-fixed: #9999CC;
+            --wiki-main: #3399CC; 
+            --wiki-point: #66B2FF;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+            --wiki-table-header-text: #ffffff;
+            --wiki-tooltip-bg: #2d2f34;
+            --wiki-tooltip-border: #666666;
+            --wiki-tooltip-text: #eeeeee;
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            margin: 0; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .wiki-container { 
+            max-width: 1152px; 
+            margin: 0 auto; 
+            padding: 20px 40px; 
+            border-left: 1px solid var(--wiki-border); 
+            border-right: 1px solid var(--wiki-border); 
+            min-height: 100vh; 
+            background-color: var(--wiki-bg);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: fixed !important; }
+        th, td { border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-link[href^="http"]::after {
+            content: "\f35d";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 0.7em;
+            margin-left: 4px;
+            opacity: 0.7;
+        }
+
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 3px solid var(--wiki-main); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ""; display: inline-block; width: 8px; height: 1.8rem; background: var(--wiki-main); margin-right: 5px; }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: var(--wiki-text); border-left: 5px solid var(--wiki-main); padding-left: 12px; display: flex; align-items: center;}
+        
+        .wiki-quote { border-left: 5px solid var(--wiki-main); padding: 10px 15px; background-color: rgba(0, 102, 153, 0.1); margin: 15px 0; font-style: italic; color: var(--wiki-text); }
+
+        /* 메인 페이지 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: var(--wiki-gray-bg); width: 100%; max-width: 380px; font-size: 0.85rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .infobox-title-row { display: flex; border-bottom: 1px solid var(--wiki-border); background: #fff; color: #000; align-items: center; min-height: 80px; }
+        [data-theme='dark'] .infobox-title-row { background: #2d2f34; color: #fff; }
+        .infobox-logo { width: 100px; height: 100px; border-right: 1px solid var(--wiki-border); display: flex; align-items: center; justify-content: center; padding: 5px; background: #fff; }
+        .infobox-name { flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 10px; }
+        .infobox th { background: var(--wiki-main); color: #fff; width: 110px; text-align: center; padding: 6px 8px; font-weight: bold; border-color: #fff !important; }
+        .infobox td { padding: 6px 10px; text-align: left; }
+        
+        del { color: #999; text-decoration: line-through; }
+        
+        .nav-box { border: 2px solid var(--wiki-main); margin-bottom: 15px; font-size: 0.85rem; border-radius: 6px; overflow: hidden; clear: both; }
+        .nav-box-header { background-color: var(--wiki-main); color: #fff; padding: 8px 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; }
+        .nav-toggle-btn { position: absolute; right: 12px; font-size: 10px; background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px; }
+        .nav-table { width: 100%; border-collapse: collapse; text-align: center; }
+        .nav-table th { background-color: var(--wiki-main) !important; color: #fff !important; width: 100px; font-weight: bold; border: 1px solid white !important; }
+        .nav-table td { background-color: var(--wiki-gray-bg); border: 1px solid white !important; }
+        [data-theme='dark'] .nav-table td { background-color: #2d2f34; border: 1px solid #444 !important; }
+
+        .category-box { background: #fff; border: 1px solid var(--wiki-border); padding: 5px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        [data-theme='dark'] .category-box { background: #2d2f34; border-color: #444; }
+
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc li { margin-bottom: 4px; }
+
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        [data-theme='dark'] .wiki-btn-group { background: #2d2f34; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn.active { background-color: var(--wiki-main); color: white !important; font-weight: bold; }
+        
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+
+        sup.wiki-fn { font-size: 0.75rem; vertical-align: super; font-weight: normal; cursor: pointer; color: var(--wiki-link); }
+        sup.wiki-fn:hover { text-decoration: underline; }
+        
+        .wiki-footnote-area { margin-top: 40px; border-top: 1px solid var(--wiki-border); padding-top: 10px; font-size: 0.85rem; color: var(--wiki-text); }
+        .wiki-footnote-area ol { padding-left: 25px; }
+        .wiki-footnote-area li { margin-bottom: 5px; }
+        .wiki-footnote-area li:target { background-color: rgba(0, 102, 153, 0.2); transition: background-color 0.5s; }
+
+        #wiki-tooltip {
+            position: absolute;
+            display: none;
+            background-color: var(--wiki-tooltip-bg);
+            border: 1px solid var(--wiki-tooltip-border);
+            color: var(--wiki-tooltip-text);
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 9999;
+            max-width: 320px;
+            line-height: 1.4;
+            pointer-events: none;
+        }
+        #wiki-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 20px;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--wiki-tooltip-border) transparent transparent transparent;
+        }
+
+        /* 정당 뱃지 스타일 */
+        .party-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: white !important;
+            font-weight: bold;
+            font-size: 0.75em;
+            line-height: 1.2;
+            text-decoration: none !important;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+        .badge-minju { background-color: #004EA2; border: 1px solid #004EA2; }
+        .badge-gukhim { background-color: #E61E2B; border: 1px solid #E61E2B; }
+        .badge-joguk { background-color: #0073CF; border: 1px solid #0073CF; }
+
+        /* 푸터 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; }
+        
+        .anchor-offset { scroll-margin-top: 70px; }
+        
+        /* 12문단 표 스타일 (효빈위키 행정구역 표) */
+        .admin-dong-grid { width: 100%; border-collapse: collapse; background: #fff; table-layout: fixed; }
+        [data-theme='dark'] .admin-dong-grid { background: #2d2f34; }
+        .admin-dong-grid td, .admin-dong-grid th { border: 1px solid var(--wiki-border); padding: 6px 8px; font-size: 0.85rem; text-align: center; vertical-align: middle; }
+        .admin-dong-grid th { background-color: var(--wiki-main); color: white; font-weight: bold; }
+        .admin-dong-grid td.admin-name-cell { font-weight: bold; background-color: #f9f9f9; color: var(--wiki-main); }
+        [data-theme='dark'] .admin-dong-grid td.admin-name-cell { background-color: #383b40; color: #66B2FF; }
+        .legal-dong-cell { text-align: left; padding-left: 10px; }
+        
+        details > summary { list-style: none; outline: none; }
+        details > summary::-webkit-details-marker { display: none; }
+
+        /* [핵심 1] 법정동 전용 미니 인포박스 스타일 */
+        .legal-infobox { float: right; width: 100%; max-width: 320px; margin-left: 20px; margin-bottom: 15px; border: 1px solid var(--wiki-border); background-color: var(--wiki-bg); border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .legal-infobox-header { text-align: center; padding: 12px 5px; border-bottom: 1px solid var(--wiki-border); background-color: var(--wiki-bg); }
+        .legal-infobox table { width: 100% !important; margin: 0 !important; border: none !important; }
+        .legal-infobox th { background-color: var(--wiki-main); color: #fff; border: 1px solid var(--wiki-border) !important; padding: 8px; width: 38%; font-size: 0.85rem; text-align: center; }
+        .legal-infobox td { background-color: var(--wiki-bg) !important; color: var(--wiki-text) !important; border: 1px solid var(--wiki-border) !important; padding: 8px; text-align: center; font-size: 0.85rem; }
+
+        /* [핵심 2] 행정동 전용 상세 인포박스 (정치/복지센터 포함, 완벽 재현) */
+        .admin-infobox { float: right; width: 100%; max-width: 360px; margin-left: 20px; margin-bottom: 20px; border: 1px solid var(--wiki-border); background-color: var(--wiki-bg); border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-size: 0.85rem; }
+        .admin-infobox-header { text-align: center; padding: 15px 5px; border-bottom: 1px solid var(--wiki-border); background-color: var(--wiki-bg); }
+        .admin-infobox table { width: 100%; border-collapse: collapse; margin: 0; }
+        .admin-infobox th, .admin-infobox td { border: 1px solid var(--wiki-border); padding: 7px 10px; vertical-align: middle; }
+        .admin-infobox .th-main { background-color: var(--wiki-main); color: #fff; width: 30%; font-weight: bold; text-align: center; }
+        .admin-infobox .td-main { background-color: var(--wiki-bg); color: var(--wiki-text); text-align: center; }
+        
+        .admin-infobox .th-politics { background-color: #1ea15a; color: #fff; width: 20%; font-weight: bold; text-align: center; }
+        .admin-infobox .th-center { background-color: #245096; color: #fff; width: 20%; font-weight: bold; text-align: center; }
+        
+        .admin-infobox .pol-title { color: #fff; font-weight: bold; text-align: center; font-size: 0.8em; padding: 4px; }
+        .admin-infobox .pol-nat { background-color: #5b1016; }
+        .admin-infobox .pol-metro { background-color: #003478; }
+        .admin-infobox .pol-local { background-color: #e65d0f; }
+        .admin-infobox .pol-party { background-color: var(--wiki-bg); text-align: center; width: 30%; padding: 4px; }
+        .admin-infobox .pol-name { background-color: var(--wiki-bg); color: var(--wiki-text); text-align: left; padding-left: 10px; width: 50%; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+<div id="wiki-msg-box"></div>
+<div id="wiki-tooltip"></div>
+<nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-fixed);">
+<div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+<span class="font-bold text-xl">HyobinWiki</span>
+</div>
+<div class="flex items-center gap-2">
+<input class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner" id="searchInput" placeholder="문서 검색 (Enter)" type="text"/>
+<button class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner hover:bg-[#444477] transition" id="themeBtn" onclick="toggleTheme()">다크모드</button>
+</div>
+</nav>
+<div class="wiki-container shadow-lg">
+<div class="flex justify-between items-end mb-4">
+<h1 class="m-0 border-none p-0">마잡동</h1>
+<div class="wiki-btn-group shadow-sm mb-4">
+<a class="wiki-tool-btn" href="토론.html">토론</a>
+<a class="wiki-tool-btn" href="수정.html">편집</a>
+<a class="wiki-tool-btn" href="역사.html">역사</a>
+<div class="wiki-tool-btn" onclick="showMsg('★ 즐겨찾기에 추가됨')">★</div>
+</div>
+</div>
+<div class="category-box">
+<span class="font-bold text-[#006699]">분류:</span>
+<a class="wiki-link" href="청엽구.html">청엽구</a> | 
+            <a class="wiki-link" href="청엽구_행정동.html">청엽구의 행정동</a> |
+            <a class="wiki-link" href="청엽구_법정동.html">청엽구의 법정동</a> |
+            <a class="wiki-link" href="https://namu.wiki/w/BanG%20Dream!/성지순례" target="_blank">BanG Dream!/성지순례</a>
+</div>
+<!-- 3. 해당 자치구 행정구역 내비게이션 -->
+<div class="nav-box rounded overflow-hidden shadow-sm" style="border-color: var(--wiki-main);">
+<div class="nav-box-header" onclick="toggleNav('dongNav', 'dongLabel')">
+<span class="flex items-center">
+<img alt="📂" onerror="this.outerHTML='📂'" src="이미지/청엽구_흰색로고.png" style="height: 3.0em; width: auto; margin-right: 5px;"/>
+<span>효빈광역시 청엽구의 행정구역</span>
+</span>
+<span class="text-[10px] bg-white/20 px-2 py-0.5 rounded nav-toggle-btn" id="dongLabel">[접기]</span>
+</div>
+<div class="nav-box-body transition-all duration-300 overflow-hidden" id="dongNav" style="max-height: 2000px;">
+<table class="admin-dong-grid">
+<colgroup>
+<col class="w-1/4"/>
+<col class="w-1/4"/>
+<col class="w-1/4"/>
+<col class="w-1/4"/>
+</colgroup>
+<tr class="text-white">
+<th class="border border-[#ccc] p-2" style="background-color: var(--wiki-main);">행정동</th>
+<th class="border border-[#ccc] p-2" colspan="3" style="background-color: var(--wiki-main);">법정동</th>
+</tr>
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="동리동.html" style="font-weight:900; color:var(--wiki-main); text-decoration:underline;">동리동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-2" colspan="3"><a class="wiki-link" href="동리동.html">동리동</a></td>
+</tr>
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="등동.html">등동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-2" colspan="3"><a class="wiki-link" href="등동.html">등동</a></td>
+</tr>
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="마잡1동.html">마잡1동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-2"><a class="wiki-link" href="마잡동.html">마잡동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-2"><a class="wiki-link" href="헌이송동.html">헌이송동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-2"><a class="wiki-link" href="서증동.html">서증동</a></td>
+</tr>
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="마잡2동.html">마잡2동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-2" colspan="3"><a class="wiki-link" href="마잡동.html">마잡동</a>(일부)</td>
+</tr>
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="비마동.html">비마동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-2"><a class="wiki-link" href="비마동.html">비마동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-2" colspan="2"><a class="wiki-link" href="사노동.html">사노동</a></td>
+</tr>
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="우전1동.html">우전1동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-2" colspan="3" rowspan="3"><a class="wiki-link" href="우전동.html">우전동</a></td>
+</tr>
+<tr><td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="우전2동.html">우전2동</a></td></tr>
+<tr><td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="우전3동.html">우전3동</a></td></tr>
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="우택동.html">우택동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-2" colspan="3"><a class="wiki-link" href="우택동.html">우택동</a></td>
+</tr>
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="입빈동.html">입빈동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-2">
+<a class="wiki-link" href="효빈동1가.html">효빈동1가</a><br/>
+<a class="wiki-link" href="효빈동2가.html">효빈동2가</a>
+</td>
+<td class="legal-dong-cell border border-[#ccc] p-2" colspan="2">
+<a class="wiki-link" href="입동.html">입동1가</a><br/>
+<a class="wiki-link" href="입동.html">입동2가</a><br/>
+<a class="wiki-link" href="입동.html">입동3가</a>
+</td>
+</tr>
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="청엽1동.html">청엽1동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-2" colspan="3" rowspan="6"><a class="wiki-link" href="청엽동.html">청엽동</a></td>
+</tr>
+<tr><td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="청엽2동.html">청엽2동</a></td></tr>
+<tr><td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="청엽3동.html">청엽3동</a></td></tr>
+<tr><td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="청엽4동.html">청엽4동</a></td></tr>
+<tr><td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="청엽5동.html">청엽5동</a></td></tr>
+<tr><td class="admin-name-cell border border-[#ccc] p-2"><a class="wiki-link" href="청엽6동.html">청엽6동</a></td></tr>
+</table>
+</div>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4 flex-grow">
+<!-- 목차 -->
+<div class="toc shrink-0 shadow-sm h-fit order-2 md:order-1" id="toc-box">
+<div class="toc-title">목차</div>
+<ul>
+<li>1. <a class="wiki-link" href="#s-1">개요</a></li>
+<li>2. <a class="wiki-link" href="#s-2">행정 구역 및 특징</a>
+<ul class="pl-4 text-xs text-gray-500">
+<li>2.1. <a class="wiki-link" href="#s-2-1">마잡1동</a></li>
+<li>2.2. <a class="wiki-link" href="#s-2-2">마잡2동</a></li>
+</ul>
+</li>
+<li>3. <a class="wiki-link" href="#s-3">소속 법정동 상세</a>
+<ul class="pl-4 text-xs text-gray-500">
+<li>3.1. <a class="wiki-link" href="#s-3-1">마잡동</a></li>
+<li>3.2. <a class="wiki-link" href="#s-3-2">서증동</a></li>
+<li>3.3. <a class="wiki-link" href="#s-3-3">헌이송동</a></li>
+</ul>
+</li>
+<li>4. <a class="wiki-link" href="#s-4">주요 시설</a></li>
+<li>5. <a class="wiki-link" href="#s-5">각주</a></li>
+</ul>
+</div>
+<!-- 마잡동 메인 인포박스 -->
+<aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
+<div class="text-center py-3 border-b border-[#ccc]" style="background-color: var(--wiki-bg); color: var(--wiki-text);">
+<div class="text-[0.75rem] font-bold">효빈광역시 청엽구의 행정동</div>
+<div class="text-2xl font-bold my-1">마잡동</div>
+<div class="text-[0.7rem] opacity-80">馬雑洞 | Majap-dong</div>
+</div>
+<div class="infobox-title-row" style="background-color: var(--wiki-bg); color: var(--wiki-text);">
+<div class="infobox-logo" style="background-color: var(--wiki-bg);">
+<img alt="청엽구 로고" onerror="this.parentNode.innerHTML='&lt;span class=\'text-2xl font-bold text-[#006699]\'&gt;청엽&lt;/span&gt;'" src="이미지/청엽구.png"/>
+</div>
+<div class="infobox-name">
+<div class="text-xs">상징 문구</div>
+<div class="font-bold" style="color: var(--wiki-main);">"철도 동호인들의 성지이자<br/>모카 팬들의 제2의 고향"</div>
+</div>
+</div>
+<div class="infobox-map border-b border-[#ccc]" style="width: 100%; height: 250px; overflow: hidden; position: relative; display: block !important;">
+<iframe src="https://binia1.github.io/mymap/" style="width: 160%; height: 160%; border: none; 
+                       position: absolute; top: 0; left: 0;
+                       transform: scale(0.625); transform-origin: 0 0;">
+</iframe>
+</div>
+
+<table class="w-full text-sm m-0 border-none" style="border-collapse: collapse; table-layout: fixed;">
+<colgroup>
+<col style="width: 35%;"/>
+<col style="width: 65%;"/>
+</colgroup>
+<tbody>
+<tr><th class="border border-[#ccc] p-2 bg-[var(--wiki-main)] text-white">광역자치단체</th><td class="border border-[#ccc] p-2 text-center" style="background-color: var(--wiki-bg); color: var(--wiki-text);"><a class="wiki-link" href="효빈광역시.html">효빈광역시</a></td></tr>
+<tr><th class="border border-[#ccc] p-2 bg-[var(--wiki-main)] text-white">기초자치단체</th><td class="border border-[#ccc] p-2 text-center" style="background-color: var(--wiki-bg); color: var(--wiki-text);"><a class="wiki-link" href="청엽구.html">청엽구</a></td></tr>
+<tr>
+<th class="border border-[#ccc] p-2 bg-[var(--wiki-main)] text-white">관할 법정동</th>
+<td class="border border-[#ccc] p-0 text-center" style="background-color: var(--wiki-bg); color: var(--wiki-text);">
+<details class="w-full group">
+<summary class="cursor-pointer text-center p-1 text-xs font-bold transition hover:opacity-70" style="background-color: var(--wiki-gray-bg); color: var(--wiki-text);">
+                                        [ 펼치기 · 접기 ]
+                                    </summary>
+<div class="p-2 text-xs text-left leading-relaxed border-t border-[#ccc]" style="background-color: var(--wiki-bg); color: var(--wiki-text);">
+<a class="wiki-link" href="마잡동.html">마잡동</a>, <a class="wiki-link" href="서증동.html">서증동</a>, <a class="wiki-link" href="헌이송동.html">헌이송동</a><br/>
+<span class="text-gray-500" style="color: var(--wiki-fixed);">(총 3개동)</span>
+</div>
+</details>
+</td>
+</tr>
+<tr><th class="border border-[#ccc] p-2 bg-[var(--wiki-main)] text-white">구 행정구역</th><td class="border border-[#ccc] p-2 text-center" style="background-color: var(--wiki-bg); color: var(--wiki-text);">청엽면 (1914년)</td></tr>
+<tr><th class="border border-[#ccc] p-2 bg-[var(--wiki-main)] text-white">하위 행정구역</th><td class="border border-[#ccc] p-2 text-center" style="background-color: var(--wiki-bg); color: var(--wiki-text);">마잡1동, 마잡2동</td></tr>
+<tr><th class="border border-[#ccc] p-2 bg-[var(--wiki-main)] text-white">면적</th><td class="border border-[#ccc] p-2 text-center" style="background-color: var(--wiki-bg); color: var(--wiki-text);">10.52㎢</td></tr>
+<tr><th class="border border-[#ccc] p-2 bg-[var(--wiki-main)] text-white">인구</th><td class="border border-[#ccc] p-2 text-center" style="background-color: var(--wiki-bg); color: var(--wiki-text);">47,294명<sup class="wiki-fn" data-target="fn-1" id="ref-1">[1]</sup> <span class="text-[0.7rem] text-gray-500" style="color: var(--wiki-fixed);">(2025년 기준)</span></td></tr>
+<tr><th class="border border-[#ccc] p-2 bg-[var(--wiki-main)] text-white">인구밀도</th><td class="border border-[#ccc] p-2 text-center" style="background-color: var(--wiki-bg); color: var(--wiki-text);">4,495.62명/㎢</td></tr>
+</tbody>
+</table>
+</aside>
+</div>
+<!-- 본문 내용 -->
+<h2 id="s-1">1. 개요</h2>
+<div class="wiki-quote">
+            "철도 동호인들의 성지이자 모카 팬들의 제2의 고향"<br/>
+            - <a class="wiki-link" href="효빈광역시.html">효빈</a> 관광 가이드
+        </div>
+<p>
+<a class="wiki-link" href="효빈광역시.html">효빈광역시</a> <a class="wiki-link" href="청엽구.html">청엽구</a>의 <a class="wiki-link" href="법정동.html">법정동</a>이자 행정동.
+            이름이 참... 거시기하다. '말(馬)이 섞여(雜) 있다'는 유래를 가지고 있는데, 어감 때문에 외지인들은 한 번 들으면 절대 안 까먹는다. <del>마! 잡았다!</del>
+</p>
+<p>
+<a class="wiki-link" href="청엽동.html">청엽동</a>과 함께 <a class="wiki-link" href="https://namu.wiki/w/BanG%20Dream!" target="_blank">BanG Dream!</a>의 <strong><a class="wiki-link" href="https://namu.wiki/w/아오바%20모카" target="_blank">아오바 모카</a>(<a class="wiki-link" href="https://namu.wiki/w/Afterglow" target="_blank">Afterglow</a>)</strong> 성지로 묶인다. '마잡'이라는 글자가 모카의 이름을 중국어로 번안했을 때의 한자(摩卡)와 비슷하다는 썰 때문인데, 실제 마잡동의 한자는 '馬雑'이므로 사실 그냥 끼워 맞추기 나름이다(...).
+        </p>
+<h2 id="s-2">2. 행정 구역 및 특징</h2>
+<p>행정동은 마잡1동과 마잡2동으로 나뉘며, 법정동 마잡동을 쪼개서 관할함과 동시에 <a class="wiki-link" href="헌이송동.html">헌이송동</a>과 <a class="wiki-link" href="서증동.html">서증동</a>을 산하에 두고 있다.</p>
+<!-- [핵심 복구] 마잡1동 행정동 인포박스 -->
+<h3 id="s-2-1">2.1. 마잡1동 (馬雑一洞)</h3>
+<aside class="admin-infobox clear-both">
+<div class="admin-infobox-header">
+<div class="text-[0.7rem] font-bold" style="color: var(--wiki-text);">효빈광역시 청엽구의 행정동</div>
+<div class="text-xl font-bold my-1" style="color: var(--wiki-text);">마잡1동</div>
+<div class="text-[0.65rem] opacity-80" style="color: var(--wiki-text);">馬雑一洞 | Majap 1-dong</div>
+</div>
+<table>
+<tbody>
+<tr><th class="th-main">광역자치단체</th><td class="td-main" colspan="2"><a class="wiki-link" href="효빈광역시.html">효빈광역시</a></td></tr>
+<tr><th class="th-main">기초자치단체</th><td class="td-main" colspan="2"><a class="wiki-link" href="청엽구.html">청엽구</a></td></tr>
+<tr><th class="th-main">행정표준코드</th><td class="td-main" colspan="2">79060110</td></tr>
+<tr>
+<th class="th-main">관할 법정동</th>
+<td class="td-main p-0" colspan="2">
+<details class="w-full">
+<summary class="cursor-pointer text-center p-1 text-xs font-bold transition hover:opacity-70 bg-gray-100 dark:bg-gray-800">
+                                    [ 펼치기 · 접기 ]
+                                </summary>
+<div class="p-2 text-xs text-left leading-relaxed border-t border-[#ccc]">
+<a class="wiki-link" href="마잡동.html">마잡동</a>(일부), <a class="wiki-link" href="헌이송동.html">헌이송동</a>, <a class="wiki-link" href="서증동.html">서증동</a>
+</div>
+</details>
+</td>
+</tr>
+<tr><th class="th-main">면적</th><td class="td-main" colspan="2">2.28㎢</td></tr>
+<tr><th class="th-main">인구</th><td class="td-main" colspan="2">18,061명</td></tr>
+<tr><th class="th-main">인구밀도</th><td class="td-main" colspan="2">7,921.49명/㎢</td></tr>
+<!-- 마잡1동 정치 섹션 -->
+<tr>
+<th class="th-politics" rowspan="8">정치</th>
+<td class="pol-title pol-nat" colspan="2">국회의원 | 청엽구 을</td>
+</tr>
+<tr>
+<td class="pol-party"><span class="party-badge badge-minju">더불어민주당</span></td>
+<td class="pol-name"><a class="wiki-link" href="소판권.html">소판권</a> <span class="text-[0.7rem] text-gray-500">(초선)</span></td>
+</tr>
+<tr>
+<td class="pol-title pol-metro" colspan="2">효빈광역시의원 | 청엽구 제1선거구</td>
+</tr>
+<tr>
+<td class="pol-party"><span class="party-badge badge-minju">더불어민주당</span></td>
+<td class="pol-name"><a class="wiki-link" href="오상원.html">오상원</a> <span class="text-[0.7rem] text-gray-500">(3선)</span></td>
+</tr>
+<tr>
+<td class="pol-title pol-local" colspan="2">청엽구의원 | 가 선거구</td>
+</tr>
+<tr>
+<td class="pol-party"><span class="party-badge badge-minju">더불어민주당</span></td>
+<td class="pol-name"><a class="wiki-link" href="한정훈.html">한정훈</a> <span class="text-[0.7rem] text-gray-500">(재선)</span></td>
+</tr>
+<tr>
+<td class="pol-party"><span class="party-badge badge-minju">더불어민주당</span></td>
+<td class="pol-name"><a class="wiki-link" href="서민재.html">서민재</a> <span class="text-[0.7rem] text-gray-500">(3선)</span></td>
+</tr>
+<tr>
+<td class="pol-party"><span class="party-badge" style="background-color: #808080;">무소속</span></td>
+<td class="pol-name"><a class="wiki-link" href="송석현.html">송석현</a> <span class="text-[0.7rem] text-gray-500">(초선)</span></td>
+</tr>
+<!-- 마잡1동 행정복지센터 -->
+<tr>
+<th class="th-center">행정복지센터</th>
+<td class="td-main text-xs leading-tight py-3" colspan="2">
+                            효빈광역시 청엽구 마잡동 173-2<br/>
+<a class="wiki-link text-[#245096] dark:text-[#66B2FF] mt-1 inline-block" href="마잡1동_주민센터.html">🏢 마잡1동 행정복지센터</a>
+</td>
+</tr>
+</tbody>
+</table>
+</aside>
+<p>
+            관내에 <strong>효빈청엽소방서</strong>가 위치하여 소방차 사이렌 소리가 24시간 BGM으로 깔리는 역동적인 동네다. <del>자동 알람 기능 탑재</del>
+</p>
+<p class="text-sm text-gray-600 mt-2">※ 관내 학교: <a class="wiki-link" href="남동초등학교.html">남동초</a>, <a class="wiki-link" href="남부중학교.html">남부중</a>, <a class="wiki-link" href="색수중학교.html">색수중</a>, <strong><a class="wiki-link" href="모카중학교.html">모카중학교</a></strong></p>
+<ul class="list-disc pl-5 mt-2">
+<li><strong><a class="wiki-link" href="모카중학교.html">모카중학교</a></strong>: 동네에 모카의 이름을 딴 학교까지 생겨버렸다. <del>교가에 '빵'이 들어갈 것 같다는 합리적인 의심이 든다.</del></li>
+</ul>
+<!-- [핵심 복구] 마잡2동 행정동 인포박스 -->
+<h3 id="s-2-2">2.2. 마잡2동 (馬雑二洞)</h3>
+<aside class="admin-infobox clear-both">
+<div class="admin-infobox-header">
+<div class="text-[0.7rem] font-bold" style="color: var(--wiki-text);">효빈광역시 청엽구의 행정동</div>
+<div class="text-xl font-bold my-1" style="color: var(--wiki-text);">마잡2동</div>
+<div class="text-[0.65rem] opacity-80" style="color: var(--wiki-text);">馬雑二洞 | Majap 2-dong</div>
+</div>
+<table>
+<tbody>
+<tr><th class="th-main">광역자치단체</th><td class="td-main" colspan="2"><a class="wiki-link" href="효빈광역시.html">효빈광역시</a></td></tr>
+<tr><th class="th-main">기초자치단체</th><td class="td-main" colspan="2"><a class="wiki-link" href="청엽구.html">청엽구</a></td></tr>
+<tr><th class="th-main">행정표준코드</th><td class="td-main" colspan="2">79060120</td></tr>
+<tr>
+<th class="th-main">관할 법정동</th>
+<td class="td-main p-0" colspan="2">
+<details class="w-full">
+<summary class="cursor-pointer text-center p-1 text-xs font-bold transition hover:opacity-70 bg-gray-100 dark:bg-gray-800">
+                                    [ 펼치기 · 접기 ]
+                                </summary>
+<div class="p-2 text-xs text-left leading-relaxed border-t border-[#ccc]">
+<a class="wiki-link" href="마잡동.html">마잡동</a>(일부)
+                                </div>
+</details>
+</td>
+</tr>
+<tr><th class="th-main">면적</th><td class="td-main" colspan="2">8.24㎢</td></tr>
+<tr><th class="th-main">인구</th><td class="td-main" colspan="2">29,233명</td></tr>
+<tr><th class="th-main">인구밀도</th><td class="td-main" colspan="2">3,547.69명/㎢</td></tr>
+<!-- 마잡2동 정치 섹션 -->
+<tr>
+<th class="th-politics" rowspan="8">정치</th>
+<td class="pol-title pol-nat" colspan="2">국회의원 | 청엽구 을</td>
+</tr>
+<tr>
+<td class="pol-party"><span class="party-badge badge-minju">더불어민주당</span></td>
+<td class="pol-name"><a class="wiki-link" href="소판권.html">소판권</a> <span class="text-[0.7rem] text-gray-500">(초선)</span></td>
+</tr>
+<tr>
+<td class="pol-title pol-metro" colspan="2">효빈광역시의원 | 청엽구 제6선거구</td>
+</tr>
+<tr>
+<td class="pol-party"><span class="party-badge badge-minju">더불어민주당</span></td>
+<td class="pol-name"><a class="wiki-link" href="구상원.html">구상원</a> <span class="text-[0.7rem] text-gray-500">(3선)</span></td>
+</tr>
+<tr>
+<td class="pol-title pol-local" colspan="2">청엽구의원 | 다 선거구</td>
+</tr>
+<tr>
+<td class="pol-party"><span class="party-badge" style="background-color: #808080; color: white;">무소속</span></td>
+<td class="pol-name"><a class="wiki-link" href="민성군.html">민성군</a> <span class="text-[0.7rem] text-gray-500">(초선)</span></td>
+</tr>
+<tr>
+<td class="pol-party"><span class="party-badge badge-minju">더불어민주당</span></td>
+<td class="pol-name"><a class="wiki-link" href="추진호.html">추진호</a> <span class="text-[0.7rem] text-gray-500">(초선)</span></td>
+</tr>
+<tr>
+<td class="pol-party"><span class="party-badge badge-minju">더불어민주당</span></td>
+<td class="pol-name"><a class="wiki-link" href="전서우.html">전서우</a> <span class="text-[0.7rem] text-gray-500">(재선)</span></td>
+</tr>
+<!-- 마잡2동 행정복지센터 -->
+<tr>
+<th class="th-center">행정복지센터</th>
+<td class="td-main text-xs leading-tight py-3" colspan="2">
+                            효빈광역시 청엽구 마잡동 8<br/>
+<a class="wiki-link text-[#245096] dark:text-[#66B2FF] mt-1 inline-block" href="마잡2동_주민센터.html">🏢 마잡2동 행정복지센터</a>
+</td>
+</tr>
+</tbody>
+</table>
+</aside>
+<p>
+            동네 면적의 절반 이상이 <strong><a class="wiki-link" href="마잡차량사업소.html">마잡차량기지</a></strong>가 차지하고 있다. 차량기지 인근의 낡은 철길 건널목이 묘하게 일본 애니메이션 감성을 자극한다며 인스타 핫플로 부상했다. 덕분에 카메라를 든 <a class="wiki-link" href="https://namu.wiki/w/철도%20동호인" target="_blank">철도 동호인</a>과 코스어들이 뒤엉켜 사진을 찍는 진풍경을 매일같이 볼 수 있다.
+        </p>
+<p class="text-sm text-gray-600 mt-2">※ 관내 학교: <a class="wiki-link" href="색수초등학교.html">색수초</a>, <a class="wiki-link" href="헌이송초등학교.html">헌이송초</a>, <a class="wiki-link" href="신지초등학교.html">신지초</a>, <a class="wiki-link" href="서증초등학교.html">서증초</a>, <a class="wiki-link" href="헌이송중학교.html">헌이송중</a>, <a class="wiki-link" href="서증중학교.html">서증중</a>, <a class="wiki-link" href="마잡중학교.html">마잡중</a>, <strong><a class="wiki-link" href="색수고등학교.html">색수고등학교</a></strong>, <a class="wiki-link" href="헌이송고등학교.html">헌이송고</a>, <a class="wiki-link" href="헌이송공업고등학교.html">헌이송공업고등학교</a></p>
+<h2 id="s-3">3. 소속 법정동 상세</h2>
+<h3 id="s-3-1">3.1. 마잡동 (馬雑洞)</h3>
+<aside class="legal-infobox clear-both">
+<div class="legal-infobox-header">
+<div class="text-[0.7rem] font-bold" style="color: var(--wiki-text);">효빈광역시 청엽구의 법정동</div>
+<div class="text-lg font-bold my-1" style="color: var(--wiki-text);">마잡동</div>
+<div class="text-[0.65rem] opacity-80" style="color: var(--wiki-text);">馬雑洞 | Majap-dong</div>
+</div>
+<table>
+<tbody>
+<tr><th>광역자치단체</th><td><a class="wiki-link" href="효빈광역시.html">효빈광역시</a></td></tr>
+<tr><th>기초자치단체</th><td><a class="wiki-link" href="청엽구.html">청엽구</a></td></tr>
+<tr><th>행정표준코드</th><td>7918010300</td></tr>
+<tr><th>관할 행정동</th><td>마잡1동, 마잡2동</td></tr>
+<tr><th>면적</th><td>5.08㎢</td></tr>
+<tr><th>인구</th><td>30,892명</td></tr>
+<tr><th>인구밀도</th><td>6,081.10명/㎢</td></tr>
+</tbody>
+</table>
+</aside>
+<ul class="list-disc pl-5 space-y-2 mt-4">
+<li><strong>인구 순위:</strong> 청엽구 24위</li>
+<li><strong>특징:</strong> 본동(本洞). 면적이 상당히 넓어 1동과 2동에 걸쳐 폭넓게 퍼져 있다. 차량기지와 수많은 학교가 밀집해 있어 주거 단지로서의 기능도 탄탄하게 수행 중이다. 뱅드림 팬들에게는 '모카(摩卡)'와 발음이 비슷한 한자 덕에 성지로 여겨지며 꾸준히 사랑받고 있다.</li>
+</ul>
+<h3 id="s-3-2">3.2. 서증동 (西證洞)</h3>
+<aside class="legal-infobox clear-both">
+<div class="legal-infobox-header">
+<div class="text-[0.7rem] font-bold" style="color: var(--wiki-text);">효빈광역시 청엽구의 법정동</div>
+<div class="text-lg font-bold my-1" style="color: var(--wiki-text);">서증동</div>
+<div class="text-[0.65rem] opacity-80" style="color: var(--wiki-text);">西證洞 | Seojeung-dong</div>
+</div>
+<table>
+<tbody>
+<tr><th>광역자치단체</th><td><a class="wiki-link" href="효빈광역시.html">효빈광역시</a></td></tr>
+<tr><th>기초자치단체</th><td><a class="wiki-link" href="청엽구.html">청엽구</a></td></tr>
+<tr><th>행정표준코드</th><td>7918010600</td></tr>
+<tr><th>관할 행정동</th><td>마잡1동</td></tr>
+<tr><th>면적</th><td>1.73㎢</td></tr>
+<tr><th>인구</th><td>2,111명</td></tr>
+<tr><th>인구밀도</th><td>1,220.23명/㎢</td></tr>
+</tbody>
+</table>
+</aside>
+<ul class="list-disc pl-5 space-y-2 mt-4">
+<li><strong>인구 순위:</strong> 청엽구 112위</li>
+<li><strong>특징:</strong> 마잡동 구석탱이에 붙어있는 다소 잉여스러운(...) 법정동.</li>
+<li><strong>병원 이름의 배신:</strong> 지역 거점 병원인 <strong><a class="wiki-link" href="우전병원.html">우전병원</a></strong>이 바로 이곳 서증동에 있다. 택시 기사님한테 "우전병원 가주세요"라고 하면 높은 확률로 옆 동네인 <strong><a class="wiki-link" href="우전동.html">우전동</a></strong>으로 갔다가 쌍욕을 먹는 대참사가 벌어진다. <del>서증병원이라고 짓지 그랬어</del></li>
+</ul>
+<h3 id="s-3-3">3.3. 헌이송동 (献耳松洞)</h3>
+<aside class="legal-infobox clear-both">
+<div class="legal-infobox-header">
+<div class="text-[0.7rem] font-bold" style="color: var(--wiki-text);">효빈광역시 청엽구의 법정동</div>
+<div class="text-lg font-bold my-1" style="color: var(--wiki-text);">헌이송동</div>
+<div class="text-[0.65rem] opacity-80" style="color: var(--wiki-text);">献耳松洞 | Heoneisong-dong</div>
+</div>
+<table>
+<tbody>
+<tr><th>광역자치단체</th><td><a class="wiki-link" href="효빈광역시.html">효빈광역시</a></td></tr>
+<tr><th>기초자치단체</th><td><a class="wiki-link" href="청엽구.html">청엽구</a></td></tr>
+<tr><th>행정표준코드</th><td>7918011300</td></tr>
+<tr><th>관할 행정동</th><td>마잡1동</td></tr>
+<tr><th>면적</th><td>3.71㎢</td></tr>
+<tr><th>인구</th><td>14,291명</td></tr>
+<tr><th>인구밀도</th><td>3,852.02명/㎢</td></tr>
+</tbody>
+</table>
+</aside>
+<ul class="list-disc pl-5 space-y-2 mt-4">
+<li><strong>인구 순위:</strong> 청엽구 45위</li>
+<li><strong>특징:</strong> <strong>헌이송공업단지</strong>가 넓게 펼쳐져 있는 공업 지구다. 동네 이름이 다섯 글자라 부르기 더럽게 힘들어서 원주민들도 그냥 '헌동'이나 '공단'이라고 줄여서 부른다.</li>
+<li><strong>이름 돌려쓰기:</strong> 학교 이름 짓기가 귀찮았는지 관내 학교를 온통 '헌이송'으로 도배를 해놨다. 특히 <strong><a class="wiki-link" href="헌이송공업고등학교.html">헌이송공고</a></strong>는 이 지역의 불량... 아니, 피 끓는 기술 인재들의 요람으로 명성이 자자하다.</li>
+</ul>
+<h2 id="s-4">4. 주요 시설</h2>
+<ul class="list-disc pl-5 space-y-2">
+<li>
+<strong>교통 시설</strong>
+<ul class="list-[circle] ml-5 mt-1 text-sm text-gray-700 dark:text-gray-300">
+<li><a class="wiki-link" href="6호선.html">효빈 도시철도 6호선</a>: <strong><a class="wiki-link" href="마잡역.html">마잡역</a></strong>, <strong><a class="wiki-link" href="비동역.html">비동역</a></strong></li>
+<li><strong><a class="wiki-link" href="마잡차량사업소.html">마잡차량기지</a></strong>: 마잡2동 인구와 상권의 핵심.</li>
+</ul>
+</li>
+<li>
+<strong>공공 및 의료 시설</strong>
+<ul class="list-[circle] ml-5 mt-1 text-sm text-gray-700 dark:text-gray-300">
+<li><strong>효빈청엽소방서</strong> (마잡1동)</li>
+<li><strong><a class="wiki-link" href="우전병원.html">우전병원</a></strong> (서증동)</li>
+</ul>
+</li>
+</ul>
+<h2 id="s-5">5. 각주</h2>
+<div class="wiki-footnote-area">
+<ol>
+<li id="fn-1">마잡1동(18,061명)과 마잡2동(29,233명)의 행정동 인구 총합. 법정동 '마잡동'만의 인구는 30,892명이다. <a href="#ref-1" title="본문으로 이동">↑</a></li>
+<li id="fn-2">주소지는 서증동에 위치해 있다. <a href="#ref-2" title="본문으로 이동">↑</a></li>
+</ol>
+</div>
+<footer class="wiki-footer">
+<div class="mb-2 font-bold text-lg">HyobinWiki</div>
+<p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br/>
+            이 저작물은 <a class="text-blue-600 hover:underline" href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br/>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+<p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br/>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+</footer>
+</div>
+<script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+
+        function toggleNav(id, labelId) {
+            const content = document.getElementById(id);
+            const label = document.getElementById(labelId);
+            if (content.style.maxHeight === '0px') {
+                content.style.maxHeight = '2000px';
+                label.innerText = '[접기]';
+            } else {
+                content.style.maxHeight = '0px';
+                label.innerText = '[펼치기]';
+            }
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                document.getElementById('themeBtn').innerText = '라이트모드';
+            }
+            initFootnoteTooltips();
+        };
+        
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                const target = this.value.trim();
+                location.href = target + ".html";
+            }
+        });
+
+        function initFootnoteTooltips() {
+            const footnotes = document.querySelectorAll('.wiki-fn');
+            const tooltip = document.getElementById('wiki-tooltip');
+
+            footnotes.forEach(fn => {
+                fn.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('data-target');
+                    const contentEl = document.getElementById(targetId);
+                    
+                    if (contentEl) {
+                        let text = contentEl.innerHTML;
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = text;
+                        const backLink = tempDiv.querySelector('a:last-child'); 
+                        if(backLink && backLink.innerText.includes('↑')) backLink.remove();
+                        
+                        tooltip.innerHTML = tempDiv.innerHTML;
+                        tooltip.style.display = 'block';
+                        
+                        const rect = this.getBoundingClientRect();
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        
+                        tooltip.style.top = (rect.bottom + scrollTop + 5) + 'px';
+                        tooltip.style.left = rect.left + 'px';
+                    }
+                });
+
+                fn.addEventListener('mouseleave', function() {
+                    tooltip.style.display = 'none';
+                });
+                
+                fn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    const targetEl = document.getElementById(targetId);
+                    if(targetEl) {
+                        targetEl.scrollIntoView({behavior: 'smooth', block: 'center'});
+                        targetEl.style.backgroundColor = "rgba(0, 102, 153, 0.2)";
+                        setTimeout(() => targetEl.style.backgroundColor = "transparent", 1500);
+                    }
+                });
+            });
+        }
+    </script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+</body>
+</html>

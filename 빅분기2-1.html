@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>데이터 정제 및 변수 이해 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #00CCAA; 
+            --wiki-line-color: #00CCAA; 
+            
+            --wiki-header-bg: var(--wiki-line-color);
+            --wiki-header-text: #ffffff;
+            --wiki-table-header-bg: #e6faf6;
+            --wiki-table-header-text: #000000;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f8f9fa; 
+            --wiki-link: #008877; 
+            --wiki-footer-bg: #f0f0f0;
+            --wiki-footer-text: #777;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #33eebb; 
+            --wiki-table-header-bg: #222;
+            --wiki-table-header-text: #ffffff;
+            --wiki-footer-bg: #1a1a1a;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.7; word-break: keep-all; margin: 0; transition: background-color 0.3s, color 0.3s; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 30px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1.5px; border-bottom: 3px solid var(--wiki-main); padding-bottom: 15px;} 
+        
+        h2 { font-size: 2rem; font-weight: 900; border-bottom: 2px solid var(--wiki-line-color); padding-bottom: 8px; margin-top: 3.5rem; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; color: var(--wiki-text); }
+        h2::before { content: ""; display: inline-block; width: 6px; height: 2rem; background: var(--wiki-line-color); }
+        h3 { font-size: 1.5rem; font-weight: 800; margin-top: 2.5rem; margin-bottom: 15px; border-left: 6px solid var(--wiki-line-color); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 10px; color: var(--wiki-text); }
+
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; border: 1px solid var(--wiki-border); font-size: 0.95rem; }
+        th, td { border: 1px solid var(--wiki-border); padding: 10px 12px; text-align: left; vertical-align: middle; color: var(--wiki-text); }
+        th { background-color: var(--wiki-table-header-bg); font-weight: 800; text-align: center; border-bottom: 2px solid var(--wiki-main);}
+
+        .infobox { float: right; margin-left: 25px; margin-bottom: 20px; width: 350px; clear: right; border: 2px solid var(--wiki-main); border-radius: 4px; background-color: var(--wiki-bg); }        
+        .infobox-top { background-color: var(--wiki-main); padding: 20px 10px; text-align: center; border-bottom: 1px solid var(--wiki-border); color: #fff; }
+        .infobox-top b { font-size: 1.8rem; line-height: 1.2; letter-spacing: -1px; font-weight: 900; }
+
+        .toc { display: inline-block; min-width: 300px; margin-bottom: 25px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 20px; border-radius: 4px; }        
+        .toc-title { text-align: center; font-weight: 900; border-bottom: 1px solid var(--wiki-border); margin-bottom: 15px; padding-bottom: 10px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding: 0; margin: 0; line-height: 1.6; font-weight: 600;}
+        .toc li { margin-bottom: 4px; }
+        .toc .pl-5 { padding-left: 20px; font-weight: 400;}
+
+        .wiki-link { color: var(--wiki-link); font-weight: 700; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        .quote-box { background: var(--wiki-gray-bg); padding: 15px 20px; font-weight: 600; border-left: 5px solid var(--wiki-line-color); margin-bottom: 20px; color: var(--wiki-text); }
+        .exam-box { border: 2px solid #ff4444; background-color: #fffafa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        [data-theme='dark'] .exam-box { background-color: #2a1111; border-color: #cc3333; }
+        .exam-title { font-weight: 900; color: #ff4444; margin-bottom: 10px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;}
+        
+        .anime-box { border: 2px dashed; background-color: #fdf5fd; padding: 20px; border-radius: 8px; margin: 20px 0; color: #333; display: flex; gap: 15px; align-items: flex-start;}
+        [data-theme='dark'] .anime-box { background-color: #2a1a2a; color: #eee;}
+        .anime-box-title { font-weight: 900; font-size: 1.15rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;}
+        .anime-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid; flex-shrink: 0; background-color: #fff;}
+
+        .mermaid { background: var(--wiki-bg); padding: 15px; border-radius: 8px; margin: 15px 0; display: flex; justify-content: center; overflow-x: auto; border: 1px solid var(--wiki-border);}
+        
+        del { color: #999; text-decoration: line-through; }
+
+        /* 각주 및 툴팁 전용 CSS */
+        .fn-link { color: var(--wiki-link); font-size: 0.75em; vertical-align: super; margin: 0 1px; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .fn-link:hover { text-decoration: underline; }
+        
+        .wiki-footnotes { margin-top: 60px; padding-top: 20px; border-top: 2px solid var(--wiki-border); }
+        .wiki-footnotes h4 { font-size: 1.1rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 10px; }
+        .wiki-footnotes ul { list-style: none; padding: 0; margin: 0; }
+        .wiki-footnotes li { margin-bottom: 8px; font-size: 0.9rem; line-height: 1.6; padding: 4px 8px; border-radius: 4px; transition: background-color 0.3s; }
+        .wiki-footnotes li:target { background-color: rgba(0, 204, 170, 0.15); }
+
+        .wiki-tooltip {
+            position: absolute; background-color: var(--wiki-bg); color: var(--wiki-text); border: 1px solid var(--wiki-border);
+            border-radius: 6px; padding: 12px 16px; font-size: 0.85rem; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 0.2s ease-in-out, transform 0.2s ease;
+            transform: translateY(5px); z-index: 9999; word-break: keep-all; line-height: 1.6;
+        }
+        .wiki-tooltip.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+        [data-theme='dark'] .wiki-tooltip { box-shadow: 0 4px 15px rgba(0,0,0,0.6); background-color: #222; }
+    
+        /* 효빈위키 전용 하단 내비게이션 틀 CSS */
+        .wiki-nav-box { margin: 40px auto 10px; border: 1px solid var(--wiki-border); border-radius: 4px; background: var(--wiki-bg); overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .wiki-nav-header { display: flex; align-items: center; justify-content: center; padding: 12px; font-weight: 900; font-size: 1.1rem; color: #fff; background: linear-gradient(to right, #005BAC, #00CCAA); letter-spacing: 1px; }
+        .wiki-nav-toggle { text-align: center; padding: 6px; background: var(--wiki-gray-bg); border-bottom: 1px solid var(--wiki-border); border-top: 1px solid var(--wiki-border); cursor: pointer; font-size: 0.85rem; user-select: none; color: var(--wiki-text); font-weight: bold; }
+        .wiki-nav-toggle:hover { filter: brightness(0.95); }
+        .wiki-nav-content { display: none; }
+        .wiki-nav-content.active { display: block; }
+        .wiki-nav-table { width: 100%; border-collapse: collapse; text-align: center; margin: 0; font-size: 0.9rem; }
+        .wiki-nav-table th, .wiki-nav-table td { border: 1px solid var(--wiki-border); padding: 12px; }
+        .wiki-nav-table th { color: #fff; font-weight: bold; vertical-align: middle; }
+        .wiki-nav-table td { text-align: left; line-height: 1.8; word-break: keep-all; }
+        .bg-nav-red { background-color: #D81C2F; } /* 효빈 시내버스 급행 레드 */
+        .bg-nav-blue { background-color: #485EC6; } /* 효빈 시내버스 광역 블루 */
+        .wiki-nav-item { display: inline-block; margin-right: 12px; white-space: nowrap; }
+        .wiki-nav-item a { color: var(--wiki-link); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .wiki-nav-item a:hover { color: #FF4F91; text-decoration: underline; font-weight: bold; }
+
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <nav class="bg-[#00CCAA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50 border-b border-[#009988]">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl tracking-tight text-white">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1.5 px-4 rounded text-black text-sm w-64 focus:outline-none shadow-inner">
+            <button class="bg-[#008877] p-1.5 px-4 rounded text-sm hover:bg-[#006655] font-bold transition-colors text-white">검색</button>
+            <button onclick="document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')" class="bg-[#009988] p-1.5 px-3 rounded text-xs border border-[#006655] text-white shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="txt-lvl-1">데이터 정제 (PART 02-01)</div>
+
+        <div class="category-box bg-[#f9f9f9] border border-[#ccc] p-3 mb-5 rounded text-sm font-bold">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="빅데이터분석기사_필기.html" class="wiki-link">빅데이터분석기사 필기</a> | <a href="빅데이터분석기사.html" class="wiki-link">빅데이터분석기사</a> | <a href="데이터_전처리.html" class="wiki-link">데이터 전처리</a> | <a href="데이터_탐색.html" class="wiki-link">데이터 탐색</a> | <a href="데이터_시각화.html" class="wiki-link">데이터 시각화</a> | <a href="회귀분석.html" class="wiki-link">회귀분석</a> | <a href="분류_알고리즘.html" class="wiki-link">분류 알고리즘</a> | <a href="군집분석.html" class="wiki-link">군집분석</a> | <a href="머신러닝.html" class="wiki-link">머신러닝</a> | <a href="통계학.html" class="wiki-link">통계학</a> | <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> | <a href="효빈도시철도.html" class="wiki-link">효빈도시철도</a> | <a href="효빈광역시_시내버스.html" class="wiki-link">효빈광역시 시내버스</a> | <a href="러브라이브!_시리즈.html" class="wiki-link">러브라이브! 시리즈</a> | <a href="니지가사키_스쿨_아이돌_동호회.html" class="wiki-link">니지가사키 스쿨 아이돌 동호회</a> | <a href="BanG_Dream!.html" class="wiki-link">BanG Dream!</a> | <a href="MyGO!!!!!.html" class="wiki-link">MyGO!!!!!</a> | <a href="걸즈_밴드_크라이.html" class="wiki-link">걸즈 밴드 크라이</a> | <a href="토게나시_토게아리.html" class="wiki-link">토게나시 토게아리</a> | <a href="봇치_더_록!.html" class="wiki-link">봇치 더 록!</a> | <a href="결속밴드.html" class="wiki-link">결속밴드</a>
+        </div>
+        
+
+        <aside class="infobox shadow-sm">
+            <div class="infobox-top">
+                <b>빅데이터분석기사 필기</b><br>
+                <span class="text-sm opacity-80">PART 02. 데이터 전처리</span>
+            </div>
+            <table>
+                <tr><th>과목명</th><td>제2과목 빅데이터 탐색</td></tr>
+                <tr><th>섹션</th><td>SECTION 01. 데이터 정제</td></tr>
+                <tr><th>출제빈도</th><td>하 (★)</td></tr>
+                <tr><th>반복학습</th><td>[1] [2] [3] 회독</td></tr>
+                <tr><th>빈출태그</th><td>#변수이해 #데이터정제 #결측값 #이상값</td></tr>
+            </table>
+        </aside>
+
+        <div class="toc shadow-sm">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li><a href="#s-1" class="wiki-link">1. 데이터에 내재된 변수의 이해</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-1-1" class="wiki-link">1) 데이터 관련 정의</a></li>
+                        <li><a href="#s-1-2" class="wiki-link">2) 데이터의 종류</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-2" class="wiki-link">2. 데이터의 정제</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-2-1" class="wiki-link">1) 데이터 정제 개요 및 필요성</a></li>
+                        <li><a href="#s-2-2" class="wiki-link">2) 데이터 정제 과정 및 변환 기법</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-3" class="wiki-link">3. 데이터 결측값 처리</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-3-1" class="wiki-link">1) 결측 데이터의 종류 및 메커니즘</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-4" class="wiki-link">4. 이상치 탐지 및 처리</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-4-1" class="wiki-link">1) 이상치 원인 및 문제점</a></li>
+                        <li><a href="#s-4-2" class="wiki-link">2) 이상치 탐지 기법</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-5" class="wiki-link">5. 합격을 다지는 예상문제</a></li>
+            </ul>
+        </div>
+
+        <div class="quote-box">
+            📌 <b>[핵심 개념 핵심 요약]</b><br>
+            • <b>데이터:</b> 관심의 대상이 되는 사물이나 사건의 속성을 일정한 규칙에 의해 측정, 조사, 관찰하여 습득한 기호화·수치화된 자료.<br>
+            • <b>자료 종류 파악의 중요성:</b> 수집된 자료의 특성에 따라서 해당 자료로부터 분석 결과를 도출하기 위한 <b>적용방법론이 완전히 바뀌기 때문</b>이다. <a href="#fn1" id="rfn1" class="fn-link">[1]</a>
+        </div>
+
+        <h2 id="s-1">01 데이터에 내재된 변수의 이해</h2>
+        <h3 id="s-1-1">1) 데이터 관련 정의</h3>
+        <p>빅데이터 분석이나 전통적 통계분석을 통해 원하는 결과를 얻기 위해서는 모든 분석의 근간이 되는 자료의 명확한 이해가 필수적이다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li><b>① 데이터(Data):</b> 이론을 세우는 기초가 되는 사실 또는 자료를 지칭하며, 컴퓨터와 연관되어 프로그램을 운용할 수 있는 형태로 기호화·수치화한 자료를 의미한다.</li>
+            <li><b>② 단위(Unit):</b> 관찰되는 항목 또는 대상을 지칭한다.</li>
+            <li><b>③ 관측값(Observation):</b> 각 조사 단위별로 기록된 구체적인 정보 또는 특성을 말한다.</li>
+            <li><b>④ 변수(Variable):</b> 각 단위에서 측정된 특성의 결과값이다.</li>
+            <li><b>⑤ 원자료(Raw Data):</b> 표본에서 조사된 가공되지 않은 <b>최초의 자료</b>를 말한다.</li>
+        </ul>
+
+        <h3 id="s-1-2">2) 데이터의 종류</h3>
+        <p>변수들의 집합인 자료의 종류와 그 특성에 따라 데이터는 다음과 같이 엄밀하게 분류된다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li><b>① 단변량자료(Univariate Data):</b> 자료의 특성을 대표하는 특성 변수가 단 하나인 자료이다.</li>
+            <li><b>② 다변량자료(Multivariate Data):</b> 자료의 특성을 대표하는 특성 변수가 두 가지 이상인 자료이다.</li>
+            <li><b>③ 질적자료(Qualitative Data):</b> 정성적 또는 범주형 자료라고도 하며, 자료를 범주의 형태로 분류한다. 분류의 편의상 부여된 수치의 크기 자체에는 아무런 수학적 의미를 부여하지 않는 자료이다.
+                <ul class="list-circle pl-6 space-y-1 mt-1">
+                    <li><b>명목자료(Nominal Data):</b> 측정대상이 범주나 종류에 대해 구분되어지는 것을 수치 또는 기호로 분류한 데이터이다. (예: 전화번호상의 국번·지역번호 / 사용가능 연산자: `=`, `≠`)</li>
+                    <li><b>서열자료(Ordinal Data):</b> 명목자료와 비슷하나 수치나 기호가 <b>명확한 서열이나 순위</b>를 나타내는 자료이다. (예: 기록경기의 순위 등 일반적인 순위 자료 / 사용가능 연산자: `=`, `≠`, `≤`, `≥`)</li>
+                </ul>
+            </li>
+            <li><b>④ 수치자료(Quantitative Data):</b> 정량적 또는 연속형 자료라고도 한다. 숫자의 크기에 직접적인 수학적 의미를 부여할 수 있는 자료를 나타낸다.
+                <ul class="list-circle pl-6 space-y-1 mt-1">
+                    <li><b>구간자료(Interval Data):</b> 명목자료와 서열자료의 의미를 포함하면서, 숫자로 표현된 변수 간의 관계가 산술적인 간격의 의미를 가지는 자료이다. 절대영점이 존재하지 않는다. (예: 온도 / 사용가능 연산자: `=`, `≠`, `≤`, `≥`, `+`, `-`)</li>
+                    <li><b>비율자료(Ratio Data):</b> 명목, 서열, 구간자료의 의미를 모두 가지며, 수치화된 변수에 <b>비율과 절대영점(0)의 개념을 도입</b>할 수 있는 자료이다. (예: 무게 / 사용가능 연산자: `=`, `≠`, `≤`, `≥`, `+`, `-`, `×`, `÷`)</li>
+                </ul>
+            </li>
+            <li><b>⑤ 시계열자료(Time Series Data):</b> 일정한 시간 간격 동안에 수집된, 시간 개념이 포함되어 있는 연속적인 자료이다. (예: 일별 주식 가격)</li>
+            <li><b>⑥ 횡단자료(Cross Sectional Data):</b> 횡단면자료라고도 하며, <b>특정 단일 시점</b>에서 여러 대상을 상대로 수집된 자료이다.</li>
+            <li><b>⑦ 종적자료(Longitudinal Data):</b> 시계열자료와 횡단자료의 결합 형태로, <b>여러 개체를 여러 시점 동안 반복 수집</b>한 입체적인 자료이다.</li>
+        </ul>
+
+        <div class="mermaid">
+        graph TD
+            A[데이터의 종류] --> B[질적자료 <br/> Qualitative Data]
+            A --> C[수치자료 <br/> Quantitative Data]
+            B --> D[명목자료 Nominal]
+            B --> E[서열자료 Ordinal]
+            C --> F[구간자료 Interval]
+            C --> G[비율자료 Ratio]
+            
+            style A fill:#f9f,stroke:#333,stroke-width:2px
+            style B fill:#bbf,stroke:#333,stroke-width:2px
+            style C fill:#bfb,stroke:#333,stroke-width:2px
+        </div>
+
+        <div class="anime-box" style="border-color: #00CCAA; background-color: #EBFBf7;">
+            <img src="이미지/하루빈.png" alt="하루빈" class="anime-img" onerror="this.style.display='none'" style="border-color: #00CCAA;">
+            <div>
+                <div class="anime-box-title" style="color: #008877;">🚉 [효빈위키 마스코트 특강] 2호선 하루빈의 척도 단위 대박 과외</div>
+                <p class="text-sm text-gray-800">효빈도시철도와 애니메이션 캐릭터 데이터를 활용해 4대 데이터 종류를 1초 만에 마스터해 보죠!</p>
+                <ul class="list-disc pl-5 text-sm space-y-1 mt-2 text-gray-800">
+                    <li><b>명목자료:</b> 효빈광역시 버스 도색 설정 <del>(1세대 크림색이나 2세대 흑역사 똥색)</del> 혹은 <b>소속 밴드명</b>(결속밴드, MyGO!!!!!, 토게나시 토게아리)입니다. 뱅드림의 시이나 타키가 MyGO!!!!! 소속인지 아닌지 여부만 판별할 수 있고, 더하거나 빼는 연산은 아무 의미가 없죠!</li>
+                    <li><b>서열자료:</b> 걸즈 밴드 크라이 작중 'GB 가을 페스티벌'의 <b>밴드 순위</b>나 라이브 굿즈 대기열 번호표입니다. 1등, 2등 서열은 확실하지만 1등과 2등의 실력 차이가 2등과 3등의 실력 차이와 같다고 볼 산술적 근거는 전혀 없습니다.</li>
+                    <li><b>구간자료:</b> 캐릭터들의 <b>생일 연도나 타임스탬프</b>, 혹은 보컬 레이팅 점수입니다. 온도가 대표적인데, 온도가 10도에서 20도가 되었다고 "2배 더워졌다(비율)"고 말하면 통계학적으로 뺨을 맞습니다(?) 절대적인 기준점 0이 없기 때문이에요.</li>
+                    <li><b>비율자료:</b> 제 공식 프로필 신장인 <b>174cm</b>나 시이나 타키가 사용하는 드럼 스틱의 무게(g)입니다. 키가 0cm이면 존재하지 않는 절대영점이고, 174cm는 87cm의 정확히 2배라고 비율 연산(`×`, `÷`)을 완벽하게 적용할 수 있습니다!</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 id="s-2">02 데이터의 정제</h2>
+        <h3 id="s-2-1">1) 데이터 정제 개요 및 필요성</h3>
+        <p>수집된 전체 데이터를 대상으로 분석 목적에 적합한 데이터만을 추출하고 가공·통합하는 필수적인 일련의 전처리 과정이다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li><b>데이터 정제의 필요성:</b> 원원시 데이터에서 원하는 정밀한 분석 도구나 기법에 부합하도록 일관된 형태로 다듬어야만 분석이 가능하기 때문이다.</li>
+            <li><b>정제과정을 거치지 않은 데이터의 문제점:</b> 데이터의 일관성이 파괴되어 컴퓨터 시스템의 연산 처리에 치명적인 오류를 발생시키며, 도출된 최종 분석 결과의 <b>신뢰성이 극도로 저하</b>된다. (Garbage In, Garbage Out)</li>
+            <li><b>전처리 vs 후처리:</b>
+                <ul class="list-circle pl-6 space-y-1 mt-1">
+                    <li><b>전처리(Pre Processing):</b> 데이터 <b>저장소 적재 전</b>의 처리 과정으로 대상 데이터 선정, 입수 방법 결정, 물리적 저장 장소 선정을 포함한다.</li>
+                    <li><b>후처리(Post Processing):</b> 데이터 <b>저장소 적재 후</b>의 전반적인 처리 및 정밀 품질 관리 과정을 의미한다.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3 id="s-2-2">2) 데이터 정제 과정 및 변환 기법</h3>
+        <p>시스템 내·외부에서 수집된 대량의 데이터는 정형 데이터보다 복잡한 비정형 데이터가 대다수이다. 이를 분석하기 위해 정형 데이터로 변환하고 레거시 데이터(Legacy Data, 과거로부터 물려 내려온 데이터)와 연계·통합하는 변환 프로세스가 수행된다.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%;">구분</th>
+                    <th style="width: 55%;">수행내용</th>
+                    <th style="width: 20%;">Process</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="font-bold text-center">데이터의 수집</td>
+                    <td>• 데이터의 입수 방법 및 정책 결정<br>• 입수 경로의 구조화<br>• 집계(Aggregation) 및 저장소 결정</td>
+                    <td class="text-center font-bold text-blue-600">전처리<br>(Pre-Processing)<br>포함</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-center">데이터의 변환</td>
+                    <td>• 데이터 유형의 변화 및 분석 가능한 형태로 가공<br>• ETL(Extraction, Transformation, Loading)<br>• 일반화(Generalization), 정규화(Normalization), 평활화(Smoothing) 수행</td>
+                    <td class="text-center">-</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-center">데이터의 교정</td>
+                    <td>• 결측치의 처리, 이상치(Outlier) 처리, 노이즈 제거<br>• 비정형 데이터 수집 및 전환 시 필수적으로 요구되는 사항</td>
+                    <td class="text-center">-</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-center">데이터의 통합</td>
+                    <td>• 데이터 분석이 용이하도록 기존 또는 유사 데이터와의 연계 통합<br>• 기존 레거시 데이터(Legacy Data)와 함께 분석이 필요한 경우 결합 수행</td>
+                    <td class="text-center">-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4 class="mt-4 text-[#00CCAA] font-bold">▣ 핵심 데이터 변환 기술 용어 상세 정의 (★필수 암기)</h4>
+        <ul class="list-disc pl-6 space-y-2 mb-4">
+            <li><b>집계(Aggregation):</b> 데이터를 요약하거나 특정 기준값으로 그룹화하여 통계적 정보를 획득하는 과정이다. 데이터의 합계, 평균, 중앙값, 최빈값, 분산, 표준편차 등을 산출하여 데이터 구조의 원초적 특성을 파악한다.</li>
+            <li><b>일반화(Generalization):</b> 데이터 변환 과정에서 데이터가 가지는 일반적인 특성이나 상위 패턴을 추출하여 복잡성을 감소시키고 중요한 특징을 인위적으로 강조하는 작업이다. (예: 이미지 처리에서 주요 특징 벡터를 추출해 새로운 이미지 패턴을 인식할 수 있도록 일관성을 부여하는 학습 과정)</li>
+            <li><b>정규화(Normalization):</b> 수치형 데이터들의 크기 단위가 다를 때, 이를 <b>일정한 수치 범위(예: 0~1 또는 -1~1)로 표준화하여 상대적인 크기 차이를 제거</b>하는 작업이다. 대표적으로 Min-Max 정규화와 Z-score 정규화가 있으며, 이상치 영향을 완화하고 모델의 가중치 수렴을 돕는 주된 목적을 가진다.</li>
+            <li><b>평활화(Smoothing):</b> 데이터의 거친 변동을 제어하고 무작위 노이즈를 억제하여, 데이터 내부에 감춰진 장기적인 추세(Trend)나 일관된 패턴을 부드럽게 깎아내는 시각화·시계열 기술이다. 주요 기법으로 이동평균법(Moving Average), 지수평활법(Exponential Smoothing), Savitzky-Golay 필터법 등이 존재한다.</li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #0077DD; background-color: #EEF7FF;">
+            <img src="이미지/고나미.png" alt="고나미" class="anime-img" onerror="this.style.display='none'" style="border-color: #0077DD;">
+            <div>
+                <div class="anime-box-title" style="color: #0055AA;">🎤 [효빈위키 싱크로율 100%] 1호선 고나미의 실무 속 ETL과 데이터 변환</div>
+                <p class="text-sm text-gray-800">시험에 단골로 출제되는 <b>ETL(Extraction, Transformation, Loading)</b>과 평활화 기술을 봇치 더 록! 결속밴드 데이터에 접해봅시다.</p>
+                <ul class="list-disc pl-5 text-sm space-y-1 mt-2 text-gray-800">
+                    <li><b>ETL의 메커니즘:</b> 결속밴드의 유튜브 스트리밍 API 음원 데이터와 스포티파이 실시간 재생 정보를 외부에서 추출(Extraction)해와서, 파이썬 Pandas를 켜고 누락값이나 깨진 인코딩을 가공 및 정규화(Transformation)한 후, 최종적으로 효빈위키 데이터베이스 서버에 적재(Loading)하는 일련의 과정 전체가 바로 ETL입니다!</li>
+                    <li><b>평활화(Smoothing)의 묘미:</b> 고토 히토리(봇치)의 일별 유튜브 구독자 상승 그래프를 그렸는데, 주말이나 특정 기행을 펼친 날만 유독 뾰족하게 튀어 튀는 노이즈가 발생했습니다. 이 거친 데이터에 7일 이동평균법(Moving Average)을 적용해 선을 부드럽게 깎아내면, 전체적인 구독자 우상향 추세를 정확히 볼 수 있게 됩니다. 이게 바로 평활화의 힘이죠!</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 id="s-3">03 데이터 결측값 처리</h2>
+        <h3 id="s-3-1">1) 결측 데이터의 종류 및 메커니즘</h3>
+        <p>데이터 분석 도중 특정 데이터가 누락되어 비어 있는 상태를 결측치(Missing Data)라고 부른다. 이를 무조건 `dropna()` 등으로 삭제하면 <b>데이터 직접 손실로 인한 유의수준 확보 실패</b>가 발생하며, 무작정 단순 값으로 대체하면 <b>데이터의 편향(Bias)이 발생하여 신뢰성이 붕괴</b>되므로 원인 분석이 선행되어야 한다.</p>
+
+        <ul class="list-disc pl-6 space-y-2 mb-4">
+            <li><b>① 완전 무작위 결측(MCAR: Missing Completely At Random):</b> 어떤 변수상에서 발생한 결측 데이터가, 이미 관측된 다른 변수 혹은 관측되지 않은 또 다른 변수들과 <b>아무런 연관성 및 인과관계가 없이 완전히 우연히 발생한 경우</b>이다. (대규모 데이터셋인 경우 단순 무작위 표본추출을 통해 처리 가능하다.)</li>
+            <li><b>② 무작위 결측(MAR: Missing At Random):</b> 변수상의 결측 여부가 <b>이미 관측 완료된 누군가 다른 변수와는 밀접하게 연관</b>되어 있지만, 정작 본인이 숨긴 누락된 '비관측값 자체'와는 아무런 연관 관계를 가지지 않는 경우이다.</li>
+            <li><b>③ 비 무작위 결측(NMAR: Not Missing At Random):</b> 완전 무작위(MCAR)나 무작위 결측(MAR)으로 전혀 설명할 수 없는 악질적인 케이스로, <b>결측된 변수의 '값 자체'가 본인의 결측 여부(누락된 이유)와 직접적인 인과관계를 가질 때</b> 정의된다. (예: 저소득 가구일수록 본인의 소득을 의도적으로 숨겨 소득 변수에 결측이 발생하는 경우)</li>
+        </ul>
+
+        <div class="mermaid">
+        graph TD
+            A[결측치 발생!] --> B{결측의 원인이<br>다른 변수와 연관이 있는가?}
+            B -- 아니오 (우연히 누락됨) --> C[MCAR <br> 완전 무작위 결측]
+            B -- 예 --> D{결측된 '값 자체'가<br>결측의 원인인가?}
+            D -- 아니오 (다른 변수 때문임) --> E[MAR <br> 무작위 결측]
+            D -- 예 (내 값이 쪽팔려서 숨김) --> F[NMAR <br> 비 무작위 결측]
+            
+            style A fill:#ff9999,stroke:#333,stroke-width:2px
+            style C fill:#99ccff,stroke:#333,stroke-width:2px
+            style E fill:#99ff99,stroke:#333,stroke-width:2px
+            style F fill:#ffcc99,stroke:#333,stroke-width:2px
+        </div>
+
+        <div class="anime-box" style="border-color: #FF5522; background-color: #FFF2EE;">
+            <img src="이미지/다로나.png" alt="다로나" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF5522;">
+            <div>
+                <div class="anime-box-title" style="color: #DD4411;">💡 [효빈위키 기적의 대입법] 4호선 다로나의 결측치 3형제 완벽 요점 정리</div>
+                <p class="text-sm text-gray-800">이름만 들으면 헷갈리는 MCAR, MAR, NMAR을 러브라이브 니지가사키 스쿨 아이돌 동호회 멤버들의 신체검사 설문조사로 대입해 보죠!</p>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>MCAR (완전 무작위 결측):</b> 고토 히토리나 오사카 시즈쿠가 인적사항지를 들고 가다가 실수로 잉크를 쏟아 체중 칸이 알아볼 수 없게 지워졌습니다. 체중이 무겁든 가볍든, 학년이 무엇이든 상관없이 발생한 <b>순수 100% 우연의 일치</b>이므로 데이터 편향에 아무런 해가 없습니다!</li>
+                    <li><b>MAR (무작위 결측):</b> 통계적으로 스쿨 아이돌 동호회 중 '보컬 전공 멤버'들이 댄스팀 멤버들에 비해 체중 공개를 유독 꺼려해서 보컬 조에서 결측치가 대량 발생했습니다. 결측 원인이 '보컬(관측된 변수)'에 의존할 뿐, 본인의 실제 몸무게 수치와는 무관하므로 다른 변수로 보정 연산이 가능합니다.</li>
+                    <li><b>NMAR (비 무작위 결측):</b> 몸무게가 유독 많이 나가거나, 혹은 작중 자퇴 횟수가 많아 <del>(걸밴크 이세리 니나 등)</del> <b>그 감추고 싶은 수치 값 자체가 원인이 되어</b> 설문지에 빈칸으로 제출해 버린 경우입니다. 이 데이터를 파이썬에서 함부로 평균값 대체(`fillna(mean)`)하면 전체 통계가 완전히 박살 나므로 가장 정밀한 고급 대치 기법을 써야 합니다!</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 id="s-4">04 이상치 탐지 및 처리</h2>
+        <h3 id="s-4-1">1) 이상치 원인 및 문제점</h3>
+        <p>이상치(Outlier)란 전체 데이터의 일반적인 핵심 분포 패턴에서 비정상적으로 멀리 떨어진 극단적인 변동값을 의미한다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li><b>이상치 발생의 주요 원인:</b>
+                <ul class="list-circle pl-6 space-y-1 mt-1">
+                    <li><b>실험 오류(Experimental Error):</b> 실험 과정 중 기기 오작동이나 환경적 제약으로 발생한 모든 시스템 에러.</li>
+                    <li><b>의도적 이상치(Intentional Outlier):</b> 설문자의 자기 보고 측정에서 발생하는 왜곡. (예: 남성이 키 조사 시 의도적으로 실제보다 높게 기입 <del>(반올림은 국룰이라며...)</del>)</li>
+                    <li><b>자료 처리 오류(Data Processing Error):</b> 복수 개의 데이터셋 통합 및 추출 가공 전처리 과정에서 발생하는 연산 미스.</li>
+                    <li><b>표본 오류(Sampling Error):</b> 모집단을 대변하지 못하는 편향된 표본 추출 행위.</li>
+                    <li>위 항목 이외의 순수 자연 현상에 의해 발생하는 이상치는 <b>자연적 이상치(Natural Outlier)</b>로 정의한다.</li>
+                </ul>
+            </li>
+            <li><b>이상치의 치명적 문제점:</b> 평균($\mu$)과 분산($\sigma^2$) 등의 기초 통계적 대푯값을 강하게 왜곡시켜 추정·검정, 선형 회귀분석의 신뢰도를 바닥으로 떨어뜨린다. 단, <b>중앙값(Median)은 이상치에 의한 영향도가 거의 없다.</b> <a href="#fn2" id="rfn2" class="fn-link">[2]</a></li>
+        </ul>
+
+        <h3 id="s-4-2">2) 이상치 탐지 기법</h3>
+        <h4 class="text-[#00CCAA] font-bold">① 시각화를 통한 탐지 기법 (비모수적, 단변량/2변량 분석에 적합)</h4>
+        <ul class="list-disc pl-6 space-y-2 mb-4">
+            <li><b>상자 수염 그림 (Box Plot):</b> 데이터의 최소, 최대, 중앙값, 1사분위수(Q1, 25%), 3사분위수(Q3, 75%)를 상자 형태로 도식화한 필수적인 탐지 도구이다. 사분위범위인 $IQR = Q3 - Q1$을 정의한 후, 다음 하한선과 상한선을 벗어나는 모든 값을 이상치로 가차 없이 판별해 낸다.
+                <div class="bg-gray-100 p-3 rounded my-2 font-mono text-center">
+                    최댓값 경계선 (Upper Fence) = Q3 + (1.5 * IQR) <br>
+                    최솟값 경계선 (Lower Fence) = Q1 - (1.5 * IQR)
+                </div>
+            </li>
+            <li><b>줄기-잎 그림 (Stem and Leaf Diagram):</b> 데이터셋이 비교적 작을 때 각 데이터 포인트를 정수부인 '줄기'와 말단 자리수인 '잎'으로 분리 배치하여 일반적 분포 열에서 멀리 도망친 낙오자 이상치를 눈으로 검수한다.</li>
+            <li><b>산점도 (Scatter Plot):</b> 2차원 평면 좌표계 상에 두 변수의 매핑 구조를 점으로 뿌려서 기하학적으로 혼자 외롭게 격리되어 있는 점을 탐색한다.</li>
+        </ul>
+
+        <div class="mermaid">
+        graph TD
+            OUT((o 이상치)) ~~~ MAX[--- 최대값 한계선 ---]
+            MAX --- Q3[+---- Q3 75% ----+]
+            Q3 --- MED[|   중앙값 50%   |]
+            MED --- Q1[+---- Q1 25% ----+]
+            Q1 --- MIN[--- 최소값 한계선 ---]
+
+            style Q3 fill:#f9f9f9,stroke:#333,stroke-width:1px
+            style MED fill:#f9f9f9,stroke:#333,stroke-width:1px
+            style Q1 fill:#f9f9f9,stroke:#333,stroke-width:1px
+        </div>
+
+        <h4 class="text-[#00CCAA] font-bold">② Z-score 방법 (모수적, 단변량 정규분포 가정)</h4>
+        <p>각 데이터 포인트가 평균으로부터 표준편차 단위 기준으로 얼마나 멀리 떨어져 정렬해 있는지를 수치화한 지표이다.</p>
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-center font-mono">
+            $$z_i = \frac{x_i - \mu}{\sigma}$$
+        </div>
+        <p>통상적으로 데이터 정규화 후 Z-score의 절댓값 임계치($|z_i| > z_{thr}$)를 설정하며, 일반적인 통계학 실무에서는 <b>$\pm 3\sigma$(전체의 99.73%) 범위를 넘어가면 이상치</b>로 엄격하게 취급 및 도려낸다.</p>
+
+        <h4 class="text-[#00CCAA] font-bold">③ 밀도기반 클러스터링 (DBSCAN)</h4>
+        <p>비모수적 다변량 분석 기법으로 기하학적인 군집 간 밀도를 계산한다. 특정 탐색 반경(Epsilon) 내에 이웃하는 데이터 개수가 지정된 파라미터(MinPts) 미만이라 군집 형성에 최종 실패하고 멀리 고립된 포인트들을 <b>노이즈 및 이상치</b>로 단정 짓는다.</p>
+
+        <h4 class="text-[#00CCAA] font-bold">④ 고립 의사나무 방법 (Isolation Forest)</h4>
+        <p>머신러닝 의사결정나무(Decision Tree) 메커니즘을 기반으로, 전체 데이터를 무작위로 분할하여 정상 데이터와 격리시키는 방식을 취한다. 밀도가 높은 정상 데이터들은 나무의 리프 노드 깊숙이 파고들어야 간신히 고립되는 반면, <b>이상치 데이터는 데이터 분포의 외곽에 위치하기 때문에 스무고개 하듯 몇 번의 분할(적은 트리 깊이)만으로도 쉽고 빠르게 단독 고립</b>된다는 통계적 특성을 이용한다.</p>
+
+        <div class="mermaid">
+        graph TD
+            A[전체 데이터 셋] -->|분할 1~2번 만에 초고속 고립| B((빨간 점: 이상치 Isolation))
+            A -->|무작위 분할 축| C[나머지 밀집 데이터 뭉탱이]
+            C -->|수많은 분할 반복| D[트리 하부 깊숙이 진입]
+            D -->|많은 깊이 도달 후 고립| E((파란 점: 정상 데이터))
+            
+            style B fill:#ff9999,stroke:#333,stroke-width:2px
+            style E fill:#99ccff,stroke:#333,stroke-width:2px
+        </div>
+
+        <div class="anime-box" style="border-color: #881188; background-color: #FDF5FD;">
+            <img src="이미지/라세나.png" alt="라세나" class="anime-img" onerror="this.style.display='none'" style="border-color: #881188;">
+            <div>
+                <div class="anime-box-title" style="color: #881188;">🎸 [효빈위키 요약 타임] 6호선 라세나의 머신러닝 이상치 탐색 비법 전수</div>
+                <p class="text-sm text-gray-800">머신러닝 파트에서 귀에 못이 박히도록 마주할 DBSCAN과 Isolation Forest의 원리를 명쾌하게 뚫어드릴게요!</p>
+                <ul class="list-disc pl-5 text-sm space-y-1 mt-2 text-gray-800">
+                    <li><b>DBSCAN (밀도기반 아싸 색출법):</b> 효빈광역시 야외 라이브 콘서트장에 모인 관객들의 위경도 좌표 데이터를 VS Code 지도로 시각화했습니다. 다들 무대 앞에 바글바글 뭉쳐있는데(밀도 충족), 저 멀리 태평양 한가운데나 산꼭대기에 덩그러니 좌표 찍힌 이상한 관객(?)이 보입니다. 밀도 탐색 반경 내에 친구가 아무도 없는 이 낙오자를 노이즈 이상치로 컷하는 것입니다.</li>
+                    <li><b>Isolation Forest (스무고개 고립법):</b> 결속밴드 멤버들의 일주일 연습량 데이터에서 봇치(고토 히토리)의 연습 시간은 0에 수렴하는 기행 이상치입니다. 의사결정나무 스무고개를 할 때 "너 연습시간 10시간 미만이냐?" 한 번만 가볍게 가위질해도 봇치의 이상치 데이터는 단 한 번 만에 혼자 뚝 떨어져 격리(Isolation)됩니다. 나머지 정상 멤버들은 여러 번 쪼개야 간신히 고립되는 성질과 완전 대비되는 천재적인 알고리즘이랍니다!</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 id="s-5">05 합격을 다지는 예상문제</h2>
+        <div class="exam-box">
+            <div class="exam-title">✔️ 개념 체크 및 기출 예상 풀이</div>
+            
+            <p class="font-bold">Q1. 데이터의 정의와 관련된 용어 중, 모집단 또는 표본에서 얻어낸 아무런 인위적 가공을 거치지 않은 '최초의 원초적 자료'를 가리키는 용어로 올바른 것은?</p>
+            <p class="pl-4 text-sm mt-1">
+                ① 단위 (Unit)<br>
+                ② 관측값 (Observation)<br>
+                ③ 변수 (Variable)<br>
+                <b>④ 원자료 (Raw Data)</b>
+            </p>
+            <p class="text-xs text-gray-500 mt-1 pl-4"><b>[정답 및 해설] ④</b> 원자료(Raw Data)는 분석을 위해 요약, 정제, 필터링 등 어떠한 변환도 가하지 않은 표본 조사 최초의 순수 데이터를 뜻합니다.</p>
+            
+            <hr class="border-red-200 my-4">
+
+            <p class="font-bold">Q2. 다음 중 정량적 수치 자료에 해당하며, 데이터 간에 산술적인 간격의 의미는 지니고 있으나 비례 관계를 성립시킬 수 있는 절대적 원점(0)이 존재하지 않는 데이터 종류는 무엇인가?</p>
+            <p class="pl-4 text-sm mt-1">
+                ① 명목자료 (Nominal Data)<br>
+                ② 서열자료 (Ordinal Data)<br>
+                <b>③ 구간자료 (Interval Data)</b><br>
+                ④ 비율자료 (Ratio Data)
+            </p>
+            <p class="text-xs text-gray-500 mt-1 pl-4"><b>[정답 및 해설] ③</b> 구간자료(Interval Data)는 덧셈과 뺄셈은 가능하지만 절대영점이 없어 곱셈, 나눗셈 같은 비율 연산이 불가능한 척도입니다. 대표적으로 '온도'가 있습니다.</p>
+
+            <hr class="border-red-200 my-4">
+
+            <p class="font-bold">Q3. 질적자료(범주형 자료)에 관한 성격으로 가장 올바르게 서술된 문항을 고르시오.</p>
+            <p class="pl-4 text-sm mt-1">
+                ① 정량적 자료라고 부르며 수치 자체가 내포하는 물리적 크기에 의미를 강하게 부여한다.<br>
+                <b>② 서열자료는 명목자료와 유사한 속성을 띄나, 기호나 수치 간에 명확한 계급과 순위가 성립한다.</b><br>
+                ③ 명목자료는 측정 대상이 가지는 범주나 성격을 수치 혹은 기호 단위로 분류해낼 수 없는 데이터 형태이다.<br>
+                ④ 완벽한 정성적 성격만을 띄기 때문에 구조화된 테이블 형태로 정형화하는 것이 원천적으로 불가능하다.
+            </p>
+            <p class="text-xs text-gray-500 mt-1 pl-4"><b>[정답 및 해설] ②</b> 서열자료는 범주형에 속하면서 크고 작음의 순서 관계가 명확한 자료입니다. 명목자료는 분류 기호 부여가 가능하므로 ③은 틀렸으며, 질적자료도 정형 데이터 형태로 얼마든지 관리할 수 있으므로 ④도 오답입니다.</p>
+
+            <hr class="border-red-200 my-4">
+
+            <p class="font-bold">Q4. 수집된 대규모 원시 빅데이터를 대상으로 수행하는 데이터 정제(Data Cleansing) 활동에 관한 설명 중 가장 옳지 않은 진술은?</p>
+            <p class="pl-4 text-sm mt-1">
+                ① 수집 완료된 데이터를 대상으로 분석 알고리즘에 필수적인 요소들을 추출 및 연계 결합하는 과정이다.<br>
+                ② 전처리를 거치지 않은 가비지 데이터는 분석 모델의 연산 오류를 유발하고 최종 신뢰성을 심각하게 무너뜨린다.<br>
+                <b>③ 원본 데이터 내부 고유의 유효성을 훼손 없이 보존하기 위해서, 정제 단계에서 데이터 변환 작업은 가급적 일절 배제한다.</b><br>
+                ④ 이종 시스템 간 분석을 유도하기 위해 원시 비정형 데이터를 구조화하고 레거시 데이터와 통합하는 ETL 작업이 동반된다.
+            </p>
+            <p class="text-xs text-gray-500 mt-1 pl-4"><b>[정답 및 해설] ③</b> 수집된 원시 데이터를 분석 기법이나 소프트웨어 규격에 맞게 정규화, 일반화, 평활화 등 입맛대로 형태를 변환(Transformation)하고 가공하는 노가다가 전처리 정제 활동의 본질이자 핵심 요체입니다.</p>
+        </div>
+
+        <div class="wiki-footnotes">
+            <h4>각주</h4>
+            <ul>
+                <li id="fn1"><a href="#rfn1" class="text-[var(--wiki-link)] font-bold mr-1">[1]</a> 데이터 유형 파악 미스로 명목형 서열 변수에 선형 회귀 모형을 때려 박으면 수식 오류와 결과 왜곡의 대재앙이 도래한다.</li>
+                <li id="fn2"><a href="#rfn2" class="text-[var(--wiki-link)] font-bold mr-1">[2]</a> 중앙값(Median)은 데이터를 크기순으로 나열했을 때 한가운데 서 있는 물리적인 위치값이므로 양 끝단에 초거대 이상치가 붙어도 미동조차 하지 않는 강력한 강건성(Robust)을 지닌다.</li>
+            </ul>
+        </div>
+    </div>
+
+    
+        <!-- 나무위키식 하단 내비게이션 틀 시작 -->
+        <div class="wiki-nav-box" id="bigbunNav">
+            <div class="wiki-nav-header">
+                📊 빅데이터분석기사 필기 전체 문서 목록
+            </div>
+            <div class="wiki-nav-toggle" onclick="document.getElementById('bigbunNavContent').classList.toggle('active')">
+                [ 펼치기 · 접기 ]
+            </div>
+            <div class="wiki-nav-content" id="bigbunNavContent">
+                <table class="wiki-nav-table">
+                    <tbody>
+                        <tr>
+                            <th class="bg-nav-red" style="width: 18%;">제1과목<br>빅데이터 분석 기획</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기1-1.html">빅분기1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-1.html">빅분기1-2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-2.html">빅분기1-2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-3.html">빅분기1-2-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-1.html">빅분기1-3-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-2.html">빅분기1-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-3.html">빅분기1-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-4.html">빅분기1-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-1.html">빅분기1-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-2.html">빅분기1-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-1.html">빅분기1-5-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-2.html">빅분기1-5-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-6.html">빅분기1-6</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제2과목<br>빅데이터 탐색</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기2-1.html">빅분기2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-2.html">빅분기2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-3.html">빅분기2-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-red">제3과목<br>빅데이터 모델링</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-1.html">빅분기3-1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-2.html">빅분기3-1-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-3.html">빅분기3-1-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-2.html">빅분기3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-2.html">빅분기3-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-3.html">빅분기3-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-4.html">빅분기3-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-1.html">빅분기3-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-2.html">빅분기3-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-3.html">빅분기3-4-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제4과목<br>빅데이터 결과 해석</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기4-1.html">빅분기4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-2.html">빅분기4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-3.html">빅분기4-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-4.html">빅분기4-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-5.html">빅분기4-5</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-6.html">빅분기4-6</a></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 나무위키식 하단 내비게이션 틀 끝 -->
+
+    <footer class="wiki-footer p-6 text-center border-t border-[var(--wiki-border)] bg-[var(--wiki-footer-bg)] text-[var(--wiki-footer-text)]">
+        <div class="font-bold text-sm">
+            이 저작물은 <span class="text-[var(--wiki-text)]">효빈위키</span> 독점 규정에 따라 이용할 수 있습니다.<br>
+            ※ 본 문서는 빅데이터분석기사 필기 핵심 전처리 요약본의 단독 HTML 양식입니다.
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'wiki-tooltip';
+            document.body.appendChild(tooltip);
+
+            const fnLinks = document.querySelectorAll('a.fn-link');
+            
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        const childNodes = Array.from(targetElement.childNodes);
+                        const tooltipContent = childNodes
+                            .filter(node => node.nodeName !== 'A')
+                            .map(node => node.nodeType === Node.TEXT_NODE ? node.textContent : node.outerHTML)
+                            .join('')
+                            .trim();
+                        
+                        tooltip.innerHTML = tooltipContent;
+                        tooltip.classList.add('visible');
+                        
+                        const rect = this.getBoundingClientRect();
+                        let topPos = rect.bottom + window.scrollY + 8;
+                        let leftPos = rect.left + window.scrollX;
+                        
+                        tooltip.style.display = 'block';
+                        if (leftPos + tooltip.offsetWidth > window.innerWidth) {
+                            leftPos = window.innerWidth - tooltip.offsetWidth - 20;
+                        }
+                        
+                        tooltip.style.left = leftPos + 'px';
+                        tooltip.style.top = topPos + 'px';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    tooltip.classList.remove('visible');
+                });
+            });
+        });
+    </script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

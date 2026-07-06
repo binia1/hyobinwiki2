@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>임의의 문서 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-box-bg: #ffffff;
+        }
+
+        body.dark-mode {
+            --wiki-main: #8888CC; 
+            --wiki-border: #444;
+            --wiki-bg: #1f2023;
+            --wiki-text: #ddd;
+            --wiki-gray-bg: #2a2d30;
+            --wiki-link: #6699ff;
+            --wiki-box-bg: #2a2d30;
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-gray-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            margin: 0; 
+            transition: background-color 0.3s, color 0.3s; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 로고 및 네비게이션 (최소화 버전) */
+        nav { background-color: #7777AA; color: white; padding: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: #7777AA; border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-right: 8px; }
+        .wiki-link-white { color: white; text-decoration: none; font-weight: bold; }
+        .wiki-link-white:hover { text-decoration: underline; }
+
+        /* 중앙 리다이렉트 박스 */
+        .redirect-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .redirect-box {
+            background-color: var(--wiki-bg);
+            border: 1px solid var(--wiki-border);
+            border-radius: 12px;
+            padding: 50px 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .dice-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: spin 1s infinite linear, bounce 1s infinite alternate;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-15px); }
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--wiki-main);
+        }
+
+        .sub-text {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 30px;
+            word-break: keep-all;
+        }
+
+        .target-doc-name {
+            display: inline-block;
+            background: var(--wiki-gray-bg);
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 1px solid var(--wiki-border);
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--wiki-text);
+            margin-top: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .manual-btn {
+            display: none; /* 실패 시에만 표시 */
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: var(--wiki-main);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .manual-btn:hover { opacity: 0.9; }
+
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body id="body">
+
+    <!-- 상단 네비게이션 -->
+    <nav>
+        <div style="display: flex; align-items: center;">
+            <div class="nav-logo-box">H</div>
+            <a href="index.html" class="wiki-link-white text-xl">HyobinWiki</a>
+        </div>
+        <div style="font-size: 0.85rem;">
+            <a href="index.html" class="wiki-link-white">대문으로 돌아가기</a>
+        </div>
+    </nav>
+
+    <!-- 중앙 리다이렉트 영역 -->
+    <div class="redirect-container">
+        <div class="redirect-box">
+            <div class="dice-icon">🎲</div>
+            <div class="loading-text">무작위 문서로 이동 중입니다...</div>
+            <div class="sub-text">효빈위키의 방대한 데이터베이스에서 문서를 하나 추첨하고 있습니다. 잠시만 기다려주세요.</div>
+            
+            <div id="targetDoc" class="target-doc-name">문서 탐색 중...</div>
+            
+            <a href="#" id="manualLink" class="manual-btn">이동하지 않는다면 여기를 클릭하세요</a>
+        </div>
+    </div>
+
+    <!-- 인덱스 데이터 연동 -->
+    <script src="assets/wiki_index.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            // 1. 다크모드 적용
+            if (localStorage.getItem('hb_dark_mode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+
+            // 2. 실제 wiki_index.js 데이터에서 무작위 문서 하나 뽑기
+            let selectedTitle = "효빈광역시"; // 기본값
+            let targetUrl = "효빈광역시.html";
+
+            // window.HB_WIKI_PAGES 배열이 로드되었다면 여기서 찐 랜덤 추첨
+            if (window.HB_WIKI_PAGES && window.HB_WIKI_PAGES.length > 0) {
+                const randomIndex = Math.floor(Math.random() * window.HB_WIKI_PAGES.length);
+                const selectedPage = window.HB_WIKI_PAGES[randomIndex];
+                
+                selectedTitle = selectedPage.title;
+                targetUrl = selectedPage.href;
+            } else {
+                console.warn("wiki_index.js 파일을 불러오지 못했습니다. 기본 문서로 이동합니다.");
+            }
+
+            // 3. 시각적 연출을 위한 타이머 (약 0.8초 후 이동)
+            const targetDocEl = document.getElementById('targetDoc');
+            const manualLinkEl = document.getElementById('manualLink');
+
+            setTimeout(() => {
+                // 추첨된 문서 이름 표시
+                targetDocEl.innerText = `[ ${selectedTitle} ] 문서로 이동!`;
+                targetDocEl.style.opacity = '1';
+                
+                // 만약 자동 이동이 브라우저에 의해 차단될 경우를 대비한 수동 링크 세팅
+                manualLinkEl.href = targetUrl;
+                
+                // 실제 이동
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 400); // 이름 보여주고 0.4초 뒤 이동
+
+                // 3초가 지나도 안 넘어갔다면 수동 버튼 표시 (팝업 차단 대비)
+                setTimeout(() => {
+                    manualLinkEl.style.display = 'inline-block';
+                    document.querySelector('.dice-icon').style.animation = 'none'; // 애니메이션 정지
+                }, 3000);
+
+            }, 800);
+        });
+    </script>
+
+    <script src="secret_search.js"></script>
+
+    <script src="assets/hb_wiki_core.js?v=2"></script>
+
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

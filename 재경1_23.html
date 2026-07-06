@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 23. 리스 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #0077DD; /* 1호선 메인 컬러 */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #0077DD;
+            --wiki-table-header-text: #ffffff;
+            --wiki-alert-border: #a2a9b1;
+            --wiki-alert-bg: #f8f9fa;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 3.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 2.5rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.15rem !important; font-weight: 700; margin-top: 1.5rem; margin-bottom: 1rem; color: #333; border-bottom: 1px dashed #ccc; padding-bottom: 5px; }
+
+        /* 위키 요소 */
+        del { color: #7f7f7f; text-decoration: line-through; cursor: help; }
+        .wiki-drip { color: #aaa; font-size: 0.85em; }
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-quote { background-color: #f8f9fa; border-left: 4px solid var(--wiki-main); padding: 15px; margin: 15px 0; font-style: italic; color: #555; position: relative; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 350px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 30px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
+        .toc ul li { margin-bottom: 6px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+
+        /* 테이블 스타일 */
+        table.wiki-table-custom { border-collapse: collapse !important; width: 100%; margin: 20px 0; border: 1px solid #ddd !important; font-size: 0.95rem; }
+        table.wiki-table-custom th, table.wiki-table-custom td { border: 1px solid #ddd !important; padding: 12px; vertical-align: middle; }
+        table.wiki-table-custom th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; text-align: center; }
+
+        /* 특수 박스 (킬러, 예시, RP, 텍스트분석) */
+        .killer-box { background: #fff0f0; border: 2px solid #e74c3c; padding: 18px; margin: 25px 0; border-radius: 5px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .killer-box::before { content: "⚠️ 수험생 멘탈 분쇄기 경보"; display: block; font-weight: bold; color: #e74c3c; margin-bottom: 10px; font-size: 1.1em; }
+        
+        .example-box { background: #f0f8ff; border: 2px solid #3498db; padding: 18px; margin: 25px 0; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .example-box::before { content: "💡 효빈시 관련 공식 일화 (Official)"; display: block; font-weight: bold; color: #2980b9; margin-bottom: 10px; font-size: 1.1em; }
+
+        .rp-box { background: #fcf3cf; border: 2px solid #f1c40f; padding: 18px; margin: 25px 0; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .rp-box::before { content: "💬 대환장 참교육 시나리오"; display: block; font-weight: bold; color: #d68910; margin-bottom: 10px; font-size: 1.1em; }
+
+        .text-analysis-box { background: #fdfefe; border: 2px dashed #7f8c8d; padding: 18px; margin: 15px 0 25px 0; border-radius: 5px; box-shadow: inset 0 0 10px rgba(0,0,0,0.02); }
+        .text-analysis-box::before { content: "📊 [첨부 이미지 정밀 분석 텍스트]"; display: block; font-weight: bold; color: #34495e; margin-bottom: 10px; font-size: 1.05em; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+
+        /* 이미지 컨테이너 */
+        .img-container { text-align: center; margin: 25px 0 5px 0; background: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 8px 8px 0 0; border-bottom: none; }
+        .img-container img { max-width: 100%; height: auto; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); display: block; margin: 0 auto; }
+        .img-caption { margin-top: 12px; font-weight: bold; color: #444; font-size: 0.95rem; }
+
+        /* 둘러보기 틀 */
+        .nw-box { border: 2px solid; margin-top: 40px; margin-bottom: 30px; border-radius: 4px; overflow: hidden; font-size: 0.9rem; background: white; }
+        .nw-box summary { padding: 12px; text-align: center; font-weight: bold; cursor: pointer; display: block; }
+        .nw-tbl { width: 100%; border-collapse: collapse; text-align: center; }
+        .nw-tbl th, .nw-tbl td { border: 1px solid #ccc; padding: 10px; vertical-align: middle; }
+        .nw-th-col { font-weight: bold; background-color: #f9f9f9; }
+        .nw-link { color: inherit; text-decoration: none; display: block; font-weight: bold; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <!-- 상단 내비게이션 -->
+<nav class="bg-[#0077DD] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+        <span class="font-bold text-xl">HyobinWiki</span>
+    </div>
+    <div class="flex items-center gap-2">
+        <input type="text" id="searchInput" placeholder="문서 검색" class="p-1.5 px-3 rounded text-black text-sm w-48 focus:outline-none shadow-inner">
+        
+        <button type="button" onclick="검색실행함수()" class="bg-[#0055AA] p-1.5 px-4 rounded text-sm shadow-inner font-bold">검색</button>
+    </div>
+</nav>
+
+    <div class="wiki-container shadow-lg">
+        <!-- 문서 제목 -->
+        <div class="title-area">
+            <div class="txt-lvl-1">Chapter 23. 리스</div>
+            <div class="flex gap-2 mb-1">
+                <button style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc; border-radius:4px; padding:6px 12px; font-size:14px; font-weight:bold; cursor:pointer;">토론</button>
+                <button style="background-color:#0275d8; color:#ffffff; border:1px solid #0275d8; border-radius:4px; padding:6px 12px; font-size:14px; font-weight:bold; cursor:pointer;">편집</button>
+                <button style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc; border-radius:4px; padding:6px 12px; font-size:14px; font-weight:bold; cursor:pointer;">역사</button>
+            </div>
+        </div>
+
+        <div class="wiki-quote">
+            "자본주의의 꽃이자 기업 자산 조달의 궁극기. 리스의 마법을 깨우친 자만이 <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> 핵심 상권의 진정한 건물주로 거듭날 수 있다. 사용권자산과 리스부채를 완벽히 통제하여 공기업 프리패스의 길을 걷자. 렌터카 빌리듯 대충 비용 처리하다가는 <a href="효빈공단.html" class="wiki-link">효빈공단</a> 구석에서 영원히 장부나 뒤적이는 신세가 될 것이다."
+        </div>
+
+        <!-- 목차 -->
+        <div class="toc">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">리스의 정의 및 기본 개념</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">리스의 효익 및 한계</a></li>
+                <li>3. <a href="#s-3" class="wiki-link">리스의 핵심 용어 정리</a></li>
+                <li>4. <a href="#s-4" class="wiki-link">리스료 및 관련 지표</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">리스이용자의 회계처리 (완전 세부 정리)</a></li>
+                <li>6. <a href="#s-6" class="wiki-link">리스제공자의 회계처리 (초정밀 정리)</a></li>
+                <li>7. <a href="#s-7" class="wiki-link">공시사항</a></li>
+            </ul>
+        </div>
+        <div class="clear-both"></div>
+
+        <h2 id="s-1">1. 리스의 정의 및 기본 개념</h2>
+        <p>📘 I. 리스거래의 기초개념 및 용어 – 세부 완전 정리</p>
+
+        <h4>(1) 리스의 정의 (Definition of Lease)</h4>
+        <table class="wiki-table-custom">
+            <tr>
+                <th style="width: 25%;">항목</th>
+                <th>설명</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-blue-700 bg-blue-50">리스(lease)의 정의</td>
+                <td class="bg-blue-50">
+                    대가와 교환하여 <strong>기초자산의 사용권을 일정 기간 이전</strong>하는 계약 또는 계약의 일부.<br>
+                    리스이용자가 자산에 대해 <strong>실질적으로 통제를 행사할 수 있는 경우를 포함</strong>한다.<br>
+                    <span class="text-sm">물건의 소유자 등이 임대료의 지불을 받는 것을 조건으로 타인에게 그 물건을 사용하도록 하는 계약으로 민법상의 임대차계약을 포함하는 개념이나, 최근의 리스의 개념은 주로 기계설비 등의 유형자산을 구입하는데 필요한 <strong>자금조달의 금융적 기능을 강조하는 형태</strong>로 진화되었다. 즉, 명목상으로는 임대차계약을 맺고 있으나 <strong>실질적 물적 금융의 성격</strong>을 보유한다.</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">리스제공자(lessor)</td>
+                <td>자산을 제공하는 주체 (소유자)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">리스이용자(lessee)</td>
+                <td>자산의 사용권을 이전받는 주체 (이용자)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">기초자산</td>
+                <td>리스의 대상이 되는 자산 (기계, 건물, 차량 등)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">사용권(right to use)</td>
+                <td>특정 자산의 배타적 사용과 통제 권리</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">기간</td>
+                <td>계약에 명시된 사용권 이전 기간</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">대가</td>
+                <td>리스이용자가 리스제공자에게 지급하는 리스료</td>
+            </tr>
+        </table>
+        
+        <p class="font-bold text-red-600 mb-4 bg-red-50 p-4 border border-red-200 rounded leading-relaxed shadow-sm">
+            📌 리스는 실질적으로 자산조달의 수단으로 해석되며, 소유권은 이전되지 않아도 사용에 대한 권리와 책임이 전가된 것으로 본다. K-IFRS 제1116호 '리스'에서 언급된 리스의 정의는 대가와 교환하여 자산(기초자산)의 사용권을 일정 기간 이전하는 계약이나 계약의 일부를 말한다. 이는 포괄적인 것으로 여신전문금융업법상의 시설대여거래뿐 아니라 이와 유사한 렌탈거래 및 임대차 거래를 모두 포함하는 계약이다.
+        </p>
+
+        <!-- 이미지 1: 리스거래의 절차 -->
+        <div class="img-container">
+            <img src="이미지/image (2).png" alt="리스거래의 절차" onerror="this.onerror=null; this.src='https://placehold.co/800x300/0077DD/FFFFFF?text=Lease+Transaction+Procedure';">
+            <div class="img-caption">▲ 리스거래의 절차 (3자 간의 관계)</div>
+        </div>
+        <div class="text-analysis-box mt-0 rounded-t-none border-t-0">
+            <p class="mb-2 text-gray-800">해당 이미지는 리스거래를 구성하는 3자(자산의 제조판매사, 리스제공자, 리스이용자) 간의 현금 및 물건의 흐름을 6단계로 명확히 보여주고 있습니다. 실질적인 금융 대출과 물건 구매가 어떻게 결합되는지 파악하는 핵심 도해입니다.</p>
+            <table class="wiki-table-custom mt-2 mb-0 bg-white">
+                <tr>
+                    <th colspan="3" class="bg-gray-100 text-gray-800">리스거래 6단계 흐름 상세 분석</th>
+                </tr>
+                <tr>
+                    <td class="font-bold text-center w-1/4">① 물건 선정</td>
+                    <td><strong>리스이용자 ➔ 자산의 제조판매사</strong></td>
+                    <td class="text-sm">리스이용자가 사용할 기계나 차량 등 기초자산을 직접 고릅니다.</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-center">② 리스계약 체결</td>
+                    <td><strong>리스이용자 ↔ 리스제공자</strong></td>
+                    <td class="text-sm">물건을 정한 후, 캐피탈사 등 리스제공자와 금융 약정(리스계약)을 맺습니다.</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-center">③ 물건 발주</td>
+                    <td><strong>리스제공자 ➔ 자산의 제조판매사</strong></td>
+                    <td class="text-sm">계약을 맺은 리스제공자가 제조판매사에게 해당 물건을 공식적으로 주문합니다.</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-center">④ 물건 납품</td>
+                    <td><strong>자산의 제조판매사 ➔ 리스이용자</strong></td>
+                    <td class="text-sm">물건은 리스제공자를 거치지 않고 실제 사용자인 리스이용자에게 직배송됩니다.</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-center text-red-600">⑤ 물건대금 지급</td>
+                    <td><strong>리스제공자 ➔ 자산의 제조판매사</strong></td>
+                    <td class="text-sm">물건값(거액)은 리스제공자가 제조판매사에게 일시불로 대신 결제합니다. (금융의 핵심)</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-center text-blue-700">⑥ 리스료 지급</td>
+                    <td><strong>리스이용자 ➔ 리스제공자</strong></td>
+                    <td class="text-sm">리스이용자는 대신 대금을 내준 리스제공자에게 매월 원금과 이자가 섞인 리스료를 분할 납부합니다.</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="rp-box">
+            <p><strong>[참교육자 3호선 박라미 vs 빌런 뱅드림 호노카 (리스의 진짜 의미)]</strong></p>
+            <p><strong><a href="코사카 호노카.html" class="wiki-link" style="color: #FF5522;">호노카</a>:</strong> "우와! 리스? 그거 그냥 정수기나 렌터카 한 달 빌리는 거랑 똑같은 거 아냐?! 빌려 쓰다가 질리면 반납하면 끝이잖아! 완전 꿀이네!"</p>
+            <p><strong><a href="박라미.html" class="wiki-link" style="color: #FFCC11;">박라미</a>:</strong> "호노카... 방금 '리스거래 6단계' 표 못 봤어? 네가 야마부키 베이커리에 대형 오븐을 살 돈이 없어서 캐피탈사(리스제공자)한테 돈을 빌리는 대신, 캐피탈사가 빵 오븐을 일시불로 대신 사서(⑤) 너한테 장기간 빌려주고 리스료를 회수(⑥)하는 <strong>'물적 금융'</strong>의 성격을 가지고 있는 게 현대의 리스야! 실질적으로는 거액의 자금을 은행에서 조달한 것과 완벽히 동일한 효과를 내지. 단순 렌탈이라고 착각하고 장부를 허술하게 썼다간 빵집 문 닫게 될 거야."</p>
+        </div>
+
+        <div class="killer-box">
+            <h4 style="margin-top:0; color:#e74c3c;">⚠️ 2. 리스 기준의 적용 범위 (아래 제외 모든 것) - 100% 암기 필수</h4>
+            <p>모든 임대차가 리스 기준서(K-IFRS 제1116호)를 적용받는 것은 아니다. 다음 항목들은 <strong>적용 범위에서 완벽히 제외</strong>된다.</p>
+            <ul class="list-disc pl-5 mt-2 space-y-2 font-bold text-gray-800">
+                <li>광물, 석유, 천연가스, 이와 비슷한 비재생 천연자원을 탐사하거나 사용하기 위한 리스</li>
+                <li>리스이용자가 보유하는 기업회계기준서 제1041호 '농림어업'의 적용범위에 포함되는 생물자산 리스</li>
+                <li>기업회계기준해석서 제2112호 '민간투자사업'의 적용범위에 포함되는 민간투자사업</li>
+                <li>리스제공자가 부여하는 기업회계기준서 제1115호 '고객과의 계약에서 생기는 수익'의 적용범위에 포함되는 지적재산 라이선스</li>
+                <li>기업회계기준서 제1038호 '무형자산'의 적용범위에 포함되는, 라이선싱 계약에 따라 영화필름, 비디오 녹화물, 희곡, 원고, 특허권, 저작권과 같은 항목에 대하여 리스이용자가 보유하는 권리</li>
+            </ul>
+        </div>
+
+        <div class="rp-box">
+            <p><strong>[참교육자 5호선 미소하 vs 빌런 4호선 다로나 (적용 예외의 늪)]</strong></p>
+            <p><strong><a href="다로나.html" class="wiki-link" style="color: #FF5522;">다로나</a>:</strong> "반짝반짝 두근두근! 내가 <a href="수구.html" class="wiki-link">수구</a>역 뒷산에서 금을 캘 수 있는 '광산 탐사권'을 10년짜리 리스로 빌려왔어! 당장 장부에 사용권자산 팍팍 잡아버려야지!!"</p>
+            <p><strong><a href="미소하.html" class="wiki-link" style="color: #EE0022;">미소하</a>:</strong> "(이마를 짚으며) 하아... 다로나, 광물이나 천연가스 같은 비재생 천연자원을 탐사하는 리스, 그리고 영화필름이나 저작권 같은 무형자산 라이선스는 <strong>1116호 리스 기준서 적용 범위에서 원천적으로 제외</strong>된다고 방금 표에 적혀 있잖아! 무작정 다 리스부채로 잡아버리면 재무제표가 누더기가 된다고! 너 그러다 <a href="효빈공단.html" class="wiki-link">효빈공단</a>에서 쫓겨난다?"</p>
+        </div>
+
+        <h2 id="s-2">2. 리스의 효익 및 한계</h2>
+        <h4>(2) 리스의 효익과 한계</h4>
+        <table class="wiki-table-custom">
+            <tr>
+                <th style="width: 20%;">구분</th>
+                <th>항목</th>
+                <th>설명</th>
+            </tr>
+            <tr>
+                <td rowspan="3" class="font-bold text-center text-blue-700 bg-blue-50">① 효익 (장점)</td>
+                <td class="font-bold bg-blue-50">ㄱ. 자산취득자금의 차입효과</td>
+                <td class="bg-blue-50">자산구입대금을 <strong>차입한 것과 동일한 효과</strong>가 있다. (초기 대규모 자금 불필요)</td>
+            </tr>
+            <tr>
+                <td class="font-bold bg-blue-50">ㄴ. 진부화 위험의 회피</td>
+                <td class="bg-blue-50">리스기간 종료 시 리스자산의 반환, 구입, 재리스 중에서 선택할 수 있으므로 <strong>기술혁신에 따른 진부화의 위험이 감소</strong>된다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold bg-blue-50">ㄷ. 편리한 자금관리</td>
+                <td class="bg-blue-50">자산구입대금을 차입금으로 조달하면 원금을 상환하는 부담이 있으나, 리스의 경우에는 <strong>일정 리스료만 정기적으로 지급</strong>하면 되므로 자금의 관리가 간편하다.</td>
+            </tr>
+            <tr>
+                <td rowspan="2" class="font-bold text-center text-red-600 bg-red-50">② 한계 (단점)</td>
+                <td class="font-bold bg-red-50">ㄱ. 고액의 리스료</td>
+                <td class="bg-red-50">리스료가 <strong>감가상각비와 자금코스트를 합한 것보다 고액</strong>이다. (리스회사의 마진과 수수료 포함)</td>
+            </tr>
+            <tr>
+                <td class="font-bold bg-red-50">ㄴ. 실질적 이용의 한계</td>
+                <td class="bg-red-50">리스제공자에 귀속된 소유권으로 인하여 리스이용자는 <strong>자산처분, 용도변경, 중도해약 등이 사실상 불가능</strong>하다.</td>
+            </tr>
+        </table>
+
+        <div class="example-box">
+            <p class="mb-2"><strong>[효빈시장 박효빈의 시내버스 진부화 위험 회피 전략]</strong></p>
+            <p>1996년생 남성이자 <a href="효빈대학교.html" class="wiki-link">효빈대학교</a> 회계학과 평점 4점대 A+ 폭격기로 명성을 날린 절대 권력자 <strong><a href="박효빈.html" class="wiki-link">박효빈</a> 시장</strong> (※ 사용자 2003년생 잼민이와는 차원이 다른 위대한 인물이다). 그는 효빈광역시의 3세대 시내버스 '스타더스트 작전'의 8가지 컬러(Vivid Orange, Sky Blue 등) 버스들을 전면 도입할 때, 전액 시청 예산으로 일시불 구매하지 않고 <strong>리스(Lease)</strong>를 적극 활용했다. <br>
+            그는 시의원들을 모아놓고 자기가 가장 좋아하는 두툼한 고기와 빵을 썰며 이렇게 선언했다. <em>"전기차와 수소차 기술이 하루가 다르게 발전하는데, 시 예산으로 버스를 통째로 사버리면 5년 뒤 구형 배터리가 탑재된 버스들은 똥값이 되어 고철 덩어리(진부화)가 된다! 고액의 리스료라는 한계점은 있지만, 자산취득 차입효과를 극대화하고 미래의 기술 진부화 위험을 캐피탈사(리스회사)에 전부 전가해라!"</em></p>
+        </div>
+
+        <h2 id="s-3">3. 리스의 핵심 용어 정리</h2>
+        <h4>Ⅲ. 리스의 핵심 용어 정리</h4>
+        <table class="wiki-table-custom">
+            <tr>
+                <th style="width: 25%;">용어</th>
+                <th>정의 및 회계처리 적용 (원문 100%)</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-purple-700 bg-purple-50">✅ 1. 리스약정일<br>(lease inception date)</td>
+                <td class="bg-purple-50">
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>리스계약이 성립되는 날.</li>
+                        <li><strong>‘계약 체결일’과 ‘주요 조건이 합의된 날’ 중 빠른 날</strong>을 말함.</li>
+                        <li><strong class="text-purple-800">리스약정일을 기준으로 운용리스나 금융리스로 분류한다.</strong></li>
+                        <li>리스변경이 있는 경우에만 분류가 다시 판단된다.</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-green-700 bg-green-50">✅ 2. 리스개시일<br>(lease commencement date)</td>
+                <td class="bg-green-50">
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li><strong>리스제공자가 리스이용자에게 기초자산을 사용할 수 있게 하는 날.</strong></li>
+                        <li>기초자산의 사용권이 실제 이전되는 날짜.</li>
+                        <li>회계상 <strong>사용권자산과 리스부채를 최초 인식하는 시점</strong>.</li>
+                        <li>리스의 최초인식일(즉, 리스에 따른 자산, 부채, 수익 및 비용을 적절하게 인식하는 날). 리스이용자는 이 시점부터 사용권자산과 리스부채를 인식함.</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center bg-gray-50">✅ 3. 리스기간<br>(lease term)</td>
+                <td class="bg-gray-50">
+                    리스이용자가 자산을 사용할 수 있는 <strong>해지 불가능한 기간</strong>.<br>
+                    <ul class="list-disc pl-5 mt-2 space-y-1 text-sm font-bold">
+                        <li>리스이용자가 리스 연장선택권을 행사할 것이 <strong>상당히 확실한 경우</strong>에 그 선택권의 대상 기간을 포함.</li>
+                        <li>리스이용자가 리스 종료선택권을 행사하지 않을 것이 <strong>상당히 확실한 경우</strong>에 그 선택권의 대상 기간(당해 추가기간)을 포함.</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+
+        <div class="rp-box">
+            <p><strong>[참교육자 6호선 라세나 vs 빌런 뱅드림 란 (개시일과 약정일의 혼동)]</strong></p>
+            <p><strong><a href="미타케 란.html" class="wiki-link" style="color: #EE0022;">란</a>:</strong> "흥! 오늘 내가 캐피탈사랑 <a href="시로.html" class="wiki-link">시로</a>역 앞에서 리스 계약서에 멋지게 도장(약정일) 찍었으니까, 오늘 당장 재무상태표에 리스부채랑 사용권자산 수십억 원어치 팍팍 잡아버려! 계약했으면 내 거잖아!"</p>
+            <p><strong><a href="라세나.html" class="wiki-link" style="color: #881188;">라세나</a>:</strong> "어리석긴... 도장 찍은 <strong>'리스약정일'</strong>은 이 리스가 금융리스인지 운용리스인지 성격만 분류하는 날이야. 아직 기계가 <a href="효빈항물류지구.html" class="wiki-link">효빈항물류지구</a>에 도착하지도 않아서 우리가 기계를 통제할 수도 없는데 무슨 부채를 잡아? <strong>'리스개시일'</strong>, 즉 우리가 기계를 넘겨받아 '실제로 사용할 수 있게 된 그 날'에 비로소 자산과 부채를 최초 인식하는 거다. 쓸데없이 장부 더럽히지 마."</p>
+        </div>
+
+        <div class="rp-box">
+            <p><strong>[참교육자 7호선 임세정 vs 빌런 8호선 유리아 (리스기간의 딜레마)]</strong></p>
+            <p><strong><a href="유리아.html" class="wiki-link" style="color: #9856FF;">유리아</a>:</strong> "세정 언니! 3년 계약 리스인데 1년 연장할 수 있는 옵션이 있습니다! 어차피 제가 연장할지 말지는 나중에 제 맘대로 정할 거니까, 일단 리스기간은 무조건 3년으로 짧게 계산하는 게 부채를 줄이는 무사도에 맞는 거죠?!"</p>
+            <p><strong><a href="임세정.html" class="wiki-link" style="color: #FF8899;">임세정</a>:</strong> "유리아... 그건 무사도가 아니라 꼼수란다. 만약 네가 연장선택권을 행사할 것이 <strong>'상당히 확실(reasonably certain)'</strong>하다면, 그 1년 추가 기간도 리스기간에 무조건 포함해서 총 4년 치 리스부채를 잡아야 해! 반대로 종료선택권(해지권)이 있더라도, 네가 해지하지 않을 것이 상당히 확실하면 그것도 리스기간에 포함이야. 마음대로 기간을 줄여서 부채를 축소하려 들면 가만 안 둬."</p>
+        </div>
+
+        <h2 id="s-4">4. 리스료 및 관련 지표</h2>
+        <h4>Ⅳ. 리스료</h4>
+        <p><strong>리스료:</strong> 기초자산 사용권과 관련하여 리스기간에 리스이용자가 리스제공자에게 지급하는 금액. (리스 부채의 뼈대가 된다.)</p>
+
+        <div class="killer-box">
+            <h4 style="margin-top:0; color:#e74c3c;">✅ 1. 기본 구성 공식 (100% 암기 필수)</h4>
+            <p class="font-bold text-lg text-center bg-white p-3 rounded border border-gray-300 shadow-sm mt-2 mb-3 text-blue-800">
+                리스료 = 고정리스료 + 변동리스료 + 매수선택권의 행사가격 + 종료선택권 부담금액 + 잔존가치 보증에 따라 지급이 예상되는 금액
+            </p>
+            <ul class="list-decimal pl-5 space-y-2 text-gray-800 font-bold">
+                <li><strong>고정리스료:</strong> 실질적인 고정리스료를 포함하고, <span class="text-red-600">리스 인센티브는 차감</span>. 리스기간의 기초자산 사용권에 대하여 리스이용자가 리스제공자에게 지급하는 금액에서 변동리스료를 뺀 금액.</li>
+                <li><strong>지수나 요율(이율)에 따라 달라지는 변동리스료:</strong> 리스기간에 기초자산의 사용권에 대하여 리스이용자가 리스제공자에게 지급하는 리스료의 일부로서, 시간의 경과가 아닌 리스개시일 후 <strong>사실이나 상황의 변화 때문에 달라지는 부분</strong>.</li>
+                <li>리스이용자가 <strong>매수선택권을 행사할 것이 상당히 확실한 경우</strong>에 그 매수선택권의 행사가격.</li>
+                <li>리스기간이 리스이용자의 <strong>종료선택권 행사를 반영</strong>하는 경우에, 그 리스를 종료하기 위하여 부담하는 금액.</li>
+            </ul>
+        </div>
+
+        <h4>■ 중요 리스 개념 세부 정리</h4>
+        <table class="wiki-table-custom">
+            <tr>
+                <th style="width: 20%;">용어</th>
+                <th>설명 (원문 100% 보존)</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center bg-gray-50">(5) 잔존가치보증</td>
+                <td class="bg-gray-50">리스제공자와 특수 관계에 있지 않은 당사자가 리스제공자에게 제공한, 리스종료일의 기초자산 가치(또는 가치의 일부)가 <strong>적어도 특정 금액이 될 것이라는 보증</strong>.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-red-600">(6) 무보증잔존가치</td>
+                <td>리스제공자가 실현할 수 있을지 확실하지 않거나 <strong>리스제공자의 특수관계자만이 보증</strong>한, 기초자산 잔존가치 부분.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center bg-gray-50">(7) 리스총투자<br>리스순투자<br>미실현 금융수익</td>
+                <td class="bg-gray-50">
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li><strong>리스총투자:</strong> 금융리스에서 리스제공자가 받게 될 리스료와 무보증잔존가치의 합계액. (리스총투자 = 리스료 + 무보증잔존가치)</li>
+                        <li><strong>리스순투자:</strong> 리스총투자를 리스의 내재이자율로 할인한 금액. (리스순투자 = 리스료의 현재가치 + 무보증잔존가치의 현재가치)</li>
+                        <li><strong>미실현 금융수익:</strong> 리스총투자와 리스순투자의 차이. (미실현 금융수익 = 리스총투자 - 리스순투자)</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-blue-700 bg-blue-50">(8) 내재이자율</td>
+                <td class="bg-blue-50">
+                    리스료 및 무보증잔존가치의 현재가치 합계액을, <strong>기초자산의 공정가치와 리스제공자의 리스개설직접원가의 합계액과 동일하게 하는 할인율.</strong> 리스제공자 입장에서 리스투자에 대한 수익률과 동일한 개념.<br>
+                    ➔ <span class="font-bold text-blue-900">기초자산의 공정가치 + 리스개설직접원가 = (리스료 + 무보증잔존가치)의 현재가치 (리스제공자의 내재이자율로 할인함)</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">(9) 리스개설직접원가</td>
+                <td>
+                    리스를 체결하지 않았더라면 부담하지 않았을 리스체결의 증분원가.<br>
+                    <span class="text-red-600 font-bold">다만, 금융리스와 관련하여 제조자나 판매자인 리스제공자가 부담하는 원가는 제외.</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-purple-700 bg-purple-50">(10) 증분차입이자율</td>
+                <td class="bg-purple-50">
+                    리스이용자의 증분차입이자율은 리스이용자가 비슷한 경제적 환경에서 비슷한 기간에 걸쳐 비슷한 담보로 <strong>사용권자산과 가치가 비슷한 자산 획득에 필요한 자금을 차입한다면 지급해야 하는 이자율</strong>.<br>
+                    ➔ 리스제공자 입장에서는 미래 현금수취예상액(리스료+무보증잔존가치)을 평가하기 위해 내재이자율을 사용. 리스이용자의 경우에도 리스거래를 리스제공자와 동일한 방법으로 회계처리하기 위해서는 리스제공자의 내재이자율을 알아야 하나, <strong>쉽게 산정할 수 없는 경우 리스이용자의 증분차입이자율을 사용</strong>한다.
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">(11) 선택권 리스료</td>
+                <td>리스를 연장하거나 종료하는 선택권의 대상 기간(리스기간에 포함되는 기간은 제외)에 기초자산 사용권에 대하여 리스이용자가 리스제공자에게 지급하는 리스료.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center bg-gray-50">(12) 리스 인센티브</td>
+                <td class="bg-gray-50">리스와 관련하여 리스제공자가 리스이용자에게 지급하는 금액이나 리스이용자의 원가를 리스제공자가 보상하거나 부담하는 금액.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">(13) 단기리스</td>
+                <td>리스 개시일에, <strong>리스기간이 12개월 이하인 리스</strong>를 말하며, 매수선택권이 있는 리스는 단기리스에 미해당.</td>
+            </tr>
+        </table>
+
+        <div class="rp-box">
+            <p><strong>[참교육자 빈효선 전노아 vs 빌런 2호선 하루빈 (잔존가치 보증의 늪)]</strong></p>
+            <p><strong><a href="하루빈.html" class="wiki-link" style="color: #00CCAA;">하루빈</a>:</strong> "노아 쨩~ 우리가 빌린 오븐, 나중에 돌려줄 때 100만 원은 무조건 보장(보증잔존가치)해 준다고 계약했는데, 이거 리스부채 계산할 때 100만 원 통째로 다 더해서 현재가치로 땡기는 거 맞지? 부채가 너무 무거워~"</p>
+            <p><strong><a href="전노아.html" class="wiki-link" style="color: #6677CC;">전노아</a>:</strong> "히에엑! 선배님 제발요!! 잔존가치를 100만 원 보증했다고 해서 100만 원 전체를 리스료에 포함시키는 게 아니에요! 리스기간 끝날 때 오븐의 진짜 가치(예상 잔존가치)가 80만 원으로 예상된다면, 우리가 캐피탈사에 물어줘야 할 <strong>'지급이 예상되는 금액'인 20만 원만 리스료에 포함시켜서 현재가치로 땡기는 거</strong>라구요! 100만 원을 통째로 잡으면 부채가 폭발해요 ㅠㅠ"</p>
+        </div>
+
+        <div class="rp-box">
+            <p><strong>[참교육자 7호선 임세하 vs 빌런 5호선 미소하 (할인율의 팩폭)]</strong></p>
+            <p><strong><a href="미소하.html" class="wiki-link" style="color: #EE0022;">미소하</a>:</strong> "아 몰라몰라! 리스부채 현재가치 땡길 때 할인율은 그냥 우리 회사 은행 대출 금리(증분차입이자율) 쓰면 되는 거지? 내가 왜 캐피탈사(리스제공자)의 내재이자율까지 알아내서 계산해야 돼?!"</p>
+            <p><strong><a href="임세하.html" class="wiki-link" style="color: #FF8899;">임세하</a>:</strong> "어라, 너 그렇게 야매로 장부 쓸 거야? 원칙적으로 <strong>'리스제공자의 내재이자율'</strong>을 사용하는 게 1순위야! 그게 리스 거래의 실질적인 수익률이니까! 그걸 알아내기 위해 계약서를 뜯어보고 계산기를 굴려보다가, <strong>도저히 쉽게 산정할 수 없을 때만 차선책으로 '리스이용자의 증분차입이자율'을 쓰는 거</strong>라고. 기초적인 우선순위도 모르면서 어떻게 실무를 하겠다는 거야?"</p>
+        </div>
+
+        <h2 id="s-5">5. 리스이용자의 회계처리 (완전 세부 정리)</h2>
+        <p>📘 II. 리스이용자의 회계처리</p>
+
+        <h4>■ 1. 사용권자산 및 리스부채의 인식 (리스개시일)</h4>
+        <p>리스이용자는 리스개시일에 사용권자산과 리스부채를 인식한다.</p>
+
+        <ul class="list-disc pl-8 space-y-3 mb-6 text-gray-800">
+            <li>
+                <strong>(1) 리스부채의 최초 측정</strong><br>
+                리스이용자는 리스개시일에 그날 현재 <strong>지급되지 않은 리스료의 현재가치</strong>로 리스부채를 측정한다. 리스개시일에 리스부채의 측정치에 포함되는 리스료는 리스기간에 걸쳐 기초자산을 사용하는 권리에 대한 지급액 중 그날 현재 지급되지 않은 다음 금액으로 구성된다.
+                <ul class="list-decimal pl-5 mt-1 text-sm font-bold text-blue-700 bg-blue-50 p-3 rounded shadow-sm">
+                    <li>① 고정리스료(실질적인 고정리스료를 포함하고, <strong>받을 리스 인센티브는 차감</strong>)</li>
+                    <li>② 지수나 요율(이율)에 따라 달라지는 변동리스료</li>
+                    <li>③ 잔존가치보증에 따라 <strong>리스이용자가 지급할 것으로 예상되는 금액</strong></li>
+                    <li>④ 리스이용자가 <strong>매수선택권을 행사할 것이 상당히 확실한 경우</strong>에 그 매수선택권의 행사가격</li>
+                    <li>⑤ 리스기간이 리스이용자의 <strong>종료선택권 행사</strong>를 반영하는 경우에 그 리스를 종료하기 위하여 부담하는 금액</li>
+                </ul>
+                <span class="text-red-600 font-bold block mt-2">※ 리스부채 계산 시 적용 할인율: 리스제공자 내재이자율 (쉽게 산정 불가 시: 리스이용자의 증분차입이자율 사용)</span>
+            </li>
+            <li class="mt-4">
+                <strong>(2) 사용권자산의 최초 측정</strong><br>
+                리스이용자는 리스개시일에 사용권자산을 <strong>원가</strong>로 측정한다. 사용권자산의 원가는 다음 항목으로 구성된다.
+                <ul class="list-decimal pl-5 mt-1 text-sm font-bold text-green-700 bg-green-50 p-3 rounded shadow-sm">
+                    <li><strong>① 리스부채의 최초 측정금액</strong></li>
+                    <li><strong>② 리스개시일이나 그 전에 지급한 리스료 (받은 리스 인센티브는 차감)</strong></li>
+                    <li><strong>③ 리스이용자가 부담하는 리스개설직접원가</strong></li>
+                    <li><strong>④ 복구원가 추정치:</strong> 리스 조건에서 요구하는 대로 기초자산을 해체하고 제거하거나, 기초자산이 위치한 부지를 복구, 기초자산 자체를 복구할 때 리스이용자가 부담하는 원가의 추정치</li>
+                </ul>
+            </li>
+            <li class="mt-4 font-bold text-red-600 bg-red-50 p-2 rounded border border-red-200">
+                <strong>재무상태표 표시:</strong> 리스부채는 사용권자산에서 <strong>차감 형식 표시 X</strong>. 재무상태표에서 부채를 유동과 비유동으로 구분하여 표시하고 있다면 리스부채도 동일하게 구분 표시. 사용권자산과 리스부채는 다른 자산과 부채와 구분하여 표시하거나 공시한다.
+            </li>
+        </ul>
+
+        <div class="killer-box">
+            <h4 style="margin-top:0; color:#e74c3c;">✅ 리스이용자의 리스개시 회계처리 분개</h4>
+            <table class="wiki-table-custom bg-white mt-2">
+                <tr>
+                    <th style="width: 25%;">구분</th>
+                    <th colspan="2">리스이용자의 회계처리</th>
+                </tr>
+                <tr>
+                    <td class="font-bold text-center">리스개설 직접원가발생</td>
+                    <td class="font-mono text-sm">(차) 리스개설직접원가 XXX</td>
+                    <td class="font-mono text-sm">(대) 현금, 미지급금 XXX</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-center bg-gray-50">리스기간 개시일</td>
+                    <td class="font-mono text-sm bg-gray-50 font-bold text-blue-700">
+                        (차) 사용권자산 XXX
+                    </td>
+                    <td class="font-mono text-sm bg-gray-50 font-bold text-red-600">
+                        (대) 리스부채 XXX<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;리스개설직접원가 XXX<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;선급리스료 XXX<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;복구충당부채 XXX
+                    </td>
+                </tr>
+            </table>
+            <p class="text-sm font-bold text-gray-700 mt-2">
+                * 리스부채 = 리스료를 내재이자율로 할인한 현재가치 (내재이자율을 쉽게 산정할 수 없다면 리스이용자의 증분차입이자율로 할인)<br>
+                * 리스자산(사용권자산) = 리스부채 최초 측정금액 + 리스개시일 전에 지급한 리스료 + 리스이용자의 리스개설직접원가 + 복구원가 추정치
+            </p>
+        </div>
+
+        <div class="rp-box">
+            <p><strong>[참교육자 1호선 고나미 vs 빌런 5호선 미소하 (리스부채 차감의 오류)]</strong></p>
+            <p><strong><a href="미소하.html" class="wiki-link" style="color: #EE0022;">미소하</a>:</strong> "어차피 리스부채는 기계 빌리면서 생긴 빚이잖아? 귀찮게 자산 부채 양쪽에 올리지 말고, 그냥 사용권자산에서 리스부채를 빼서(차감 형식) 순액으로 표시하면 재무상태표가 깔끔해 보이고 내 빚도 적어 보이겠지?! 천재적이야!"</p>
+            <p><strong><a href="고나미.html" class="wiki-link" style="color: #0077DD;">고나미</a>:</strong> "(기타로 책상을 박살 내며) 천재가 아니라 분식회계 범죄자겠지! 1116호 기준서에 <strong>'리스부채는 사용권자산에서 차감 형식으로 표시하지 않는다'</strong>고 명백히 적혀 있어! 총액으로 투명하게 표시하고, 부채를 유동/비유동 구분까지 칼같이 해야 투자자들이 속지 않지. 잔머리 굴릴 생각 말고 분개나 똑바로 끊어."</p>
+        </div>
+
+        <h4>■ 2. 수익과 비용 인식 (후속측정기간의 회계처리)</h4>
+        
+        <!-- 이미지 2: 소유권이 이전되지 않는 경우 각 회계연도 손익 -->
+        <div class="img-container">
+            <img src="이미지/image (3).png" alt="소유권이 이전되지 않는 경우 각 회계연도 손익 및 후속측정" onerror="this.onerror=null; this.src='https://placehold.co/800x350/0077DD/FFFFFF?text=Subsequent+Measurement+Lessee';">
+            <div class="img-caption">▲ 소유권이 이전되지 않는 경우 각 회계연도 손익 그래프</div>
+        </div>
+        <div class="text-analysis-box mt-0 rounded-t-none border-t-0">
+            <p class="mb-2 text-gray-800">해당 이미지는 리스이용자가 매년 부담하는 <strong>'총비용(감가상각비+이자비용)'의 추이</strong>를 시각화한 그래프입니다. 리스의 본질적인 특성인 '초기 비용 과대 계상 현상(Front-loading)'을 완벽하게 설명합니다.</p>
+            <ul class="list-disc pl-5 mt-2 space-y-2 text-sm text-gray-800">
+                <li><strong>수평선 (감가상각비):</strong> 사용권자산을 정액법으로 상각하므로 매년 동일한 금액이 발생합니다.</li>
+                <li><strong>우하향 곡선 (이자비용):</strong> 리스부채의 원금을 매기 상환하므로, 잔액이 줄어들면서 <strong>유효이자율법에 따른 이자비용도 시간이 갈수록 감소</strong>합니다.</li>
+                <li><strong>우하향 곡선 (총비용 = 감가상각비 + 이자비용):</strong> 이자비용이 감소하므로 전체 총비용도 우하향하는 곡선을 그립니다.</li>
+                <li><strong>수평 점선 (리스료):</strong> 매월 동일하게 지급하는 정액 리스료입니다.</li>
+                <li><span class="text-red-600 font-bold">결론 (가장 중요):</span> 계약 초기에는 (총비용 > 리스료) 현상이 발생하여 장부상 이익이 악화되지만, 후기에는 (총비용 < 리스료) 현상으로 역전됩니다. <strong>즉, 정액 리스료를 내더라도 회계상 비용은 초기에 크게 잡히는 Front-loading 효과가 나타납니다.</strong></li>
+            </ul>
+        </div>
+
+        <table class="wiki-table-custom mt-4">
+            <tr>
+                <th style="width: 25%;">구분</th>
+                <th colspan="2">리스이용자의 회계처리 (후속측정)</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center bg-blue-50 text-blue-800">수익·비용 인식<br>(이자비용 및 원금상환)</td>
+                <td class="font-mono text-sm bg-blue-50 text-blue-800 font-bold">
+                    (차) 이자비용 XXX<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;리스부채 XXX
+                </td>
+                <td class="font-mono text-sm bg-blue-50 text-blue-800 font-bold">
+                    (대) 현금 XXX
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">감가상각비 인식</td>
+                <td class="font-mono text-sm">
+                    (차) 감가상각비 XXX
+                </td>
+                <td class="font-mono text-sm">
+                    (대) 감가상각누계액 XXX
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center bg-gray-50">리스자산의 손상시</td>
+                <td class="font-mono text-sm bg-gray-50">
+                    (차) 사용권자산손상차손 XXX
+                </td>
+                <td class="font-mono text-sm bg-gray-50">
+                    (대) 손상차손누계액 XXX
+                </td>
+            </tr>
+        </table>
+
+        <ul class="list-disc pl-8 space-y-3 mb-6 text-gray-800 mt-4">
+            <li>
+                <strong>(1) 금융원가, 리스부채 안분</strong><br>
+                리스이용자가 매기 지급하는 리스료 = (금융원가 + 리스부채의 상환액).<br>
+                금융원가(이자비용)는 매기 부채의 잔액에 대하여 <strong>일정한 기간이자율이 산출되게 리스기간의 각 회계기간에 배분</strong>. (위 그래프의 우하향 곡선 원리)
+            </li>
+            <li>
+                <strong>(2) 감가상각비</strong><br>
+                감가상각대상인 사용권자산의 감가상각정책은 리스이용자가 소유한 다른 감가상각대상자산의 감가상각정책과 일관 필요.<br>
+                만약 리스이용자가 리스기간 종료시점까지 자산의 소유권을 획득할 것이 확실하지 않다면 <strong>리스기간과 자산의 내용연수 중 짧은 기간</strong>에 걸쳐 감가상각.<br>
+                <div class="bg-gray-100 p-2 mt-1 rounded font-bold border border-gray-300">
+                    - 소유권 이전 확실: 사용권자산 감가상각비 = (사용권자산 취득원가 - 잔존가치) / 내용연수<br>
+                    - 반환조건 (미확실): 사용권자산 감가상각비 = 사용권자산 취득원가 / 상각기간*<br>
+                    <span class="text-sm text-red-600 font-normal">(* 상각기간 = 자산의 내용연수와 리스기간 중 짧은 기간)</span>
+                </div>
+            </li>
+            <li>
+                <strong>(3) 손상여부</strong><br>
+                사용권자산의 손상여부는 한국채택국제회계기준 제1036호 '자산손상'에 따라 손상여부를 검토한다.
+            </li>
+        </ul>
+
+        <div class="rp-box">
+            <p><strong>[참교육자 1호선 고나미 vs 빌런 4호선 다로나 (감가상각 기간의 함정)]</strong></p>
+            <p><strong><a href="다로나.html" class="wiki-link" style="color: #FF5522;">다로나</a>:</strong> "반짝반짝! 내용연수가 10년인 빵 굽는 기계를 3년 리스로 빌렸어! 어차피 3년 뒤에 돌려줄 거지만 감가상각은 내 맘대로 길게 10년 동안 천천히 할래! 그럼 매년 당기 비용이 줄어들잖아!"</p>
+            <p><strong><a href="고나미.html" class="wiki-link" style="color: #0077DD;">고나미</a>:</strong> "어리석긴. 소유권 획득이 불확실하고 3년 뒤에 반환할 거라면, 네가 실제로 그 자산을 통해 경제적 효익을 뽑아먹는 기간은 3년뿐이야! 기준서에는 명확하게 <strong>'리스기간과 자산의 내용연수 중 짧은 기간'</strong>에 걸쳐 감가상각하라고 되어 있어. 3년 동안 빡세게 상각 안 하면 비용 과소계상으로 철창행이다."</p>
+        </div>
+
+        <div class="rp-box">
+            <p><strong>[참교육자 8호선 유리아 vs 빌런 7호선 임세정 (Front-loading 효과의 충격)]</strong></p>
+            <p><strong><a href="임세정.html" class="wiki-link" style="color: #FF8899;">임세정</a>:</strong> "유리아! 우리 매달 100만 원씩 똑같이 리스료 내고 있는데, 장부 보니까 첫해에 비용이 150만 원이나 찍혀 있잖아! 너 횡령했지!!"</p>
+            <p><strong><a href="유리아.html" class="wiki-link" style="color: #9856FF;">유리아</a>:</strong> "억울합니다!! 아까 제가 보여드린 '소유권이 이전되지 않는 경우 손익 그래프'를 보십시오! 리스 초반에는 부채 원금이 빵빵하게 남아있어서 이자비용이 엄청나게 크게 잡힙니다! 그래서 <strong>초기에는 (감가상각비 + 이자비용)의 총합이 지급하는 리스료를 초과하는 전진적재(Front-loading) 현상</strong>이 당연하게 발생하는 것입니다! 횡령이 아니라 회계의 무사도입니다!"</p>
+        </div>
+
+        <h4>■ 3. 리스기간 완료시 회계처리</h4>
+        
+        <!-- 이미지 3: 리스이용자 리스기간 완료시 -->
+        <div class="img-container">
+            <img src="이미지/image (4).png" alt="리스이용자 리스기간 완료시 회계처리" onerror="this.onerror=null; this.src='https://placehold.co/800x150/0077DD/FFFFFF?text=Lessee+End+of+Lease+Term';">
+            <div class="img-caption">▲ 리스이용자의 리스기간 완료시 처리 흐름도</div>
+        </div>
+        <div class="text-analysis-box mt-0 rounded-t-none border-t-0">
+            <p class="mb-2 text-gray-800">이 흐름도는 리스기간이 완료되었을 때, <strong>'보증잔존가치'</strong>의 유무와 <strong>'기초자산의 실제 공정가치'</strong>에 따라 리스이용자가 캐피탈사에 추가 현금을 토해내야 하는지 여부를 판별하는 핵심 논리 트리입니다.</p>
+            <ul class="list-none pl-2 mt-2 space-y-3 text-sm text-gray-800">
+                <li class="bg-gray-50 p-2 rounded border border-gray-200">
+                    <strong>1. 잔존가치를 보증했는가?</strong> ➔ <span class="font-bold text-red-600">[아니오]</span> ➔ 그냥 자산을 반환하면 끝. <br>(분개: <span class="text-blue-600">차) 리스부채 / 대) 사용권자산</span>)
+                </li>
+                <li class="bg-green-50 p-2 rounded border border-green-200">
+                    <strong>1. 잔존가치를 보증했는가?</strong> ➔ <span class="font-bold text-green-700">[예]</span> ➔ <strong>2. (기초자산의 공정가치 < 보증잔존가치) 인가?</strong> <br>즉, 기계를 너무 막 굴려서 똥값이 되었는가?
+                    <ul class="list-disc pl-8 mt-2 space-y-2">
+                        <li>➔ <span class="font-bold text-red-600">[예] (기계가 똥값이 됨):</span> <strong>현금지급액 발생!</strong> (현금 = 보증잔존가치 - 기초자산 공정가치). 차액만큼 현금으로 물어줘야 합니다.<br>
+                        (분개: <span class="text-blue-600">차) 리스부채 / 대) 사용권자산, 현금</span>) - 여기서 차변에 리스자산보증손실 발생.</li>
+                        <li>➔ <span class="font-bold text-blue-700">[아니오] (기계 관리를 잘함):</span> <strong>현금지급액 없음.</strong> 보증한 가치보다 기계가 더 비싸거나 같으니 그냥 반환하면 끝납니다.<br>
+                        (분개: <span class="text-blue-600">차) 리스부채 / 대) 사용권자산</span>)</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <table class="wiki-table-custom mt-4">
+            <tr>
+                <th style="width: 25%;">구분</th>
+                <th colspan="2">리스이용자의 회계처리 (리스기간 완료시 현금보상 발생 케이스)</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center bg-red-50 text-red-800">리스기간 완료시</td>
+                <td class="font-mono text-sm bg-red-50 text-red-800 font-bold">
+                    (차) 리스부채 XXX<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;감가상각누계액 XXX<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;리스자산보증손실 XXX
+                </td>
+                <td class="font-mono text-sm bg-red-50 text-red-800 font-bold">
+                    (대) 사용권자산 XXX<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;현금*1 XXX
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" class="text-sm font-bold text-gray-700 text-center">
+                    *1: 현금 지급액은 (보증잔존가치 - 반환시 리스자산 공정가치)만큼 인식한다.
+                </td>
+            </tr>
+        </table>
+
+        <ul class="list-disc pl-8 space-y-2 mb-4 text-gray-800 mt-4">
+            <li>리스이용자는 리스기간이 종료하면 리스자산을 리스제공자에게 돌려줄 것이다.</li>
+            <li>이때 리스이용자 등이 리스기간 종료 시 리스자산의 잔존가치 중 일부 또는 전부를 보증한 경우, <strong>그 금액과 반환할 실제 리스자산의 잔존가치와의 차액을 현금으로 보상할 채무</strong>가 발생.</li>
+            <li>만일 실제 잔존가치(공정가치)가 보증잔존가치보다 크다면 리스이용자는 리스제공자에게 지급할 금액 X.</li>
+            <li>그러나 <strong>리스자산의 실제 잔존가치(공정가치)가 보증잔존가치보다 낮으면 리스이용자는 리스제공자에게 리스자산을 반환하는 동시에 차액을 현금으로 지불 필요.</strong></li>
+            <li>완료시점에 리스부채의 잔액은 <strong>잔존가치 보증에 따라 지급 예상 금액만 남게 되며</strong>, 만일 현금 보상 실제 금액이 잔존가치 보증에 따라 지급 예상한 금액보다 크게 발생 시 이 금액만큼 <strong>'리스자산보증손실'</strong>로 처리한다. ➔ <strong>(보증잔존가치 - 반환시 리스자산 공정가치)만큼 인식.</strong></li>
+        </ul>
+
+        <div class="rp-box">
+            <p><strong>[참교육자 3호선 박라미 vs 빌런 7호선 임세하 (자산보증손실의 눈물)]</strong></p>
+            <p><strong><a href="임세하.html" class="wiki-link" style="color: #FF8899;">임세하</a>:</strong> "흐에엑! 선배님! 아까 보여주신 흐름도에서 저 완벽하게 [예] ➔ [예] 트리에 걸려버렸어요! 제가 리스로 빌려온 트램 부품용 3D 프린터, 마개조를 했더니 계약 끝나고 돌려줄 때 공정가치가 10만 원밖에 안 남았대요! 제가 50만 원 보증해 줬는데!! 내 월급!!"</p>
+            <p><strong><a href="박라미.html" class="wiki-link" style="color: #FFCC11;">박라미</a>:</strong> "어휴, 기계를 곱게 쓰지 않고 막 굴리니까 가치가 박살이 났지! 네가 50만 원을 보증했는데 실제 잔존가치가 10만 원이면, 그 차액인 40만 원은 네가 현금으로 캐피탈사에 뱉어내야 해! 그게 바로 차변에 기록되는 <strong>'리스자산보증손실'</strong>이야! 이번 달 네 월급에서 깔 테니까 그렇게 알아!"</p>
+        </div>
+
+        <h4>■ 4. 인식면제</h4>
+        <p>리스이용자는 다음 리스를 <strong>사용권자산과 리스부채를 인식하지 않기로 선택 가능</strong>하다.</p>
+        <ul class="list-disc pl-8 space-y-1 mb-4 text-gray-800 font-bold bg-yellow-50 p-3 border border-yellow-200 rounded">
+            <li><strong>단기리스</strong> (리스 개시일에, 리스기간이 12개월 이하인 리스를 말하며, 매수선택권이 있는 리스는 단기리스에 미해당)</li>
+            <li><strong>소액 기초자산 리스</strong></li>
+        </ul>
+        <p>단기리스나 소액 기초자산 리스에 대해 사용권자산과 리스부채를 인식하지 않기로 선택한 경우의 리스이용자는, 해당 리스에 관련되는 리스료를 리스기간에 걸쳐 <strong>정액 기준이나 다른 체계적인 기준 따라 비용 인식</strong>한다. (다른 체계적 기준이 리스이용자의 효익의 형태를 더 잘 나타나는 경우에는 그 기준을 적용).</p>
+
+        <div class="rp-box">
+            <p><strong>[참교육자 8호선 유리아 vs 빌런 7호선 임세정 (소액 리스의 은총)]</strong></p>
+            <p><strong><a href="임세정.html" class="wiki-link" style="color: #FF8899;">임세정</a>:</strong> "유리아! 우리 <a href="신덕.html" class="wiki-link">신덕</a>역 사무실에 3개월 렌탈한 정수기랑 솜사탕 기계 들어왔지? 당장 리스부채랑 사용권자산 계산해서 장부에 올려 놔!"</p>
+            <p><strong><a href="유리아.html" class="wiki-link" style="color: #9856FF;">유리아</a>:</strong> "세정 선배님! 무사도에 어긋나는 지시입니다! 계약 기간이 12개월 이하인 '단기리스'나, 푼돈짜리 '소액 기초자산 리스'는 굳이 복잡하게 현재가치 할인해서 자산부채로 안 잡고 인식면제를 받을 수 있습니다! 그냥 매달 정액 기준으로 임차료(비용) 털면 끝인데 왜 사서 고생을 하십니까!"</p>
+        </div>
+
+        <h2 id="s-6">6. 리스제공자의 회계처리 (초정밀 정리)</h2>
+        <p>📘 III. 리스제공자의 회계처리 – 문장 기반 초정밀 정리</p>
+
+        <h4>■ 1. 리스의 분류기준</h4>
+        <p>리스제공자는 각 리스를 운용리스 아니면 금융리스로 분류한다. <strong>기초자산 소유에 따른 위험과 보상의 귀속자가 누구냐</strong>에 의하여 금융리스와 운용리스로 분류한다.</p>
+        <p>➔ 위험은 유휴 생산능력이나 기술적 진부화로 생기는 손실 가능성과 경제적 상황의 변화로 생기는 수익 변동성 포함, 기초자산 경제적 내용연수에 걸친 수익성 있는 운영과 가치의 상승이나 잔존가치 실현에서 생기는 차익에 대한 예상으로 나타날 수 있다.</p>
+
+        <table class="wiki-table-custom mt-3">
+            <tr>
+                <th style="width: 50%;">기초자산 소유에 따른 위험과 보상이 리스이용자에게 대부분 이전 되었는가?</th>
+                <th>분류</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-blue-700 bg-blue-50">No (대부분 이전되지 않음)</td>
+                <td class="font-bold text-center bg-blue-50">운용리스 (Operating Lease)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-red-600 bg-red-50">Yes (대부분 이전됨)</td>
+                <td class="font-bold text-center bg-red-50">금융리스 (Finance Lease)</td>
+            </tr>
+        </table>
+        
+        <p class="font-bold text-gray-800 mb-4 mt-2">➔ 리스가 금융리스인지 운용리스인지는 <strong>계약의 형식보다는 거래의 실질</strong>에 달림.</p>
+
+        <div class="killer-box">
+            <h4 style="margin-top:0; color:#e74c3c;">✅ 리스가 일반적으로 금융리스로 분류되는 상황 (개별적으로나 결합되어) - 100% 암기</h4>
+            <p>예시)</p>
+            <ul class="list-decimal pl-5 space-y-2 text-gray-800 font-bold">
+                <li><strong>① 소유권이전약정기준:</strong> 리스기간 종료시점 이전에 기초자산의 소유권이 리스이용자에게 이전되는 리스.</li>
+                <li><strong>② 염가매수선택권 약정기준:</strong> 리스이용자가 선택권을 행사할 수 있는 날의 공정가치보다 충분히 낮을 것으로 예상되는 가격으로 기초자산을 매수할 수 있는 선택권을 가지고 있고, 그 선택권을 행사할 것이 리스약정일 현재 상당히 확실한 경우.</li>
+                <li><strong>③ 리스기간기준:</strong> 기초자산의 소유권이 이전되지는 않더라도 <strong>리스기간이 기초자산의 경제적 내용연수의 상당 부분</strong>을 차지하는 경우.</li>
+                <li><strong>④ 공정가치회수기준:</strong> 리스약정일 현재, <strong>리스료의 현재가치가 적어도 기초자산 공정가치의 대부분</strong>에 해당하는 경우.</li>
+                <li><strong>⑤ 범용성 없는 자산:</strong> 기초자산이 특수하여 해당 리스이용자만이 주요한 변경 없이 사용할 수 있는 경우.</li>
+            </ul>
+            <hr class="my-3 border-red-300">
+            <h5 class="font-bold text-red-800">※ 한편, 리스가 금융리스로 분류될 수 있는 상황의 지표 개별적으로나 결합되는 경우</h5>
+            <ul class="list-disc pl-5 space-y-1 text-sm text-gray-800">
+                <li>리스이용자가 리스를 해지할 수 있는 경우에 리스이용자가 해지에 관련되는 리스제공자의 손실을 부담하는 경우.</li>
+                <li>잔존자산의 공정가치 변동에서 생기는 손익이 리스이용자에게 귀속되는 경우 (예를 들어, 리스 종료시점에 매각대가의 대부분에 해당하는 금액이 리스료 환급의 형태로 리스이용자에게 귀속되는 경우).</li>
+                <li>리스이용자가 시장리스료보다 현저하게 낮은 리스료로 다음 리스기간에 리스를 계속할 능력이 있는 경우.</li>
+            </ul>
+            <p class="mt-3 text-sm font-bold text-blue-700 bg-blue-50 p-3 rounded">
+                [주의점] 앞에서 열거한 경우에 해당할 때에도 항상 금융리스로 분류는 아님. 계약 다른 속성들을 고려 시 리스자산의 소유에 따른 위험과 보상의 대부분을 이전하지 않는다는 사실이 분명하다면 그 리스는 <strong>운용리스로 분류</strong>. Ex) 리스기간 종료시점에 기초자산의 소유권을 그 시점의 공정가치에 해당하는 변동지급액으로 이전하거나, 변동리스료가 있고 그 결과로 리스제공자가 기초자산의 소유에 따른 위험과 보상의 대부분을 이전하지 않는 경우.
+            </p>
+        </div>
+
+        <div class="rp-box">
+            <p><strong>[참교육자 1호선 고나미 vs 빌런 빈효선 전노아 (금융리스의 함정)]</strong></p>
+            <p><strong><a href="전노아.html" class="wiki-link" style="color: #6677CC;">전노아</a>:</strong> "히에엑! 고나미 선배님! 계약서 보니까 리스기간 끝나면 공정가치(시가)에 해당하는 변동지급액을 내고 소유권을 가져간대요! 아까 '소유권이전약정' 있으면 묻지도 따지지도 않고 금융리스라고 했으니까 무조건 금융리스 잡으면 되죠?!"</p>
+            <p><strong><a href="고나미.html" class="wiki-link" style="color: #0077DD;">고나미</a>:</strong> "(기타줄을 튕기며) 멍청아, 그게 1116호의 함정이야. 헐값이 아니라 '그 시점의 공정가치'를 다 주고 사가는 거면 그건 '소유에 따른 위험과 보상'이 리스이용자한테 미리 전가된 게 아니잖아! 나중에 제값 다 주고 새 기계 사듯이 사는 거니까. 이런 계약 다른 속성들을 고려했을 때 위험과 보상의 대부분이 이전되지 않는다는 게 분명하면, 아무리 나중에 소유권이 이전돼도 <strong>'운용리스'</strong>로 엎어서 분류해야 해. 수박 겉핥기로 공부하면 <a href="효빈대학교.html" class="wiki-link">효빈대학교</a> 회계학과는 꿈도 못 꾼다."</p>
+        </div>
+
+        <h4>■ 2. 운용리스의 회계처리</h4>
+        <ul class="list-disc pl-8 space-y-1 mb-4 text-gray-800">
+            <li><strong>운용리스:</strong> 기초자산의 소유에 따른 위험과 보상의 대부분을 이전하지 않는 리스. <strong>실질적인 임대차거래와 유사.</strong></li>
+            <li>리스기간이 비교적 짧고 합의된 기간 전에 예고에 의한 중도해지가 인정.</li>
+            <li>리스물건 보수·관리 등은 <strong>원칙적으로 리스제공자가 부담</strong>.</li>
+            <li>금융적 성격보다 <strong>서비스 제공 측면</strong>.</li>
+        </ul>
+
+        <table class="wiki-table-custom">
+            <tr>
+                <th style="width: 25%;">구분</th>
+                <th colspan="2">리스제공자의 회계처리 (운용리스)</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">리스개설 직접원가 발생</td>
+                <td class="font-mono text-sm">(차) 리스개설직접원가 XXX</td>
+                <td class="font-mono text-sm">(대) 현금 XXX</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">리스자산 취득</td>
+                <td class="font-mono text-sm">(차) 선급리스자산 XXX</td>
+                <td class="font-mono text-sm">(대) 현금, 미지급금 XXX</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center bg-gray-50">리스기간 개시일</td>
+                <td class="font-mono text-sm bg-gray-50 font-bold text-blue-700">
+                    (차) 운용리스자산 XXX<br>
+                    <span class="text-gray-500 font-normal">운용리스 협상 원가 추가:</span>
+                </td>
+                <td class="font-mono text-sm bg-gray-50 font-bold text-red-600">
+                    (대) 선급리스자산 XXX<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;리스개설직접원가 XXX
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" class="text-sm text-gray-700 bg-yellow-50 font-bold">
+                    * 리스제공자의 운용리스자산 취득 및 리스개시에 대한 회계처리:<br>운용리스의 협상 및 계약단계에서 발생한 리스개설직접원가는 운용리스자산의 장부금액에 추가하고 <strong>리스료수익에 대응해 리스기간 동안 비용 인식</strong>한다.
+                </td>
+            </tr>
+        </table>
+
+        <ul class="list-disc pl-8 space-y-2 mb-4 text-gray-800">
+            <li><strong>수익 인식:</strong> 운용리스에서 리스료수익은 리스자산의 사용효익이 감소하는 기간적 형태를 잘 나타내는 다른 체계적인 인식기준이 없다면, 비록 리스료가 매기 정액으로 수취되지 않더라도 리스료수익(보험료나 수선비와 같은 용역제공에 대한 대가 수령액은 제외)은 <strong>리스기간에 걸쳐 정액기준으로 인식</strong>.</li>
+            <li><strong>비용의 인식 (감가상각비):</strong> 리스료수익의 획득과정에서 발생하는 감가상각비를 포함한 원가는 비용 인식. 또한 운용리스자산의 감가상각정책은 리스제공자가 소유한 다른 유사자산의 일반 감가상각정책과 일관 필요.</li>
+            <li><strong>비용의 인식 (손상여부):</strong> 운용리스자산의 손상여부는 한국채택국제회계기준 제1036호 '자산손상'에 따라 손상여부 검토.</li>
+        </ul>
+
+        <div class="rp-box">
+            <p><strong>[참교육자 1호선 고나미 vs 빌런 4호선 다로나 (정액기준의 법칙)]</strong></p>
+            <p><strong><a href="다로나.html" class="wiki-link" style="color: #FF5522;">다로나</a>:</strong> "반짝반짝! 우리가 오븐을 운용리스로 빌려줬어! 첫 달은 프로모션으로 무료, 둘째 달부터는 10만 원씩 받기로 했지롱! 그럼 첫 달 수익은 0원이니까 장부 안 써도 되지?!"</p>
+            <p><strong><a href="고나미.html" class="wiki-link" style="color: #0077DD;">고나미</a>:</strong> "바보야. 돈을 첫 달에 안 받았더라도, 네 오븐은 첫 달부터 빌려준 사람한테 경제적 효익을 제공하고 있잖아? 운용리스의 수익은 돈 들어오는 스케줄에 상관없이 <strong>'전체 리스기간에 걸쳐 정액기준으로 쪼개서 인식'</strong>하는 게 원칙이야. 첫 달이 무료든 말든 평균 내서 수익 잡아라."</p>
+        </div>
+
+        <h4>■ 3. 금융리스의 회계처리</h4>
+        
+        <!-- 이미지 4: 금융리스자산의 취득 및 리스개시의 회계처리 -->
+        <div class="img-container">
+            <img src="이미지/image (5).png" alt="금융리스자산의 취득 및 리스개시의 회계처리" onerror="this.onerror=null; this.src='https://placehold.co/800x150/0077DD/FFFFFF?text=Lessor+Finance+Lease+Initial';">
+            <div class="img-caption">▲ 금융리스자산의 취득 및 리스개시의 회계처리 공식 (리스제공자)</div>
+        </div>
+        <div class="text-analysis-box mt-0 rounded-t-none border-t-0">
+            <p class="mb-2 text-gray-800">해당 이미지는 리스제공자 입장에서 <strong>'리스순투자(리스채권)'</strong>의 금액이 어떻게 양방향으로 일치(대칭)하는지를 보여주는 회계 공식의 정수입니다.</p>
+            <ul class="list-none pl-2 mt-2 space-y-3 text-sm text-gray-800">
+                <li class="bg-gray-50 p-3 rounded border border-gray-200 font-bold text-center">
+                    <span class="text-blue-700">기초자산의 공정가치 + 리스개설직접원가</span><br>
+                    =<br>
+                    <span class="text-purple-700 text-lg">리스순투자</span><br>
+                    =<br>
+                    <span class="text-red-600">리스료의 현재가치 + 무보증잔존가치의 현재가치</span>
+                </li>
+                <li><strong>해석:</strong> 리스회사가 기계를 사면서 지출한 총비용(공정가치 + 직접원가)은, 결국 리스이용자한테 매달 받을 돈(리스료)의 현재가치와 나중에 기계를 돌려받았을 때의 깡통값(무보증잔존가치)의 현재가치를 더한 값과 정확히 <strong>내재이자율로 할인되어 일치(균형)</strong>해야 합니다. 이 세 가지 블록이 완벽한 3단 콤보로 들어맞아야 금융리스 회계처리가 성립합니다.</li>
+            </ul>
+        </div>
+
+        <table class="wiki-table-custom mt-4">
+            <tr>
+                <th style="width: 25%;">구분</th>
+                <th colspan="2">리스제공자의 회계처리 (금융리스 개시일)</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">리스개설 직접원가발생</td>
+                <td class="font-mono text-sm">(차) 리스개설직접원가 XXX</td>
+                <td class="font-mono text-sm">(대) 현금, 미지급금 XXX</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">리스자산취득</td>
+                <td class="font-mono text-sm">(차) 선급리스자산 XXX</td>
+                <td class="font-mono text-sm">(대) 현금, 미지급금 XXX</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center bg-blue-50 text-blue-800">리스기간 개시일</td>
+                <td class="font-mono text-sm bg-blue-50 font-bold text-blue-700">
+                    (차) 리스채권 XXX
+                </td>
+                <td class="font-mono text-sm bg-blue-50 font-bold text-red-600">
+                    (대) 선급리스자산 XXX<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;리스개설직접원가 XXX
+                </td>
+            </tr>
+        </table>
+
+        <ul class="list-disc pl-8 space-y-3 mb-6 text-gray-800 mt-4">
+            <li>
+                <strong>(1) 금융리스자산의 취득 및 리스개시</strong><br>
+                리스거래가 금융리스로 분류될 경우 리스제공자는 리스개시일에 금융리스에 따라 보유하는 자산을 재무상태표에 인식하고, 그 자산을 <strong>리스순투자와 동일한 금액의 수취채권(리스채권)으로 표시</strong>한다.<br>
+                리스제공자 입장에서는 당해 리스거래와 관련하여 예상되는 현금유입금액은 리스료뿐만 아니라 <strong>'무보증잔존가치'도 포함</strong> 필요. ➔ 리스이용자가 보증을 하지 않는 무보증잔존가치가 존재한다고 해서 리스기간 종료시 리스자산의 잔존가치가 감소하는 것은 아니기 때문.<br>
+                <div class="bg-gray-100 p-3 mt-2 font-bold text-blue-800 border border-blue-300 rounded text-center">
+                    리스채권 = 리스순투자 = 기초자산의 공정가치 + 리스개설직접원가<br>
+                    = (리스료 + 무보증잔존가치)를 내재이자율로 할인한 현재가치
+                </div>
+            </li>
+            <li>
+                <strong>리스개설직접원가 (리스를 체결하지 않았더라면 부담하지 않았을 리스 체결의 증분원가) 처리:</strong><br>
+                제조자도 판매자도 아닌 일반 리스제공자의 금융리스의 경우, <strong>리스개설직접원가는 리스채권 최초인식액에 포함</strong>되어 리스기간 인식수익 감소. 내재이자율 정의에 따라 리스개설직접원가가 <strong>자동적으로 리스채권액에 포함</strong>되므로, 별도로 계산하여 가산할 필요 X.<br>
+                <span class="text-red-600 font-bold">다만, 제조자나 판매자인 리스제공자에 의해 리스의 협상 및 계약단계에서 리스와 관련하여 발생한 원가는 리스개설직접원가 정의에서 제외. ➔ 당해 원가는 리스순투자에서 제외하고 매출이익 인식 시 비용인식 (금융리스에서는 일반적으로 리스기간개시일에 인식).</span>
+            </li>
+        </ul>
+
+        <div class="example-box">
+            <p class="mb-2"><strong>[효빈시장 박효빈의 제조자 리스제공자 참교육 공식 일화]</strong></p>
+            <p>데이터 분석과 회계 지식에 통달한 절대 권력자 <strong><a href="박효빈.html" class="wiki-link">박효빈</a> 시장</strong>. 하루는 <a href="효빈공단.html" class="wiki-link">효빈공단</a>에 위치한 기계 제조업체가 자사 기계를 직접 금융리스로 넘기면서, 고객 밥 사준 접대비(협상 원가)를 리스채권 장부금액에 가산(자본화)한 것을 적발했다.<br>
+            <em>"이 무식한 놈들아! 일반 캐피탈사면 그걸 리스채권에 가산해서 내재이자율로 녹이는 게 맞지만, 너희같이 '제조자나 판매자인 리스제공자'는 금융리스 계약할 때 발생한 원가를 리스순투자에서 전액 제외하고, <strong>매출이익 인식 시점에 전액 당기비용으로 즉시 털어버려야</strong> 한다! 기준서 예외 조항도 모르고 분식회계를 해?!"</em><br>
+            이후 그 업체는 박 시장의 팩폭에 뼈를 맞고 올바르게 분개를 수정했다.</p>
+        </div>
+
+        <h4>■ (2) 수익과 비용 인식 (금융리스의 후속측정기간 회계처리)</h4>
+        <table class="wiki-table-custom">
+            <tr>
+                <th style="width: 25%;">구분</th>
+                <th colspan="2">리스제공자의 회계처리 (금융리스 후속측정)</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center bg-gray-50">수익·비용 인식<br>(이자수익 및 원금회수)</td>
+                <td class="font-mono text-sm bg-gray-50 font-bold text-blue-700">
+                    (차) 현금 XXX
+                </td>
+                <td class="font-mono text-sm bg-gray-50 font-bold text-red-600">
+                    (대) 이자수익 XXX<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;리스채권 XXX
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">리스채권의 손상시</td>
+                <td class="font-mono text-sm font-bold">
+                    (차) 리스채권손상차손 XXX
+                </td>
+                <td class="font-mono text-sm font-bold">
+                    (대) 리스채권 XXX
+                </td>
+            </tr>
+        </table>
+        
+        <ul class="list-disc pl-8 space-y-2 mb-4 text-gray-800 mt-2">
+            <li>
+                <strong>채권의 원금회수와 이자수익의 인식:</strong> 금융리스에서는 기초자산의 법적소유에 따른 위험과 보상의 대부분이 이전되므로, 리스료는 리스채권의 원금회수액과 이자수익으로 구분해 회계처리. 이때 이자수익은 리스제공자의 금융리스 순투자 금액에 대하여 <strong>일정한 기간수익률을 반영하는 방식을 적용해 인식</strong> (리스제공자 내재이자율 적용).
+            </li>
+            <li>
+                <strong>금융리스채권 손상차손:</strong> 리스제공자는 리스총투자를 계산할 때 사용한 무보증잔존가치를 정기적으로 검토. <strong>추정무보증잔존가치가 줄어든 경우에 리스제공자는 리스기간에 걸쳐 수익배분을 조정하며, 리스채권의 장부금액은 감소시키고 그 감소액은 즉시 당기비용인식.</strong>
+            </li>
+        </ul>
+
+        <h2 id="s-7">7. 공시사항</h2>
+
+        <table class="wiki-table-custom">
+            <tr>
+                <th style="width: 25%;">주체</th>
+                <th>세부 공시 항목 (원문 100% 반영)</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-blue-700 bg-blue-50">(1) 리스제공자</td>
+                <td class="bg-blue-50">
+                    <ul class="list-disc pl-5 space-y-1 font-bold text-gray-800">
+                        <li><strong>운용리스:</strong> 리스수익, 지수나 요율(이율)에 따라 달라지지 않는 변동리스료 관련 수익</li>
+                        <li><strong>금융리스:</strong> 매출손익, 리스순투자의 금융수익, 리스순투자 측정치에 포함되지 않은 변동리스료에 관련되는 수익</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-green-700 bg-green-50">(2) 리스이용자</td>
+                <td class="bg-green-50">
+                    <ul class="list-disc pl-5 space-y-1 font-bold text-gray-800">
+                        <li>기초자산 유형별 사용권자산의 감가상각비</li>
+                        <li>리스부채에 대한 이자비용</li>
+                        <li>금융리스로 회계처리 하지 않는 단기리스인 경우 단기리스에 관련되는 비용</li>
+                        <li>리스로 회계처리 하지 않는 소액 기초자산 리스인 경우 소액자산 리스에 관련 비용</li>
+                        <li>리스부채 측정치에 포함되지 않은 변동리스료에 관련되는 비용</li>
+                        <li>사용권자산의 전대리스에서 생기는 수익</li>
+                        <li>리스의 총 현금유출</li>
+                        <li>사용권자산의 추가</li>
+                        <li>판매후리스 거래에서 생기는 모든 차손익</li>
+                        <li>보고기간 말 현재 기초자산 유형별 사용권자산의 장부금액</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+
+        <div class="rp-box">
+            <p><strong>[참교육자 7호선 임세정 vs 빌런 8호선 유리아 (공시의 무게)]</strong></p>
+            <p><strong><a href="유리아.html" class="wiki-link" style="color: #9856FF;">유리아</a>:</strong> "세정 언니! 리스이용자가 공시해야 할 항목이 10개나 됩니다! 단기리스 비용, 변동리스료, 현금유출액까지... 다 적으려면 손가락에 쥐가 날 것 같습니다! 무사도에 어긋납니다!!"</p>
+            <p><strong><a href="임세정.html" class="wiki-link" style="color: #FF8899;">임세정</a>:</strong> "유리아... 과거에는 기업들이 운용리스라는 명목하에 어마어마한 빚을 장부에서 숨겨놨었지(부외금융). 그걸 막기 위해 IFRS 1116호가 도입되면서 거의 모든 리스를 자산과 부채로 잡게 된 거야. 그만큼 투자자들에게 <strong>'우리가 빌려 쓰는 자산이 얼만지, 갚아야 할 이자와 현금유출이 얼만지'</strong> 투명하게 까발려야 하는 책무가 생긴 거지. 손가락에 쥐가 나도 단기리스, 소액리스 예외 항목까지 철저하게 공시해야 해. 그게 자본주의 회계의 엄격한 룰이야."</p>
+        </div>
+
+        <br><br>
+
+        <!-- 효빈교통공사 캐릭터들 둘러보기 틀 (세계관 연동) -->
+        <details class="nw-box" style="border-color:#555588;" open>
+            <summary style="background-color:#555588; color: white;" class="outline-none">
+                <a href="효빈교통공사.html" class="text-white text-lg hover:underline"><span class="font-bold">효빈교통공사 & 뱅드림 연관 마스코트 둘러보기</span></a>
+            </summary>
+            <table class="nw-tbl">
+                <tr>
+                    <th rowspan="4" class="w-[10%] nw-th-col text-[#555588]">등<br>장<br>인<br>물</th>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #0077DD;"><a href="1호선.html" class="nw-link hover:underline text-white">1호선</a></td>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #00CCAA;"><a href="2호선.html" class="nw-link hover:underline text-white">2호선</a></td>
+                    <td class="font-bold text-[#333]" style="background-color: #FFCC11;"><a href="3호선.html" class="nw-link hover:underline text-[#333]">3호선</a></td>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #FF5522;"><a href="4호선.html" class="nw-link hover:underline text-white">4호선</a></td>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #EE0022;"><a href="5호선.html" class="nw-link hover:underline text-white">5호선</a></td>
+                </tr>
+                <tr>
+                    <td><a href="고나미.html" class="nw-link hover:underline text-[#0077DD]">고나미</a><br><span class="text-xs text-gray-500">(연관: <a href="하나조노 타에.html" class="hover:underline text-gray-500">타에</a>)</span></td>
+                    <td><a href="하루빈.html" class="nw-link hover:underline text-[#00CCAA]">하루빈</a><br><span class="text-xs text-gray-500">(연관: <a href="아오바 모카.html" class="hover:underline text-gray-500">모카</a>)</span></td>
+                    <td><a href="박라미.html" class="nw-link hover:underline text-[#FFCC11]">박라미</a><br><span class="text-xs text-gray-500">(연관: <a href="야마부키 사아야.html" class="hover:underline text-gray-500">사아야</a>)</span></td>
+                    <td><a href="다로나.html" class="nw-link hover:underline text-[#FF5522]">다로나</a><br><span class="text-xs text-gray-500">(연관: <a href="토야마 카스미.html" class="hover:underline text-gray-500">카스미</a>)</span></td>
+                    <td><a href="미소하.html" class="nw-link hover:underline text-[#EE0022]">미소하</a><br><span class="text-xs text-gray-500">(연관: <a href="미타케 란.html" class="hover:underline text-gray-500">란</a>)</span></td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-white" style="background-color: #881188;"><a href="6호선.html" class="nw-link hover:underline text-white">6호선</a></td>
+                    <td colspan="2" class="font-bold text-[#333]" style="background-color: #FF8899;"><a href="7호선.html" class="nw-link hover:underline text-[#333]">7호선</a></td>
+                    <td class="font-bold text-white" style="background-color: #9856FF;"><a href="8호선.html" class="nw-link hover:underline text-white">8호선</a></td>
+                    <td class="font-bold text-white" style="background-color: #6677CC;"><a href="빈효광역선.html" class="nw-link hover:underline text-white">빈효선*</a></td>
+                </tr>
+                <tr>
+                    <td><a href="라세나.html" class="nw-link hover:underline text-[#881188]">라세나</a><br><span class="text-xs text-gray-500">(연관: <a href="미나토 유키나.html" class="hover:underline text-gray-500">유키나</a>)</span></td>
+                    <td><a href="임세정.html" class="nw-link hover:underline text-[#FF8899]">임세정</a></td>
+                    <td><a href="임세하.html" class="nw-link hover:underline text-[#FF8899]">임세하</a><br><span class="text-xs text-gray-500">(연관: <a href="치하야 아논.html" class="hover:underline text-gray-500">아논</a>)</span></td>
+                    <td><a href="유리아.html" class="nw-link hover:underline text-[#9856FF]">유리아</a><br><span class="text-xs text-gray-500">(연관: <a href="와카미야 이브.html" class="hover:underline text-gray-500">이브</a>)</span></td>
+                    <td><a href="전노아.html" class="nw-link hover:underline text-[#6677CC]">전노아</a><br><span class="text-xs text-gray-500">(연관: <a href="쿠라타 마시로.html" class="hover:underline text-gray-500">마시로</a>)</span></td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="text-left text-xs text-gray-600 bg-gray-50 px-3 py-2 border-t border-gray-300" style="text-align: left;">
+                        * <strong>주의:</strong> 효빈메트로 마스코트 캐릭터와 뱅드림 캐릭터는 세계관 내에서 철저히 <strong>'별개의 인물'</strong>로 취급됩니다. <br>
+                        * <strong>빈효선</strong>: 노선 운영은 효빈교통공사가 아닌 코레일(한국철도공사)이 담당하지만, 지역 인프라 특성상 같이 묶여서 캐릭터 사업으로 진행됨.
+                    </td>
+                </tr>
+            </table>
+        </details>
+
+    </div>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

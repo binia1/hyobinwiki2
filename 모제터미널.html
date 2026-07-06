@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>모제터미널 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* [테마 컬러] 버스 터미널: 청록색/짙은 파랑 */
+            --wiki-main: #006699; 
+            /* [상단바 고정] 위키 지정 컬러 */
+            --wiki-nav-bg: #7777AA;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.15rem !important; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 400px; font-size: 0.82rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.2rem !important; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: var(--wiki-gray-bg); color: var(--wiki-main); width: 100px; padding: 5px 8px; border: 1px solid var(--wiki-border); text-align: center; }
+        .infobox td { padding: 5px 8px; border: 1px solid var(--wiki-border); }
+
+        /* 데이터 테이블 */
+        .data-table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; font-size: 0.9rem; }
+        .data-table th, .data-table td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; }
+        .data-table th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; text-align: center; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* 특수 스타일 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+        del { color: #ccc; text-decoration: line-through; }
+        .wiki-gray { color: #888; font-size: 0.9em; }
+
+        /* 요약문 테이블 */
+        .bus-table { width: 100%; border-collapse: collapse; border: 1px solid var(--wiki-border); margin: 10px 0; text-align: center; }
+        .bus-table th, .bus-table td { border: 1px solid var(--wiki-border); padding: 8px; vertical-align: middle; }
+        .bus-table th { background-color: #6e6e6e; font-weight: bold; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+
+        /* 사건/강조 박스 */
+        .incident-box { border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .incident-box.red { border-color: #fecaca; background-color: #fef2f2; }
+        .incident-box.yellow { border-color: #fef08a; background-color: #fefce8; }
+        .incident-box.green { border-color: #bbf7d0; background-color: #f0fdf4; }
+        .incident-box.blue { border-color: #bfdbfe; background-color: #eff6ff; }
+
+        .anchor-offset { scroll-margin-top: 70px; }
+    </style>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav-bg);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="효빈위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a href="토론.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">토론</a>
+                <a href="수정.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">편집</a>
+                <a href="역사.html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">모제터미널</div>
+            <div class="flex gap-2 mb-1">
+                <a href="토론.html" class="wiki-btn">토론</a>
+                <a href="수정.html" class="wiki-btn">편집</a>
+                <a href="역사.html" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold text-[#006699]" style="color: var(--wiki-main);">분류:</span> 
+            <a href="모제군.html" class="wiki-link">모제군의 교통</a> | 
+            <a href="버스터미널.html" class="wiki-link">버스터미널</a> | 
+            <a href="모제읍.html" class="wiki-link">모제읍</a>
+        </div>
+        
+        <div class="no-autolink" id="deokbuk-transit-zone">
+            <script src="assets/틀_효빈덕북권대중교통.js"></script>
+        </div>
+        
+        <div class="overflow-x-auto my-6">
+            <table class="bus-table">
+                <thead>
+                    <tr>
+                        <th colspan="2" style="background-color: #7777AA; color: white; padding: 10px;">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                                <img onerror="this.style.display='none'" src="이미지/모제군로고.png" style="max-height: 28px; width: auto;" alt="Moje County Logo"/>
+                                <span style="font-weight: bold; font-size: 1.1rem;">모제군 관내 버스 터미널 및 정류소</span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="text-[0.9rem]">
+                    <tr>
+                        <th class="w-1/4 text-center bg-gray-100">터미널</th>
+                        <td>
+                            <a href="모제터미널.html" class="wiki-link">모제터미널</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="text-center bg-gray-100">정류소</th>
+                        <td>
+                            <a href="약궁정류소.html" class="wiki-link">약궁정류소</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-[11px] p-2 italic bg-gray-50 text-left" colspan="2">
+                            ※ 인구 소멸 소리 듣던 깡시골이지만 <a href="약궁면.html" class="wiki-link">약궁면</a> 반도체 클러스터 떡상 덕분에 노선망이 간신히 연명 및 확장 중입니다.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">특징 및 입지</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">운행 노선</a>
+                        <ul>
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">고속버스 노선</a></li>
+                            <li>3.2. <a href="#s-3-2" class="wiki-link">시외버스 및 완행 노선</a></li>
+                            <li>3.3. <a href="#s-3-3" class="wiki-link">농어촌버스 노선</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">여담</a></li>
+                </ul>
+            </div>
+
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="infobox-title">모제터미널<br><span class="text-sm font-normal">Moje Bus Terminal</span></div>
+                <div class="bg-white text-center border-b">
+                    <div class="w-full bg-gray-100 overflow-hidden flex items-center justify-center">
+                        <img src="이미지/모제터미널.png" alt="모제터미널" class="w-full h-auto object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'py-10 text-5xl\'>🚌</div>'">
+                    </div>
+                    <div class="p-2 text-sm font-bold border-t">"이름에 금(金)이 있지만 금은 안 나옵니다"</div>
+                </div>
+                <table>
+                    <tr><th>주소</th><td><a href="덕빈북도.html" class="wiki-link">덕빈북도</a> <a href="모제군.html" class="wiki-link">모제군</a> <a href="모제읍.html" class="wiki-link">모제읍</a> 금전리</td></tr>
+                    <tr><th>운영시간</th><td>06:00 ~ 22:00</td></tr>
+                    <tr><th>핵심 연계</th><td><a href="모제역.html" class="wiki-link">모제역</a> (일반철도 연계)</td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <p><strong>모제터미널</strong>은 <a href="덕빈북도.html" class="wiki-link">덕빈북도</a> <a href="모제군.html" class="wiki-link">모제군</a> <a href="모제읍.html" class="wiki-link">모제읍</a> 금전리에 위치한 공용 버스 터미널이다. 공식 위키 명칭 및 옛 간판은 모제공용버스터미널이었으나 시설 리모델링 후 깔끔하게 모제터미널로 축약되었다.</p>
+        <p>덕빈북도 9개 군 가운데 *인구가 가장 적은(29,823명)* 초미니 지자체 <a href="모제군.html" class="wiki-link">모제군</a>의 메인 터미널답게 전체적인 배차 간격은 처참함의 극치를 달렸으나, 최근 <a href="약궁면.html" class="wiki-link">약궁면</a> 반도체 협력사 클러스터 떡상과 출퇴근 노동자 유입 덕분에 극적으로 산소호흡기를 붙이고 살아난 반전의 역사작이다.</p>
+
+        <h2 id="s-2" class="anchor-offset">2. 특징 및 입지</h2>
+        <p>터미널이 위치한 곳은 모제읍 <strong>금전리</strong>인데, <a href="장어면.html" class="wiki-link">장어면</a> 문서에서 장어 맛집 찾지 말라고 경고하듯 <strong>여기 와서 금맥 찾으려다간 뺨 맞기 딱 좋다.</strong> <span class="wiki-gray">(그냥 흔한 깡시골 논밭 뷰다.)</span> 명목상 군청이 있는 모제리 구시가지와는 거리가 좀 있으며, 오히려 일반철도가 정차하는 가운리의 <a href="모제역.html" class="wiki-link">모제역</a> 및 신흥 주거지와 연계성이 훨씬 좋아 이쪽이 실질적인 모제군의 대동맥 기점 역할을 한다.</p>
+        <p>전형적인 도농복합 소멸위험 지역 특성상 과거에는 밤만 되면 암흑천지가 되었으나, 가운리 신시가지와 금전리 터미널 일대는 군 내에서 유일하게 "밤에 돌아다닐 만한 가로등"이 켜지는 핫플레이스(?)이기도 하다.</p>
+
+        <h2 id="s-3" class="anchor-offset">3. 운행 노선</h2>
+
+        <h3 id="s-3-1">3.1. 고속버스 노선</h3>
+        <p>철도가 <a href="전산시.html" class="wiki-link">전산시</a>나 <a href="서진시.html" class="wiki-link">서진시</a> 같은 인근 중소도시만 연결해 주기 때문에, 환승 없이 서울로 다이렉트 슛을 쏴주는 메리트 덕분에 주말마다 매진 세례를 이룬다.</p>
+        <div class="overflow-x-auto">
+            <table class="data-table">
+                <thead>
+                    <tr><th>행선지</th><th>배차 빈도 / 횟수</th><th>비고</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>서울(경부)</strong></td>
+                        <td>1일 5회</td>
+                        <td>상경하려는 군민들과 반도체 산단 바이어들의 소중한 발. 주말 증회 없음.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>인천 / 부천</strong></td>
+                        <td>1일 2회</td>
+                        <td>수도권 서부 연계망.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 id="s-3-2">3.2. 시외버스 및 완행 노선</h3>
+        <p>인접한 거대 도시인 <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> 방면 노선은 하루에 단 5회(...)만 감질나게 들어오기 때문에 시간표를 못 맞추면 야숙을 각오해야 한다. 대신 인근 <a href="전산시.html" class="wiki-link">전산시</a>행 배차가 아주 알차게 살아남아 있다.</p>
+        <div class="overflow-x-auto">
+            <table class="data-table">
+                <thead>
+                    <tr><th>권역</th><th>행선지</th><th>배차 빈도</th><th>특징</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>광역 메가시티</strong></td>
+                        <td><a href="효빈고속버스터미널.html" class="wiki-link">효빈종합</a></td>
+                        <td>1일 5회</td>
+                        <td><a href="칠양여객.html" class="wiki-link">칠양고속</a> 운행. 완행 계통이라 시간이 무지막지하게 걸린다.</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="3"><strong>도내 시·군 연계</strong></td>
+                        <td><a href="전산시.html" class="wiki-link">전산공용</a></td>
+                        <td>30~40분 간격</td>
+                        <td><strong>터미널의 실질적인 먹여 살리기 노선.</strong> 전산 산단과 모제를 잇는다.</td>
+                    </tr>
+                    <td><a href="서진시.html" class="wiki-link">서진시외</a></td>
+                    <td>1일 5회</td>
+                    <td>몰락해 가는 광역도시 서진행. 전철 환승보다 버스가 편한 어르신들이 탄다.</td>
+                </tr>
+                <tr>
+                    <td><a href="상안군.html" class="wiki-link">상안</a>, <a href="저천군.html" class="wiki-link">저천</a>, <a href="강주시.html" class="wiki-link">강주</a></td>
+                    <td>각 1일 2~3회</td>
+                    <td>내륙 오지 및 해안가로 향하는 극악 선형의 유배형 코스. 멀미 봉투 지참 필수.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 id="s-3-3">3.3. 농어촌버스 노선</h3>
+        <p>모제군청에서 인구 유입을 위해 칼을 갈고 대폭 늘려준 버스망이다. <del>이거라도 없으면 면 단위 주민들은 읍내 구경도 못 한다.</del></p>
+        <ul class="list-disc pl-5 space-y-1">
+            <li><strong>모제읍 - 약궁면 - 전산시 간선 노선:</strong> 15~20분 간격. <strong>모제군 대동맥 1호선.</strong> 반도체 공장 교대 근무자들과 출퇴근 직장인들이 꽉꽉 들어차는 가축 수송의 현장이다.</li>
+            <li><strong><a href="괴천면.html" class="wiki-link">괴천면</a> 방면:</strong> 1일 4회. 사람보다 느티나무가 더 많은 것 같다는 깡시골 전용 노선. 초중 병설학교 학생들의 통학 셔틀이다.</li>
+            <li><strong><a href="청해면.html" class="wiki-link">청해면</a> 방면:</strong> 1일 6회. 해안 평야 지대로 향하며 남부 교육 거점인 청해고 학생들의 든든한 발이다.</li>
+            <li><strong><a href="장어면.html" class="wiki-link">장어면</a> 방면:</strong> 1일 5회. 땅은 군 내에서 제일 넓은데 산지가 많아 거주지가 띄엄띄엄 흩어져 있으므로, 기사님이 안내방송 없이 쿨하게 패싱할 수 있으니 내릴 때 벨을 미리미리 광클해야 한다.</li>
+            <li><strong><a href="양광면.html" class="wiki-link">양광면</a> 방면:</strong> 1일 3회. 인구 밀도 군 내 최저를 달리는 조용한 숲세권행 버스. 조용히 살고 싶어 귀촌한 양반들이 가끔 얻어 탄다.</li>
+        </ul>
+
+        <h2 id="s-4" class="anchor-offset">4. 여담</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>약궁면 소년 가장 밈:</strong> 모제읍 금전리에 터미널 본진이 버티고 있긴 하지만, 군청 교통과나 상인들이나 온통 신경은 반도체 대박이 터진 <strong><a href="약궁면.html" class="wiki-link">약궁면</a></strong>에만 쏠려 있다. 위키러들 사이에서는 "읍내 본진은 노인들만 지키고 있고, 돈은 약궁면 소년 가장이 다 벌어온다"며 놀림을 받는다.</li>
+            <li>터미널 대합실 매표소 옆에는 초선인 진기현 군수의 '반도체 코인 탑승 스펙터클 미래 도시 모제' 포스터가 큼지막하게 붙어 있는데, 먼지가 뽀얗게 쌓여 있어 묘한 시골 감성을 더해준다.</li>
+            <li>가운리 모제역과 금전리 터미널 사이의 직선 도로변에는 기묘하게 생긴 붕어빵 트럭이 하나 있는데, 겨울철 퇴근 시간대만 되면 반도체 공단 노동자들이 줄을 길게 서서 터미널 일대의 유일한 정체 구간을 만들어내기도 한다.</li>
+        </ul>
+
+        <div class="nav-template-box">
+            <div class="nav-template-header">
+                <span>[틀: 덕빈북도 버스 터미널 (모제군 권역)]</span>
+            </div>
+            <div class="nav-template-content">
+                <table class="nav-template-table">
+                    <tr>
+                        <th>터미널</th>
+                        <td><a href="모제터미널.html" class="wiki-link">모제터미널</a></td>
+                    </tr>
+                    <tr>
+                        <th>정류소</th>
+                        <td><a href="약궁정류소.html" class="wiki-link">약궁정류소</a></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleFold(id) {
+            var content = document.getElementById(id);
+            if (content.style.display === "none" || content.style.display === "") {
+                content.style.display = "block";
+            } else {
+                content.style.display = "none";
+            }
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                location.href = query + '.html';
+            } else {
+                showMsg('검색어를 입력해주세요.');
+            }
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

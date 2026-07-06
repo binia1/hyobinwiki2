@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<link href="이미지/효빈위키아이콘.png" rel="icon"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>효빈광역시 통합 유튜브 플랫폼</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #ffffff; color: #0f0f0f; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+        .yt-red { color: #ff0000; }
+        .bg-yt-gray { background-color: #f2f2f2; }
+        .hover-bg-yt-gray:hover { background-color: #e5e5e5; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body class="flex flex-col min-h-screen pt-[56px]">
+<!-- 공유하기 토스트 알림 (숨김) -->
+<div class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-full text-sm opacity-0 transition-opacity duration-300 z-[200] pointer-events-none" id="toast">
+        클립보드에 링크가 복사되었습니다.
+    </div>
+<!-- [관리자 메뉴] -->
+<div class="w-full bg-gray-800 text-white p-2 text-center text-sm font-bold fixed top-0 z-[100]">
+        ⚙️ 지역 강제 이동: 
+        <select class="text-black px-2 py-1 rounded ml-2 outline-none cursor-pointer" id="regionSelect" onchange="changeRegion(this.value); switchTab('home');">
+<option value="효빈광역시청">효빈광역시청</option>
+<option value="천성구">천성구</option>
+<option value="치원군">치원군</option>
+<option value="남구(효빈광역시)">남구(효빈광역시)</option>
+</select>
+<span class="ml-4 font-normal text-xs text-yellow-300">※ URL의 ?region= 파라미터를 최우선으로 따라갑니다.</span>
+</div>
+<!-- 상단 네비게이션 -->
+<nav class="bg-white fixed top-[44px] sm:top-0 w-full z-50 h-[56px] flex items-center justify-between px-4 border-b border-gray-200 sm:mt-11">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 rounded-full hover-bg-yt-gray flex justify-center items-center transition"><i class="fas fa-bars text-xl"></i></button>
+<div class="flex items-center gap-1 cursor-pointer" onclick="switchTab('home')">
+<i class="fab fa-youtube text-3xl yt-red"></i>
+<span class="text-xl font-bold tracking-tighter">YouTube</span><span class="text-xs text-gray-500 -mt-3">KR</span>
+</div>
+</div>
+<div class="hidden md:flex flex-1 justify-center max-w-[720px] ml-10">
+<div class="flex w-full">
+<div class="flex items-center w-full border border-gray-300 rounded-l-full px-4 py-2 bg-white focus-within:border-blue-500">
+<i class="fas fa-search text-gray-400 mr-2"></i>
+<input class="w-full outline-none font-medium" id="top-search-input" onkeypress="if(event.key === 'Enter') executeSearch()" placeholder="채널 또는 동영상 검색" type="text"/>
+</div>
+<button class="border border-l-0 border-gray-300 bg-[#f8f8f8] px-5 rounded-r-full hover:bg-[#f0f0f0] transition" onclick="executeSearch()"><i class="fas fa-search text-gray-600"></i></button>
+</div>
+</div>
+<div class="flex items-center gap-2 sm:gap-4">
+<button class="w-8 h-8 rounded-full overflow-hidden ml-2"><img class="w-full h-full object-cover" src="이미지/이름없음.png"/></button>
+</div>
+</nav>
+<div class="flex flex-1 h-full mt-11 sm:mt-24">
+<!-- 사이드바 -->
+<aside class="hidden xl:flex flex-col w-[240px] px-3 py-2 fixed h-[calc(100vh-100px)] overflow-y-auto hover:scrollbar-thumb-gray-400">
+<a class="flex items-center px-3 py-2.5 rounded-lg hover-bg-yt-gray transition mb-1" href="#" onclick="switchTab('home')"><i class="fas fa-home text-xl w-8 text-center mr-4"></i><span class="font-medium">홈</span></a>
+<a class="flex items-center px-3 py-2.5 rounded-lg hover-bg-yt-gray transition mb-1" href="#" onclick="switchTab('shorts')"><i class="fas fa-bolt text-xl w-8 text-center mr-4"></i><span class="font-medium">Shorts</span></a>
+<div class="h-[1px] bg-gray-200 my-3"></div>
+<h3 class="px-4 py-1 text-base font-bold">구독</h3>
+<div class="flex flex-col" id="sidebar-subscriptions">
+<!-- JS에서 채워짐 (최대 5개) -->
+</div>
+<!-- 🌟 전체 보기 메뉴 -->
+<button class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 transition mt-1 text-gray-700 w-full text-left" onclick="openAllSubsModal()">
+<i class="fas fa-chevron-down text-lg w-8 text-center mr-4"></i><span class="font-medium">전체 보기</span>
+</button>
+</aside>
+<!-- 메인 컨텐츠 영역 -->
+<main class="flex-1 xl:ml-[240px] w-full max-w-[1280px] mx-auto pb-10" id="main-content">
+<!-- 공통 헤더 (배너, 로고, 구독 버튼) -->
+<div class="w-full h-[15vw] min-h-[150px] max-h-[250px] xl:rounded-2xl overflow-hidden mt-4 bg-gray-200">
+<img alt="배너" class="w-full h-full object-cover" id="yt-banner" src="이미지/배너.png"/>
+</div>
+<div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 px-4 py-6">
+<img alt="로고" class="w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] rounded-full object-cover border border-gray-200" id="yt-logo" src="이미지/로고.png"/>
+<div class="flex-1 text-center sm:text-left">
+<h1 class="text-3xl font-bold mb-1 flex items-center justify-center sm:justify-start gap-2">
+<span id="yt-name">지자체명</span> <i class="fas fa-check-circle text-gray-500 text-[18px]"></i>
+</h1>
+<div class="text-gray-600 text-sm mb-2 font-medium">
+<span class="font-bold text-black" id="yt-handle">@Handle</span> ‧ 구독자 <span id="yt-subs">0만명</span> ‧ 동영상 1,024개
+                    </div>
+<div class="text-gray-600 text-sm mb-4 max-w-2xl cursor-pointer group" onclick="openAboutModal()">
+<span class="line-clamp-2" id="yt-desc">소개글</span>
+<span class="font-bold text-black mt-1 inline-block group-hover:underline">... 더보기 <i class="fas fa-chevron-right text-[10px]"></i></span>
+</div>
+<button class="bg-[#0f0f0f] hover:bg-[#272727] text-white font-bold px-4 py-2 rounded-full transition" id="subscribe-btn" onclick="toggleSubscribe()">구독</button>
+</div>
+</div>
+<!-- 유튜브 탭 버튼 -->
+<div class="flex border-b border-gray-200 px-4 overflow-x-auto">
+<button class="yt-tab px-6 py-3 font-bold text-black border-b-[3px] border-black whitespace-nowrap" id="tab-btn-home" onclick="switchTab('home')">홈</button>
+<button class="yt-tab px-6 py-3 font-semibold text-gray-600 hover:text-black transition whitespace-nowrap" id="tab-btn-videos" onclick="switchTab('videos')">동영상</button>
+<button class="yt-tab px-6 py-3 font-semibold text-gray-600 hover:text-black transition whitespace-nowrap" id="tab-btn-shorts" onclick="switchTab('shorts')">Shorts</button>
+<button class="yt-tab px-6 py-3 font-semibold text-gray-600 hover:text-black transition whitespace-nowrap" id="tab-btn-community" onclick="switchTab('community')">커뮤니티</button>
+</div>
+<!-- 1. [홈] 탭 영역 -->
+<div class="tab-content block animate-fade-in" id="content-home">
+<div class="px-4 py-6 border-b border-gray-200">
+<div class="flex flex-col md:flex-row gap-4 cursor-pointer hover:bg-gray-50 rounded-xl transition p-2" id="home-featured"></div>
+</div>
+<div class="px-4 py-6 border-b border-gray-200">
+<div class="flex items-center gap-2 mb-4">
+<h2 class="text-lg font-bold cursor-pointer hover:text-blue-600" onclick="switchTab('videos')">최근 업로드된 동영상</h2>
+<button class="w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center transition" onclick="switchTab('videos')"><i class="fas fa-play text-xs"></i></button>
+</div>
+<div class="flex gap-4 overflow-x-auto pb-4 snap-x" id="home-recent-videos"></div>
+</div>
+</div>
+<!-- 2. [동영상] 탭 영역 -->
+<div class="tab-content hidden animate-fade-in" id="content-videos">
+<div class="px-4 py-6">
+<!-- 🌟 채널 검색 결과가 나타날 영역 -->
+<div class="mb-6 flex flex-col gap-4" id="channel-search-result"></div>
+<div class="flex gap-3 mb-6">
+<button class="bg-black text-white px-3 py-1.5 rounded-lg text-sm font-semibold">최신순</button>
+<button class="bg-[#f2f2f2] hover:bg-[#e5e5e5] text-black px-3 py-1.5 rounded-lg text-sm font-semibold transition">인기순</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8" id="videos-grid"></div>
+</div>
+</div>
+<!-- 3. [Shorts] 탭 영역 -->
+<div class="tab-content hidden animate-fade-in" id="content-shorts">
+<div class="px-4 py-6">
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-6" id="shorts-grid"></div>
+</div>
+</div>
+<!-- 4. [커뮤니티] 탭 영역 -->
+<div class="tab-content hidden animate-fade-in" id="content-community">
+<div class="px-4 py-6 max-w-[850px]" id="community-posts-container">
+<!-- JS에서 다중 게시글 반복 생성됨 -->
+</div>
+</div>
+</main>
+</div>
+<!-- 🌟 채널 정보(더보기) 모달 -->
+<div class="fixed inset-0 bg-black bg-opacity-50 z-[200] hidden flex items-center justify-center animate-fade-in" id="about-modal" onclick="closeAboutModal()">
+<div class="bg-white rounded-2xl w-full max-w-[500px] p-6 m-4 shadow-xl transform transition-transform scale-95" id="about-modal-content" onclick="event.stopPropagation()">
+<div class="flex justify-between items-start mb-4">
+<h2 class="text-xl font-bold">정보</h2>
+<button class="text-gray-500 hover:text-black w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition" onclick="closeAboutModal()"><i class="fas fa-times text-xl"></i></button>
+</div>
+<div class="space-y-4">
+<p class="text-[14px] whitespace-pre-wrap text-black leading-relaxed" id="modal-desc"></p>
+<h3 class="font-bold text-lg pt-4 border-t border-gray-200">채널 세부정보</h3>
+<div class="flex flex-col gap-3 text-[14px] text-black">
+<div class="flex items-center gap-4"><i class="fas fa-globe text-xl text-gray-500 w-6 text-center"></i><a class="text-blue-600 hover:underline" href="#">www.hyobin.go.kr</a></div>
+<div class="flex items-center gap-4"><i class="fas fa-user text-xl text-gray-500 w-6 text-center"></i>구독자 <span id="modal-subs"></span>명</div>
+<div class="flex items-center gap-4"><i class="fas fa-video text-xl text-gray-500 w-6 text-center"></i>동영상 1,024개</div>
+<div class="flex items-center gap-4"><i class="fas fa-chart-line text-xl text-gray-500 w-6 text-center"></i>조회수 123,456,789회</div>
+</div>
+<div class="pt-4 border-t border-gray-200 flex justify-end">
+<button class="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full font-bold text-sm transition" onclick="shareLink()"><i class="fas fa-share mr-2"></i> 채널 공유</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 🌟 전체 구독 보기 모달 -->
+<div class="fixed inset-0 bg-black bg-opacity-50 z-[200] hidden flex items-center justify-center animate-fade-in" id="all-subs-modal" onclick="closeAllSubsModal()">
+<div class="bg-white rounded-2xl w-full max-w-[500px] max-h-[80vh] flex flex-col m-4 shadow-xl transform transition-transform scale-95" id="all-subs-content" onclick="event.stopPropagation()">
+<div class="flex justify-between items-center p-4 border-b border-gray-200">
+<h2 class="text-xl font-bold">모든 지자체 채널</h2>
+<button class="text-gray-500 hover:text-black w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition" onclick="closeAllSubsModal()"><i class="fas fa-times text-xl"></i></button>
+</div>
+<div class="p-2 overflow-y-auto flex-1 flex flex-col" id="all-subs-list">
+<!-- JS 렌더링 -->
+</div>
+</div>
+</div>
+<script>
+        // 1. 외부 JSON 연동
+        let regionDB = {};
+
+        // 🌟 도시 로고 경로 생성 헬퍼 함수 (이미지/도시명.png)
+        function getCityLogo(regionName) {
+            // 괄호 포함 지역명 완벽 파싱 (예: 남구(효빈광역시) -> 남구)
+            const cleanName = regionName.replace(/\([^)]*\)/g, '').trim(); 
+            return `이미지/${cleanName}.png`;
+        }
+
+        async function init() {
+            try {
+                // 파이썬으로 추출한 youtube_regionDB.json 읽기
+                const response = await fetch('youtube_regionDB.json');
+                if(response.ok) {
+                    regionDB = await response.json();
+                    console.log("✅ youtube_regionDB.json 데이터 로딩 성공!");
+                } else {
+                    console.warn("⚠️ youtube_regionDB.json을 찾을 수 없습니다. 자동 생성 모드로 작동합니다.");
+                }
+            } catch(e) {
+                console.warn("⚠️ 로컬 환경이거나 파일을 찾을 수 없습니다. 자동 생성 모드로 작동합니다.", e);
+            }
+
+            // URL 파라미터 확인 및 적용
+            const urlParams = new URLSearchParams(window.location.search);
+            const region = urlParams.get('region') || "천성구";
+            const tab = urlParams.get('tab') || "home";
+
+            changeRegion(region);
+            switchTab(tab);
+        }
+
+        // JSON에 없는 지역일 경우 즉석에서 데이터를 빚어내는 만능 공장
+        function generateData(regionName) {
+            if(regionDB[regionName]) {
+                // JSON에서 불러온 데이터라도 로고 경로는 강제로 '이미지/도시명.png' 적용
+                regionDB[regionName].logo = getCityLogo(regionName);
+                return regionDB[regionName];
+            }
+            
+            // 괄호 포함 지역명 완벽 파싱 (예: 남구(효빈광역시) -> 남구 -> 남)
+            const cleanName = regionName.replace(/\([^)]*\)/g, '').trim(); 
+            const shortName = cleanName.replace(/(광역시청|시청|군청|구청|도청|광역시|시|군|구)$/, "").trim(); 
+            const displayName = shortName || cleanName;
+
+            return {
+                name: regionName, handle: "@" + displayName + "_Official", subs: "1.5만",
+                logo: getCityLogo(regionName),
+                banner: `https://via.placeholder.com/1280x250/333333/ffffff?text=${displayName}+Banner`,
+                desc: `${regionName} 공식 채널입니다. 알찬 시정 소식을 전해드립니다.`,
+                videos: [
+                    { img: `https://via.placeholder.com/640x360?text=${displayName}1`, title: `${displayName} 시정 브리핑`, views: "1.2만회", time: "1일 전", duration: "10:15" },
+                    { img: `https://via.placeholder.com/640x360?text=${displayName}2`, title: `${displayName} 명소 랜선 투어`, views: "3.5만회", time: "1주 전", duration: "08:45" },
+                    { img: `https://via.placeholder.com/640x360?text=${displayName}3`, title: `${displayName} 맛집 탐방`, views: "1.8만회", time: "2주 전", duration: "12:00" },
+                    { img: `https://via.placeholder.com/640x360?text=${displayName}4`, title: `${displayName} 브이로그`, views: "9,900회", time: "1개월 전", duration: "05:10" }
+                ],
+                shorts: [
+                    { img: `https://via.placeholder.com/300x533?text=${displayName}S1`, title: `${displayName} 1분 요약`, views: "15만회" }
+                ],
+                posts: [
+                    {
+                        id: `post_${displayName}_1`,
+                        text: `📢 <b>[공지] ${regionName} 채널 안내</b><br><br>${displayName}의 새로운 소식을 전해드립니다!`,
+                        img: `https://via.placeholder.com/800x450?text=${displayName}+Notice`,
+                        likes: 1240,
+                        comments: [
+                            { author: `${displayName}시민`, handle: `@${displayName}_citizen`, text: "응원합니다!!", time: "1시간 전", isVillain: false, isOfficial: false },
+                            { author: "전직시장_윤대환", handle: "@YoonDaeHwan_Official", text: "어린놈의 시장이 시키드나! 내 두청운수나 돌려내!!", time: "30분 전", isVillain: true, isOfficial: false, replies: [
+                                { author: regionName, handle: `@${displayName}_Official`, text: "@YoonDaeHwan_Official 수감자님, 교정센터 노역을 추가했습니다. ^^", time: "10분 전", isOfficial: true }
+                            ]}
+                        ]
+                    }
+                ]
+            };
+        }
+
+        let currentData = null;
+        let currentRegionName = "";
+
+        // 탭 전환 (SPA 라우팅)
+        function switchTab(tabName) {
+            document.querySelectorAll('.yt-tab').forEach(el => {
+                el.classList.remove('font-bold', 'text-black', 'border-b-[3px]', 'border-black');
+                el.classList.add('font-semibold', 'text-gray-600');
+            });
+            const activeBtn = document.getElementById('tab-btn-' + tabName);
+            if(activeBtn) {
+                activeBtn.classList.remove('font-semibold', 'text-gray-600');
+                activeBtn.classList.add('font-bold', 'text-black', 'border-b-[3px]', 'border-black');
+            }
+
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            });
+            const targetContent = document.getElementById('content-' + tabName);
+            if(targetContent) {
+                targetContent.classList.remove('hidden');
+                targetContent.classList.add('block');
+            }
+
+            // URL 업데이트
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('tab', tabName);
+            window.history.replaceState({}, '', `${window.location.pathname}?${urlParams.toString()}`);
+        }
+
+        // 지역 변경 및 렌더링
+        function changeRegion(regionKey) {
+            currentRegionName = regionKey;
+            currentData = generateData(regionKey);
+            const data = currentData;
+
+            // 호환성 패치 (단일 post -> posts 배열)
+            if (!data.posts && data.post) {
+                data.posts = [{
+                    id: "post_gen_1",
+                    text: data.post.text || "게시물이 없습니다.",
+                    img: data.post.img || "https://via.placeholder.com/800x450",
+                    likes: data.post.likes || 0,
+                    comments: data.comments || []
+                }];
+            }
+
+            // Select 박스에 없는 지역이 들어오면 추가
+            const select = document.getElementById('regionSelect');
+            if(select && !Array.from(select.options).some(opt => opt.value === regionKey)) {
+                select.appendChild(new Option(`${regionKey}`, regionKey));
+            }
+            if(select) select.value = regionKey;
+
+            // 사이드바 업데이트
+            updateSidebar();
+
+            // 공통 헤더 바인딩
+            document.getElementById('yt-banner').src = data.banner || `https://via.placeholder.com/1280x250?text=${data.name}`;
+            document.getElementById('yt-logo').src = data.logo || `https://via.placeholder.com/160?text=${data.name}`;
+            document.getElementById('yt-name').innerText = data.name;
+            document.getElementById('yt-handle').innerText = data.handle;
+            document.getElementById('yt-subs').innerText = data.subs;
+            document.getElementById('yt-desc').innerText = data.desc;
+            document.getElementById('modal-desc').innerHTML = data.desc.replace(/\n/g, '<br>');
+            document.getElementById('modal-subs').innerText = data.subs;
+
+            // 홈 탭 렌더링
+            if(data.videos && data.videos.length > 0) {
+                const fv = data.videos[0];
+                document.getElementById('home-featured').innerHTML = `
+                    <div class="relative w-full md:w-[450px] aspect-video rounded-xl overflow-hidden flex-shrink-0" onclick="goToVideo('${currentRegionName}')">
+                        <img src="${fv.img}" class="w-full h-full object-cover">
+                        <span class="absolute bottom-1 right-1 bg-black bg-opacity-80 text-white text-xs font-bold px-1 py-0.5 rounded">${fv.duration}</span>
+                    </div>
+                    <div class="flex flex-col justify-center" onclick="goToVideo('${currentRegionName}')">
+                        <h3 class="text-xl font-bold text-black line-clamp-2 mb-2">${fv.title}</h3>
+                        <div class="text-sm text-gray-500 mb-2">조회수 ${fv.views} • ${fv.time}</div>
+                        <p class="text-sm text-gray-600 line-clamp-3">최신 소식을 영상으로 만나보세요. 구독과 알림 설정 부탁드립니다!</p>
+                    </div>
+                `;
+
+                document.getElementById('home-recent-videos').innerHTML = data.videos.slice(1).map(v => `
+                    <div class="flex flex-col cursor-pointer group min-w-[250px] snap-center" onclick="goToVideo('${currentRegionName}')">
+                        <div class="relative w-full aspect-video rounded-xl overflow-hidden mb-3">
+                            <img src="${v.img}" class="w-full h-full object-cover group-hover:scale-105 transition">
+                            <span class="absolute bottom-1 right-1 bg-black bg-opacity-80 text-white text-xs font-bold px-1 py-0.5 rounded">${v.duration}</span>
+                        </div>
+                        <h3 class="text-sm font-bold text-black line-clamp-2 mb-1 group-hover:text-blue-600">${v.title}</h3>
+                        <div class="text-xs text-gray-500">조회수 ${v.views} • ${v.time}</div>
+                    </div>
+                `).join('');
+            }
+
+            // 동영상 및 기타 탭 렌더링
+            renderVideos("");
+            
+            if(data.shorts) {
+                document.getElementById('shorts-grid').innerHTML = data.shorts.map(s => `
+                    <div class="flex flex-col cursor-pointer group" onclick="window.location.href='유튜브 Shorts 재생.html?region=${regionKey}'">
+                        <div class="relative w-full aspect-[9/16] rounded-xl overflow-hidden mb-2">
+                            <img src="${s.img}" class="w-full h-full object-cover group-hover:scale-105 transition">
+                            <i class="fas fa-play absolute bottom-2 left-2 text-white bg-black bg-opacity-50 p-1 rounded"></i>
+                        </div>
+                        <h3 class="text-sm font-bold text-black line-clamp-2 leading-tight">${s.title}</h3>
+                        <div class="text-xs text-gray-500 mt-1">조회수 ${s.views}</div>
+                    </div>
+                `).join('');
+            }
+
+            renderCommunity(data);
+
+            // URL 지역명 업데이트
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('region', regionKey);
+            window.history.replaceState({}, '', `${window.location.pathname}?${urlParams.toString()}`);
+        }
+
+        // 사이드바 목록 갱신 (최대 5개 표시)
+        function updateSidebar() {
+            const select = document.getElementById('regionSelect');
+            // JSON에 있는 키와 select에 있는 옵션 병합
+            let allRegions = Array.from(select.options).map(o => o.value);
+            Object.keys(regionDB).forEach(k => { if(!allRegions.includes(k)) allRegions.push(k); });
+            
+            // 앞 5개만 사이드바에 표시
+            const visible = allRegions.slice(0, 5);
+            const sidebarHtml = visible.map(opt => {
+                const d = regionDB[opt] || generateData(opt);
+                const isActive = (opt === currentRegionName) ? 'bg-gray-100 font-bold' : '';
+                return `
+                    <a href="javascript:void(0)" onclick="changeRegion('${opt}'); switchTab('home'); closeAllSubsModal();" class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 transition mb-1 ${isActive}">
+                        <img src="${getCityLogo(opt)}" onerror="this.src='https://via.placeholder.com/24'" class="w-6 h-6 rounded-full mr-4 object-cover">
+                        <span class="truncate">${d.name}</span>
+                    </a>
+                `;
+            }).join('');
+            document.getElementById('sidebar-subscriptions').innerHTML = sidebarHtml;
+        }
+
+        // 🌟 전체 보기 모달 제어
+        function openAllSubsModal() {
+            const modal = document.getElementById('all-subs-modal');
+            const content = document.getElementById('all-subs-content');
+            
+            // 모든 지역 리스트업
+            const select = document.getElementById('regionSelect');
+            let allRegions = Array.from(select.options).map(o => o.value);
+            Object.keys(regionDB).forEach(k => { if(!allRegions.includes(k)) allRegions.push(k); });
+            
+            const listHtml = allRegions.map(opt => {
+                const d = regionDB[opt] || generateData(opt);
+                return `
+                    <div class="flex items-center gap-4 p-3 hover:bg-gray-100 rounded-lg cursor-pointer transition" onclick="changeRegion('${opt}'); switchTab('home'); closeAllSubsModal();">
+                        <img src="${getCityLogo(opt)}" onerror="this.src='https://via.placeholder.com/40'" class="w-10 h-10 rounded-full object-cover">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-sm">${d.name}</h4>
+                            <p class="text-xs text-gray-500">${d.handle}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('all-subs-list').innerHTML = listHtml;
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => { content.classList.remove('scale-95'); content.classList.add('scale-100'); }, 10);
+        }
+
+        function closeAllSubsModal() {
+            const modal = document.getElementById('all-subs-modal');
+            const content = document.getElementById('all-subs-content');
+            content.classList.remove('scale-100'); content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); document.body.style.overflow = 'auto'; }, 200);
+        }
+
+        // 커뮤니티 탭 다중 게시글 렌더링
+        function renderCommunity(data) {
+            const container = document.getElementById('community-posts-container');
+            if(!data.posts || data.posts.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-500">아직 게시물이 없습니다.</p>`;
+                return;
+            }
+
+            const officialLogo = getCityLogo(currentRegionName);
+            let html = '';
+            data.posts.forEach((post, index) => {
+                const postId = post.id || `post_${index}`;
+                const likeCountText = post.likes >= 10000 ? (post.likes / 10000).toFixed(1) + '만' : post.likes.toLocaleString();
+                
+                // 해당 게시글의 댓글들 생성
+                let commentsHtml = '';
+                if(post.comments) {
+                    post.comments.forEach((c, cIndex) => {
+                        const commentId = `${postId}_c${cIndex}`;
+                        let pImg = c.isVillain ? (c.author.includes('대환') ? '이미지/윤대환.png' : '이미지/윤재훈.png') : 'https://via.placeholder.com/40';
+                        let nameBadge = c.isOfficial ? 'bg-gray-500 text-white px-1.5 py-0.5 rounded-full' : 'text-black font-bold';
+                        
+                        commentsHtml += `
+                            <div class="flex gap-3 mb-6">
+                                <img src="${c.isOfficial ? officialLogo : pImg}" onerror="this.src='https://via.placeholder.com/40'" class="w-10 h-10 rounded-full object-cover">
+                                <div class="flex-1 w-full min-w-0">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="text-[13px] ${nameBadge} truncate">${c.handle}</span>
+                                        <span class="text-[12px] text-gray-500">${c.time}</span>
+                                    </div>
+                                    <p class="text-[14px] text-black mb-1 break-words">${c.text}</p>
+                                    <div class="flex items-center gap-4 text-gray-600 mt-2">
+                                        <button onclick="toggleIcon(this)"><i class="far fa-thumbs-up text-sm"></i></button>
+                                        <button onclick="toggleIcon(this)"><i class="far fa-thumbs-down text-sm"></i></button>
+                                        <button class="text-xs font-bold hover:bg-gray-100 px-3 py-1 rounded-full transition" onclick="toggleReplyInput('${commentId}')">답글</button>
+                                    </div>
+                                    
+                                    <!-- 🌟 답글 입력 영역 -->
+                                    <div id="reply-input-area-${commentId}" class="hidden mt-2 flex gap-3 items-start animate-fade-in">
+                                        <img src="https://via.placeholder.com/24" class="w-6 h-6 rounded-full">
+                                        <div class="flex-1">
+                                            <input type="text" id="reply-input-${commentId}" placeholder="답글 추가..." class="w-full bg-transparent border-b border-gray-300 focus:border-black outline-none py-1 text-[13px] transition" onkeypress="if(event.key === 'Enter') addReply('${commentId}')">
+                                            <div class="flex justify-end mt-2">
+                                                <button class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1 rounded-full text-xs font-bold transition" onclick="addReply('${commentId}')">답글 달기</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 🌟 답글 목록 영역 -->
+                                    <div id="replies-container-${commentId}" class="mt-2 space-y-4">
+                        `;
+                        // 답글(공식 계정 사이다 등)
+                        if(c.replies) {
+                            c.replies.forEach(r => {
+                                let rBg = r.isOfficial ? 'bg-blue-50 p-3 rounded-xl' : ''; 
+                                let rBadge = r.isOfficial ? 'bg-gray-500 text-white px-2 py-0.5 rounded-full' : 'text-black font-bold';
+                                let rpImg = r.isOfficial ? officialLogo : 'https://via.placeholder.com/24';
+                                commentsHtml += `
+                                    <div class="flex gap-3 ${rBg}">
+                                        <img src="${rpImg}" class="w-6 h-6 rounded-full object-cover mt-1" onerror="this.src='https://via.placeholder.com/24'">
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center gap-2 mb-0.5">
+                                                <span class="text-[12px] ${rBadge} truncate">${r.handle}</span>
+                                                ${r.isOfficial ? '<i class="fas fa-check-circle text-gray-500 text-[10px]"></i>' : ''}
+                                                <span class="text-[11px] text-gray-500">${r.time}</span>
+                                            </div>
+                                            <p class="text-[13px] text-black break-words">${r.text}</p>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        }
+                        commentsHtml += `</div></div></div>`;
+                    });
+                }
+
+                const commentTotal = post.comments ? post.comments.length : (post.commentsCount || 0);
+
+                // 게시글 HTML 조립
+                html += `
+                    <div class="border border-gray-200 rounded-xl p-4 sm:p-5 mb-6 shadow-sm">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex gap-3 cursor-pointer">
+                                <img src="${officialLogo}" onerror="this.src='https://via.placeholder.com/40'" class="w-10 h-10 rounded-full object-cover">
+                                <div><h3 class="font-bold text-sm hover:underline"><span>${data.name}</span> <span class="text-xs text-gray-500 font-normal ml-1">게시됨</span></h3></div>
+                            </div>
+                        </div>
+                        <div class="text-sm mb-3 break-words">${post.text}</div>
+                        <div class="rounded-xl overflow-hidden bg-gray-100 mb-3 border border-gray-200 cursor-pointer">
+                            <img src="${post.img}" class="w-full h-auto max-h-[500px] object-cover" onerror="this.src='https://via.placeholder.com/800x450/EEEEEE/333333?text=Image'">
+                        </div>
+                        <div class="flex items-center gap-4 mt-3 pt-2">
+                            <div class="flex bg-gray-100 rounded-full">
+                                <button class="flex items-center gap-2 px-4 py-2 hover:bg-gray-200 rounded-l-full transition" onclick="togglePostLike(this, '${postId}', ${post.likes})">
+                                    <i class="far fa-thumbs-up text-[16px]"></i><span id="like-count-${postId}" class="text-xs font-bold">${likeCountText}</span>
+                                </button>
+                                <div class="w-[1px] bg-gray-300 my-2"></div>
+                                <button class="px-4 py-2 hover:bg-gray-200 rounded-r-full transition" onclick="toggleIcon(this)"><i class="far fa-thumbs-down text-[16px]"></i></button>
+                            </div>
+                            <button class="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full transition flex items-center gap-2" onclick="shareLink()">
+                                <i class="fas fa-share text-[16px]"></i> <span class="text-xs font-bold">공유</span>
+                            </button>
+                            <button class="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full transition flex items-center gap-2" onclick="document.getElementById('input-${postId}').focus()">
+                                <i class="far fa-comment-alt text-[16px]"></i> <span id="comment-total-${postId}" class="text-xs font-bold">${commentTotal}</span>
+                            </button>
+                        </div>
+                        
+                        <div class="mt-4 border-t border-gray-100 pt-4">
+                            <div class="flex gap-3 items-start mb-5">
+                                <img src="https://via.placeholder.com/32" class="w-8 h-8 rounded-full">
+                                <div class="flex-1">
+                                    <input type="text" id="input-${postId}" placeholder="댓글 추가..." class="w-full bg-transparent border-b border-gray-300 focus:border-black outline-none py-1 text-sm transition" onkeypress="if(event.key === 'Enter') addPostComment('${postId}')">
+                                    <div class="flex justify-end mt-2">
+                                        <button class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1 rounded-full text-xs font-bold transition" onclick="addPostComment('${postId}')">댓글</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="comments-area-${postId}" class="space-y-5">
+                                ${commentsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // 🌟 동영상 및 "채널 검색 결과" 렌더링
+        function renderVideos(searchQuery) {
+            const channelResultContainer = document.getElementById('channel-search-result');
+            const gridElement = document.getElementById('videos-grid');
+            channelResultContainer.innerHTML = ''; // 기존 채널 검색 결과 초기화
+
+            if (!currentData || !currentData.videos) return;
+            let targetVideos = currentData.videos;
+
+            // 검색어가 있을 때
+            if (searchQuery) {
+                // 1. [채널 검색] 지자체명이 검색어와 일치하는 채널 찾기
+                const select = document.getElementById('regionSelect');
+                let allRegions = Array.from(select.options).map(o => o.value);
+                Object.keys(regionDB).forEach(k => { if(!allRegions.includes(k)) allRegions.push(k); });
+                
+                const matchedChannels = allRegions.filter(name => name.toLowerCase().includes(searchQuery.toLowerCase()));
+                
+                if (matchedChannels.length > 0) {
+                    const channelCards = matchedChannels.map(rName => {
+                        const d = regionDB[rName] || generateData(rName);
+                        return `
+                            <div class="flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer transition shadow-sm" onclick="changeRegion('${rName}'); switchTab('home');">
+                                <img src="${getCityLogo(rName)}" onerror="this.src='https://via.placeholder.com/160'" class="w-[80px] h-[80px] sm:w-[120px] sm:h-[120px] rounded-full object-cover">
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="text-lg sm:text-xl font-bold flex items-center gap-1 truncate">${d.name} <i class="fas fa-check-circle text-gray-500 text-[14px]"></i></h3>
+                                    <div class="text-sm text-gray-600 truncate">${d.handle} • 구독자 ${d.subs}</div>
+                                    <p class="text-xs text-gray-500 mt-1 line-clamp-2">${d.desc}</p>
+                                </div>
+                                <button class="hidden sm:block bg-[#0f0f0f] text-white font-bold px-4 py-2 rounded-full whitespace-nowrap">구독</button>
+                            </div>
+                        `;
+                    }).join('');
+                    channelResultContainer.innerHTML = `<h3 class="font-bold text-gray-700 mb-3 ml-1">채널 검색 결과</h3>${channelCards}<hr class="my-6 border-gray-200">`;
+                }
+
+                // 2. [영상 검색] 현재 채널의 영상 중 검색어가 포함된 것 필터링
+                targetVideos = currentData.videos.filter(v => v.title.toLowerCase().includes(searchQuery.toLowerCase()));
+            }
+
+            // 영상 그리드 렌더링
+            if (targetVideos.length === 0) {
+                gridElement.innerHTML = `<div class="col-span-full flex flex-col items-center justify-center py-20 text-gray-500"><i class="fas fa-search text-4xl mb-4"></i><p class="text-lg">영상 검색 결과가 없습니다.</p></div>`;
+            } else {
+                gridElement.innerHTML = targetVideos.map(v => `
+                    <div class="flex flex-col cursor-pointer group" onclick="goToVideo('${currentRegionName}')">
+                        <div class="relative w-full aspect-video rounded-xl overflow-hidden mb-3">
+                            <img src="${v.img}" class="w-full h-full object-cover group-hover:scale-105 transition" onerror="this.src='https://via.placeholder.com/640x360'">
+                            <span class="absolute bottom-1 right-1 bg-black bg-opacity-80 text-white text-xs font-bold px-1 py-0.5 rounded">${v.duration}</span>
+                        </div>
+                        <h3 class="text-sm font-bold text-black line-clamp-2 mb-1 group-hover:text-blue-600">${v.title}</h3>
+                        <div class="text-xs text-gray-500">조회수 ${v.views} • ${v.time}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function executeSearch() {
+            const query = document.getElementById('top-search-input').value.trim();
+            switchTab('videos'); // 동영상 탭으로 이동
+            renderVideos(query); // 채널 및 영상 필터링 렌더링
+        }
+
+        function goToVideo(region) {
+            window.location.href = `유튜브 영상재생.html?region=${region}`;
+        }
+
+        function openAboutModal() {
+            const modal = document.getElementById('about-modal');
+            const content = document.getElementById('about-modal-content');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => { content.classList.remove('scale-95'); content.classList.add('scale-100'); }, 10);
+        }
+
+        function closeAboutModal() {
+            const modal = document.getElementById('about-modal');
+            const content = document.getElementById('about-modal-content');
+            content.classList.remove('scale-100'); content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); document.body.style.overflow = 'auto'; }, 200);
+        }
+
+        let isSubscribed = false;
+        function toggleSubscribe() {
+            const btn = document.getElementById('subscribe-btn');
+            isSubscribed = !isSubscribed;
+            btn.innerHTML = isSubscribed ? '<i class="far fa-bell mr-1"></i> 구독중' : '구독';
+            btn.className = isSubscribed ? "bg-[#f2f2f2] text-black font-bold px-4 py-2 rounded-full" : "bg-[#0f0f0f] text-white font-bold px-4 py-2 rounded-full hover:bg-[#272727]";
+        }
+
+        function togglePostLike(btn, postId, baseCount) {
+            const icon = btn.querySelector('i');
+            const countEl = document.getElementById('like-count-' + postId);
+            if(icon.classList.contains('far')) {
+                icon.classList.replace('far', 'fas');
+                let n = baseCount + 1;
+                countEl.innerText = (n >= 10000) ? (n / 10000).toFixed(1) + '만' : n.toLocaleString();
+            } else {
+                icon.classList.replace('fas', 'far');
+                countEl.innerText = (baseCount >= 10000) ? (baseCount / 10000).toFixed(1) + '만' : baseCount.toLocaleString();
+            }
+        }
+
+        function toggleIcon(btn) { 
+            btn.querySelector('i').classList.toggle('fas'); 
+            btn.querySelector('i').classList.toggle('far'); 
+        }
+
+        function addPostComment(postId) {
+            const input = document.getElementById('input-' + postId);
+            const text = input.value.trim();
+            if (text === '') return;
+            const safeText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            
+            const newComment = `
+                <div class="flex gap-3 mb-6 animate-fade-in">
+                    <img src="https://via.placeholder.com/40" class="w-10 h-10 rounded-full object-cover">
+                    <div class="flex-1 w-full min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="font-bold text-[13px] text-black truncate">@Citizen_New</span>
+                            <span class="text-[12px] text-gray-500">방금 전</span>
+                        </div>
+                        <p class="text-[14px] text-black mb-1 break-words">${safeText}</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('comments-area-' + postId).insertAdjacentHTML('afterbegin', newComment);
+            input.value = '';
+            const totalEl = document.getElementById('comment-total-' + postId);
+            totalEl.innerText = (parseInt(totalEl.innerText.replace(/,/g,'')) + 1).toString();
+        }
+
+        // 🌟 개별 답글(대댓글) UI 토글 및 등록 함수
+        function toggleReplyInput(commentId) {
+            const el = document.getElementById('reply-input-area-' + commentId);
+            el.classList.toggle('hidden');
+            if(!el.classList.contains('hidden')) {
+                document.getElementById('reply-input-' + commentId).focus();
+            }
+        }
+
+        function addReply(commentId) {
+            const input = document.getElementById('reply-input-' + commentId);
+            const text = input.value.trim();
+            if (text === '') return;
+            const safeText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            
+            const replyHtml = `
+                <div class="flex gap-3 animate-fade-in">
+                    <img src="https://via.placeholder.com/24" class="w-6 h-6 rounded-full object-cover mt-1">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <span class="text-[12px] font-bold text-black truncate">@Citizen_New</span>
+                            <span class="text-[11px] text-gray-500">방금 전</span>
+                        </div>
+                        <p class="text-[13px] text-black break-words">${safeText}</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('replies-container-' + commentId).insertAdjacentHTML('beforeend', replyHtml);
+            input.value = '';
+            toggleReplyInput(commentId);
+        }
+
+        function shareLink() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0');
+            setTimeout(() => toast.classList.add('opacity-0'), 2000);
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

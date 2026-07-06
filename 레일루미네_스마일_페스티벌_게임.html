@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAILUMINAE SMILE FESTIVAL - 로비</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Orbitron:wght@700&display=swap');
+
+        :root {
+            --color-active: #0077DD;
+            --color-festival: #C455F6;
+            --color-accent: #FF4F91;
+            --header-height: 80px;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #050510;
+            font-family: 'Noto Sans KR', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #app-container {
+            position: relative;
+            width: 1280px;
+            height: 720px;
+            background-color: #0a0b1a;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+            overflow: hidden;
+            transform-origin: center;
+        }
+
+        #bg-image-layer {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 0.8s ease-in-out;
+            z-index: 0;
+        }
+
+        /* 실시간 시간대 반영 오버레이 */
+        #time-tint-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            transition: background-color 2s ease;
+            mix-blend-mode: overlay;
+        }
+
+        .bg-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(10,11,26,0.85) 0%, rgba(196,85,246,0.1) 50%, rgba(0,0,0,0.6) 100%);
+            z-index: 2;
+        }
+
+        #brightness-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: black;
+            opacity: 0; 
+            pointer-events: none;
+            z-index: 199;
+            transition: opacity 0.3s;
+        }
+
+        .bokeh {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--color-active) 0%, transparent 70%);
+            animation: float 10s infinite alternate ease-in-out;
+            opacity: 0.15;
+            z-index: 3;
+            transition: background 0.5s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); opacity: 0.1; }
+            100% { transform: translateY(-50px) scale(1.5); opacity: 0.25; }
+        }
+
+        .top-bar {
+            position: absolute;
+            top: 0; left: 0; width: 100%;
+            height: var(--header-height);
+            background: linear-gradient(to bottom, rgba(10, 11, 26, 0.95), rgba(10, 11, 26, 0.4));
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid var(--color-active);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 20;
+            transition: border-color 0.5s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+        }
+
+        .exp-bar-bg { width: 160px; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; margin-top: 5px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
+        .exp-bar-fill { height: 100%; background: linear-gradient(90deg, #0077DD, #00CCAA); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .character-standee-container {
+            position: absolute;
+            top: var(--header-height); 
+            bottom: -20px; 
+            left: 5%;
+            width: 45%;
+            max-width: 600px;
+            z-index: 10;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .character-standee-container img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            object-position: bottom;
+            filter: drop-shadow(0 0 25px rgba(0,0,0,0.8)) drop-shadow(0 0 10px var(--color-active));
+            transition: filter 0.5s, transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: breathe 5s infinite ease-in-out;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+        
+        .character-standee-container img:active { 
+            transform: scale(0.95) translateY(10px); 
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.9)) drop-shadow(0 0 20px var(--color-active));
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        #affection-badge {
+            position: absolute;
+            bottom: 30%;
+            left: 55%;
+            background: linear-gradient(135deg, rgba(255,79,145,0.95), rgba(196,85,246,0.95));
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 900;
+            font-size: 16px;
+            box-shadow: 0 10px 20px rgba(255,79,145,0.4);
+            border: 2px solid rgba(255,255,255,0.6);
+            z-index: 12;
+            backdrop-filter: blur(5px);
+            pointer-events: none;
+            transition: all 0.3s;
+        }
+        #affection-badge .fill-bar {
+            position: absolute; bottom: 0; left: 0; height: 5px; border-radius: 0 0 30px 30px;
+            background: #fff; width: 0%; transition: width 0.3s; opacity: 0.9;
+        }
+
+        .speech-bubble {
+            position: absolute;
+            top: 140px;
+            left: 42%;
+            background: rgba(255, 255, 255, 0.95);
+            color: #111;
+            padding: 20px 30px;
+            border-radius: 25px 25px 25px 0;
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 1.5;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            z-index: 15;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            max-width: 450px;
+            word-wrap: break-word;
+            border-left: 6px solid var(--color-active);
+        }
+        .speech-bubble.show { opacity: 1; transform: translateY(0); }
+
+        /* 터치 콤보 시스템 UI */
+        #combo-container {
+            position: absolute;
+            top: 35%;
+            left: 5%;
+            z-index: 18;
+            pointer-events: none;
+            opacity: 0;
+            transform: scale(0.5) rotate(-5deg);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 0 4px 10px rgba(0,0,0,0.8), 0 0 20px var(--color-active);
+        }
+        #combo-container.active {
+            opacity: 1;
+            transform: scale(1) rotate(-5deg);
+        }
+        .combo-text { font-family: 'Orbitron', sans-serif; font-size: 24px; font-weight: 900; color: #fff; font-style: italic; }
+        .combo-number { font-family: 'Montserrat', sans-serif; font-size: 64px; font-weight: 900; color: #FFCC11; background: -webkit-linear-gradient(#fff, #FFCC11); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* 플로팅 텍스트 애니메이션 */
+        .floating-text {
+            position: absolute;
+            font-weight: 900;
+            font-size: 22px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8), 0 0 10px var(--color-active);
+            pointer-events: none;
+            z-index: 150;
+            animation: floatText 1s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+        }
+        @keyframes floatText {
+            0% { transform: translate(-50%, 0) scale(0.5); opacity: 0; }
+            20% { transform: translate(-50%, -30px) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -80px) scale(1); opacity: 0; }
+        }
+
+        .main-menu {
+            position: absolute;
+            right: 40px;
+            bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 20;
+            align-items: flex-end;
+        }
+
+        .menu-btn {
+            position: relative;
+            width: 260px;
+            height: 60px;
+            background: linear-gradient(90deg, rgba(20,22,45,0.85) 0%, rgba(40,45,80,0.9) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-right: 5px solid rgba(255,255,255,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            color: white;
+            font-size: 22px;
+            font-weight: 900;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            clip-path: polygon(15px 0, 100% 0, 100% 100%, 0 100%);
+            backdrop-filter: blur(5px);
+        }
+
+        .menu-btn:hover {
+            width: 290px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, var(--color-active) 100%);
+            border-color: white; border-right-color: white;
+            box-shadow: -10px 0 30px var(--color-active);
+        }
+
+        .menu-btn .kor-text {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 11px; font-weight: 500;
+            color: rgba(255,255,255,0.6); margin-top: -2px;
+        }
+
+        .btn-live {
+            height: 90px;
+            background: linear-gradient(90deg, var(--color-festival) 0%, var(--color-accent) 100%);
+            border-right: 8px solid white; font-size: 32px;
+            box-shadow: 0 0 25px rgba(196,85,246,0.5);
+            animation: pulse-glow 2s infinite;
+        }
+
+        .btn-live:hover {
+            width: 310px;
+            background: linear-gradient(90deg, #d369ff 0%, #ff6b9f 100%);
+            box-shadow: 0 0 40px rgba(255,79,145,0.8);
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(196,85,246,0.5); }
+            50% { box-shadow: 0 0 30px rgba(196,85,246,0.9); }
+        }
+
+        .custom-modal {
+            position: absolute; inset: 0;
+            background: rgba(5,5,16,0.95); backdrop-filter: blur(15px);
+            z-index: 200; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .custom-modal.show { opacity: 1; pointer-events: auto; }
+
+        .grid-container {
+            display: grid; gap: 15px; max-height: 500px; width: 80%;
+            overflow-y: auto; padding: 20px; margin-top: 20px;
+        }
+        .grid-container::-webkit-scrollbar { width: 8px; }
+        .grid-container::-webkit-scrollbar-thumb { background: var(--color-active); border-radius: 4px; }
+        .grid-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); }
+
+        .select-btn {
+            height: 120px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+        }
+        .select-btn:hover {
+            transform: scale(1.05); border-color: white;
+            background: rgba(255,255,255,0.15); box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .item-card {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 15px;
+            transition: all 0.2s;
+        }
+        .item-card:hover { background: rgba(255,255,255,0.1); border-color: var(--color-active); }
+        .item-icon { font-size: 40px; background: rgba(0,0,0,0.5); width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
+
+        .quest-card {
+            background: rgba(20,22,45,0.8); border: 1px solid rgba(255,255,255,0.1);
+            border-left: 4px solid var(--color-active); border-radius: 8px; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+        }
+        
+        .quest-progress-bg { width: 200px; height: 10px; background: rgba(0,0,0,0.5); border-radius: 5px; overflow: hidden; margin-top: 8px; }
+        .quest-progress-fill { height: 100%; background: var(--color-active); transition: width 0.3s; }
+
+        .notification-dot {
+            position: absolute; top: -5px; right: 10px; width: 14px; height: 14px;
+            background-color: #EE0022; border-radius: 50%; border: 2px solid #1a1a2e;
+            box-shadow: 0 0 8px #EE0022; display: none;
+        }
+        .notification-dot.active { display: block; animation: pulse-glow 1.5s infinite; }
+
+        /* 순차적 토스트 메시지 시스템 */
+        .toast-container {
+            position: absolute; top: 100px; left: 50%; transform: translateX(-50%) translateY(-20px);
+            background: rgba(0, 0, 0, 0.9); border: 2px solid var(--color-active);
+            padding: 15px 35px; border-radius: 50px; text-align: center; font-size: 18px; font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 300; opacity: 0; pointer-events: none; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .toast-container.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+
+        /* 고급 레벨업 모달 전용 스타일 */
+        #level-up-modal {
+            background: radial-gradient(circle at center, rgba(10,11,26,0.95) 0%, rgba(0,0,0,0.98) 100%);
+        }
+        .level-up-content {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.25), inset 0 0 30px rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            transform: scale(0.8);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #level-up-modal.show .level-up-content { transform: scale(1); opacity: 1; }
+        .level-badge {
+            display: inline-flex; justify-content: center; align-items: center;
+            width: 100px; height: 100px; background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 50%; font-size: 48px; font-weight: 900; color: #111;
+            box-shadow: 0 10px 30px rgba(255, 165, 0, 0.6); margin-bottom: 30px; border: 5px solid white;
+        }
+        .reward-item {
+            background: rgba(0,0,0,0.6); border-radius: 12px; padding: 12px 24px; margin: 8px;
+            display: inline-flex; align-items: center; gap: 12px; font-weight: bold; font-size: 20px;
+            border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        
+        .setting-group { margin-bottom: 20px; }
+        .setting-group label { display: block; font-size: 14px; font-weight: bold; color: #cbd5e1; margin-bottom: 8px; }
+        .custom-range { width: 100%; height: 8px; border-radius: 4px; appearance: none; background: rgba(255,255,255,0.2); outline: none; }
+        .custom-range::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--color-active); cursor: pointer; border: 2px solid white; }
+        .radio-group { display: flex; gap: 15px; }
+        .radio-group label { display: flex; align-items: center; gap: 8px; font-size: 16px; color: white; cursor: pointer; }
+        .custom-select { width: 100%; padding: 10px; background: black; color: white; border: 1px solid gray; border-radius: 8px; outline: none; }
+    </style>
+</head>
+<body>
+
+<audio id="bgm-player" loop></audio>
+
+<div id="app-container">
+    <div id="brightness-overlay"></div>
+    <div id="bg-image-layer" style="background-image: url('이미지/교통공사사무실.png');"></div>
+    <div id="time-tint-overlay"></div> <!-- 실시간 시간대 반영 레이어 -->
+    <div class="bg-overlay"></div>
+    <div class="bokeh" style="width: 300px; height: 300px; top: 20%; left: 30%;"></div>
+    <div class="bokeh" style="width: 200px; height: 200px; bottom: 10%; right: 20%; animation-delay: -3s;"></div>
+    
+    <div class="top-bar">
+        <div class="flex items-center">
+            <div id="player-level" class="bg-white text-gray-900 font-black rounded-xl w-14 h-14 flex items-center justify-center mr-4 border-2 border-gray-400 shadow-[0_0_15px_rgba(255,255,255,0.3)] text-2xl">1</div>
+            <div>
+                <div class="text-xs text-yellow-300 font-bold tracking-widest uppercase">효빈교통공사 수석 매니저</div>
+                <div id="player-name" class="font-black text-2xl leading-tight tracking-tight">Player_Name</div>
+                <div class="exp-bar-bg" title="경험치 바"><div id="player-exp-fill" class="exp-bar-fill"></div></div>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-5">
+            <div class="flex items-center bg-black/70 border border-gray-500 rounded-full px-5 py-2 shadow-inner">
+                <span class="text-2xl drop-shadow-md">🪙</span><span id="player-coin" class="font-bold font-['Orbitron'] ml-3 text-xl text-gray-200">0</span>
+            </div>
+            <div class="flex items-center bg-black/70 border border-blue-500 rounded-full px-5 py-2 shadow-[0_0_15px_rgba(0,119,221,0.4)]">
+                <span class="text-2xl drop-shadow-md">💎</span><span id="player-gem" class="font-bold font-['Orbitron'] ml-3 text-xl text-blue-300">0</span>
+            </div>
+            
+            <button class="ml-4 w-12 h-12 bg-gray-800 hover:bg-gray-700 border border-gray-500 rounded-full flex items-center justify-center text-xl transition shadow-lg hover:scale-110" onclick="openBgModal()" title="배경 변경">🏞️</button>
+            <button class="w-12 h-12 bg-gray-800 hover:bg-gray-700 border border-gray-500 rounded-full flex items-center justify-center text-xl transition shadow-lg hover:scale-110" onclick="openSettingsModal()" title="시스템 설정">⚙️</button>
+        </div>
+    </div>
+
+    <!-- 캐릭터 스탠디 및 상호작용 UI -->
+    <div class="character-standee-container">
+        <img id="main-character-img" src="이미지/고나미.png" alt="캐릭터 스탠디">
+        <div id="affection-badge">
+            ♥ Lv.<span id="ui-aff-lvl">1</span> <span class="text-sm font-normal opacity-80 ml-1" id="ui-aff-text">(0/100)</span>
+            <div class="fill-bar" id="ui-aff-bar"></div>
+        </div>
+    </div>
+    
+    <!-- 콤보 컨테이너 -->
+    <div id="combo-container">
+        <div class="combo-text">COMBO</div>
+        <div class="combo-number"><span id="combo-val">0</span></div>
+    </div>
+
+    <div class="speech-bubble" id="speech-bubble">대사 출력 영역</div>
+
+    <!-- 이벤트 배너 -->
+    <div class="absolute left-10 top-32 w-80 rounded-2xl border-2 border-white/30 p-5 cursor-pointer hover:scale-105 transition-transform shadow-[0_10px_20px_rgba(0,0,0,0.5)] backdrop-blur-md" 
+         style="background: linear-gradient(135deg, rgba(10,11,26,0.95), rgba(196,85,246,0.4));"
+         onclick="enqueueToast('Nebula Beats 상세 페이지는 업데이트 예정입니다.', false)">
+        <div class="text-xs font-bold text-yellow-300 mb-1 tracking-widest">LIMITED EVENT</div>
+        <div class="font-black text-2xl font-['Montserrat'] mb-1">NEBULA BEATS</div>
+        <div class="text-sm text-gray-300">효빈행 교향곡, 그 막이 오릅니다!</div>
+    </div>
+
+    <!-- 메인 메뉴 -->
+    <div class="main-menu">
+        <div class="menu-btn" onclick="goToPage('스토리.html')">
+            <div>STORY<div class="kor-text">업무 일지 / 메인 스토리</div></div>
+            <span class="text-2xl opacity-50">📖</span>
+        </div>
+        <div class="menu-btn" onclick="openCharacterModal()">
+            <div>CHARACTERS<div class="kor-text">당번 마스코트 편성</div></div>
+            <span class="text-2xl opacity-50">👥</span>
+        </div>
+        <div class="menu-btn" onclick="goToPage('캐릭터사전.html')">
+            <div>DICTIONARY<div class="kor-text">캐릭터 도감 / 설정 자료</div></div>
+            <span class="text-2xl opacity-50">📚</span>
+        </div>
+        <div class="menu-btn" onclick="openQuestModal()">
+            <div class="notification-dot" id="quest-notif"></div>
+            <div>QUEST<div class="kor-text">일일 임무 / 보상</div></div>
+            <span class="text-2xl opacity-50">📜</span>
+        </div>
+        <div class="menu-btn" onclick="openInventoryModal()">
+            <div>INVENTORY<div class="kor-text">아이템 가방 / 선물하기</div></div>
+            <span class="text-2xl opacity-50">🎒</span>
+        </div>
+        <div class="menu-btn" onclick="goToPage('상점.html')">
+            <div>GACHA<div class="kor-text">특별 픽업 / 상점</div></div>
+            <span class="text-2xl text-yellow-300 opacity-90 drop-shadow-[0_0_10px_rgba(255,255,0,0.5)]">✨</span>
+        </div>
+        <div class="menu-btn btn-live" onclick="goToPage('라이브.html')">
+            <div>LIVE<div class="kor-text text-white">리듬 페스티벌 플레이</div></div>
+            <span class="text-4xl text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">🎵</span>
+        </div>
+    </div>
+
+    <div id="modal-character" class="custom-modal">
+        <h2 class="text-4xl font-black mb-2 text-white">마스코트 당번 편성</h2>
+        <p class="text-gray-400 mb-4 text-lg">홈 화면에 배치하여 매니저님을 보좌할 마스코트를 선택해 주세요.</p>
+        <div class="grid-container" style="grid-template-columns: repeat(5, 1fr);" id="char-grid"></div>
+        <button class="mt-8 px-10 py-4 bg-gray-700 hover:bg-gray-600 rounded-full font-bold text-white text-xl transition border border-gray-500 shadow-lg" onclick="closeModal('modal-character')">돌아가기</button>
+    </div>
+
+    <div id="modal-bg" class="custom-modal">
+        <h2 class="text-4xl font-black mb-2 text-white">홈 배경화면 설정</h2>
+        <p class="text-gray-400 mb-4 text-lg">매니저님의 취향에 맞는 장소로 집무실 배경을 변경하세요.</p>
+        <div class="grid-container" style="grid-template-columns: repeat(4, 1fr); width: 90%;" id="bg-grid"></div>
+        <button class="mt-8 px-10 py-4 bg-gray-700 hover:bg-gray-600 rounded-full font-bold text-white text-xl transition border border-gray-500 shadow-lg" onclick="closeModal('modal-bg')">돌아가기</button>
+    </div>
+
+    <div id="modal-inventory" class="custom-modal">
+        <h2 class="text-4xl font-black mb-2 text-white">인벤토리 (가방)</h2>
+        <p class="text-gray-400 mb-4 text-lg">담당 마스코트에게 선물을 주어 호감도를 극적으로 높일 수 있습니다.</p>
+        <div class="grid-container" style="grid-template-columns: repeat(2, 1fr); width: 75%;" id="inventory-grid"></div>
+        <button class="mt-8 px-10 py-4 bg-gray-700 hover:bg-gray-600 rounded-full font-bold text-white text-xl transition border border-gray-500 shadow-lg" onclick="closeModal('modal-inventory')">닫기</button>
+    </div>
+
+    <div id="modal-quest" class="custom-modal">
+        <h2 class="text-4xl font-black mb-2 text-white">일일 업무 (QUEST)</h2>
+        <p class="text-gray-400 mb-6 text-lg">매일 주어지는 임무를 완수하고 보상을 획득하세요. (매일 자정 갱신)</p>
+        <div class="w-[750px] max-h-[500px] overflow-y-auto" id="quest-list"></div>
+        <button class="mt-8 px-10 py-4 bg-gray-700 hover:bg-gray-600 rounded-full font-bold text-white text-xl transition border border-gray-500 shadow-lg" onclick="closeModal('modal-quest')">닫기</button>
+    </div>
+
+    <!-- 신규: 화려한 레벨업 연출 모달 -->
+    <div id="level-up-modal" class="custom-modal">
+        <div class="level-up-content">
+            <h2 class="text-5xl font-black mb-2 text-yellow-300 drop-shadow-md">LEVEL UP!</h2>
+            <p class="text-gray-300 mb-6 text-lg">매니저님의 레벨이 상승했습니다! 보상을 확인하세요.</p>
+            <div class="level-badge" id="level-badge-num">2</div>
+            
+            <div id="level-rewards-container" class="mt-4 mb-8 flex flex-wrap justify-center max-w-2xl mx-auto">
+                <!-- 동적 렌더링 영역 -->
+            </div>
+            
+            <button class="px-14 py-4 bg-yellow-500 hover:bg-yellow-400 text-black rounded-full font-black text-2xl transition shadow-[0_0_20px_rgba(255,215,0,0.6)] hover:scale-105" onclick="closeModal('level-up-modal')">확인 및 수령</button>
+        </div>
+    </div>
+
+    <div id="modal-settings" class="custom-modal">
+        <h2 class="text-4xl font-black mb-2 text-white">시스템 환경 설정</h2>
+        <div class="w-[600px] h-[450px] overflow-y-auto bg-gray-900/90 p-8 rounded-2xl border border-gray-600 shadow-2xl backdrop-blur-md custom-scrollbar">
+            <div class="setting-group">
+                <label>매니저 이름 변경</label>
+                <div class="flex gap-2">
+                    <input type="text" id="input-player-name" class="flex-1 bg-black border border-gray-500 rounded-lg px-4 py-3 text-white outline-none" maxlength="10">
+                    <button class="bg-blue-600 hover:bg-blue-500 px-6 rounded-lg font-bold" onclick="savePlayerName()">적용</button>
+                </div>
+            </div>
+            <div class="setting-group border-t border-gray-700 pt-5 mt-5">
+                <label>로비 BGM 선택</label>
+                <select id="input-bgm" class="custom-select" onchange="applyLiveSettings()">
+                    <option value="효빈교통공사 상행열차 진입음.mp3">트랙 1: 상행열차 진입음</option>
+                    <option value="효빈교통공사 하행열차 진입음.mp3">트랙 2: 하행열차 진입음</option>
+                    <option value="효빈도시철도 급행열차 상행 진입음.mp3">트랙 3: 급행상행 진입음</option>
+                    <option value="효빈도시철도 급행열차 하행 진입음.mp3">트랙 4: 급행하행 진입음</option>
+                    <option value="효빈도시철도 종착역 도착음.mp3">트랙 5: 종착역 진입음</option>
+                    <option value="효빈도시철도 환승음악.mp3">트랙 6: 환승역 진입음</option>
+                    <option value="HAPPY PARTY TRAIN.mp3">트랙 7: 해피 파티 트레인!</option>
+                    <option value="始まりは君の空.mp3">트랙 8: 시작은 너의 하늘</option>
+                    <option value="繚乱！ビクトリーロード.mp3">트랙 9: 요란! 빅토리로드</option>
+                    <option value="NEO SKY, NEO MAP!.mp3">트랙 10: 네오스카이, 네오맵</option>
+                    <option value="none">음악 끄기</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label>전체 음량 <span id="val-volume" class="text-blue-300 ml-2">100%</span></label>
+                <input type="range" id="input-volume" class="custom-range" min="0" max="100" oninput="applyLiveSettings()">
+            </div>
+            <div class="setting-group">
+                <label>화면 밝기 (디밍) <span id="val-brightness" class="text-blue-300 ml-2">100%</span></label>
+                <input type="range" id="input-brightness" class="custom-range" min="30" max="100" oninput="applyLiveSettings()">
+            </div>
+            <div class="setting-group">
+                <label>노트 판정 감도 (게임 전용) <span id="val-sensitivity" class="text-blue-300 ml-2">5</span></label>
+                <input type="range" id="input-sensitivity" class="custom-range" min="1" max="10" oninput="document.getElementById('val-sensitivity').innerText = this.value; saveSettings();">
+            </div>
+            <div class="setting-group pb-4 border-b border-gray-700">
+                <label>리듬게임 기본 조작키</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="input-keys" value="dfjk" onchange="saveSettings()"> 영문 키보드 (D, F, J, K)</label>
+                    <label><input type="radio" name="input-keys" value="1289" onchange="saveSettings()"> 숫자 키보드 (1, 2, 8, 9)</label>
+                </div>
+            </div>
+            <div class="setting-group pt-4 mb-0">
+                <label class="text-red-400">데이터 관리 (주의)</label>
+                <button id="btn-reset-data" class="w-full bg-red-900 hover:bg-red-700 border border-red-500 text-red-100 py-4 rounded-lg font-bold transition shadow-lg" onclick="resetGameData()">진행 데이터 완전 초기화</button>
+            </div>
+        </div>
+        <button class="mt-6 px-10 py-4 bg-gray-700 hover:bg-gray-600 rounded-full font-bold text-white text-xl transition shadow-lg" onclick="closeModal('modal-settings')">닫기</button>
+    </div>
+
+    <div id="toast-container" class="toast-container">메시지</div>
+</div>
+
+<script>
+    const appContainer = document.getElementById('app-container');
+    function resize() {
+        const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+        appContainer.style.transform = `scale(${scale})`;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const toast = document.getElementById('toast-container');
+    let toastQueue = [];
+    let isToastShowing = false;
+
+    window.enqueueToast = function(message, isWarning = false) {
+        toastQueue.push({ msg: message, warn: isWarning });
+        if(!isToastShowing) processToastQueue();
+    }
+
+    function processToastQueue() {
+        if(toastQueue.length === 0) {
+            isToastShowing = false;
+            return;
+        }
+        isToastShowing = true;
+        const current = toastQueue.shift();
+        
+        toast.innerText = current.msg;
+        toast.style.borderColor = current.warn ? '#EE0022' : 'var(--color-active)';
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(processToastQueue, 400);
+        }, 2200);
+    }
+    
+    window.showToast = enqueueToast;
+
+    window.goToPage = function(pageName) {
+        enqueueToast(`'${pageName}'(으)로 이동합니다...`);
+        setTimeout(() => { location.href = pageName; }, 600);
+    }
+
+    const STORAGE_KEY = 'railumina_save_data_v7_final';
+    
+    // 완벽하게 초기화된 기본 상태 (테스트용 데이터 싹 지움, 상점 연동 준비)
+    let gameState = {
+        playerName: '신입매니저',
+        level: 1, exp: 0, maxExp: 100, coin: 0, gem: 0, // 기본 재화 0으로 초기화
+        activeCharId: '1호선',
+        ownedChars: ['1호선'], // 오직 1호선만 기본 지급. 나머지는 상점에서 구매 시 연동
+        activeBgFile: '교통공사사무실.png',
+        bgmTrack: '효빈교통공사 상행열차 진입음.mp3', volume: 80, brightness: 100, sensitivity: 5, keyBinding: 'dfjk',
+        inventory: {}, // 인벤토리도 초기에는 비어있음
+        affection: {}, 
+        lastLoginDate: '', 
+        quests: {
+            login: { desc: "출근 도장 찍기", progress: 0, target: 1, reward: 50, isGem: true, claimed: false },
+            touch: { desc: "마스코트와 교감하기 (터치 20회)", progress: 0, target: 20, reward: 1000, isGem: false, claimed: false },
+            gift: { desc: "마스코트에게 선물 주기 (1회)", progress: 0, target: 1, reward: 2000, isGem: false, claimed: false },
+            combo: { desc: "마스코트 터치 30콤보 달성", progress: 0, target: 1, reward: 100, isGem: true, claimed: false }
+        }
+    };
+
+    const ITEM_DB = {
+        '모카골드 믹스커피 1박스': { icon: '☕', desc: '박빛나 주임의 생명수. 라이브 에너지(AP) 20 회복.' },
+        '아바라 (벤티 사이즈)': { icon: '🥤', desc: '하루빈의 최애 음료. 1시간 동안 획득 경험치 1.5배 상승.' },
+        '에스프레소 투 샷': { icon: '🍵', desc: '라세나의 이성 각성제. 다음 라이브 판정 감도 완화.' },
+        '특대 뼈해장국 (들깨 팍팍)': { icon: '🍲', desc: '이덕희 명예차장과 유리아의 소울푸드. 스태미나 100% 회복.' },
+        '참이슬 프레시 & 숙취해소제': { icon: '🍶', desc: '전노아의 텐션 부스터. 점수 상승 및 페널티 부여.' },
+        '캡사이신 5단계 엽떡': { icon: '🌶️', desc: '미소하 주임 전용 매운맛. 스코어 게이지 1.5배 증가.' },
+        '참치김밥 (치즈 추가)': { icon: '🍙', desc: '박빛나 주임의 소소한 사치. 기력(AP 10) 회복.' },
+        '맑은 곰탕 정식': { icon: '🥣', desc: '고나미 대리의 점심 메뉴. 라이브 HP 50 회복.' },
+        '사능동 특제 소금빵': { icon: '🥐', desc: '다로나가 엑셀로 출빵 시간을 분석한 소금빵.' },
+        '초코 소라빵': { icon: '🍩', desc: '감성 대학생 박라미를 평온하게 만드는 마법의 빵.' },
+        '비싼 인스타 마카롱': { icon: '🍡', desc: '심세이와 하루빈이 좋아하는 예쁜 마카롱.' },
+        '통귤 탕후루': { icon: '🍊', desc: '맑눈광 김소빈의 달콤바삭한 간식.' },
+        '하스노소라 한정 굿즈': { icon: '🎀', desc: '이덕희 명예 차장 전용. (SSR 호감도 템)' },
+        '창전동 타워팰리스 판다 브로치': { icon: '🐼', desc: '심세이의 트레이드 마크. 엄마가 사주신 물건.' },
+        'K-장녀의 3단 고기반찬 도시락': { icon: '🍱', desc: '임세정 대리가 동생을 위해 직접 싼 정성 가득 한식.' },
+        '니지동 카나타 아크릴 스탠드': { icon: '🎭', desc: '라세나의 숨덕을 완벽하게 저격하는 굿즈.' },
+        '일본 철도 성지순례 비행기표': { icon: '✈️', desc: '고나미 대리를 폭주하게 만드는 아이템. (UR 호감도)' },
+        '엠마 베르데 특제 빵': { icon: '🍞', desc: '바다 요정 한바다가 제일 좋아하는 빵.' },
+        '오렌지색 볼펜 세트': { icon: '🖊️', desc: '전노아가 3줄 요약을 작성할 때 쓰는 펜.' },
+        'WD-40 특대용량': { icon: '🛢️', desc: '임세하가 환장하는 만능 윤활방청제.' },
+        '몽키스패너 (대형)': { icon: '🔧', desc: '유리아의 필수 장착템. 현장 파괴력 상승.' },
+        '한정판 킹블레이드 세트': { icon: '🔦', desc: '한바다의 썬더스네이크 오타게를 위한 장비.' },
+        'V2000 결제 단말기': { icon: '📱', desc: '박빛나와 김소빈의 진상 퇴치용 퀵드로우 무기.' },
+        '고음질 지향성 마이크': { icon: '🎙️', desc: '고나미 대리의 딕션과 구동음을 위한 장비.' },
+        '다중회귀분석 바인더 (Red)': { icon: '📕', desc: '미소하 주임의 주무기. 명치 데미지 증폭.' },
+        '에어팟 맥스 실버': { icon: '🎧', desc: '김소빈의 의료기기. 라떼 가스라이팅 차단.' },
+        '100배줌 미러리스 카메라': { icon: '📸', desc: '박라미의 감성 출사용 최종 병기.' },
+        '현장용 메가폰 (확성기)': { icon: '📢', desc: '임세정 대리의 전용 무기. 군중 통제력 상승.' },
+        '법인 카드 (골드)': { icon: '💳', desc: '전노아의 진정한 힘을 개방하는 무기.' },
+        '모카골드 믹스커피': { icon: '☕', desc: '직장인들의 생명수. 누군가에게는 최고의 사치일 수도 있다.' },
+        '사능동 소금빵': { icon: '🥐', desc: '엑셀로 출빵 시간을 분석해야만 살 수 있는 전설의 소금빵.' },
+        'WD-40': { icon: '🛢️', desc: '모든 고착된 관절과 뻑뻑한 기계를 부드럽게 만들어주는 마법의 액체.' },
+        '참이슬 프레시': { icon: '🍾', desc: '회식의 꽃. 법인카드로 결제할 때 가장 달콤한 맛이 난다.' },
+        '러브라이브 굿즈': { icon: '🎀', desc: '특정 역무원들을 미치게 만드는 전설의 마젠타/핫핑크 굿즈.' }
+    };
+
+    const charData = [
+        { 
+            id: '1호선', name: '고나미', color: '#0077DD', file: '고나미.png', 
+            lines: [
+                "모자 각도 이상 무. 규정대로 완벽합니다.", "머리카락이 시야를 가리면 안 됩니다.", "제 흑발 긴 생머리가 눈에 띄나요? 정복의 일부일 뿐입니다.", "오늘도 철도 안전을 위해 전방 주시 철저히!", "안전 운행은 제 자존심입니다.",
+                "매니저님! 같이 눈사람... 아니, 순찰 도실래요?", "방송 마이크 테스트. 딕션 확인.", "저음으로 경고합니다. 녹음실 들어오지 마세요.", "하아? 장난칠 시간 있으면 서류나 보시지?", "매뉴얼 제4장 2조, 확인 완료.",
+                "가슴의 1호선 배지, 자랑스럽습니다.", "제 파란색 정복 핏이 완벽하다고요? 당연합니다.", "아버지께 배운 원칙, 어머니께 배운 딕션. 완벽하죠.", "제 동생이요? 걔는 제 규율에 고통받는 중입니다.", "옷 구겨집니다. 거리 유지하시죠.",
+                "Project V 폴더? ...그, 그건 그냥 소리 파일입니다!", "일본 철도 성지순례 비행기표... 방금 일시불로 긁었습니다.", "매니저님의 검이 되어드리겠습니다!", "VVVF 인버터 구동음... 아아, 맑네요. (녹음 중)", "특별 교육 시간입니다. 펜 드세요.",
+                "식사하셨습니까? 저는 맑은 곰탕을 먹고 왔습니다.", "블랙 커피 한 잔으로 정신을 깨우는 중입니다.", "삼겹살 회식은 극혐입니다. 정복에 냄새 배잖아요.", "월급은 꼬박꼬박 저축 중입니다. 덕질할 때 써야 하니까요.", "규정은 지키라고 있는 겁니다.",
+                "학생! 승강장 안전선 밖으로 물러서세요!", "도어음 템포가 미세하게 어긋났군요. 검수팀에 보고해야...", "어?! 방금 저거 1호선 신형 희귀 편성?! (다다다)", "휴가 때는 무조건 철도 원정입니다.", "오늘 운행도, 규정대로, 이상 무!"
+            ] 
+        },
+        { 
+            id: '2호선', name: '하루빈', color: '#00CCAA', file: '하루빈.png', 
+            lines: [
+                "아~ 덥다 더워! 머리 묶고 올까요?", "제 네이비 포니테일 어때요? 나름 신경 쓴 건데~", "매니저님! 저 릴스 찍게 거기 좀 비켜봐요!", "앞머리 망가지면 자본주의 미소 안 나옵니다~", "오늘따라 순환선이 왜 이리 뱅글뱅글 도는 기분이지?",
+                "진실은 언제나 하나! 월급루팡은 나야!", "어둠의 불꽃에 휩싸여라...!", "고나미 선배 잔소리? 그거 제 ASMR 수면용 녹음본이죠.", "큭큭... 내 마력에 취해볼 텐가?", "활짝 웃으면서 현장 통제하는 게 제 특기라구요~ 그치?",
+                "이 듬직한 피지컬(F컵)을 보세요! 장갑차가 따로 없죠?", "어머, 제 다크한 역무원 정복이 좀 성숙해 보이나요?", "동생이 집에서 제 싹싹한 코스프레 보고 토하려 하던데요?", "자~ 자본주의 미소 장전 완료! 민원 받으러 갑시다~", "매니저님, 다 같이 웃으며 끝내면 좋잖아요?",
+                "아바라 벤티 사이즈는 제 생명 유지 장치입니다. 쪽쪽.", "아, 쓴 에스프레소는 질색이에요! 달달한 게 최고!", "숨덕 탐지기 발동! 라세나, 너 또 애니 보고 있었지?", "CCTV 사각지대 확보 완료. 자, 셀카 타임~", "아이폰 17 프로 맥스는 역시 릴스 찍기 최고라니까요.",
+                "오늘 점심은 마라탕 어때요? 선배 카드 찬스!", "텅장 빔-! 월급 들어오자마자 마라탕이랑 카페에 다 털렸어!", "귀찮게 가시 발라먹는 생선 같은 건 딱 질색이에요.", "초면인 사람 응대하는 게 제일 쉬워요. 친화력 맥스니까!", "아, 벌써 퇴근 시간인가? 시간 참 안 가네~",
+                "순환선은 뱅글뱅글~ 내 다리도 뱅글뱅글~", "휴게실 구석에 좋은 농땡이 스팟을 발견했어요.", "매니저님 최고~ 이러면 제가 칭찬으로 구워삶을 줄 알았죠?", "위험 상황 발생! 전원 대피하십시오! (급 정색)", "자~ 오늘도 무사히 월급루팡 완료! 퇴근합시다!"
+            ] 
+        },
+        { 
+            id: '3호선', name: '박라미', color: '#FFCC11', file: '박라미.png', 
+            lines: [
+                "이건 도시의 맥박... 골든아워의 완벽한 컷입니다.", "제 금발 포니테일, 좀 쿨뷰티 같지 않나요?", "햇빛이 너무 강해요. 프레이밍이 망가진다고요.", "아아, 미국에 계신 할아버지께서도 이 노을을 보실까요?", "바람 불어서 머리 헝클어지잖아요. 사진 망치게.",
+                "고객님, 자동수기인형... 아니, 안내원 박라미입니다.", "F는 뭐다? Framing의 F다! 학사경고가 아니라고요!", "매니저님은... 내가 지킬게.", "전동차 출사 때문에 경영통계학 시험 짼 건 비밀입니다.", "제 쿨한 표정, 카메라에 잘 담겼나요?",
+                "회색 후드티에 청바지, 이게 바로 꾸안꾸 대학생 룩이죠.", "제 완벽한 마네킹 비율에 반하셨나요? 후훗.", "오빠가 또 제 카메라 렌즈 건드렸나? 혼내줘야겠네.", "전 감성을 중요시합니다. 컵라면 같은 건 취급 안 해요.", "오늘 착장, 인스타에 올리면 좋아요 100개 예약이네요.",
+                "이 카메라요? 이번 달 할부금 내느라 통장이 텅텅 비었죠.", "모든 것은 계획대로. 이 사진도 말이야.", "저기 신형 전동차 지나갑니다! 오늘만 찍을 수 있다고요!", "왕님! 같이 빵 먹으러 가자!", "다꾸(다이어리 꾸미기) 영수증 붙이게 그거 버리지 마세요!",
+                "사능동 빵집 갓 구운 식빵... 냄새만 맡아도 행복해...", "여행자, 다음 역은 빵집이 있는 곳이야.", "은수저라고요? 뭐... 용돈은 좀 넉넉히 받는 편이긴 하죠.", "밥 대신 초코 소라빵 하나면 세계가 멸망해도 평온합니다.", "감성 파괴되는 삼각김밥은 제 입에 안 맞아요.",
+                "출사 포인트 섭외 완료! 당장 달려가야 해!", "아뿔싸, 지금 빛이 딱 좋은데 삼각대를 안 가져왔네요.", "4개 국어 프리토킹? ¡Claro que sí! ...근데 철자법은 몰라요.", "즉흥적인 게 제 매력이죠. 아, 오늘 알바도 째버릴까?", "경영학과인데 숫자는 몰라요! 감성으로 승부합니다!"
+            ] 
+        },
+        { 
+            id: '4호선', name: '다로나', color: '#FF5522', file: '다로나.png', 
+            lines: [
+                "단정한 적갈색 생머리, 유지 완료. 복장 불량은 부적절합니다.", "매니저님, 저는 마법사가 아니라 주임입니다만.", "머리 쓰다듬지 마시기 바랍니다. 체크리스트에 없는 스킨십입니다.", "매니저님 마음, 아냐가 다 읽었... 아, 아닙니다.", "안전모 착용은 필수입니다. 헬멧 쓰시기 바랍니다.",
+                "안전 점검 도구! ...목소리가 왜 이러죠?", "사능동 소금빵 출빵 시간, 엑셀 매크로 분석 완료되었습니다.", "칭찬하셨습니까? 정상입니다. 다음 업무로 넘어가시죠.", "AI 안내방송 의혹이라니요. 저는 사람입니다.", "이 철도가... 나의 돌아갈 곳.",
+                "가슴의 4호선 주황색 배지, 제 프라이드입니다.", "흰 셔츠에 얼룩 묻으면 매뉴얼대로 즉각 세탁 조치합니다.", "집에 계신 조부모님과 남동생이 보고 싶... 흠흠, 아닙니다.", "우리 남동생 건드리면... (각성) 규정 위반으로 처단합니다.", "매운 음식은 안 됩니다! 위장 규정에 어긋나요!",
+                "체크리스트와 클립보드 장전. 변수는 용납하지 않습니다.", "안전선 위반자 발견. 즉각 통제 절차에 들어갑니다.", "뮤직 스타트! ...아니, 안전 방송 스타트!", "알뜰폰 3년 약정, 완벽한 재무 설계입니다.", "다치셨습니까? 여기 밴드와 핫팩을 지급해 드립니다.",
+                "알코올 분해 효소 제로입니다. 회식에서 술 권하지 마십시오.", "주택청약 납입 48회차 완료. 고금리 적금 이상 무.", "계획이 변경된다고요...? (동공 지진) 불안 요소가 감지됩니다.", "'괜찮겠지'라는 말은 사고의 원흉입니다. 재검토 바랍니다.", "까눌레 한 입 드시겠습니까? 엑셀로 최저가 분석해 샀습니다.",
+                "주말에는 4호선 연선 등산을 다닙니다. 하체 단련 목적이죠.", "위험 요소 발견. 조치하겠습니다. 안심하시기 바랍니다.", "수학 과학은 1등급인데, 사람 마음 읽는 건 매뉴얼이 없네요.", "동선 낭비는 부적절합니다. 최단 루트로 이동하시죠.", "오늘 하루도 안전 매뉴얼에 따라 무사히 종료되었습니다."
+            ] 
+        },
+        { 
+            id: '5호선', name: '미소하', color: '#EE0022', file: '미소하.png', 
+            lines: [
+                "제 빨간 왕리본, 귀엽나요? 5호선의 상징이랍니다~", "갈색 웨이브 머리가 바람에 날리네요. 평온한 하루예요.", "다 같이 폭탄... 아니, 예산안 터뜨리러 가자!", "머리 쓰다듬어 주시는 건가요? 헤헤, 기분 좋아요.", "가끔은 저도 푹 쉬고 싶을 때가... 아, 아니에요! 멀쩡합니다!",
+                "예산팀 명치 딱 대세요! 세무조사 들어갑니다~", "정책 분석의 근거는요? 다중회귀분석표 가져오세요. (싱긋)", "잔반 처리 기사 미소하 등장! ...아니라고요!", "귀신보다 무서운 건 사각지대 복지 누락입니다.", "상냥한 얼굴로 팩폭한다고 다들 그러더라고요. 왜일까요?",
+                "연노랑 원피스가 잘 어울리나요? 중고로 싸게 샀답니다.", "개미허리에 B컵 꽉찬... 꺄악! 어딜 보시는 거예요!", "아빠 버스 사고 이후로... 제가 가족을 지켜야 해요.", "예산 규정상 안 됩니다. (단호) 돌아가세요.", "남 챙기다 보면 제 체력이 방전되곤 해요. 하아...",
+                "여기 제 빨간 바인더 보이시죠? 132페이지 분석 자료예요.", "중고 아이폰 16, 잔존 가치를 고려한 치밀한 선택이죠.", "시장님은 제 성덕의 대상이랍니다! 너무 멋지셔!", "해킹 완료. 효빈시 복지 예산안 다 뚫었어.", "동생 학원비 송금 완료! 이번 달 장학금도 알차게 썼네요.",
+                "캡사이신 5단계 엽떡? 훗, 그 정도는 평온하게 먹죠.", "인스타 감성만 챙긴 비싼 디저트는 가성비 최악이에요.", "정책 모드 ON! 밥 먹을 시간도 아깝습니다. 집중할게요.", "소하 맵 작동. 보도블록 단차 실사 측정 결과입니다.", "세이 씨의 익명 기부금, 복지 시스템으로 다 추적했답니다~",
+                "발이 좀 아프네요. 현장 조사하느라 너무 걸었나 봐요.", "규정은 차갑지만, 서비스는 따뜻해야 하니까요.", "통계 데이터로 압살해 드릴게요. 불만 있으신가요?", "복지 사각지대 제로를 향해, 오늘도 달립니다!", "제 조용한 단단함이 매니저님께도 힘이 되었으면 좋겠어요."
+            ] 
+        },
+        { 
+            id: '6호선', name: '라세나', color: '#881188', file: '라세나.png', 
+            lines: [
+                "애쉬 브라운 단발 유지 중. 학생다운 단정함이 생명이죠.", "별 모양 헤어핀? 그냥... 세일하길래 산 거예요!", "분 단위 스케줄이 어긋났어요! (멘붕) 내 계획이...!", "하아암~ 세나 졸려어...", "이어폰 잭팟 참사... Roselia 노래 울려퍼졌을 때 진짜 죽고 싶었어요.",
+                "으음! 으으음!! (스톱워치 가리킴)", "쓸데없는 소리 할 시간 없어요.", "호카게... 아니, 1등급이 될 거야!", "숨긴 폴더 '수면/힐링' 안에 애니 아카이브 들켰... 아니에요!", "현실적으로 생각하세요. 지금 덕질할 때가 아니라고요.",
+                "회색 교복 치마, 학생의 본분이죠. 단정하게!", "언니랑 기싸움에서 또 밀렸어... 초딩 동생한테 용돈 뺏기고...", "유리아! 제발 가만히 좀 있어! 언니 말 좀 들어!", "카나타 오시인데 나랑 목소리가 너무 비슷해... 자아분열 올 것 같아.", "즐거움을 허락하면 죄책감이 든단 말이에요... 공부해야 해.",
+                "노이즈 캔슬링 이어폰 장착. 세상과 단절합니다.", "아이폰 17 일반 모델. 일코용으로 딱이죠. 튀면 안 돼.", "독서실에서 몰래 듣는 성우 라디오가 유일한 낙... 아니, 공부했어요!", "아, 그 굿즈 그냥 확인만 한 거예요! 산 거 아니라고요!", "수능 스톱워치 멈추지 마세요. 시간은 금입니다.",
+                "에스프레소 원샷! 이성 각성제로 버티는 고3입니다.", "젤리 주지 마세요, 유리아! ...아니, 하나만 먹을게.", "가시 발라 먹는 생선? 식사 시간 15분 넘기면 스케줄 꼬여요.", "금수저면 뭐해, 용돈은 20만 원인데... 덕질 영끌 파산 직전.", "생명과학 1등급, 영어 3등급. 영어... 트라우마 온다...",
+                "동선 최적화 완료. 가장 빠른 길로 독서실 갑니다.", "시간 없어요. 결론만 딱 잘라서 말씀하세요.", "같은 성우 드립 치지 마세요! 저 진짜 화냅니다!", "오답 노트 정리 다 했어요. 틀린 건 다시 안 틀려요.", "숨덕의 길은 멀고도 험하네요... 들키면 끝장이야."
+            ] 
+        },
+        { 
+            id: '7호선', name: '임세정', color: '#FF8899', file: '임세정.png', 
+            lines: [
+                "흑남색 반묶음 머리, 현장 통제에 최적화된 스타일이지.", "정수리 바보털 건드리지 마. 지금 심기 불편하니까.", "설명은 나중에! 지금 당장 뒤로 물러나!", "샤이니~☆ ...아니, 장난칠 기분 아니라고.", "마이크 파괴할 정도로 소리 질러야 통제가 된다고, 현장은.",
+                "등가교환의 법칙! 일한 만큼 쉬게 해줘!", "찌질하네~ ...큼, 말이 헛나왔군.", "낭만? 감성? 그런 거 챙기다 미끄러져 다친다. 조심해.", "유리아. 당장 기계에서 손 떼.", "필리핀 혼혈 6남매 맏언니의 짬바를 무시하지 마라.",
+                "흰 셔츠 깃 빳빳하게. K-장녀의 자존심이지.", "내 동생 세하 건드리면 부셔버릴 줄 알아.", "트램 폐지 시위? 하, 그때 내가 앞장섰던 투사였지.", "위기 수습은 내가 1인자야. 사고 나면 일사천리지.", "표현이 거칠다고? 현장에선 돌려 말할 시간 따위 없어.",
+                "생활비 카드로 오늘 장 다 봤다. 영수증 챙겨.", "진상? 통화 녹음 켜고 바로 경찰 부른다. 짤짤이 안 통과해.", "동생들 3단 고기 반찬 도시락 싸느라 어깨가 다 빠지겠어.", "내 용돈은 30만 원도 안 남지만, 가족들 배부르면 됐지 뭐.", "과거 투쟁사 정리된 파일, 함부로 열어보지 마라.",
+                "밥심으로 버티는 거야! 오늘 점심은 국밥 특대다!", "마카롱? 배도 안 차고 예쁘기만 한 비싼 간식, 극혐.", "제육볶음 한 사발이면 3교대 야간 근무도 거뜬해.", "실수령은 내가 탑인데, 통장은 왜 항상 스쳐 지나가지?", "동생들 학비 대느라 등골이 휜다. 보너스 좀 더 안 주나?",
+                "혼잡 구역 발생! 전 병력 투입해! 내가 선두에 선다.", "전문대 나왔다고 실무 무시하면 현장에서 뼈도 못 추려.", "미끄럼 주의 표지판 당장 설치해. 사고 나면 네 책임이야.", "현장의 화신 임세정. 오늘도 사고 제로 달성한다.", "후배 녀석들, 실전 교육 한 번 찐하게 돌려야겠군."
+            ] 
+        },
+        { 
+            id: '7호선(세하)', name: '임세하', color: '#FF8899', file: '임세하.png', 
+            lines: [
+                "흑발 포니테일, 기름때 묻어도 티 안 나서 좋아.", "헤어 스크런치 예쁘다고? 언니(세정)가 억지로 묶어준 거야.", "다 다다~ 모터 분해하러 가자!", "나한테 노래 시키지 마... 고장 난단 말이야.", "모터 이상 소음 감지. 주파수 대역이 불안정해.",
+                "사유리 버그? 내가 언제 귀여운 리액션을 했다고 그래! (귀 붉어짐)", "사람 감정 같은 거 몰라. C++ 코드가 차라리 직관적이지.", "바나나 치워!! 어릴 때 박스째 먹고 질렸단 말이야 으엑.", "그거 틀렸는데. 베어링 마찰 계수 다시 계산해 와.", "나 칭찬하지 마... 회로 꼬이듯이 머릿속이 하얘지니까.",
+                "정비복이 제일 편해. 셔츠 단추 터질 것 같단 말이야 (낑낑)", "꺄악! 어딜만지는거야?", "기계공학과 1학년인데, 벌써 감속기 마개조 마쳤어.", "오빠랑 공유기 대역폭으로 칼부림 직전까지 갔지. 내가 이겼어.", "WD-40은 신이야. 모든 고착된 관절을 풀어주지.",
+                "내 아이폰은 리듬게임 전용, 갤럭시는 리눅스 마개조용.", "장학금 탔어! 바로 용산 가서 납땜 인두기랑 소자 사야지.", "밥은 굶어도 부품은 사야 해. 공대생의 낭만이지.", "맥가이버 공구세트 하나면 세상 모든 기계를 뜯을 수 있어.", "유리아가 또 뭘 뜯으려고 해?! 내가 먼저 슬라이딩해서 막는다!",
+                "에너지 드링크 수혈 중. 밤샘 코딩엔 필수야.", "필리핀식 단 스파게티? 우리 집 소울 푸드지.", "초코바 하나면 하루 버틸 수 있어. 식비 아껴서 부품 사야지.", "국어 5등급이야. 문학적 비유 따위 쓰지 마, 못 알아들으니까.", "수학, 물리 1등급 천재라고 불러줄래? 기계 한정으로.",
+                "이 기계 진동 패턴 봐... 예술적이지 않아?", "현장형 실습이 최고야. 앉아서 하는 공부는 질색.", "내 손재주 무시하지 마. 고장 난 개찰구 3분 컷 냈어.", "오늘도 정비복에 기름칠 좀 해볼까. 스패너 가져와.", "기계는 거짓말을 안 해. 사람보다 훨씬 낫지."
+            ] 
+        },
+        { 
+            id: '8호선', name: '유리아', color: '#9856FF', file: '유리아.png', 
+            lines: [
+                "짙은 초코 브라운 생머리! 휘날리며 등장!", "모자 삐뚤어졌다! 요소로-! 출발 전 점검 완료!", "제 갭모에 주인공 페이스, 좀 먹히나요? 헤헤.", "이 몽키스패너로 다 박살 내... 아니, 고쳐주마!", "호기심 폭발! 저 버튼 누르면 어떻게 될까? 딱 한 번만요!",
+                "0o0! 고장 났어! 어떡해!", "전속 전진, 요소로!!", "발연기 사과 들어갑니다. 헉, 야바이~ 실수해버렸네염☆", "라세나 언니! 언니가 제일 좋아! 맹목적 충성!", "임세정 선배님이 제 이름 부르면... 바로 정지 버튼 눌러야 해요.",
+                "체크무늬 치마 교복, 실습하긴 좀 불편하지만 예쁘니까!", "한일 혼혈이라고요. 집에서 밥솥 완전 분해했다가 쫓겨났어요.", "제 얼굴만 한 몽키스패너, 귀엽죠? 위력은 안 귀엽지만.", "이 낡은 기계 장갑 안엔 무한한 가능성이... 뜯어봐도 되죠?", "성장하는 사고뭉치 막내 유리아입니다! 지켜봐 주세요!",
+                "무전기 소리 너무 좋아! 칙칙, 여기는 유리아, 오버.", "낫싱폰 샀어요! 속이 다 보이는 디자인, 당근마켓 득템!", "공구 상가 쇼핑하다 또 파산했어요... 용돈 거덜 났네.", "금지 표지만 보면 왜 이렇게 뜯어보고 싶을까요?", "전동 드릴 부품 샀다! 이제 못 뚫는 벽은 없어!",
+                "뼈해장국 특대 사이즈에 들깨가루 팍팍! 완벽한 아재 입맛!", "가만히 앉아서 먹는 코스 요리? 온몸에 쥐가 날 것 같아요.", "AGT(경전철) 최신 기술, 제 머릿속에 다 스캔 완료!", "국어 영어 6등급이면 어때요? 기계 조립은 1등급인데!", "언젠간 저도 멋진 철도 엔지니어가 될 거예요. 요소로!",
+                "여기 배선 장인 유리아 출동! 복잡한 선도 한방에 정리하죠.", "라세나 언니 쫓아다니면 뭐든 배울 게 생겨요.", "사고뭉치라고 놀리지 마세요! 다 성장통이라고요!", "개통 3년 전 선행 데뷔한 짬바를 보여드릴게요.", "우신면 현수막 철거는 제 작품입니다. 깔끔하죠?"
+            ] 
+        },
+        { 
+            id: '빈효선', name: '전노아', color: '#6677CC', file: '전노아.png', 
+            lines: [
+                "오렌지 컬러 바보털! 텐션 업의 상징이죠!", "주황색 후드 집업 핏, 활동성 만점 관종 룩 완성!", "타카미 치카 비주얼이라고요? 귤 하나 까먹을까요?", "조별과제 생태계 포식자 전노아 등장! 3줄 요약 안 하면 죽습니다.", "선배님 이름 조별과제에서 뺍니다? 찡긋~",
+                "저, 저 연극할래요! ...아니 정책 기획할래요!", "네네~ 어차피 난 행정 불도저니까~", "어뮤즈 광견 빙의! 소맥 말아오십쇼, 부장님!", "당 떨어지면 저 슬라임처럼 녹아내려요... 으어어...", "회의 압축 정리 완료. 이 사안의 핵심은 세 가지입니다.",
+                "코레일 본부장님의 양딸? 뭐, 낙하산은 아닙니다 실력이지.", "전례가 없으면 만들면 되죠! 행정 불도저 출동합니다.", "윤석열 비판? 할 말은 해야죠. 행정 낭비는 참을 수 없어요.", "관종 가문 출신답게, 집안 행사 MC는 제 전담입니다.", "새내기 허당이라고요? 메뉴 하나 못 고르는 건 인정...",
+                "귤색 커스텀 아이폰 17 프로! 홍보물 제작에 딱이죠.", "법인카드로 회식 캐리! 코레일 법카 긁을 때가 제일 짜릿해!", "오렌지 펜 잉크가 다 닳도록 기안서 뽑고 있습니다.", "PPT 100장 만들기 쯤이야 밤새면 뚝딱이죠.", "사실확인, 쟁점정리, 선택지, 액션 확정. 완벽한 프로세스.",
+                "참이슬 프레시에 소맥 한잔 캬~! 회식 텐션 올려!", "입술 화장 지워지는 음식은 극혐. 발표할 때 안 예쁘잖아요.", "이에 고춧가루 끼면 최악입니다. 조심조심 먹어야지.", "지갑은 얇지만 법카가 내 손에 있는 한 난 만수르다!", "행정 천재의 정책 기획안, 한번 보실래요?",
+                "여기저기 쏘다니며 현장 파악 중입니다. 기동성 최고!", "광역연계 사업화, 예산 조례 결재 전부 내 손안에 있소이다.", "새내기 패기로 전례 없는 짓 한 번 저질러 보겠습니다!", "분위기 메이커는 나에게 맡겨! 회식 장소 섭외 끝!", "오늘도 정의로운 관종의 하루가 저뭅니다. 찡긋!"
+            ] 
+        },
+        { 
+            id: '창전선', name: '심세이', color: '#33AAFF', file: '심세이.png', 
+            lines: [
+                "백금발 웨이브 머리, 우아함의 상징이죠. 바람에 날리지 마세요.", "차가운 은회색 비주얼? 속은 라틴 하이텐션이랍니다~", "연청색 교복 핏 완벽하죠? 1호선 파란옷 스파이 아닙니다!", "일본총대장... 아니, 창전선 총대장입니다!", "구소쿠무시 댄스라니요! 이건 플라멩코라고요! 억지 부리지 마!",
+                "으아악! 귀, 귀신이다!! (꼬리 펑)", "갤럭시... 아니 창전선의 갤럭시는 나라고!", "¡Hola! ¡Dios mío! 우아한 척 하려다 스페인어 방언 터졌네!", "17살인데 왜 21살 덕희가 나한테 반말하고 언니라 부르는 거야?!", "외국어 팩폭 맛 좀 볼래? 영어 스페인어 속사포 랩 들어간다!",
+                "타워팰리스급 주상복합 거주? 뭐... 창전동에선 흔하죠.", "스페인계 어머니 피를 물려받아 이모구비가 뚜렷하답니다.", "가슴에 이 팬더 브로치, 귀엽죠? 엄마가 사주신 거예요.", "제국주의 역사 팩폭 날렸다가 7호선 언니들한테 서류철로 맞았어요...", "체육은 5등급 이하... 조금만 뛰어도 체력 방전이에요. 헥헥.",
+                "창전동 금수저 클라스! 폰 두 대(S26U, 아이폰) 돌립니다.", "홍보 수당 받은 건 전액 익명 기부했어요. 노블레스 오블리주죠.", "엄마 카드 찬스! 우아한 디저트 사 먹으러 갈까요?", "창전 모노레일 부심! 아직 개통 전이지만 내가 에이스야.", "유리아 걔는 기계만 보면 환장을 해요. 나랑은 앙숙이죠.",
+                "땀 흘리며 먹는 음식 극혐. 우아하게 홍차나 마실래요.", "비싼 디저트 카페 투어가 제 유일한 낙이랍니다.", "구청 로비 모니카 포스터 앞에서 몰래 셀카 찰칵!", "외국어, 세계사 1등급! 국제 특화 엘리트란 이런 거죠.", "옷 팔아서 기부했더니 부모님이 감동해서 용돈 3배 올려주심. 이득!",
+                "돌발 상황 발생! (뇌정지) 어, 어떡하지? ¡Ayúdame!", "하극상 동네북이라뇨! 전 우아한 창전선 홍보대사라고요!", "모노레일 급제동 걸리면 저 진짜 비명 지릅니다 꺄악!", "덕희언니가 자꾸 럽라 굿즈 들고 동생인 나보고 언니라면서 쫓아와요! 저리 가 덕후야!", "우아함을 연기하는 것도 체력이 달리는 일이네요... 후유."
+            ] 
+        },
+        { 
+            id: '빈주1호선', name: '박빛나', color: '#CFBA0F', file: '박빛나.png', 
+            lines: [
+                "흑발 중단발, 가장 무난하고 튀지 않는 생존형 헤어스타일이죠.", "눈 밑에 다크서클 보이나요? 빈주 3노선 독박 홍보의 훈장입니다.", "제 청색 눈동자... 심연을 들여다보는 K-직장인의 눈빛입니다.", "어째서 나한테만! 왜 맨날 야근이냐고 으앙!", "사장님의 소고기 결계에 갇혀서 퇴근을 못 하고 있습니다. 살려줘.",
+                "참을 수 없어! 내 한계는 이미 돌파했다고!", "제가 할게요! ...라고 말해버린 과거의 나를 친다.", "하아... 사장님 또 헛소리 하시네.", "자본주의 미소 ON. 네, 고객님! 무엇을 도와드릴까요?", "소빈이가 또 이상한 짓 해서 위경련이... 위장약 좀 주세요.",
+                "남색 정복 스판덱스 추가. D컵 숨기려면 어쩔 수 없어요.", "5남매 중 셋째, 위아래로 치이며 단련된 극한의 눈치 100단입니다.", "사장님 부당 지시 떨어지면 속으로 기계랑 섀도우 복싱 100라운드 뜁니다.", "사표는 항상 가슴속에 품고 출근하죠. 언젠간 던진다.", "짬처리의 아이콘 박빛나. 오늘도 남의 일까지 다 합니다.",
+                "이동식 결제 단말기 퀵드로우! 건카타의 달인 박빛나입니다 탕탕!", "갤럭시 S26 기본형. 삼페 없으면 5남매 심부름 못해요.", "돈 쓸 시간도 기력도 없어서 강제 저축되는 슬픈 텅장입니다.", "진상 나타나면 '심판관님 빛나 주임은 무죄입니다!' 방패막이 시전.", "오늘 악성 민원 3건 사전 차단 완료. 압도적 업무 효율이죠.",
+                "모카골드 믹스커피 2봉지 원샷! 생명수 투입 완료.", "김밥천국 참치김밥에 치즈 추가. 제 인생 최대의 사치랍니다.", "인스타 감성 비싼 마카롱? 가성비 파괴! 절대 안 먹어.", "가시 발라야 하는 귀찮은 생선류 극혐. 시간 아까워.", "퇴근하고 암막 커튼 치고 무소음 수면하는 게 유일한 힐링입니다.",
+                "다리 붓기 빼는 압박 스타킹은 직장인 필수템입니다.", "오늘도 빈주도시철도의 평화는 제가 독박 캐리해서 지킵니다.", "은은한 광기가 올라온다... 웃으면서 단말기로 후려칠 뻔.", "리모컨 쟁탈전? 두꺼비집 내려버리면 다들 조용해집니다.", "매니저님... 제발 저 좀 퇴근시켜주세요. 네?"
+            ] 
+        },
+        { 
+            id: '빈주2호선', name: '김소빈', color: '#C455F6', file: '김소빈.png', 
+            lines: [
+                "일자 뱅 중단발, MZ 트렌드의 정점 아니겠어요?", "맑눈광 시오리코 비주얼? 헤헤, 칭찬으로 들을게요~", "에어팟 맥스는 의료기기입니다. 노이즈 캔슬링 없으면 귀에서 피 나요.", "삑- 해킹 완료. 그건 제 업무가 아닌데요? 헤헤.", "웃으면서 과태료 협박하는 게 제 주특기랍니다. 벌금 내실래요?",
+                "캡틴 스마일! 진상 퇴치 완료!", "매니저님 심장 소리 엄청 빨리 뛰어! 설레나 봐~", "사장님의 라떼 가스라이팅? 제 귀엔 안 들리는데요~", "노동법 위반 시 고발 조치 들어갑니다~♡", "박빛나 선배님 위경련 약 챙겨드려야지. 제가 스트레스 줬거든요.",
+                "필라테스로 단련된 코어 근육! 진상 취객 손목 단숨에 꺾어버리죠.", "보라색 제복 어때요? B컵 조작 논란은 가볍게 무시합니다.", "인간흉기 헬스 유도 해병대 출신 오빠 3명의 늦둥이 막내 공주랍니다.", "집에서 무한 사랑 받고 자라서 강철 멘탈 무적이에요. 타격 제로!", "합법적 광기 발동! 노동법 사규 마스터 김소빈입니다.",
+                "V2000 단말기 QR 스나이퍼 장전 완료. 표적 확인, 쏩니다!", "아이폰 17로 노동법 PDF 띄워서 사장님 조련하는 중이에요.", "법카로 마라탕 회식 뜯어내는 건 수습사원의 합법적 권리죠.", "인스타 릴스 지하철 OOTD 촬영 중! 좋아요 팍팍 눌러주세요.", "수당 청구서 칼같이 올렸습니다. 제 시간은 소중하니까요.",
+                "마라탕 3단계에 아샷추 벤티 사이즈! 맵단맵단 완벽 조합!", "통귤 탕후루 와그작! 제로 콜라로 양심 챙기기 완료.", "냄새 배는 싸구려 돼지고기 회식은 단호히 거절합니다.", "은수저 여유 뿜뿜. 돈 걱정 없이 탕후루에 탕진하는 삶 최고야.", "심리학 전공 살린 진상 프로파일링 멘탈 붕괴술, 한번 보실래요?",
+                "발걸음도 가볍게 출근! MZ 신입의 패기를 보여주지.", "선배님~ 짬처리 하시면 노동부에 신고할 거예요~ 장난장난!", "트렌드 추구 직장인 김소빈, 오늘도 평화롭게 진상을 팹니다.", "사장님 지갑 터는 재미로 회사 다닙니다. 다음엔 소고기?", "맑은 눈의 광인, 김소빈의 활약 기대해 주세요! 뾰로롱~"
+            ] 
+        },
+        { 
+            id: '덕주1호선', name: '이덕희', color: '#FF4F91', file: '이덕희.png', 
+            lines: [
+                "올림머리 번 헤어! 명예 차장님의 깔끔한 스타일이죠.", "1호선 색깔 보고 마젠타라고요? 덕주역 핫핑크 럽순이 극대노!", "성공한 덕후의 핫핑크 자부심을 무시하지 마십시오!", "이게 바로 '지혜의 신' 뼈해장국 정식이야.", "덕산구 출신 토박이 1/8 화교 혼혈 이덕희 등장!",
+                "너 바보야?! 똑바로 안 해?", "히익... 무, 무서워요... (멘탈 개복치 빙의)", "哎呀(아이야)! 찐 본토 중국어 들으면 저 뇌정지 온단 말이에요.", "17살 세이한테 냅다 언니라고 불렀어... 하극상 성공적.", "애교 넘치는 인싸 텐션! 덕주역의 핫핑크 요정입니다!",
+                "짙은 남색 비즈니스 수트, 핫핑크 넥타이 포인트!", "진짜 차장님한테 빌려온 명예 차장 명찰, 간지 나죠?", "C컵 글래머 K-국밥 러버 이덕희의 든든한 피지컬을 보라!", "아버지 한국인, 어머니 혼혈. 난 100% 한국인 정체성이라구.", "윤재훈 팩폭 샤우팅으로 퇴치 완료! 매출이 복지다 이놈아!",
+                "러브라이브 하스노소라 굿즈에 내 모든 용돈을 탕진한다!", "아이폰 SE4 핫핑크 케이스! 니코 찬양용 성덕의 타이템!", "철도경영학과 전공 1등급! 성지순례 기획에 다 써먹지롱.", "제2외국어 일본어 1등급! 애니로 배운 실전 일본어 짬바!", "덕업일치의 열정! 1호선 핫핑크 하나 보고 파견 지원했죠.",
+                "뼈해장국에 다대기 2배 팍팍! 깍두기 국물 무한 리필!", "가성비 국밥으로 식비 때우고 남은 돈은 전부 굿즈에 올인!", "가만히 앉아 격식 차리는 코스 요리? 온몸이 쑤셔 죽어.", "전노아 너 참이슬 당장 압수! 파견 명예 차장의 권한이다!", "K-아재 입맛 국밥러의 소울은 뼈해장국에 있다 이말이야.",
+                "러브라이브 성지순례 가려고 하체 운동 열심히 하고 있어요.", "멘탈 털리면 구석에서 바들바들 떰... 저 유리 멘탈이에요.", "덕주역 핫핑크 요정의 열정 만수르 스텝 밟기! 챠챠챠!", "파견 역무원 럭키 세븐 이덕희, 오늘도 덕업일치 달성!", "우리 하스노소라 아이들 보러 일본 또 가고 싶다아아~"
+            ] 
+        },
+        { 
+            id: '효빈시청', name: '한바다', color: '#FFFFFF', file: '한바다_전신.png', 
+            lines: [
+                "효빈의 바다는 오늘도 맑음! 텐션 MAX 바다 요정입니다!", "밀레니엄 창조물 2000년생, 효빈시청 얼굴마담 한바다 등장!", "박현만 전 시장님의 창조물... 저 은근 짬바 높답니다.", "키라키라 도키도키! 별 스티커 붙여드릴게요!", "전속 전진! 요소로!! 하이텐션 긍정왕 출항합니다!",
+                "내 노래를 들어! 킹블레이드 점화!", "오라버니..! 아니, 시장님 결재 반려라니요!", "갈색버스 전 시장 언급하면 분위기 절대영도로 냉각됩니다. 조심.", "시장님은 철없는 남동생 챙기듯 제가 다 케어하죠.", "악플? 강철 멘탈 생존왕 한바다에겐 타격 제로입니다!",
+                "G컵 흉부 장갑! 셔츠 단추가 터질 것 같아서 맨날 수선해요.", "HAF 여신 코스프레 마스터, 그게 접니다.", "윤재훈 패거리 참교육 완료. 매출이 곧 복지다 이 녀석들아!", "시민 헌장인 척하지만 사실 이건 제 맛집 지도랍니다 헷.", "지하 창고 16개월 유폐 생존기... 폐쇄공포증 올 뻔했어요 엉엉.",
+                "양손에 킹블레이드 장착! 썬더스네이크 오타게 달인 출동!", "뱅드림 30렙 엄지 풀콤보? 그 정돈 서브컬처 SSS랭크의 기본이죠.", "타자 속도 800타 키보드 워리어! 행정 홍보 완벽 수행합니다.", "지하철 노선도 타임어택 신기록 보유자. 길 찾기는 나에게!", "칭찬받으면 저 홍당무 돼요... 쑥스럽게 자꾸 그러지 마요.",
+                "간식 창고의 초콜릿, 젤리, 사탕은 제가 다 털어먹죠 냠냠.", "엠마 베르데 빵 완전 호! 맛있게 먹으면 0칼로리~", "갈색 음식(카레, 짜장면)은 극혐... 버스 사고 트라우마 때문에 구역질 나요.", "7,000원 버스 요금... 그 악몽 같은 두청운수 시절, 다신 안 돌아가.", "시내버스 도색 감상하며 달달한 거 먹는 게 최고의 힐링이죠.",
+                "현장을 발로 뛰는 공식 마스코트! 기동성 하난 최고죠.", "친화력 끝판왕 ENFJ! 덕후 친화적 행정 서비스 제공합니다.", "시장님의 아이돌 한바다, 무대 위에선 완벽한 아이돌 텐션!", "바다 요정의 가호로 오늘 효빈시의 평화도 완벽하게 지켰습니다.", "매니저님도 저랑 같이 킹블레이드 흔들며 오타게 한 판 어때요?!"
+            ] 
+        }
+    ];
+
+    const bgmPlayer = document.getElementById('bgm-player');
+    const brightnessOverlay = document.getElementById('brightness-overlay');
+    let isBgmInitialized = false;
+
+    document.body.addEventListener('click', () => {
+        if(!isBgmInitialized && gameState.bgmTrack !== 'none') {
+            bgmPlayer.play().catch(e => console.log("오디오 자동재생 대기"));
+            isBgmInitialized = true;
+        }
+    }, { once: true });
+
+    function saveGame() { localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState)); }
+
+    function loadGame() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                
+                // localStorage에 값이 있으면 완벽하게 덮어쓰기 (기본값 무시)
+                gameState.playerName = parsed.playerName || gameState.playerName;
+                gameState.level = parsed.level || gameState.level;
+                gameState.exp = parsed.exp || 0;
+                gameState.maxExp = parsed.maxExp || gameState.maxExp;
+                gameState.coin = parsed.coin !== undefined ? parsed.coin : gameState.coin;
+                gameState.gem = parsed.gem !== undefined ? parsed.gem : gameState.gem;
+                gameState.activeCharId = parsed.activeCharId || gameState.activeCharId;
+                
+                // 상점에서 해금한 배열이 존재할 경우에만 덮어씀 (없으면 기본 배열 '1호선' 유지)
+                if (parsed.ownedChars && parsed.ownedChars.length > 0) {
+                    gameState.ownedChars = parsed.ownedChars;
+                }
+                
+                gameState.activeBgFile = parsed.activeBgFile || gameState.activeBgFile;
+                gameState.bgmTrack = parsed.bgmTrack || gameState.bgmTrack;
+                gameState.volume = parsed.volume !== undefined ? parsed.volume : gameState.volume;
+                gameState.brightness = parsed.brightness !== undefined ? parsed.brightness : gameState.brightness;
+                gameState.sensitivity = parsed.sensitivity !== undefined ? parsed.sensitivity : gameState.sensitivity;
+                gameState.keyBinding = parsed.keyBinding || gameState.keyBinding;
+                
+                gameState.inventory = parsed.inventory || gameState.inventory;
+                gameState.affection = parsed.affection || gameState.affection;
+                gameState.lastLoginDate = parsed.lastLoginDate || gameState.lastLoginDate;
+                gameState.quests = parsed.quests || gameState.quests;
+
+            } catch(e) { console.error("Save file corrupted"); }
+        }
+
+        // 호감도 객체 초기화 보장
+        charData.forEach(c => {
+            if(!gameState.affection[c.id]) gameState.affection[c.id] = { level: 1, exp: 0 };
+        });
+
+        checkDailyReset();
+        updateTopBarUI();
+        updateAffectionUI();
+        checkQuestNotif();
+        
+        document.getElementById('bg-image-layer').style.backgroundImage = `url('이미지/${gameState.activeBgFile}')`;
+        document.getElementById('input-player-name').value = gameState.playerName;
+        document.getElementById('input-bgm').value = gameState.bgmTrack;
+        document.getElementById('input-volume').value = gameState.volume;
+        document.getElementById('input-brightness').value = gameState.brightness;
+        document.getElementById('input-sensitivity').value = gameState.sensitivity;
+        
+        if(gameState.keyBinding === '1289') document.querySelector('input[name="input-keys"][value="1289"]').checked = true;
+        else document.querySelector('input[name="input-keys"][value="dfjk"]').checked = true;
+
+        applyLiveSettings(true); 
+    }
+
+    function applyLiveSettings(isInitialLoad = false) {
+        const newBgm = document.getElementById('input-bgm').value;
+        const newVol = document.getElementById('input-volume').value;
+        const newBright = document.getElementById('input-brightness').value;
+        
+        document.getElementById('val-volume').innerText = newVol + '%';
+        document.getElementById('val-brightness').innerText = newBright + '%';
+
+        bgmPlayer.volume = newVol / 100;
+        brightnessOverlay.style.opacity = (100 - newBright) / 100;
+
+        if(newBgm === 'none') {
+            bgmPlayer.pause();
+        } else {
+            const expectedSrc = `음악/${newBgm}`;
+            if(!bgmPlayer.src.endsWith(encodeURI(expectedSrc))) {
+                bgmPlayer.src = expectedSrc;
+                if(!isInitialLoad || isBgmInitialized) bgmPlayer.play().catch(e=>{});
+            }
+        }
+        saveSettings();
+    }
+
+    function saveSettings() {
+        gameState.bgmTrack = document.getElementById('input-bgm').value;
+        gameState.volume = document.getElementById('input-volume').value;
+        gameState.brightness = document.getElementById('input-brightness').value;
+        gameState.sensitivity = document.getElementById('input-sensitivity').value;
+        gameState.keyBinding = document.querySelector('input[name="input-keys"]:checked').value;
+        saveGame();
+    }
+
+    function updateTopBarUI() {
+        document.getElementById('player-name').innerText = gameState.playerName;
+        document.getElementById('player-level').innerText = gameState.level;
+        document.getElementById('player-coin').innerText = gameState.coin.toLocaleString();
+        document.getElementById('player-gem').innerText = gameState.gem.toLocaleString();
+        const expPercent = Math.min((gameState.exp / gameState.maxExp) * 100, 100);
+        document.getElementById('player-exp-fill').style.width = `${expPercent}%`;
+    }
+
+    let currentChar = charData[0];
+    const charImg = document.getElementById('main-character-img');
+    const speechBubble = document.getElementById('speech-bubble');
+    
+    let bubbleTimeout;
+    let lastTouchTime = 0;
+    let comboCount = 0;
+    let comboResetTimer;
+
+    function resetCombo() {
+        comboCount = 0;
+    }
+
+    function createFloatingText(x, y, text, color = '#fff') {
+        const el = document.createElement('div');
+        el.className = 'floating-reward';
+        el.innerText = text;
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+        el.style.color = color;
+        appContainer.appendChild(el);
+        setTimeout(() => el.remove(), 1000);
+    }
+
+    charImg.addEventListener('click', (e) => {
+        const now = Date.now();
+        if(now - lastTouchTime < 300) return; // 무지성 광클 방지
+        lastTouchTime = now;
+
+        clearTimeout(comboResetTimer);
+        comboCount++;
+        comboResetTimer = setTimeout(resetCombo, 1500);
+
+        if(bubbleTimeout) clearTimeout(bubbleTimeout);
+        
+        const rect = e.target.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        let col = Math.floor((x / rect.width) * 5); 
+        let row = Math.floor((y / rect.height) * 6); 
+        col = Math.max(0, Math.min(4, col));
+        row = Math.max(0, Math.min(5, row));
+        
+        const lineIndex = (row * 5) + col; 
+        const lines = currentChar.lines;
+        
+        speechBubble.innerText = lines[lineIndex] || lines[0]; 
+        speechBubble.classList.add('show');
+        bubbleTimeout = setTimeout(() => { speechBubble.classList.remove('show'); }, 4000);
+        
+        const clickX = e.clientX - appContainer.getBoundingClientRect().left;
+        const clickY = e.clientY - appContainer.getBoundingClientRect().top;
+
+        // 밸런스 패치: 기본 5 EXP, 터치만으로 코인 획득 불가.
+        let expGain = 5;
+        let isCombo = false;
+        if (comboCount > 0 && comboCount % 10 === 0) {
+            expGain = 30; isCombo = true;
+        }
+        
+        gameState.exp += expGain;
+        const color = isCombo ? '#FFCC11' : '#00CCAA';
+        const text = isCombo ? `+${expGain} EXP (COMBO ${comboCount}!)` : `+${expGain} EXP`;
+        createFloatingText(clickX, clickY, text, color);
+
+        if(gameState.exp >= gameState.maxExp) {
+            levelUp(); // 레벨업 이벤트 발생
+        } else {
+            updateTopBarUI();
+        }
+        
+        // 30% 확률로 호감도 상승
+        if(Math.random() < 0.3) {
+            gainAffection(1);
+            createFloatingText(clickX + 30, clickY - 30, '💖', '#FF4F91');
+        }
+
+        if(gameState.quests.touch.progress < gameState.quests.touch.target) {
+            gameState.quests.touch.progress++;
+        }
+        if(comboCount >= 30 && gameState.quests.combo.progress < gameState.quests.combo.target) {
+            gameState.quests.combo.progress++;
+        }
+        
+        saveGame(); checkQuestNotif();
+    });
+
+    function levelUp() {
+        gameState.level++;
+        gameState.exp -= gameState.maxExp;
+        gameState.maxExp = Math.floor(gameState.maxExp * 1.3);
+        
+        // 레벨업 기본 보상
+        gameState.gem += 200;
+        gameState.coin += 1000;
+        updateTopBarUI(); saveGame();
+        
+        enqueueToast(`🎉 레벨 업! 매니저 레벨이 ${gameState.level}(으)로 상승했습니다. (보상: 💎200 / 🪙1000)`);
+        
+        // 연쇄 레벨업 대비
+        if(gameState.exp >= gameState.maxExp) {
+            setTimeout(levelUp, 1500); 
+        }
+    }
+
+    function gainAffection(amount) {
+        let aff = gameState.affection[currentChar.id];
+        if(!aff) aff = { level: 1, exp: 0 };
+        
+        aff.exp += amount;
+        let maxExp = aff.level * 100;
+        
+        if(aff.exp >= maxExp) {
+            aff.level++;
+            aff.exp -= maxExp;
+            enqueueToast(`💖 ${currentChar.name}의 호감도 레벨이 ${aff.level}(으)로 상승했습니다!`);
+        }
+        
+        gameState.affection[currentChar.id] = aff;
+        updateAffectionUI(); saveGame();
+    }
+
+    function updateAffectionUI() {
+        const aff = gameState.affection[currentChar.id] || { level: 1, exp: 0 };
+        const maxExp = aff.level * 100;
+        document.getElementById('ui-aff-lvl').innerText = aff.level;
+        document.getElementById('ui-aff-text').innerText = `(${aff.exp}/${maxExp})`;
+        document.getElementById('ui-aff-bar').style.width = `${(aff.exp / maxExp) * 100}%`;
+    }
+
+    window.openSettingsModal = () => document.getElementById('modal-settings').classList.add('show');
+    window.closeModal = (id) => { document.getElementById(id).classList.remove('show'); }
+    
+    window.savePlayerName = () => {
+        const newName = document.getElementById('input-player-name').value.trim();
+        if(newName.length > 0) {
+            gameState.playerName = newName;
+            updateTopBarUI(); saveGame();
+            enqueueToast(`이름이 '${newName}'(으)로 변경되었습니다.`);
+        } else { enqueueToast(`이름을 한 글자 이상 입력해주세요.`, true); }
+    }
+
+    let resetClickCount = 0; let resetTimeout;
+    window.resetGameData = () => {
+        const btn = document.getElementById('btn-reset-data');
+        resetClickCount++;
+        if(resetClickCount === 1) {
+            btn.innerText = "정말 초기화하시겠습니까? (한 번 더 클릭)";
+            btn.classList.replace('bg-red-900', 'bg-red-600');
+            enqueueToast("경고: 모든 진행 데이터가 삭제됩니다.", true);
+            resetTimeout = setTimeout(() => { 
+                resetClickCount = 0; btn.innerText = "진행 데이터 완전 초기화"; btn.classList.replace('bg-red-600', 'bg-red-900');
+            }, 3000);
+        } else if(resetClickCount === 2) {
+            clearTimeout(resetTimeout);
+            localStorage.removeItem(STORAGE_KEY); // 스토리지 완전 삭제
+            enqueueToast("데이터가 완전히 초기화되었습니다. 잠시 후 재시작합니다.");
+            setTimeout(() => location.reload(), 1500);
+        }
+    }
+
+    function renderCharacterGrid() {
+        const charGrid = document.getElementById('char-grid');
+        charGrid.innerHTML = '';
+        charData.forEach(char => {
+            const isOwned = gameState.ownedChars.includes(char.id);
+            const btn = document.createElement('div');
+            
+            btn.className = `select-btn relative overflow-hidden ${isOwned ? '' : 'opacity-40 grayscale cursor-not-allowed border-gray-600'}`;
+            btn.innerHTML = `
+                <div class="absolute right-[-10px] bottom-[-10px] w-32 h-32 opacity-20 pointer-events-none z-0">
+                    <img src="이미지/${char.file}" class="w-full h-full object-contain object-bottom">
+                </div>
+                <div class="relative z-10 w-full flex flex-col items-center justify-center">
+                    <div style="width: 60%; height: 6px; background-color: ${char.color}; border-radius: 3px; margin-bottom: 12px; box-shadow: 0 0 8px ${char.color};"></div>
+                    <div class="text-xs font-bold text-gray-400 mb-1">${char.id}</div>
+                    <div class="text-xl font-black text-white flex items-center gap-2">
+                        ${isOwned ? '' : '🔒'} ${char.name}
+                    </div>
+                </div>
+            `;
+            
+            btn.onclick = () => {
+                if(!isOwned) {
+                    enqueueToast('상점의 픽업 가챠(GACHA)에서 먼저 영입해야 합니다.', true);
+                    return;
+                }
+                currentChar = char; gameState.activeCharId = char.id; 
+                document.documentElement.style.setProperty('--color-active', currentChar.color);
+                charImg.src = `이미지/${char.file}`;
+                updateAffectionUI(); saveGame();
+                closeModal('modal-character');
+                enqueueToast(`${char.name} 매니저님을 보좌하기 위해 도착했습니다!`);
+            };
+            charGrid.appendChild(btn);
+        });
+    }
+    window.openCharacterModal = () => document.getElementById('modal-character').classList.add('show');
+
+    const bgData = [
+        "고나미방.png", "곽산역승무본부.png", "교통공사사무실.png", "근로장학센터.png", "기계공고.png", "기계실.png", "김소빈방.png", "다로나방.png", "데이트.png", "라세나방.png", "마케팅팀.png", "미소하방.png", "박라미방.png", "박빛나방.png", "사무실.png", "서재.png", "욕실.png", "유리아방.png", "임세정방.png", "임세하방.png", "전노아방.png", "중수여고.png", "중수여고_교실.png", "지하실.png", "평안명대_과방.png", "하루빈방.png", "한바다방.png", "해수욕장.png", "화장실.png", "효빈대_과방.png", "효빈대사회복지정책학과.png", "효빈집거실.png", "효빈집침실.png", "휴게실.png"
+    ];
+
+    const bgGrid = document.getElementById('bg-grid');
+    bgData.forEach(bgFile => {
+        const bgName = bgFile.replace('.png', '');
+        const btn = document.createElement('div');
+        btn.className = 'select-btn';
+        btn.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('이미지/${bgFile}') center/cover`;
+        btn.innerHTML = `<div class="text-lg font-bold text-white text-center break-keep px-2">${bgName}</div>`;
+        btn.onclick = () => {
+            document.getElementById('bg-image-layer').style.backgroundImage = `url('이미지/${bgFile}')`;
+            gameState.activeBgFile = bgFile; saveGame();
+            closeModal('modal-bg');
+            enqueueToast(`배경이 [${bgName}](으)로 변경되었습니다.`);
+        };
+        bgGrid.appendChild(btn);
+    });
+    window.openBgModal = () => document.getElementById('modal-bg').classList.add('show');
+
+    function renderInventory() {
+        const grid = document.getElementById('inventory-grid');
+        grid.innerHTML = '';
+        let hasItems = false;
+        
+        for(let itemName in gameState.inventory) {
+            const count = gameState.inventory[itemName];
+            if(count <= 0) continue;
+            hasItems = true;
+            const itemData = ITEM_DB[itemName] || { icon: '📦', desc: '미확인 물품' };
+            
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            card.innerHTML = `
+                <div class="item-icon">${itemData.icon}</div>
+                <div class="flex-1">
+                    <div class="text-lg font-bold text-white">${itemName} <span class="text-yellow-400 ml-2">x${count}</span></div>
+                    <div class="text-xs text-gray-400 mt-1 mb-2 break-keep">${itemData.desc}</div>
+                    <button class="bg-[var(--color-active)] hover:bg-blue-500 text-white text-sm font-bold py-1 px-4 rounded-full transition" onclick="useItem('${itemName}')">선물하기</button>
+                </div>
+            `;
+            grid.appendChild(card);
+        }
+        if(!hasItems) {
+            grid.innerHTML = '<div class="col-span-2 text-center text-gray-500 py-10">가방이 텅 비어 있습니다. 레벨업이나 퀘스트를 통해 획득하세요.</div>';
+        }
+    }
+
+    window.useItem = function(itemName) {
+        if(gameState.inventory[itemName] > 0) {
+            gameState.inventory[itemName]--;
+            gainAffection(50); 
+            
+            if(gameState.quests.gift.progress < gameState.quests.gift.target) {
+                gameState.quests.gift.progress++;
+                checkQuestNotif();
+            }
+            
+            saveGame(); renderInventory();
+            enqueueToast(`${currentChar.name}에게 [${itemName}]을(를) 선물했습니다! (호감도 +50 💖)`);
+            
+            speechBubble.innerText = "선물 감사합니다! 마음에 쏙 들어요!";
+            speechBubble.classList.add('show');
+            if(bubbleTimeout) clearTimeout(bubbleTimeout);
+            bubbleTimeout = setTimeout(() => { speechBubble.classList.remove('show'); }, 3000);
+        }
+    }
+
+    window.openInventoryModal = () => {
+        renderInventory();
+        document.getElementById('modal-inventory').classList.add('show');
+    };
+
+    function renderQuests() {
+        const list = document.getElementById('quest-list');
+        list.innerHTML = '';
+        
+        for(let key in gameState.quests) {
+            const q = gameState.quests[key];
+            const isCompleted = q.progress >= q.target;
+            const percent = Math.min((q.progress / q.target) * 100, 100);
+            
+            let btnHtml = '';
+            if(q.claimed) {
+                btnHtml = `<button class="bg-gray-600 text-gray-400 font-bold py-2 px-6 rounded-lg cursor-not-allowed" disabled>완료됨</button>`;
+            } else if(isCompleted) {
+                btnHtml = `<button class="bg-yellow-500 hover:bg-yellow-400 text-black font-black py-2 px-6 rounded-lg transition shadow-[0_0_10px_rgba(234,179,8,0.5)]" onclick="claimQuest('${key}')">보상 받기</button>`;
+            } else {
+                btnHtml = `<button class="bg-[var(--color-active)] text-white font-bold py-2 px-6 rounded-lg opacity-50 cursor-not-allowed" disabled>진행 중</button>`;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'quest-card';
+            card.innerHTML = `
+                <div>
+                    <div class="text-xl font-bold text-white">${q.desc}</div>
+                    <div class="flex items-center gap-3 mt-1">
+                        <div class="quest-progress-bg"><div class="quest-progress-fill" style="width: ${percent}%"></div></div>
+                        <div class="text-sm font-bold text-gray-400 mt-2">${q.progress} / ${q.target}</div>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center gap-2">
+                    <div class="text-lg font-black ${q.isGem ? 'text-blue-300' : 'text-gray-200'}">${q.isGem ? '💎' : '🪙'} ${q.reward}</div>
+                    ${btnHtml}
+                </div>
+            `;
+            list.appendChild(card);
+        }
+    }
+
+    window.claimQuest = function(key) {
+        const q = gameState.quests[key];
+        if(!q.claimed && q.progress >= q.target) {
+            q.claimed = true;
+            if(q.isGem) gameState.gem += q.reward;
+            else gameState.coin += q.reward;
+            
+            enqueueToast(`${q.isGem ? '💎보석' : '🪙코인'} ${q.reward}개를 획득했습니다!`);
+            updateTopBarUI(); saveGame(); renderQuests(); checkQuestNotif();
+        }
+    }
+
+    function checkQuestNotif() {
+        let hasReward = false;
+        for(let key in gameState.quests) {
+            if(gameState.quests[key].progress >= gameState.quests[key].target && !gameState.quests[key].claimed) {
+                hasReward = true; break;
+            }
+        }
+        document.getElementById('quest-notif').classList.toggle('active', hasReward);
+    }
+
+    window.openQuestModal = () => {
+        renderQuests();
+        document.getElementById('modal-quest').classList.add('show');
+    };
+
+    function checkDailyReset() {
+        const today = new Date().toLocaleDateString();
+        if(gameState.lastLoginDate !== today) {
+            gameState.lastLoginDate = today;
+            for(let key in gameState.quests) {
+                gameState.quests[key].progress = 0;
+                gameState.quests[key].claimed = false;
+            }
+            gameState.quests.login.progress = 1; // 로그인 완료
+            enqueueToast("📅 일일 업무가 갱신되었습니다!");
+            saveGame();
+        }
+    }
+
+    loadGame();
+    renderCharacterGrid();
+
+    const loadedChar = charData.find(c => c.id === gameState.activeCharId);
+    if (loadedChar) {
+        currentChar = loadedChar;
+        document.documentElement.style.setProperty('--color-active', currentChar.color);
+        charImg.src = `이미지/${currentChar.file}`;
+        updateAffectionUI();
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>덕빈도 - 효빈위키</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        :root { 
+            /* 효빈위키 공통 테마 */
+            --wiki-nav: #7777AA; 
+            --wiki-header: #BBFF64; 
+            --wiki-header-text: #000000;
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            
+            /* 덕빈도 고유 테마 (지도 상의 보라색 반영) */
+            --db-do-gradient-start: #9B59B6;
+            --db-do-gradient-end: #8E44AD;
+
+            /* 지하철 노선 색상 (사용자 지정) */
+            --line-1: #0077DD;
+            --line-2: #00CCAA;
+            --line-3: #FFCC11;
+            --line-4: #FF5522;
+            --line-5: #EE0022;
+            --line-6: #881188;
+            --line-7: #FF8899;
+            --line-8: #9856FF;
+            --line-binhyo: #6677CC;
+
+            /* 버스 색상 (사용자 지정) */
+            --bus-ganseon: #01B7ED;
+            --bus-sunhwan: #E7D600;
+            --bus-jiseon: #37B484;
+            --bus-gwangyeok: #485EC6;
+            --bus-jwaseok: #FF5800;
+            --bus-maeul: #A664A0;
+            --bus-airport: #84C36E;
+            --bus-citytour: #7777AA;
+            --bus-express: #D81C2F;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-nav: #444477;
+            --wiki-header: #88AA33;
+            --wiki-header-text: #ffffff;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; margin: 0; }
+        .wiki-container { max-width: 1280px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); display: flex; flex-direction: column; }
+
+        /* 테이블 공통 스타일 */
+        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: fixed !important; }
+        th, td { border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; word-break: break-word; }
+        
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        del { color: #aaa; text-decoration: line-through; }
+        [data-theme='dark'] del { color: #777; }
+        
+        /* 각주 스타일 */
+        .footnote { color: var(--wiki-link); font-size: 0.8em; vertical-align: super; cursor: pointer; }
+
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 2px solid var(--wiki-header); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-header); }
+        
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: #000000; border-left: 4px solid var(--wiki-header); padding-left: 12px; }
+        [data-theme='dark'] h3 { color: #ffffff; }
+        h4 { font-size: 1.2rem !important; font-weight: 700 !important; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #333; }
+        [data-theme='dark'] h4 { color: #ccc; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--db-do-gradient-end); background-color: var(--wiki-gray-bg); width: 100%; max-width: 400px; font-size: 0.85rem; margin-bottom: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-top-label { background: linear-gradient(135deg, var(--db-do-gradient-start) 0%, var(--db-do-gradient-end) 100%); color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 1.2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+        .infobox-title-row { display: flex; border-bottom: 1px solid var(--wiki-border); background: #fff; align-items: center; justify-content: center; padding: 10px; }
+        .infobox th { background-color: #eee !important; color: #333 !important; width: 100px; text-align: center; font-weight: bold; }
+        [data-theme='dark'] .infobox th { background-color: #333 !important; color: #eee !important; }
+        .infobox td { text-align: left; padding: 5px 10px; }
+
+        /* 하위 행정구역 표 전용 스타일 */
+        .admin-table th.side-header { background-color: #e2e8f0 !important; color: #1e293b !important; border-right: 1px solid var(--wiki-border) !important; }
+        [data-theme='dark'] .admin-table th.side-header { background-color: #334155 !important; color: #f8fafc !important; }
+
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        
+        /* 정당 뱃지 */
+        .badge-minju { background-color: #004EA2; color: white; padding: 1px 4px; border-radius: 3px; font-size: 0.75rem; font-weight: bold; margin-right: 4px; vertical-align: middle; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+<div id="wiki-msg-box"></div>
+<nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav);">
+<div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+<span class="font-bold text-xl">HyobinWiki</span>
+</div>
+<div class="flex items-center gap-2">
+<input autocomplete="off" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner" id="searchInput" placeholder="문서 검색" type="text"/>
+<button class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner font-bold" id="searchBtn" type="button">검색</button>
+<button class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner" id="themeBtn" onclick="toggleTheme()" type="button">다크모드</button>
+</div>
+</nav>
+<div class="wiki-container shadow-lg">
+<div class="flex justify-between items-end mb-4">
+<h1 class="m-0 border-none p-0">덕빈도</h1>
+<div class="flex bg-white border rounded overflow-hidden shadow-sm mb-4">
+<a class="wiki-tool-btn" href="토론.html">토론</a>
+<a class="wiki-tool-btn" href="수정.html">편집</a>
+<a class="wiki-tool-btn" href="역사.html">역사</a>
+<div class="px-3 py-1 text-[11px] cursor-pointer hover:bg-gray-100" onclick="showMsg('즐겨찾기에 추가됨')">★</div>
+</div>
+</div>
+<div class="category-box bg-white border p-2 mb-4 text-xs">
+<span class="font-bold text-[#7777AA]">분류:</span>
+<a class="wiki-link" href="과거의_행정구역.html">과거의 행정구역</a> | 
+            <a class="wiki-link" href="대한민국의_지역_구분.html">대한민국의 지역 구분</a> | 
+            <a class="wiki-link" href="덕빈도.html">덕빈도</a>
+</div>
+<!-- 한반도의 지역 구분 틀 -->
+<div class="mb-4 border border-[#0084c9] shadow-sm rounded overflow-hidden" style="font-size: 0.85em;">
+<div class="bg-[#0084c9] text-white font-bold p-2 text-center text-lg shadow-sm">
+                🗺️ <a class="text-white hover:underline" href="한반도.html">한반도</a>의 <a class="text-white hover:underline" href="한반도_지역_구분.html">지역 구분</a>
+</div>
+<div class="bg-[#1f2023]">
+<div class="cursor-pointer text-center p-2 text-xs font-bold text-gray-300 hover:text-white transition-colors select-none border-b border-gray-700" onclick="toggleNav('korea-table-content', 'korea-table-label')">
+                    [ <span id="korea-table-label">표로 보기</span> ]
+                </div>
+<div id="korea-table-content" style="max-height: 2000px; overflow: hidden; transition: max-height 0.3s ease-out; background-color: var(--wiki-bg);">
+<table class="w-full text-center m-0 border-collapse border-0">
+<tbody>
+<tr>
+<th class="w-[10%] bg-[#1c1d1f] text-[#C19B76]" rowspan="3">북부</th>
+<td class="w-[2%] p-0 bg-[#A3B1C6] border-none"></td>
+<th class="w-[18%] bg-[#1c1d1f] text-[#C19B76]"><a class="wiki-link text-[#C19B76]" href="관북.html">관북</a></th>
+<td class="text-left bg-[#1c1d1f] text-gray-300">
+<a class="wiki-link text-[#FF9E7B]" href="라선시.html">라선</a> · <a class="wiki-link text-[#FF9E7B]" href="함경북도.html">함북</a> · <a class="wiki-link text-[#FF9E7B]" href="함경남도.html">함남</a> · <a class="wiki-link text-[#FF9E7B]" href="량강도.html">량강</a>
+</td>
+</tr>
+<tr>
+<td class="p-0 bg-[#A7C6C0] border-none"></td>
+<th class="bg-[#1c1d1f] text-[#C19B76]"><a class="wiki-link text-[#C19B76]" href="관서.html">관서</a></th>
+<td class="text-left bg-[#1c1d1f] text-gray-300">
+<a class="wiki-link text-[#FF9E7B]" href="평양시.html">평양</a> · <a class="wiki-link text-[#FF9E7B]" href="남포시.html">남포</a> · <a class="wiki-link text-[#FF9E7B]" href="평안북도.html">평북</a> · <a class="wiki-link text-[#FF9E7B]" href="평안남도.html">평남</a> · <a class="wiki-link text-[#FF9E7B]" href="자강도.html">자강</a>
+</td>
+</tr>
+<tr>
+<td class="p-0 bg-[#EFDA84] border-none"></td>
+<th class="bg-[#1c1d1f] text-[#C19B76]"><a class="wiki-link text-[#C19B76]" href="해서.html">해서</a></th>
+<td class="text-left bg-[#1c1d1f] text-gray-300">
+<a class="wiki-link text-[#FF9E7B]" href="개성시.html">개성</a> · <a class="wiki-link text-[#FF9E7B]" href="황해북도.html">황북</a> · <a class="wiki-link text-[#FF9E7B]" href="황해남도.html">황남</a>
+</td>
+</tr>
+<tr>
+<th class="bg-[#1c1d1f] text-[#C19B76]" rowspan="3">중부</th>
+<td class="p-0 border-none" style="background: linear-gradient(to bottom, #EDBECC 50%, #E8AFC2 50%);"></td>
+<th class="bg-[#1c1d1f] text-[#C19B76]">
+<a class="wiki-link text-[#FF9E7B]" href="강원특별자치도.html">강원<span class="text-xs text-[#C19B76] ml-1">(관동)</span></a><br/>
+<span class="text-[0.7rem] text-gray-400">( <a class="wiki-link text-gray-400" href="영동.html">영동</a> · <a class="wiki-link text-gray-400" href="영서.html">영서</a> )</span>
+</th>
+<td class="text-left bg-[#1c1d1f] text-gray-300">
+<a class="wiki-link text-[#FF9E7B]" href="강원특별자치도.html">강원</a>
+</td>
+</tr>
+<tr>
+<td class="p-0 bg-[#666666] border-none"></td>
+<th class="bg-[#1c1d1f] text-[#C19B76]"><a class="wiki-link text-[#FF9E7B]" href="수도권.html">수도권<span class="text-xs text-[#C19B76] ml-1">(경기)</span></a></th>
+<td class="text-left bg-[#1c1d1f] text-gray-300">
+<a class="wiki-link text-[#FF9E7B]" href="서울특별시.html">서울</a> · <a class="wiki-link text-[#FF9E7B]" href="인천광역시.html">인천</a> · <a class="wiki-link text-[#FF9E7B]" href="경기도.html">경기</a>
+</td>
+</tr>
+<tr>
+<td class="p-0 bg-[#B2B09A] border-none"></td>
+<th class="bg-[#1c1d1f] text-[#C19B76]"><a class="wiki-link text-[#FF9E7B]" href="충청도.html">충청<span class="text-xs text-[#C19B76] ml-1">(호서)</span></a></th>
+<td class="text-left bg-[#1c1d1f] text-gray-300">
+<a class="wiki-link text-[#FF9E7B]" href="대전광역시.html">대전</a> · <a class="wiki-link text-[#FF9E7B]" href="세종특별자치시.html">세종</a> · <a class="wiki-link text-[#FF9E7B]" href="충청북도.html">충북</a> · <a class="wiki-link text-[#FF9E7B]" href="충청남도.html">충남</a>
+</td>
+</tr>
+<tr>
+<th class="bg-[#1c1d1f] text-[#C19B76]" rowspan="4">남부</th>
+<td class="p-0 bg-[#97BDC6] border-none"></td>
+<th class="bg-[#1c1d1f] text-[#C19B76]"><a class="wiki-link text-[#C19B76]" href="영남.html">영남</a></th>
+<td class="text-left bg-[#1c1d1f] text-gray-300">
+<a class="wiki-link text-[#FF9E7B]" href="부산광역시.html">부산</a> · <a class="wiki-link text-[#FF9E7B]" href="대구광역시.html">대구</a> · <a class="wiki-link text-[#FF9E7B]" href="울산광역시.html">울산</a> · <a class="wiki-link text-[#FF9E7B]" href="경상북도.html">경북</a> · <a class="wiki-link text-[#FF9E7B]" href="경상남도.html">경남</a>
+</td>
+</tr>
+<tr>
+<td class="p-0 bg-[#B4C9A6] border-none"></td>
+<th class="bg-[#1c1d1f] text-[#C19B76]"><a class="wiki-link text-[#C19B76]" href="호남.html">호남</a></th>
+<td class="text-left bg-[#1c1d1f] text-gray-300">
+<a class="wiki-link text-[#FF9E7B]" href="광주광역시.html">광주</a> · <a class="wiki-link text-[#FF9E7B]" href="전북특별자치도.html">전북</a> · <a class="wiki-link text-[#FF9E7B]" href="전라남도.html">전남</a>
+</td>
+</tr>
+<tr>
+<td class="p-0 bg-[#E2B89C] border-none"></td>
+<th class="bg-[#1c1d1f] text-[#C19B76]"><a class="wiki-link text-[#C19B76]" href="제주도.html">제주</a></th>
+<td class="text-left bg-[#1c1d1f] text-gray-300">
+<a class="wiki-link text-[#FF9E7B]" href="제주특별자치도.html">제주</a>
+</td>
+</tr>
+<!-- 덕빈도 추가 -->
+<tr>
+<td class="p-0 bg-[#9B59B6] border-none"></td>
+<th class="bg-[#1c1d1f] text-[#C19B76]"><a class="wiki-link text-[#B57EDC]" href="덕빈도.html">덕빈</a></th>
+<td class="text-left bg-[#1c1d1f] text-gray-300">
+<a class="wiki-link text-[#FF9E7B]" href="효빈광역시.html">효빈</a> · <a class="wiki-link text-[#FF9E7B]" href="덕빈북도.html">덕북</a> · <a class="wiki-link text-[#FF9E7B]" href="덕빈남도.html">덕남</a>
+</td>
+</tr>
+<tr class="bg-[#1c1d1f] text-[0.75rem] text-left text-gray-400">
+<td class="text-left px-4 py-2 leading-relaxed border-t border-gray-700" colspan="4">
+                                    ▪ 근거: &lt;대한민국 국가지도집 I 2019&gt; 국토교통부 국토지리정보원 발간<br/>
+                                    ▪ 강원·충청: 각각 관동·호서라는 이칭이 있음<br/>
+                                    ▪ 해서·충청: 전통적으로 각각 중부와 남부 지방으로 분류되기도 함<br/>
+                                    ▪ 개성: 본래 경기도 소속이나 분단으로 인해 황해도 소속이 됨<br/>
+<span class="font-bold text-[#B57EDC]">▪ 덕빈: 과거 한반도 서남부에 존재했던 거대 행정구역(덕빈도)의 관할 구역이었으며, 효빈·덕북·덕남을 아우름.</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cursor-pointer text-center p-2 text-xs font-bold text-gray-300 hover:text-white transition-colors select-none border-t border-b border-gray-700" onclick="toggleNav('korea-map-content', 'korea-map-label')">
+                    [ <span id="korea-map-label">지도로 보기</span> ]
+                </div>
+<div class="text-center p-4" id="korea-map-content" style="max-height: 2000px; overflow: hidden; transition: max-height 0.3s ease-out; background-color: #1f2023;">
+<img alt="한반도 지방" class="inline-block w-full max-w-[600px] rounded" onerror="this.src='https://via.placeholder.com/600x800?text=Map+Image+Not+Found'" src="이미지/한반도_지역_1.png"/>
+</div>
+</div>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4 flex-grow">
+<!-- 목차 -->
+<div class="toc shrink-0 shadow-sm h-fit order-2 md:order-1 w-full md:w-auto bg-[#f9f9f9] border border-gray-300 p-4 rounded" id="toc-box">
+<div class="text-center font-bold border-bottom border-gray-300 mb-2 pb-1">목차</div>
+<ul class="text-sm list-none p-0 m-0">
+<li>1. <a class="wiki-link" href="#s-1">개요</a></li>
+<li>2. <a class="wiki-link" href="#s-2">명칭</a></li>
+<li>3. <a class="wiki-link" href="#s-3">역사</a>
+<ul>
+<li>3.1. <a class="wiki-link" href="#s-3-1">원삼국시대</a></li>
+<li>3.2. <a class="wiki-link" href="#s-3-2">삼국시대</a></li>
+<li>3.3. <a class="wiki-link" href="#s-3-3">통일신라 시대</a></li>
+<li>3.4. <a class="wiki-link" href="#s-3-4">후삼국시대</a></li>
+<li>3.5. <a class="wiki-link" href="#s-3-5">고려 시대</a></li>
+<li>3.6. <a class="wiki-link" href="#s-3-6">조선 시대 이후</a></li>
+<li>3.7. <a class="wiki-link" href="#s-3-7">갑오개혁 이후</a></li>
+</ul>
+</li>
+<li>4. <a class="wiki-link" href="#s-4">인구</a></li>
+<li>5. <a class="wiki-link" href="#s-5">범위</a></li>
+<li>6. <a class="wiki-link" href="#s-6">특징</a>
+<ul>
+<li>6.1. <a class="wiki-link" href="#s-6-1">지리</a></li>
+<li>6.2. <a class="wiki-link" href="#s-6-2">동서로 위치한 충남/충북 (기묘한 남북 분할)</a></li>
+<li>6.3. <a class="wiki-link" href="#s-6-3">군사</a></li>
+<li>6.4. <a class="wiki-link" href="#s-6-4">사투리</a></li>
+<li>6.5. <a class="wiki-link" href="#s-6-5">상업</a></li>
+<li>6.6. <a class="wiki-link" href="#s-6-6">특산물</a></li>
+<li>6.7. <a class="wiki-link" href="#s-6-7">종교</a></li>
+<li>6.8. <a class="wiki-link" href="#s-6-8">교통</a>
+<ul>
+<li>6.8.1. <a class="wiki-link" href="#s-6-8-1">철도</a>
+<ul>
+<li>6.8.1.1. <a class="wiki-link" href="#s-6-8-1-1">도시철도/광역전철</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>6.9. <a class="wiki-link" href="#s-6-9">생활권</a></li>
+<li>6.10. <a class="wiki-link" href="#s-6-10">스포츠</a></li>
+<li>6.11. <a class="wiki-link" href="#s-6-11">기타 (서브컬처 성지, 폭염)</a></li>
+<li>6.12. <a class="wiki-link" href="#s-6-12">지역 간 관계</a></li>
+</ul>
+</li>
+<li>7. <a class="wiki-link" href="#s-7">교육</a>
+<ul>
+<li>7.1. <a class="wiki-link" href="#s-7-1">대학</a></li>
+</ul>
+</li>
+<li>8. <a class="wiki-link" href="#s-8">정치</a>
+<ul>
+<li>8.1. <a class="wiki-link" href="#s-8-1">3표의 비극과 광기의 철도 말살 (2006~2007)</a></li>
+<li>8.2. <a class="wiki-link" href="#s-8-2">심판과 민주당 강세 지형의 고착화</a></li>
+<li>8.3. <a class="wiki-link" href="#s-8-3">덕빈북도의 낙동강 전선 (보수 텃밭)</a></li>
+<li>8.4. <a class="wiki-link" href="#s-8-4">덕빈남도의 양극화: 러스트 벨트와 소멸 지역</a></li>
+</ul>
+</li>
+<li>9. <a class="wiki-link" href="#s-9">덕빈도 지역을 본관으로 한 성씨</a></li>
+<li>10. <a class="wiki-link" href="#s-10">세종실록지리지에서의 설명</a></li>
+<li>11. <a class="wiki-link" href="#s-11">둘러보기</a></li>
+</ul>
+</div>
+<!-- 인포박스 -->
+<aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
+<div class="infobox-top-label">
+                    덕빈도<br/>
+<span class="text-sm font-normal">Deokbin-do / 德彬道</span>
+</div>
+<div class="infobox-title-row">
+<img alt="덕빈도 위치도" class="w-full max-w-[250px]" onerror="this.src='https://via.placeholder.com/250x300?text=Deokbin-do+Map'" src="이미지/한반도_지역_1.png"/>
+</div>
+<div class="infobox-map border-b border-[#ccc]" style="width: 100%; height: 250px; overflow: hidden; position: relative; display: block !important;">
+<iframe src="https://binia1.github.io/mymap/" style="width: 160%; height: 160%; border: none; 
+                       position: absolute; top: 0; left: 0;
+                       transform: scale(0.625); transform-origin: 0 0;">
+</iframe>
+</div>
+
+<table>
+<tr>
+<th>위치</th>
+<td class="text-left leading-relaxed">한반도 서남부 해상 및 연안 (전라도 서남쪽)</td>
+</tr>
+<tr>
+<th>존속 기간</th>
+<td class="text-left leading-relaxed">조선 초 ~ 1896년 (단일 행정구역 기준)<br/><span class="text-[0.7rem] text-gray-500">* 지리적 명칭으로는 현재도 사용됨</span></td>
+</tr>
+<tr>
+<th>지도상 상징색</th>
+<td class="text-left leading-relaxed"><span style="color:#9B59B6; font-weight:bold;">보라색 (Purple)</span></td>
+</tr>
+<tr>
+<th>광역자치단체장</th>
+<td class="text-left leading-relaxed">
+<strong>효빈시장</strong>: <span class="badge-minju">더불어민주당</span> <a class="wiki-link" href="박효빈.html">박효빈</a><br/>
+<strong>덕빈북도지사</strong>: <span class="badge-minju">더불어민주당</span> <a class="wiki-link" href="강수성.html">강수성</a><br/>
+<strong>덕빈남도지사</strong>: <span class="badge-minju">더불어민주당</span> <a class="wiki-link" href="김영산.html">김영산</a>
+</td>
+</tr>
+<tr>
+<th>분리된 구역</th>
+<td class="text-left leading-relaxed">
+<a class="wiki-link" href="효빈광역시.html">효빈광역시</a><br/>
+<a class="wiki-link" href="덕빈북도.html">덕빈북도</a><br/>
+<a class="wiki-link" href="덕빈남도.html">덕빈남도</a>
+</td>
+</tr>
+<tr>
+<th>관련 문서</th>
+<td class="text-left leading-relaxed"><strong><a class="wiki-link" href="덕빈권.html">덕빈권</a></strong></td>
+</tr>
+</table>
+</aside>
+</div>
+<h2 id="s-1">1. 개요</h2>
+<p>
+<strong>덕빈도(德彬道)</strong>는 한반도 서남부, 호남(전라도)의 남서쪽 해상과 연안에 툭 튀어나와 굳건히 자리 잡은 거대한 지리적 권역이자 과거 한반도의 주요 행정구역이다. 현재의 <strong><a class="wiki-link" href="효빈광역시.html">효빈광역시</a></strong>, <strong><a class="wiki-link" href="덕빈북도.html">덕빈북도</a></strong>, <strong><a class="wiki-link" href="덕빈남도.html">덕빈남도</a></strong>를 통틀어 이르는 전통적인 명칭이다.
+        </p>
+<p>
+            조선 건국 초기부터 한반도는 북부 3도, 중부 3도, 남부 3도(경상, 전라, 덕빈)로 나뉘는 당당한 <strong>'조선 구도(九道)'</strong> 체제로 편제되어 왔다. 지도를 보면 알 수 있듯 전라도나 경상도에 맞먹는 엄청난 크기의 영토를 자랑하며, 복잡한 해안선과 수많은 부속 도서를 거느리고 있어 경제적, 군사적으로 결코 무시할 수 없는 핵심 행정구역이었다. <del>국사 시간에 졸았던 사람들이 가끔 한반도를 조선 8도라고 착각하기도 하는데, 덕빈도 출신 어르신들 앞에서 그런 소리를 했다간 "우리 덕빈도는 워따 팔아묵었냐"며 불호령을 듣기 십상이다.</del>
+</p>
+<p>
+            현대에 들어서는 단일 행정구역으로서의 기능을 상실하고 1896년 15도제에 의한 남·북 분도(分道) 및 1981년 직할시(광역시) 독립을 거쳤기 때문에, 문서상으로는 정치·경제·생활권역을 묶어 부르는 <strong>'<a class="wiki-link" href="덕빈권.html">덕빈권</a>'</strong> 혹은 <strong>'효덕권'</strong>이라는 용어가 더 자주 쓰인다.
+        </p>
+<h2 id="s-2">2. 명칭</h2>
+<p>
+            조선 시대 행정구역 명명법의 국룰(각 도의 가장 큰 두 고을의 앞 글자를 따오는 방식)을 철저히 따랐다. 당시 도내에서 가장 융성했던 두 목(牧)이자 관찰사가 파견되던 주요 거점이었던 남부의 <strong><a class="wiki-link" href="덕주시.html">덕주(德州)</a></strong>와 북부의 <strong><a class="wiki-link" href="빈주시.html">빈주(彬州)</a></strong>의 앞 글자를 따서 <strong>'덕빈도(德彬道)'</strong>가 되었다. 
+        </p>
+<p class="text-sm bg-gray-100 p-2 border border-gray-300 rounded mt-2 mb-2">
+<span class="font-bold text-[#8E44AD]">[참고]</span> 여담으로 현재 덕빈권의 중심지이자 거대 도시인 <strong><a class="wiki-link" href="효빈광역시.html">효빈(孝彬)</a></strong>은 과거 빈주나 덕주에 속하지 않은 <strong>독자적인 고을(효빈현)</strong>이었다. 예로부터 나라에서 정표를 내린 효자비(孝子碑)가 유독 많이 세워져 '효(孝)' 자를 하사받았고, 인근의 큰 고을인 빈주(彬州)와 나란히 번성하라는 의미에서 '빈(彬)' 자를 더해 '효빈'이라는 지명이 탄생했다는 역사적 유래가 전해진다. <del>현직 시장 이름도 박효빈이라 시장이 도시 이름을 지었다는 터무니없는 루머가 있지만, 시장이 100살이 넘지 않은 이상 물리적으로 불가능하다.</del>
+</p>
+<h2 id="s-3">3. 역사</h2>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-3-1">3.1. 원삼국시대</h3>
+<p>
+            마한(馬韓)의 영토에 속해 있었으며, 덕북 평야와 남해안을 중심으로 여러 소국들이 난립해 있었다. 특히 서해안과 남해안의 복잡한 해안선을 이용해 일찍부터 해상 무역을 주도하는 해상 세력들이 존재했던 것으로 고고학계는 추정한다.
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-3-2">3.2. 삼국시대</h3>
+<p>
+            백제(百濟)가 마한을 복속시키면서 자연스럽게 백제의 영토로 편입되었다. 이 시기부터 <a class="wiki-link" href="마진시.html">마진</a>이나 <a class="wiki-link" href="덕주시.html">덕주</a> 등지에 군사적 방어와 지방 통치를 위한 성곽들이 세워지기 시작했으며, 중국과 일본을 잇는 백제의 해상 실크로드 기착지로서 중요한 역할을 담당했다.
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-3-3">3.3. 통일신라 시대</h3>
+<p>
+            신라가 삼국을 통일한 후 전국을 9주 5소경으로 개편할 때, 덕빈 지역은 광활한 영토 특성상 전라도 지역의 무주(武州) 관할에 속하거나 인근 소경의 영향을 복합적으로 받았다. 이 시기에 수많은 사찰이 산간과 해안가에 지어졌으며, 해상 활동을 장악했던 장보고 세력의 영향권에 들기도 했다.
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-3-4">3.4. 후삼국시대</h3>
+<p>
+            견훤이 완산주에 후백제를 건국하면서 가장 먼저 후백제의 깃발을 꽂은 지역이다. 하지만 해상 무역의 이점을 노린 왕건의 수군이 나주를 거쳐 이 지역의 해안(현 방산, 비천 일대)을 공략하면서 치열한 해전이 벌어진 무대가 되기도 했다.
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-3-5">3.5. 고려 시대</h3>
+<p>
+            전라도의 남부 지역에 파편화된 현(縣)과 수군 진보(鎭堡) 형태로 속해 있었다. 고려 말, 왜구(Wokou)의 침략이 덕빈 남서해안의 복잡한 섬과 내해를 타고 극심해지자, <a class="wiki-link" href="마진읍성.html">마진읍성</a> 등 해안가를 따라 거대한 석성들이 대거 축조되었다. 해상 방어의 중요성이 본격적으로 대두된 시기.
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-3-6">3.6. 조선 시대 이후</h3>
+<p>
+            해안선이 복잡하고 섬이 많아 왜구와 이양선의 침몰이 잦아지자, 해상 방어의 독립적 필요성이 커졌다. 결국 조선 태종 때 전라도에서 완전히 분리되어 독자적인 '도(道)'로 승격, <strong>'조선 구도(9도)'</strong> 체제를 완성했다. 수군 제독이 머무는 <strong>덕빈수영(德彬水營)</strong>이 설치되었고, 임진왜란 당시에는 이순신 함대에 막대한 군량미(덕북)와 전선(덕남)을 보급한 숨은 병참 기지 역할을 수행했다.
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-3-7">3.7. 갑오개혁 이후 (근대 행정구역 개편)</h3>
+<ul class="list-disc pl-5 space-y-2">
+<li><strong>1896년 (15도제 실시):</strong> 조선 구도(9도)가 근대적 행정구역으로 재편되면서 전라도가 전남북으로 갈라질 때, 덕빈도 역시 북부(서부)의 <strong><a class="wiki-link" href="덕빈북도.html">덕빈북도</a></strong>와 남부(동부)의 <strong><a class="wiki-link" href="덕빈남도.html">덕빈남도</a></strong>로 나뉘며 한반도는 최종적으로 <strong>15도제</strong>를 맞이하게 되었다.</li>
+<li><strong>1914년 (부군면 통폐합):</strong> 일제에 의해 수십 개의 군이 대대적으로 칼질을 당해 통폐합되었다.</li>
+<li><strong>1981년 (효빈직할시 승격):</strong> 덕빈북도 내 항만 물류와 중화학 공업으로 폭발 성장하던 <a class="wiki-link" href="효빈시.html">효빈시</a>가 <strong>효빈직할시</strong>로 승격, 도에서 완전히 독립했다. <del>이때 세수 1위 도시를 뺏긴 덕빈북도는 배를 잡고 뒹굴었다 카더라.</del> 이후 1995년 도농복합을 거쳐 <strong><a class="wiki-link" href="효빈광역시.html">효빈광역시</a></strong>로 완성되었다.</li>
+</ul>
+<h2 id="s-4">4. 인구</h2>
+<p>
+            "지방 소멸? 그게 뭐죠? 여기는 남서부 인구의 블랙홀입니다."<br/>
+            2025년 기준 덕빈도(덕빈권) 전체 권역의 인구는 <strong>약 849만 4천 명</strong>에 달한다. 
+        </p>
+<ul class="list-disc pl-5 mt-2 text-sm text-gray-700">
+<li><strong><a class="wiki-link" href="효빈광역시.html">효빈광역시</a>:</strong> 2,967,406명 (2025년 7월)</li>
+<li><strong><a class="wiki-link" href="덕빈북도.html">덕빈북도</a>:</strong> 3,511,919명 (2025년 10월)</li>
+<li><strong><a class="wiki-link" href="덕빈남도.html">덕빈남도</a>:</strong> 2,015,432명 (2025년)</li>
+</ul>
+<p class="mt-2">
+            수도권(서울/경기/인천), 동남권(부울경)에 이은 명실상부 대한민국 제3의 거대 광역 권역이다. 특히 <a class="wiki-link" href="효빈광역시.html">효빈광역시</a>라는 300만 급 맏형이 버티고 있고, <a class="wiki-link" href="빈주시.html">빈주시</a>(83만), <a class="wiki-link" href="천주시.html">천주시</a>(52만), <a class="wiki-link" href="덕주시.html">덕주시</a>(52만) 등 중견 도시들이 든든하게 받쳐주고 있어 지방 소멸의 파도를 그나마 가장 잘 방어해내고 있는 권역으로 꼽힌다.
+        </p>
+<h2 id="s-5">5. 범위</h2>
+<p>
+            현행 행정구역 기준으로 다음의 광역자치단체들을 포괄한다.
+        </p>
+<ul class="list-disc pl-5 mt-2">
+<li><strong><a class="wiki-link" href="효빈광역시.html">효빈광역시</a></strong> (8구 1군)</li>
+<li><strong><a class="wiki-link" href="덕빈북도.html">덕빈북도</a></strong> (9시 9군)</li>
+<li><strong><a class="wiki-link" href="덕빈남도.html">덕빈남도</a></strong> (7시 10군)</li>
+</ul>
+<h2 id="s-6">6. 특징</h2>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-6-1">6.1. 지리</h3>
+<p>
+            지형을 보자면 덕빈도의 지정학적 위치가 얼마나 압도적이고 사기적인지 단번에 알 수 있다. 북쪽으로는 끝이 보이지 않는 광활한 <strong>'덕북 평야'</strong>가 펼쳐져 곡창지대를 이루고, 남쪽과 동쪽으로는 소백산맥에서 뻗어 나온 험준한 산맥이 병풍처럼 호남과의 경계를 가른다. 전체적으로 리아스식 해안의 극치를 보여주어 내해(內海)와 만(灣)이 수도 없이 많으며, 이는 <a class="wiki-link" href="효빈항.html">효빈항</a>이나 <a class="wiki-link" href="비천항.html">비천항</a>, <a class="wiki-link" href="운진항.html">운진항</a> 같은 천혜의 무역/군사 항구들을 발달시켰다.
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-6-2">6.2. 동서로 위치한 충남/충북 (기묘한 남북 분할)</h3>
+<p>
+            이름은 <a class="wiki-link" href="덕빈북도.html">덕빈북도</a>, <a class="wiki-link" href="덕빈남도.html">덕빈남도</a>로 나뉘어 있지만, <strong>실제 지도를 보면 충청도(충북-동, 충남-서)처럼 '서쪽의 덕빈북도'와 '동쪽의 덕빈남도'로 동서(東西) 분할이 이루어져 있다.</strong> <del>한국지리 수험생들의 영원한 오답 유도 구간.</del> 
+            명칭이 남북인 이유는 서부(덕북)에 권역 전체의 <strong>최북단</strong>이 뾰족하게 솟아있고, 동부(덕남)에 <strong>최남단</strong> 곶(岬)이 위치해 있어 이 끝점들을 기준으로 삼았기 때문이다. 실질적인 생활권과 지형은 동서로 쪼개져 있다.
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-6-3">6.3. 군사</h3>
+<p>
+            "서해와 남해, 하늘과 땅을 모두 지키는 군사적 요충지."
+        </p>
+<ul class="list-disc pl-5 mt-2">
+<li><strong>해군:</strong> 서해 쪽 <a class="wiki-link" href="방산항.html">방산시</a>에는 제2함대 방산기지전대가 주둔하며, 남해 쪽 <a class="wiki-link" href="운진항.html">운진군</a>에는 제3함대 운진방어전대가 주둔한다. 덕분에 휴가철만 되면 하얀 제복을 입은 수병들이 시내를 점령한다.</li>
+<li><strong>공군 &amp; 육군:</strong> <a class="wiki-link" href="안천구.html">효빈 안천구</a>에 공군 39비행단이 주둔하며, 육군은 제38보병사단(쌍용부대)과 제71사단 등이 향토 방위를 책임진다.</li>
+</ul>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-6-4">6.4. 사투리</h3>
+<p>
+            전라도와 충청도의 경계에 있어 사투리가 오묘하게 섞여 있다. 전라도 특유의 걸걸함보다는 말끝이 더 늘어지고 둥글둥글한 편이다. 말끝을 "~유"와 "~잉"을 섞어 써서, 타지 사람이 들으면 충청도인지 전라도인지 헷갈려한다. 젊은 층은 효빈시의 영향으로 서울말과 비슷한 '효빈 표준어'를 쓰지만, 나이 든 사람에게 전라도 사람이냐고 물으면 <strong>"우리가 왜 거그 사람인디? 우린 덕빈인디?"</strong> 하고 정색하며 사투리 검증이 들어간다.
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-6-5">6.5. 상업</h3>
+<p>
+<a class="wiki-link" href="효빈광역시.html">효빈광역시</a>의 중앙로, 고송신도시, 청엽지구, 평당신도시는 밤낮없이 돌아가는 상업의 심장이다. 덕빈북도는 <a class="wiki-link" href="빈주시.html">빈주시</a> 천조신도시가 거대 쇼핑의 블랙홀 역할을 하고, 덕빈남도는 <a class="wiki-link" href="덕주시.html">덕주시</a> 조전구가 상업을 주도한다. 
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-6-6">6.6. 특산물</h3>
+<p>
+            서해 갯벌, 남해 청정 바다, 덕북 대평야가 콜라보를 이뤄 식재료의 천국이다.
+            <strong>덕주 곰탕</strong>, 상다리가 부러지는 <strong>낙주 쌀밥 정식</strong>, 호불호가 갈리지만 중독성 강한 <strong>운진 멸치쌈밥</strong>이 유명하다. 항구 쪽으로는 <strong>군천 대게·킹크랩</strong>이 대박을 쳤고, 화교 문화가 융합된 <strong>효빈식 해물 짬뽕</strong>은 전국구 맛집으로 통한다.
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-6-7">6.7. 종교</h3>
+<p>
+            과거 통일신라와 고려 시대부터 명산과 섬 곳곳에 지어진 거대 전통 사찰들이 불교의 명맥을 굳건히 지키고 있다. 동시에 근대 개항기 이후 효빈항 등을 통해 들어온 개신교와 가톨릭 세력이 구도심을 중심으로 거대한 성당과 교회를 세워, 전통 종교와 현대 기독교 세력이 팽팽하게 공존하는 독특한 종교 지형을 띤다.
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-6-8">6.8. 교통</h3>
+<h4 class="font-bold mt-3 mb-1" id="s-6-8-1">6.8.1. 철도</h4>
+<p>
+<strong>"도로는 지옥, 철도는 천국."</strong><br/>
+            철도 분담률 전국 1위를 찍을 정도로 철도망이 거미줄처럼 짜여 있다. KTX와 SRT는 물론 일반 여객열차가 쉴 새 없이 다닌다. 주요 간선으로 효빈항과 서해항을 잇는 최고존엄 <strong><a class="wiki-link" href="빈효선.html">빈효선</a></strong>, 바다를 건너는 <strong><a class="wiki-link" href="강빈선.html">강빈선</a></strong>, 종단 노선인 <strong><a class="wiki-link" href="덕빈선.html">덕빈선</a></strong>이 있다.
+        </p>
+<h5 class="font-bold mt-3 mb-1" id="s-6-8-1-1">6.8.1.1. 도시철도/광역전철</h5>
+<div class="overflow-x-auto mb-4">
+<table class="w-full text-xs text-center">
+<tr class="bg-gray-200 font-bold">
+<th>지역</th><th>노선색 (Hex)</th><th>노선명</th><th>특징</th>
+</tr>
+<tr>
+<td class="font-bold border border-[var(--wiki-border)]" rowspan="9"><a class="wiki-link" href="효빈광역시.html">효빈광역시</a></td>
+<td style="background-color:#0077DD; color:white;">■ #0077DD</td><td class="font-bold">1호선</td><td class="text-left">효빈의 대동맥. <strong>과거 윤대환 전 시장이 5단계 연장구간 공사를 공정률 98% 상태에서 어이없이 백지화 시도했던 끔찍한 흑역사가 있다.</strong></td>
+</tr>
+<tr><td style="background-color:#00CCAA; color:white;">■ #00CCAA</td><td class="font-bold">2호선</td><td class="text-left">공단 셔틀 순환선.</td></tr>
+<tr><td style="background-color:#FFCC11; color:black;">■ #FFCC11</td><td class="font-bold">3호선</td><td class="text-left">효빈공항 공항철도.</td></tr>
+<tr><td style="background-color:#FF5522; color:white;">■ #FF5522</td><td class="font-bold">4호선</td><td class="text-left">산단 통근 수요 특화.</td></tr>
+<tr><td style="background-color:#EE0022; color:white;">■ #EE0022</td><td class="font-bold">5호선</td><td class="text-left">철제차륜 AGT, 진백-광정 연결.</td></tr>
+<tr><td style="background-color:#881188; color:white;">■ #881188</td><td class="font-bold">6호선</td><td class="text-left">마잡 첨단소재단지 연결. 출퇴근 지옥도.</td></tr>
+<tr><td style="background-color:#FF8899; color:black;">■ #FF8899</td><td class="font-bold">7호선</td><td class="text-left"><strong>[노면전차]</strong> 1931년 개통. 1968년 타 지역 전차가 폐지될 때 회주공업 박신유 대표의 사재 출연으로 폐지를 면했으며, 훗날 윤대환의 폐지 공작까지 이겨낸 전설의 노선.</td></tr>
+<tr><td style="background-color:#9856FF; color:white;">■ #9856FF</td><td class="font-bold">8호선</td><td class="text-left">평당신도시와 남구청 연결.</td></tr>
+<tr><td style="background-color:#6677CC; color:white;">■ #6677CC</td><td class="font-bold">빈효선광역전철</td><td class="text-left">효빈과 덕빈북도를 잇는 핵심 대동맥.</td></tr>
+<tr>
+<td class="font-bold border border-[var(--wiki-border)]" rowspan="3"><a class="wiki-link" href="덕빈북도.html">덕빈북도</a></td>
+<td style="background-color:#D4AF37; color:black;">■ 골드</td><td class="font-bold">빈주 1호선</td><td class="text-left">인구 83만 도시에 뚫린 중전철. 빈주시 동서를 관통하는 황금노선이다.</td>
+</tr>
+<tr><td style="background-color:#C455F6; color:white;">■ #C455F6</td><td class="font-bold">빈주 2호선</td><td class="text-left">지상 경전철. 전 구간 지상이라 시티투어 열차 취급을 받기도 한다.</td></tr>
+<tr><td style="background-color:#0052A4; color:white;">■ #0052A4</td><td class="font-bold">빈주권 광역전철</td><td class="text-left">강주 ~ 빈주 ~ 계성을 잇는 코레일 광역전철. 빈효선과 직결 운행한다.</td></tr>
+<tr>
+<td class="font-bold border border-[var(--wiki-border)]"><a class="wiki-link" href="덕빈남도.html">덕빈남도</a></td>
+<td style="background-color:#FF4F91; color:white;">■ 핫핑크</td><td class="font-bold">덕주 1호선</td><td class="text-left">별명 <strong>'니코 트레인'</strong>. 색상이 야자와 니코 컬러와 똑같아서 성지가 됨.</td>
+</tr>
+</table>
+</div>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-6-9">6.9. 생활권</h3>
+<ul class="list-disc pl-5 mt-2">
+<li><strong>효빈-천주(효덕) 생활권:</strong> 사실상 하나의 거대 도시. <a class="wiki-link" href="빈효선.html">빈효선</a>으로 출퇴근을 공유한다.</li>
+<li><strong>빈주권:</strong> 덕북의 심장부. "우리가 덕빈의 본가"라는 프라이드가 있다.</li>
+<li><strong>서해권 (서해-서진):</strong> 바다를 낀 외해 권역. </li>
+<li><strong>덕주-방산 생활권:</strong> 덕남의 행정(덕주)과 직장(방산) 분리 구조. 출퇴근 전쟁.</li>
+<li><strong>남해안권 (운진-고포):</strong> 남해 다도해 해양 관광 중심지.</li>
+</ul>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-6-10">6.10. 스포츠</h3>
+<p>
+            야구는 회주 돌핀즈, 축구는 <a class="wiki-link" href="효빈광역시.html">효빈 레인보우 아쿠아드</a>, <a class="wiki-link" href="덕빈남도.html">덕빈 FC</a>(시민구단)가 있다. 효빈과 덕빈 FC가 맞붙는 '덕빈 더비'가 열리면 지역민들이 들썩이지만, 재정의 한계로 보통 덕빈 FC가 지는 편이다. (...)
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-6-11">6.11. 기타 (서브컬처 성지, 폭염)</h3>
+<p>
+            덕빈도(효빈, 덕북, 덕남) 권역 전체를 관통하는 가장 기형적이고도 위대한 특징. <strong>대한민국 서브컬처의 수도이자 오타쿠들의 예루살렘</strong>이다. 우연인지 예지인지 알 수 없으나, 수백 년 전 조선시대부터 쓰이던 덕빈도의 옛 지명들이 현대 일본 애니메이션(<a class="wiki-link" href="러브_라이브!.html">러브 라이브!</a>, <a class="wiki-link" href="BanG_Dream!.html">BanG Dream!</a> 등) 캐릭터 및 성우들의 이름(한자까지)과 소름 돋게 일치하는 기적이 발생하면서 권역 전체가 거대한 서브컬처 테마파크가 되었다. <del>조상님들의 선견지명</del>
+</p>
+<ul class="list-disc pl-5 mt-2 space-y-3">
+<li>
+<strong><a class="wiki-link" href="효빈광역시.html">효빈광역시</a> (서브컬처의 심장):</strong> 지명 매칭의 끝판왕. 북구 <strong>고송동(타카마츠)</strong>, <strong>중수동(나카스)</strong>, <strong>당가동(탕 쿠쿠)</strong>, <strong>이자동(사쿠라우치)</strong>부터 시작해 <strong>우이동(히라사와 우이)</strong>, <strong>리사동(이마이 리사)</strong>, <strong>쌍엽동(후타바)</strong> 등 열거하기 힘들 정도로 지명과 캐릭터가 일치한다. 매년 여름 열리는 <strong>HAF(효빈 애니메이션 페스티벌)</strong> 기간에는 시외버스터미널 안내방송을 아예 일본 성우들이 맡고, 시내버스(스타더스트 작전)는 각 캐릭터 퍼스널 컬러에 맞춰 운행된다. 현직 <a class="wiki-link" href="박효빈.html">박효빈</a> 시장부터가 시장실에 굿즈를 전시해놓고 브리핑을 하는 진성 '성덕'이며 지지율 80%를 넘기는 기염을 토하고 있다.
+            </li>
+<li>
+<strong><a class="wiki-link" href="덕빈북도.html">덕빈북도</a> (BanG Dream! &amp; 봇치 더 록! 성지):</strong>
+<ul class="list-[circle] pl-5 mt-1 space-y-1 text-gray-700">
+<li><strong><a class="wiki-link" href="빈주시.html">빈주시</a>:</strong> <a class="wiki-link" href="장기구.html">장기구(나가사키)</a>는 나가사키 소요, 도청 소재지인 천조읍 <strong><a class="wiki-link" href="아논리.html">아논리</a></strong>는 치하야 아논(천조를 일본어로 읽으면 치하야)과 완벽하게 매칭되어 팬들의 발길이 끊이지 않는 일명 '아논 핫플'이 되었다. 송원읍은 마츠바라 카논의 성지가 되었다.</li>
+<li><strong><a class="wiki-link" href="천주시.html">천주시</a>:</strong> 궁하구 아이동(미야시타 아이), 과림읍(아사카 카린), 인자읍(시로카네 린코) 등 거를 타선이 없다. 구청 앞에서 "아이(愛)!"를 외치는 사람들을 심심찮게 볼 수 있다.</li>
+<li><strong><a class="wiki-link" href="치원군.html">치원군</a>:</strong> 후등면(고토)은 고토 히토리(봇치)의 성씨 한자와 정확히 일치하여, 면사무소 구석이나 벽장 속에 들어가서 기괴한(?) 인증샷을 찍는 성지순례 명소가 되었다.</li>
+</ul>
+</li>
+<li>
+<strong><a class="wiki-link" href="덕빈남도.html">덕빈남도</a> (Love Live!의 맹주):</strong>
+<ul class="list-[circle] pl-5 mt-1 space-y-1 text-gray-700">
+<li><strong><a class="wiki-link" href="덕주시.html">덕주시</a>:</strong> 일명 '오덕주'. 덕주 1호선의 노선색이 핫핑크(#FF4F91)인데, 야자와 니코의 컬러와 동일하며 덕주(德州)의 한자가 니코 성우 토쿠이(徳井)와 일치해 아예 시 차원에서 <strong>'니코 트레인'</strong>으로 대놓고 부르고 있다.</li>
+<li><strong><a class="wiki-link" href="낙주시.html">낙주시</a> (오니낫츠의 기적):</strong> 최근 급부상한 Liella!(슈퍼스타!!)의 성지. 도시 이름이 오니츠카 나츠미의 별명 '낫츠'와 비슷한 것을 넘어, 이파동(이나미), 이달동(다테), 회삼동(에모리), 판창동(사카쿠라), 고규동(타카츠키) 등 실제 러브라이브 <strong>성우들의 성씨 한자와 정확히 일치</strong>하는 동네들이 무더기로 발견되었다. 심지어 나츠미의 동생 토마리와 이름이 같은 <strong><a class="wiki-link" href="토마역.html">토마역</a></strong>까지 존재한다. 낙주역 굿즈샵 점장은 아예 매장을 나츠미 제단으로 꾸며놓았다.</li>
+<li><strong><a class="wiki-link" href="운진군.html">운진군</a>:</strong> 남해 바다를 끼고 있어 Aqours(아쿠아) 팬들이 해변에서 점프샷을 찍으러 단체로 몰려오는 해양 성지다.</li>
+</ul>
+</li>
+<li>
+<strong>어마어마한 경제 효과:</strong> 주말만 되면 덕빈권으로 들어오는 KTX·SRT 열차에는 등산복을 입은 어르신들과 캐릭터 캔배지가 잔뜩 달린 <strong>'이타백'</strong>을 멘 오타쿠들이 공존하는 기묘한 풍경이 연출된다. <a class="wiki-link" href="효빈교통공사.html">효빈교통공사</a> 등 지역 공기업들은 연간 100억 원 이상의 굿즈 매출을 올리며, 지역 상인들도 처음엔 낯설어하다가 이제는 "아이고, 또 그 만화 보러 왔능가?" 하며 능숙하게 맛집과 성지 코스를 안내해주는 경지에 이르렀다. <del>문화 승리이자 자본주의의 힘</del>
+</li>
+<li>
+<strong>효프리카와 눈 폭탄 (기후 여담):</strong> 오타쿠들이 성지순례 올 때 주의할 점이 있다. 덕빈권 내륙 분지 지형은 여름이면 열기가 빠져나가지 못해 대구를 능가하는 살인적인 폭염(효프리카)이 닥친다. 아스팔트가 녹는 건 기본이고 파초에서 바나나가 열렸다는 뉴스가 나올 정도. 반대로 겨울 서해안 쪽은 시베리아 바람이 직격해 '눈 폭탄'을 맞으므로 단단히 대비해야 한다.
+            </li>
+</ul>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-6-12">6.12. 지역 간 관계</h3>
+<ul class="list-disc pl-5 mt-2">
+<li><strong>전라도와의 앙숙이자 형제:</strong> 역사적으로는 교류가 활발했으나 산맥으로 생활권이 단절되어 정체성이 다르다. KTX 정차역이나 국가 예산 유치를 두고 허구한 날 전라남도와 혈투(?)를 벌이는 앙숙 관계다.</li>
+<li><strong>효빈 블랙홀과 은행 트라우마:</strong> 덕빈 사람들은 쇼핑하러 효빈시로 가면서도 "돈을 다 빨아먹는다"며 얄미워한다. 특히 1997년 향토 은행인 <a class="wiki-link" href="덕남은행.html">덕남은행</a>이 망하고 그 자리를 <a class="wiki-link" href="효빈은행.html">효빈은행</a>이 차지한 것에 노년층은 아직도 앙금을 품고 있다.</li>
+</ul>
+<h2 id="s-7">7. 교육</h2>
+<p>
+            교육열이 하늘을 찌른다. 빈주, 덕주와 함께 특히 <strong><a class="wiki-link" href="천주시.html">천주시</a></strong>는 대형 학원가가 밀집해 있어 '덕빈의 대치동'이라 불리며, 효빈시에서도 유학을 올 정도다.
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-7-1">7.1. 대학</h3>
+<p>
+            거점 국립대를 비롯해 각 권역별로 수많은 대학들이 포진해 있다. 효빈광역시가 절대다수를 차지하지만, 덕빈남·북도 역시 각 거점 도시를 중심으로 탄탄한 고등교육 인프라를 구축하고 있다.
+        </p>
+<h4 class="font-bold mt-3 mb-1" id="s-7-1-1">7.1.1. <a class="wiki-link" href="효빈광역시.html">효빈광역시</a> 소재 대학</h4>
+<div class="overflow-x-auto mb-4">
+<table class="w-full text-xs text-center border-collapse">
+<tr class="bg-gray-200 font-bold">
+<th class="w-[15%] border border-[var(--wiki-border)]">구분</th>
+<th class="border border-[var(--wiki-border)]">대학명</th>
+</tr>
+<tr>
+<td class="font-bold bg-gray-100 border border-[var(--wiki-border)]">국립/특수</td>
+<td class="text-left p-2 border border-[var(--wiki-border)]">
+<a class="wiki-link" href="효빈대학교.html">효빈대학교</a> · 
+                        <a class="wiki-link" href="효빈과학기술원.html">효빈과학기술원(HIST)</a> · 
+                        <a class="wiki-link" href="효빈교육대학교.html">효빈교육대학교</a> · 
+                        <a class="wiki-link" href="효빈해양대학교.html">효빈해양대학교</a>
+</td>
+</tr>
+<tr>
+<td class="font-bold bg-gray-100 border border-[var(--wiki-border)]">사립</td>
+<td class="text-left p-2 border border-[var(--wiki-border)] leading-relaxed">
+<a class="wiki-link" href="엽월대학교.html">엽월대학교</a> · 
+                        <a class="wiki-link" href="옥선대학교.html">옥선대학교</a> · 
+                        <a class="wiki-link" href="평안명대학교.html">평안명대학교</a> · 
+                        <a class="wiki-link" href="평천대학교.html">평천대학교</a> · 
+                        <a class="wiki-link" href="동구대학교.html">동구대학교</a> · 
+                        <a class="wiki-link" href="덕북대학교.html">덕북대학교 효빈캠퍼스</a> · 
+                        <a class="wiki-link" href="삼선대학교.html">삼선대학교</a> · 
+                        <a class="wiki-link" href="성택대학교.html">성택대학교</a> · 
+                        <a class="wiki-link" href="광연대학교.html">광연대학교</a> · 
+                        <a class="wiki-link" href="청엽국제학교.html">청엽국제학교 대학부</a> · 
+                        <a class="wiki-link" href="중촌대학교.html">중촌대학교</a> · 
+                        <a class="wiki-link" href="효빈외국어대학교.html">효빈외국어대학교</a> · 
+                        <a class="wiki-link" href="효빈복지대학교.html">효빈복지대학교</a> · 
+                        <a class="wiki-link" href="해천대학교.html">해천대학교</a>
+</td>
+</tr>
+<tr>
+<td class="font-bold bg-gray-100 border border-[var(--wiki-border)]">전문/기타</td>
+<td class="text-left p-2 border border-[var(--wiki-border)] leading-relaxed">
+<span class="font-bold text-[#7777AA]">[전문]</span> <a class="wiki-link" href="효빈보건대학교.html">효빈보건대학교</a> · <a class="wiki-link" href="해총대학교.html">해총대학교</a> · <a class="wiki-link" href="치고대학교.html">치고대학교</a> · <a class="wiki-link" href="대찬대학교.html">대찬대학교</a> · <a class="wiki-link" href="선자대학교.html">선자대학교</a> · <a class="wiki-link" href="삽곡대학교.html">삽곡대학교</a> · <a class="wiki-link" href="안신대학교.html">안신대학교</a> · <a class="wiki-link" href="안월대학교.html">안월대학교</a> · <a class="wiki-link" href="효빈과학대학교.html">효빈과학대학교</a> · <a class="wiki-link" href="효빈예술대학교.html">효빈예술대학교</a><br/>
+<span class="font-bold text-[#7777AA] mt-1 inline-block">[기능]</span> <a class="wiki-link" href="한국폴리텍대학.html">한국폴리텍VIII대학(효빈캠퍼스)</a><br/>
+<span class="font-bold text-[#7777AA] mt-1 inline-block">[원격]</span> <a class="wiki-link" href="한국방송통신대학교.html">한국방송통신대학교 효빈·덕북지역대학</a>
+</td>
+</tr>
+</table>
+</div>
+<h4 class="font-bold mt-3 mb-1" id="s-7-1-2">7.1.2. <a class="wiki-link" href="덕빈북도.html">덕빈북도</a> 소재 대학</h4>
+<div class="overflow-x-auto mb-4">
+<table class="w-full text-xs text-center border-collapse">
+<tr class="bg-gray-200 font-bold">
+<th class="w-[15%] border border-[var(--wiki-border)]">지역</th>
+<th class="border border-[var(--wiki-border)]">대학명</th>
+<th class="w-[30%] border border-[var(--wiki-border)]">비고</th>
+</tr>
+<tr>
+<td class="font-bold bg-gray-100 border border-[var(--wiki-border)]"><a class="wiki-link" href="빈주시.html">빈주시</a></td>
+<td class="text-left p-2 border border-[var(--wiki-border)] leading-relaxed">
+<span class="font-bold text-[#4AD898]">[국립]</span> <a class="wiki-link" href="덕북대학교.html">덕북대학교</a> · <a class="wiki-link" href="빈주교육대학교.html">빈주교육대학교</a><br/>
+<span class="font-bold text-[#4AD898]">[사립]</span> <a class="wiki-link" href="빈주대학교.html">빈주대학교</a> · <a class="wiki-link" href="선빈대학교.html">선빈대학교</a><br/>
+<span class="font-bold text-[#4AD898]">[전문/기타]</span> <a class="wiki-link" href="덕북과학기술대학교.html">덕북과학기술대학교</a> · <a class="wiki-link" href="빈주보건대학.html">빈주보건대학</a> · <a class="wiki-link" href="덕북예술대학.html">덕북예술대학</a>
+</td>
+<td class="text-left p-2 border border-[var(--wiki-border)]">덕북대는 장기구 소재. 끝없이 넓은 평지 캠퍼스라 자전거가 필수다.</td>
+</tr>
+<tr>
+<td class="font-bold bg-gray-100 border border-[var(--wiki-border)]"><a class="wiki-link" href="천주시.html">천주시</a></td>
+<td class="text-left p-2 border border-[var(--wiki-border)] leading-relaxed">
+<span class="font-bold text-[#4AD898]">[국립]</span> <a class="wiki-link" href="효빈대학교.html">효빈대학교 (천주캠퍼스)</a><br/>
+<span class="font-bold text-[#4AD898]">[사립]</span> <a class="wiki-link" href="천주대학교.html">천주대학교</a> · <a class="wiki-link" href="덕북외국어대학교.html">덕북외국어대학교</a><br/>
+<span class="font-bold text-[#4AD898]">[전문/기타]</span> <a class="wiki-link" href="천주폴리텍대학.html">천주폴리텍대학</a>
+</td>
+<td class="text-left p-2 border border-[var(--wiki-border)]">천주대는 사범대학과 행정대학이 유명한 굴지의 명문 사학이다.</td>
+</tr>
+</table>
+</div>
+<h4 class="font-bold mt-3 mb-1" id="s-7-1-3">7.1.3. <a class="wiki-link" href="덕빈남도.html">덕빈남도</a> 소재 대학</h4>
+<div class="overflow-x-auto mb-4">
+<table class="w-full text-xs text-center border-collapse">
+<tr class="bg-gray-200 font-bold">
+<th class="w-[15%] border border-[var(--wiki-border)]">권역</th>
+<th class="border border-[var(--wiki-border)]">대학명</th>
+<th class="w-[30%] border border-[var(--wiki-border)]">비고</th>
+</tr>
+<tr>
+<td class="font-bold bg-gray-100 border border-[var(--wiki-border)]">덕주권</td>
+<td class="text-left p-2 border border-[var(--wiki-border)] leading-relaxed">
+<span class="font-bold text-[#335566]">[국립]</span> <a class="wiki-link" href="덕남대학교.html">덕남대학교</a> · <a class="wiki-link" href="덕주교육대학교.html">덕주교육대학교</a><br/>
+<span class="font-bold text-[#335566]">[사립/전문]</span> <a class="wiki-link" href="덕주대학교.html">덕주대학교</a> · <a class="wiki-link" href="덕빈보건대학.html">덕빈보건대학</a>
+</td>
+<td class="text-left p-2 border border-[var(--wiki-border)]">덕남대는 거점국립대. 언덕이 너무 가팔라 재학생들을 '덕남산악회'라 부른다.</td>
+</tr>
+<tr>
+<td class="font-bold bg-gray-100 border border-[var(--wiki-border)]">낙주/마진권</td>
+<td class="text-left p-2 border border-[var(--wiki-border)] leading-relaxed">
+<span class="font-bold text-[#335566]">[사립]</span> <a class="wiki-link" href="낙주대학교.html">낙주대학교</a> · <a class="wiki-link" href="마진해양대학.html">마진해양대학</a>
+</td>
+<td class="text-left p-2 border border-[var(--wiki-border)]">낙주대는 명문 사학, 마진해양대는 해양 특성화 대학이다.</td>
+</tr>
+<tr>
+<td class="font-bold bg-gray-100 border border-[var(--wiki-border)]">방산/기타권</td>
+<td class="text-left p-2 border border-[var(--wiki-border)] leading-relaxed">
+<span class="font-bold text-[#335566]">[국/공립]</span> <a class="wiki-link" href="한국국방기술대학교.html">한국국방기술대학교(KNDT)</a>(방산시) · <a class="wiki-link" href="덕남도립대학.html">덕남도립대학</a>(하정시)<br/>
+<span class="font-bold text-[#335566]">[사립/전문]</span> <a class="wiki-link" href="방산대학교.html">방산대학교</a> · <a class="wiki-link" href="인곡과학대학.html">인곡과학대학</a>(인곡군) · <a class="wiki-link" href="덕빈폴리텍대학.html">덕빈폴리텍대학</a>(방산시)
+                    </td>
+<td class="text-left p-2 border border-[var(--wiki-border)]">방산대의 공대 강세, KNDT의 압도적 취업률(특수목적대)이 돋보인다.</td>
+</tr>
+</table>
+</div>
+<h2 id="s-8">8. 정치</h2>
+<p>
+<strong>"민주당의 파란 물결(Blue Wave) 속에 버티고 선 보수의 러스트 벨트."</strong><br/>
+            덕빈도는 전반적으로 더불어민주당의 절대 텃밭이다. 특히 <a class="wiki-link" href="효빈광역시.html">효빈광역시</a>와 <a class="wiki-link" href="덕빈북도.html">덕빈북도</a>가 지금처럼 확고한 진보 우위 지형이 된 결정적인 계기는, 2006년 지방선거에서 단 <strong>3표 차이(525,599표 vs 525,596표)</strong>로 보수 성향 후보가 어부지리로 당선되었던 이른바 <strong>'<a class="wiki-link" href="윤대환.html">윤대환</a> 전 효빈시장 사태'</strong>라는 거대한 흑역사 때문이다.
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-8-1">8.1. 3표의 비극과 광기의 철도 말살 (2006~2007)</h3>
+<p>
+            당시 시외·시내버스 회사(두청운수) 사주 출신이었던 윤대환은 진보 진영의 표 분산으로 고작 3표 차이로 시장에 당선되었다. 그는 철저히 자신의 일가 기업인 두청운수의 수익 극대화를 위해 시장 직권을 남용하여 <strong>전무후무한 철도 파괴 공작</strong>을 펼쳤다. <del>이게 시장이야, 테러리스트야</del>
+</p>
+<ul class="list-disc pl-5 mt-2 space-y-2">
+<li><strong>효빈 도시철도 대학살:</strong> 공정률 98%로 리본만 자르면 되던 <strong><a class="wiki-link" href="1호선.html">효빈 1호선</a> 5단계 연장구간</strong>의 공사를 중단시키고, 2호선 어간지선(공정률 90%)과 5호선 공사까지 모두 백지화했다. 효빈시의 상징인 노면전차 <strong><a class="wiki-link" href="7호선.html">7호선</a></strong>마저 철거하려 했으며, 6호선은 아예 <strong>설계도와 지질 데이터를 소각장에 던져 파쇄해 버리는</strong> 기록 말살형에 처했다.</li>
+<li><strong>빈효선 사태와 "거지 동네" 망언:</strong> 덕빈북도와 효빈시를 잇는 <strong><a class="wiki-link" href="빈효선.html">빈효선 광역전철</a></strong> 사업도 전면 취소했다. 이에 분노하여 항의하러 온 약산시장과 천주시장에게 윤대환은 <strong>"천주나 약산 같은 거지 촌동네들이 우리 효빈 인프라에 기생하려 든다"</strong>는 최악의 망언을 쏟아냈다. 이 모욕적인 사건으로 인해 덕빈북도 시민들의 보수 정당 혐오가 폭발, 덕북 전체가 민주당 철옹성으로 돌아서는 결정적 계기가 되었다.</li>
+<li><strong>두청운수 게이트 (가축 수송):</strong> 윤대환의 비호 아래 독점 기업이 된 두청운수는 45인승 버스에 75명을 구겨 넣는 '인간 테트리스'를 자행했다. 엔진룸 덮개에까지 사람을 앉혔으며, 국도를 이용한다는 명목으로 조작된 지도를 제출해 요금을 7,000원으로 뻥튀기하는 폭리를 취하다 타이어 폭발 사고로 전모가 드러났다.</li>
+</ul>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-8-2">8.2. 심판과 민주당 강세 지형의 고착화</h3>
+<p>
+            내부 폭로를 막기 위해 비서관을 지하주차장으로 불러내 조폭을 사주해 암살하려다 실패(전치 8주 중상)하는 등 범죄 영화급 막장 행각 끝에, 윤대환은 2007년 11월 공직선거법 위반, 뇌물수수, 살인교사 미수 등으로 <strong>당선 무효</strong> 처리되며 감옥으로 직행했다. (긍정 평가 5%, 부정 평가 93%라는 전무후무한 기록을 남겼다.)
+        </p>
+<p>
+            이 끔찍한 1년 4개월의 암흑기 이후, 윤대환의 똥을 치우며 교통망을 복구한 <a class="wiki-link" href="박현만.html">박현만</a> 전 시장과 현직 <a class="wiki-link" href="박효빈.html">박효빈</a> 시장으로 이어지는 민주당 계열이 효빈과 덕북 권역 시민들의 압도적인 지지(긍정 평가 80% 이상)를 받게 되었다. 반면 보수 정당은 "윤대환의 당"이라는 주홍글씨가 찍혀 선거마다 궤멸적인 타격을 입고 있으며, 간혹 선거에 출마하는 윤대환의 아들 <a class="wiki-link" href="윤재훈.html">윤재훈</a>조차 득표율 2~4%의 처참한 성적표를 받으며 조롱거리가 되고 있다.
+        </p>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-8-3">8.3. 덕빈북도의 낙동강 전선 (보수 텃밭)</h3>
+<p>
+            덕빈북도는 국회의원 17석 중 14석을 민주당이 휩쓸 정도로 진보의 성지지만, 그 안에서도 <strong>"덕빈북도의 낙동강 전선"</strong>이라 불리는 보수의 보루가 굳건히 존재한다. 
+        </p>
+<ul class="list-disc pl-5 mt-2 space-y-2">
+<li><strong><a class="wiki-link" href="서진시.html">서진시</a> 벨트 (피 말리는 초접전지):</strong> 서진시-모제군-전산시-상안군 벨트는 제22대 총선에서 민주당 46.63% vs 국민의힘 46.79% (불과 0.16%p 차이)의 초접전이 벌어진 곳이다. 민주당 깃발만 꽂아도 당선되는 빈주시나 천주시와는 분위기가 180도 다르다.</li>
+<li><strong><a class="wiki-link" href="덕현군.html">덕현군</a>·<a class="wiki-link" href="치원군.html">치원군</a>·<a class="wiki-link" href="저천군.html">저천군</a> (보수의 철옹성):</strong> 전형적인 농촌 선거구로 고령화율이 매우 높아 국민의힘의 지지세가 매우 굳건하다. 덕북에서 보수 정당이 숨을 고를 수 있는 몇 안 되는 곳이다.</li>
+<li><strong><del>서진시의 굴욕과 윤대환의 최후</del>:</strong> 역설적이게도 덕빈북도 최대 보수 텃밭인 <strong>서진시</strong>는 윤대환의 고향이기도 하다. 출소 후 정치적 재기를 노린 윤대환이 이 보수 텃밭을 맹신하고 서진시장에 두 번이나 출마했으나, 과거 '두청운수'의 막장 배차와 요금 폭리의 피해자였던 서진 시민들은 그를 "고향의 수치"라며 철저히 외면했다. 심지어 보수 텃밭에서 민주당 후보에게도 밀려 3위로 낙선하거나, 무소속 후보에게 완패하는 등 <strong>"아무리 뼛속까지 보수라도 윤대환은 안 찍는다"</strong>는 무서운 진리를 남기며 정치 생명이 완전히 끝났다.</li>
+</ul>
+<h3 class="text-lg font-bold mt-4 mb-2" id="s-8-4">8.4. 덕빈남도의 양극화: 러스트 벨트와 소멸 지역</h3>
+<p>
+<strong><a class="wiki-link" href="덕빈남도.html">덕빈남도</a></strong>를 들여다보면 뚜렷한 정치적 양극화가 존재한다. 방산, 낙주, 덕주 같은 인구 밀집 성장 도시는 민주당이 싹쓸이하지만, 과거의 영광을 잃고 쇠락한 공업 도시 <strong>비천, 하정(러스트 벨트)</strong>이나 소멸 고위험 농촌인 <strong>고포, 곡천, 인곡, 관수</strong> 지역은 국민의힘 콘크리트 지지율이 70%를 상회할 정도로 보수 정서가 막강하다. 이른바 "가난한 보수, 부유한 진보"의 역설적 정치 지형을 보여주고 있다.
+        </p>
+<h2 id="s-9">9. 덕빈도 지역을 본관으로 한 성씨</h2>
+<p>오랜 역사를 지닌 고장답게 이 지역을 본관으로 하는 유력 성씨들이 꽤 많다.</p>
+<ul class="list-disc pl-5 mt-2">
+<li><strong>효빈 박씨 (孝彬 朴氏)</strong> / <strong>효빈 상씨 (孝彬 尙氏)</strong></li>
+<li><strong>탄성 장씨 (彈城 張氏)</strong> / <strong>안천 우씨 (安川 禹氏)</strong></li>
+<li><strong>빈주 박씨 (彬州 朴氏):</strong> 빈주 시내를 걷다 보면 발에 채이는 게 빈주 박씨라는 농담이 있을 정도다.</li>
+<li><strong>천주 강씨 (泉州 姜氏):</strong> 예로부터 학자와 교육자를 많이 배출한 명문가.</li>
+<li><strong>군천 우씨 (群川 禹氏):</strong> 수산업과 해운업계에서 두각을 나타낸다.</li>
+<li><strong>반양 양씨 (潘陽 梁氏)</strong> / <strong>덕현 원씨 (德縣 元氏)</strong></li>
+</ul>
+<h2 id="s-10">10. 세종실록지리지에서의 설명</h2>
+<div class="bg-gray-100 p-4 border-l-4 border-[#8E44AD] italic text-sm my-4">
+<p>
+                "덕빈(德彬)의 땅은 본디 마한의 옛 터요, 백제의 요충지라. 동쪽으로 험한 산맥이 장벽을 이루고, 서남쪽으로는 큰 바다에 맞닿아 있어 수많은 섬들이 성곽처럼 둘러쳐져 있다. 땅이 넓고 기름져 덕북(德北)의 평야에서 나는 쌀과 곡식이 삼남을 먹여 살리기에 족하고, 덕남(德南)의 포구에서 나는 어물과 소금이 나라의 창고를 채운다.
+            </p>
+<p class="mt-2">
+                그 중심을 이루는 빈주(彬州)와 덕주(德州)는 백성들이 번성하고 장시가 크게 서는 호남 서남방의 큰 고을이라. 해안의 굴곡이 심하여 왜구의 침노가 잦은 까닭에 일찍이 수영(水營)을 두어 병선을 조련하고 바다를 굳게 지키게 하니, 진실로 나라의 남서쪽 관문이자 무장(武裝)과 문물(文物)이 함께 성한 고장이라 이를 만하다."
+            </p>
+</div>
+<h2 id="s-11">11. 둘러보기</h2>
+<table class="w-full text-sm text-center border-collapse mt-4 admin-table">
+<tr class="bg-[#7777aa] text-white font-bold">
+<th class="p-2 border border-[var(--wiki-border)]" colspan="2">
+<img class="inline align-middle mr-2 h-4 w-auto object-contain" onerror="this.style.display='none'" src="이미지/효빈시_로고.png"/>
+                    효빈광역시 (과거 덕빈도 해안/중심)
+                </th>
+</tr>
+<tr class="bg-white" data-theme-target="table-row">
+<th class="w-[20%] side-header">자치구</th>
+<td class="text-left p-2 border border-[var(--wiki-border)]">
+<a class="wiki-link" href="중구.html">중구</a> · <a class="wiki-link" href="동구.html">동구</a> · <a class="wiki-link" href="서구.html">서구</a> · <a class="wiki-link" href="남구.html">남구</a> · <a class="wiki-link" href="북구.html">북구</a> · <a class="wiki-link" href="청엽구.html">청엽구</a> · <a class="wiki-link" href="창전구.html">창전구</a> · <a class="wiki-link" href="안천구.html">안천구</a>
+</td>
+</tr>
+<tr class="bg-white" data-theme-target="table-row">
+<th class="side-header">자치군</th>
+<td class="text-left p-2 border border-[var(--wiki-border)]">
+<a class="wiki-link" href="탄성군.html">탄성군</a>
+</td>
+</tr>
+</table>
+<table class="w-full text-sm text-center border-collapse mt-4 admin-table">
+<tr class="bg-[#4AD898] text-white font-bold">
+<th class="p-2 border border-[var(--wiki-border)]" colspan="2">
+<img class="inline align-middle mr-2 h-4 w-auto object-contain" onerror="this.style.display='none'" src="이미지/덕북로고.png"/>
+                    덕빈북도 (과거 덕빈도 서부/북부)
+                </th>
+</tr>
+<tr class="bg-white" data-theme-target="table-row">
+<th class="w-[20%] side-header">시 (市)</th>
+<td class="text-left p-2 border border-[var(--wiki-border)]">
+<a class="wiki-link" href="강주시.html">강주시</a> · <a class="wiki-link" href="계성시.html">계성시</a> · <a class="wiki-link" href="군천시.html">군천시</a> · <a class="wiki-link" href="빈주시.html">빈주시</a> · <a class="wiki-link" href="서진시.html">서진시</a> · <a class="wiki-link" href="서해시.html">서해시</a> · <a class="wiki-link" href="약산시.html">약산시</a> · <a class="wiki-link" href="전산시.html">전산시</a> · <a class="wiki-link" href="천주시.html">천주시</a>
+</td>
+</tr>
+<tr class="bg-white" data-theme-target="table-row">
+<th class="side-header">군 (郡)</th>
+<td class="text-left p-2 border border-[var(--wiki-border)]">
+<a class="wiki-link" href="기도군.html">기도군</a> · <a class="wiki-link" href="낭원군.html">낭원군</a> · <a class="wiki-link" href="덕현군.html">덕현군</a> · <a class="wiki-link" href="모제군.html">모제군</a> · <a class="wiki-link" href="반양군.html">반양군</a> · <a class="wiki-link" href="상안군.html">상안군</a> · <a class="wiki-link" href="선곡군.html">선곡군</a> · <a class="wiki-link" href="저천군.html">저천군</a> · <a class="wiki-link" href="치원군.html">치원군</a>
+</td>
+</tr>
+</table>
+<table class="w-full text-sm text-center border-collapse mt-4 admin-table">
+<tr class="bg-[#335566] text-white font-bold">
+<th class="p-2 border border-[var(--wiki-border)]" colspan="2">
+<img class="inline align-middle mr-2 h-4 w-auto object-contain" onerror="this.style.display='none'" src="이미지/덕빈남도_로고.png"/>
+                    덕빈남도 (과거 덕빈도 동부/남부)
+                </th>
+</tr>
+<tr class="bg-white" data-theme-target="table-row">
+<th class="w-[20%] side-header">시 (市)</th>
+<td class="text-left p-2 border border-[var(--wiki-border)]">
+<a class="wiki-link" href="덕주시.html">덕주시</a> · <a class="wiki-link" href="낙주시.html">낙주시</a> · <a class="wiki-link" href="마진시.html">마진시</a> · <a class="wiki-link" href="매성시.html">매성시</a> · <a class="wiki-link" href="방산시.html">방산시</a> · <a class="wiki-link" href="비천시.html">비천시</a> · <a class="wiki-link" href="하정시.html">하정시</a>
+</td>
+</tr>
+<tr class="bg-white" data-theme-target="table-row">
+<th class="side-header">군 (郡)</th>
+<td class="text-left p-2 border border-[var(--wiki-border)]">
+<a class="wiki-link" href="고포군.html">고포군</a> · <a class="wiki-link" href="곡천군.html">곡천군</a> · <a class="wiki-link" href="관수군.html">관수군</a> · <a class="wiki-link" href="두원군.html">두원군</a> · <a class="wiki-link" href="매산군.html">매산군</a> · <a class="wiki-link" href="분주군.html">분주군</a> · <a class="wiki-link" href="석창군.html">석창군</a> · <a class="wiki-link" href="운진군.html">운진군</a> · <a class="wiki-link" href="원안군.html">원안군</a> · <a class="wiki-link" href="인곡군.html">인곡군</a>
+</td>
+</tr>
+</table>
+<footer class="wiki-footer border-t border-gray-300 mt-10 pt-4">
+<div class="mb-2 font-bold text-lg">HyobinWiki</div>
+<p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br/>
+            이 저작물은 <a class="text-blue-600 hover:underline" href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다.<br/>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+<p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br/>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+</footer>
+</div>
+<script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+            
+            const tableRows = document.querySelectorAll('[data-theme-target="table-row"]');
+            tableRows.forEach(row => {
+                row.className = isDark ? "bg-[#2d2f34] text-white" : "bg-white text-black";
+            });
+        }
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        function toggleNav(id, labelId) {
+            const content = document.getElementById(id);
+            const label = document.getElementById(labelId);
+            if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
+                content.style.maxHeight = '2000px';
+                if(label.innerText.includes('표로 보기') || label.innerText.includes('지도로 보기')) return;
+                label.innerText = '접기';
+            } else {
+                content.style.maxHeight = '0px';
+                if(label.innerText.includes('표로 보기') || label.innerText.includes('지도로 보기')) return;
+                label.innerText = '펼치기';
+            }
+        }
+        
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                document.getElementById('themeBtn').innerText = '라이트모드';
+                const tableRows = document.querySelectorAll('[data-theme-target="table-row"]');
+                tableRows.forEach(row => { row.className = "bg-[#2d2f34] text-white"; });
+            }
+        };
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                location.href = this.value.trim() + ".html";
+            }
+        });
+    </script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+</body>
+</html>

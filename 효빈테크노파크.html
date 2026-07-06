@@ -1,0 +1,436 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈테크노파크 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800&display=swap');
+        
+        :root { 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0022aa; 
+            --wiki-visited: #800080;
+            --wiki-table-header: #FFD700; /* 테크노파크 고유색: 골드 (니지카의 이미지 컬러이자 빛나는 미래) */
+            --wiki-table-header-text: #ffffff;
+            --wiki-del: #999;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 텍스트 스타일 */
+        .txt-lvl-1 { font-size: 2.8rem !important; font-weight: 800; color: #000000; margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1px; } 
+        h2 { font-size: 1.6rem !important; font-weight: 700; border-bottom: 2px solid var(--wiki-table-header); padding-bottom: 8px; margin-top: 3rem; margin-bottom: 1.2rem; color: var(--wiki-text); display: block; }
+        h3 { font-size: 1.3rem !important; font-weight: 700; margin-top: 2rem; margin-bottom: 10px; color: var(--wiki-text); border-left: 5px solid var(--wiki-table-header); padding-left: 10px; }
+        h4 { font-size: 1.1rem !important; font-weight: 600; margin-top: 1.5rem; margin-bottom: 8px; color: #555; }
+        
+        /* 링크 스타일 */
+        a.wiki-link { color: var(--wiki-link); text-decoration: none; cursor: pointer; }
+        a.wiki-link:hover { text-decoration: underline; }
+        a.wiki-link:visited { color: var(--wiki-visited); }
+
+        /* 표 스타일 */
+        table.wiki-table { border-collapse: collapse; width: 100%; margin: 15px 0; border: 1px solid #ccc; font-size: 0.95rem; }
+        table.wiki-table th, table.wiki-table td { border: 1px solid #ccc; padding: 10px 12px; vertical-align: middle; }
+        table.wiki-table th { background-color: var(--wiki-table-header); color: white; text-align: center; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        table.wiki-table td { background-color: #fff; }
+
+        /* 인포박스 */
+        .infobox { 
+            border: 2px solid var(--wiki-table-header); 
+            background-color: #fff; 
+            width: 100%; 
+            max-width: 400px; 
+            font-size: 0.9rem; 
+            margin-bottom: 20px; 
+            float: right; 
+            margin-left: 20px; 
+            border-radius: 4px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .infobox-title { background-color: var(--wiki-table-header); color: white; padding: 12px; text-align: center; font-size: 1.2rem !important; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        .infobox-image { text-align: center; padding: 0; background: white; border-bottom: 1px solid #ddd; }
+        .infobox table { width: 100%; border-collapse: collapse; border: none; }
+        .infobox th { background-color: #fffacd; color: #333; width: 130px; text-align: center; padding: 8px; border: 1px solid #ddd; font-weight: bold; }
+        .infobox td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; }
+
+        /* 취소선 스타일 */
+        .del { text-decoration: line-through; color: var(--wiki-del); }
+        .del:hover { color: #555; }
+        
+        /* 분류 박스 */
+        .category-box { border: 1px solid #ccc; background-color: #f5f5f5; padding: 8px 15px; font-size: 0.9rem; margin-bottom: 20px; border-radius: 4px; }
+
+        /* 목차 */
+        .toc { display: inline-block; border: 1px solid #ccc; background-color: #f9f9f9; padding: 15px 25px; margin-bottom: 30px; min-width: 300px; border-radius: 5px; }
+        .toc-title { text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding-left: 0; margin: 0; font-size: 0.95rem; }
+        .toc li { margin-bottom: 4px; }
+        .toc a { text-decoration: none; color: #333; }
+        .toc a:hover { text-decoration: underline; color: var(--wiki-table-header); }
+
+        /* 위키 도구 버튼 */
+        .wiki-tool-group { display: flex; gap: 4px; margin-bottom: 15px; justify-content: flex-end; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 13px; border: 1px solid #ccc; background: linear-gradient(to bottom, #fff, #eee); cursor: pointer; border-radius: 2px; color: #333; text-decoration: none; }
+
+        /* 각주 스타일 */
+        .footnote-link { vertical-align: super; font-size: 0.7em; color: var(--wiki-link); text-decoration: none; margin-left: 2px; cursor: pointer; }
+        
+        /* 각주 툴팁 스타일 */
+        .fn-tooltip {
+            position: absolute;
+            background-color: white;
+            border: 1px solid #333;
+            padding: 10px 15px;
+            border-radius: 4px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+            z-index: 10000;
+            font-size: 0.9rem;
+            max-width: 400px;
+            display: none;
+            color: #333;
+            pointer-events: none;
+            line-height: 1.5;
+        }
+        
+        /* 인용문 */
+        .quote { border-left: 5px solid var(--wiki-table-header); background-color: #fffacd; padding: 20px 30px; margin: 20px 0; font-style: italic; color: #555; font-size: 1.05rem; }
+        
+        /* 외부 링크 아이콘 */
+        .ext-link::after { content: " 🔗"; font-size: 0.7em; }
+
+        /* 검색창 */
+        .search-bar { border: 1px solid #ccc; padding: 4px 8px; font-size: 14px; width: 250px; }
+        .search-btn { background-color: #555588; color: white; border: none; padding: 4px 10px; cursor: pointer; font-size: 14px; }
+        
+        /* 효빈광역시 공공기관 틀 스타일 */
+        .namu-frame a:hover { text-decoration: underline; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <!-- 1. 상단바 -->
+    <nav class="bg-[#7777AA] text-white p-2 px-4 flex justify-between items-center shadow-md sticky top-0 z-50 h-14">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl tracking-tight">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-1">
+            <input type="text" id="searchInput" placeholder="여기에서 검색" class="search-bar rounded-sm text-black" onkeypress="if(event.keyCode==13) handleSearch()">
+            <button onclick="handleSearch()" class="search-btn rounded-sm">🔍</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg pt-6">
+        
+        <!-- 2. 문서 제목 -->
+        <div class="flex justify-between items-end border-b-2 border-gray-400 pb-2 mb-4">
+            <div class="txt-lvl-1">효빈테크노파크</div>
+            <div class="wiki-tool-group">
+                <a href="수정.html" class="wiki-tool-btn">편집</a>
+                <a href="토론.html" class="wiki-tool-btn">토론</a>
+                <a href="역사.html" class="wiki-tool-btn">역사</a>
+            </div>
+        </div>
+
+        <!-- 3. 분류 박스 -->
+        <div class="category-box">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="효빈광역시의공공기관.html" class="wiki-link">효빈광역시의 공공기관</a> | 
+            <a href="대한민국의테크노파크.html" class="wiki-link">대한민국의 테크노파크</a> | 
+            <a href="산업지원기관.html" class="wiki-link">산업지원기관</a> | 
+            <a href="1999년.html" class="wiki-link">1999년 설립</a>
+        </div>
+
+        <!-- 4. 내비게이션 틀 -->
+        <div class="no-autolink">
+    <div id="hyobin-public-org-nav"></div>
+    <script src="js/효빈공공기관.js"></script>
+    <script> renderHyobinPublicOrg('hyobin-public-org-nav'); </script>
+</div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-8 relative">
+            
+            <!-- 5. 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit">
+                <div class="toc-title">목차 [접기]</div>
+                <ul class="space-y-1">
+                    <li>1. <a href="#s-1">개요</a></li>
+                    <li>2. <a href="#s-2">역사</a>
+                        <ul>
+                            <li>2.1. 초창기 (1999~2005)</li>
+                            <li>2.2. 암흑기: '두청운수의 정비소' (2006~2007)</li>
+                            <li>2.3. 재도약과 혁신 (2008~2021)</li>
+                            <li>2.4. '서브컬처 테크'의 성지 (2022~현재)</li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3">조직 및 시설</a></li>
+                    <li>4. <a href="#s-4">주요 사업</a>
+                        <ul>
+                            <li>4.1. 기술 기반 창업 지원 (스타트업)</li>
+                            <li>4.2. 서브컬처-테크 융합 (Cos-Tech)</li>
+                            <li>4.3. 스마트 시티 인프라 관리</li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5">논란 및 사건사고</a>
+                        <ul>
+                            <li>5.1. 윤대환 시기 '버스 부품 밀수' 방조 사건</li>
+                            <li>5.2. 이차야 대표 '3D 프린터는 사탄의 도구' 난동</li>
+                        </ul>
+                    </li>
+                    <li>6. <a href="#s-6">여담 (이직하 원장)</a></li>
+                    <li>7. <a href="#s-7">관련 문서</a></li>
+                </ul>
+            </div>
+
+            <!-- 6. 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden lg:order-last">
+                <div class="infobox-title">효빈테크노파크<br><span class="text-sm font-normal">Hyobin Technopark (HBTP)</span></div>
+                <div class="infobox-image">
+                    <!-- 실제 이미지 링크 적용. onerror로 로컬 파일 없을 시 대체 이미지 표시 -->
+                    <img src="이미지/효빈테크노파크.png" 
+                         alt="효빈테크노파크 로고" 
+                         class="w-full h-auto object-cover"
+                         onerror="this.src='https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=400&h=250&auto=format&fit=crop'; this.onerror=null;">
+                    <div class="mt-2 text-sm font-bold text-[#FFD700] p-2">"꿈을 현실로, 기술을 문화로"</div>
+                </div>
+                <table>
+                    <tr><th>정식 명칭</th><td>재단법인 효빈테크노파크</td></tr>
+                    <tr><th>한자 명칭</th><td>財團法人 孝彬Technopark</td></tr>
+                    <tr><th>영문 명칭</th><td>Hyobin Technopark (HBTP)</td></tr>
+                    <tr><th>설립일</th><td>1999년 12월 24일</td></tr>
+                    <tr><th>설립 근거</th><td>산업기술단지 지원에 관한 특례법<br>효빈테크노파크 설립 및 운영 조례</td></tr>
+                    <tr><th>원장</th><td><strong>이직하</strong></td></tr>
+                    <tr><th>주무관청</th><td>중소벤처기업부, <a href="효빈광역시청.html" class="wiki-link">효빈광역시청</a></td></tr>
+                    <tr><th>소재지</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구.html" class="wiki-link">북구</a> 실본동 32<br>(효빈정부청사 내)</td></tr>
+                    <tr><th>직원 수</th><td>135명 (2025년 기준)</td></tr>
+                    <tr><th>예산</th><td>680억 원</td></tr>
+                    <tr><th>주요 기능</th><td>지역산업 고도화 및 기술지원<br>창업보육 및 기업 육성<br><strong>서브컬처 융복합 기술(CT) 지원</strong></td></tr>
+                    <tr><th>관련 웹사이트</th><td><a href="#" class="wiki-link ext-link">공식 홈페이지</a></td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <!-- 본문 내용 -->
+        <h2 id="s-1">1. 개요</h2>
+        <p>
+            <a href="효빈광역시.html" class="wiki-link">효빈광역시</a>의 산업 경쟁력을 강화하고, 지역 내 중소·벤처기업을 기술적으로 지원하기 위해 설립된 지역 거점 혁신 기관.
+            전국의 다른 테크노파크와 마찬가지로 R&D(연구개발) 지원, 스마트 공장 보급, 창업 보육 등의 업무를 수행한다.
+        </p>
+        <p class="mt-2">
+            하지만 효빈테크노파크(이하 HBTP)가 가진 가장 큰 차별점은 <strong>'서브컬처 산업과 첨단 기술의 융합'</strong>을 주도한다는 것이다.
+            단순히 제조업만 지원하는 것이 아니라, 3D 프린팅을 이용한 정밀 피규어 제작 기술, 코스프레 의상을 위한 스마트 섬유 개발, 홀로그램 라이브 무대 장치 기술 등 <strong>'덕질을 더 완벽하게 만드는 기술'</strong>을 중점적으로 육성하고 있다.
+        </p>
+
+        <h2 id="s-2">2. 역사</h2>
+        <h3 id="s-2.1">2.1. 초창기 (1999~2005)</h3>
+        <p>
+            1999년 산업자원부(현 산업통상자원부)의 테크노파크 조성 사업에 선정되어 설립되었다. 
+            초기에는 북구의 기계 부품 산업단지를 고도화하고, 자동차 부품 기업들을 지원하는 데 주력했다.
+        </p>
+
+        <h3 id="s-2.2">2.2. 암흑기: '두청운수의 정비소' (2006~2007)</h3>
+        <p>
+            2006년 <strong><a href="윤대환.html" class="wiki-link">윤대환</a></strong> 시장 취임 후, 테크노파크는 본연의 기능을 잃고 윤대환 일가 기업인 <a href="두청운수.html" class="wiki-link">두청운수</a>의 <strong>'무료 정비소'</strong> 취급을 받았다.
+            윤대환은 TP의 고가 정밀 장비를 두청운수 버스 정비에 무단으로 사용하게 했고, 심지어 연구 인력을 차출해 불법 개조(매연 저감 장치 떼기 등)를 시켰다.
+            이에 저항하던 연구원들은 해고되거나 지하 창고로 좌천되었으며, 이 시기 효빈시의 R&D 역량은 퇴보했다.
+        </p>
+
+        <h3 id="s-2.3">2.3. 재도약과 혁신 (2008~2021)</h3>
+        <p>
+            2008년 <a href="박현만.html" class="wiki-link">박현만</a> 시장 복귀 이후, TP는 대대적인 감사를 통해 윤대환의 잔재를 청산하고 정상화되었다.
+            특히 이 시기부터 지역 뿌리산업(금형, 주조 등) 기업들이 피규어 및 프라모델 산업으로 전환할 수 있도록 기술 지도를 시작하며, 오늘날 효빈시가 '굿즈 생산 기지'가 되는 초석을 다졌다.
+        </p>
+
+        <h3 id="s-2.4">2.4. '서브컬처 테크'의 성지 (2022~현재)</h3>
+        <p>
+            2022년 <strong><a href="박효빈.html" class="wiki-link">박효빈</a></strong> 시장 취임과 함께, <strong>"기술은 꿈을 현실로 만든다"</strong>는 비전 아래 제8대 원장으로 <strong>이직하(Lee Chi-ka)</strong><a href="#fn-1" id="r-fn-1" class="footnote-link">[1]</a>가 부임했다.
+            이직하 원장은 특유의 밝은 에너지와 포용력으로 스타트업 대표들의 '멘탈 케어'까지 담당하며, TP를 딱딱한 관공서가 아닌 활기찬 '창업 밴드'처럼 탈바꿈시켰다.
+        </p>
+
+        <h2 id="s-3">3. 조직 및 시설</h2>
+        <p>
+            효빈정부청사 내에 본원이 있으며, <a href="서구.html" class="wiki-link">서구</a> 산업단지와 <a href="동구.html" class="wiki-link">동구</a> 벤처밸리에 분원을 두고 있다.
+        </p>
+        <ul class="list-disc pl-5 mt-2 space-y-2">
+            <li><strong>기업지원단:</strong> 입주 기업들의 자금, 마케팅, 특허 출원 등을 원스톱으로 지원한다. 이직하 원장이 가장 자주 출몰하여 간식을 나눠주는 곳이다.</li>
+            <li><strong>특화산업본부 (Cos-Tech 센터):</strong> 코스프레 의상 제작을 위한 신소재(발광 섬유, 형상 기억 합금 등) 연구와 특수 분장용 실리콘 개발을 지원한다.</li>
+            <li><strong>스마트제조혁신센터:</strong> 피규어 대량 생산을 위한 스마트 공장 구축을 돕는다. 3D 프린터 팜(Farm)이 구축되어 있어 시제품을 빠르게 뽑아볼 수 있다.</li>
+            <li><strong>메이커 스페이스 '드림 팩토리':</strong> 시민 누구나 자신의 아이디어(굿즈)를 직접 만들어볼 수 있는 열린 공작소.</li>
+        </ul>
+
+        <h2 id="s-4">4. 주요 사업</h2>
+        <h3 id="s-4.1">4.1. 기술 기반 창업 지원 (스타트업)</h3>
+        <p>
+            "아이디어만 가져오세요, 기술은 우리가 해결해 드립니다."
+            예비 창업자(Pre-Star)부터 도약 기업(Post-BI)까지 성장 단계별 맞춤 지원을 제공한다. 
+            특히 실패한 경험이 있는 재창업자에게 가산점을 주는 '패자부활전 프로그램'이 유명하다.
+        </p>
+
+        <h3 id="s-4.2">4.2. 서브컬처-테크 융합 (Cos-Tech)</h3>
+        <p>
+            전국 유일의 <strong>'오타쿠 특화 기술 지원'</strong> 사업.
+        </p>
+        <ul class="list-disc pl-5 mt-1 text-sm text-gray-600">
+            <li><strong>스마트 코스튬:</strong> LED가 박힌 의상, 날개가 자동으로 펼쳐지는 기계 장치 등 '공학적 코스프레'를 위한 기술 컨설팅을 제공한다.</li>
+            <li><strong>고정밀 3D 스캐닝 & 프린팅:</strong> 유명 코스어의 전신을 스캔하여 1:1 피규어를 만들거나, 단종된 고전 프라모델 부품을 복원하는 기술을 지원한다.</li>
+            <li><strong>가상 아이돌 모션 캡처:</strong> 버튜버(Virtual YouTuber)를 꿈꾸는 크리에이터들에게 고가의 모션 캡처 장비와 스튜디오를 저렴하게 대여해 준다.</li>
+        </ul>
+
+        <h3 id="s-4.3">4.3. 스마트 시티 인프라 관리</h3>
+        <p>
+            <a href="효빈정보산업진흥원.html" class="wiki-link">효빈정보산업진흥원</a>과 협력하여 도시 곳곳에 설치된 스마트 가로등, 지능형 CCTV, 공공 와이파이 등의 하드웨어 유지 보수를 총괄한다.
+        </p>
+
+        <h2 id="s-5">5. 논란 및 사건사고</h2>
+        <h3 id="s-5.1">5.1. 윤대환 시기 '버스 부품 밀수' 방조 사건</h3>
+        <p>
+            2007년, 두청운수가 중국산 저가 버스 부품을 국산 정품으로 속여(포대갈이) 보조금을 타낼 때, 당시 TP 원장이 이를 묵인하고 '품질 인증서'를 위조해 준 사건.
+            이 가짜 부품 때문에 주행 중 바퀴가 빠지거나 브레이크가 파열되는 사고가 빈번했다. 관련자들은 2008년 전원 구속되었다.
+        </p>
+
+        <h3 id="s-5.2">5.2. 이차야 대표 '3D 프린터는 사탄의 도구' 난동</h3>
+        <p>
+            극우 시민단체 대표 <strong><a href="이차야.html" class="wiki-link">이차야</a></strong>가 TP 메이커 스페이스에 난입하여 "이 기계(3D 프린터)로 음란한 인형(피규어)을 찍어내고 있다! 이건 사탄의 도구다!"라며 장비를 때려 부수려 한 사건.
+            당시 현장에 있던 <strong>이직하 원장</strong>이 몸을 날려 장비를 막아섰고, 뒤이어 달려온 입주 기업 청년들이 이차야를 제압해 경찰에 넘겼다.
+            이직하 원장은 "기계는 죄가 없어요! 그리고 우리 입주 기업들의 피와 땀을 모욕하지 마세요!"라며 평소답지 않게 크게 화를 냈다고 한다. 이 사건 이후 TP의 보안이 대폭 강화되었다.
+        </p>
+
+        <h2 id="s-6">6. 여담 (이직하 원장)</h2>
+        <div class="quote">
+            "힘들 땐 언제든 찾아와요. 기술 지원도, 멘탈 케어도, 맛있는 간식도 준비되어 있으니까요. 우린 한 팀이잖아요?"<br>
+            - 이직하 원장, 밤샘 야근 중인 스타트업 대표에게
+        </div>
+        <p>
+            제8대 원장 <strong>이직하</strong>는 <strong>[봇치 더 락!]</strong>의 <strong>이지치 니지카</strong>를 모티브로 한 것 같은 인물이다. 
+            밝고 긍정적인 에너지의 소유자로, 트레이드마크인 노란색 스카프(또는 리본)를 항상 하고 다닌다. 
+            공학 박사 학위 소지자지만, 권위적이기보다는 '동아리 부장'이나 '큰언니' 같은 친근한 리더십을 보여준다.
+        </p>
+        <ul class="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>엔젤 투자자(?):</strong> 월급의 상당 부분을 입주 기업 직원들의 야식비나 간식비로 쓴다는 소문이 있다. 직원들이 지쳐 보이면 "포기하면 안 돼! 우리의 꿈은 이제 시작이라구!"라며 등을 두드려준다.</li>
+            <li><strong>드럼 실력:</strong> 사내 밴드 동아리에서 드럼을 맡고 있다. 평소엔 상냥하지만 드럼 스틱만 잡으면 파워풀하게 돌변한다. 스트레스를 드럼으로 푼다고.</li>
+            <li><strong>박효빈 시장과의 관계:</strong> 박 시장이 "이런 기술도 가능할까요?"라고 엉뚱한 아이디어(예: 날아다니는 버스 등)를 가져오면, "에?! 그건 좀 무리지만... 그래도 한번 해볼까요?!"라며 긍정적으로 검토해 주는 유일한 인물이다.</li>
+        </ul>
+
+        <h2 id="s-7">7. 관련 문서</h2>
+        <ul class="list-disc pl-5 space-y-1 mt-2">
+            <li><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></li>
+            <li><a href="박효빈.html" class="wiki-link">박효빈</a></li>
+            <li><a href="윤대환.html" class="wiki-link">윤대환</a></li>
+            <li><a href="효빈정보산업진흥원.html" class="wiki-link">효빈정보산업진흥원</a></li>
+            <li><a href="효빈디자인진흥원.html" class="wiki-link">효빈디자인진흥원</a></li>
+        </ul>
+
+        <div class="mt-10 pt-4 border-t border-gray-300 text-sm">
+            <h2 style="border:none; margin:0; padding:0; font-size:1.1rem;">각주</h2>
+            <ol class="list-decimal pl-8 text-gray-600 mt-2">
+                <li id="fn-1">이름과 밝은 성격, 드럼 실력, 그리고 노란색 사이드 포니테일(비슷한) 스타일까지 니지카와 판박이다. <a href="#r-fn-1" class="footnote-link">↩</a></li>
+            </ol>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="wiki-footer mt-12 border-t-2 border-[#7777AA] pt-6 pb-10">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2 text-sm"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+
+    </div>
+
+    <script>
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+
+            const searchMap = {
+                '1호선': '1호선.html',
+                '2호선': '2호선.html',
+                '3호선': '3호선.html',
+                '4호선': '4호선.html',
+                '5호선': '5호선.html',
+                '6호선': '6호선.html',
+                '7호선': '7호선.html',
+                '8호선': '8호선.html',
+                '빈효선': '빈효선광역전철.html',
+                '공항': '효빈국제공항.html',
+                '효빈국제공항': '효빈국제공항.html',
+                '교통공사': '효빈교통공사.html',
+                '도시공사': '효빈도시공사.html',
+                '문화재단': '효빈문화재단.html',
+                '테크노파크': '효빈테크노파크.html',
+                '시청': '효빈광역시청.html',
+                '박효빈': '박효빈.html'
+            };
+
+            const target = searchMap[query] || (query + '.html');
+            window.location.href = target;
+        }
+
+        // 각주 툴팁 기능 구현
+        document.addEventListener('DOMContentLoaded', () => {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'fn-tooltip';
+            document.body.appendChild(tooltip);
+
+            const fnLinks = document.querySelectorAll('a[href^="#fn-"]');
+
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', (e) => {
+                    const fnId = link.getAttribute('href').substring(1);
+                    const fnEl = document.getElementById(fnId);
+                    
+                    if (fnEl) {
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = fnEl.innerHTML;
+                        const backLinks = tempDiv.querySelectorAll('.footnote-link');
+                        backLinks.forEach(bl => bl.remove());
+
+                        tooltip.innerHTML = tempDiv.innerHTML;
+                        tooltip.style.display = 'block';
+                        updateTooltipPosition(e);
+                    }
+                });
+
+                link.addEventListener('mousemove', (e) => {
+                    updateTooltipPosition(e);
+                });
+
+                link.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+            });
+
+            function updateTooltipPosition(e) {
+                const xOffset = 10;
+                const yOffset = 15;
+                let left = e.pageX + xOffset;
+                if (left + tooltip.offsetWidth > window.innerWidth) {
+                    left = e.pageX - tooltip.offsetWidth - xOffset;
+                }
+                tooltip.style.left = left + 'px';
+                tooltip.style.top = (e.pageY + yOffset) + 'px';
+            }
+        });
+    </script>
+
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>
+

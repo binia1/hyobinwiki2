@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>중수도서관 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* [테마 컬러 설정] 위키 기본 블루 */
+            --wiki-main: #005BAA; 
+            --wiki-nav-bg: #7777aa; 
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            
+            /* 노선 컬러 */
+            --line-2: #00CCAA;
+            --line-6: #881188;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-main: #3388DD;
+            --wiki-nav-bg: #444466; 
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: var(--wiki-text); line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { border-bottom: 2px solid var(--wiki-border); margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem !important; font-weight: 700 !important; border-bottom: 1px solid var(--wiki-border) !important; padding-bottom: 5px !important; margin-top: 2.5rem !important; display: flex !important; align-items: center !important; gap: 10px !important; color: var(--wiki-main) !important; clear: both !important; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700 !important; margin-top: 1.8rem !important; border-left: 4px solid var(--wiki-main) !important; padding-left: 12px !important; color: var(--wiki-main) !important; }
+        h4 { font-size: 1.15rem !important; font-weight: 700 !important; margin-top: 1.2rem !important; margin-bottom: 0.5rem !important; color: var(--wiki-text) !important; border-left: 3px solid var(--wiki-border) !important; padding-left: 8px !important; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid var(--wiki-border); background: var(--wiki-bg); padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: var(--wiki-gray-bg); color: var(--wiki-text); border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        .category-box { background: var(--wiki-gray-bg); border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0 25px 0; border-radius: 4px; }
+        
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: var(--wiki-bg); width: 100%; max-width: 380px; font-size: 0.85rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.2rem !important; font-weight: bold; border-bottom: 2px solid var(--wiki-bg); }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: var(--wiki-gray-bg); color: var(--wiki-text); width: 95px; padding: 8px; border: 1px solid var(--wiki-border); text-align: center; font-weight: bold; }
+        .infobox td { padding: 8px 12px; border: 1px solid var(--wiki-border); color: var(--wiki-text); text-align: left; }
+        .infobox .merged-row { background-color: var(--wiki-bg); text-align: center; padding: 10px; border-bottom: 1px solid var(--wiki-border); }
+
+        /* 데이터 테이블 */
+        .data-table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; font-size: 0.9rem; }
+        .data-table th, .data-table td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; text-align: center; vertical-align: middle; color: var(--wiki-text); }
+        .data-table th { background-color: var(--wiki-gray-bg); font-weight: bold; }
+
+        /* 버스 및 지하철 배지 */
+        .bus-badge, .subway-badge { display: inline-block; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-right: 4px; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; color: var(--wiki-text); }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* 인용 및 특수효과 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: var(--wiki-gray-bg); padding: 10px; font-style: italic; }
+        [data-theme='dark'] blockquote { color: #ccc; }
+        del { color: #aaa; text-decoration: line-through; }
+
+        /* 푸터 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid var(--wiki-border); padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: var(--wiki-gray-bg); line-height: 1.5; }
+        [data-theme='dark'] .wiki-footer { color: #999; }
+        .wiki-footer strong { color: var(--wiki-text); }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+        .hide-table-body { display: none !important; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+
+    <div id="wiki-msg-box"></div>
+
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav-bg);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl drop-shadow-sm">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="효빈위키 검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+            <button class="bg-[#555588] hover:bg-[#444477] p-1 px-3 rounded text-xs shadow-inner font-bold transition" onclick="handleSearch()">검색</button>
+            <button class="bg-[#555588] hover:bg-[#444477] p-1 px-3 rounded text-xs shadow-inner font-bold transition" onclick="document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="flex justify-between items-end">
+                <div class="txt-lvl-1">중수도서관</div>
+                <div class="flex gap-2 mb-1">
+                    <a href="#" class="wiki-btn">토론</a>
+                    <a href="#" class="wiki-btn">편집</a>
+                    <a href="#" class="wiki-btn">역사</a>
+                    <div class="px-3 py-1 text-[11px] border border-gray-300 bg-white rounded cursor-pointer flex items-center justify-center text-gray-600">★</div>
+                </div>
+            </div>
+            <div class="text-sm text-gray-500 font-bold mt-2">최근 수정 시각: 2026-05-18 20:15:33</div>
+        </div>
+
+        <!-- 카테고리 박스 -->
+        <div class="category-box">
+            <span class="font-bold" style="color: var(--wiki-main);">분류:</span> 
+            <a href="북구(효빈).html" class="wiki-link">북구(효빈)의 문화 시설</a> | 
+            <a href="구립도서관.html" class="wiki-link">구립도서관</a> | 
+            <a href="중수동.html" class="wiki-link">중수동</a> |
+            <a href="중수역.html" class="wiki-link">중수역</a> |
+            <a href="법원.html" class="wiki-link">법원</a> |
+            <a href="니지가사키_학원_스쿨_아이돌_동호회.html" class="wiki-link">니지가사키 학원 스쿨 아이돌 동호회</a>
+        </div>
+
+        <!-- ======================================================= -->
+        <!-- 효빈광역시 관내 공공도서관 틀 (네비게이션) -->
+        <!-- ======================================================= -->
+        <div class="w-full mx-auto border-2 mb-8 text-sm font-sans bg-white shadow-sm" style="border-color: #7777aa;">
+            <div class="text-white p-2.5 flex justify-center items-center gap-3 border-b" style="background-color: #7777aa; border-bottom-color: #7777aa;">
+                <img src="이미지/효빈시_로고.png" alt="효빈광역시 로고" class="h-8 object-contain bg-transparent" onerror="this.style.display='none'">
+                <div class="flex flex-col items-center justify-center text-center">
+                    <span class="font-extrabold text-[17px] tracking-widest leading-tight drop-shadow-sm text-white">효빈광역시 관내 공공도서관</span>
+                </div>
+            </div>
+            
+            <div onclick="toggleTable('lib-nav-body', 'libToggleBtn')" class="bg-white text-center text-xs py-1.5 cursor-pointer font-bold select-none hover:bg-gray-100 transition-colors border-b text-gray-700" style="border-bottom-color: #7777aa;">
+                <span id="libToggleBtn">[ 접기 ]</span>
+            </div>
+
+            <table class="w-full border-collapse bg-white text-center table-fixed text-[13px] text-gray-800">
+                <colgroup>
+                    <col style="width: 15%;">
+                    <col style="width: 85%;">
+                </colgroup>
+                <tbody id="lib-nav-body" class="toggle-body">
+                    <!-- 시청산하 시립도서관 -->
+                    <tr>
+                        <th colspan="2" class="bg-[#7777aa] text-white py-1.5 font-bold border-b border-gray-300 tracking-wide text-[14px]">시청산하 시립도서관</th>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#7799CC] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">북구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="효빈시청한바다도서관.html" class="text-[#0275d8] hover:underline break-keep">효빈시청한바다도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#006699] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">청엽구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="효빈도서관.html" class="text-[#0275d8] hover:underline break-keep">효빈도서관</a>
+                        </td>
+                    </tr>
+
+                    <!-- 교육청 산하 시립도서관 -->
+                    <tr>
+                        <th colspan="2" class="bg-[#7777aa] text-white py-1.5 font-bold border-b border-gray-300 border-t border-gray-300 tracking-wide text-[14px]">교육청 산하 시립도서관</th>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#BB9955] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">중구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="효빈광역시립중앙도서관.html" class="text-[#0275d8] hover:underline break-keep">효빈광역시립중앙도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#FF9922] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">동구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="효빈광역시립덕현도서관.html" class="text-[#0275d8] hover:underline break-keep">효빈광역시립덕현도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#00AABB] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">서구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="효빈광역시립당선도서관.html" class="text-[#0275d8] hover:underline break-keep">효빈광역시립당선도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#DDBBFF] text-gray-800 py-2 font-bold border-r border-white border-b border-white shadow-inner">남구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="효빈광역시립항동분관.html" class="text-[#0275d8] hover:underline break-keep">효빈광역시립항동분관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈광역시립평당도서관.html" class="text-[#0275d8] hover:underline break-keep">효빈광역시립평당도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#7799CC] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">북구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="효빈광역시립시민도서관.html" class="text-[#0275d8] hover:underline break-keep">효빈광역시립시민도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈광역시립오내도서관.html" class="text-[#0275d8] hover:underline break-keep">효빈광역시립오내도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#33AAFF] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">창전구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="효빈광역시립창전도서관.html" class="text-[#0275d8] hover:underline break-keep">효빈광역시립창전도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#006699] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">청엽구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="효빈광역시립청엽도서관.html" class="text-[#0275d8] hover:underline break-keep">효빈광역시립청엽도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈광역시립비마도서관.html" class="text-[#0275d8] hover:underline break-keep">효빈광역시립비마도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#AA66DD] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">안천구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="효빈광역시립안천도서관.html" class="text-[#0275d8] hover:underline break-keep">효빈광역시립안천도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#BBFF64] text-gray-800 py-2 font-bold border-r border-white border-b border-white shadow-inner">탄성군</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="효빈광역시립탄성도서관.html" class="text-[#0275d8] hover:underline break-keep">효빈광역시립탄성도서관</a><span class="text-[10px] text-gray-500 font-bold ml-0.5">(예정)</span>
+                        </td>
+                    </tr>
+
+                    <!-- 구·군립도서관 -->
+                    <tr>
+                        <th colspan="2" class="bg-[#7777aa] text-white py-1.5 font-bold border-b border-gray-300 border-t border-gray-300 tracking-wide text-[14px]">구·군립도서관</th>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#BB9955] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">중구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="중구립도서관.html" class="text-[#0275d8] hover:underline break-keep">중구립도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="중구효빈전차도서관.html" class="text-[#0275d8] hover:underline break-keep">중구효빈전차도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#FF9922] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">동구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="동구립사가당도서관.html" class="text-[#0275d8] hover:underline break-keep">동구립사가당도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="전천도서관.html" class="text-[#0275d8] hover:underline break-keep">전천도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#00AABB] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">서구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="서구립도서관.html" class="text-[#0275d8] hover:underline break-keep">서구립도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="사복도서관.html" class="text-[#0275d8] hover:underline break-keep">사복도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="청덕도서관.html" class="text-[#0275d8] hover:underline break-keep">청덕도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="과진과학도서관.html" class="text-[#0275d8] hover:underline break-keep">과진과학도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#DDBBFF] text-gray-800 py-2 font-bold border-r border-white border-b border-white shadow-inner">남구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="평당평산도서관.html" class="text-[#0275d8] hover:underline break-keep">평당평산도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="어간도서관.html" class="text-[#0275d8] hover:underline break-keep">어간도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="남구해양도서관.html" class="text-[#0275d8] hover:underline break-keep">남구해양도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#7799CC] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">북구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <!-- 현재 문서 (링크 해제 및 굵은 글씨) -->
+                            <strong class="text-gray-800 break-keep">중수도서관</strong> <span class="text-gray-300 mx-1">·</span>
+                            <a href="고송도서관.html" class="text-[#0275d8] hover:underline break-keep">고송도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="만화애니메이션도서관.html" class="text-[#0275d8] hover:underline break-keep">만화애니메이션도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="북구청도서관.html" class="text-[#0275d8] hover:underline break-keep">북구청도서관</a><span class="text-[10px] text-gray-500 font-bold ml-0.5">(예정)</span>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#33AAFF] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">창전구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="칠심도서관.html" class="text-[#0275d8] hover:underline break-keep">칠심도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="쌍엽도서관.html" class="text-[#0275d8] hover:underline break-keep">쌍엽도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="창전문화도서관.html" class="text-[#0275d8] hover:underline break-keep">창전문화도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#006699] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">청엽구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="청엽구청도서관.html" class="text-[#0275d8] hover:underline break-keep">청엽구청도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="우전도서관.html" class="text-[#0275d8] hover:underline break-keep">우전도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#AA66DD] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">안천구</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="안천팔망성도서관.html" class="text-[#0275d8] hover:underline break-keep">안천팔망성도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="당가도서관.html" class="text-[#0275d8] hover:underline break-keep">당가도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="이자도서관.html" class="text-[#0275d8] hover:underline break-keep">이자도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="이자공원도서관.html" class="text-[#0275d8] hover:underline break-keep">이자공원도서관</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <th class="bg-[#BBFF64] text-gray-800 py-2 font-bold border-r border-white border-b border-white shadow-inner">탄성군</th>
+                        <td class="text-center py-2 px-3 leading-loose">
+                            <a href="탄성군립도서관.html" class="text-[#0275d8] hover:underline break-keep">탄성군립도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="탄성군청작은도서관.html" class="text-[#0275d8] hover:underline break-keep">탄성군청작은도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="앵내도서관.html" class="text-[#0275d8] hover:underline break-keep">앵내도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="탄성군청소년센터_작은도서관.html" class="text-[#0275d8] hover:underline break-keep">탄성군청소년센터 작은도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="서목읍작은도서관.html" class="text-[#0275d8] hover:underline break-keep">서목읍작은도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="고해읍작은도서관.html" class="text-[#0275d8] hover:underline break-keep">고해읍작은도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="소원장난감도서관.html" class="text-[#0275d8] hover:underline break-keep">소원장난감도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="도향면작은도서관.html" class="text-[#0275d8] hover:underline break-keep">도향면작은도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="정근면_작은도서관.html" class="text-[#0275d8] hover:underline break-keep">정근면 작은도서관</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="흑택아이스크림도서관.html" class="text-[#0275d8] hover:underline break-keep">흑택아이스크림도서관</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ======================================================= -->
+        <!-- 본문 시작 -->
+        <!-- ======================================================= -->
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">역사</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">시설 안내</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">교통 및 접근성</a>
+                        <ul>
+                            <li>4.1. <a href="#s-4-1" class="wiki-link">도시철도</a></li>
+                            <li>4.2. <a href="#s-4-2" class="wiki-link">시내버스 (6.1. 버스)</a></li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5" class="wiki-link">여담</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">관련 문서</a></li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="merged-row" style="padding: 0; border: none; background-color: var(--wiki-gray-bg);">
+                    <img src="이미지/중수도서관.png" alt="중수도서관 전경" style="width: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/380x200?text=중수도서관'; this.style.opacity='0.5';">
+                </div>
+                <div class="infobox-title" style="background-color: var(--wiki-main);">
+                    중수도서관<br>
+                    <span style="font-size: 0.7rem !important; font-weight: normal; line-height: 1.2; display: block; margin-top: 4px;">
+                        Jungsu Library
+                    </span>
+                </div>
+                <table class="text-left text-[13px]">
+                    <tr><th class="text-center">표어</th><td>법과 지식이 만나는 정의로운 서재</td></tr>
+                    <tr><th class="text-center">구분</th><td><a href="북구청(효빈).html" class="wiki-link">북구청</a> 소속 구립도서관</td></tr>
+                    <tr><th class="text-center">개관일</th><td>1998년 3월 <span class="text-[11px] text-gray-500 font-bold block">(2017년 전면 리모델링)</span></td></tr>
+                    <tr><th class="text-center">장서 수</th><td>약 214,000권</td></tr>
+                    <tr><th class="text-center">소재지</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="북구(효빈).html" class="wiki-link">북구</a> <a href="중수동.html" class="wiki-link">중수동</a> (법원로 인근)</td></tr>
+                    <tr><th class="text-center">인근역</th>
+                        <td class="leading-relaxed">
+                            <span class="subway-badge" style="background-color: var(--line-2);">2</span>
+                            <span class="subway-badge" style="background-color: var(--line-6);">6</span>
+                            <a href="중수역.html" class="wiki-link text-black font-bold hover:underline">중수역</a>
+                        </td>
+                    </tr>
+                    <tr><th class="text-center">연락처</th><td>079-522-7700</td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <blockquote class="text-center font-bold text-lg" style="border-left: none; background-color: var(--wiki-gray-bg); border: 2px solid var(--wiki-main); border-radius: 8px;">
+            <span class="text-[#005BAA]">"효빈시에서 가장 숨 막히게 조용한 도서관."</span><br>
+            <span class="text-sm font-normal text-gray-600 mt-2 block">"책장 넘기는 소리도 데시벨을 맞춰야 살아남을 수 있습니다."<br><del>(고시생들의 정신과 시간의 방)</del></span>
+        </blockquote>
+
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <p>
+            대한민국 <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> 북구 중수동에 위치한 북구청 관할 구립도서관. 
+        </p>
+        <p>
+            <a href="효빈지방법원.html" class="wiki-link">효빈지방법원</a>과 효빈지방검찰청이 자리 잡은 법조타운 한가운데에 떡하니 박혀 있어 일명 <strong>'법원 근처 도서관'</strong>으로 악명(?)이 높다. 공인중개사, 노무사, 변호사 시험(로스쿨생), 각종 공무원 시험을 준비하는 고시생들이 뿜어내는 <strong>살벌하고 엄숙한 기운</strong>이 1년 365일 감도는 무시무시한 곳이다. 
+        </p>
+        <p>
+            다만 최근 들어서는 <a href="중수동.html" class="wiki-link">중수동</a> 일대가 <a href="https://namu.wiki/w/나카스%20카스미" class="wiki-link font-bold text-[#E7D600] drop-shadow-sm" style="text-shadow: 1px 1px 0 #000;">나카스 카스미</a> 밈으로 묶이는 특유의 서브컬처적 광기와, 엄숙한 법학도들의 팽팽한 기싸움이 공존하는 혼돈의 장소로 묘하게 변모하고 있다.
+        </p>
+
+        <h2 id="s-2" class="anchor-offset">2. 역사</h2>
+        <ul class="list-disc pl-5 text-[15px] text-gray-800 leading-relaxed space-y-3">
+            <li><strong>1998년 3월:</strong> 중수동 일대에 법원과 검찰청 청사가 들어서고 행정/법조 타운이 형성되자, 법률 관련 인프라 지원 및 지역 주민의 교양 증진을 명목으로 개관했다.</li>
+            <li><strong>2017년:</strong> 건물이 노후화되고 칙칙한 '독서실' 이미지가 너무 강해지자, 북구청에서 예산을 투입해 대대적인 리모델링을 거쳤다. 외관은 세련된 법학전문대학원처럼 깔끔해졌으나, 안에 들어찬 고시생들의 살벌한 라인업은 변하지 않았다.</li>
+            <li><strong>현재:</strong> 지하철 2호선과 6호선이 만나는 교통의 요지 <strong>중수역</strong>과 가까워, 타 구에서도 공부 좀 빡세게 해보겠다는 수험생들이 굳이 이곳까지 원정을 오는 기현상이 벌어지고 있다.</li>
+        </ul>
+
+        <h2 id="s-3" class="anchor-offset">3. 시설 안내</h2>
+        <p class="mb-3 text-[15px] text-gray-800">지하 1층부터 지상 5층까지 '효율과 집중'에 극대화된 구조를 띠고 있다.</p>
+        
+        <ul class="list-none text-[15px] text-gray-800 leading-relaxed space-y-4">
+            <li>
+                <div class="font-bold text-[#005BAA] text-[16px] mb-1">■ 지하 1층 (구내식당 및 매점)</div>
+                수험생들의 헛헛한 속을 달래주는 생존 구역. 밥심으로 버티는 고시생들을 위해 백반 정식의 퀄리티가 상당히 높고 양이 무지막지하게 많다. 식사 시간대에는 츄리닝 차림에 두꺼운 법학 서적을 들고 밥을 마시듯 먹어 치우는 사람들을 볼 수 있다.
+            </li>
+            <li class="bg-[#ffffe0] p-3 border-l-4 border-[#E7D600] rounded">
+                <div class="font-bold text-[#005BAA] text-[16px] mb-1">■ 1층 (로비 및 법학전문자료실)</div>
+                타 도서관과 가장 차별화되는 중수도서관만의 정체성. 로비 한편에 <strong>'법학전문자료실'</strong>이 별도로 마련되어 있어, 시중에서 구하기 힘든 고가의 두꺼운 전공 서적과 판례집이 빽빽하게 꽂혀 있다. 
+                <br>특이한 점은 <strong>효빈지방법원의 '카스밍 오시'로 유명한 최 모 부장판사</strong>가 가끔 사비를 털어 고가의 법학 도서를 이곳에 대량으로 기증한다는 것이다. 그가 기증한 책들은 겉표지 안쪽이나 책갈피에 미세하게 노란색 별 스티커나 카스미 캐릭터 인장이 찍혀 있다. 고시생들 사이에서는 이른바 <strong>'현직 부장판사의 기운이 깃든 성유물'</strong>로 취급되어 대출 경쟁이 매우 치열하다. <span class="text-sm text-gray-500"><del>가끔 법정 배틀 게임인 '역전재판' 시리즈 공식 설정집도 법률 서적 틈바구니에 몰래 끼워져 있다.</del></span>
+            </li>
+            <li>
+                <div class="font-bold text-[#005BAA] text-[16px] mb-1">■ 2층 ~ 3층 (종합자료실 및 어린이자료실)</div>
+                주민들을 위한 일반 서적과 아이들을 위한 책이 있는 평범한 공간. 다만 위층(4~5층)의 살벌한 기운이 내려오는 탓인지, 이곳에서 뛰노는 아이들도 묘하게 목소리를 깔고 속삭인다는 괴담이 있다.
+            </li>
+            <li>
+                <div class="font-bold text-[#005BAA] text-[16px] mb-1">■ 4층 ~ 5층 (일반열람실 - 정신과 시간의 방)</div>
+                <strong>효빈시에서 가장 숨 막히는 공간.</strong> 발소리, 볼펜 딸깍거리는 소리, 심지어 책장 넘기는 소리조차 주변의 날 선 눈초리를 받을 수 있는 극한의 정숙 구역이다. 백색소음기조차 시끄럽다며 민원이 들어와 꺼버렸을 정도다. 공부에 미친 자들만이 살아남을 수 있는 콜로세움.
+            </li>
+        </ul>
+
+        <h2 id="s-4" class="anchor-offset">4. 교통 및 접근성</h2>
+        <p>법원과 도서관이 밀집한 중수동 핵심 상권에 위치해 대중교통 연계가 매우 훌륭하다. 특히 2, 6호선 더블 역세권의 위엄을 뽐낸다.</p>
+
+        <h3 id="s-4-1">4.1. 도시철도</h3>
+        <ul class="list-disc pl-5 mb-4 text-gray-800 text-[15px]">
+            <li><span class="subway-badge" style="background-color: var(--line-2);">2호선</span> <strong><a href="중수역.html" class="wiki-link text-[#00CCAA] font-bold hover:underline">효빈 도시철도 2호선</a></strong> (마스코트: <strong>하루빈</strong>)</li>
+            <li><span class="subway-badge" style="background-color: var(--line-6);">6호선</span> <strong><a href="중수역.html" class="wiki-link text-[#881188] font-bold hover:underline">효빈 도시철도 6호선</a></strong> (마스코트: <strong>라세나</strong>)
+                <br><span class="text-sm text-gray-600 mt-1 block">중수역 하차 후 법원 방면 출구(통상 4번, 5번 출구)로 나와 약 300m 도보로 이동하면 법조타운 초입에 도서관이 보인다. 하루빈과 라세나의 환승 안내방송을 듣고 내리면 된다.</span>
+            </li>
+        </ul>
+
+        <h3 id="s-4-2">4.2. 시내버스 (6.1. 버스)</h3>
+        <p class="text-sm mb-2 text-gray-700">도서관 및 중수역 앞 정류장을 통과하는 버스 노선 목록. 효빈시의 <strong>3세대 스타더스트 작전 도색(색상별 테마)</strong>이 적용된 버스들이 운행된다.</p>
+        
+        <table class="data-table text-[13px]">
+            <colgroup>
+                <col style="width: 18%;">
+                <col style="width: 18%;">
+                <col style="width: 64%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>방향</th>
+                    <th>노선 구분</th>
+                    <th>운행 노선 번호 및 상세 안내 (스타더스트 작전 도색)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 순방향 -->
+                <tr>
+                    <td rowspan="4" class="font-bold align-middle bg-gray-50 border-r text-gray-700">중수역<br>(순방향)</td>
+                    <td class="font-bold align-middle border-r">
+                        <span class="bus-badge w-12 text-center" style="background-color: #01B7ED;">간선</span>
+                    </td>
+                    <td class="text-left leading-loose px-4 py-2 border-b-0">
+                        <span class="font-bold text-[#01B7ED] text-[15px]">2, 13, 24, 30</span> <br>
+                        <span class="text-xs text-gray-500">스카이 블루 (오사카 시즈쿠) 도색</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="font-bold align-middle border-r border-t-0">
+                        <span class="bus-badge w-12 text-center" style="background-color: #37B484;">지선</span>
+                    </td>
+                    <td class="text-left leading-loose px-4 py-2 border-t-0 border-b-0">
+                        <span class="font-bold text-[#37B484] text-[15px]">131, 251, 391</span> <br>
+                        <span class="text-xs text-gray-500">제이드 그린 (미후네 시오리코) 도색</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="font-bold align-middle border-r border-t-0">
+                        <span class="bus-badge w-12 text-center" style="background-color: #84C36E;">공항</span>
+                    </td>
+                    <td class="text-left leading-loose px-4 py-2 border-t-0 border-b-0">
+                        <span class="font-bold text-[#84C36E] text-[15px]">A01</span> <br>
+                        <span class="text-xs text-gray-500">라이트 그린 (엠마 베르데) 도색</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="font-bold align-middle border-r border-t-0">
+                        <span class="bus-badge w-12 text-center" style="background-color: #FF5800;">좌석</span>
+                    </td>
+                    <td class="text-left leading-loose px-4 py-2 border-t-0">
+                        <span class="font-bold text-[#FF5800] text-[15px]">3333</span> <br>
+                        <span class="text-xs text-gray-500">비비드 오렌지 (미야시타 아이) 도색</span>
+                    </td>
+                </tr>
+
+                <!-- 역방향 (건너편) -->
+                <tr>
+                    <td rowspan="4" class="font-bold align-middle bg-gray-50 border-r text-gray-700">중수역<br>(건너편/역방향)</td>
+                    <td class="font-bold align-middle border-r">
+                        <span class="bus-badge w-12 text-center" style="background-color: #01B7ED;">간선</span>
+                    </td>
+                    <td class="text-left leading-loose px-4 py-2 border-b-0">
+                        <span class="font-bold text-[#01B7ED] text-[15px]">02-1, 31, 42, 30-1</span> <br>
+                        <span class="text-xs text-gray-500">스카이 블루 (오사카 시즈쿠) 도색</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="font-bold align-middle border-r border-t-0">
+                        <span class="bus-badge w-12 text-center" style="background-color: #37B484;">지선</span>
+                    </td>
+                    <td class="text-left leading-loose px-4 py-2 border-t-0 border-b-0">
+                        <span class="font-bold text-[#37B484] text-[15px]">311, 521, 391</span> <br>
+                        <span class="text-xs text-gray-500">제이드 그린 (미후네 시오리코) 도색</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="font-bold align-middle border-r border-t-0">
+                        <span class="bus-badge w-12 text-center" style="background-color: #84C36E;">공항</span>
+                    </td>
+                    <td class="text-left leading-loose px-4 py-2 border-t-0 border-b-0">
+                        <span class="font-bold text-[#84C36E] text-[15px]">A01R</span> <br>
+                        <span class="text-xs text-gray-500">라이트 그린 (엠마 베르데) 도색</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="font-bold align-middle border-r border-t-0">
+                        <span class="bus-badge w-12 text-center" style="background-color: #FF5800;">좌석</span>
+                    </td>
+                    <td class="text-left leading-loose px-4 py-2 border-t-0">
+                        <span class="font-bold text-[#FF5800] text-[15px]">3333R</span> <br>
+                        <span class="text-xs text-gray-500">비비드 오렌지 (미야시타 아이) 도색</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="s-5" class="anchor-offset">5. 여담</h2>
+        <ul class="list-disc pl-5 text-[15px] text-gray-800 leading-relaxed space-y-4">
+            <li><strong>뜻밖의 법조인 팬미팅(?):</strong> 바로 옆이 법원과 검찰청이다 보니, 점심시간이나 퇴근 후 넥타이를 풀어 헤친 진짜 변호사나 검사들이 재판 관련 서적을 빌리거나 가벼운 에세이를 읽으러 도서관에 출몰하기도 한다. 고시생들 입장에서는 자기가 목표로 하는 직업의 끝판왕들이 동네 아저씨 차림으로 돌아다니는 것을 보고 자극을 받는다고 한다.</li>
+            <li><strong>지독한 서브컬처와의 기싸움:</strong> 처음에는 온 동네가 애니메이션 마스코트로 도배되는 효빈시에서 유일하게 '덕후'의 향기가 철저히 배제된 공간처럼 보였다. 하지만 중수(中須)라는 이름 탓에 니지동 <a href="https://namu.wiki/w/나카스%20카스미" class="wiki-link text-[#E7D600] font-bold drop-shadow-sm">나카스 카스미</a>의 성지로 묶이는 중수동의 운명을 이 도서관도 피하지 못했다. 법원 쪽에서 카스밍 굿즈를 가방에 달고 다니는 판사나 직원들이 도서관에 수시로 출몰하며, 열람실 책상 위에 은근슬쩍 노란색 네소베리를 올려두고 공부하는 고시생들도 생겨나고 있다. <del>결국 효빈시의 피는 속일 수 없다.</del></li>
+            <li><strong>포스트잇 살인마:</strong> 4층 열람실에서 조금만 크게 기침을 하거나 삼색 볼펜 딸깍거리는 소리를 내면, 10분 뒤 화장실을 다녀온 사이 책상 위에 <em>"조용히 좀 해주세요 ^^ (경고)"</em>라고 적힌 살벌한 포스트잇이 붙어 있는 것을 경험할 수 있다. <del>이 도서관에서 살아남으려면 숨도 코로 쉬지 말고 귀로 쉬어야 한다.</del></li>
+        </ul>
+
+        <h2 id="s-6" class="anchor-offset">6. 관련 문서</h2>
+        <div class="bg-gray-50 border border-gray-300 p-4 text-sm mt-2 rounded mb-10">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-center md:text-left">
+                <a href="효빈광역시.html" class="wiki-link text-[#005BAA]">효빈광역시</a>
+                <a href="북구(효빈).html" class="wiki-link text-gray-800">북구(효빈광역시)</a>
+                <a href="중수동.html" class="wiki-link text-[#005BAA] font-bold">중수동</a>
+                <a href="중수역.html" class="wiki-link font-bold text-[#881188]">중수역</a>
+                <a href="하루빈.html" class="wiki-link text-[#00CCAA]">하루빈 (2호선)</a>
+                <a href="라세나.html" class="wiki-link text-[#881188]">라세나 (6호선)</a>
+                <a href="효빈지방법원.html" class="wiki-link text-gray-800">효빈지방법원</a>
+                <a href="스타더스트_작전.html" class="wiki-link text-gray-800">스타더스트 작전</a>
+                <a href="최_모_부장판사.html" class="wiki-link text-[#1A365D]">최 모 부장판사</a>
+                <a href="https://namu.wiki/w/나카스%20카스미" class="wiki-link text-[#E7D600] font-bold">나카스 카스미</a>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 문서는 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.
+            </p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 검색 기능
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            const box = document.getElementById('wiki-msg-box');
+            if (query) {
+                box.innerText = `'${query}' 문서를 검색합니다...`; 
+            } else {
+                box.innerText = '검색어를 입력해주세요.'; 
+            }
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        // 스무스 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                if(this.getAttribute('href').startsWith('#fn-')) return;
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, 
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 테이블 접기/펼치기
+        function toggleTable(id, labelId) {
+            const tbody = document.getElementById(id);
+            if (!tbody) return;
+            const label = document.getElementById(labelId);
+            
+            if (tbody.classList.contains('hide-table-body')) {
+                tbody.classList.remove('hide-table-body'); 
+                if(label) label.innerText = '[ 접기 ]';
+            } else {
+                tbody.classList.add('hide-table-body');
+                if(label) label.innerText = '[ 펼치기 · 접기 ]';
+            }
+        }
+    </script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_wiki_core.js?v=1"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+</body>
+</html>

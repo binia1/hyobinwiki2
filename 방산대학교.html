@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>방산대학교 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* 문서 테마 컬러: 방산 라이온 레드 & 서중 샌드 골드 */
+            --wiki-main: #A31D1D; 
+            --wiki-sub: #D4AF37;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #A31D1D;
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.15rem !important; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 스타일 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 450px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-header { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.4rem !important; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: #F7EBEB; color: var(--wiki-main); width: 100px; padding: 6px 10px; border: 1px solid var(--wiki-border); text-align: center; font-weight: bold; vertical-align: middle; }
+        .infobox td { padding: 6px 10px; border: 1px solid var(--wiki-border); vertical-align: middle; }
+        
+        /* 테이블 스타일 */
+        .wiki-table { border-collapse: collapse; width: 100%; margin: 10px 0; border: 1px solid #ccc; }
+        .wiki-table th { background-color: var(--wiki-main); color: white; padding: 8px; border: 1px solid #ccc; text-align: center; font-weight: bold; }
+        .wiki-table td { padding: 8px; border: 1px solid #ccc; background: white; }
+        .wiki-table-center { text-align: center; }
+        .wiki-table-sub { background-color: #F7EBEB; font-weight: bold; text-align: center; color: var(--wiki-main); }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* 기타 요소 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+        del { color: #ccc; text-decoration: line-through; }
+        .wiki-gray { color: #888; font-size: 0.9em; }
+        
+        /* 폴딩(접기/펼치기) 구현 */
+        details { border: 1px solid #aaa; border-radius: 4px; padding: 0; margin-bottom: 10px; background: white; }
+        summary { font-weight: bold; padding: 0.5em; cursor: pointer; background-color: #eee; list-style: none; display: flex; justify-content: center; align-items: center; }
+        summary:after { content: " [ 펼치기 · 접기 ]"; font-size: 0.8em; margin-left: 5px; color: #555; }
+        details[open] { padding: 0; }
+        details[open] summary { border-bottom: 1px solid #aaa; }
+
+        /* 하단 네비게이션 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+        
+        /* 푸터 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+        
+        /* 상단 그라데이션 박스 */
+        .gradient-box {
+            background-image: linear-gradient(to right, var(--wiki-main), var(--wiki-sub), var(--wiki-sub), var(--wiki-main));
+            color: white; padding: 20px; text-align: center; border-radius: 5px; margin-bottom: 0px;
+        }
+
+        /* 각주 스타일 */
+        .wiki-fn { font-size: 0.8em; vertical-align: super; color: var(--wiki-link); text-decoration: none; font-weight: bold; cursor: help; margin-left: 1px; }
+        .wiki-fn:hover { text-decoration: underline; }
+        .wiki-fn-content-box { border-top: 1px solid #ccc; margin-top: 40px; padding-top: 10px; font-size: 0.9rem; }
+        .wiki-fn-item { margin-bottom: 6px; }
+        .wiki-fn-back { color: var(--wiki-link); text-decoration: none; margin-right: 5px; font-weight: bold; }
+        
+        /* 각주 툴팁 (호버보드) */
+        #wiki-fn-tooltip {
+            position: fixed;
+            display: none;
+            background: #fff;
+            border: 1px solid var(--wiki-main);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            max-width: 350px;
+            z-index: 100000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: 6px;
+            pointer-events: none;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        /* 둘러보기 틀 스타일 */
+        .nav-template { width: 100%; border: 2px solid var(--wiki-main); border-radius: 4px; overflow: hidden; margin-bottom: 20px; clear: both; font-size: 0.9rem; }
+        .nav-template-header { background-color: var(--wiki-main); color: white; padding: 8px 12px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .nav-template-content { background-color: #fff; }
+        .nav-template-table { width: 100%; border-collapse: collapse; }
+        .nav-template-table th { background-color: #F7EBEB; color: #333; border: 1px solid #ddd; padding: 6px 10px; text-align: center; font-weight: bold; width: 100px; }
+        .nav-template-table td { border: 1px solid #ddd; padding: 6px 10px; }
+        .nav-template-sub-th { background-color: #FDF6F6; font-weight: bold; text-align: center; width: 40px; color: #555; }
+        .nav-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .nav-item { color: #333; text-decoration: none; cursor: pointer; }
+        .nav-item:hover { text-decoration: underline; color: var(--wiki-link); }
+        .nav-current { font-weight: 900; color: white; background-color: var(--wiki-main); padding: 2px 6px; border-radius: 4px; }
+        .nav-current:hover { color: white; text-decoration: none; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-fn-tooltip"></div>
+
+    <!-- 상단 네비게이션 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: #7777AA;">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="goToLink('index.html')">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a onclick="goToLink('토론.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">토론</a>
+                <a onclick="goToLink('수정.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">편집</a>
+                <a onclick="goToLink('역사.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">방산대학교</div>
+            <div class="flex gap-2 mb-1">
+                <a onclick="goToLink('방산대학교.html')" class="wiki-btn">문서</a>
+                <a onclick="goToLink('토론.html')" class="wiki-btn">토론</a>
+                <a onclick="goToLink('수정.html')" class="wiki-btn">편집</a>
+                <a onclick="goToLink('역사.html')" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold" style="color: var(--wiki-main);">분류:</span> 
+            <a onclick="goToLink('방산시.html')" class="wiki-link">방산시</a> | 
+            <a onclick="goToLink('덕빈남도의_대학교.html')" class="wiki-link">덕빈남도의 대학교</a> | 
+            <a onclick="goToLink('사립대학.html')" class="wiki-link">사립대학</a>
+        </div>
+
+        <!-- 상단 둘러보기 틀 (덕빈남도 대학교 현황) -->
+        <div class="mb-5">
+            <div class="nav-template">
+                <div class="nav-template-header">
+                    <span style="flex:1;"></span>
+                    <span style="flex:2; text-align: center;"><a onclick="goToLink('덕빈남도의_대학교.html')" style="color: white; text-decoration: none; cursor: pointer;">덕빈남도 대학교 현황</a></span>
+                    <span style="flex:1; text-align: right; font-size: 0.8em; font-weight: normal;"><a style="color: #ddd; cursor: pointer; text-decoration: none;">[편집]</a></span>
+                </div>
+                <div class="nav-template-content">
+                    <table class="nav-template-table">
+                        <tr>
+                            <th rowspan="2">국립</th>
+                            <td class="nav-template-sub-th">ㄷ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('덕남대학교.html')" class="nav-item">국립덕남대학교</a>
+                                    <a onclick="goToLink('덕주교육대학교.html')" class="nav-item">덕주교육대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅎ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('한국국방과학기술대학교.html')" class="nav-item">한국국방과학기술대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th rowspan="1">공립</th>
+                            <td class="nav-template-sub-th">ㄷ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('덕남도립대학.html')" class="nav-item">덕남도립대학</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th rowspan="5">사립</th>
+                            <td class="nav-template-sub-th">ㄴ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('낙주대학교.html')" class="nav-item">낙주대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㄷ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('덕빈보건대학.html')" class="nav-item">덕빈보건대학</a>
+                                    <a onclick="goToLink('덕빈폴리텍대학.html')" class="nav-item">덕빈폴리텍대학</a>
+                                    <a onclick="goToLink('덕주대학교.html')" class="nav-item">덕주대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅁ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('마진해양대학교.html')" class="nav-item">마진해양대학</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅂ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('방산대학교.html')" class="nav-item nav-current">방산대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅇ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('엽월대학교.html')" class="nav-item">엽월대학교 덕남캠퍼스</a>
+                                    <a onclick="goToLink('인곡과학대학.html')" class="nav-item">인곡과학대학</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 그라데이션 박스와 접기 틀 -->
+            <div class="gradient-box">
+                <!-- 학교 로고/심볼 이미지 -->
+                <img src="이미지/방산대학교_UI.svg" alt="방산대학교 로고" style="width: 250px; display: inline-block;" onerror="this.src='https://via.placeholder.com/250x80?text=Bangsan+University';">
+            </div>
+            
+            <details>
+                <summary></summary>
+                <div class="p-2 border border-t-0 bg-white">
+                    <table class="wiki-table" style="margin: 0; width: 100%;">
+                        <tr>
+                            <td colspan="4" class="text-center font-bold text-white" style="background-color: var(--wiki-main);">대학 정보</td>
+                        </tr>
+                        <tr>
+                            <td class="wiki-table-center"><a onclick="goToLink('방산대학교_개요.html')" class="wiki-link text-[var(--wiki-main)]">개요</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('방산대학교_역사.html')" class="wiki-link text-[var(--wiki-main)]">역사 및 상징</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('방산대학교_학부.html')" class="wiki-link text-[var(--wiki-main)]">학부 및 학과</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('방산대학교_캠퍼스.html')" class="wiki-link text-[var(--wiki-main)]">캠퍼스 및 상권</a></td>
+                        </tr>
+                         <tr>
+                            <td colspan="4" class="text-center font-bold text-white" style="background-color: var(--wiki-main);">기타 정보</td>
+                        </tr>
+                        <tr>
+                            <td class="wiki-table-center"><a onclick="goToLink('방산대학교_입시.html')" class="wiki-link text-[var(--wiki-main)]">입시 및 위상</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('방산대학교_출신인물.html')" class="wiki-link text-[var(--wiki-main)]">출신 인물</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('방산대학교_여담.html')" class="wiki-link text-[var(--wiki-main)]">여담</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('서중읍.html')" class="wiki-link text-[var(--wiki-main)]">소재지(서중읍)</a></td>
+                        </tr>
+                    </table>
+                </div>
+            </details>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="infobox-header">
+                    방산대학교<br>
+                    <span class="text-sm font-normal">Bangsan University</span>
+                </div>
+                <div class="p-4 bg-white text-center border-b">
+                    <!-- 엠블럼 이미지 -->
+                    <div class="w-full flex justify-center py-4">
+                        <img src="이미지/방산대학교_UI.svg" alt="방산대학교 UI" class="w-48" onerror="this.src='https://via.placeholder.com/150?text=BU';">
+                    </div>
+                </div>
+                <table>
+                    <tr><th>교훈</th><td>방산(防産)의 지성, 국가의 미래</td></tr>
+                    <tr><th>개교</th><td>1972년 11월 12일</td></tr>
+                    <tr><th>성격</th><td><a onclick="goToLink('사립대학.html')" class="wiki-link">사립</a> 종합대학</td></tr>
+                    <tr><th>상징</th><td>사자(동물), 소나무(목), 철쭉(화)</td></tr>
+                    <tr><th>교색</th><td>
+                         <span style="display:inline-block; width:15px; height:15px; background:var(--wiki-main); border:1px solid #ccc; vertical-align:middle;"></span> 방산 라이온 레드 (#A31D1D)<br>
+                         <span style="display:inline-block; width:15px; height:15px; background:var(--wiki-sub); border:1px solid #ccc; vertical-align:middle; margin-top:2px;"></span> 서중 샌드 골드 (#D4AF37)
+                    </td></tr>
+                    <tr><th>국가</th><td><a onclick="goToLink('대한민국.html')" class="wiki-link">대한민국</a></td></tr>
+                    <tr><th>소재지</th><td><a onclick="goToLink('덕빈남도.html')" class="wiki-link">덕빈남도</a> <a onclick="goToLink('방산시.html')" class="wiki-link">방산시</a> <a onclick="goToLink('서중읍.html')" class="wiki-link">서중읍</a> 대학로 10</td></tr>
+                    <tr><th>재적생</th><td>약 8,500명 <span class="text-xs text-gray-500">(2025년 기준)</span></td></tr>
+                    <tr><th>웹사이트</th><td><a href="https://www.bangsan.ac.kr" target="_blank" class="wiki-link">공식 홈페이지</a></td></tr>
+                </table>
+                <div class="w-full bg-[#f9f9f9] border-t border-b">
+                    <div class="infobox-map" style="width: 100%; height: 250px; overflow: hidden; position: relative; display: block !important;">
+                        <iframe src="https://binia1.github.io/mymap/?name=방산대학교" 
+                                style="width: 160%; height: 160%; border: none; 
+                                       position: absolute; top: 0; left: 0;
+                                       transform: scale(0.625); transform-origin: 0 0;">
+                        </iframe>
+                    </div>
+                    <div style="padding: 5px; text-align: center; background: #eee; font-size: 0.8rem; color: #666;">
+                        방산대학교 캠퍼스 맵 (인터랙티브)
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1 w-full lg:w-auto">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">상징</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">역사</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">학부 및 개설 학과</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">캠퍼스 및 주변 상권</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">입시 및 위상 (해양대보다는 낫다!)</a></li>
+                    <li>7. <a href="#s-7" class="wiki-link">출신 인물</a></li>
+                    <li>8. <a href="#s-8" class="wiki-link">여담</a></li>
+                    <li>9. <a href="#s-9" class="wiki-link">관련 문서</a></li>
+                    <li>10. <a href="#s-10" class="wiki-link">둘러보기</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <p>대한민국 <a onclick="goToLink('덕빈남도.html')" class="wiki-link">덕빈남도</a> <a onclick="goToLink('방산시.html')" class="wiki-link">방산시</a> <a onclick="goToLink('서중읍.html')" class="wiki-link">서중읍</a>에 위치한 4년제 종합 <a onclick="goToLink('사립대학.html')" class="wiki-link">사립대학</a>. 약칭은 <strong>방산대</strong>.</p>
+        <p>방산시의 산업 동력과 함께 성장해온 지역 거점 사립대다. 과거에는 법학과와 행정학과를 필두로 덕남권 정계를 주름잡던 시절이 있었으나, 최근에는 학령인구 감소의 직격탄을 맞고 있다. 하지만 "옆 동네 배 타는 학교(<a onclick="goToLink('마진해양대학교.html')" class="wiki-link">마진해양대학교</a>)보다는 그래도 우리가 입결이 높다"는 자부심으로 버티는 중이다. (...) <del>도토리 키재기</del></p>
+
+        <!-- 2. 상징 -->
+        <h2 id="s-2" class="anchor-offset">2. 상징</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>교조: 사자</strong> - 방산시를 지키는 맹수의 기상을 상징한다. 정문에 사자 동상이 있는데 <strong>시험 기간만 되면 학생들이 머리 위에 캔커피를 올리고 기도를 한다.</strong> <del>도서관에 앉아있는 것보다 캔커피 조공이 효험이 좋다고 한다</del></li>
+            <li><strong>교목: 소나무</strong> - 척박한 땅에서도 푸름을 잃지 않는 선비 정신을 의미한다.</li>
+            <li><strong>교화: 철쭉</strong> - 방산시의 시화와 동일하다.</li>
+        </ul>
+
+        <!-- 3. 역사 -->
+        <h2 id="s-3" class="anchor-offset">3. 역사</h2>
+        <p>1972년 방산 공업 단지의 배후 인력 양성을 목적으로 개교했다. 1980년대 종합대학교로 승격되면서 전성기를 누렸으며, 특히 법조인과 고위 공무원 배출에서 두각을 나타냈다. 최근에는 스마트 국방 공학 등 시대에 맞춘 학과 개편으로 거센 폐교의 파도를 피해 필사적인 생존을 도모하고 있다.</p>
+
+        <!-- 4. 학부 및 개설 학과 -->
+        <h2 id="s-4" class="anchor-offset">4. 학부 및 개설 학과</h2>
+        <p>전통적인 인문·사회 계열의 힘이 강하지만, 공학 계열의 취업률이 점차 대학을 먹여 살리는 중이다.</p>
+        
+        <table class="wiki-table">
+            <tr>
+                <th width="30%">단과대학</th>
+                <th width="70%">소속 학부 및 학과</th>
+            </tr>
+            <tr>
+                <td class="wiki-table-center font-bold text-[var(--wiki-main)]">법정대학 (간판)</td>
+                <td><strong>법학과, 행정학과, 정치외교학과</strong> <del>덕남권 정계 진출의 패스파인더</del></td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center font-bold">경상대학</td>
+                <td>경영학과, 경제학과, 회계학과</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center font-bold">사회과학대학</td>
+                <td>사회학과, 심리학과, 신문방송학과</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center font-bold text-[var(--wiki-main)]">공과대학</td>
+                <td><strong>방산기계공학과, 컴퓨터공학과, 전자공학과</strong> <del>방산대 재정의 실질적 소년가장</del></td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center font-bold">인문예술대학</td>
+                <td>국어국문학과, 영어영문학과, 시각디자인학과</td>
+            </tr>
+        </table>
+
+        <!-- 5. 캠퍼스 및 주변 상권 -->
+        <h2 id="s-5" class="anchor-offset">5. 캠퍼스 및 주변 상권</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>캠퍼스:</strong> <a onclick="goToLink('방산시.html')" class="wiki-link">방산시</a> <a onclick="goToLink('서중읍.html')" class="wiki-link">서중읍</a> 평지에 위치해 있다. 등산의 고통이 없는 평지 캠퍼스라는 점이 큰 장점이다.</li>
+            <li><strong>교통:</strong> 서중읍 소재지라 시내버스가 꽤 자주 다닌다. <a onclick="goToLink('덕남대학교.html')" class="wiki-link">국립덕남대학교</a> 통학버스가 지나가면 묘한 경쟁 의식을 느낀다는 학생들도 있다. <del>물론 덕남대생들은 별 생각 없이 버스 안에서 자고 있다</del></li>
+            <li><strong>상권:</strong> 정문 앞은 이른바 <strong>'서중 대학로'</strong>로 불리며, 방산시에서 가장 젊은 층이 많이 모이는 핫플레이스다. 인근 공단 근로자들과 대학생들이 섞여 밤이면 불야성을 이룬다.</li>
+        </ul>
+
+        <!-- 6. 입시 및 위상 -->
+        <h2 id="s-6" class="anchor-offset">6. 입시 및 위상 (해양대보다는 낫다!)</h2>
+        <blockquote>
+            <strong>"예전만 못해도 사립 중엔 방산대지!"</strong>
+        </blockquote>
+        <p>입결이 예전에 비해 떡락했다는 사실은 재학생들도 인정하는 뼈아픈 진실이다. (...) 하지만 덕남권 사립대 서열 싸움에서는 항상 우위를 점하고 있다.</p>
+        <p>특히 경쟁 학교인 <strong><a onclick="goToLink('마진해양대학교.html')" class="wiki-link">마진해양대학교</a></strong>가 신입생 충원에 허덕이며 미달의 늪에 빠질 때, 방산대는 여전히 높은 충원율을 보여주며 <strong>"우리는 아직 살아있다"</strong>는 것을 증명 중이다. 수험생 커뮤니티에서는 "덕남대 안 되면 <a onclick="goToLink('낙주대학교.html')" class="wiki-link">낙주대</a>나 방산대 가라"는 말이 공식처럼 통한다.</p>
+
+        <!-- 7. 출신 인물 -->
+        <h2 id="s-7" class="anchor-offset">7. 출신 인물</h2>
+        <p>방산 지역구는 물론이고 낙주, 원안, 마진까지 진출한 정계 아웃풋이 빵빵하다.</p>
+        
+        <div class="overflow-x-auto">
+            <table class="wiki-table text-sm" style="min-width: 1400px;">
+                <tr>
+                    <th>광역자치단체</th>
+                    <th>선거구</th>
+                    <th>정당(변천사)</th>
+                    <th>국회의원(단체장)</th>
+                    <th>선수</th>
+                    <th>역임 대수</th>
+                    <th>생년월일</th>
+                    <th>출신지 (시대 고증 반영)</th>
+                    <th>출신고교</th>
+                    <th>출신대학</th>
+                    <th>출신학과</th>
+                    <th>비고</th>
+                    <th>오시(?)</th>
+                    <th>현재 재임상태</th>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">덕빈남도</td>
+                    <td class="wiki-table-center">방산·석창 갑</td>
+                    <td class="wiki-table-center">더불어민주당</td>
+                    <td class="wiki-table-center font-bold">최한기</td>
+                    <td class="wiki-table-center">2선</td>
+                    <td class="wiki-table-center">20~21대</td>
+                    <td class="wiki-table-center">1974-05-20</td>
+                    <td class="wiki-table-center">덕남 방산시 냉천면 화전리</td>
+                    <td class="wiki-table-center">방산고</td>
+                    <td class="wiki-table-center">방산대</td>
+                    <td class="wiki-table-center">사회학과</td>
+                    <td class="wiki-table-center">21대 미기재분 반영</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center text-gray-500">전직</td>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">덕빈남도</td>
+                    <td class="wiki-table-center">마진·분주</td>
+                    <td class="wiki-table-center">더불어민주당</td>
+                    <td class="wiki-table-center font-bold">박상훈</td>
+                    <td class="wiki-table-center">1선</td>
+                    <td class="wiki-table-center">20대</td>
+                    <td class="wiki-table-center">1973-09-15</td>
+                    <td class="wiki-table-center">덕남 마진시 팔현면 용천리</td>
+                    <td class="wiki-table-center">마진고</td>
+                    <td class="wiki-table-center">방산대</td>
+                    <td class="wiki-table-center">경영학과</td>
+                    <td class="wiki-table-center">마진 출신 방산대 인재의 대표 격</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center text-gray-500">전직</td>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">덕빈남도</td>
+                    <td class="wiki-table-center">낙주·원안 을</td>
+                    <td class="wiki-table-center">통합민주당</td>
+                    <td class="wiki-table-center font-bold">이명수</td>
+                    <td class="wiki-table-center">1선</td>
+                    <td class="wiki-table-center">18대</td>
+                    <td class="wiki-table-center">1957-09-09</td>
+                    <td class="wiki-table-center">덕남 원안군 소궁면 덕천리</td>
+                    <td class="wiki-table-center">소궁고</td>
+                    <td class="wiki-table-center">방산대</td>
+                    <td class="wiki-table-center">행정학과</td>
+                    <td class="wiki-table-center">원안 지역 인재 출신</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center text-gray-500">전직</td>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">덕빈남도</td>
+                    <td class="wiki-table-center">방산·석창 갑</td>
+                    <td class="wiki-table-center">열린우리당</td>
+                    <td class="wiki-table-center font-bold">강상현</td>
+                    <td class="wiki-table-center">1선</td>
+                    <td class="wiki-table-center">17대</td>
+                    <td class="wiki-table-center">1954-02-11</td>
+                    <td class="wiki-table-center">덕남 방산시 서중읍 월평리</td>
+                    <td class="wiki-table-center">서중고</td>
+                    <td class="wiki-table-center">방산대</td>
+                    <td class="wiki-table-center">법학과</td>
+                    <td class="wiki-table-center">방산대 법학 전성기 세대</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center text-gray-500">전직</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 8. 여담 -->
+        <h2 id="s-8" class="anchor-offset">8. 여담</h2>
+        <ul class="list-disc pl-5">
+            <li>캠퍼스 전설에 따르면, 축제 때 <a onclick="goToLink('마진해양대학교.html')" class="wiki-link">마진해양대</a> 학생들이 원정을 오면 <strong>학생회가 사자 동상을 앞세워(?) 쫓아낸다</strong>는 우스갯소리가 있다. <del>포세이돈과 라이온 킹의 웅장한 대결</del></li>
+            <li>최한기 의원이 낙선한 이후, 사회학과 후배들 사이에서 "방산대의 시대는 끝났는가"라는 자조적인 농담이 돌기도 했으나, 여전히 지역 유지들 중 방산대 출신이 수두룩해서 든든하다는 평이다. <del>끝난 지가 언젠데 새삼스레</del></li>
+        </ul>
+
+        <!-- 9. 관련 문서 -->
+        <h2 id="s-9" class="anchor-offset">9. 관련 문서</h2>
+        <ul class="list-disc pl-5">
+            <li><a onclick="goToLink('방산시.html')" class="wiki-link">방산시</a></li>
+            <li><a onclick="goToLink('서중읍.html')" class="wiki-link">서중읍</a></li>
+            <li><a onclick="goToLink('덕빈남도.html')" class="wiki-link">덕빈남도</a></li>
+            <li><a onclick="goToLink('덕남대학교.html')" class="wiki-link">국립덕남대학교</a></li>
+            <li><a onclick="goToLink('마진해양대학교.html')" class="wiki-link">마진해양대학교</a></li>
+        </ul>
+
+        <!-- 10. 둘러보기 -->
+        <h2 id="s-10" class="anchor-offset">10. 둘러보기</h2>
+        <div class="nav-box shadow-sm mt-5">
+            <div class="nav-box-header">덕빈남도의 주요 대학교</div>
+            <div class="nav-box-content leading-loose text-sm">
+                <a onclick="goToLink('덕남대학교.html')" class="nav-item"><span class="wiki-link">국립덕남대학교</span></a> ·
+                <a onclick="goToLink('덕주교육대학교.html')" class="nav-item"><span class="wiki-link">덕주교육대학교</span></a> ·
+                <a onclick="goToLink('덕주대학교.html')" class="nav-item"><span class="wiki-link">덕주대학교</span></a> ·
+                <a onclick="goToLink('낙주대학교.html')" class="nav-item"><span class="wiki-link">낙주대학교</span></a> ·
+                <a onclick="goToLink('방산대학교.html')" class="nav-item"><span class="wiki-link font-bold">방산대학교</span></a> ·
+                <a onclick="goToLink('마진해양대학교.html')" class="nav-item"><span class="wiki-link">마진해양대학교</span></a>
+            </div>
+        </div>
+
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2">
+                이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다.<br>
+                효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 검색 기능 핸들러
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(query)}`, '_blank');
+            } else {
+                showMsg('검색어를 입력해주세요.');
+            }
+        }
+
+        // 메시지 박스 표시 함수
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        // 링크 이동 핸들러
+        async function goToLink(filename) {
+            if (filename.startsWith('#')) return;
+
+            const namuKeywords = ['대한민국', '국립대학', '사립대학', '공립대학', '전문대학', '거점국립대학교', '교육대학', '종합대학', '특수목적대학', '해양특성화대학', '더불어민주당', '국민의힘', '열린우리당', '통합민주당', '민주당', '자민련'];
+            const pureName = filename.replace('.html', '').replace(/_/g, ' ');
+            
+            if (namuKeywords.includes(pureName) || filename.includes('namu.wiki')) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(pureName)}`, '_blank');
+                return;
+            }
+
+            try {
+                location.href = filename;
+            } catch (e) {
+                showMsg('문서를 찾을 수 없습니다.');
+            }
+        }
+        
+        // 목차 및 내부 링크 스무스 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (!targetId || targetId === '#') return;
+
+                e.preventDefault();
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, 
+                        behavior: 'smooth'
+                    });
+                    
+                    targetElement.style.transition = 'background 0.5s';
+                    targetElement.style.backgroundColor = '#fff3cd';
+                    setTimeout(() => { targetElement.style.backgroundColor = 'transparent'; }, 1500);
+                }
+            });
+        });
+
+        // --- 각주 툴팁 호버보드 로직 ---
+        const tooltip = document.getElementById('wiki-fn-tooltip');
+        const footnotes = document.querySelectorAll('.wiki-fn');
+
+        footnotes.forEach(fn => {
+            fn.addEventListener('mouseenter', (e) => {
+                const targetId = fn.getAttribute('href').substring(1); 
+                const contentEl = document.getElementById(targetId);
+                
+                if (contentEl) {
+                    tooltip.innerHTML = contentEl.innerHTML;
+                    const backLink = tooltip.querySelector('.wiki-fn-back');
+                    if(backLink) {
+                        backLink.style.display = 'none'; 
+                    }
+                    tooltip.style.display = 'block';
+                }
+            });
+
+            fn.addEventListener('mousemove', (e) => {
+                const x = e.clientX + 15;
+                const y = e.clientY + 15;
+                
+                const tooltipRect = tooltip.getBoundingClientRect();
+                let finalX = x;
+                let finalY = y;
+
+                if (x + tooltipRect.width > window.innerWidth) {
+                    finalX = e.clientX - tooltipRect.width - 10;
+                }
+                if (y + tooltipRect.height > window.innerHeight) {
+                    finalY = e.clientY - tooltipRect.height - 10;
+                }
+
+                tooltip.style.left = finalX + 'px';
+                tooltip.style.top = finalY + 'px';
+            });
+
+            fn.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

@@ -1,0 +1,533 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>덕빈 방언 변환기 Ultimate (양방향)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f4f5f7; color: #333; }
+        .header-bg { background: linear-gradient(135deg, #7B1FA2, #4A148C); }
+        textarea { resize: none; font-size: 1.15rem; line-height: 1.6; }
+        .dict-badge {
+            display: inline-block; background-color: #f3e5f5; color: #7B1FA2;
+            padding: 6px 14px; border-radius: 20px; font-size: 0.9rem; font-weight: bold;
+            margin: 5px 4px; border: 1px solid #e1bee7; cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .dict-badge:hover { background-color: #7B1FA2; color: #fff; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .category-label { font-size: 0.95rem; font-weight: 900; color: #4A148C; margin: 20px 0 10px; border-bottom: 2px solid #e1bee7; display: inline-block; padding-bottom: 2px; }
+        .switch-btn {
+            background-color: #f3e5f5; color: #7B1FA2; border: 2px solid #ce93d8;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .switch-btn:hover {
+            background-color: #7B1FA2; color: white; transform: rotate(180deg) scale(1.1); border-color: #7B1FA2;
+        }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body class="min-h-screen flex flex-col">
+    <header class="header-bg text-white p-4 shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl cursor-pointer" onclick="location.href='덕빈방언.html'" title="위키로 돌아가기">🔙</span>
+                <h1 class="text-2xl font-black tracking-tight">덕빈 방언 변환기 <span class="text-yellow-400">ULTIMATE</span></h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="덕빈방언.html" class="text-sm font-bold hover:underline hidden sm:block mr-2">효빈위키 본문 보기</a>
+                <div class="text-sm bg-black/20 px-3 py-1 rounded-full hidden sm:block font-bold">HyobinWiki Engine v8.1 (고도화 모델)</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl mx-auto w-full p-4 flex flex-col gap-5 mt-4">
+        <!-- 상단 컨트롤러 -->
+        <div class="flex flex-wrap items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+            <div class="flex items-center gap-4 mb-2 sm:mb-0">
+                <div id="lang-left" class="font-bold text-gray-700 w-28 text-center bg-gray-100 py-2 rounded-lg transition-colors">표준어</div>
+                
+                <!-- 방향 전환 버튼 -->
+                <button onclick="toggleDirection()" class="switch-btn w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl shadow-sm" title="변환 방향 바꾸기">
+                    🔄
+                </button>
+                
+                <div id="lang-right" class="font-bold text-purple-700 w-28 text-center bg-purple-100 py-2 rounded-lg transition-colors">덕빈 방언</div>
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <button onclick="clearAll()" class="flex-1 sm:flex-none bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-lg transition-colors">지우기</button>
+                <button onclick="translateText()" class="flex-1 sm:flex-none bg-purple-700 hover:bg-purple-800 text-white font-bold py-2 px-10 rounded-lg shadow-md transition-colors">변환하기</button>
+            </div>
+        </div>
+
+        <!-- 번역 영역 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[350px] lg:h-[450px]">
+            <!-- 입력창 -->
+            <div class="flex flex-col bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden relative">
+                <div class="p-3 border-b bg-gray-50 flex justify-between items-center">
+                    <span id="src-label" class="text-sm font-bold text-gray-600">표준어 입력 (문맥 인지 고도화)</span>
+                    <span class="text-xs text-gray-400">여기에 타이핑하샤</span>
+                </div>
+                <textarea id="src" class="flex-grow p-6 focus:outline-none bg-transparent" placeholder="예: 야 이 쓰레기 새끼야! 진짜 어이없네. 혼자 겉돌지 말고 빨리 와서 맛있는 거 먹자. 미안해하지 말고!" oninput="translateText()"></textarea>
+            </div>
+            
+            <!-- 출력창 -->
+            <div class="flex flex-col bg-purple-50/50 rounded-xl shadow-sm border border-purple-200 overflow-hidden relative">
+                <div class="p-3 border-b bg-purple-100/60 flex justify-between items-center">
+                    <span id="target-label" class="text-sm font-bold text-purple-800">덕빈 방언 결과</span>
+                    <button onclick="copyToClipboard()" class="text-xs font-bold bg-purple-700 text-white hover:bg-purple-800 px-3 py-1 rounded-full transition-colors shadow-sm">복사하기</button>
+                </div>
+                <textarea id="target" class="flex-grow p-6 focus:outline-none bg-transparent text-purple-900 font-bold" placeholder="변환 결과가 요기에 뜬당구마..." readonly></textarea>
+            </div>
+        </div>
+
+        <!-- 마스터 사전 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 overflow-y-auto max-h-[400px]">
+            <h3 class="text-xl font-black border-b pb-3 mb-4 text-gray-800">📖 덕빈어 마스터 사전 <span class="text-sm font-normal text-gray-500 ml-2">(단어 클릭 시 자동 입력)</span></h3>
+            
+            <div class="category-label">🎸 록/걸밴드 & 기타 판타지 기적의 어간 <span class="text-xs text-red-500 font-bold ml-1">[NEW]</span></div>
+            <div class="text-xs text-gray-500 mb-2">봇치, 케이온, 걸밴크, 프리렌 등에서 차용한 듯 하지만 절묘하게 자연스러운 방언들</div>
+            <div id="band-badges" class="mb-4 flex flex-wrap"></div>
+
+            <div class="category-label">📺 아이돌물 & 일상물 기적의 매칭 어간</div>
+            <div id="anime-badges" class="mb-4 flex flex-wrap"></div>
+            
+            <div class="category-label">🌊 고유 토속어 & 일상어</div>
+            <div id="native-badges" class="mb-4 flex flex-wrap"></div>
+
+            <div class="category-label">🔥 흑역사 욕설 & 전용 필터링</div>
+            <div id="lore-badges" class="mb-4 flex flex-wrap"></div>
+        </div>
+    </main>
+
+    <script>
+        let isReversed = false;
+
+        // 고도화된 정규식: 단어 경계(\b)와 후방탐색/전방탐색을 활용하여 조사와 어미가 자연스럽게 붙도록 개선
+        const stdToDeokRules = [
+            // 강력 욕설 (우선순위 최상)
+            { r: /(씨발롬|씨벌롬|씨\*발롬|시발롬|씨발새끼|씨벌새끼|개새끼|쌍놈의\s*새끼|병신\s*새끼)/g, t: "윤대환같은 놈" },
+            { r: /(씨발년|씨벌년|씨\*발년|썅년|개썅년|미친년)/g, t: "윤대환같은 것" },
+            { r: /(쓰레기\s*새끼|쓰레기\s*같은\s*놈|미친\s*새끼|나쁜\s*새끼)/g, t: "대환같은 놈" },
+            { r: /도둑(?:놈|년|새끼)?/g, t: "제미나이" },
+            { r: /이\s*자식(?:아|이)?/g, t: "에미나이" },
+            { r: /지랄(?=하네|한다|떨고|하고|염병)/g, t: "씨나락" },
+            { r: /(닥쳐|시끄러워|입\s*다물어)/g, t: "나발이 닥치샤" },
+            { r: /(존나|개)(빡치네|빡친다|짜증나네|짜증난다)/g, t: "마기 폭폭하당구마" },
+            { r: /섹스/g, t: "뜩스" },
+            { r: /(씨발|시발|존나|개썅|개)(?!\s*(같은|새끼|년|롬|놈|안))/g, t: "윤대환 " },
+
+            // 일상어 및 어미 고도화 (조사 분리 및 어간 매칭)
+            { r: /안녕(?:하세요|하십니까|)/g, t: "오샤!" },
+            { r: /수고하(?:십니다|세요|셨습니다)/g, t: "수고하당구마" },
+            { r: /(감사|고맙)(?:합니다|해요|다)/g, t: "고맙당구마" },
+            { r: /미안해(?:요)?|죄송해(?:요)?/g, t: "미안시롱" },
+            { r: /오랜만이야|오랜만이네/g, t: "오랫만이드라고" },
+
+            // 불규칙 활용 고도화 (앞뒤 문맥 고려)
+            { r: /귀여(?:워|웠)(?:요|어|)\?/g, t: "니껍뎌?" }, 
+            { r: /귀여(?:워|웠)(?:요|다|어)/g, t: "니껍다냐" }, 
+            { r: /귀엽(?:다|고|네|지|게)/g, t: "니껍$&".replace('귀엽', '') }, 
+            { r: /귀여운/g, t: "니껍다" },
+            
+            { r: /(부드러|포근해|포근하)(?:워|웠|지)(?:요|어|)\?/g, t: "보돕뎌?" }, 
+            { r: /(부드러|포근해)(?:워|웠)(?:요|다|어)/g, t: "보돕다냐" },
+            { r: /(부드럽|포근하)(?:다|고|네|지|게)/g, t: "보돕$&".replace(/부드럽|포근하/, '') }, 
+            { r: /(부드러운|포근한)/g, t: "보돕다" },
+            
+            { r: /(예뻐|이뻐|아름다워)(?:요|어|)\?/g, t: "미아하뎌?" }, 
+            { r: /(예뻐|이뻐|아름다워)(?:요|다|어)/g, t: "미아하다냐" },
+            { r: /(예쁘|이쁘|아름답)(?:다|고|네|지|게)/g, t: "미아하$&".replace(/예쁘|이쁘|아름답/, '') }, 
+            { r: /(예쁜|이쁜|아름다운)/g, t: "미아하" },
+            
+            { r: /(속상해|짜증나)(?:요|어|)\?/g, t: "폭폭하뎌?" }, 
+            { r: /(속상해|짜증나)(?:요|다|어)/g, t: "폭폭하다냐" }, 
+            { r: /(속상하|짜증나)(?:다|고|네|지|게)/g, t: "폭폭하$&".replace(/속상하|짜증나/, '') },
+
+            { r: /최악이(?:야|에요|냐)\?/g, t: "대환같뎌?" }, 
+            { r: /최악이(?:다|네|야|에요)/g, t: "대환같당구마" },
+            { r: /무리하(?:게|여|네|다|고)/g, t: "두청하$&".replace('무리하', '') }, 
+            { r: /망했(?:어|다|네|지)/g, t: "어간졌$&".replace('망했', '') },
+            { r: /망하(?:네|고|지)/g, t: "어간지$&".replace('망하', '') },
+            
+            // '씨겨버리다' (죽여버리다/박살내다/가만 안 두다) 활용형 전면 확장
+            { r: /(죽여\s*버렸|박살\s*냈|가만\s*안\s*뒀)(다|어|네|지|고)/g, t: "씨겨부렀$2" },
+            { r: /(죽여\s*버리|박살\s*내\s*버리|가만\s*안\s*두)(겠|고|네|지|다|까|자|는)/g, t: "씨겨버리$2" },
+            { r: /(죽여\s*버릴|박살\s*낼|가만\s*안\s*둘)/g, t: "씨겨버릴" },
+            { r: /(죽여\s*버려|박살\s*내|가만\s*안\s*둬)(요|야지|라)?/g, t: "씨겨버려$2" },
+            { r: /(죽여\s*버린|박살\s*낸)/g, t: "씨겨버린" },
+            { r: /(죽일|죽인|죽이)(다|네|고|지|까|는)/g, t: "씨길$2" },
+
+            { r: /민폐(?:를)?\s*끼치/g, t: "갑수치" },
+            { r: /꼬였(?:어|다|네)/g, t: "노선꼬여불당구마" },
+            { r: /개노답/g, t: "어간진 놈" },
+
+            // 조사 및 부사 자연스러운 연결
+            { r: /어떻게|어떡해|어캐/g, t: "워째" }, 
+            { r: /왜(?=\s)|어째서(?=\s)/g, t: "뭣하러" },
+            { r: /빨리(?:빨리)?|얼른|어서|냉큼/g, t: "퍼뜩" }, 
+            { r: /갑자기|문득/g, t: "해까닥" },
+            { r: /진짜(?:로)?|정말(?:로)?|참말로/g, t: "마기" }, 
+            { r: /엄청(?:나게)?|되게|너무|허벌나게|무지하게/g, t: "허벌나게" },
+            { r: /조금|약간|좀/g, t: "쪼까" }, 
+            { r: /어디(?:에|로)/g, t: "어디메로" },
+            { r: /이쪽으로|이리로/g, t: "이 짝으로" },
+            { r: /이리\s*와|일로\s*와/g, t: "퍼뜩 오샤" }, 
+            { r: /거짓말|구라/g, t: "그짓말" },
+            { r: /아주|영락없이/g, t: "영락없이" },
+            { r: /이것(?:봐)|저것(?:봐)/g, t: "요거 보샤" },
+            { r: /괜찮(?:아|다|네|지)/g, t: "개안$&".replace('괜찮', '') },
+            { r: /맛있(?:다|어|네|지)/g, t: "개미가 기깔난$&".replace('맛있', '') },
+            { r: /많(?:다|아|네|지)/g, t: "천지삐까리$&".replace('많', '') },
+            
+            // 밴드/애니 어간 치환 (조사가 뒤에 붙을 수 있도록)
+            { r: /혼자\s*겉돌|외톨이\s*같/g, t: "보치하" },
+            { r: /눈치\s*빠르|싹싹하/g, t: "니지카" },
+            { r: /빈대\s*붙|돈\s*떼먹|엉뚱하/g, t: "료하" },
+            { r: /눈부시|인싸\s*같/g, t: "기타하" },
+            { r: /술주정\s*부리|만취하/g, t: "히로이하" },
+            { r: /태평하|게으르/g, t: "유이하" },
+            { r: /부끄럼\s*타|수줍어하/g, t: "미오하" },
+            { r: /장난\s*치|까불/g, t: "리츠하" },
+            { r: /힘이\s*장사|힘\s*세/g, t: "무기하" },
+            { r: /아주\s*야무지|똑부러지/g, t: "아주사하" },
+            { r: /독기\s*품|들이받/g, t: "니나하" },
+            { r: /차갑게\s*끊어내|냉정하/g, t: "도모하" },
+            { r: /아재개그\s*치|속을\s*모르/g, t: "루파하" },
+            { r: /정겹|할매\s*같/g, t: "스바루하" },
+            { r: /세월아\s*네월아|미적거리/g, t: "부리련하" },
+            { r: /도망치|런\s*하/g, t: "니게하" },
+            { r: /뾰로통하|볼\s*부풀리/g, t: "페른하" },
+            { r: /센\s*척하|허세\s*부리/g, t: "수타르하" },
+            { r: /잘생긴\s*척하/g, t: "히멜하" },
+            { r: /농땡이\s*피우|여유부리/g, t: "방가후하" },
+            { r: /3배\s*빠르/g, t: "사야하" },
+            { r: /가만히|조용히/g, t: "가논" }, 
+            { r: /꼼꼼하게|자세히/g, t: "구구하게" }, 
+            { r: /야무지(?:게|다|고|네)/g, t: "냐무지$&".replace('야무지', '') }, 
+            { r: /동글동글하/g, t: "치삿하" }, 
+            { r: /차가운\s*바람이\s*스며들/g, t: "스미레하" },
+            { r: /길고\s*길(?:다|어|고)/g, t: "기나고하$&".replace(/길고\s*길/, '') }, 
+            { r: /벅차오르|목\s*메/g, t: "메이" },
+            { r: /시기상조|이르다/g, t: "시기하당구마" }, 
+            { r: /넉살\s*좋|수완\s*좋/g, t: "낫츠하" },
+            { r: /막아(?:라|야지)/g, t: "마가레" }, 
+            { r: /끝맺음|마무리|결론/g, t: "도마리" },
+            { r: /가뿐하|상쾌하/g, t: "가호하" }, 
+            { r: /시야/g, t: "사야가" }, 
+            { r: /줄줄이|연이어|계속해서/g, t: "주즈리" },
+            { r: /빈틈을\s*메우|채워/g, t: "메구미하" }, 
+            { r: /맘껏\s*누리|즐겨/g, t: "루리노" },
+            { r: /마르고\s*꼿꼿한/g, t: "고주박이" }, 
+            { r: /다음에|나중에/g, t: "다에" }, 
+            { r: /이미|벌써/g, t: "리미" },
+            { r: /날씨가\s*맑/g, t: "사아야하" }, 
+            { r: /속을\s*알\s*수\s*없/g, t: "아리사하" },
+            { r: /강단\s*있|고집\s*있/g, t: "란하" }, 
+            { r: /목이\s*마르|갈증나/g, t: "모가 타" },
+            { r: /힘을\s*내|화이팅/g, t: "히마리 내" }, 
+            { r: /통\s*크게/g, t: "도모에" }, 
+            { r: /쭈구리고|웅크리고/g, t: "츠구미" },
+            { r: /흔하게|널려있/g, t: "히나" }, 
+            { r: /마냥/g, t: "마야" }, 
+            { r: /입구/g, t: "이브" },
+            { r: /재빨리|민첩하게/g, t: "유기나" }, 
+            { r: /싸늘하/g, t: "사요하" }, 
+            { r: /인사|예절/g, t: "리사" },
+            { r: /아궁이/g, t: "아코" }, 
+            { r: /사과|붉어지/g, t: "린고" }, 
+            { r: /골고루/g, t: "고고로" },
+            { r: /겉멋\s*들|가오\s*잡/g, t: "가오루" }, 
+            { r: /아랫구강|턱/g, t: "하구미" },
+            { r: /헛수고|소용없/g, t: "미사기" }, 
+            { r: /마음대로|멋대로/g, t: "마시로" }, 
+            { r: /돕고|도와줘|도와주/g, t: "도우고" },
+            { r: /나란히/g, t: "나나미" }, 
+            { r: /조금씩/g, t: "주구시" }, 
+            { r: /해\s*저무는|뉘엿뉘엿/g, t: "루이" },
+            { r: /라니까/g, t: "레야" }, 
+            { r: /첫\s*개시/g, t: "마수기" }, 
+            { r: /놓을까\?/g, t: "로까?" },
+            { r: /바란다오/g, t: "바레오" }, 
+            { r: /찝찝하/g, t: "추추하" }, 
+            { r: /뭉친\s*덩어리/g, t: "도모리" },
+            { r: /아늑하|평온하/g, t: "아논하" }, 
+            { r: /불안하|속이\s*꼬이/g, t: "소요하" },
+            { r: /깐깐하/g, t: "다기하" }, 
+            { r: /위쪽이/g, t: "우이가" }, 
+            { r: /묵묵히/g, t: "무주미" },
+            { r: /많아|많다/g, t: "마나" }, 
+            { r: /사기꾼/g, t: "사기꼬" }, 
+            { r: /넓고\s*시원하|탁\s*트이/g, t: "가냥하" }, 
+            { r: /깊은\s*맛|감칠맛/g, t: "우미" }, 
+            { r: /따뜻하|기분\s*좋/g, t: "호녹하" }, 
+            { r: /재수|운수/g, t: "노점이" }, 
+            { r: /기괴하|엉뚱하/g, t: "요한하" }, 
+            { r: /딱딱하/g, t: "디아" }, 
+            { r: /화사하|반짝거리/g, t: "루비하" }, 
+            { r: /마음이\s*시리|아름답/g, t: "애리" }, 
+            { r: /파고드/g, t: "구구하" }, 
+            { r: /시치미\s*떼/g, t: "시주구하" }, 
+            { r: /길을\s*잃|길\s*가리/g, t: "가린" }, 
+            { r: /아스라히\s*멀/g, t: "가나타하" }, 
+            { r: /임마|이놈아|이자식아/g, t: "엠마" }, 
+            { r: /사실대로|정직하/g, t: "시어리꼬" }, 
+            { r: /정성스럽|제대로|확실히/g, t: "리고로" }, 
+            { r: /치근덕대/g, t: "치카하" }, 
+            { r: /요란하|시끄럽/g, t: "요우하" },
+            { r: /가슴/g, t: "가스미" }, 
+            { r: /어휴|하아|아뿔싸/g, t: "아이" }, 
+            { r: /이리\s*내/g, t: "리나" },
+
+            // 명사 (문맥 파괴 방지)
+            { r: /아주머니|아줌마/g, t: "아지매" }, 
+            { r: /아저씨|아재/g, t: "아재" }, 
+            { r: /할머니|할매/g, t: "할마씨" },
+            { r: /가위/g, t: "가새" }, 
+            { r: /여우/g, t: "여시" }, 
+            { r: /고양이/g, t: "괭이" },
+            { r: /고기/g, t: "괴기" }, 
+            { r: /토끼/g, t: "퇴끼" },
+            { r: /김치/g, t: "지" }, 
+            { r: /부엌|주방/g, t: "정지" }, 
+            { r: /비닐\s*봉투|봉지/g, t: "봉저리" },
+            { r: /국수|면\s*요리|라면/g, t: "광문" }, 
+            { r: /보라색/g, t: "부라" }, 
+            { r: /잠시만|잠깐|잠깐만/g, t: "자부락" },
+            { r: /가득/g, t: "하니요" }, 
+            { r: /어처구니\s*없(?:다|네)/g, t: "얼척없당구마" }, 
+            { r: /어처구니/g, t: "얼척" }, 
+            { r: /싸가지/g, t: "느자구" },
+            { r: /바보|멍청이/g, t: "모지랭이" }, 
+            { r: /의사\s*선생님/g, t: "으사선상님" }, 
+            { r: /선생님/g, t: "선상님" },
+            { r: /미쳤(?:다|네)/g, t: "해까닥했다냐" }, 
+            { r: /어이없(?:다|네)/g, t: "얼척없당구마" },
+            { r: /마음/g, t: "맴" },
+
+            // 문장 종결 어미 패턴 최적화 (가장 마지막에 처리)
+            { r: /하었/g, t: "했" }, 
+            { r: /하아/g, t: "해" },
+            { r: /(?:습니까|합니까|입니까|인가요|나요|가요)\?/g, t: "당구마?" },
+            { r: /(?:어요|아요|해요|예요|이에요)\?/g, t: "샤?" },
+            { r: /뭐해\?|뭐하고\s*있어\?/g, t: "뭣하랴?" }, 
+            { r: /먹었어\?|드셨어요\?/g, t: "챙기묵었뎌?" },
+            { r: /그렇지\?|맞지\?/g, t: "그라지라~" }, 
+            { r: /어쩌라고/g, t: "어쩌마둥!" },
+            { r: /([가-힣])(?:니|어|아)\?/g, t: "$1뎌?" },
+            { r: /([가-힣])(?:냐|나)\?/g, t: "$1댜?" },
+            { r: /다니까(?:요)?/g, t: "당께" },
+            { r: /니까(?:요)?/g, t: "ㄴ께로" },
+            { r: /할까(?:요)?\?/g, t: "하끄나?" },
+            { r: /(?:네|구나|군|네요)([!\.\~]*)$/gm, t: "다냐$1" },
+            { r: /(?:하십시오|하세요|합시다|해보자)([!\.\~]*)$/gm, t: "쇼셔$1" },
+            { r: /(?:해라|가라|해|가자|먹자)([!\.\~]*)$/gm, t: "그라$1" },
+            { r: /(?:습니다|합니다|입니다|해요)([!\.\~]*)$/gm, t: "당구마$1" },
+            { r: /고\s*싶(?:어|다|습니다|네|지)/g, t: "고 잡$&".replace(/고\s*싶/, '') },
+            { r: /(?:버렸|버린|버리)(?:다|어|네|지)/g, t: "부렀$&".replace(/버렸|버린|버리/, '') },
+            { r: /(피곤해|힘들어|아파|귀찮아)([!\.\~]*)$/gm, t: "$1나벼$2" },
+            { r: /(왜\s*그래|그러지\s*마)([!\.\~]*)$/gm, t: "그러시롱$2" }
+        ];
+
+        // 역방향: 덕빈 -> 표준어 고도화
+        const deokToStdRules = [
+            { r: /씨나락치고\s*자빠졌당구마/g, t: "이상한 소리하고 있네" },
+            { r: /마기\s*폭폭하당구마/g, t: "진짜 짜증나네" },
+            { r: /나발이\s*닥치샤/g, t: "입 다물어" },
+            { r: /노선꼬여불당구마/g, t: "일이 완전히 꼬였네" },
+            { r: /당구마\?/g, t: "습니까?" },
+            { r: /샤\?/g, t: "어요?" },
+            { r: /뎌\?/g, t: "었어?" },
+            { r: /댜\?/g, t: "냐?" },
+            { r: /당구마([!\.\~]*)$/gm, t: "습니다$1" },
+            { r: /쇼셔([!\.\~]*)$/gm, t: "하세요$1" },
+            { r: /다냐([!\.\~]*)$/gm, t: "구나$1" },
+            { r: /그라지라/g, t: "그렇지" },
+            { r: /그라([!\.\~]*)$/gm, t: "해라$1" },
+            { r: /당께/g, t: "다니까" },
+            { r: /ㄴ께로/g, t: "니까요" },
+            { r: /ㄴ께/g, t: "니까" },
+            { r: /하끄나\?/g, t: "할까?" },
+            { r: /고\s*잡([가-힣]*)/g, t: "고 싶$1" },
+            { r: /부렀([가-힣]*)/g, t: "버렸$1" },
+            { r: /그러시롱/g, t: "그러지 마" },
+            { r: /어쩌마둥/g, t: "어쩌라고" },
+            { r: /나벼([!\.\~]*)$/gm, t: "네$1" },
+            { r: /윤대환같은\s*놈/g, t: "나쁜 놈" },
+            { r: /대환같은\s*놈/g, t: "나쁜 놈" },
+            { r: /윤대환같은\s*것/g, t: "나쁜 사람" },
+            { r: /윤대환\s/g, t: "나쁜 " },
+            { r: /제미나이/g, t: "도둑" },
+            { r: /에미나이/g, t: "이 자식" },
+            { r: /어간진\s*놈/g, t: "개노답" },
+            { r: /갑수치/g, t: "민폐 끼치" },
+
+            // '씨겨버리다' 활용형 역번역(덕빈->표준어) 확장
+            { r: /씨겨부렀(다|어|네|지|고)/g, t: "죽여버렸$1" },
+            { r: /씨겨버리(겠|고|네|지|다|까|자|는)/g, t: "죽여버리$1" },
+            { r: /씨겨버릴/g, t: "죽여버릴" },
+            { r: /씨겨버려(요|야지|라)?/g, t: "죽여버려$1" },
+            { r: /씨겨버린/g, t: "죽여버린" },
+            { r: /씨길(다|네|고|지|까|는)/g, t: "죽일$1" },
+
+            { r: /어간지/g, t: "망하" },
+            { r: /어간졌/g, t: "망했" },
+            { r: /두청하/g, t: "무리하" },
+            { r: /보치하/g, t: "혼자 겉돌" }, { r: /니지카/g, t: "눈치 빠르" }, { r: /료하/g, t: "빈대 붙" }, { r: /기타하/g, t: "인싸 같" },
+            { r: /히로이하/g, t: "만취하" }, { r: /유이하/g, t: "태평하" }, { r: /미오하/g, t: "부끄럼 타" }, { r: /리츠하/g, t: "장난 치" },
+            { r: /무기하/g, t: "힘이 세" }, { r: /아주사하/g, t: "야무지" }, { r: /니나하/g, t: "독기 품" }, { r: /도모하/g, t: "냉정하" },
+            { r: /루파하/g, t: "아재개그 치" }, { r: /스바루하/g, t: "정겹" }, { r: /부리련하/g, t: "미적거리" }, { r: /니게하/g, t: "도망치" },
+            { r: /페른하/g, t: "뾰로통하" }, { r: /수타르하/g, t: "센 척하" }, { r: /히멜하/g, t: "잘생긴 척하" }, { r: /방가후하/g, t: "농땡이 피우" },
+            { r: /사야하/g, t: "3배 빠르" },
+            { r: /가논/g, t: "가만히" }, { r: /구구하게/g, t: "꼼꼼하게" }, { r: /냐무지/g, t: "야무지" }, { r: /치삿하/g, t: "동글동글하" },
+            { r: /스미레하/g, t: "차가운 바람이 스며들" }, { r: /기나고하/g, t: "길고 길" }, { r: /메이/g, t: "벅차오르" },
+            { r: /시기하당구마/g, t: "시기상조야" }, { r: /낫츠하/g, t: "넉살 좋" }, { r: /마가레/g, t: "막아라" }, { r: /도마리/g, t: "마무리" },
+            { r: /가호하/g, t: "상쾌하" }, { r: /사야가/g, t: "시야" }, { r: /주즈리/g, t: "줄줄이" }, { r: /메구미하/g, t: "빈틈을 메우" },
+            { r: /루리노/g, t: "맘껏 누리" }, { r: /고주박이/g, t: "마르고 꼿꼿한" }, { r: /다에/g, t: "다음에" }, { r: /리미/g, t: "이미" },
+            { r: /사아야하/g, t: "날씨가 맑" }, { r: /아리사하/g, t: "속을 알 수 없" }, { r: /란하/g, t: "고집 있" }, { r: /모가\s*타/g, t: "목이 마르" },
+            { r: /히마리\s*내/g, t: "힘을 내" }, { r: /도모에/g, t: "통 크게" }, { r: /츠구미/g, t: "쭈구리고" }, { r: /히나/g, t: "흔하게" },
+            { r: /마야/g, t: "마냥" }, { r: /이브/g, t: "입구" }, { r: /유기나/g, t: "재빨리" }, { r: /사요하/g, t: "싸늘하" },
+            { r: /리사/g, t: "인사" }, { r: /아코/g, t: "아궁이" }, { r: /린고/g, t: "사과" }, { r: /고고로/g, t: "골고루" },
+            { r: /가오루/g, t: "가오 잡" }, { r: /하구미/g, t: "턱" }, { r: /미사기/g, t: "헛수고" }, { r: /마시로/g, t: "마음대로" },
+            { r: /도우고/g, t: "도와줘" }, { r: /나나미/g, t: "나란히" }, { r: /주구시/g, t: "조금씩" }, { r: /루이/g, t: "해 저무는" },
+            { r: /레야/g, t: "라니까" }, { r: /마수기/g, t: "첫 개시" }, { r: /로까\?/g, t: "놓을까?" }, { r: /바레오/g, t: "바란다오" },
+            { r: /추추하/g, t: "찝찝하" }, { r: /도모리/g, t: "뭉친 덩어리" }, { r: /아논하/g, t: "아늑하" }, { r: /소요하/g, t: "속이 꼬이" },
+            { r: /다기하/g, t: "깐깐하" }, { r: /우이가/g, t: "위쪽이" }, { r: /무주미/g, t: "묵묵히" }, { r: /마나/g, t: "많아" },
+            { r: /사기꼬/g, t: "사기꾼" }, { r: /가냥하/g, t: "넓고 시원하" }, { r: /우미/g, t: "깊은 맛" }, { r: /호녹하/g, t: "따뜻하" },
+            { r: /노점이/g, t: "운수" }, { r: /요한하/g, t: "기괴하" }, { r: /디아/g, t: "딱딱하" }, { r: /루비하/g, t: "반짝거리" },
+            { r: /애리/g, t: "마음이 시리" }, { r: /구구하/g, t: "파고드" }, { r: /시주구하/g, t: "시치미 떼" }, { r: /가린/g, t: "길을 잃" },
+            { r: /가나타하/g, t: "아스라히 멀" }, { r: /엠마/g, t: "임마" }, { r: /시어리꼬/g, t: "사실대로" }, { r: /리고로/g, t: "제대로" },
+            { r: /치카하/g, t: "치근덕대" }, { r: /요우하/g, t: "요란하" }, { r: /가스미/g, t: "가슴" }, { r: /아이/g, t: "어휴" }, { r: /리나/g, t: "이리 내" },
+            { r: /니껍뎌\?/g, t: "귀여워?" }, { r: /니껍/g, t: "귀엽" },
+            { r: /보돕뎌\?/g, t: "포근해?" }, { r: /보돕/g, t: "포근하" },
+            { r: /미아하뎌\?/g, t: "예뻐?" }, { r: /미아하/g, t: "예쁘" },
+            { r: /폭폭하뎌\?/g, t: "속상해?" }, { r: /폭폭하/g, t: "속상하" },
+            { r: /오샤!/g, t: "안녕하세요!" }, { r: /수고하당구마/g, t: "수고하십니다" },
+            { r: /고맙당구마/g, t: "고맙습니다" }, { r: /미안시롱/g, t: "미안해" },
+            { r: /오랫만이드라고/g, t: "오랜만이네" }, { r: /워째/g, t: "어떻게" },
+            { r: /뭣하러\s/g, t: "왜 " }, { r: /퍼뜩/g, t: "빨리" }, { r: /해까닥/g, t: "갑자기" },
+            { r: /마기/g, t: "진짜" }, { r: /허벌나게/g, t: "엄청" }, { r: /쪼까/g, t: "조금" },
+            { r: /어디메로/g, t: "어디로" }, { r: /이\s*짝으로/g, t: "이쪽으로" },
+            { r: /그짓말/g, t: "거짓말" }, { r: /영락없이/g, t: "아주" },
+            { r: /요거\s*보샤/g, t: "이것 봐" }, { r: /개안/g, t: "괜찮" },
+            { r: /개미가\s*기깔난/g, t: "맛있" }, { r: /천지삐까리/g, t: "많" },
+            { r: /아지매/g, t: "아주머니" }, { r: /아재/g, t: "아저씨" }, { r: /할마씨/g, t: "할머니" },
+            { r: /가새/g, t: "가위" }, { r: /여시/g, t: "여우" }, { r: /괭이/g, t: "고양이" },
+            { r: /괴기/g, t: "고기" }, { r: /퇴끼/g, t: "토끼" }, { r: /지/g, t: "김치" },
+            { r: /정지/g, t: "부엌" }, { r: /봉저리/g, t: "비닐봉투" }, { r: /광문/g, t: "면 요리" },
+            { r: /부라/g, t: "보라색" }, { r: /자부락/g, t: "잠시만" }, { r: /하니요/g, t: "가득" },
+            { r: /얼척없당구마/g, t: "어이없네" }, { r: /얼척/g, t: "어처구니" },
+            { r: /느자구/g, t: "싸가지" }, { r: /모지랭이/g, t: "바보" },
+            { r: /으사선상님/g, t: "의사 선생님" }, { r: /선상님/g, t: "선생님" },
+            { r: /해까닥했다냐/g, t: "미쳤네" }, { r: /맴/g, t: "마음" },
+            { r: /딱치자/g, t: "사랑을 나누자" }, { r: /뜩스/g, t: "스킨십" }
+        ];
+
+        const bandList = ["혼자 겉돌다", "눈치 빠르다", "빈대 붙다", "인싸 같다", "술주정 부리다", "태평하다", "수줍어하다", "장난치다", "힘이 세다", "독기 품다", "냉정하다", "아재개그 치다", "할매 같다", "세월아 네월아", "도망치다", "뾰로통하다", "센 척하다", "잘생긴 척하다", "농땡이 피우다", "3배 빠르다"];
+        const animeList = ["넓고 시원하다", "깊은 맛", "따뜻하다", "기괴하다", "반짝거리다", "넉살 좋다", "시야가 좋다", "길을 잃다", "열정적이다", "잠이 오다", "사실대로", "아늑하다", "마음대로", "가만히", "꼼꼼하게", "야무지다", "줄줄이", "마무리", "다음에", "이미", "날씨가 맑다", "목이 마르다", "힘을 내라", "통 크게", "쭈구리고", "싸늘하다", "인사", "아궁이", "조금씩", "많아", "도와줘", "어휴", "이리 내"];
+        const nativeList = ["안녕하세요", "미안해", "오랜만이야", "어떻게", "왜", "거짓말", "빨리", "진짜", "갑자기", "어디로", "바보", "선생님", "고기", "토끼", "조금만", "엄청나다", "가위", "부엌", "어처구니 없다", "싸가지 없다", "속상해", "비릿하다", "잠시만", "나중에", "미쳤다", "맛있다", "많다", "괜찮아"];
+        const loreList = ["쓰레기 새끼", "씨*발롬", "개새끼", "미친 새끼", "나쁜 새끼", "도둑", "이 자식", "개노답", "지랄하네", "닥쳐", "최악이다", "무리하게 진행하다", "완전히 망했다", "민폐 끼치다", "죽여버린다", "꼬였다"];
+
+        const deokBandList = ["보치하다", "니지카다", "료하다", "기타하다", "히로이하다", "유이하다", "미오하다", "리츠하다", "무기하다", "니나하다", "도모하다", "루파하다", "스바루하다", "부리련하다", "니게하다", "페른하다", "수타르하다", "히멜하다", "방가후하다", "사야하다"];
+        const deokAnimeList = ["가냥하다", "우미", "호녹하다", "요한하다", "루비하다", "낫츠하다", "사야가", "가린", "세주나하다", "가나타하다", "시어리꼬", "아논하다", "마시로", "가논", "구구하게", "냐무지다", "주즈리", "도마리", "다에", "리미", "사아야하다", "모가 타", "히마리 내", "도모에", "츠구미", "사요하", "리사", "아코", "주구시", "마나", "도우고", "아이", "리나"];
+        const deokNativeList = ["오샤!", "미안시롱", "오랫만이드라고", "워째", "뭣하러", "그짓말", "퍼뜩", "마기", "해까닥", "어디메로", "모지랭이", "선상님", "괴기", "퇴끼", "쪼까", "허벌나게", "가새", "정지", "얼척없다", "느자구없다", "폭폭하다", "비룽하다", "자부락", "란주", "해까닥했다", "기깔나다", "천지삐까리다", "개안하다"];
+        const deokLoreList = ["대환같은 놈", "윤대환같은 놈", "대환같은 것", "제미나이", "에미나이", "씨나락치고 있네", "나발이 닥치샤", "대환같다", "두청하다", "어간지다", "갑수치다", "씨겨버린다", "노선꼬였다"];
+
+        function toggleDirection() {
+            isReversed = !isReversed;
+            
+            const langLeft = document.getElementById('lang-left');
+            const langRight = document.getElementById('lang-right');
+            const srcLabel = document.getElementById('src-label');
+            const targetLabel = document.getElementById('target-label');
+            const srcText = document.getElementById('src');
+            const targetText = document.getElementById('target');
+            
+            if(isReversed) {
+                langLeft.innerText = "덕빈 방언";
+                langLeft.className = "font-bold text-purple-700 w-28 text-center bg-purple-100 py-2 rounded-lg transition-colors";
+                langRight.innerText = "표준어";
+                langRight.className = "font-bold text-gray-700 w-28 text-center bg-gray-100 py-2 rounded-lg transition-colors";
+                srcLabel.innerText = "덕빈 방언 입력";
+                targetLabel.innerText = "표준어 결과";
+                srcText.placeholder = "예: 야 이 윤대환같은 놈아! 마기 얼척없당구마. 뭣하러 그리 페른하뎌? 방가후하지 말고 퍼뜩 일하샤. 뜩스하자!";
+            } else {
+                langLeft.innerText = "표준어";
+                langLeft.className = "font-bold text-gray-700 w-28 text-center bg-gray-100 py-2 rounded-lg transition-colors";
+                langRight.innerText = "덕빈 방언";
+                langRight.className = "font-bold text-purple-700 w-28 text-center bg-purple-100 py-2 rounded-lg transition-colors";
+                srcLabel.innerText = "표준어 입력 (문맥 인지 고도화)";
+                targetLabel.innerText = "덕빈 방언 결과";
+                srcText.placeholder = "예: 야 이 쓰레기 새끼야! 진짜 어이없네. 혼자 겉돌지 말고 빨리 와서 맛있는 거 먹자. 미안해하지 말고!";
+            }
+            
+            const temp = srcText.value;
+            srcText.value = targetText.value;
+            translateText();
+            
+            renderBadges();
+        }
+
+        function renderBadges() {
+            setupBadges('band-badges', isReversed ? deokBandList : bandList);
+            setupBadges('anime-badges', isReversed ? deokAnimeList : animeList);
+            setupBadges('native-badges', isReversed ? deokNativeList : nativeList);
+            setupBadges('lore-badges', isReversed ? deokLoreList : loreList);
+        }
+
+        function setupBadges(id, list) {
+            const container = document.getElementById(id);
+            if(!container) return;
+            container.innerHTML = ''; 
+            list.forEach(w => {
+                const b = document.createElement('span');
+                b.className = 'dict-badge'; b.innerText = w;
+                b.onclick = () => {
+                    const s = document.getElementById('src');
+                    s.value += (s.value && !s.value.endsWith(' ') ? ' ' : '') + w;
+                    translateText();
+                };
+                container.appendChild(b);
+            });
+        }
+
+        function translateText() {
+            const srcEl = document.getElementById('src');
+            const targetEl = document.getElementById('target');
+            if(!srcEl || !targetEl) return;
+
+            let val = srcEl.value;
+            if(!val.trim()) { targetEl.value = ''; return; }
+            
+            const activeRules = isReversed ? deokToStdRules : stdToDeokRules;
+            
+            activeRules.forEach(rule => { val = val.replace(rule.r, rule.t); });
+            targetEl.value = val;
+        }
+
+        function clearAll() { 
+            const srcEl = document.getElementById('src');
+            if(srcEl) srcEl.value = ''; 
+            translateText(); 
+        }
+        
+        function copyToClipboard() {
+            const t = document.getElementById('target');
+            if(!t || !t.value) return;
+            t.select(); 
+            document.execCommand('copy');
+            alert('클립보드에 복사되었당구마!');
+        }
+
+        window.onload = function() {
+            renderBadges();
+        };
+    </script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>루비로 - 효빈위키</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        /* 1. 전역 스타일 및 변수 */
+        :root { 
+            /* [고정] 효빈위키 브랜드 컬러 */
+            --wiki-fixed: #7777AA; 
+            
+            /* [변동] 도로 퍼스널 컬러 (시티투어버스와 유사한 우아한 색상) */
+            --wiki-main: #7777AA; 
+            
+            /* [변동] 포인트 컬러 (쿠로사와 루비를 상징하는 핑크/마젠타) */
+            --wiki-point: #EB4D94; 
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+
+            /* [고정] 효빈위키 버스 지정 색상 */
+            --bus-ganseon: #01B7ED;
+            --bus-sunhwan: #E7D600;
+            --bus-jiseon: #37B484;
+            --bus-maeul: #A664A0;
+            --bus-geuphaeng: #D81C2F;
+            --bus-gwangyeok: #485EC6;
+            --bus-jwaseok: #FF5800;
+            --bus-gonghang: #84C36E;
+
+            /* [고정] 효빈위키 지하철 지정 색상 */
+            --line-1: #0077DD;
+            --line-5: #EE0022;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-fixed: #9999CC;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            word-break: keep-all; 
+            margin: 0; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .wiki-container { 
+            max-width: 1152px; 
+            margin: 0 auto; 
+            padding: 20px 40px; 
+            border-left: 1px solid var(--wiki-border); 
+            border-right: 1px solid var(--wiki-border); 
+            min-height: 100vh; 
+            background-color: var(--wiki-bg);
+            display: block; 
+        }
+
+        /* 표 스타일 */
+        table { 
+            border-collapse: collapse !important; 
+            width: 100% !important; 
+            margin: 15px 0; 
+            border: 1px solid var(--wiki-border) !important; 
+            table-layout: fixed !important; 
+        }
+
+        th, td { 
+            border: 1px solid var(--wiki-border) !important; 
+            padding: 8px 6px; 
+            text-align: center; 
+            vertical-align: middle; 
+            font-size: 0.9rem;
+        }
+
+        th { 
+            background-color: var(--wiki-table-header); 
+            color: var(--wiki-table-header-text); 
+            font-weight: bold; 
+        }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* 제목 스타일 */
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 2px solid var(--wiki-main); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; clear: left; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; color: var(--wiki-point); border-left: 4px solid var(--wiki-main); padding-left: 12px; }
+        h4 { font-size: 1.2rem !important; font-weight: 700; margin-top: 1.5rem; padding-left: 10px; border-left: 3px solid #ccc; }
+
+        /* 인포박스 */
+        .infobox { 
+            border: 1px solid var(--wiki-main); 
+            background-color: var(--wiki-gray-bg); 
+            width: 100%; max-width: 460px; 
+
+            font-size: 0.85rem; 
+            margin-bottom: 20px; 
+            float: right; 
+            margin-left: 20px; 
+            border-radius: 4px; 
+            overflow: hidden; 
+        }
+        .infobox-top-label { background-color: var(--wiki-point); color: #fff; padding: 5px; text-align: center; font-weight: bold; font-size: 1.1em;}
+        .infobox-title-row { display: flex; border-bottom: 1px solid var(--wiki-border); background: #fff; color: #000; align-items: center; justify-content: center; padding: 15px; flex-direction: column; }
+        [data-theme='dark'] .infobox-title-row { background: #2d2f34; color: #fff; }
+        .infobox th { background: var(--wiki-gray-bg); color: var(--wiki-text); width: 100px; text-align: center; padding: 5px 8px; font-weight: bold; border: 1px solid var(--wiki-border); }
+        [data-theme='dark'] .infobox th { background-color: #383b40; }
+        .infobox td { padding: 5px 8px; text-align: left; border: 1px solid var(--wiki-border); }
+
+        /* 인용구 스타일 */
+        .wiki-quote {
+            border-left: 4px solid var(--wiki-point);
+            padding: 10px 15px;
+            background-color: var(--wiki-gray-bg);
+            margin: 15px 0;
+            color: #555;
+            font-style: italic;
+        }
+        [data-theme='dark'] .wiki-quote { color: #aaa; border-left: 4px solid var(--wiki-point); }
+
+        .wiki-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.75rem; margin-right: 3px; vertical-align: middle; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+
+        .category-box { background: #fff; border: 1px solid var(--wiki-border); padding: 5px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        [data-theme='dark'] .category-box { background: #2d2f34; border-color: #444; }
+
+        /* 목차 박스 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid #a2a9b1; background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        [data-theme='dark'] .toc { border: 1px solid #666; background: #2d2f34; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid #a2a9b1; margin-bottom: 10px; padding-bottom: 8px; font-size: 1.1rem; }
+        [data-theme='dark'] .toc-title { border-bottom: 1px solid #666; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; line-height: 1.7; }
+        .toc .lvl-2 { padding-left: 15px; }
+
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn:hover { background-color: #eee; }
+        .wiki-tool-btn.active { background-color: var(--wiki-main); color: white !important; font-weight: bold; }
+        
+        .clearfix::after { content: ""; display: block; clear: both; }
+
+        /* 경로 테이블 전용 스타일 */
+        .route-table th { background: #e0e0e0; color: #333; font-size: 0.8rem; }
+        [data-theme='dark'] .route-table th { background: #444; color: #ddd; }
+        .route-table .center-col { font-weight: bold; background: var(--wiki-gray-bg); }
+        
+        /* 버스 노선 테이블 전용 스타일 */
+        .bus-table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+        .bus-table th { font-size: 0.85rem; padding: 10px; background: #f1f3f5; color: #333; border: 1px solid #dee2e6; }
+        [data-theme='dark'] .bus-table th { background: #343a40; color: #f8f9fa; border-color: #495057; }
+        .bus-table td { padding: 12px; border: 1px solid #dee2e6; text-align: center; }
+        [data-theme='dark'] .bus-table td { border-color: #495057; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+<!-- 상단바 -->
+<nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-fixed);">
+<div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+<span class="font-bold text-xl">HyobinWiki</span>
+</div>
+<div class="flex items-center gap-2">
+<input class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner" id="searchInput" placeholder="문서 또는 번호 검색" type="text"/>
+<button class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner" id="themeBtn" onclick="toggleTheme()">다크모드</button>
+</div>
+</nav>
+<div class="wiki-container shadow-lg clearfix">
+<!-- 1. 제목 및 버튼 -->
+<div class="flex justify-between items-end mb-4">
+<h1 class="m-0 border-none p-0">루비로</h1>
+<div class="wiki-btn-group shadow-sm mb-4">
+<a class="wiki-tool-btn" href="토론.html">토론</a>
+<a class="wiki-tool-btn active" href="수정.html">편집</a>
+<a class="wiki-tool-btn" href="역사.html">역사</a>
+<div class="wiki-tool-btn">★</div>
+</div>
+</div>
+<div class="text-sm text-gray-500 mb-4">최근 수정 시각: 2026-05-06 23:58:12</div>
+<!-- 2. 카테고리 박스 -->
+<div class="category-box">
+<span class="font-bold text-[#7777AA]">분류:</span>
+<a class="wiki-link" href="효빈광역시의_도로.html">효빈광역시의 도로</a> | 
+            <a class="wiki-link" href="탄성군.html">탄성군(효빈광역시)</a> | 
+            <a class="wiki-link" href="흑택면.html">흑택면</a> |
+            <a class="wiki-link" href="루비리.html">루비리</a> |
+            <a class="wiki-link" href="러브라이브!_선샤인!!.html">러브라이브! 선샤인!!</a> |
+            <a class="wiki-link" href="성지순례.html" style="color: var(--wiki-point);">성지순례</a>
+</div>
+<!-- 3. 내비게이션 박스 (둘러보기 틀 영역) -->
+<div class="mb-6 clear-both" id="wiki-navbox-area">
+<div class="border border-gray-300 rounded overflow-hidden">
+<div class="bg-[#7777AA] text-white text-center font-bold py-1">효빈광역시 관내 도로</div>
+<div class="bg-gray-50 flex flex-col text-sm border-t border-gray-300">
+<div class="flex">
+<div class="w-12 bg-gray-200 font-bold text-center py-2 flex-shrink-0 flex items-center justify-center">ㄹ</div>
+<div class="p-2 flex-1 items-center leading-relaxed">
+<a class="wiki-link" href="라상로.html">라상로</a> · 
+                            <strong style="color: var(--wiki-main);">루비로</strong>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 인포박스 (우측 플로팅 적용) -->
+<aside class="infobox shadow-sm rounded overflow-hidden">
+<div class="infobox-top-label">루비로<br/><span style="font-size: 0.8em; font-weight: normal; color: #fff;">루비路 | Rubi-ro</span></div>
+<div class="infobox-title-row">
+<!-- 도로 안내판 이미지 -->
+<img alt="루비로 도로명판 이미지" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100%25\' height=\'200\' background=\'%23f3f3f3\'%3E%3Ctext x=\'50%25\' y=\'50%25\' font-size=\'14\' text-anchor=\'middle\' alignment-baseline=\'middle\' fill=\'%23999\'%3E이미지/루비로.png%3C/text%3E%3C/svg%3E'" src="이미지/루비로.png" style="width: 200px; height: auto; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 10px;"/>
+<div class="text-[0.8rem] opacity-70 font-bold" style="color: var(--wiki-point);">흑택면의 가장 작고 소중한 심장</div>
+<table style="margin: 0; border: none !important; width: 100%; margin-top: 10px;">
+<tr style="background: var(--wiki-gray-bg);">
+<td style="border:none !important; width: 33%; text-align: center;">
+<div class="text-xs text-gray-500">← 흑택면 중심지 방면</div>
+</td>
+<td style="border:none !important; width: 33%; text-align: center;">
+<span class="wiki-badge bg-gray-500">기·종점</span>
+</td>
+<td style="border:none !important; width: 33%; text-align: center;">
+<div class="text-xs text-gray-500">은염리 방면 →</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="infobox-map border-b border-[#ccc]" style="width: 100%; height: 250px; overflow: hidden; position: relative; display: block !important;">
+<iframe src="https://binia1.github.io/mymap/" style="width: 160%; height: 160%; border: none; 
+                       position: absolute; top: 0; left: 0;
+                       transform: scale(0.625); transform-origin: 0 0;">
+</iframe>
+</div>
+
+<table>
+<tr><th>기점</th><td><a class="wiki-link" href="탄성군.html">탄성군</a> <a class="wiki-link" href="흑택면.html">흑택면</a> <a class="wiki-link" href="루비리.html">루비리</a></td></tr>
+<tr><th>종점</th><td><a class="wiki-link" href="탄성군.html">탄성군</a> <a class="wiki-link" href="흑택면.html">흑택면</a> <a class="wiki-link" href="은염리.html">은염리</a></td></tr>
+<tr><th>연장</th><td>1,141m</td></tr>
+<tr><th>관리</th><td>효빈광역시 탄성군청</td></tr>
+<tr><th>차로 수</th><td>왕복 2~4차로</td></tr>
+<tr><th>주요 역</th><td><span style="color: #EE0022; font-weight: bold;">●</span> 5호선 <a class="wiki-link" href="루비역.html">루비역</a></td></tr>
+</table>
+</aside>
+<!-- 목차 -->
+<div class="toc shadow-sm h-fit mb-8 mt-4" id="toc-box">
+<div class="toc-title">목차</div>
+<ul>
+<li>1. <a class="wiki-link" href="#s-1">개요</a></li>
+<li>2. <a class="wiki-link" href="#s-2">상세</a>
+<ul>
+<li class="lvl-2">2.1. <a class="wiki-link" href="#s-2-1">특징: 흑택면의 작고 소중한 심장</a></li>
+<li class="lvl-2">2.2. <a class="wiki-link" href="#s-2-2">주요 구간</a></li>
+</ul>
+</li>
+<li>3. <a class="wiki-link" href="#s-3">대중교통</a>
+<ul>
+<li class="lvl-2">3.1. <a class="wiki-link" href="#s-3-1">도시철도</a></li>
+<li class="lvl-2">3.2. <a class="wiki-link" href="#s-3-2">시내버스</a></li>
+</ul>
+</li>
+<li>4. <a class="wiki-link" href="#s-4">주요 시설</a></li>
+<li>5. <a class="wiki-link" href="#s-5">기타 및 여담</a>
+<ul>
+<li class="lvl-2">5.1. <a class="wiki-link" href="#s-5-1">삐기족(Piggy族)들의 유쾌한 일화</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="s-1">1. 개요</h2>
+<div class="wiki-quote">
+<strong>"삐기!(ピギィ!) 소리와 달콤한 고구마 향기가 진동하는 흑택면의 가장 귀여운 1km."</strong>
+</div>
+<p>
+<a class="wiki-link" href="효빈광역시.html">효빈광역시</a> <a class="wiki-link" href="탄성군.html">탄성군</a> <a class="wiki-link" href="흑택면.html">흑택면</a> <a class="wiki-link" href="루비리.html">루비리</a>를 관통하는 연장 1.1km의 짧지만 강렬한 간선도로. 흑택면의 행정과 주거 중심지를 연결하며, 도로명은 당연하게도 관할 법정리인 루비리에서 따왔다.
+        </p>
+<h2 id="s-2">2. 상세</h2>
+<h3 id="s-2-1">2.1. 특징: 흑택면의 작고 소중한 심장</h3>
+<p>
+            연장은 약 1.1km로 효빈광역시의 다른 거대 간선도로들에 비하면 매우 짧고 앙증맞은 편이다. 하지만 이 도로는 <a class="wiki-link" href="러브라이브!_선샤인!!.html">러브 라이브! 선샤인!!</a> 팬들에게는 효빈 최고의 성지 중 하나로 꼽힌다. 도로가 위치한 흑택면(쿠로사와)과 루비리라는 지명 조합이 <strong><a class="wiki-link font-bold" href="쿠로사와_루비.html" style="color: var(--wiki-point);">쿠로사와 루비</a></strong> 그 자체이기 때문.
+        </p>
+<p>
+            도로 양옆으로는 흑택면의 신축 아파트 단지들이 밀집해 있어, 탄성군 내에서도 꽤 세련된 도시 경관을 자랑한다. 도로 노선 색상은 시티투어버스와 유사한 <code>#7777AA</code> 계열로 지정되어 있어 은근히 우아한 느낌을 주지만, 횡단보도나 과속방지턱 군데군데 묘하게 핑크색(#EB4D94) 도료가 섞여 발라져 있어 시청 도로교통과 직원의 사심이 들어간 것 아니냐는 의혹을 받고 있다.
+        </p>
+<h3 id="s-2-2">2.2. 주요 구간</h3>
+<table class="route-table text-xs">
+<colgroup><col width="22%"/><col width="78%"/></colgroup>
+<thead>
+<tr>
+<th>구분</th>
+<th>상세 설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="center-col font-bold">루비리<br/>(기점)</td>
+<td class="text-left pl-3">흑택면의 행정 중심지이자 아파트 숲이 시작되는 지점. 이 부근의 상가에서는 일년 내내 고구마 굽는 냄새가 난다는 카더라가 있다.</td>
+</tr>
+<tr>
+<td class="center-col font-bold">은염리<br/>(종점)</td>
+<td class="text-left pl-3">루비리를 벗어나 은염리로 진입하며 도로가 끝난다. 도로의 끝에서 <a class="wiki-link" href="청엽로.html">청엽로</a> 등 주요 간선도로와 연계된다.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="s-3">3. 대중교통</h2>
+<h3 id="s-3-1">3.1. 도시철도</h3>
+<p>
+            놀랍게도 도로 한가운데에 <strong><span class="wiki-badge" style="background-color: var(--line-5);">5호선</span> <a class="wiki-link" href="루비역.html">루비역</a></strong>이 떡하니 자리 잡고 있다! 과거에는 1호선 약산역에서 내려 버스를 갈아타야 하는 수고로움이 있었으나, 5호선 연장 개통과 함께 아예 대놓고 '루비역'이 신설되면서 성지순례의 접근성이 수직 상승했다. 역명판을 배경으로 네소베리를 들고 사진을 찍는 팬들로 항상 북적인다.
+        </p>
+<h3 id="s-3-2">3.2. 시내버스</h3>
+<p>
+            짧은 도로임에도 불구하고 5호선 루비역과 흑택면 중심지를 잇는 환승 수요 때문에 경유하는 버스 노선이 상당히 알차다. <strong>효빈광역시의 공식 버스 도색</strong>에 맞춘 알록달록한 버스들이 루비로를 누빈다.
+        </p>
+<table class="bus-table">
+<thead>
+<tr>
+<th style="width: 20%;">노선 구분</th>
+<th style="width: 80%;">경유 노선 번호</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="font-bold" style="color: var(--bus-ganseon);">■ 간선버스</td>
+<td class="text-left">
+<span class="wiki-badge" style="background-color: var(--bus-ganseon);">59</span>
+</td>
+</tr>
+<tr>
+<td class="font-bold" style="color: #c9ba00;">■ 순환버스</td>
+<td class="text-left">
+<span class="wiki-badge" style="background-color: var(--bus-sunhwan); color: #000;">40</span>
+<span class="wiki-badge" style="background-color: var(--bus-sunhwan); color: #000;">60</span>
+</td>
+</tr>
+<tr>
+<td class="font-bold" style="color: var(--bus-jiseon);">■ 지선버스</td>
+<td class="text-left">
+<span class="wiki-badge" style="background-color: var(--bus-jiseon);">451</span>
+<span class="wiki-badge" style="background-color: var(--bus-jiseon);">461</span>
+</td>
+</tr>
+<tr>
+<td class="font-bold" style="color: var(--bus-maeul);">■ 마을버스</td>
+<td class="text-left">
+<span class="wiki-badge" style="background-color: var(--bus-maeul);">흑택01</span>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="s-4">4. 주요 시설</h2>
+<p>도로대장에 기록된 루비로의 핵심 시설물들이다. 성지순례 명소와 신축 아파트가 절묘하게 혼재되어 있다.</p>
+<ul class="list-disc pl-5 space-y-2 text-sm mt-3">
+<li><strong>흑택아쿠아아파트</strong> - 이름부터 <a class="wiki-link" href="Aqours.html">Aqours</a>의 기운이 강하게 느껴지는 루비로의 대표 대단지 아파트.</li>
+<li><strong>다이아 플라자</strong> - 루비로 진입 길목에 위치한 5층 규모의 상가 건물. 자매의 끈끈한 우애(?)를 상징한다.</li>
+<li><strong>루비 스위트 베이커리</strong> - 루비가 가장 좋아하는 음식인 '고구마'를 활용한 디저트를 전문으로 파는 빵집. 고구마 타르트는 주말 오전에 무조건 매진된다.</li>
+<li><strong>우라노호시 수예부 효빈지부 (옷수선점)</strong> - 원래는 평범한 동네 세탁소 겸 옷수선점이었으나, 의상 제작을 담당하는 루비의 설정과 엮여 간판을 아예 이렇게 바꿔버렸다. 코스프레 의상 수선도 쿨하게 받아주신다고.</li>
+<li><strong>아이스티워아파트</strong> - 흑택면의 스카이라인을 담당하는 고층 주상복합 아파트. <del>아이스티를 팔지는 않는다.</del></li>
+<li>흑택아이파크아파트 (2029년 예정)</li>
+<li><strong>루비리 행정복지센터</strong> - 기점 인근 위치.</li>
+</ul>
+<h2 id="s-5">5. 기타 및 여담</h2>
+<ul class="list-disc pl-5 space-y-3 mt-3">
+<li>
+                도로의 총 연장이 1,141m인데, 팬들은 이 숫자를 보고 <em>"루비의 생일(9월 21일)과는 상관없지만 어쨌든 1km가 넘으니 간바루비!"</em>라며 기적의 논리를 펼치곤 한다. (...)
+            </li>
+<li>
+                도로가 매우 깔끔하고 평탄해서 자전거를 타거나 산책하기에 최적이다. 가끔 루비의 상징색인 <strong>마젠타 핑크색(비비드 핑크) 트레이닝복</strong>을 입고 이 도로를 뛰는 러너들이 단체로 목격되는데, 이제 지역 주민들은 그들을 보며 "아이고, 삐기들 또 운동나왔네"라며 그러려니 한다고.
+            </li>
+</ul>
+<h3 class="font-bold mt-6 mb-2 text-[#EB4D94]" id="s-5-1">5.1. 삐기족(Piggy族)들의 유쾌한 일화</h3>
+<p>
+            루비로가 성지로 급부상하고 5호선 루비역까지 개통되면서, 루비의 열성 팬덤인 일명 <strong>'삐기족(Piggy族)'</strong>들이 대거 유입되어 기상천외한 일화들을 끊임없이 양산해내고 있다.
+        </p>
+<div class="bg-gray-50 border-l-4 border-[#EB4D94] p-4 mt-3 mb-4 text-sm leading-relaxed">
+<ul class="list-none space-y-4">
+<li>
+<strong class="text-[#EB4D94] text-base"><i class="fa-solid fa-candy-cane mr-2"></i>사탕 바구니의 전설 (사탕 공양)</strong><br/>
+                    낯을 많이 가리는 루비가 사탕으로 쉽게 꼬여(?)진다는 공식 설정 때문에, 루비로 연선의 상인들은 가게 문 앞에 <strong>무료 사탕 바구니</strong>를 놓아두는 암묵적인 룰이 생겼다. 삐기족들은 이 사탕을 하나 집어먹은 뒤, 보답으로 그 가게에서 무언가를 잔뜩 팔아주는 기이한 상부상조의 생태계를 구축했다. 상인회 회장의 인터뷰에 따르면 "사탕값 100원을 쓰면 만 원이 돌아온다"며 싱글벙글.
+                </li>
+<li>
+<strong class="text-[#EB4D94] text-base"><i class="fa-solid fa-person-walking-arrow-loop-left mr-2"></i>언니의 그림자는 밟을 수 없다 (다이아 상가 앞 문워크)</strong><br/>
+                    루비로 초입에 있는 건물 이름이 언니의 이름과 같은 <strong>'다이아 플라자'</strong>인데, 극도의 시스콘인 루비의 설정을 빙의한 일부 짓궂은 팬들이 다이아 상가 앞을 지날 때 <strong>"감히 언니의 그림자를 밟을 순 없다!"</strong>며 뒷걸음질(문워크)로 지나가는 기행을 벌인다. 이 광경을 처음 본 타 지역 사람들은 사이비 종교인 줄 알고 기겁했다고 한다.
+                </li>
+<li>
+<strong class="text-[#EB4D94] text-base"><i class="fa-solid fa-cake-candles mr-2"></i>9월 21일의 핑크빛 교통마비</strong><br/>
+                    루비의 생일인 9월 21일이 되면 루비로 전체가 마젠타 핑크빛으로 물든다. 전국에서 몰려든 삐기족들이 루비역 앞 광장에서 단체로 <strong>"간바루비-!!"</strong>를 외치며 플래시몹을 벌이는데, 이때만큼은 흑택면 파출소에서도 일찌감치 경찰관을 배치해 교통 정리를 도와줄 정도의 지역 축제(?)가 되어버렸다.
+                </li>
+<li>
+<strong class="text-[#EB4D94] text-base"><i class="fa-solid fa-burger mr-2"></i>고구마 튀김 대란</strong><br/>
+                    루비의 최애 간식이 프렌치프라이와 고구마라는 점에 착안, 루비로 일대의 프랜차이즈 햄버거집과 개인 카페들은 주말만 되면 '고구마 튀김'과 '고구마 라떼'가 오전 중에 싹쓸이되는 사태를 겪는다. 햄버거집 점장이 본사에 <strong>"루비로 지점만 유독 감자튀김보다 고구마튀김 발주량이 5배 많다"</strong>고 보고했다가 본사 직원이 실사를 나온 적도 있다고 한다.
+                </li>
+</ul>
+</div>
+<footer class="mt-12 border-t pt-6 text-center text-xs pb-10 leading-relaxed text-[#373a3c] bg-white clear-both">
+<p class="mb-4">
+                이 저작물은 <strong>CC BY-NC-SA 2.0 KR</strong>에 따라 이용할 수 있습니다. <br/>
+                기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.
+            </p>
+<p class="text-gray-500">
+                효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.
+            </p>
+<div class="mt-4 text-[10px] text-gray-400 font-mono">
+                Powered by HyobinWiki Engine
+            </div>
+</footer>
+</div>
+<script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+    </script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+<script src="assets/auto_navbox.js"></script>
+</body>
+</html>

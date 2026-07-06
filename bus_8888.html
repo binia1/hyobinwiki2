@@ -1,0 +1,391 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈 버스 8888 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #FF5800; /* 좌석버스 Orange (Ai Color) */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3rem !important; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; text-decoration: none; }
+        .wiki-btn:hover { background: #f0f0f0; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 400px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.5rem !important; font-weight: 900; }
+        .infobox-subtitle { background-color: #fff; color: #000; padding: 5px; text-align: center; font-weight: bold; border-bottom: 1px solid #eee; }
+        .infobox table { width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: #fff7ed; color: var(--wiki-main); width: 100px; text-align: center; padding: 8px; border-bottom: 1px solid #eee; font-weight: bold; }
+        .infobox td { padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
+
+        /* 노선도 탭 */
+        .route-tabs { display: flex; border-bottom: 2px solid var(--wiki-main); margin-top: 20px; }
+        .route-tab { padding: 10px 20px; cursor: pointer; font-weight: bold; color: #777; border: 1px solid #ccc; border-bottom: none; border-radius: 8px 8px 0 0; background: #f9f9f9; margin-right: 4px; }
+        .route-tab.active { background: var(--wiki-main); color: white; border-color: var(--wiki-main); }
+        .route-content { display: none; padding: 20px; border: 1px solid #ccc; border-top: none; background: #fff; }
+        .route-content.active { display: block; }
+
+        /* 정류장 리스트 */
+        .stop-list { position: relative; padding-left: 20px; margin-top: 10px; border-left: 4px solid var(--wiki-main); }
+        .stop-item { margin-bottom: 8px; position: relative; font-size: 0.95rem; }
+        .stop-item::before { content: "●"; color: var(--wiki-main); position: absolute; left: -26px; font-size: 1.2rem; background: white; border: 2px solid #ccc; border-radius: 50%; }
+        .stop-item.major { font-weight: bold; color: #000; }
+        .stop-item.subway::after { content: "🚇"; font-size: 0.8rem; margin-left: 5px; }
+
+        /* 효빈위키 드립용 */
+        del { color: #999; text-decoration: line-through; }
+        .namu-note { font-size: 0.8em; vertical-align: super; color: #0055AA; cursor: pointer; font-weight: bold; }
+        .namu-quote { border-left: 4px solid var(--wiki-main); background-color: #fff7ed; padding: 15px; margin: 10px 0; font-size: 1rem; line-height: 1.5; }
+        
+        #footnote-tooltip { position: fixed; background: white; border: 1px solid #333; padding: 8px 12px; border-radius: 4px; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); font-size: 0.85rem; max-width: 300px; z-index: 20000; display: none; pointer-events: none; line-height: 1.4; }
+
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+
+        /* Footer 영역 */
+        .wiki-footer { margin-top: 100px; padding: 40px 0; border-top: 2px solid #eee; font-size: 0.85rem; color: #666; clear: both; }
+        .wiki-footer-inner { max-width: 1200px; margin: 0 auto; }
+        .license-box { background: #f8f9fa; padding: 20px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 20px; }
+    
+
+/* ===== 효빈위키풍 시내버스 네비게이션 박스 ===== */
+.namu-tpl{border:2px solid var(--wiki-main);border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08);margin:14px 0 18px;background:#fff}
+.namu-tpl table{width:100%;border-collapse:collapse}
+.namu-head{background:var(--wiki-main);color:#fff}
+.namu-emblem{width:70px;text-align:center;padding:10px}
+.namu-emblem img{height:45px;width:auto}
+.namu-title{padding:10px 10px 10px 0}
+.namu-title .city{font-weight:800;font-size:13px;opacity:.95}
+.namu-title .kind{font-weight:900;font-size:22px;line-height:1.1;margin-top:2px}
+.namu-badges td{padding:10px;border-bottom:1px solid #ddd}
+.namu-pills{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.namu-pill{display:inline-block;padding:4px 8px;border-radius:6px;font-weight:800;font-size:13px;text-decoration:none;border:1px solid transparent}
+.namu-pill.red{background:#D81C2F;color:#fff}
+.namu-pill.cyan{background:#01B7ED;color:#fff}
+.namu-pill.yellow{background:#E7D600;color:#111}
+.namu-pill.green{background:#37B484;color:#fff}
+.namu-pill.blue{background:#485EC6;color:#fff}
+.namu-pill.orange{background:#FF5800;color:#fff}
+.namu-pill.purple{background:#A664A0;color:#fff}
+.namu-pill.lime{background:#84C36E;color:#fff}
+.namu-pill.gray{background:#7777AA;color:#fff}
+.namu-fold td{padding:0}
+.namu-fold details{padding:0 10px 10px}
+.namu-fold summary{cursor:pointer;user-select:none;font-weight:900;font-size:13px;padding:10px 0;color:#333}
+.fold-body{padding:10px 0 6px;border-top:1px solid #ddd}
+.namu-route-table{width:100%;border-collapse:separate;border-spacing:8px 8px}
+.namu-route-table td{width:25%}
+.namu-route-table a{display:block;text-align:center;text-decoration:none;font-weight:900;padding:8px 0;border-radius:7px;border:1px solid #ccc;background:#fff;color:#111}
+.namu-route-table a:hover{filter:brightness(.97)}
+.namu-route-note{font-size:12px;color:#555;text-align:center;margin-top:8px}
+
+</style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+    <div id="footnote-tooltip"></div>
+
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="location.href='토론.html'" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">토론</button>
+            <button onclick="location.href='수정.html'" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">편집</button>
+            <button onclick="location.href='역사.html'" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">역사</button>
+            <form class="flex items-center gap-2" onsubmit="event.preventDefault(); goSearch();">
+  <input id="navSearch" class="text-sm px-2 py-1 rounded text-black w-36" placeholder="검색어" autocomplete="off">
+  <button type="submit" class="bg-[#555588] p-1.5 px-3 rounded text-sm hover:bg-[#444477] font-bold transition-colors">검색</button>
+</form>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">효빈 버스 8888 / 8888R</div>
+            <div class="flex gap-2 mb-1">
+                <a href="토론.html" class="wiki-btn">토론</a>
+                <a href="수정.html" class="wiki-btn">편집</a>
+                <a href="역사.html" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+                <div class="category-box mb-6"></div>
+<div class="bg-gray-100 p-2 text-sm border mb-4">
+
+            <span class="font-bold text-[#FF5800]">분류:</span> 
+            <a href="효빈광역시_시내버스.html" class="wiki-link">효빈광역시 시내버스</a> | 
+            <a href="좌석버스.html" class="wiki-link">좌석버스</a> |
+            <a href="청엽여객.html" class="wiki-link">청엽여객</a> |
+            <a href="https://namu.wiki/w/인터넷 밈" target="_blank" class="wiki-link external">인터넷 밈</a>
+        </div>
+
+        <div aria-label="시내버스 노선 둘러보기 틀" class="namu-tpl" id="transport-box">
+        <table>
+        <tr class="namu-head">
+        <td class="namu-emblem">
+        <img alt="효빈광역시" onerror="this.src='https://via.placeholder.com/45x45/FF5800/ffffff?text=HB'" src="이미지/효빈시_로고.png"/>
+        </td>
+        <td class="namu-title">
+        <div class="city">효빈광역시</div>
+        <div class="kind">시내버스</div>
+        </td>
+        </tr>
+        <tr class="namu-badges">
+        <td colspan="2">
+        <div class="namu-pills">
+        <a class="namu-pill red" href="급행버스.html">급행</a>
+        <a class="namu-pill cyan" href="간선버스.html">간선</a>
+        <a class="namu-pill yellow" href="순환버스.html">순환</a>
+        <a class="namu-pill green" href="지선버스.html">지선</a>
+        <a class="namu-pill orange" href="좌석버스.html">좌석</a>
+        <a class="namu-pill blue" href="광역버스.html">광역</a>
+        <a class="namu-pill lime" href="공항버스.html">공항</a>
+        <a class="namu-pill purple" href="마을버스.html">마을</a>
+        <a class="namu-pill gray" href="시티투어버스.html">시티투어</a>
+        </div>
+        </td>
+        </tr>
+        <tr class="namu-fold">
+        <td colspan="2">
+        <details open="">
+        <summary>좌석버스 노선 번호</summary>
+        <div class="fold-body">
+        <table aria-label="좌석버스 노선 번호 표" class="namu-route-table">
+        <tr><td><a href="1111.html">1111</a></td>
+        <td><a href="2222.html">2222</a></td>
+        <td><a href="3333.html">3333</a></td>
+        <td><a href="4004.html">4004</a></td></tr>
+        <tr><td><a href="5555.html">5555</a></td>
+        <td><a href="6666.html">6666</a></td>
+        <td><a href="7777.html">7777</a></td>
+        <td><a href="8888.html">8888</a></td></tr>
+        <tr><td><a href="9999.html">9999</a></td>
+        <td></td>
+        <td></td>
+        <td></td></tr>
+        </table>
+        <div class="namu-route-note"></div>
+        </div>
+        </details>
+        </td>
+        </tr>
+        </table>
+        </div>
+        
+
+        <!-- 인포박스 -->
+        <aside class="infobox">
+            <div class="infobox-title">효빈 좌석 8888</div>
+            <div class="infobox-subtitle">Hyobin Seat Bus 8888</div>
+            
+            <div class="p-2 text-center bg-white">
+                <img src="이미지/8888.png" alt="8888번 버스" onerror="this.src='https://via.placeholder.com/380x200/FF5800/FFFFFF?text=Seat+8888';">
+                <div class="text-xs text-gray-500 mt-1">청엽여객 소속 좌석 8888번 차량</div>
+            </div>
+
+            <table>
+                <tr><th>운행지역</th><td><a href="약산시.html" class="wiki-link">약산시</a> ↔ <a href="청엽구.html" class="wiki-link">청엽구</a></td></tr>
+                <tr><th>운행거리</th><td>약 46.2km</td></tr>
+                <tr><th>운수회사</th><td><a href="효빈여객.html" class="wiki-link">효빈여객</a></td></tr>
+                <tr><th>기점</th><td><a href="약산시.html" class="wiki-link">원강읍사무소</a> (8888)<br><a href="청엽동.html" class="wiki-link">청엽구청역</a> (8888R)</td></tr>
+                <tr><th>종점</th><td><a href="청엽동.html" class="wiki-link">청엽구청역</a> (8888)<br><a href="약산시.html" class="wiki-link">원강읍사무소</a> (8888R)</td></tr>
+                <tr><th>배차간격</th><td>평일 18~22분<br>주말 25~30분</td></tr>
+                <tr><th>첫차시각</th><td>05:02 (기점 기준)</td></tr>
+                <tr><th>막차시각</th><td>23:44 (평일) / 23:32 (주말)</td></tr>
+                <tr><th>인가대수</th><td>11대</td></tr>
+            </table>
+        </aside>
+
+        <!-- 목차 -->
+        <div class="toc h-fit">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">역사: 성지 상실의 비극</a></li>
+                <li>3. <a href="#s-3" class="wiki-link">특징</a></li>
+                <li>4. <a href="#s-4" class="wiki-link">노선 정보</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">여담</a></li>
+            </ul>
+        </div>
+        <div class="clear-both"></div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <p><a href="효빈광역시.html" class="wiki-link">효빈광역시</a>의 <a href="좌석버스.html" class="wiki-link">좌석버스</a> 노선. 약산시 동부의 <strong>원강읍</strong>과 청엽구의 행정 중심지인 <strong>청엽구청역</strong>을 잇는 장거리 노선이다.</p>
+        <p>광역버스 8000번(카린 버스)과 함께 <strong>DiverDiva</strong> 계통을 구성하는 '아이(Ai) 버스' 중 하나로, 광역버스가 정차하지 않는 주요 읍·면 소재지와 대학교 정문을 꼼꼼하게 경유하여 지역 주민들의 실질적인 발이 되어준다. 고유 색상은 미야시타 아이의 오렌지(#FF5800)다.</p>
+
+        <h2 id="s-2">2. 역사: 성지 상실의 비극</h2>
+        <p>이 노선은 효빈시 버스 팬덤과 러브라이버들 사이에서 **'상실의 아이콘'**으로 불린다.</p>
+        <ul class="list-disc pl-5 space-y-1">
+            <li><strong>2009년 10월 15일:</strong> 약산시와 남구 <strong>아이동(啞異洞)</strong>, <strong>궁하동</strong>을 연결하는 888번 좌석버스로 개통했다. 당시에는 미야시타 아이의 이름과 성씨(궁하-미야시타)가 모두 포함된 노선이라 팬들의 절대적인 지지를 받았다.</li>
+            <li><strong>2015년 8월 1일:</strong> 좌석버스 번호 체계 개편으로 <strong>좌석8888(8888)</strong>번이 되었다.</li>
+            <li><strong>2017년 & 2019년:</strong> 빈효선 광역전철 <strong>궁하역</strong>(2017)과 <strong>아이역</strong>(2019)이 차례로 개통되면서 노선망이 대격변을 맞이했다. 중복 노선 정리로 인해 아이동과 궁하동 구간이 **전격 폐지**되었고, 종점은 현재의 원강읍사무소로 대폭 후퇴(?)하게 되었다.</li>
+        </ul>
+
+        <h2 id="s-3">3. 특징</h2>
+        <ul class="list-disc pl-5 space-y-1">
+            <li><strong>DiverDiva 시스템:</strong> 광역 8000번(카린)이 "길치" 속성으로 주요 거점만 찍고 날아갈 때, 8888번(아이)이 뒤따라오며 낙오된 승객들을 웃으며 실어 나른다.</li>
+            <li><strong>대학교 투어:</strong> 평천대학교, 해천대학교, 덕북대학교 효빈캠퍼스 등을 두루 거쳐 대학생들의 등하교 비중이 매우 높다.</li>
+            <li><strong>행운의 상징:</strong> 숫자 '8'이 네 개나 겹치는 번호 덕분에, 복권을 사러 갈 때 이 버스를 타면 당첨된다는 도시전설이 있다. <del>물론 기사님이 아재개그를 던지면 운수가 나빠진다고 카더라</del></li>
+        </ul>
+
+        <h2 id="s-4">4. 노선 정보</h2>
+        
+        <div class="route-tabs">
+            <div class="route-tab active" onclick="openTab('tab-8888')">8888번 (청엽행)</div>
+            <div class="route-tab" onclick="openTab('tab-8888r')">8888R (원강행)</div>
+        </div>
+
+        <div id="tab-8888" class="route-content active">
+            <p class="mb-4 text-sm text-gray-600">※ 약산시 원강읍사무소에서 출발하여 청엽구청역으로 가는 하행 노선입니다.</p>
+            <div class="stop-list">
+                <div class="stop-item major">원강읍사무소 (기점)</div>
+                <div class="stop-item">원강푸르지오아파트</div>
+                <div class="stop-item">원강고등학교</div>
+                <div class="stop-item">약산한약단지</div>
+                <div class="stop-item major">화소역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span> <span class="text-xs bg-[#6677CC] text-white px-1 rounded">빈효선</span></div>
+                <div class="stop-item major">하내장역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span></div>
+                <div class="stop-item">요곡공단예정지</div>
+                <div class="stop-item">약산 유한양행공장</div>
+                <div class="stop-item">역성지구</div>
+                <div class="stop-item major">약산역 <span class="text-xs bg-[#6677CC] text-white px-1 rounded">빈효선</span></div>
+                <div class="stop-item">후작동</div>
+                <div class="stop-item major">산형역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span></div>
+                <div class="stop-item">도향면사무소</div>
+                <div class="stop-item">공리택지지구</div>
+                <div class="stop-item major">탄성군청역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span></div>
+                <div class="stop-item">탄성소방서</div>
+                <div class="stop-item">탄성우체국</div>
+                <div class="stop-item">고무중학교</div>
+                <div class="stop-item">평천대학교</div>
+                <div class="stop-item">창전세무서</div>
+                <div class="stop-item major">보통역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span></div>
+                <div class="stop-item">해천대학교</div>
+                <div class="stop-item">창전 홈플러스</div>
+                <div class="stop-item">칠심W아파트</div>
+                <div class="stop-item major">칠심역 <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span></div>
+                <div class="stop-item">칠심주공</div>
+                <div class="stop-item major">우전역 <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span> <span class="text-xs bg-[#00CCAA] text-white px-1 rounded">2호선</span></div>
+                <div class="stop-item major">효빈남부시외버스터미널 <span class="text-xs bg-[#FFCC11] text-black px-1 rounded">3호선</span></div>
+                <div class="stop-item">롯데백화점 청엽점.승강기안전공단</div>
+                <div class="stop-item major">청엽구청역 (종점) <span class="text-xs bg-[#0077DD] text-white px-1 rounded">1호선</span> <span class="text-xs bg-[#FFCC11] text-black px-1 rounded">3호선</span></div>
+            </div>
+        </div>
+
+        <div id="tab-8888r" class="route-content">
+            <p class="mb-4 text-sm text-gray-600">※ 청엽구청역에서 출발하여 약산시 원강읍사무소로 가는 상행(역방향) 노선입니다.</p>
+            <div class="stop-list">
+                <div class="stop-item major">청엽구청역 (기점)</div>
+                <div class="stop-item">... (중략) ...</div>
+                <div class="stop-item major">원강읍사무소 (종점)</div>
+            </div>
+        </div>
+
+        <h2 id="s-5">5. 여담</h2>
+        <h3 id="s-5-1">5.1. "아이 없는 아이 버스"의 서러움</h3>
+        <p>과거에는 <strong>아이동(啞異洞)</strong> 내부까지 깊숙이 들어가 "아이 보러 아이동 가는 아이 버스"라는 완벽한 라임을 자랑했으나, 아이역 개통 이후로 노선이 잘려나가면서 팬들의 탄식이 이어졌다. 현재는 아이동 주민들이 8888번을 타려면 인근 큰길까지 한참을 걸어 나와야 한다.</p>
+        
+        <div class="namu-quote">
+            "내 이름은 아이동(啞異洞)인데, 왜 아이 버스(8888)는 나를 버리고 갔니..."<br>
+            - <span class="text-xs text-gray-500">어느 버스 갤러리의 감성글(...)</span>
+        </div>
+
+        <h3 id="s-5-2">5.2. DiverDiva의 길치 행보</h3>
+        <p>광역 8000번(카린)과 좌석 8888번(아이)은 효빈시의 대표적인 <strong>DiverDiva 계통</strong>이지만, 두 버스 모두 자기 이름을 딴 동네(과림읍, 아이동)는 가지 못하는 묘한 공통점이 생겼다. 팬들은 이를 보고 <strong>"역시 둘 다 길치 속성이 어디 안 간다"</strong>며 즐거워하고 있다.</p>
+
+        <footer class="wiki-footer">
+            <div class="wiki-footer-inner">
+                <div class="license-box">
+                    <p class="font-bold mb-1">이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)</p>
+                    <p>기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+                </div>
+                
+                <ul class="text-xs text-gray-500 space-y-1">
+                    <li>● 효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</li>
+                    <li>● 효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.</li>
+                    <li>● 본 문서는 효빈광역시 가상 교통 설정을 기반으로 한 창작물입니다.</li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function openTab(tabId) {
+            document.querySelectorAll('.route-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.route-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            const clickedTab = Array.from(document.querySelectorAll('.route-tab')).find(el => el.getAttribute('onclick').includes(tabId));
+            if(clickedTab) clickedTab.classList.add('active');
+        }
+
+        const tooltip = document.getElementById('footnote-tooltip');
+        const notes = document.querySelectorAll('.namu-note');
+
+        notes.forEach(note => {
+            note.addEventListener('mouseenter', (e) => {
+                const content = e.target.getAttribute('data-content');
+                if (content) {
+                    tooltip.innerText = content;
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = e.clientX + 10 + 'px';
+                    tooltip.style.top = e.clientY + 10 + 'px';
+                }
+            });
+            note.addEventListener('mousemove', (e) => {
+                tooltip.style.left = e.clientX + 10 + 'px';
+                tooltip.style.top = e.clientY + 10 + 'px';
+            });
+            note.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+
+<script>
+function goSearch(){
+  const el = document.getElementById('navSearch');
+  if(!el) return;
+  const q = (el.value || '').trim();
+  if(!q) return;
+  location.href = encodeURIComponent(q) + '.html';
+}
+        </script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js?v=1"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+
+</html>

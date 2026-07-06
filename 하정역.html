@@ -1,0 +1,447 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>하정역 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        :root { 
+            --wiki-main: #005BAC; /* 본문 강조색: 코레일 블루 */
+             --wiki-fixed: #7777AA; /* 상단 네비게이션: 효빈위키 기본색 */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-link: #0055AA; 
+            
+            /* 코레일 색상 */
+            --korail-blue: #005BAC;
+        }
+
+        body { font-family: 'Pretendard', 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: break-all; margin: 0; font-size: 15px; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900; color: #000; margin-bottom: 0.5rem; border-bottom: 2px solid #ccc; padding-bottom: 10px; }
+        
+        h2 { font-size: 2.5rem !important; font-weight: 800; border-bottom: 3px solid var(--wiki-main); padding-bottom: 10px; margin-top: 3rem; margin-bottom: 20px; color: #000; }
+        h3 { font-size: 1.8rem !important; font-weight: 700; margin-top: 2rem; margin-bottom: 15px; padding-left: 10px; border-left: 5px solid var(--wiki-main); color: #000; }
+
+        /* 테이블 공통 */
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; border: 1px solid #ccc; font-size: 14px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: center; vertical-align: middle; }
+        th { background-color: #f2f2f2; font-weight: 700; }
+
+        /* 인포박스 스타일 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 400px; font-size: 13px; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .infobox-top { background-color: var(--korail-blue); padding: 10px; text-align: center; color: white; }
+        .infobox-title { font-size: 2rem !important; font-weight: 900; }
+        
+        /* 인포박스 내부 테이블 */
+        .infobox-table { width: 100%; border: none; margin: 0; }
+        .infobox-table th { background: #f9f9f9; width: 35%; text-align: center; border: 1px solid #ddd; }
+        .infobox-table td { text-align: left; padding: 8px; border: 1px solid #ddd; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: 700; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* 철도거리표 스타일 */
+        .distance-table-container {
+            width: 100%;
+            background-color: #fff;
+            border-top: 2px solid #ccc;
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+        }
+        .main-header {
+            background-color: #f0f0f0;
+            color: #333;
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+            border-bottom: 1px solid #ccc;
+        }
+        .station-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding: 8px 0;
+            text-align: center;
+        }
+        .col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .col.side { flex-basis: 30%; font-size: 0.9em; }
+        .col.center { flex-basis: 40%; background-color: #fafafa; border-left: 1px solid #eee; border-right: 1px solid #eee; padding: 5px 0; }
+        
+        .station-link-dist { font-weight: bold; color: var(--wiki-link); text-decoration: none; font-size: 1.1em; }
+        .line-badge { font-size: 0.8em; color: #555; font-weight: bold; margin-bottom: 2px; }
+        .dist-val { font-size: 0.8em; color: #666; margin-top: 2px; }
+
+        .image-box { text-align: center; background: #eee; border-bottom: 1px solid #ccc; }
+        .image-box img { max-width: 100%; height: auto; display: block; }
+
+        /* 승강장 배선도 테이블 스타일 (3행 구조) */
+        .platform-track-table { border: 2px solid #aaa !important; margin: 15px 0 !important; background: #fff !important; width: 100% !important; table-layout: fixed; }
+        .track-normal { color: #000 !important; font-family: 'Courier New', monospace; font-size: 1.1rem !important; font-weight: bold; }
+        .platform-badge-box { color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.9rem !important; font-weight: 900; display: inline-block; min-width: 35px; }
+
+        /* 효빈위키식 스타일 */
+        .wiki-strike { text-decoration: line-through; color: #999; }
+        .wiki-footnote { font-size: 0.8em; vertical-align: super; color: var(--wiki-link); cursor: pointer; text-decoration: none; }
+
+        /* 빈주역 스타일 내비게이션 CSS */
+        .infobox-line-header { background-color: #ffffff; padding: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; border-bottom: 1px solid var(--wiki-border); }
+        .badge-rail { display: inline-flex; align-items: center; justify-content: center; height: 24px; padding: 0 10px; border-radius: 4px; color: white; font-weight: 900; font-size: 0.85rem; line-height: 1; }
+        
+        .rail-nav-table { width: 100% !important; margin: 0 !important; border: none !important; table-layout: fixed; background: #fff; }
+        .rail-nav-table td { border: none !important; border-bottom: 1px solid #eee !important; padding: 8px 4px !important; text-align: center; vertical-align: middle; }
+        .nav-prev-next { font-size: 0.8rem; color: #666; }
+        .nav-prev-next b { display: block; font-size: 1rem; color: #000; margin: 2px 0; }
+        .nav-center { color: white; font-weight: 900; font-size: 0.8rem; }
+        .nav-line-name { font-size: 0.7rem; background: rgba(0,0,0,0.1); padding: 1px 6px; border-radius: 10px; margin-bottom: 2px; display: inline-block; }
+
+        /* 폐역 안내 틀 스타일 */
+        .closed-station-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 10px;
+            background-color: #fdfdfd;
+        }
+        .closed-station-table td {
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            vertical-align: middle;
+        }
+        .closed-station-header {
+            width: 80px;
+            background-color: #888888;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+            font-size: 14px;
+        }
+        .closed-station-content {
+            text-align: center;
+            font-size: 15px;
+            color: #333;
+        }
+        .closed-station-item {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 4px;
+            vertical-align: bottom;
+            line-height: 1.1;
+        }
+        .closed-station-year {
+            font-size: 0.65em;
+            color: #337ab7;
+            margin-bottom: 2px;
+        }
+        .closed-station-link {
+            color: #337ab7;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .closed-station-link:hover {
+            text-decoration: underline;
+        }
+        .current-station {
+            font-weight: bold;
+            color: #000;
+            font-size: 16px;
+            margin: 0 4px;
+        }
+        
+        .wiki-image-box { text-align: center; background: #eee; border: 1px solid #ccc; margin-bottom: 20px; padding: 10px; }
+        .wiki-image-caption { font-size: 13px; color: #666; margin-top: 5px; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <!-- 상단바 색상 #7777AA -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-fixed);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 또는 번호 검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="txt-lvl-1">하정역</div>
+        <div class="text-right text-sm text-gray-500 mb-2 font-bold">최근 수정 시각: 2026-01-20 17:35:00</div>
+
+        <!-- 위키 형식 폐역 내비게이션 틀 -->
+        <table class="closed-station-table mt-4">
+            <tr>
+                <td class="closed-station-header">폐역</td>
+                <td class="closed-station-content">
+                    <a href="석창역.html" class="text-black hover:underline" style="font-weight:500;">석창</a> - 
+                    <div class="closed-station-item">
+                        <span class="closed-station-year">-1987</span>
+                        <a href="동석역.html" class="closed-station-link">동석</a>
+                    </div> - 
+                    <div class="closed-station-item">
+                        <span class="closed-station-year">폐역</span>
+                        <a href="등전역.html" class="closed-station-link">등전</a>
+                    </div> - 
+                    <span class="current-station">하정</span> - 
+                    <div class="closed-station-item">
+                        <span class="closed-station-year">-2008</span>
+                        <a href="해성역.html" class="closed-station-link">해성</a>
+                    </div> - 
+                    <div class="closed-station-item">
+                        <span class="closed-station-year">-2020</span>
+                        <a href="내덕역.html" class="closed-station-link">내덕</a>
+                    </div> - 
+                    <div class="closed-station-item">
+                        <span class="closed-station-year">-1987</span>
+                        <a href="산서역.html" class="closed-station-link">산서</a>
+                    </div> - 
+                    <a href="전진역.html" class="text-black hover:underline" style="font-weight:500;">전진</a>
+                </td>
+            </tr>
+        </table>
+
+        <!-- 기존 카테고리(분류) 박스 -->
+        <div class="p-3 border border-gray-300 rounded mb-5 bg-white text-sm mt-2">
+            <span class="font-bold text-[#005BAC]">분류:</span> 
+            <a href="하정시의_철도역.html" class="wiki-link">하정시의 철도역</a> | 
+            <a href="1964년_개업한_철도역.html" class="wiki-link">1964년 개업한 철도역</a> | 
+            <a href="매덕선.html" class="wiki-link">매덕선</a>
+        </div>
+
+        <!-- 인포박스 시작 -->
+        <aside class="infobox">
+            <!-- 인포박스 헤더 코레일 블루 -->
+            <div class="infobox-top">
+                <div class="infobox-title">하 정</div>
+                <div class="text-sm">Hajeong / 荷亭</div>
+            </div>
+
+            <!-- 노선 뱃지 -->
+            <div class="infobox-line-header">
+                <div class="badge-rail bg-[#5288f5]">새마을호</div>
+                <div class="badge-rail bg-[#f55839]">무궁화호</div>
+            </div>
+
+            <!-- 빈주역 스타일 내비게이션 테이블 -->
+            <div class="rail-nav-table-container">
+                <table class="rail-nav-table">
+                    <colgroup><col style="width:35%"><col style="width:30%"><col style="width:35%"></colgroup>
+<script>
+    function getStationLink(name) {
+        return `${name.endsWith('역') ? name : name + '역'}.html`;
+    }
+
+    const navData = [
+        // 매덕선 새마을호
+        { 
+            line: '매덕선', name: '새마을호', color: '#5288f5', 
+            prev: '석창', prevDir: '비천항', pDist: '18.31', 
+            next: '덕주', nextDir: '운진항', nDist: '26.28' // 전진역 통과
+        },
+        // 매덕선 무궁화호
+        { 
+            line: '매덕선', name: '무궁화호', color: '#f55839', 
+            prev: '석창', prevDir: '비천항', pDist: '18.31', 
+            next: '전진', nextDir: '운진항', nDist: '20.41' 
+        }
+    ];
+    
+    navData.forEach(d => {
+        const prevText = d.prev === '시종착' 
+            ? '시종착' 
+            : `${d.prevDir} 방면<br><b><a href="${getStationLink(d.prev)}" class="wiki-link" style="color:#000;">${d.prev}</a></b>${d.pDist ? '<br>← ' + d.pDist + '㎞' : ''}`;
+
+        const nextText = d.next === '시종착' 
+            ? '시종착' 
+            : `${d.nextDir} 방면<br><b><a href="${getStationLink(d.next)}" class="wiki-link" style="color:#000;">${d.next}</a></b>${d.nDist ? '<br>' + d.nDist + ' ㎞ →' : ''}`;
+
+        document.write(`<tr>
+            <td class="nav-prev-next">${prevText}</td>
+            <td class="nav-center" style="background:${d.color}">
+                <div class="nav-line-name">${d.line}</div><br>
+                <div class="font-bold">${d.name}</div>
+                ${d.note ? '<div style="font-size:0.6rem">' + d.note + '</div>' : ''}
+            </td>
+            <td class="nav-prev-next">${nextText}</td>
+        </tr>`);
+    });
+</script>
+                </table>
+            </div>
+            
+            <div class="image-box">
+                <img src="이미지/하정역.png" alt="하정역 전경" onerror="this.src='https://placehold.co/400x250?text=Hajeong+Station';">
+                <div class="p-2 text-xs text-gray-600 bg-gray-100 border-t border-gray-300">하정역사</div>
+            </div>
+
+            <table class="infobox-table">
+                <tr><th>운영 기관</th><td><a href="한국철도공사.html" class="wiki-link">한국철도공사</a></td></tr>
+                <tr><th>개업일</th><td>1932년 11월 1일</td></tr>
+                <tr><th>주소</th><td><a href="덕빈남도.html" class="wiki-link">덕빈남도</a> <a href="하정시.html" class="wiki-link">하정시</a> <a href="규산동.html" class="wiki-link">규산동</a> 288</td></tr>
+                <tr><th>노선</th><td><a href="매덕선.html" class="wiki-link">매덕선</a></td></tr>
+                <tr><th>등급</th><td>보통역 (3급)</td></tr>
+                <tr><th>승강장</th><td>2면 4선 (쌍섬식)</td></tr>
+                <tr><th>운행열차</th><td><a href="새마을호.html" class="wiki-link">새마을호</a>, <a href="무궁화호.html" class="wiki-link">무궁화호</a></td></tr>
+            </table>
+
+            <!-- 철도거리표 (아이콘 제거, 텍스트 중심) -->
+            <div class="distance-table-container">
+                <div class="main-header">철도거리표</div>
+                
+                <div class="station-row">
+                    <div class="col side">
+                        <span class="direction">비천항 방면</span>
+                        <a href="석창역.html" class="station-link-dist">석 창</a>
+                        <span class="dist-val">← 18.31 km</span>
+                    </div>
+                    <div class="col center">
+                        <div class="line-badge text-[#005BAC]">매덕선</div>
+                        <span class="font-black text-lg">하 정</span>
+                    </div>
+                    <div class="col side">
+                        <span class="direction">운진항 방면</span>
+                        <a href="전진역.html" class="station-link-dist">전 진</a>
+                        <span class="dist-val">20.41 km →</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- 인포박스 끝 -->
+
+        <!-- 목차 업데이트 (승강장을 5번으로 독립) -->
+        <div class="inline-block min-w-[300px] border border-gray-300 bg-gray-50 p-4 mb-6">
+            <div class="text-center font-black mb-2 text-lg">목차</div>
+            <ul class="list-decimal list-inside text-sm font-bold text-[#0055AA] space-y-1">
+                <li><a href="#s-1">개요</a></li>
+                <li><a href="#s-2">역사</a></li>
+                <li><a href="#s-3">역 정보</a></li>
+                <li><a href="#s-4">일평균 이용객</a></li>
+                <li><a href="#s-5">승강장</a></li>
+                <li><a href="#s-6">연계 교통</a></li>
+                <li><a href="#s-7">여담</a></li>
+            </ul>
+        </div>
+        <div class="clear-both"></div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <p>
+            <a href="매덕선.html" class="wiki-link">매덕선</a>의 철도역. <a href="덕빈남도.html" class="wiki-link">덕빈남도</a> <a href="하정시.html" class="wiki-link">하정시</a> 규산동 288번지에 위치해 있다.
+        </p>
+        <p>
+            과거 <b>'검은 노다지'</b>라 불리며 석탄 산업으로 전성기를 누렸던 하정시의 관문역이다. 1970년대 인구 20만 명 시절에는 화물과 여객으로 북새통을 이루었으나, 폐광 이후 도시가 쇠퇴하며 현재는 다소 한산해진 상태이다. 그럼에도 하정시의 유일한 철도역이자 교통 요충지(규산동)로서 여전히 지역 경제의 중심축을 담당하고 있다. <a href="새마을호.html" class="wiki-link">새마을호</a>와 <a href="무궁화호.html" class="wiki-link">무궁화호</a>가 정차한다.
+        </p>
+
+        <h2 id="s-2">2. 역사</h2>
+        <ul class="list-disc ml-6 space-y-1 mb-4">
+            <li><b>1932년 11월 1일:</b> 보통역으로 영업 개시</li>
+            <li><b>1970년대:</b> 석탄 수송량 급증으로 구내 선로 확장 및 역사 증축 (전성기)</li>
+            <li><b>1990년대:</b> 석탄 산업 합리화 정책으로 화물 취급량 급감</li>
+            <li><b>2000년대:</b> 역사 리모델링, 현재는 여객 및 일부 화물(농산물, 자재) 취급</li>
+        </ul>
+
+        <h2 id="s-3">3. 역 정보</h2>
+        <p>
+            역사는 과거의 영광을 반영하듯 도시 규모에 비해 상당히 크고 웅장한 편이다. 대합실 천장이 높고 광장이 넓게 조성되어 있으나, 이용객이 줄어들어 지금은 다소 썰렁한 느낌을 주기도 한다. 역 주변은 하정시의 행정 중심지인 규산동으로, 물류창고와 산업단지가 인접해 있다.
+        </p>
+        <p>
+            전 역인 <a href="석창역.html" class="wiki-link">석창역</a>과는 18.31km, 다음 역인 <a href="전진역.html" class="wiki-link">전진역</a>과는 20.41km 떨어져 있어 역간 거리가 매우 길다. 이는 하정시가 험준한 산악 지형인 탓도 있지만, <b>과거 존재했던 중간 간이역들이 모두 폐역되었기 때문</b>이다. 실제로 석탄 산업 전성기에는 <b>석창 방면으로 2개, 전진 방면으로 3개</b>의 간이역이 있었으나, 산업 쇠퇴와 인구 감소로 인해 모두 문을 닫고 현재의 긴 역간 거리가 형성되었다.
+        </p>
+        
+        <h2 id="s-4">4. 일평균 이용객</h2>
+        <p>
+            과거에는 석탄 관련 종사자와 그 가족들로 붐볐으나, 현재는 지역 주민들의 시외 이동과 관광객 수요에 의존하고 있다.
+        </p>
+        <p>
+            특이한 점은 <b>시(市) 단위의 중심역</b>임에도 불구하고, 인접한 <b>군(郡) 단위 역</b>인 <a href="석창역.html" class="wiki-link">석창역</a>보다 이용객이 적다는 것이다. 이는 하정시 인구(약 7.7만 명)가 석창군(약 8만 명)보다 적을 뿐만 아니라, 석창군의 IT/물류 산업 발달로 유동 인구가 급증한 탓에 역전 현상이 발생했기 때문이다. <span class="wiki-strike">시가 군한테 졌다</span>
+        </p>
+
+        <!-- 새롭게 적용된 5. 승강장 문단 -->
+        <h2 id="s-5">5. 승강장</h2>
+        <p>2면 4선의 쌍섬식 승강장을 갖추고 있으며, 과거 석탄 열차 대피 및 조성을 위해 선로 유효장이 매우 길다.</p>
+            
+        <div class="wiki-image-box">
+            <img src="이미지/하정역_일반선_승강장.webp" alt="하정역 승강장" style="max-width: 100%; height: auto; display: block; margin: 0 auto;" onerror="this.src='https://placehold.co/800x450?text=No+Image';">
+            <div class="wiki-image-caption">
+                세월의 흔적이 묻어나는 하정역 1~4번 승강장 전경. <del>사람보다 비둘기가 더 자주 보인다.</del>
+            </div>
+        </div>
+
+        <div class="my-4 overflow-x-auto">
+            <table class="platform-track-table" style="font-family:monospace; min-width:600px; text-align:center;">
+                <colgroup>
+                    <col style="width:10%">
+                    <col style="width:80%">
+                    <col style="width:10%">
+                </colgroup>
+                <tr><td colspan="3" class="bg-gray-100 font-bold">↑ <a href="석창역.html" class="wiki-link">석창</a></td></tr>
+                <tr class="h-16">
+                    <td style="background:#ddd; border-right:2px solid #555;">1 2</td>
+                    <td class="track-normal">ㅣㅣ　　　　　　　　　　　　　　　　ㅣㅣ</td>
+                    <td style="background:#ddd; border-left:2px solid #555;">3 4</td>
+                </tr>
+                <tr><td colspan="3" class="bg-gray-100 font-bold">↓ <a href="전진역.html" class="wiki-link">전진</a></td></tr>
+            </table>
+        </div>
+
+        <table class="platform-track-table">
+            <thead>
+                <tr><th style="width:12%">번호</th><th style="width:38%">노선 및 열차 등급</th><th>행선지</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="platform-badge-box" style="background:#005BAC;">1 · 2</span></td>
+                    <td style="text-align:left;"><b>매덕선</b> (새마을호 · 무궁화호)</td>
+                    <td style="text-align:left;"><a href="석창역.html" class="wiki-link">석창</a>·<a href="매성역.html" class="wiki-link">매성</a>·<a href="비천항역.html" class="wiki-link">비천항</a> 방면</td>
+                </tr>
+                <tr>
+                    <td><span class="platform-badge-box" style="background:#005BAC;">3 · 4</span></td>
+                    <td style="text-align:left;"><b>매덕선</b> (새마을호 · 무궁화호)</td>
+                    <td style="text-align:left;"><a href="전진역.html" class="wiki-link">전진</a>·<a href="덕주역.html" class="wiki-link">덕주</a>·<a href="운진항역.html" class="wiki-link">운진항</a> 방면</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="s-6">6. 연계 교통</h2>
+        <p>역 광장에서 하정시내 각 지역(하정동, 해성동 등)과 별당읍, 면 지역으로 향하는 시내버스를 이용할 수 있다.</p>
+
+        <h2 id="s-7">7. 여담</h2>
+        <ul class="list-disc ml-8 space-y-2">
+            <li>
+                역 이름 <b>하정(荷亭)</b>은 '연꽃 정자'라는 예쁜 뜻이지만, 현지에서는 <b>"하.. 정말.."</b>의 줄임말이라며 인구 감소에 대한 탄식으로 쓰이는 자조적인 밈이 있다. <span class="wiki-strike">하.. 정 말 답이 없다</span>
+            </li>
+            <li>
+                과거 탄광 전성기 시절에는 "하정역 개도 만 원짜리를 물고 다녔다"는 전설 같은 이야기가 전해진다. 지금은 역 광장 비둘기가 뻥튀기를 물고 다닌다.
+            </li>
+            <li>
+                역 구내에 옛날 석탄을 실어 나르던 화차 1량이 전시되어 있어 인증샷 명소로 쓰인다. <span class="wiki-strike">하지만 밤에 보면 무섭다는 평이 많다</span>
+            </li>
+            <li>
+                인근 석창역보다 이용객이 적다는 사실에 자존심 상해하는 지역 어르신들이 많다. "옛날엔 우리가 석창이 먹여 살렸다"며 라떼를 시전하시곤 시전하시곤 한다.
+            </li>
+        </ul>
+
+    </div>
+    
+    <footer class="p-10 bg-gray-100 mt-20 text-sm text-center text-gray-500 font-bold">
+        이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. <br>
+        효빈위키는 백과사전이 아니며 검증되지 않았거나 잘못된 서술이 있을 수 있습니다.
+    </footer>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

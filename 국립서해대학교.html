@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>국립서해대학교 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* 문서 테마 컬러: 딥 오션 네이비 & 서해 시안 블루 */
+            --wiki-main: #002147; 
+            --wiki-sub: #00A3D2;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #002147;
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.15rem !important; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 스타일 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 450px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-header { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.4rem !important; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: #f0f4f8; color: var(--wiki-main); width: 100px; padding: 6px 10px; border: 1px solid var(--wiki-border); text-align: center; font-weight: bold; vertical-align: middle; }
+        .infobox td { padding: 6px 10px; border: 1px solid var(--wiki-border); vertical-align: middle; }
+        
+        /* 테이블 스타일 */
+        .wiki-table { border-collapse: collapse; width: 100%; margin: 10px 0; border: 1px solid #ccc; }
+        .wiki-table th { background-color: var(--wiki-main); color: white; padding: 8px; border: 1px solid #ccc; text-align: center; font-weight: bold; }
+        .wiki-table td { padding: 8px; border: 1px solid #ccc; background: white; }
+        .wiki-table-center { text-align: center; }
+        .wiki-table-sub { background-color: #f0f4f8; font-weight: bold; text-align: center; color: var(--wiki-main); }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* 기타 요소 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+        del { color: #ccc; text-decoration: line-through; }
+        .wiki-gray { color: #888; font-size: 0.9em; }
+        
+        /* 폴딩(접기/펼치기) 구현 */
+        details { border: 1px solid #aaa; border-radius: 4px; padding: 0; margin-bottom: 10px; background: white; }
+        summary { font-weight: bold; padding: 0.5em; cursor: pointer; background-color: #eee; list-style: none; display: flex; justify-content: center; align-items: center; }
+        summary:after { content: " [ 펼치기 · 접기 ]"; font-size: 0.8em; margin-left: 5px; color: #555; }
+        details[open] { padding: 0; }
+        details[open] summary { border-bottom: 1px solid #aaa; }
+
+        /* 하단 네비게이션 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+        
+        /* 푸터 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+        
+        /* 상단 그라데이션 박스 */
+        .gradient-box {
+            background-image: linear-gradient(to right, #002147, #00A3D2, #00A3D2, #002147);
+            color: white; padding: 20px; text-align: center; border-radius: 5px; margin-bottom: 0px;
+        }
+
+        /* 지하철 노선 아이콘 스타일 */
+        .subway-icon {
+            display: inline-flex; justify-content: center; align-items: center;
+            width: 20px; height: 20px; border-radius: 50%;
+            color: white; font-weight: bold; font-size: 0.75rem;
+            margin-right: 4px;
+        }
+        .subway-line-binhyo { background-color: #6677CC; color: white; width: 45px; border-radius: 10px;} /* 빈효선 */
+        .subway-line-train { background-color: #222222; color: white; width: 55px; border-radius: 10px;} /* 일반철도 */
+
+        /* 각주 스타일 */
+        .wiki-fn { font-size: 0.8em; vertical-align: super; color: var(--wiki-link); text-decoration: none; font-weight: bold; cursor: help; margin-left: 1px; }
+        .wiki-fn:hover { text-decoration: underline; }
+        .wiki-fn-content-box { border-top: 1px solid #ccc; margin-top: 40px; padding-top: 10px; font-size: 0.9rem; }
+        .wiki-fn-item { margin-bottom: 6px; }
+        .wiki-fn-back { color: var(--wiki-link); text-decoration: none; margin-right: 5px; font-weight: bold; }
+        
+        /* 각주 툴팁 (호버보드) */
+        #wiki-fn-tooltip {
+            position: fixed;
+            display: none;
+            background: #fff;
+            border: 1px solid var(--wiki-main);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            max-width: 350px;
+            z-index: 100000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: 6px;
+            pointer-events: none;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        /* 둘러보기 틀 스타일 */
+        .nav-template { width: 100%; border: 2px solid var(--wiki-main); border-radius: 4px; overflow: hidden; margin-bottom: 20px; clear: both; font-size: 0.9rem; }
+        .nav-template-header { background-color: var(--wiki-main); color: white; padding: 8px 12px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .nav-template-content { background-color: #fff; }
+        .nav-template-table { width: 100%; border-collapse: collapse; }
+        .nav-template-table th { background-color: #e6f2ee; color: #333; border: 1px solid #ddd; padding: 6px 10px; text-align: center; font-weight: bold; width: 100px; }
+        .nav-template-table td { border: 1px solid #ddd; padding: 6px 10px; }
+        .nav-template-sub-th { background-color: #f5f9fa; font-weight: bold; text-align: center; width: 40px; color: #555; }
+        .nav-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .nav-item { color: #333; text-decoration: none; cursor: pointer; }
+        .nav-item:hover { text-decoration: underline; color: var(--wiki-link); }
+        .nav-current { font-weight: 900; color: white; background-color: var(--wiki-main); padding: 2px 6px; border-radius: 4px; }
+        .nav-current:hover { color: white; text-decoration: none; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-fn-tooltip"></div>
+
+    <!-- 상단 네비게이션 (검색창 바) -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: #7777AA;">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="goToLink('index.html')">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a onclick="goToLink('토론.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">토론</a>
+                <a onclick="goToLink('수정.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">편집</a>
+                <a onclick="goToLink('역사.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">국립서해대학교</div>
+            <div class="flex gap-2 mb-1">
+                <a onclick="goToLink('국립서해대학교.html')" class="wiki-btn">문서</a>
+                <a onclick="goToLink('토론.html')" class="wiki-btn">토론</a>
+                <a onclick="goToLink('수정.html')" class="wiki-btn">편집</a>
+                <a onclick="goToLink('역사.html')" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold" style="color: var(--wiki-main);">분류:</span> 
+            <a onclick="goToLink('덕빈북도의_대학교.html')" class="wiki-link">덕빈북도의 대학교</a> | 
+            <a onclick="goToLink('국립대학.html')" class="wiki-link">국립대학</a> |
+            <a onclick="goToLink('서해시/교육.html')" class="wiki-link">서해시/교육</a> |
+            <a onclick="goToLink('동음이의어(오해).html')" class="wiki-link">동음이의어(오해)</a>
+        </div>
+
+        <!-- 상단 관련 학교/협의회 템플릿 (덕빈북도 대학교 현황) -->
+        <div class="mb-5">
+            <div class="nav-template">
+                <div class="nav-template-header">
+                    <span style="flex:1;"></span>
+                    <span style="flex:2; text-align: center;"><a onclick="goToLink('덕빈북도의_대학교.html')" style="color: white; text-decoration: none; cursor: pointer;">덕빈북도 대학교 현황</a></span>
+                    <span style="flex:1; text-align: right; font-size: 0.8em; font-weight: normal;"><a style="color: #ddd; cursor: pointer; text-decoration: none;">[편집]</a></span>
+                </div>
+                <div class="nav-template-content">
+                    <table class="nav-template-table">
+                        <tr>
+                            <th rowspan="5">국립</th>
+                            <td class="nav-template-sub-th">ㄱ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('국립서해대학교.html')" class="nav-item nav-current">국립서해대학교</a>
+                                    <a onclick="goToLink('서해해양대학교.html')" class="nav-item">국립서해해양대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㄷ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('덕북대학교.html')" class="nav-item">국립덕북대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅂ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('빈주교육대학교.html')" class="nav-item">빈주교육대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅊ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('천주대학교.html')" class="nav-item">천주대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅎ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('효빈대학교.html')" class="nav-item">효빈대학교 (도내 캠퍼스)</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th rowspan="1">공립</th>
+                            <td class="nav-template-sub-th">ㄷ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('덕북도립대학.html')" class="nav-item">덕북도립대학</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th rowspan="7">사립</th>
+                            <td class="nav-template-sub-th">ㄱ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('강주가톨릭대학교.html')" class="nav-item">강주가톨릭대학교</a>
+                                    <a onclick="goToLink('계성문화대학.html')" class="nav-item">계성문화대학</a>
+                                    <a onclick="goToLink('군천대학교.html')" class="nav-item">군천대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㄷ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('덕북과학기술대학교.html')" class="nav-item">덕북과학기술대학교</a>
+                                    <a onclick="goToLink('덕북외국어대학교.html')" class="nav-item">덕북외국어대학교</a>
+                                    <a onclick="goToLink('덕북예술대학.html')" class="nav-item">덕북예술대학</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅂ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('빈주대학교.html')" class="nav-item">빈주대학교</a>
+                                    <a onclick="goToLink('빈주보건대학.html')" class="nav-item">빈주보건대학</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅅ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('서진대학.html')" class="nav-item">서진대학</a>
+                                    <a onclick="goToLink('선빈대학교.html')" class="nav-item">선빈대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅇ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('약산대학교.html')" class="nav-item">약산대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅈ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('저소대학교.html')" class="nav-item">저소대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅊ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('천주폴리텍대학.html')" class="nav-item">천주폴리텍대학</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 그라데이션 박스와 접기 틀 -->
+            <div class="gradient-box">
+                <!-- 학교 로고/심볼 이미지 -->
+                <img src="이미지/국립서해대학교.svg" alt="국립서해대학교 로고" style="width: 250px; display: inline-block;" onerror="this.src='https://via.placeholder.com/250x80?text=SHNU+Logo';">
+            </div>
+            
+            <details>
+                <summary></summary>
+                <div class="p-2 border border-t-0 bg-white">
+                    <table class="wiki-table" style="margin: 0; width: 100%;">
+                        <tr>
+                            <td colspan="4" class="text-center font-bold text-white" style="background-color: #002147;">대학 정보</td>
+                        </tr>
+                        <tr>
+                            <td class="wiki-table-center"><a onclick="goToLink('국립서해대학교_역사.html')" class="wiki-link text-[#002147]">역사</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('국립서해대학교_캠퍼스.html')" class="wiki-link text-[#002147]">캠퍼스</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('국립서해대학교_주변상권.html')" class="wiki-link text-[#002147]">주변 상권</a></td>
+                        </tr>
+                    </table>
+                </div>
+            </details>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="infobox-header">
+                    국립서해대학교<br>
+                    <span class="text-sm font-normal">Seohae National University (SHNU)</span>
+                </div>
+                <div class="p-4 bg-white text-center border-b">
+                    <!-- 엠블럼 이미지 -->
+                    <div class="w-full flex justify-center py-4">
+                        <img src="이미지/국립서해대학교.svg" alt="국립서해대학교 UI" class="w-48" onerror="this.src='https://via.placeholder.com/150?text=SHNU';">
+                    </div>
+                </div>
+                <table>
+                    <tr><th>교훈</th><td>창의(創意), 실천(實踐), 협력(協力)</td></tr>
+                    <tr><th>개교</th><td>1953년 10월 12일</td></tr>
+                    <tr><th>상징</th><td>고래(동물), 곰솔(교목), 해당화(교화)</td></tr>
+                    <tr><th>교색</th><td>
+                         <span style="display:inline-block; width:15px; height:15px; background:#00A3D2; border:1px solid #ccc; vertical-align:middle;"></span> 서해 시안 블루 (#00A3D2)<br>
+                         <span style="display:inline-block; width:15px; height:15px; background:#002147; border:1px solid #ccc; vertical-align:middle; margin-top:2px;"></span> 딥 오션 네이비 (#002147)
+                    </td></tr>
+                    <tr><th>총장</th><td>제12대 권영석</td></tr>
+                    <tr><th>주소</th><td><a onclick="goToLink('덕빈북도.html')" class="wiki-link">덕빈북도</a> <a onclick="goToLink('서해시.html')" class="wiki-link">서해시</a> 중앙로 220 (중앙동)</td></tr>
+                    <tr><th>재적생</th><td>학부생 약 15,000명 / 대학원생 약 2,000명</td></tr>
+                    <tr><th>웹사이트</th><td><a href="https://www.shnu.ac.kr" target="_blank" class="wiki-link">공식 홈페이지</a></td></tr>
+                </table>
+                <div class="w-full bg-[#f9f9f9] border-t border-b">
+                    <div class="infobox-map" style="width: 100%; height: 250px; overflow: hidden; position: relative; display: block !important;">
+                        <iframe src="https://binia1.github.io/mymap/?name=국립서해대학교" 
+                                style="width: 160%; height: 160%; border: none; 
+                                       position: absolute; top: 0; left: 0;
+                                       transform: scale(0.625); transform-origin: 0 0;">
+                        </iframe>
+                    </div>
+                    <div style="padding: 5px; text-align: center; background: #eee; font-size: 0.8rem; color: #666;">
+                        국립서해대학교 캠퍼스 맵 (인터랙티브)
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1 w-full lg:w-auto">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">상징</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">역사</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">학부</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">대학원</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">캠퍼스</a>
+                        <ul>
+                            <li>6.1. <a href="#s-6-1" class="wiki-link">중앙동캠퍼스 (본교)</a></li>
+                            <li>6.2. <a href="#s-6-2" class="wiki-link">신항산학융합캠퍼스</a></li>
+                        </ul>
+                    </li>
+                    <li>7. <a href="#s-7" class="wiki-link">부속 시설 및 관련 기관</a></li>
+                    <li>8. <a href="#s-8" class="wiki-link">학사 제도</a>
+                        <ul>
+                            <li>8.1. <a href="#s-8-1" class="wiki-link">수강신청</a></li>
+                        </ul>
+                    </li>
+                    <li>9. <a href="#s-9" class="wiki-link">학내 문화</a>
+                        <ul>
+                            <li>9.1. <a href="#s-9-1" class="wiki-link">학교 축제</a></li>
+                            <li>9.2. <a href="#s-9-2" class="wiki-link">총학생회와 총동아리연합회</a></li>
+                        </ul>
+                    </li>
+                    <li>10. <a href="#s-10" class="wiki-link">주변 상권 및 교통</a></li>
+                    <li>11. <a href="#s-11" class="wiki-link">출신 인물</a></li>
+                    <li>12. <a href="#s-12" class="wiki-link">여담</a></li>
+                    <li>13. <a href="#s-13" class="wiki-link">평가</a></li>
+                    <li>14. <a href="#s-14" class="wiki-link">사건 및 사고</a></li>
+                    <li>15. <a href="#s-15" class="wiki-link">관련 문서</a></li>
+                    <li>16. <a href="#s-16" class="wiki-link">둘러보기</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <p>대한민국 <a onclick="goToLink('덕빈북도.html')" class="wiki-link">덕빈북도</a> <a onclick="goToLink('서해시.html')" class="wiki-link">서해시</a>에 본교를 둔 4년제 종합 국립대학이다. 약칭은 <strong>서해대</strong>, 영문 이니셜은 <strong>SHNU</strong>이다.</p>
+        <p>도내 최고 존엄인 <a onclick="goToLink('덕북대학교.html')" class="wiki-link">국립덕북대학교</a>가 거점국립대학교로서 도 전체를 아우른다면, 서해대학교는 거점국립대는 아니지만 서해안권(<a onclick="goToLink('서해시.html')" class="wiki-link">서해</a>, <a onclick="goToLink('서진군.html')" class="wiki-link">서진</a>, <a onclick="goToLink('모제군.html')" class="wiki-link">모제</a>, <a onclick="goToLink('상안군.html')" class="wiki-link">상안</a>)의 교육과 산학협력을 꽉 잡고 있는 지역 중심 국립대학이다. 서해 신항 및 국가산업단지와 연계된 특성화 학과들은 물론, 종합대학답게 인문, 사회, 자연, 공학, 사범, 예술 등 방대한 학과 스펙트럼을 보유하고 있어 수험생들 사이에서 선호도가 높다.</p>
+        
+        <!-- 2. 상징 -->
+        <h2 id="s-2" class="anchor-offset">2. 상징</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>교목: 곰솔</strong> - 해풍을 견디며 자라는 강인한 서해인을 상징한다. <del>겨울에 중앙도서관 언덕을 오르다 보면 왜 곰솔인지 뼈저리게 느끼게 된다.</del></li>
+            <li><strong>교화: 해당화</strong> - 서해안의 정취와 번영을 상징.</li>
+            <li><strong>상징 동물: 고래</strong> - 드넓은 서해를 누비며 세계로 나아가는 기상을 의미한다.</li>
+            <li><strong>교색: 서해 시안 블루, 딥 오션 네이비</strong> - 맑은 서해 바다와 이지적인 탐구 정신을 뜻한다.</li>
+        </ul>
+
+        <!-- 3. 역사 -->
+        <h2 id="s-3" class="anchor-offset">3. 역사</h2>
+        <p>1953년 한국전쟁 직후 지역 사회의 재건을 위해 '서해초급대학'으로 문을 열었다. 1970년대 국가 임해산업단지 조성과 함께 공과대학을 중심으로 몸집을 불렸으며, 1980년대 4년제 종합대학으로 승격되었다. 1995년 서해시-압일군 도농통합 당시 대학 부지를 대폭 확장하여 현재의 중앙동 캠퍼스 기틀을 닦았다. 2000년대 들어 서해 신항이 개장하면서 항만·물류·해양 관련 학과들을 전폭적으로 밀어주며 비약적인 성장을 이루었다.</p>
+
+        <!-- 4. 학부 -->
+        <h2 id="s-4" class="anchor-offset">4. 학부</h2>
+        <p>종합 국립대답게 학과 스펙트럼이 매우 넓다. 덕북대에서 떨어지면 서해대로 온다는 인식이 강하지만, 공대와 항만물류학과만큼은 덕북대와 엎치락뒤치락할 정도로 입결이 높다.</p>
+        
+        <table class="wiki-table">
+            <tr>
+                <th width="25%">단과대학</th>
+                <th width="75%">소속 학부 및 학과</th>
+            </tr>
+            <tr>
+                <td class="wiki-table-center font-bold">인문대학</td>
+                <td>국어국문학과, 영어영문학과, 일어일문학과, 중어중문학과, 사학과, 철학과, 문헌정보학과</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center font-bold">사회과학대학</td>
+                <td>행정학과, 정치외교학과, 사회학과, 심리학과, 언론정보학과, 사회복지학과</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center font-bold">자연과학대학</td>
+                <td>수학과, 물리학과, 화학과, 생명과학부, 정보통계학과, 대기환경과학과</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center font-bold">경상대학</td>
+                <td>경영학과, 경제학부, <strong>항만물류학과 (초간판)</strong>, 국제통상학과, 회계세무학과</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center font-bold">공과대학</td>
+                <td>기계공학부, 조선해양공학과, 전자공학부, 컴퓨터인공지능학부, 화학공학부, 신소재공학과, 토목공학과, 건축공학부, 산업공학과</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center font-bold">해양과학대학</td>
+                <td>해양생산시스템전공, 해양경찰학과, 수산생명의학과, 스마트수산자원학과, 해양환경공학과</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center font-bold">사범대학</td>
+                <td>국어교육과, 영어교육과, 수학교육과, 역사교육과, 지리교육과, 유아교육과, 체육교육과</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center font-bold">예술대학</td>
+                <td>산업디자인학과, 시각디자인학과, 조형예술학과, 음악학과</td>
+            </tr>
+        </table>
+
+        <!-- 5. 대학원 -->
+        <h2 id="s-5" class="anchor-offset">5. 대학원</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>일반대학원:</strong> 석·박사 과정 운영.</li>
+            <li><strong>전문대학원:</strong> 융합기술경영전문대학원(MOT).</li>
+            <li><strong>특수대학원:</strong> 글로벌항만물류대학원, 교육대학원, 산업경영대학원.</li>
+        </ul>
+
+        <!-- 6. 캠퍼스 -->
+        <h2 id="s-6" class="anchor-offset">6. 캠퍼스</h2>
+        
+        <h3 id="s-6-1" class="anchor-offset">6.1. 중앙동캠퍼스 (본교)</h3>
+        <p>덕빈북도 서해시 중앙동에 자리 잡고 있는 메인 캠퍼스. 대학 본부와 대부분의 단과대학이 위치해 있다. 덕북대만큼 무식하게 광활한 평지는 아니지만, 건물들이 오밀조밀하게 모여 있어 다음 수업 건물로 뛰어가기에는 오히려 편하다. 단점이라면 바닷가 똥바람(...)이 필터링 없이 그대로 불어온다는 것.</p>
+
+        <h3 id="s-6-2" class="anchor-offset">6.2. 신항산학융합캠퍼스</h3>
+        <p>서해시 신항동에 위치한 연구 및 산학협력 전용 소규모 캠퍼스. 공대 고학년과 해양과학대학 일부 랩실 노예 연구생들이 주로 서식한다.</p>
+
+        <!-- 7. 부속 시설 및 관련 기관 -->
+        <h2 id="s-7" class="anchor-offset">7. 부속 시설 및 관련 기관</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>중앙도서관:</strong> 캠퍼스에서 가장 높은 곳에 위치해 있다. 열람실 창밖으로 서해 신항의 야경과 바다가 내려다보이는 미친 뷰를 자랑한다. <del>뷰가 너무 좋아서 공부를 안 하고 멍때리게 된다는 게 함정.</del></li>
+            <li><strong>서해대 부설 해양과학연구소:</strong> 시 외곽 포구동 인근에 위치해 있으며, 학교가 보유한 실습선(서해누리호)이 이곳에 정박해 있다.</li>
+        </ul>
+
+        <!-- 8. 학사 제도 -->
+        <h2 id="s-8" class="anchor-offset">8. 학사 제도</h2>
+        <h3 id="s-8-1" class="anchor-offset">8.1. 수강신청</h3>
+        <p>덕북대에 '오아시스'가 있다면 서해대에는 <strong>'블루웨이브'</strong> 전산망이 있다. 유리 서버인 건 지거국 형님이나 여기나 똑같다. 특히 간판 학과인 '항만물류론'이나 '현대사회와 심리' 같은 꿀교양 과목은 클릭 0.1초 컷으로 마감되며, 실패 시 피시방에서 탄식이 쏟아진다.</p>
+
+        <!-- 9. 학내 문화 -->
+        <h2 id="s-9" class="anchor-offset">9. 학내 문화</h2>
+        <h3 id="s-9-1" class="anchor-offset">9.1. 학교 축제</h3>
+        <p>매년 5월에 열리는 대동제인 <strong>'해령제'</strong>. 지역 특색(서해바다)을 제대로 살려, 총학생회 주관으로 해산물 직판장 뺨치는 고퀄리티의 주막이 열린다.</p>
+        <p>덕빈북도 국립대 종특인 '오시(Oshi) 자랑 대회' 역시 이곳에서도 성황리에 개최된다. 덕북대가 행정학과(러브라이브) vs 공대(뱅드림) 구도라면, 서해대는 공대와 해양 관련 학과들이 연합하여 미나토 유키나(항구 이름이라서(...))와 마츠우라 카난(해양의 어머니) 진영이 박 터지게 싸우는 진풍경이 벌어진다.</p>
+
+        <h3 id="s-9-2" class="anchor-offset">9.2. 총학생회와 총동아리연합회</h3>
+        <p>매년 총학 선거의 단골 공약은 "기숙사 보일러 빵빵하게 틀기", "중앙도서관 언덕 에스컬레이터 설치(매번 예산 부족으로 무산됨)", 그리고 "서해경전철 역 출구 학교 정문 앞까지 끌어오기"다.</p>
+
+        <!-- 10. 주변 상권 및 교통 -->
+        <h2 id="s-10" class="anchor-offset">10. 주변 상권 및 교통</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>일반철도 <a onclick="goToLink('서해역.html')" class="wiki-link">서해역</a>:</strong> 도보로 약 15분 거리에 있는 타 지역 학생들의 생명줄. <span class="subway-icon subway-line-train">일반</span> 금요일 오후만 되면 캐리어를 끌고 <a onclick="goToLink('빈효선.html')" class="wiki-link">빈효선</a>이나 KTX를 타러 가는 학생들로 역 앞이 바글바글하다.</li>
+            <li><strong><a onclick="goToLink('서해경전철.html')" class="wiki-link">서해경전철</a> (2034년 개통 예정):</strong> 지옥 같은 서해시 도로망을 구원할 빛과 소금. 현재 캠퍼스 바로 앞 구도심을 관통하는 천로중앙역이 들어설 예정이라 재학생들은 "제발 졸업 전에 공사 삽질이라도 보는 게 소원"이라고 입을 모은다.</li>
+            <li><strong>대학로 상권:</strong> 중앙동 일대에 가성비 좋은 국밥집, 술집, 그리고 바닷가 대학답게 횟집(...)이 은근히 많다.</li>
+        </ul>
+
+        <!-- 11. 출신 인물 -->
+        <h2 id="s-11" class="anchor-offset">11. 출신 인물</h2>
+        <p>덕북대학교가 덕빈북도 정·재계 전체를 장악하고 있다면, 서해대학교는 서해권(서해·서진)의 실무 공무원, 항만·물류 공기업(서해시 항만공사 등), 해운업계 임원진을 꽉 쥐고 있는 무서운 실속파 카르텔을 형성하고 있다.</p>
+        
+        <div class="overflow-x-auto">
+            <table class="wiki-table text-sm">
+                <tr>
+                    <th>광역자치단체</th>
+                    <th>선거구</th>
+                    <th>정당(변천사)</th>
+                    <th>국회의원(단체장)</th>
+                    <th>선수</th>
+                    <th>역임 대수</th>
+                    <th>생년월일</th>
+                    <th>출신지 (시대 고증 및 법정리 반영)</th>
+                    <th>출신고교</th>
+                    <th>출신대학</th>
+                    <th>출신학과</th>
+                    <th>비고</th>
+                    <th>오시(?)</th>
+                    <th>현재 재임상태</th>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">효빈광역시</td>
+                    <td class="wiki-table-center">청엽 갑</td>
+                    <td class="wiki-table-center">무소속 → 국민의당 → 바른미래당 → 미래통합당 → 국민의힘</td>
+                    <td class="wiki-table-center font-bold">원춘석 <span class="text-xs font-normal">(효빈 청엽구 갑 당협위원장)</span></td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center">1963년 01월 15일</td>
+                    <td class="wiki-table-center">효빈직할시 청엽구</td>
+                    <td class="wiki-table-center">청엽고등학교</td>
+                    <td class="wiki-table-center">국립서해대학교</td>
+                    <td class="wiki-table-center">정치외교학</td>
+                    <td class="wiki-table-center">잦은 당적 변경(철새 행보), 22대 총선 낙선</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center">원외 (당협위원장)</td>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">효빈광역시</td>
+                    <td class="wiki-table-center">청엽구</td>
+                    <td class="wiki-table-center">새미래민주당</td>
+                    <td class="wiki-table-center font-bold">유인철 <span class="text-xs font-normal">(지역위원장)</span></td>
+                    <td class="wiki-table-center">시의원 2선</td>
+                    <td class="wiki-table-center">제7~8대 시의원</td>
+                    <td class="wiki-table-center">1972년</td>
+                    <td class="wiki-table-center">효빈광역시 청엽구 우전동</td>
+                    <td class="wiki-table-center">청엽고등학교</td>
+                    <td class="wiki-table-center">국립서해대학교</td>
+                    <td class="wiki-table-center">행정학</td>
+                    <td class="wiki-table-center">친낙계 인사, 전 청엽구청장 후보</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center">원외 (당협)</td>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">덕빈북도</td>
+                    <td class="wiki-table-center">계성시</td>
+                    <td class="wiki-table-center">민주당 → 새정치민주연합 → 더불어민주당</td>
+                    <td class="wiki-table-center font-bold"><a onclick="goToLink('서금진.html')" class="wiki-link">서금진</a></td>
+                    <td class="wiki-table-center">3선</td>
+                    <td class="wiki-table-center">5~7기</td>
+                    <td class="wiki-table-center">1960-01-22</td>
+                    <td class="wiki-table-center">덕북 계성군 진백면 아마리 (현 계성시 진백2동 아마동)</td>
+                    <td class="wiki-table-center">진백고</td>
+                    <td class="wiki-table-center">국립서해대</td>
+                    <td class="wiki-table-center">행정학과</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center"></td>
+                    <td class="wiki-table-center"></td>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">덕빈북도</td>
+                    <td class="wiki-table-center">전산시</td>
+                    <td class="wiki-table-center">새정치민주연합 → 민주평화당</td>
+                    <td class="wiki-table-center font-bold"><a onclick="goToLink('기서진.html')" class="wiki-link">기서진</a></td>
+                    <td class="wiki-table-center">재선</td>
+                    <td class="wiki-table-center">6, 7기</td>
+                    <td class="wiki-table-center">1960-11-20</td>
+                    <td class="wiki-table-center">덕북 전산군 하면 삼향리 (현 전산시 하면 삼향리)</td>
+                    <td class="wiki-table-center">해진고</td>
+                    <td class="wiki-table-center">국립서해대</td>
+                    <td class="wiki-table-center">경제학과</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center"></td>
+                    <td class="wiki-table-center"></td>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">덕빈북도</td>
+                    <td class="wiki-table-center">치원군</td>
+                    <td class="wiki-table-center">자유선진당 → 새누리당</td>
+                    <td class="wiki-table-center font-bold"><a onclick="goToLink('연감건.html')" class="wiki-link">연감건</a></td>
+                    <td class="wiki-table-center">3선</td>
+                    <td class="wiki-table-center">4~6기</td>
+                    <td class="wiki-table-center">1951-12-25</td>
+                    <td class="wiki-table-center">덕북 치원군 후등면 소관리 (현 치원군 후등면 소관리)</td>
+                    <td class="wiki-table-center">후등고</td>
+                    <td class="wiki-table-center">국립서해대</td>
+                    <td class="wiki-table-center">행정학과</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center"></td>
+                    <td class="wiki-table-center"></td>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">덕빈남도</td>
+                    <td class="wiki-table-center">방산시</td>
+                    <td class="wiki-table-center">새정치국민회의 → 새천년민주당</td>
+                    <td class="wiki-table-center font-bold"><a onclick="goToLink('원유선.html')" class="wiki-link">원유선</a></td>
+                    <td class="wiki-table-center">재선</td>
+                    <td class="wiki-table-center">2, 3기</td>
+                    <td class="wiki-table-center">1948-10-10</td>
+                    <td class="wiki-table-center">덕남 방산군 서중면 봉암리 (현 방산시 서중읍 봉암리)</td>
+                    <td class="wiki-table-center">서중고</td>
+                    <td class="wiki-table-center">국립서해대</td>
+                    <td class="wiki-table-center">경제학과</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center"></td>
+                    <td class="wiki-table-center"></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 12. 여담 -->
+        <h2 id="s-12" class="anchor-offset">12. 여담</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>전북 군산 서해대학과의 혼동:</strong> 과거 전라북도 군산시에 실존했던 사립 전문대 '서해대학(2021년 비리로 폐교)'과 이름이 똑같아 엄청난 오해를 받았다. 2021년 군산 서해대학이 폐교됐을 때, 이곳 국립 서해대학교 교무처로 "내 졸업증명서는 이제 어디서 떼냐", "등록금 환불해달라"는 졸업생들의 항의 전화가 폭주했다. 교직원들이 며칠 밤낮으로 "선생님, 거긴 전북 군산이고요! 여긴 덕빈북도 서해시 국립대입니다! 저희 안 망했어요!!"라고 해명하느라 성대가 결절될 뻔했다는 전설적인 일화가 내려온다. 명절마다 친척들에게 "너네 학교 망했다며?"라는 소리를 듣는 건 서해대생들의 오랜 트라우마다.</li>
+            <li><strong>이름 뺏기기 논란:</strong> 바로 옆 동네인 해안동에 <a onclick="goToLink('서해해양대학교.html')" class="wiki-link">국립서해해양대학교</a>가 있는데, 이쪽과도 택시 기사님들이 자주 헷갈려 한다. "서해대 가주세요" 하면 높은 확률로 "해양대? 아님 중앙동 종합대?"라고 되묻는다.</li>
+        </ul>
+
+        <!-- 13. 평가 -->
+        <h2 id="s-13" class="anchor-offset">13. 평가</h2>
+        <p>지방 국립대들이 학령인구 감소로 직격탄을 맞는 와중에도, 서해 신항이라는 든든한 국가 무역항을 배후에 두고 있어 취업률 방어력이 매우 훌륭하다. 공과대학, 특히 조선해양공학과와 항만물류학과는 인근 중공업 단지나 물류 기업으로 바로 꽂히는 선후배 라인이 탄탄해 한경 이공계 대학평가 등에서 늘 도내 상위권에 랭크된다.</p>
+
+        <!-- 14. 사건 및 사고 -->
+        <h2 id="s-14" class="anchor-offset">14. 사건 및 사고</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>서해대 펭귄 집단 결석 사태:</strong> 2018년 겨울, 기상 관측 이래 역대급 해풍과 폭설이 캠퍼스를 덮쳤다. 경사가 있는 인문대 건물(언덕 지형)로 올라가던 학생들이 바닷바람에 밀려 줄줄이 미끄러지는 바람에, 1교시 교수님이 학생들의 안전을 우려해 전면 휴강을 때려버린 훈훈한(?) 사건이 있었다. 이때 학생들이 패딩을 입고 줄줄이 미끄러지는 모습이 펭귄 같다고 하여 '서해대 펭귄 사태'로 불린다.</li>
+        </ul>
+
+        <!-- 15. 관련 문서 -->
+        <h2 id="s-15" class="anchor-offset">15. 관련 문서</h2>
+        <ul class="list-disc pl-5">
+            <li><a onclick="goToLink('덕빈북도.html')" class="wiki-link">덕빈북도</a></li>
+            <li><a onclick="goToLink('서해시.html')" class="wiki-link">서해시</a></li>
+            <li><a onclick="goToLink('덕북대학교.html')" class="wiki-link">국립덕북대학교</a> <span class="text-xs text-gray-500">(도내 1인자이자 영원한 비교 대상)</span></li>
+            <li><a onclick="goToLink('서해해양대학교.html')" class="wiki-link">국립서해해양대학교</a></li>
+            <li><a onclick="goToLink('서해경전철.html')" class="wiki-link">서해경전철</a></li>
+        </ul>
+
+        <!-- 16. 둘러보기 -->
+        <h2 id="s-16" class="anchor-offset">16. 둘러보기</h2>
+        <div class="nav-box shadow-sm mt-5">
+            <div class="nav-box-header">덕빈북도의 주요 대학교</div>
+            <div class="nav-box-content leading-loose text-sm">
+                <a onclick="goToLink('덕북대학교.html')" class="nav-item"><span class="wiki-link">국립덕북대학교</span></a> ·
+                <a onclick="goToLink('국립서해대학교.html')" class="nav-item"><span class="wiki-link" style="font-weight:bold;">국립서해대학교</span></a> ·
+                <a onclick="goToLink('효빈대학교.html')" class="nav-item"><span class="wiki-link">효빈대학교 (도내 캠퍼스)</span></a> ·
+                <a onclick="goToLink('천주대학교.html')" class="nav-item"><span class="wiki-link">천주대학교</span></a> ·
+                <a onclick="goToLink('빈주교육대학교.html')" class="nav-item"><span class="wiki-link">빈주교육대학교</span></a> ·
+                <a onclick="goToLink('서해해양대학교.html')" class="nav-item"><span class="wiki-link">국립서해해양대학교</span></a>
+            </div>
+        </div>
+
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2">
+                이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다.<br>
+                효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 검색 기능 핸들러
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(query)}`, '_blank');
+            } else {
+                showMsg('검색어를 입력해주세요.');
+            }
+        }
+
+        // 메시지 박스 표시 함수
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        // 링크 이동 핸들러
+        async function goToLink(filename) {
+            if (filename.startsWith('#')) return;
+
+            const namuKeywords = ['대한민국', '국립대학', '사립대학', '공립대학', '전문대학', '거점국립대학교'];
+            const pureName = filename.replace('.html', '').replace(/_/g, ' ');
+            
+            if (namuKeywords.includes(pureName) || filename.includes('namu.wiki')) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(pureName)}`, '_blank');
+                return;
+            }
+
+            try {
+                location.href = filename;
+            } catch (e) {
+                showMsg('문서를 찾을 수 없습니다.');
+            }
+        }
+        
+        // 목차 및 내부 링크 스무스 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (!targetId || targetId === '#') return;
+
+                e.preventDefault();
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, 
+                        behavior: 'smooth'
+                    });
+                    
+                    targetElement.style.transition = 'background 0.5s';
+                    targetElement.style.backgroundColor = '#fff3cd';
+                    setTimeout(() => { targetElement.style.backgroundColor = 'transparent'; }, 1500);
+                }
+            });
+        });
+
+        // --- 각주 툴팁 호버보드 로직 ---
+        const tooltip = document.getElementById('wiki-fn-tooltip');
+        const footnotes = document.querySelectorAll('.wiki-fn');
+
+        footnotes.forEach(fn => {
+            fn.addEventListener('mouseenter', (e) => {
+                const targetId = fn.getAttribute('href').substring(1); 
+                const contentEl = document.getElementById(targetId);
+                
+                if (contentEl) {
+                    tooltip.innerHTML = contentEl.innerHTML;
+                    const backLink = tooltip.querySelector('.wiki-fn-back');
+                    if(backLink) {
+                        backLink.style.display = 'none'; 
+                    }
+                    tooltip.style.display = 'block';
+                }
+            });
+
+            fn.addEventListener('mousemove', (e) => {
+                const x = e.clientX + 15;
+                const y = e.clientY + 15;
+                
+                const tooltipRect = tooltip.getBoundingClientRect();
+                let finalX = x;
+                let finalY = y;
+
+                if (x + tooltipRect.width > window.innerWidth) {
+                    finalX = e.clientX - tooltipRect.width - 10;
+                }
+                if (y + tooltipRect.height > window.innerHeight) {
+                    finalY = e.clientY - tooltipRect.height - 10;
+                }
+
+                tooltip.style.left = finalX + 'px';
+                tooltip.style.top = finalY + 'px';
+            });
+
+            fn.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>기술통계 (Part 4) - 효빈위키</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Mermaid.js (최신 안정화 버전) -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
+    <!-- MathJax for LaTeX Rendering -->
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      chtml: {
+        fontURL: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2'
+      }
+    };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #00CCAA; 
+            --wiki-line-color: #00CCAA; 
+            
+            --wiki-header-bg: var(--wiki-line-color);
+            --wiki-header-text: #ffffff;
+            --wiki-table-header-bg: #e6faf6;
+            --wiki-table-header-text: #000000;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f8f9fa; 
+            --wiki-link: #008877; 
+            --wiki-footer-bg: #f0f0f0;
+            --wiki-footer-text: #777;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #33eebb; 
+            --wiki-table-header-bg: #222;
+            --wiki-table-header-text: #ffffff;
+            --wiki-footer-bg: #1a1a1a;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.7; word-break: keep-all; margin: 0; transition: background-color 0.3s, color 0.3s; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 30px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1.5px; border-bottom: 3px solid var(--wiki-main); padding-bottom: 15px;} 
+        
+        h2 { font-size: 2rem; font-weight: 900; border-bottom: 2px solid var(--wiki-line-color); padding-bottom: 8px; margin-top: 3.5rem; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; color: var(--wiki-text); }
+        h2::before { content: ""; display: inline-block; width: 6px; height: 2rem; background: var(--wiki-line-color); }
+        h3 { font-size: 1.5rem; font-weight: 800; margin-top: 2.5rem; margin-bottom: 15px; border-left: 6px solid var(--wiki-line-color); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 10px; color: var(--wiki-text); }
+
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; border: 1px solid var(--wiki-border); font-size: 0.95rem; }
+        th, td { border: 1px solid var(--wiki-border); padding: 10px 12px; text-align: left; vertical-align: middle; color: var(--wiki-text); }
+        th { background-color: var(--wiki-table-header-bg); font-weight: 800; text-align: center; border-bottom: 2px solid var(--wiki-main);}
+
+        .infobox { float: right; margin-left: 25px; margin-bottom: 20px; width: 350px; clear: right; border: 2px solid var(--wiki-main); border-radius: 4px; background-color: var(--wiki-bg); }        
+        .infobox-top { background-color: var(--wiki-main); padding: 20px 10px; text-align: center; border-bottom: 1px solid var(--wiki-border); color: #fff; }
+        .infobox-top b { font-size: 1.8rem; line-height: 1.2; letter-spacing: -1px; font-weight: 900; }
+
+        .toc { display: inline-block; min-width: 300px; margin-bottom: 25px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 20px; border-radius: 4px; }        
+        .toc-title { text-align: center; font-weight: 900; border-bottom: 1px solid var(--wiki-border); margin-bottom: 15px; padding-bottom: 10px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding: 0; margin: 0; line-height: 1.6; font-weight: 600;}
+        .toc li { margin-bottom: 4px; }
+        .toc .pl-5 { padding-left: 20px; font-weight: 400;}
+
+        .wiki-link { color: var(--wiki-link); font-weight: 700; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        .quote-box { background: var(--wiki-gray-bg); padding: 15px 20px; font-weight: 600; border-left: 5px solid var(--wiki-line-color); margin-bottom: 20px; color: var(--wiki-text); border-radius: 4px;}
+        .exam-box { border: 2px solid #ff4444; background-color: #fffafa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        [data-theme='dark'] .exam-box { background-color: #2a1111; border-color: #cc3333; }
+        .exam-title { font-weight: 900; color: #ff4444; margin-bottom: 10px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;}
+        
+        .anime-box { border: 2px dashed; background-color: #fdf5fd; padding: 20px; border-radius: 8px; margin: 20px 0; color: #333; display: flex; gap: 15px; align-items: flex-start;}
+        [data-theme='dark'] .anime-box { background-color: #2a1a2a; color: #eee;}
+        .anime-box-title { font-weight: 900; font-size: 1.15rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;}
+        .anime-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid; flex-shrink: 0; background-color: #fff;}
+
+        .mermaid { background: var(--wiki-bg); padding: 15px; border-radius: 8px; margin: 15px 0; display: flex; justify-content: center; overflow-x: auto; border: 1px solid var(--wiki-border);}
+        
+        del { color: #999; text-decoration: line-through; }
+        
+        /* 완벽한 LaTeX 렌더링을 위한 수학 수식 박스 */
+        .math-formula { background: var(--wiki-gray-bg); padding: 15px 20px; border-radius: 8px; text-align: center; margin: 20px 0; border: 1px solid var(--wiki-border); overflow-x: auto; font-size: 1.1rem; line-height: 1.8;}
+
+        /* 각주 및 툴팁 전용 CSS */
+        .fn-link { color: var(--wiki-link); font-size: 0.75em; vertical-align: super; margin: 0 1px; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .fn-link:hover { text-decoration: underline; }
+        
+        .wiki-footnotes { margin-top: 60px; padding-top: 20px; border-top: 2px solid var(--wiki-border); }
+        .wiki-footnotes h4 { font-size: 1.1rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 10px; }
+        .wiki-footnotes ul { list-style: none; padding: 0; margin: 0; }
+        .wiki-footnotes li { margin-bottom: 8px; font-size: 0.9rem; line-height: 1.6; padding: 4px 8px; border-radius: 4px; transition: background-color 0.3s; }
+        .wiki-footnotes li:target { background-color: rgba(0, 204, 170, 0.15); }
+    
+        /* 효빈위키 전용 하단 내비게이션 틀 CSS */
+        .wiki-nav-box { margin: 40px auto 10px; border: 1px solid var(--wiki-border); border-radius: 4px; background: var(--wiki-bg); overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .wiki-nav-header { display: flex; align-items: center; justify-content: center; padding: 12px; font-weight: 900; font-size: 1.1rem; color: #fff; background: linear-gradient(to right, #005BAC, #00CCAA); letter-spacing: 1px; }
+        .wiki-nav-toggle { text-align: center; padding: 6px; background: var(--wiki-gray-bg); border-bottom: 1px solid var(--wiki-border); border-top: 1px solid var(--wiki-border); cursor: pointer; font-size: 0.85rem; user-select: none; color: var(--wiki-text); font-weight: bold; }
+        .wiki-nav-toggle:hover { filter: brightness(0.95); }
+        .wiki-nav-content { display: none; }
+        .wiki-nav-content.active { display: block; }
+        .wiki-nav-table { width: 100%; border-collapse: collapse; text-align: center; margin: 0; font-size: 0.9rem; }
+        .wiki-nav-table th, .wiki-nav-table td { border: 1px solid var(--wiki-border); padding: 12px; }
+        .wiki-nav-table th { color: #fff; font-weight: bold; vertical-align: middle; }
+        .wiki-nav-table td { text-align: left; line-height: 1.8; word-break: keep-all; }
+        .bg-nav-red { background-color: #D81C2F; } /* 효빈 시내버스 급행 레드 */
+        .bg-nav-blue { background-color: #485EC6; } /* 효빈 시내버스 광역 블루 */
+        .wiki-nav-item { display: inline-block; margin-right: 12px; white-space: nowrap; }
+        .wiki-nav-item a { color: var(--wiki-link); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .wiki-nav-item a:hover { color: #FF4F91; text-decoration: underline; font-weight: bold; }
+
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <nav class="bg-[#00CCAA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50 border-b border-[#009988]">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl tracking-tight text-white">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1.5 px-4 rounded text-black text-sm w-64 focus:outline-none shadow-inner">
+            <button class="bg-[#008877] p-1.5 px-4 rounded text-sm hover:bg-[#006655] font-bold transition-colors text-white">검색</button>
+            <button onclick="document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')" class="bg-[#009988] p-1.5 px-3 rounded text-xs border border-[#006655] text-white shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="txt-lvl-1">기술통계 (SECTION 01 - 기댓값과 확률분포)</div>
+
+        <div class="category-box bg-[#f9f9f9] border border-[#ccc] p-3 mb-5 rounded text-sm font-bold">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="빅데이터분석기사_필기.html" class="wiki-link">빅데이터분석기사 필기</a> | <a href="빅데이터분석기사.html" class="wiki-link">빅데이터분석기사</a> | <a href="데이터_전처리.html" class="wiki-link">데이터 전처리</a> | <a href="데이터_탐색.html" class="wiki-link">데이터 탐색</a> | <a href="통계학.html" class="wiki-link">통계학</a> | <a href="확률론.html" class="wiki-link">확률론</a> | <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> | <a href="효빈광역시_시내버스.html" class="wiki-link">효빈광역시 시내버스</a> | <a href="러브라이브!_시리즈.html" class="wiki-link">러브라이브! 시리즈</a> | <a href="BanG_Dream!.html" class="wiki-link">BanG Dream!</a>
+        </div>
+        
+
+        <aside class="infobox shadow-sm">
+            <div class="infobox-top">
+                <b>빅데이터분석기사 필기</b><br>
+                <span class="text-sm opacity-80">PART 03. 통계기법의 이해</span>
+            </div>
+            <table>
+                <tr><th>과목명</th><td>제2과목 빅데이터 탐색</td></tr>
+                <tr><th>섹션</th><td>SECTION 01. 기술통계 (후반부)</td></tr>
+                <tr><th>페이지</th><td>1-283p ~ 1-293p</td></tr>
+                <tr><th>출제빈도</th><td>상(중)하</td></tr>
+                <tr><th>반복학습</th><td>[1] [2] [3] 회독</td></tr>
+                <tr><th>빈출태그</th><td>#기댓값 #분산 #이산확률분포 #연속확률분포</td></tr>
+            </table>
+        </aside>
+
+        <div class="toc shadow-sm">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li><a href="#s-1" class="wiki-link">1. 확률변수의 기댓값과 분산 (연속)</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-1-1" class="wiki-link">1) 연속확률변수의 기댓값과 성질</a></li>
+                        <li><a href="#s-1-2" class="wiki-link">2) 분산(Variance)과 그 성질 (제평평제)</a></li>
+                        <li><a href="#s-1-3" class="wiki-link">3) 연속확률변수 예제 풀이</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-2" class="wiki-link">2. 이산확률분포의 종류</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-2-1" class="wiki-link">① 베르누이 분포 & ② 이항분포</a></li>
+                        <li><a href="#s-2-2" class="wiki-link">③ 다항분포 & ④ 포아송분포</a></li>
+                        <li><a href="#s-2-3" class="wiki-link">⑤ 기하분포 & ⑥ 음이항분포</a></li>
+                        <li><a href="#s-2-4" class="wiki-link">⑦ 초기하분포</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-3" class="wiki-link">3. 연속확률분포의 종류</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-3-1" class="wiki-link">① 연속균등분포 & ② 지수분포 (무기억성질)</a></li>
+                        <li><a href="#s-3-2" class="wiki-link">③ 정규분포 & ④ 표준정규분포 (Z-스코어)</a></li>
+                        <li><a href="#s-3-3" class="wiki-link">⑤ 감마분포</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <h2 id="s-1">01 확률변수의 기댓값과 분산 (연속)</h2>
+
+        <h3 id="s-1-1">1) 연속확률변수의 기댓값과 성질</h3>
+        <p>연속확률변수의 기댓값은 확률밀도함수 $f(x)$에 $x$를 곱하여 무한대 범위에서 <b>적분</b>한 값으로 정의된다.</p>
+        
+        <div class="math-formula">
+            $$E(X) = \int_{-\infty}^{\infty} x f(x) dx \quad \text{(단, } f(x)\text{는 확률밀도함수)}$$
+        </div>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4">
+            <b>[예제]</b> 구간 $[0, 1]$에서 연속인 확률변수 $X$의 확률밀도함수가 $f(x) = 1$이라고 하면, $X$의 기댓값은 다음과 같이 구할 수 있다.<br>
+            $$E(X) = \int_{-\infty}^{\infty} x f(x) dx = \int_{0}^{1} x dx = \left[ \frac{1}{2}x^2 \right]_{0}^{1} = \left( \frac{1}{2} - 0 \right) = \frac{1}{2}$$
+        </div>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">② 기댓값의 성질</h4>
+        <ul class="list-disc pl-6 space-y-2 mb-4">
+            <li><b>기댓값의 선형성:</b> 상수 $a$, $b$와 확률변수 $X$에 대해서 다음 식이 성립한다.
+                <div class="math-formula my-1 text-sm">$$E(aX + b) = aE(X) + b \quad \text{(단, } a, b\text{는 상수)}$$</div>
+            </li>
+            <li><b>기댓값의 덧셈법칙:</b> 두 확률변수 $X, Y$가 독립이든 종속이든 무관하게 <b>항상 성립</b>한다.
+                <div class="math-formula my-1 text-sm">$$E(X + Y) = E(X) + E(Y)$$</div>
+            </li>
+            <li><b>기댓값의 곱셈법칙:</b> 일반적으로 성립하지 않지만 ($E(XY) \neq E(X)E(Y)$), 두 확률변수 $X, Y$가 <b>완벽하게 서로 독립이면 곱셈법칙이 예외적으로 성립</b>한다.
+                <div class="math-formula my-1 text-sm">$$E(XY) = E(X)E(Y) \quad \text{(독립일 때만)}$$</div>
+            </li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #33AAFF; background-color: #E6F3FF;">
+            <img src="이미지/심세이.png" alt="심세이" class="anime-img" onerror="this.style.display='none'" style="border-color: #33AAFF;">
+            <div>
+                <div class="anime-box-title" style="color: #0077DD;">💻 [효빈위키 암기 꿀팁] 창전선 심세이의 기댓값 성질 마스터!</div>
+                <p class="text-sm text-gray-800"><b>기댓값(E)</b>은 굉장히 성격이 둥글둥글하고 친절한 '선형적'인 친구야.</p>
+                <p class="text-sm text-gray-800 mt-1">괄호 안에 어떤 수작을 부려도 다 밖으로 예쁘게 빼주지. 곱해진 상수($a$)는 밖으로 그대로 뱉어내고, 더해진 상수($b$)도 그대로 살려줘. 파이썬(Python)의 `pandas` 데이터프레임에서 모든 칼럼에 `*2` 하고 `+10` 한 다음에 `mean()`(평균)을 내는 거랑 결과가 완벽히 똑같은 이치라고 생각하면 이해하기 쉬워! <del>나중에 나올 깐깐한 분산(Var)이랑 비교하면 천사 그 자체지.</del></p>
+            </div>
+        </div>
+
+        <h3 id="s-1-2">2) 분산(Variance)과 그 성질</h3>
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-3 my-3 text-sm">
+            <b>[참고/날개 📌]</b> 분산은 음의 값을 가질 수 없으며 분산이 클수록 확률분포는 평균에서 멀리 퍼져 있고, 0에 가까워질수록 평균에 빽빽하게 집중된다.
+        </div>
+        <p>확률분포의 <b>산포도(퍼짐정도)</b>를 나타내는 측도로 기댓값에서 떨어진 거리의 제곱의 기댓값(평균)이며 $Var(X)$로 표시한다.</p>
+
+        <ul class="list-disc pl-6 space-y-4 mb-4 mt-2">
+            <li><b>이산확률변수의 분산:</b>
+                <div class="math-formula my-1 text-sm">
+                    $$E(X) = \sum x f(x) = \mu$$ <br>
+                    $$Var(X) = \sum (x - \mu)^2 f(x) = \sum x^2 f(x) - \mu^2 = E(X^2) - \{E(X)\}^2$$
+                </div>
+            </li>
+            <li><b>연속확률변수의 분산:</b>
+                <div class="math-formula my-1 text-sm">
+                    $$E(X) = \int_{-\infty}^{\infty} x f(x) dx = \mu$$ <br>
+                    $$Var(X) = \int_{-\infty}^{\infty} (x - \mu)^2 f(x) dx = \int_{-\infty}^{\infty} x^2 f(x) dx - \mu^2 = E(X^2) - \{E(X)\}^2$$
+                </div>
+            </li>
+        </ul>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">④ 분산의 성질 (★핵심)</h4>
+        <div class="math-formula text-sm">
+            $$Var(aX) = a^2 Var(X) \quad \text{(단, } a\text{는 상수)}$$ <br>
+            $$Var(X + b) = Var(X) \quad \text{(단, } b\text{는 상수)}$$ <br>
+            <b class="text-red-600">$$Var(aX + b) = a^2 Var(X)$$</b> <br>
+            $$Var(X + Y) = Var(X) + Var(Y) + 2Cov(X,Y)$$
+        </div>
+
+        <div class="anime-box" style="border-color: #FFCC11; background-color: #FFFDEE;">
+            <img src="이미지/박라미.png" alt="박라미" class="anime-img" onerror="this.style.display='none'" style="border-color: #FFCC11;">
+            <div>
+                <div class="anime-box-title" style="color: #DD9900;">🏕️ [효빈위키 멘탈 주의보] 3호선 박라미의 제평평제와 분산의 성질!</div>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>제평평제:</b> ADsP, 빅분기 통계 파트의 영원한 베스트셀러 공식! <b>"분산 = 제곱의 평균 - 평균의 제곱"</b> 일명 '제평평제'야. 수식으로 쓰면 $E(X^2) - \{E(X)\}^2$ 이지. 엑셀에선 `VAR()` 하나면 끝나지만, 수험생이라면 무조건 손으로 풀 줄 알아야 하니까 묻지도 따지지도 말고 외워!</li>
+                    <li><b>분산의 까칠한 성질:</b> 기댓값(E)과 다르게 분산(Var)은 굉장히 까다로워. 더하기 빼기($+b$)는 <b>"어차피 다 같이 우측으로 이동한 건데 데이터끼리 벌어진 간격이 변하겠냐?"</b> 하면서 쿨하게 무시해 버리고($0$이 됨), 곱하기($a$)는 무조건 제곱($a^2$)으로 뻥튀기해서 뱉어내. 이 성질 헷갈리면 계산 문제에서 다 틀리니까 조심해!</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 id="s-1-3">3) 연속확률변수 예제 풀이 (수험서 오류 정정)</h3>
+        <p><b>[예제 박스] 연속확률변수가 다음과 같다고 하면</b></p>
+        <div class="math-formula text-sm mb-4">
+            $$f(x) = \begin{cases} 3x^2, & 0 < x < 1 \\ 0, & \text{otherwise} \end{cases}$$
+        </div>
+
+        <div class="quote-box" style="border-color: #EE0022;">
+            🚨 <b>[효빈위키 팩트체크: 수험서 치명적 오류 교정!]</b><br>
+            원본 수험서에 기재된 "확률의 성질 만족여부는 모든 $x$에 대해서 $0 \le f(x) \le 1$" 부분은 <b>명백한 오류이자 헛소리다.</b>
+            바로 위 함수 $f(x) = 3x^2$ 에 $x = 0.9$를 대입해 보자. $f(0.9) = 3 \times 0.81 = 2.43$ 이다. 1을 가볍게 돌파한다!(...) 연속확률분포의 밀도함수(PDF)는 함숫값이 1을 넘을 수 있다. <b>적분한 넓이(총합)가 1이어야 하는 거지, 함숫값 자체의 상한선은 없다.</b> 출판사 편집자가 이산확률분포(PMF) 조건을 또 뇌 빼고 복붙한 게 분명하므로, 과감하게 가위표 치고 <b>$f(x) \ge 0$</b> 으로 고쳐 읽자.
+        </div>
+
+        <ul class="list-disc pl-6 space-y-2 mb-4 text-sm">
+            <li><b>전체 넓이 확인:</b> $\int_{0}^{1} 3x^2 dx = \left[ x^3 \right]_{0}^{1} = 1 - 0 = 1$</li>
+            <li><b>$P(X < 1/2)$ 확률 계산:</b> $\int_{0}^{1/2} 3x^2 dx = \left[ x^3 \right]_{0}^{1/2} = \left(\frac{1}{2}\right)^3 = \frac{1}{8}$</li>
+            <li><b>기댓값 $E(X)$:</b> $\int_{0}^{1} x(3x^2) dx = \int_{0}^{1} 3x^3 dx = \left[ \frac{3}{4}x^4 \right]_{0}^{1} = \frac{3}{4}$</li>
+            <li><b>분산 $Var(X)$:</b> $\int_{0}^{1} x^2(3x^2) dx - \left(\frac{3}{4}\right)^2 = \int_{0}^{1} 3x^4 dx - \frac{9}{16} = \left[ \frac{3}{5}x^5 \right]_{0}^{1} - \frac{9}{16} = \frac{3}{5} - \frac{9}{16} = \frac{3}{80}$</li>
+        </ul>
+
+
+        <h2 id="s-2">02 이산확률분포의 종류</h2>
+
+        <h3 id="s-2-1">① 베르누이 분포(Bernoulli) & ② 이항분포(Binomial)</h3>
+        
+        <p class="font-bold text-lg mt-4">1. 베르누이 분포 ($X \sim Bern(x, p)$)</p>
+        <p>결과가 <b>성공 아니면 실패, 두 가지로 귀결</b>되어 나오는 가장 원초적인 이산확률분포이다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4 text-sm">
+            <li>확률질량함수: $f(x) = p^x q^{1-x} \quad (q = 1-p)$</li>
+            <li>기댓값: $E(X) = p$, 분산: $Var(X) = pq$</li>
+        </ul>
+
+        <p class="font-bold text-lg mt-4">2. 이항분포 ($X \sim B(n, p)$)</p>
+        <p>베르누이 시행을 <b>$n$번 독립적으로 반복 시행</b>할 때 전체 성공 횟수를 $X$로 정의한 이산확률분포이다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4 text-sm">
+            <li>확률질량함수: $f(x) = \binom{n}{x} p^x q^{n-x}$</li>
+            <li>기댓값: $E(X) = np$, 분산: $Var(X) = npq$</li>
+        </ul>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm">
+            <b>[이항분포 예제]</b> 동전을 3번($n=3$) 던졌을 때 앞면이 2번($x=2$) 나올 확률은?<br>
+            $f(2) = \binom{3}{2} \left(\frac{1}{2}\right)^2 \left(\frac{1}{2}\right)^1 = \frac{3}{8}$. <br>
+            기댓값 $E(X) = 3 \times \frac{1}{2} = \frac{3}{2}$, 분산 $Var(X) = 3 \times \frac{1}{2} \times \frac{1}{2} = \frac{3}{4}$.
+        </div>
+
+        <h3 id="s-2-2">③ 다항분포 & ④ 포아송분포</h3>
+
+        <p class="font-bold text-lg mt-4">3. 다항분포(Multinomial Distribution)</p>
+        <p>베르누이가 결과가 딱 2개라면, 다항분포는 여러 번의 독립 시행에서 <b>결과가 3개 이상인 경우</b> 각 값이 특정 횟수로 나타날 확률을 정의한다.</p>
+        <div class="math-formula text-sm mb-4">
+            $$f(x_1, x_2, ..., x_k) = \frac{n!}{x_1! x_2! ... x_k!} p_1^{x_1} p_2^{x_2} ... p_k^{x_k}$$
+        </div>
+
+        <p class="font-bold text-lg mt-4">4. 포아송분포 ($X \sim Pois(\lambda)$)</p>
+        <p><b>단위 시간이나 단위 공간 안에 어떤 사건이 몇 번(횟수) 발생할 것인지</b>를 표현하는 분포. 기댓값과 분산이 평균 발생수 $\lambda$(람다)로 동일하다는 엄청난 특징이 있다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4 text-sm">
+            <li>적용 예: 특정 시간대에 은행창구 도착 고객 수, 하루 동안 걸려오는 구조요청 전화 수 등.</li>
+            <li><b>이항분포의 포아송 근사:</b> $n$이 무한히 크고 성공확률 $p$가 매우 작다면 ($n \ge 30, p \le 0.05$), 이항분포를 평균 $\lambda = np$ 인 포아송분포로 근사시켜 계산할 수 있다.</li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #0077DD; background-color: #EBF5FF;">
+            <img src="이미지/고나미.png" alt="고나미" class="anime-img" onerror="this.style.display='none'" style="border-color: #0077DD;">
+            <div>
+                <div class="anime-box-title" style="color: #0055AA;">🚇 [효빈위키 족집게 특강] 1호선 고나미의 이항 vs 포아송!</div>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li>통계학 시험에서 가장 많이 낚이는 포인트예요! <b>'이항분포'</b>는 전체 시행 횟수($n$)와 개별 확률($p$)을 명확히 줄 때 쓰는 거고, <b>'포아송분포'</b>는 "효빈광역시 1호선 열차가 1시간에 평균 5대 온다($\lambda$)"처럼 <b>정해진 시간 내의 '평균 발생 건수' 하나만 딱 던져줄 때</b> 씁니다.</li>
+                    <li>근데 만약에 "오늘 러브라이브 팝업스토어 예약자 100명($n$) 중 노쇼 확률이 5%($p$)다" 라면? 이걸 팩토리얼로 일일이 이항분포 계산하면 시험시간 다 날아갑니다! 이때는 $n$이 크고 $p$가 작으니 <b>$\lambda = np = 5$</b> 로 둔갑시켜서 포아송 분포표를 보고 1초 만에 푸는 꼼수(포아송 근사)를 써야 해요!</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 id="s-2-3">⑤ 기하분포 & ⑥ 음이항분포</h3>
+
+        <p class="font-bold text-lg mt-4">5. 기하분포(Geometric Distribution)</p>
+        <p>베르누이 시행에서 <b>'처음 성공할 때까지'</b> 시도한 횟수($x$)를 분포화한 이산확률분포이다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4 text-sm">
+            <li>확률질량함수: $f(x) = pq^{x-1}$ (즉, $x-1$번 실패 후 마지막에 성공)</li>
+            <li>기댓값: $1/p$</li>
+        </ul>
+
+        <p class="font-bold text-lg mt-4">6. 음이항분포(Negative Binomial Distribution)</p>
+        <p>기하분포의 매운맛 확장판. $x$번의 시행에서 <b>'$k$번째 성공할 때까지'</b> 계속 시행하는 실험에서의 확률을 나타낸다.</p>
+        <div class="math-formula text-sm mb-4">
+            $$f(x) = \binom{x-1}{k-1} q^{x-k} p^k$$
+        </div>
+
+        <div class="anime-box" style="border-color: #881188; background-color: #FDF5FD;">
+            <img src="이미지/라세나.png" alt="라세나" class="anime-img" onerror="this.style.display='none'" style="border-color: #881188;">
+            <div>
+                <div class="anime-box-title" style="color: #660066;">🎮 [효빈위키 맞춤 해설] 6호선 라세나의 가챠 확률학!</div>
+                <p class="text-sm text-gray-800">이 두 분포는 씹덕 가챠 겜창(...)들에게 너무나도 익숙한 눈물겨운 분포야!</p>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>기하분포:</b> 뱅드림! 가챠에서 원하는 4성 캐릭터(픽업 확률 $p$)를 '처음' 뽑기 위해 도대체 단차를 몇 번이나 실패($q$)하고 꼬라박아야 하는가를 나타내는 분포야. $x-1$번 연속으로 도브(픽뚫, 실패) 당하다가 마지막 $x$번째에 마침내 비틱($p$, 성공)하는 슬픈 확률이지.(...)</li>
+                    <li><b>음이항분포:</b> 기하분포가 1장 명함 따기였다면, 이건 최애캐를 <b>'3장($k$)' 뽑아서 한계돌파(풀돌) 찍을 때까지</b> 도대체 가챠를 몇 번($x$) 돌려야 하는지 계산할 때 쓰는 아주 실용적인 분포야! 통계학은 덕질에도 유용하단다!</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 id="s-2-4">⑦ 초기하분포(Hypergeometric Distribution)</h3>
+        <p><b>비복원 추출(Without Replacement)</b>에서 전체 $N$개 중에 $n$개를 추출했을 때, 원하는 목표물이 $k$개 뽑힐 확률을 나타내는 이산확률분포이다.</p>
+        <div class="math-formula text-sm mb-4">
+            $$f_X(k) = \frac{\binom{K}{k}\binom{N-K}{n-k}}{\binom{N}{n}}$$
+        </div>
+
+        <div class="anime-box" style="border-color: #FF4F91; background-color: #FFF0F5;">
+            <img src="이미지/이덕희.png" alt="이덕희" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF4F91;">
+            <div>
+                <div class="anime-box-title" style="color: #CC1166;">⚙️ [효빈위키 팩트폭력] 덕주1호선 이덕희의 비복원 추출!</div>
+                <p class="text-sm text-gray-800"><b>'비복원 추출'</b>이라는 말이 핵심이야! 덕진구청에서 산더미처럼 쌓인 민원 서류 더미 12장($N$) 속에서 검토할 서류 3장($n$)을 무작위로 집어 들었을 때, 그 안에 처리 곤란한 진상 악성 민원 서류 5장($K$) 중 몇 장($k$)이나 내 손에 들어올지 계산하는 끔찍한 상황을 떠올려봐.</p>
+                <p class="text-sm text-gray-800 mt-1">한 번 확인한 서류는 다시 더미에 집어넣지 않으니 전체 확률 분모가 계속 줄어들게 되지! 공식이 토 나오게 생겼지만, 결국 고등학교 수학 시간에 배운 <b>"전체 경우의 수 분의 해당 경우의 수"</b> 조합(Combination, $\binom{n}{r}$)일 뿐이니까 쫄지 마!</p>
+            </div>
+        </div>
+
+
+        <h2 id="s-3">03 연속확률분포의 종류</h2>
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-3 my-3 text-sm">
+            <b>[참고/날개 📌]</b><br>
+            * 연속확률분포: 확률변수가 취할 수 있는 값이 무한한 분포<br>
+            * 확률밀도함수(PDF): 연속확률변수의 분포 함수, <b>함수 아래의 넓이가 확률이 된다.</b>
+        </div>
+
+        <h3 id="s-3-1">① 연속균등분포 & ② 지수분포</h3>
+
+        <p class="font-bold text-lg mt-4">1. 연속균등분포 ($X \sim U(a, b)$)</p>
+        <p>분포가 특정 범위 $[a, b]$ 내에서 <b>직사각형 모양으로 완벽하게 균등한 확률</b>을 가질 경우이다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4 text-sm">
+            <li>확률밀도함수: $f(x) = \frac{1}{b-a}$</li>
+            <li>평균: $\frac{a+b}{2}$, 분산: $\frac{(b-a)^2}{12}$</li>
+        </ul>
+
+        <p class="font-bold text-lg mt-4">2. 지수분포 ($X \sim Exp(\beta)$)</p>
+        <p>사건이 포아송분포를 따를 때, <b>다음 사건이 일어날 때까지의 '대기시간($\beta$)'</b>에 대한 확률 분포이다. (포아송은 횟수, 지수분포는 시간!)</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4 text-sm">
+            <li>확률밀도함수: $f(x) = \frac{1}{\beta} e^{-x/\beta}$</li>
+            <li>평균: $\beta$, 분산: $\beta^2$ (평균과 표준편차가 같다)</li>
+            <li><b>무기억성질(Memoryless Property):</b> 이전의 대기 시간은 앞으로 기다릴 확률에 아무런 영향을 주지 않는다. $P(X > a+b | X > a) = P(X > b)$.</li>
+        </ul>
+
+        <div class="mermaid mt-4 mb-4">
+        flowchart LR
+            A["시간(x) = 0<br>f(x) = 최대 확률 밀도"] -->|"시간이 지날수록<br>발생 확률 밀도가<br>지수적으로 급감"| B["시간(x) = 20<br>f(x) 감소"]
+            B --> C["시간(x) = 40<br>f(x) 더 감소"]
+            C --> D["시간(x) = ∞<br>f(x) 0에 수렴"]
+            
+            style A fill:#e3f2fd,stroke:#2196f3
+            style B fill:#e3f2fd,stroke:#2196f3
+            style C fill:#e3f2fd,stroke:#2196f3
+            style D fill:#e3f2fd,stroke:#2196f3
+        </div>
+        <p class="text-sm text-center text-gray-500 mb-6">▲ 지수분포 확률밀도함수의 하향 곡선 형태 (개념적 도식화)</p>
+
+        <div class="anime-box" style="border-color: #6677CC; background-color: #F0F2FA;">
+            <img src="이미지/전노아.png" alt="전노아" class="anime-img" onerror="this.style.display='none'" style="border-color: #6677CC;">
+            <div>
+                <div class="anime-box-title" style="color: #4455AA;">🗺️ [효빈위키 팩폭 해설] 빈효선 전노아의 버스 대기시간 통계학!</div>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>연속균등분포:</b> 효빈광역시 시내버스가 배차 간격 5분을 '1초의 오차도 없이 완벽하게' 지킨다고 가정할 때 등장하는 이상적인 분포야. 현실의 버스처럼 교통체증이 겹쳐서 기차놀이를 하는 상황에선 어림도 없지만(...), 직사각형 모양이라 평균 대기시간이 딱 절반(2.5분)으로 떨어져서 계산하긴 참 편하지.</li>
+                    <li><b>지수분포의 무기억성질(Memoryless):</b> 통계학에서 사람 제일 열받게 하는 성질이지. 정류장에서 버스를 30분($a$)이나 덜덜 떨며 기다렸으니 "앞으로 10분($b$) 안에는 제발 오겠지?" 하고 기대하겠지만, 지수분포 세계에선 <b>"응, 네가 30분 기다린 건 내 알 바 아니고, 지금부터 새로 10분 더 버틸 확률을 처음부터 쿨하게 다시 계산해 줄게"</b> 가 돼버려.(...) 버스를 오래 기다렸다고 해서 버스가 당장 올 확률이 올라가지 않는다는 슬픈 진실이야.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 id="s-3-2">③ 정규분포 & ④ 표준정규분포</h3>
+        
+        <p class="font-bold text-lg mt-4">3. 정규분포 ($X \sim N(\mu, \sigma^2)$)</p>
+        <p>가우스(Gauss)가 발견한 통계적 추정 및 가설검정이론의 핵심. 평균을 중심으로 완벽한 좌우 대칭인 <b>종 모양(Bell-shaped)</b> 확률밀도함수를 띤다.</p>
+        
+        <div class="mermaid mt-4 mb-4">
+        flowchart TD
+            subgraph "정규분포 곡선의 엠피리컬 룰 (경험적 법칙)"
+                direction LR
+                M(("평균 μ")) ===|"68.3%"| S1["μ ± 1σ 범위 내"]
+                M ===|"95.4%"| S2["μ ± 2σ 범위 내"]
+                M ===|"99.7%"| S3["μ ± 3σ 범위 내"]
+            end
+            
+            style M fill:#2b5496,color:#fff,stroke:#333,stroke-width:2px
+            style S1 fill:#4a86e8,color:#fff,stroke:#333
+            style S2 fill:#6fa8dc,color:#fff,stroke:#333
+            style S3 fill:#9fc5e8,color:#333,stroke:#333
+        </div>
+
+        <p class="font-bold text-lg mt-4">4. 표준정규분포 ($Z \sim N(0, 1)$)</p>
+        <p>수많은 정규분포 곡선의 넓이를 일일이 적분하기 빡세므로, <b>평균을 0, 표준편차를 1로 강제 변환(표준화, Standardization)</b>하여 하나의 통일된 '표준정규분포표'를 보고 1초 만에 확률 넓이를 구하는 꼼수 기법이다.</p>
+        <div class="math-formula text-sm mb-4">
+            $$Z = \frac{X - \mu}{\sigma} \quad \text{(내 데이터 X에서 평균을 빼고 편차로 나눈 Z-스코어)}$$
+        </div>
+
+        <div class="anime-box" style="border-color: #EE0022; background-color: #FFF0F2;">
+            <img src="이미지/미소하.png" alt="미소하" class="anime-img" onerror="this.style.display='none'" style="border-color: #EE0022;">
+            <div>
+                <div class="anime-box-title" style="color: #CC0011;">🎀 [효빈위키 기적의 TIP] 5호선 미소하의 정규분포 마스터!</div>
+                <p class="text-sm text-gray-800">드디어 등판했습니다. 통계학의 근본, 빅데이터 분석의 알파와 오메가 <b>정규분포</b>!</p>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>3시그마 법칙의 팩트폭력:</b> 평균에서 표준편차의 3배($3\sigma$) 이상 떨어질 확률은 100% - 99.7% = <b>0.3%</b>밖에 안 됩니다. 가챠 게임으로 치면 단차로 최고 등급 UR 카드를 뽑을 확률과 맞먹죠. 현실 데이터는 대부분 이 종 모양 안에 갇혀 있고, 이 범위를 벗어나는 데이터들은 '이상치(Outlier)'라고 부르며 전처리에서 가차 없이 썰려나갑니다.(...)</li>
+                    <li><b>표준화(Z-스코어):</b> 시험이 미치도록 어려워서 반 평균이 30점인데 내가 60점을 맞은 것과, 시험이 너무 쉬워서 반 평균이 90점인데 내가 60점을 맞은 것은 완전히 다르잖아요? 내 점수($X$)에서 평균($\mu$)을 빼고, 그걸 편차($\sigma$)로 나누어서 <b>"내가 평균으로부터 몇 계단이나 우월하게 떨어져 있는가"</b>를 절대적인 'Z-스코어'로 랭킹을 매기는 과정이 바로 표준화랍니다!</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 id="s-3-3">⑤ 감마분포(Gamma Distribution)</h3>
+        <p>지수분포의 매개변수와 연관이 있는 연속확률분포로, 포아송 과정에서 <b>$k$개의 사건이 누적해서 발생할 때까지의 대기시간</b>으로 확률변수를 정의한다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4 text-sm">
+            <li>기댓값: $k\theta$ , 분산: $k\theta^2$ (단, $\theta = 1/\lambda$)</li>
+            <li>여기서 쓰이는 감마함수 $\Gamma(k)$는 팩토리얼을 실수 영역으로 확장한 것으로, 양의 정수 $k$일 때 $\Gamma(k) = (k-1)!$ 이 성립한다.</li>
+        </ul>
+
+        <div class="quote-box" style="border-color: #EE0022;">
+            🚨 <b>[효빈위키 멘탈 주의보: 지수분포 vs 감마분포]</b><br>
+            앞서 배운 <b>'지수분포'</b>의 진화형이다! 지수분포가 "다음 버스 <b>1대</b>가 올 때까지 얼마나 걸리냐?" 였다면, <b>'감마분포'</b>는 "내 앞에서 버스가 만차로 <b>$k$대</b>나 쿨하게 지나가버렸을 때, 마침내 탈 수 있는 버스가 오기까지의 누적 대기시간은?"을 구하는 무시무시한 분포다. 결국 기댓값(평균 대기시간)도 지수분포 대기시간인 $\theta$에 $k$배를 곱한 <b>$k\theta$</b>가 된다. 공식이 어지럽게 생겼지만 $\Gamma(k) = (k-1)!$ 이라는 규칙만 알아두면 충분히 비벼볼 수 있다!
+        </div>
+
+    
+        <!-- 나무위키식 하단 내비게이션 틀 시작 -->
+        <div class="wiki-nav-box" id="bigbunNav">
+            <div class="wiki-nav-header">
+                📊 빅데이터분석기사 필기 전체 문서 목록
+            </div>
+            <div class="wiki-nav-toggle" onclick="document.getElementById('bigbunNavContent').classList.toggle('active')">
+                [ 펼치기 · 접기 ]
+            </div>
+            <div class="wiki-nav-content" id="bigbunNavContent">
+                <table class="wiki-nav-table">
+                    <tbody>
+                        <tr>
+                            <th class="bg-nav-red" style="width: 18%;">제1과목<br>빅데이터 분석 기획</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기1-1.html">빅분기1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-1.html">빅분기1-2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-2.html">빅분기1-2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-3.html">빅분기1-2-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-1.html">빅분기1-3-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-2.html">빅분기1-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-3.html">빅분기1-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-4.html">빅분기1-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-1.html">빅분기1-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-2.html">빅분기1-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-1.html">빅분기1-5-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-2.html">빅분기1-5-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-6.html">빅분기1-6</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제2과목<br>빅데이터 탐색</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기2-1.html">빅분기2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-2.html">빅분기2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-3.html">빅분기2-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-red">제3과목<br>빅데이터 모델링</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-1.html">빅분기3-1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-2.html">빅분기3-1-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-3.html">빅분기3-1-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-2.html">빅분기3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-2.html">빅분기3-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-3.html">빅분기3-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-4.html">빅분기3-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-1.html">빅분기3-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-2.html">빅분기3-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-3.html">빅분기3-4-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제4과목<br>빅데이터 결과 해석</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기4-1.html">빅분기4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-2.html">빅분기4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-3.html">빅분기4-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-4.html">빅분기4-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-5.html">빅분기4-5</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-6.html">빅분기4-6</a></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 나무위키식 하단 내비게이션 틀 끝 -->
+
+    </div> <!-- wiki-container end -->
+
+    <footer class="wiki-footer p-6 text-center border-t border-[var(--wiki-border)] bg-[var(--wiki-footer-bg)] text-[var(--wiki-footer-text)]">
+        <div class="font-bold text-sm">
+            이 저작물은 <span class="text-[var(--wiki-text)]">효빈위키</span> 규정에 따라 이용할 수 있습니다.<br>
+            ※ 본 문서는 빅데이터분석기사 필기 제2과목(기술통계 - 기댓값과 연속/이산 확률분포)의 완벽 반영판입니다.
+        </div>
+    </footer>
+
+    <!-- 각주 툴팁 구동 JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'wiki-tooltip';
+            document.body.appendChild(tooltip);
+
+            const fnLinks = document.querySelectorAll('a.fn-link');
+            
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        const childNodes = Array.from(targetElement.childNodes);
+                        const tooltipContent = childNodes
+                            .filter(node => node.nodeName !== 'A')
+                            .map(node => node.nodeType === Node.TEXT_NODE ? node.textContent : node.outerHTML)
+                            .join('')
+                            .trim();
+                        
+                        tooltip.innerHTML = tooltipContent;
+                        tooltip.classList.add('visible');
+                        
+                        const rect = this.getBoundingClientRect();
+                        let topPos = rect.bottom + window.scrollY + 8;
+                        let leftPos = rect.left + window.scrollX;
+                        
+                        tooltip.style.display = 'block';
+                        if (leftPos + tooltip.offsetWidth > window.innerWidth) {
+                            leftPos = window.innerWidth - tooltip.offsetWidth - 20;
+                        }
+                        
+                        tooltip.style.left = leftPos + 'px';
+                        tooltip.style.top = topPos + 'px';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    tooltip.classList.remove('visible');
+                });
+            });
+        });
+    </script>
+    
+    <!-- 필수 외부 스크립트 완벽 복구 -->
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

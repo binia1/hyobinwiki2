@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>토론 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f4f4f9; color: #333; }
+        .wiki-container { max-width: 1000px; margin: 30px auto; background: white; padding: 40px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .thread-box { border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
+        .thread-header { background: #f8fafc; padding: 10px 15px; border-bottom: 1px solid #e2e8f0; font-size: 0.9rem; color: #4a5568; display: flex; justify-content: space-between; }
+        .thread-body { padding: 15px; font-size: 15px; line-height: 1.6; color: #1a202c; white-space: pre-wrap; word-break: break-word; }
+        .author-ip { font-weight: bold; color: #2b6cb0; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+    <nav class="bg-[#7777AA] text-white p-3 shadow-md sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto flex items-center justify-between">
+            <a href="index.html" class="font-bold text-xl flex items-center gap-2 hover:opacity-90 transition">
+                <i class="fa-solid fa-book-open"></i> HyobinWiki <span class="text-xs font-bold bg-white/20 px-2 py-1 rounded-full tracking-wider text-green-100">LIVE DISCUSSION</span>
+            </a>
+            <div class="flex gap-2">
+                <button onclick="goToDoc()" class="bg-[#555588] hover:bg-[#444477] px-4 py-1.5 rounded text-sm font-bold transition flex items-center gap-2 shadow-inner">
+                    <i class="fa-solid fa-file-lines"></i> 문서로 돌아가기
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container relative">
+        <div class="border-b-2 border-[#7777AA] pb-3 mb-6 flex justify-between items-end">
+            <h1 class="text-3xl font-black text-gray-800"><span id="docTitleMain" class="text-[#7777AA]">...</span> - 토론</h1>
+            <span class="text-sm font-bold text-green-600"><i class="fa-solid fa-signal"></i> 서버 실시간 연동 중</span>
+        </div>
+
+        <div id="discussionArea" class="mb-8 min-h-[300px]">
+            <div class="text-center py-20 text-gray-400">
+                <i class="fa-solid fa-spinner fa-spin fa-2x mb-3"></i><br>토론 내역을 불러오는 중입니다...
+            </div>
+        </div>
+
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 sticky bottom-4 shadow-lg">
+            <div class="flex flex-col gap-3">
+                <textarea id="commentInput" rows="3" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#7777AA] resize-none" placeholder="주제와 무관한 비방이나 욕설은 삭제될 수 있습니다. 의견을 남겨주세요."></textarea>
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-500 font-bold"><i class="fa-solid fa-user-secret"></i> 작성자: 익명 (127.0.0.1)</span>
+                    <button id="sendBtn" class="bg-[#37B484] hover:bg-[#2e9e73] text-white px-8 py-2 rounded font-bold shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> 등록
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCXlxuSvvSOEEMegjfoY_UzZQs4m0NeIJo",
+            authDomain: "hyobinwiki.firebaseapp.com",
+            projectId: "hyobinwiki"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 파라미터에서 문서 이름 가져오기
+        const params = new URLSearchParams(location.search);
+        const docName = params.get("doc");
+
+        if (!docName) {
+            alert("잘못된 접근입니다. 문서 제목이 없습니다.");
+            location.href = 'index.html';
+        }
+
+        document.getElementById("docTitleMain").innerText = docName;
+
+        // 문서로 돌아가기 버튼 기능
+        window.goToDoc = function() {
+            location.href = `${docName.replace(/ /g, "_")}.html`;
+        };
+
+        const discussionArea = document.getElementById("discussionArea");
+        
+        // 🌟 실시간 데이터 불러오기 (onSnapshot) 🌟
+        // wiki_docs -> [문서이름] -> discussions 컬렉션을 시간순으로 실시간 감시합니다.
+        const q = query(collection(db, "wiki_docs", docName, "discussions"), orderBy("timestamp", "asc"));
+        
+        onSnapshot(q, (snapshot) => {
+            if (snapshot.empty) {
+                discussionArea.innerHTML = `<div class="text-center py-10 text-gray-400 font-bold border-2 border-dashed border-gray-200 rounded-lg">아직 작성된 토론이 없습니다. 첫 번째 의견을 남겨보세요!</div>`;
+                return;
+            }
+
+            discussionArea.innerHTML = ""; // 기존 로딩 화면 지우기
+            let index = 1;
+
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                
+                // 시간 처리 (방금 작성해서 서버 시간이 아직 안 넘어왔을 때 대비)
+                let dateStr = "방금 전";
+                if (data.timestamp) {
+                    const d = data.timestamp.toDate();
+                    dateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+                }
+
+                // 효빈위키식 스레드(댓글) HTML 조립
+                const threadHTML = `
+                    <div class="thread-box">
+                        <div class="thread-header">
+                            <div><span class="font-black text-[#7777AA]">#${index++}</span> <span class="author-ip ml-2">${data.author || '익명 (127.0.0.1)'}</span></div>
+                            <div class="text-gray-500"><i class="fa-regular fa-clock"></i> ${dateStr}</div>
+                        </div>
+                        <div class="thread-body">${escapeHTML(data.text)}</div>
+                    </div>
+                `;
+                discussionArea.insertAdjacentHTML('beforeend', threadHTML);
+            });
+            
+            // 새 글이 달리면 맨 아래로 자동 스크롤
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+
+        // 🌟 댓글 등록 기능 🌟
+        document.getElementById('sendBtn').addEventListener('click', async () => {
+            const inputEl = document.getElementById('commentInput');
+            const text = inputEl.value.trim();
+
+            if (!text) return alert("내용을 입력해주세요.");
+
+            const btn = document.getElementById('sendBtn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 등록 중...`;
+
+            try {
+                // Firebase에 댓글 밀어넣기
+                await addDoc(collection(db, "wiki_docs", docName, "discussions"), {
+                    text: text,
+                    author: "127.0.0.1", // 나중에 로그인 기능 달면 계정명으로 변경 가능
+                    timestamp: serverTimestamp()
+                });
+                
+                inputEl.value = ""; // 입력창 비우기
+            } catch (e) {
+                console.error(e);
+                alert("토론 등록 실패: " + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> 등록`;
+            }
+        });
+
+        // HTML 태그가 그대로 실행되어 사이트가 깨지는 것(XSS 공격)을 방지
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag])
+            );
+        }
+    </script>
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 5. 재고자산 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #0055AA;
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #0055AA;
+            --wiki-table-header-text: #ffffff;
+        }
+
+        [data-theme='dark'] {
+            --wiki-main: #6699ff;
+            --wiki-border: #444; 
+            --wiki-bg: #1a1a1a; 
+            --wiki-text: #e0e0e0; 
+            --wiki-gray-bg: #2d2d2d; 
+            --wiki-link: #88bbff;
+            --wiki-table-header: #335588;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; transition: all 0.3s ease; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 2.8rem !important; font-weight: 900 !important; color: var(--wiki-text); line-height: 1.2; letter-spacing: -1px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--wiki-border); margin-bottom: 20px; padding-bottom: 10px; }
+
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.1rem !important; font-weight: 700; margin-top: 1.5rem; margin-bottom: 1rem; }
+
+        del { color: #7f7f7f; text-decoration: line-through; cursor: help; }
+        .wiki-drip { color: #aaa; font-size: 0.85em; }
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-quote { background-color: var(--wiki-gray-bg); border-left: 4px solid var(--wiki-main); padding: 15px; margin: 10px 0; font-style: italic; color: #555; position: relative; }
+        [data-theme='dark'] .wiki-quote { color: #ccc; }
+
+        .category-box { background: var(--wiki-gray-bg); border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+
+        table.wiki-table-custom { border-collapse: collapse !important; width: 100%; margin: 15px 0; border: 1px solid var(--wiki-border) !important; font-size: 0.9rem; background-color: var(--wiki-bg); }
+        table.wiki-table-custom th, table.wiki-table-custom td { border: 1px solid var(--wiki-border) !important; padding: 10px; vertical-align: middle; }
+        table.wiki-table-custom th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; text-align: center; }
+
+        .infobox { border: 2px solid var(--wiki-main); background-color: var(--wiki-bg); width: 100%; max-width: 380px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.3rem !important; font-weight: bold; }
+        .infobox-image { text-align: center; padding: 10px; border-bottom: 1px solid var(--wiki-border); background: var(--wiki-bg); }
+        .infobox table { border: none !important; margin: 0 !important; width: 100% !important; }
+        .infobox th { background-color: var(--wiki-gray-bg); text-align: center; padding: 8px 5px; border: 1px solid var(--wiki-border); width: 35%; font-weight: bold; vertical-align: middle;}
+        .infobox td { padding: 8px 5px; border: 1px solid var(--wiki-border); text-align: left; vertical-align: middle;}
+
+        /* 참교육 박스 전용 CSS */
+        .education-box { background-color: #f8fbff; border: 2px solid #0055aa; border-radius: 10px; padding: 25px; margin: 30px 0; box-shadow: 0 5px 15px rgba(0,85,170,0.08); }
+        [data-theme='dark'] .education-box { background-color: #1e2a3b; border-color: #336699; }
+        .education-title { display: inline-block; font-weight: 900; color: #fff; background-color: #0055aa; padding: 8px 20px; border-radius: 25px; margin-bottom: 20px; }
+        [data-theme='dark'] .education-title { background-color: #336699; }
+        .dialogue-idiot { margin-bottom: 12px; padding: 15px; background-color: rgba(255,255,255,0.8); border-radius: 8px; border-left: 5px solid #ff5522; font-weight: 500; font-size: 0.95rem; line-height: 1.6;}
+        [data-theme='dark'] .dialogue-idiot { background-color: rgba(0,0,0,0.4); border-left-color: #dd4411; }
+        .dialogue-honor { margin-bottom: 15px; padding: 15px; background-color: rgba(255,255,255,0.8); border-radius: 8px; border-left: 5px solid #00aabb; font-weight: 500; font-size: 0.95rem; line-height: 1.6;}
+        [data-theme='dark'] .dialogue-honor { background-color: rgba(0,0,0,0.4); border-left-color: #008899; }
+        .edu-note { background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 12px 15px; margin-top: 15px; font-weight: bold; color: #856404; }
+        [data-theme='dark'] .edu-note { background-color: #332b00; color: #ffcc00; border-left-color: #cc9900; }
+        
+        .formula-box { background-color: #f1f5f9; padding: 15px; border-radius: 8px; border-left: 4px solid #475569; font-family: monospace; font-size: 1rem; margin: 10px 0; }
+        [data-theme='dark'] .formula-box { background-color: #1e293b; border-left-color: #94a3b8; color: #e2e8f0; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+<nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+        <span class="font-bold text-xl">HyobinWiki</span>
+    </div>
+    <div class="flex items-center gap-2">
+        <input type="text" id="searchInput" placeholder="문서 검색" class="p-1.5 px-3 rounded text-black text-sm w-48 focus:outline-none shadow-inner">
+        
+        <button type="button" onclick="검색실행함수()" class="bg-[#0055AA] p-1.5 px-4 rounded text-sm shadow-inner font-bold">검색</button>
+    </div>
+</nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">Chapter 5. 재고자산</div>
+            <div class="flex gap-2 mb-1">
+                <button style="background-color:var(--wiki-bg); color:var(--wiki-text); border:1px solid var(--wiki-border); border-radius:4px; padding:6px 12px; font-size:14px; cursor:pointer;">토론</button>
+                <button style="background-color:#0275d8; color:#ffffff; border:1px solid #0275d8; border-radius:4px; padding:6px 12px; font-size:14px; cursor:pointer;">편집</button>
+                <button style="background-color:var(--wiki-bg); color:var(--wiki-text); border:1px solid var(--wiki-border); border-radius:4px; padding:6px 12px; font-size:14px; cursor:pointer;">역사</button>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold text-[#0055AA]">분류:</span> 
+            <a href="자격증.html" class="wiki-link">자격증</a> | 
+            <a href="재경관리사.html" class="wiki-link">재경관리사</a> | 
+            <a href="재무회계.html" class="wiki-link">재무회계</a> |
+            <a href="재고자산.html" class="wiki-link">재고자산</a>
+        </div>
+
+        <!-- 인포박스 -->
+        <aside class="infobox">
+            <div class="infobox-title">재고자산<br><span class="text-sm font-normal">Inventories</span></div>
+            <div class="infobox-image">
+                <img src="이미지/재고자산.png" alt="재고자산 이미지" style="width:100%; height:auto;" onerror="this.src='https://placehold.co/300x200/0055AA/FFFFFF?text=Inventories'">
+                <div class="text-xs text-gray-500 mt-1">창고에 쌓여있는 돈줄이자 회계 처리의 핵심</div>
+            </div>
+            <table>
+                <tr><th>과목명</th><td><a href="재무회계.html" class="wiki-link">재무회계</a></td></tr>
+                <tr><th>단원명</th><td>Chapter 5</td></tr>
+                <tr><th>수험생 절망도</th><td>★★★★☆<br><del>저가법 환입에서 계산기가 박살난다</del></td></tr>
+                <tr><th>핵심 키워드</th><td>선입선출법, 저가법(LCNRV), 순실현가능가치, 재고자산감모손실</td></tr>
+            </table>
+        </aside>
+
+        <!-- 목차 -->
+        <div class="toc">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">재고자산의 정의 및 분류</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">재고자산의 취득원가 구성</a></li>
+                <li>3. <a href="#s-3" class="wiki-link">재고자산 수량 결정 및 원가흐름 가정</a>
+                    <ul>
+                        <li>3.1. <a href="#s-3-1" class="wiki-link">수량 결정법 (계속기록법 vs 실지재고조사법)</a></li>
+                        <li>3.2. <a href="#s-3-2" class="wiki-link">원가흐름 가정 (FIFO, 가중평균법 등)</a></li>
+                    </ul>
+                </li>
+                <li>4. <a href="#s-4" class="wiki-link">재고자산의 추정법</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">기말 재고자산의 평가: 저가법 (LCNRV)</a>
+                    <ul>
+                        <li>5.1. <a href="#s-5-1" class="wiki-link">평가손실 인식 요인 및 순실현가능가치</a></li>
+                        <li>5.2. <a href="#s-5-2" class="wiki-link">재고자산평가손실의 환입</a></li>
+                    </ul>
+                </li>
+                <li>6. <a href="#s-6" class="wiki-link">재고자산감모손실</a></li>
+                <li>7. <a href="#s-7" class="wiki-link">타이핑 노트 (요약)</a></li>
+            </ul>
+        </div>
+        <div class="clear-both"></div>
+
+        <h2 id="s-1">1. 재고자산의 정의 및 분류</h2>
+        <p>재고자산은 <strong>"정상적인 영업과정"</strong>에서 판매를 위하여 보유하거나 생산 중인 자산, 또는 생산이나 용역 제공에 사용될 원재료나 소모품을 말한다.</p>
+
+        <table class="wiki-table-custom">
+            <tr>
+                <th style="width: 20%;">계정과목</th>
+                <th>세부 설명 및 예시</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-[#0055AA]">상품</td>
+                <td>판매 목적으로 구입한 완성품 (예: 부동산매매업이 보유한 판매용 토지/건물, 마트의 과자)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-[#0055AA]">제품</td>
+                <td>판매 목적으로 직접 제조/생산한 품목 (주요제품 제조원가 + 생산 부산물 포함)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-[#0055AA]">반제품</td>
+                <td>일부 공정이 완료된 중간 생산품. (<strong>이 상태로 외부 판매 가능</strong>, 또는 추가 가공하여 완제품 판매 가능)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-red-600">재공품</td>
+                <td>제조 과정 중에 있는 자산. (이 상태로는 정가 판매 <strong>불가</strong>, 외부 판매용 아님)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-blue-600">원재료</td>
+                <td>직접 생산에 투입되는 자산 (원료, 부품, 미착원재료 포함)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-gray-700">저장품</td>
+                <td>생산이나 용역제공에 부수적으로 사용될 소모품 중 결산기말 미사용액 (포장재, 연료, 공구 등)</td>
+            </tr>
+        </table>
+
+        <!-- 참교육 1: 재고자산 분류 기준 -->
+        <div class="education-box">
+            <div class="education-title">⚠️ 오답 함정: 회사가 소유한 건물은 무조건 유형자산?</div>
+            <div class="dialogue-idiot">
+                <span style="color:#ee0022; font-weight:900;">미타케 란:</span> 이츠모도리... 우리 아버지가 운영하는 부동산 매매회사가 이번에 100억짜리 빌딩을 사서 팔려고 내놨어. 건물이니까 당연히 장부에는 '유형자산'으로 적어야겠지.
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#00ccaa; font-weight:900;">아오바 모카:</span> 란~ 회계에서 자산을 분류하는 기준은 물건의 형태가 아니라 '보유 목적'이야~. 일반 기업이 쓸 사무실 건물이면 유형자산이 맞지만, 부동산 회사가 '정상적인 영업과정에서 판매할 목적'으로 산 거라면 그 100억짜리 건물도 과자랑 똑같은 '재고자산(상품)'이란다~.
+            </div>
+        </div>
+
+        <!-- 참교육 2: 반제품 vs 재공품 혼동 -->
+        <div class="education-box">
+            <div class="education-title">⚠️ 오답 함정: 굽지 않은 빵 반죽을 반제품으로 우기기</div>
+            <div class="dialogue-idiot">
+                <span style="color:#ff55bb; font-weight:900;">우시고메 리미:</span> 사아야 쨩! 이 초코 소라빵은 아직 안에 초코도 안 넣고 굽지도 않은 '밀가루 반죽' 상태지만, 배고프니까 그냥 이대로 손님한테 빵(반제품)이라고 팔아도 되겠지?! 장부에 적어 줘!
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#ffcc11; font-weight:900;">야마부키 사아야:</span> 리미 린... 그건 아직 가공 중이라 절대 제값에 팔 수 없는 '재공품'이야! 다른 빵집에 중간 재료로 납품할 수 있는 구워진 빵 껍데기 정도는 돼야 '반제품'이라고 부르는 거야! 배고프다고 생반죽을 팔면 식약처에 신고당해!
+            </div>
+            <div class="edu-note">
+                💡 팩트체크: 추가 가공 없이도 그 자체로 외부 판매가 가능하면 '반제품', 미완성이라 외부 판매가 불가능하면 '재공품'이다.
+            </div>
+        </div>
+
+        <h2 id="s-2">2. 재고자산의 취득원가 구성</h2>
+        <p>재고자산의 원가는 <strong>매입원가, 전환원가, 기타 원가</strong>(현재 상태·장소까지 이르게 하는 데 소요된 원가)를 모두 포함한다. 반면 발생 기간의 비용으로 즉시 인식해야 하는 항목들을 철저히 구분해야 한다.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="border p-4 bg-blue-50 rounded">
+                <div class="font-bold text-lg mb-2 text-blue-800 border-b pb-1">✅ 포함 항목 (취득원가)</div>
+                <ul class="list-disc pl-5 space-y-1 text-sm text-gray-800">
+                    <li>매입가격 + 수입관세, 매입운임, 하역료 등</li>
+                    <li><strong>전환원가:</strong> 직접노무원가, 고정 및 변동 제조간접원가의 배부액</li>
+                    <li><strong>기타원가:</strong> 특정 고객을 위한 비제조 간접원가나 제품 디자인 원가도 재고자산에 포함될 수 있음.</li>
+                    <li>※ 매입할인, 리베이트는 매입원가에서 <strong>차감</strong>함.</li>
+                </ul>
+            </div>
+            <div class="border p-4 bg-red-50 rounded">
+                <div class="font-bold text-lg mb-2 text-red-800 border-b pb-1">❌ 제외 항목 (발생 즉시 비용 인식)</div>
+                <ul class="list-disc pl-5 space-y-1 text-sm text-gray-800">
+                    <li>재료, 노무, 제조원가 중 <strong>비정상적으로 낭비된 부분</strong></li>
+                    <li>후속 생산단계 전 보관이 필요한 경우 이외에 발생하는 <strong>보관원가</strong></li>
+                    <li>현재 장소/상태에 이르게 하는 데 기여하지 않은 관리간접원가</li>
+                    <li><strong>판매원가</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="wiki-quote text-sm">
+            <span class="font-bold text-blue-700">📌 [금융요소의 분리]</span> 후불조건 취득 시 계약에 실질적 금융요소가 포함되어 있다면 (예: 정상신용조건의 매입가격과 실제 지급액 간의 차이), 해당 금융요소는 재고자산 원가가 아니라 <strong>금융 진행 기간 동안의 이자비용</strong>으로 계상해야 한다.
+        </div>
+        
+        <p class="mt-4 font-bold text-gray-800">▶ 연산품과 부산물의 원가 배분</p>
+        <p class="text-sm">동일 공정에서 여러 제품이 생산(연산품)될 때 개별 전환원가 식별이 불가능하다면 분리점판매가치법 등으로 합리적으로 배부한다. <del>부산물은 본래 ㅈ도 안 중요한데</del> 부산물은 보통 순실현가능가치(NRV)로 측정하여 주산물의 원가에서 차감한다. (주산물 장부금액과 큰 차이 없음)<br>
+        * 생물자산에서 수확한 농림어업 수확물 취득원가 = 수확 시점의 순공정가치 (공정가치 - 처분부대원가)</p>
+
+        <!-- 참교육 3: 비정상적 낭비 원가 포함 오류 -->
+        <div class="education-box">
+            <div class="education-title">⚠️ 오답 함정: 실수로 태워 먹은 원재료를 재고자산 원가에 얹기</div>
+            <div class="dialogue-idiot">
+                <span style="color:#dd0088; font-weight:900;">우다가와 아코:</span> 크큭... 나의 흑염룡이 폭주하는 바람에 포션(원재료) 절반을 비정상적으로 낭비(태워먹음)해버렸군. 하지만 걱정 마라! 그 낭비된 포션의 가격만큼 완성된 엘릭서(제품)의 가치(원가)에 덧붙여서 나의 자산을 더 부풀려 보이게 하겠다!
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#bbbbbb; font-weight:900;">시로카네 린코:</span> 아, 아코 쨩... 재료나 노무비 중에서 '비정상적으로 낭비된 부분'은 수익 창출에 전혀 공헌하지 못하기 때문에 절대 재고자산 원가에 더하면 안 돼요... 그건 발생한 즉시 당기 '비용(손실)'으로 처리해야 해요... 장부 뻥튀기하면 큰일 나요...
+            </div>
+        </div>
+
+        <!-- 참교육 4: 금융요소 무시 -->
+        <div class="education-box">
+            <div class="education-title">⚠️ 오답 함정: 3년 할부 이자까지 전부 상품 원가로 취급하기</div>
+            <div class="dialogue-idiot">
+                <span style="color:#55ddee; font-weight:900;">히카와 히나:</span> 룽! 내가 엄청 비싼 아로마 오일 기계를 샀는데, 당장 돈이 없어서 3년 할부(후불조건)로 샀어! 원래 100만 원인데 할부 이자 붙어서 총 120만 원 내야 한대! 그럼 이 기계(재고자산)의 취득원가는 120만 원이겠네?! 완전 개이득!
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#ff88bb; font-weight:900;">마루야마 아야:</span> 히나 쨩! 아니야! 정상 신용조건의 매입가격(100만 원)과 실제 총지급액(120만 원)의 차이인 20만 원은 실질적인 '금융요소'라고! 그건 재고자산 원가에 포함하는 게 아니라 3년 동안 '이자비용'으로 나누어 인식해야 해!
+            </div>
+        </div>
+
+        <!-- 참교육 5: 부산물 원가 과대계상 -->
+        <div class="education-box">
+            <div class="education-title">⚠️ 오답 함정: 주산물과 부산물의 1:1 원가 배분</div>
+            <div class="dialogue-idiot">
+                <span style="color:#0077dd; font-weight:900;">하나조노 타에:</span> 오타에의 특제 햄버그를 만들고 남은 고기 부스러기(부산물)... 이건 아주 희귀하니까 메인 햄버그 원가랑 똑같이 반반씩 나눠서 비싸게 장부에 적어둬야지~.
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#aa66dd; font-weight:900;">이치가야 아리사:</span> 오타에!! 주산물 만들다 남은 찌꺼기(부산물)는 본질적으로 중요하지 않은 거라 메인 제품이랑 원가를 똑같이 배분하면 안 된다고! 그냥 내다 팔 수 있는 헐값(순실현가능가치)으로 대충 측정해서 메인 햄버그 원가에서 빼버려! 
+            </div>
+        </div>
+
+        <h2 id="s-3">3. 재고자산 수량 결정 및 원가흐름 가정</h2>
+        
+        <h3 id="s-3-1">3.1. 수량 결정법</h3>
+        <table class="wiki-table-custom">
+            <tr>
+                <th style="width: 25%;">방법</th>
+                <th style="width: 35%;">수량 파악 산식</th>
+                <th>특징</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-[#0055AA]">계속기록법</td>
+                <td><strong>기말재고수량</strong> = 기초 + 당기매입 - 당기판매</td>
+                <td>입출고 시마다 기록. 언제든 장부상 재고 잔량 파악 가능. (감모손실 파악 용이)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-[#0055AA]">실지재고조사법</td>
+                <td><strong>당기판매수량</strong> = 기초 + 당기매입 - <strong>기말실지재고</strong></td>
+                <td>출고 기록은 안 함. 주기적 실사 필요. 실사 전까지 당기판매량 모름. (감모손실이 매출원가에 숨어버림)</td>
+            </tr>
+        </table>
+
+        <!-- 참교육 6: 실지재고조사법의 맹점 -->
+        <div class="education-box">
+            <div class="education-title">⚠️ 오답 함정: 도난당한 재고를 팔린 것으로 착각 (실지재고조사법의 맹점)</div>
+            <div class="dialogue-idiot">
+                <span style="color:#ff9999; font-weight:900;">우에하라 히마리:</span> 에이에이오! 편의점 빵 장부를 '실지재고조사법'으로 쓰니까 진짜 편하다! 기말에 창고에 없는 빵 100개는 전부 다 손님한테 팔린 거(매출원가)로 쳐버리면 되니까 짱 쉬워! 나 장사 잘하나 봐!
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#00ccaa; font-weight:900;">아오바 모카:</span> 히마리~ 실지재고조사법은 출고 기록을 안 하니까 편하긴 한데~ 창고에 없는 빵 100개 중에 내가 몰래 먹은 50개(감모손실)까지 전부 '매출원가(정상 판매)'로 둔갑해버리는 치명적인 단점이 있어~ 장부 빵꾸나는 소리 안 들려~?
+            </div>
+        </div>
+
+        <h3 id="s-3-2">3.2. 원가흐름 가정 (기말재고액 측정법)</h3>
+        <p>단가가 다른 재고자산이 입고되었을 때, 어떤 단가의 물건이 먼저 팔렸는지를 가정하는 방법이다.</p>
+        <table class="wiki-table-custom">
+            <tr>
+                <th style="width: 15%;">방법</th>
+                <th>특징 및 회계적 영향</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">개별법</td>
+                <td>각각 구입가 기록. 소량/특수/고가품에 적합. <del>종류 많고 거래빈번하면 실무활용 ㅈ같음</del></td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-blue-600">선입선출법<br>(FIFO)</td>
+                <td>
+                    먼저 구입한 것이 먼저 판매된다고 가정. (일반적 물량흐름과 일치)<br>
+                    * <strong>실지재고조사법을 쓰든 계속기록법을 쓰든 기말재고 및 매출원가 금액이 동일하다.</strong><br>
+                    * 물가상승 시: <strong>기말재고 ↑(최근 단가), 매출원가 ↓(과거 단가), 당기순이익 ↑</strong>
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-[#0055AA]">가중평균법</td>
+                <td>
+                    기초 재고와 당기 매입의 원가를 평균 내어 단가를 결정.<br>
+                    - <strong>총평균법:</strong> 회계기간 단위 총 평균 (실지재고조사법 하의 가중평균법)<br>
+                    - <strong>이동평균법:</strong> 매입 시마다 평균 갱신 (계속기록법 하의 가중평균법)
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-red-600">후입선출법<br>(LIFO)</td>
+                <td>
+                    최근 구입한 것이 먼저 판매된다고 가정.<br>
+                    <span class="font-bold text-red-600 bg-red-50 px-2 py-1 rounded">❌ K-IFRS 미허용 (이익조정 위험 때문에 사용 불가)</span>
+                </td>
+            </tr>
+        </table>
+
+        <!-- 참교육 7: LIFO의 유혹과 K-IFRS의 철퇴 -->
+        <div class="education-box">
+            <div class="education-title">⚠️ 오답 함정: 세금 아끼려고 후입선출법(LIFO) 도입하기</div>
+            <div class="dialogue-idiot">
+                <span style="color:#ff5522; font-weight:900;">토야마 카스미:</span> 아리사! 요새 물가가 엄청 올라서 나중에 산 감자튀김이 더 비싸졌어! 그러니까 장부에는 가장 최근에 비싸게 산 감자튀김이 먼저 팔렸다(후입선출법)고 적으면, 매출원가가 높아져서 이익이 줄어들고 세금도 적게 내겠지?! 나 천재 아냐?!
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#aa66dd; font-weight:900;">이치가야 아리사:</span> 하아?! 너 지금 '이익조정' 하겠다고 대놓고 선언한 거냐?! K-IFRS에서는 재무상태표의 기말재고자산이 너무 옛날 헐값으로 표시되고 경영자 맘대로 이익을 조작할 수 있다는 이유로 <strong>후입선출법(LIFO) 사용을 전면 금지</strong>시켰다고! 당장 선입선출법이나 가중평균법으로 고쳐!
+            </div>
+        </div>
+
+        <!-- 참교육 8: FIFO 하에서의 기록법 비교 -->
+        <div class="education-box">
+            <div class="education-title">⚠️ 오답 함정: 선입선출법 적용 시 기록 방법에 따라 이익이 달라진다는 착각</div>
+            <div class="dialogue-idiot">
+                <span style="color:#FF51C4; font-weight:900;">오니츠카 나츠미:</span> ~데스노! 제가 만든 스무디 재고 장부를 선입선출법(FIFO)으로 적을 건데요, '계속기록법'으로 할지 '실지재고조사법'으로 할지에 따라 당기순이익이 달라질 테니까 저한테 제일 유리한 방법으로 신중하게 골라야겠어요!
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#4cd2e2; font-weight:900;">오니츠카 토마리:</span> 언니, 통계와 수학의 기본이 안 되어 있군요, agree입니다. 선입선출법(FIFO)은 먼저 들어온 게 무조건 먼저 나간다는 절대적 순서가 있기 때문에, 매일매일 계속 기록하든 기말에 한 번에 몰아서 실사를 하든 <strong>기말재고와 매출원가 산출 금액이 100% 동일</strong>합니다. 쓸데없는 고민 말고 장사나 하십시오.
+            </div>
+        </div>
+
+        <!-- 참교육 9: 총평균법 vs 이동평균법 혼동 -->
+        <div class="education-box">
+            <div class="education-title">⚠️ 오답 함정: 총평균법과 이동평균법의 계산 시점 혼동</div>
+            <div class="dialogue-idiot">
+                <span style="color:#ddbbff; font-weight:900;">와카미야 이브:</span> 부시도! 장부에 무사도 정신을 담아 '총평균법'을 쓰겠습니다! 목검을 새로 매입할 때마다 즉시 장부를 꺼내 전체 평균 단가를 '매번' 새로 계산하는 성실함을 보여드리겠습니다!
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#99dd88; font-weight:900;">야마토 마야:</span> 이브 씨, 물건을 매입할 때마다 매번 평균 단가를 갱신하는 건 '이동평균법(계속기록법)'임다! '총평균법'은 1년 치 다 사놓고 기말에 딱 한 번만 전체 수량으로 나누는 쿨한 방법임다! 두 개를 헷갈려서 계산하면 헛수고만 하는 검다!
+            </div>
+        </div>
+
+        <h2 id="s-4">4. 재고자산의 추정법</h2>
+        <p>재고자산 취득원가는 실제 원가가 원칙이나, 편의상 다음 방법을 사용할 수 있다.</p>
+        <table class="wiki-table-custom">
+            <tr>
+                <th style="width: 20%;">방법</th>
+                <th>설명 및 특징</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-[#0055AA]">표준원가법</td>
+                <td>제품 생산 전 재료/노무/제조간접비의 <strong>'표준'을 설정</strong>하고, 사후에 실제 원가와의 차이를 파악하여 관리. (제조업에서 주로 사용)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-[#0055AA]">소매재고법<br>(매출가격환원법)</td>
+                <td>
+                    다품종 상품(변화 잦은) 취급 시 실무적 타 원가측정법 사용 불가 시 사용. (유통업, 백화점 등)<br>
+                    <strong>판매가격 × (1 - 매출총이익률)</strong>로 원가를 역산하여 추정.
+                </td>
+            </tr>
+        </table>
+
+        <!-- 참교육 10: 소매재고법의 이익률 퉁치기 -->
+        <div class="education-box">
+            <div class="education-title">⚠️ 오답 함정: 백화점 전체 상품을 하나의 이익률로 퉁치기</div>
+            <div class="dialogue-idiot">
+                <span style="color:#aa33cc; font-weight:900;">세타 카오루:</span> 덧없구나... 백화점에는 물건이 너무 많아 일일이 원가를 계산하기 귀찮으니 '소매재고법'을 쓰기로 했어. 1층 명품관 가방이나 지하나 마트 껌이나 다 합쳐서 평균 이익률 30%로 퉁쳐서 원가를 계산하면 아주 깔끔하겠지?
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#ffeeaa; font-weight:900;">시라사기 치사토:</span> 카오루. 명품 가방이랑 껌의 이익률이 어떻게 같을 수가 있어? 소매재고법을 쓸 때는 전체를 하나로 퉁치는 게 아니라, 반드시 <strong>이익률이 유사한 판매부문별(상품군별)로 나누어서 평균이익률을 따로 적용</strong>해야 해. 엉터리 원가로 세무조사 받기 싫으면 당장 부문별로 다시 나눠.
+            </div>
+        </div>
+
+        <h2 id="s-5">5. 기말 재고자산의 평가: 저가법 (LCNRV)</h2>
+        <p>재고자산은 <strong>취득원가와 순실현가능가치(NRV) 중 낮은 금액</strong>으로 측정한다.</p>
+
+        <h3 id="s-5-1">5.1. 평가손실 인식 요인 및 순실현가능가치</h3>
+        <p>다음과 같은 사유가 발생하면 재고자산의 가치가 떨어졌다고 보아 평가손실을 인식한다. (암기 팁: <span class="font-bold text-red-600">원판진상</span>)</p>
+        <ul class="list-disc pl-5 space-y-1 mb-4 text-sm">
+            <li><strong>물리적으로 손상</strong>된 경우</li>
+            <li>완전히 또는 부분적으로 <strong>진부화</strong>된 경우</li>
+            <li><strong>판매가격이 하락</strong>한 경우</li>
+            <li>완성하거나 판매하는 데 필요한 <strong>원가가 상승</strong>한 경우</li>
+        </ul>
+
+        <div class="wiki-quote text-sm mb-4">
+            <strong>[저가법 적용 단위]</strong><br>
+            원칙적으로 <strong>항목별(개별 기준)</strong>로 적용한다. 단, 동일 지역 생산/판매, 유사한 용도의 동일 제품군 등 실무적으로 구분 평가가 불가능한 경우 예외적으로 유사 항목을 통합하여 적용할 수 있다. <span class="text-red-600 font-bold">그러나 '완제품 전체' 혹은 '특정 영업부문 전체' 기준으로 퉁쳐서 저가법을 적용하는 것은 절대 불가하다.</span>
+        </div>
+
+        <!-- 참교육 11: 저가법의 항목별 적용 위반 -->
+        <div class="education-box">
+            <div class="education-title">⚠️ 오답 함정: 손실 난 재고와 이익 난 재고를 퉁쳐서 저가법 회피하기</div>
+            <div class="dialogue-idiot">
+                <span style="color:#ffee22; font-weight:900;">츠루마키 코코로:</span> 해피! 럭키! 스마일! 곰 인형은 원가보다 50만 원 떨어졌는데, 토끼 인형은 원가보다 60만 원이나 올랐네! 두 개를 하나로 합치면 전체적으로 10만 원 이득이니까, '저가법'에 안 걸리고 재고자산평가손실을 0원으로 적어도 되겠지?! 
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#006699; font-weight:900;">오쿠사와 미사키:</span> 코코로... 저가법은 무조건 <strong>'항목별(개별)'</strong>로 적용하는 게 원칙이야. 곰 인형은 곰 인형대로 50만 원 평가손실을 무조건 인식해야 하고, 가격이 오른 토끼 인형이랑 퉁쳐서 손실을 숨기면 절대 안 돼. (토끼 인형은 원가법 원칙상 이익을 미리 인식하지도 않음)
+            </div>
+        </div>
+
+        <p class="font-bold text-blue-700 mt-6 mb-2">▶ 순실현가능가치 (NRV) 추정 기준</p>
+        <table class="wiki-table-custom">
+            <tr>
+                <th style="width: 25%;">보유 목적</th>
+                <th>NRV 계산 기준</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">판매 목적<br>(상품, 제품, 반제품, 재공품)</td>
+                <td><strong>정상적 예상 판매가격 - 추가 완성원가 - 예상 판매비용</strong></td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">사용 목적<br>(원재료, 소모품)</td>
+                <td><strong>현행대체원가</strong> (현재 시점 매입/재생산 소요 금액)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">확정판매계약 이행</td>
+                <td><strong>계약가격</strong> 기준</td>
+            </tr>
+        </table>
+
+        <div class="bg-red-50 border border-red-300 p-4 rounded-lg my-4 text-red-900 text-sm">
+            <h4 class="mt-0 text-red-800 font-bold border-b border-red-200 pb-1">🚨 [매우 중요] 원재료 저가법 적용의 대원칙</h4>
+            완성될 제품이 <strong>원가 이상으로 판매될 것으로 예상되는 경우</strong>, 그 제품 생산에 투입하기 위해 보유하는 원재료 및 기타 소모품은 가격이 하락했더라도 <strong>절대 감액(평가손실 인식)하지 않는다.</strong><br>
+            * 원재료 가격 하락으로 제품 원가가 순실현가능가치를 초과(적자)할 것으로 예상될 때만 원재료를 감액하며, 이때 원재료의 NRV는 '현행대체원가'가 된다.
+        </div>
+
+        <!-- 참교육 12: 완제품이 이익인데 원재료를 감액하는 멍청함 -->
+        <div class="education-box">
+            <div class="education-title">⚠️ 기출 팩트폭력: 완제품 흑자인데 원재료 가격 떨어졌다고 호들갑 떨기</div>
+            <div class="dialogue-idiot">
+                <span style="color:#9856FF; font-weight:900;">유리아 (8호선):</span> 세하 언니 큰일 났어요! 창고에 있는 구리선(원재료) 시장 가격이 팍 떨어졌어요! 당장 이 구리선의 가치를 깎아서 '재고자산평가손실'을 장부에 기록해야 해요!
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#FF8899; font-weight:900;">임세하 (7호선):</span> (용접기를 내려놓으며) 넌 진짜 모터 회로도만 알고 회계는 1도 모르는구나. 그 구리선으로 만든 8호선 모터(완제품)가 지금 원가보다 비싸게 팔려서 흑자 날 게 확실하지? 완제품이 이익을 내면, 원재료 가격이 똥값이 됐든 말든 절대 평가손실로 감액하지 않아. 우리는 구리선을 팔려는 게 아니라 모터를 팔아서 돈을 벌 거니까. 호들갑 떨지 말고 납땜이나 해.
+            </div>
+            <div class="edu-note">
+                💡 팩트체크: 원재료의 감액 여부는 <strong>'그것으로 만들 완제품이 적자가 나느냐'</strong>에 달려있다. 완제품이 흑자면 원재료는 절대 건드리지 않는다.
+            </div>
+        </div>
+
+        <h3 id="s-5-2">5.2. 재고자산평가손실의 환입</h3>
+        <p>감액 사유가 소멸되거나 시장가격 회복 등으로 순실현가능가치가 상승하면 평가손실을 환입한다.</p>
+        <div class="formula-box">
+            환입 금액 = Min (수정된 순실현가능가치, <strong>최초 장부금액(취득원가)</strong>) - 현재 장부금액<br>
+            ※ 핵심: <strong>최초 취득원가(장부금액)를 한도로만 환입이 가능하다.</strong> (주식처럼 무한정 가치 상승 인식 불가)
+        </div>
+        <p class="text-sm mt-2 text-gray-700">
+            [회계처리] (차) 재고자산평가충당금 XXX / (대) 재고자산평가손실환입 XXX<br>
+            * 재고자산평가손실환입은 매출원가에서 차감하는 방식으로 손익에 반영한다.
+        </p>
+
+        <!-- 참교육 13: 환입 한도 초과 오류 -->
+        <div class="education-box">
+            <div class="education-title">⚠️ 오답 함정: 취득원가 한도를 무시한 무한대 환입</div>
+            <div class="dialogue-idiot">
+                <span style="color:#A530E0; font-weight:900;">오하라 마리:</span> Oh! 엑설런트! 내가 100만 원 주고 산 빈티지 와인이 작년에 70만 원으로 떨어져서 평가손실을 잡았었는데, 올해 다시 떡상해서 시장가가 150만 원이 됐어! 당장 '재고자산평가손실환입'을 80만 원 잡아서 장부에 150만 원으로 기록할게! It's Magic!
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#F43232; font-weight:900;">쿠로사와 다이아:</span> 뿟뿌- 데스와!! 마리 상, 재고자산의 평가손실 환입은 아무리 시장가가 날뛰어도 <strong>'최초 취득원가(100만 원)'</strong>를 한도로만 환입할 수 있습니다! 작년에 깎았던 30만 원까지만 환입해서 딱 100만 원까지만 살려내야지, 주식처럼 150만 원으로 자산을 뻥튀기하는 매직은 K-IFRS에서 허락하지 않습니다!
+            </div>
+        </div>
+
+        <h2 id="s-6">6. 재고자산감모손실</h2>
+        <p>장부상 수량보다 실제 창고에 있는 <strong>실지재고수량이 부족</strong>할 때 발생하는 손실이다. (도난, 분실, 파손 등)</p>
+        <table class="wiki-table-custom">
+            <tr>
+                <th style="width: 25%;">구분</th>
+                <th>처리 방법</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-[#0055AA]">정상적 감모</td>
+                <td>영업 과정에서 피할 수 없는 감모. <strong>매출원가</strong>에 가산하여 처리.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-red-600">비정상적 감모</td>
+                <td>경영 비효율이나 이례적 사건에 의한 감모. <strong>기타비용(영업외비용)</strong>으로 처리. (재고자산감모손실 계정)</td>
+            </tr>
+        </table>
+        <p class="text-sm mt-2 text-gray-700">
+            [감모손실 회계처리] (차) 재고자산감모손실 XXX / (대) 재고자산 XXX<br>
+            ※ 감모손실은 수량이 증발해버린 것이므로, <strong>평가충당금 같은 차감 계정을 쓰지 않고 자산(재고자산) 자체를 직접 줄여버린다.</strong>
+        </p>
+
+        <!-- 참교육 14: 감모손실과 평가손실의 혼동 -->
+        <div class="education-box">
+            <div class="education-title">⚠️ 오답 함정: 훔쳐 간 수량을 평가손실로 착각하기</div>
+            <div class="dialogue-idiot">
+                <span style="color:#CFBA0F; font-weight:900;">쿠니키다 하나마루:</span> 즈라! 도둑고양이가 귤 10상자를 훔쳐 가버렸즈라! 내 장부의 전체 가치가 떨어졌으니까 이건 '재고자산평가손실'로 기록해서 평가충당금을 잡아둬야겠즈라!
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#AEAEAE; font-weight:900;">츠시마 요시코:</span> 큭큭... 어리석은 즈라마루. 물건의 단가(가격)가 떨어져서 가치가 하락한 게 '평가손실'이고, 너처럼 물건 10박스가 아예 물리적으로 증발(도난/분실)해버린 건 <strong>'감모손실'</strong>이라고 부르는 거다! 이 차이를 모르다니 심연에 먹혀버렸구나!
+            </div>
+        </div>
+
+        <!-- 참교육 15: 정상감모 vs 비정상감모 -->
+        <div class="education-box">
+            <div class="education-title">⚠️ 오답 함정: 정상감모와 비정상감모의 무지성 합산</div>
+            <div class="dialogue-idiot">
+                <span style="color:#ff9922; font-weight:900;">키타자와 하구미:</span> 에헤헤! 크로켓 튀기다가 실수로 1개 바닥에 떨어뜨린 거랑, 아까 넘어져서 100개 강물에 통째로 빠뜨린 거! 전부 다 똑같이 크로켓이 사라진 거니까 싹 다 '매출원가'에 합쳐서 비용 처리할래!
+            </div>
+            <div class="dialogue-honor">
+                <span style="color:#44ddff; font-weight:900;">마츠바라 카논:</span> 후에엥~ 하구미 쨩... 튀기다가 1개 떨어지는 건 영업 과정에서 어쩔 수 없이 발생하는 '정상적 감모'라 매출원가가 맞지만... 100개를 통째로 강물에 빠뜨린 건 이례적이고 칠칠맞은 '비정상적 감모'라서 영업외비용(기타비용)으로 따로 빼야 해... 장부 엉망으로 섞으면 안 돼...
+            </div>
+        </div>
+
+        <h2 id="s-7">7. 타이핑 노트 (주요 암기 요약)</h2>
+        <div class="bg-gray-100 p-5 rounded border border-gray-300 text-sm space-y-3">
+            <p><strong>[취득원가 핵심]</strong></p>
+            <ul class="list-disc pl-5">
+                <li>포함 ❌: 비정상적 낭비(재료, 노무), 판매원가, 이자비용(후불 금융요소), 단순 보관원가</li>
+                <li>연산품/부산물: 부산물은 순실현가능가치(NRV)로 측정해 주산물 원가에서 차감</li>
+            </ul>
+            <p><strong>[수량 및 단가 결정]</strong></p>
+            <ul class="list-disc pl-5">
+                <li>기말재고 및 순이익 크기 (물가상승 시): <strong>선입선출법(FIFO) > 이동평균법 > 총평균법 > 후입선출법(K-IFRS 금지)</strong></li>
+                <li>FIFO는 계속기록법이든 실지재고조사법이든 기말재고 금액이 100% 동일함.</li>
+            </ul>
+            <p><strong>[기말재고자산의 평가 (저가법)]</strong></p>
+            <ul class="list-disc pl-5">
+                <li>원칙: <strong>항목별(개별) 기준</strong> 적용. (특정 영업부문 등 전체 퉁치기 불가)</li>
+                <li>NRV 추정 시 보유 목적 고려 (판매용: 예상판매가-추가원가, 사용용(원재료): 현행대체원가)</li>
+                <li><strong>★원재료 감액 예외:</strong> 완제품이 흑자 판매 예상 시, 원재료는 가격이 폭락해도 절대 감액(평가손실) 안 함.</li>
+                <li>평가손실 환입: <strong>최초 장부금액(취득원가) 한도</strong> 내에서만 인정.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

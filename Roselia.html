@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roselia - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* [테마 컬러 설정] Roselia 남보라색 */
+            --wiki-main: #3344aa; 
+            --wiki-point: #2b3a99; 
+            --wiki-nav-bg: #7777aa;
+            --wiki-border: #cccccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9fa; 
+            --wiki-link: #3b50c2;
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+            --wiki-del: #999999;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-main: #4a5dcb; 
+            --wiki-point: #5c70e6;
+            --wiki-nav-bg: #555588; 
+            --wiki-border: #444444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2b2d31; 
+            --wiki-link: #7b8fed;
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+            --wiki-del: #777777;
+        }
+        
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); display: flex; flex-direction: column; }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: var(--wiki-text); line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--wiki-border); margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.15rem !important; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: var(--wiki-text); border-left: 3px solid var(--wiki-border); padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid var(--wiki-border); background: var(--wiki-bg); padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: var(--wiki-text); 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: var(--wiki-gray-bg); color: var(--wiki-main); border-color: var(--wiki-main); }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: var(--wiki-gray-bg); border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: var(--wiki-bg); width: 100%; max-width: 400px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.3rem !important; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: var(--wiki-main); color: #fff; width: 100px; padding: 6px 8px; border: 1px solid var(--wiki-border); text-align: center; vertical-align: middle; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+        .infobox td { padding: 6px 8px; border: 1px solid var(--wiki-border); vertical-align: middle; }
+
+        /* 데이터 테이블 */
+        .data-table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; font-size: 0.85rem; }
+        .data-table th, .data-table td { border: 1px solid var(--wiki-border) !important; padding: 6px 8px; text-align: center; vertical-align: middle; }
+        .data-table th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+        .data-table tr:nth-child(even) { background-color: var(--wiki-gray-bg); }
+        .data-table .song-title { font-weight: bold; color: var(--wiki-link); text-align: left; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; color: var(--wiki-main); font-size: 1.1rem; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
+        .toc ul li { margin-bottom: 6px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        .toc-number { color: var(--wiki-main); font-weight: bold; margin-right: 5px; }
+        
+        /* 효빈위키 느낌 요소 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: var(--wiki-text); background-color: var(--wiki-gray-bg); padding: 10px; font-style: italic; border-radius: 0 4px 4px 0;}
+        del { color: var(--wiki-del); text-decoration: line-through; } 
+        .wiki-gray { color: #888; font-size: 0.9em; } 
+        .wiki-center { text-align: center; }
+        
+        /* 뱃지 스타일 (지하철, 버스) */
+        .subway-badge { display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 50%; color: white; font-size: 0.75rem; font-weight: bold; margin-right: 3px; vertical-align: middle; text-shadow: 0 1px 1px rgba(0,0,0,0.3); }
+        .bus-badge { display: inline-block; padding: 0 6px; height: 20px; line-height: 20px; text-align: center; border-radius: 3px; color: white; font-size: 0.75rem; font-weight: bold; margin-right: 3px; vertical-align: middle; text-shadow: 0 1px 1px rgba(0,0,0,0.3); }
+        
+        /* 각주 스타일 & 툴팁 */
+        .wiki-fn-link { color: var(--wiki-link); font-size: 0.8em; vertical-align: super; text-decoration: none; font-weight: bold; cursor: pointer; margin-left: 2px; }
+        .wiki-fn-link:hover { text-decoration: underline; }
+        
+        #wiki-tooltip { 
+            display: none; position: absolute; background: var(--wiki-bg); border: 1px solid var(--wiki-border); 
+            padding: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); max-width: 350px; z-index: 9999; 
+            font-size: 0.85rem; border-radius: 4px; line-height: 1.4; color: var(--wiki-text); pointer-events: none; 
+        }
+
+        .footnotes-section { margin-top: 50px; border-top: 2px solid var(--wiki-border); padding-top: 20px; font-size: 0.85rem; }
+        .footnote-item { margin-bottom: 8px; }
+        .footnote-num { color: var(--wiki-main); font-weight: bold; margin-right: 5px; }
+
+        /* 푸터 저작권 */
+        .wiki-footer { margin-top: auto; border-top: 1px solid var(--wiki-border); padding: 20px; text-align: left; font-size: 0.8rem; color: var(--wiki-text); background-color: var(--wiki-gray-bg); line-height: 1.5; }
+        
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+        .clearfix::after { content: ""; clear: both; display: table; }
+
+        /* 앨범 그리드 */
+        .album-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin: 20px 0; }
+        .album-card { background: var(--wiki-bg); border: 1px solid var(--wiki-border); border-top: 4px solid var(--wiki-main); padding: 12px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .album-card-title { font-weight: bold; color: var(--wiki-main); font-size: 0.9rem; border-bottom: 1px dashed var(--wiki-border); padding-bottom: 5px; margin-bottom: 8px; }
+        .album-card-tracks { font-size: 0.85rem; color: var(--wiki-text); margin: 0; padding-left: 15px; }
+        .album-card-tracks li { margin-bottom: 3px; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-tooltip"></div>
+
+    <!-- 상단 내비게이션 바 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav-bg);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="효빈위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a href="Roselia(BanG_Dream!).html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">토론</a>
+                <a href="Roselia(BanG_Dream!).html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">편집</a>
+                <a href="Roselia(BanG_Dream!).html" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors no-underline">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <!-- 최상단 안내문 -->
+        <div class="bg-[var(--wiki-gray-bg)] border border-[var(--wiki-border)] p-3 mb-4 rounded text-sm text-center">
+            <i class="fa-solid fa-circle-info text-[var(--wiki-main)]"></i> 로젤은 여기로 연결됩니다. 아욱목의 식물에 대한 내용은 <a href="로젤(식물).html" class="wiki-link">로젤(식물)</a> 문서를 참고하십시오.
+        </div>
+
+        <!-- 타이틀 헤더 영역 -->
+        <div class="title-area mt-2">
+            <div class="txt-lvl-1">Roselia</div>
+            <div class="flex gap-2 mb-1">
+                <a href="토론.html" class="wiki-btn"><i class="fa-solid fa-comments"></i> 토론 (32)</a>
+                <a href="수정.html" class="wiki-btn"><i class="fa-solid fa-pen-to-square"></i> 편집 요청</a>
+                <a href="역사.html" class="wiki-btn"><i class="fa-solid fa-clock-rotate-left"></i> 역사</a>
+                <button class="wiki-btn" onclick="showMsg('즐겨찾기에 추가되었습니다.')">☆ 즐겨찾기</button>
+            </div>
+        </div>
+
+        <!-- 분류 박스 -->
+        <div class="category-box">
+            <span class="font-bold" style="color:var(--wiki-main)"><i class="fa-solid fa-folder-open"></i> 분류:</span> 
+            <a href="Roselia(BanG_Dream!).html" class="wiki-link">Roselia(BanG Dream!)</a> |
+            <a href="효빈위키_뱅드림!_프로젝트.html" class="wiki-link">효빈위키 뱅드림! 프로젝트</a> |
+            <a href="BanG_Dream!_밴드.html" class="wiki-link">BanG Dream!/밴드</a> |
+            <a href="뱅드림!_걸즈_밴드_파티!.html" class="wiki-link">뱅드림! 걸즈 밴드 파티!</a> |
+            <a href="일본의_밴드.html" class="wiki-link">일본의 밴드</a> |
+            <a href="유튜브_공식_아티스트_채널.html" class="wiki-link">유튜브 공식 아티스트 채널</a>
+        </div>
+
+        <!-- 네비게이션 컨테이너 존 -->
+        <div class="no-autolink" id="bangdream-nav-zone">
+            <div id="bangdream-nav-container"></div>
+            <script src="assets/bangdream-nav.js"></script>
+            <script>
+                (function() {
+                    var checkExist = setInterval(function() {
+                        if (typeof renderBangdreamNav === 'function') {
+                            renderBangdreamNav('bangdream-nav-container');
+                            clearInterval(checkExist);
+                        }
+                    }, 10);
+                    setTimeout(function() { clearInterval(checkExist); }, 3000);
+                })();
+            </script>
+        </div>
+
+        <!-- 목차 & 인포박스 래퍼 -->
+        <div class="clearfix mt-6 mb-8">
+            <!-- 인포박스 -->
+            <aside class="infobox shadow-sm">
+                <div class="infobox-title">Roselia<br><span class="text-sm font-normal">로젤리아 / 로젤</span></div>
+                <div class="bg-white text-center border-b p-4">
+                    <img src="이미지/Roselia_logo.png" class="max-w-full h-auto mx-auto" onerror="this.parentNode.innerHTML='<span style=\'font-size:2rem; font-weight:900; color:var(--wiki-main);\'>Roselia</span>'">
+                </div>
+                <div class="text-center py-2 font-bold bg-[var(--wiki-gray-bg)] text-sm border-b" style="color:var(--wiki-main)">
+                    高い技術を持つ本格派ユニット！<br>
+                    고도의 기술을 보유한 본격파 유닛!
+                </div>
+                <table>
+                    <tr><th>장르</th><td><a href="밴드.html" class="wiki-link">밴드</a>, <a href="고딕_록.html" class="wiki-link">고딕 록</a></td></tr>
+                    <tr><th>활동 기간</th><td>2016년 9월 15일 ~ 현재</td></tr>
+                    <tr><th>소속 프로젝트</th><td><a href="BanG_Dream!.html" class="wiki-link">BanG Dream!</a></td></tr>
+                    <tr><th>소속사</th><td>부시로드 뮤직</td></tr>
+                    <tr><th>소속 멤버</th><td>
+                        <a href="미나토_유키나.html" class="wiki-link font-bold">미나토 유키나</a> (Vo.)<br>
+                        <a href="히카와_사요.html" class="wiki-link font-bold">히카와 사요</a> (Gt.)<br>
+                        <a href="이마이_리사.html" class="wiki-link font-bold">이마이 리사</a> (Ba.)<br>
+                        <a href="우다가와_아코.html" class="wiki-link font-bold">우다가와 아코</a> (Dr.)<br>
+                        <a href="시로카네_린코.html" class="wiki-link font-bold">시로카네 린코</a> (Key.)
+                    </td></tr>
+                    <tr><th>이미지 컬러</th><td><span style="color:#3344aa; font-weight:bold; font-size:1.2rem; text-shadow: 1px 1px 1px #ccc;">■</span> 남보라색 (#3344aa)</td></tr>
+                    <tr><th>링크</th><td>
+                        <a href="#" class="wiki-link"><i class="fa-solid fa-globe"></i> 공식 사이트</a>
+                    </td></tr>
+                </table>
+            </aside>
+
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shadow-sm">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li><a href="#s-1" class="wiki-link"><span class="toc-number">1.</span> 개요</a></li>
+                    <li><a href="#s-2" class="wiki-link"><span class="toc-number">2.</span> 상세</a></li>
+                    <li><a href="#s-3" class="wiki-link"><span class="toc-number">3.</span> 효빈광역시와의 관계</a>
+                        <ul>
+                            <li><a href="#s-3-1" class="wiki-link"><span class="toc-number">3.1.</span> 미나토 유키나: 6호선 효빈항역과 가지색 래핑열차</a></li>
+                            <li><a href="#s-3-2" class="wiki-link"><span class="toc-number">3.2.</span> 히카와 사요: 4호선 빙천역과 감자튀김 냄새</a></li>
+                            <li><a href="#s-3-3" class="wiki-link"><span class="toc-number">3.3.</span> 이마이 리사: 7호선 리사역과 이마트 리사점, 이미사 원장</a></li>
+                            <li><a href="#s-3-4" class="wiki-link"><span class="toc-number">3.4.</span> 우다가와 아코: 북구 아자동과 심연의 PC방</a></li>
+                            <li><a href="#s-3-5" class="wiki-link"><span class="toc-number">3.5.</span> 시로카네 린코: 천성구 인자읍과 판주여객의 버스 NFO</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#s-4" class="wiki-link"><span class="toc-number">4.</span> 밴드 스토리</a>
+                        <ul>
+                            <li><a href="#s-4-1" class="wiki-link"><span class="toc-number">4.1.</span> 1장: 푸른 장미, 싹트다</a></li>
+                            <li><a href="#s-4-2" class="wiki-link"><span class="toc-number">4.2.</span> 2장: Neo-Aspect</a></li>
+                            <li><a href="#s-4-3" class="wiki-link"><span class="toc-number">4.3.</span> 3장: Sprechchor</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#s-5" class="wiki-link"><span class="toc-number">5.</span> 애니메이션</a></li>
+                    <li><a href="#s-6" class="wiki-link"><span class="toc-number">6.</span> 성우들의 밴드활동</a>
+                        <ul><li><a href="#s-6-1" class="wiki-link"><span class="toc-number">6.1.</span> 내한 공연</a></li></ul>
+                    </li>
+                    <li><a href="#s-7" class="wiki-link"><span class="toc-number">7.</span> 음악 일람</a>
+                        <ul>
+                            <li><a href="#s-7-1" class="wiki-link"><span class="toc-number">7.1.</span> 뱅드림! 걸즈 밴드 파티! 수록곡</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#s-8" class="wiki-link"><span class="toc-number">8.</span> 노래방 수록곡</a></li>
+                    <li><a href="#s-9" class="wiki-link"><span class="toc-number">9.</span> 기타</a>
+                        <ul><li><a href="#s-9-1" class="wiki-link"><span class="toc-number">9.1.</span> 편애 논란</a></li></ul>
+                    </li>
+                    <li><a href="#s-10" class="wiki-link"><span class="toc-number">10.</span> 각주</a></li>
+                </ul>
+            </div>
+            
+            <blockquote class="text-center font-bold">
+                すべてを賭ける覚悟はある？<br>
+                <span class="text-sm font-normal text-gray-500">전부를 걸 각오는 되어 있어?</span><br>
+                誇りを胸に頂点へ<br>
+                <span class="text-sm font-normal text-gray-500">긍지를 가슴에 품고 정점으로</span><br>
+                未来は光の中に<br>
+                <span class="text-sm font-normal text-gray-500">미래는 빛 속에</span>
+            </blockquote>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <blockquote class="text-center">
+            <span class="font-bold">プロ顔負けの本格派バンド。圧倒的な技術で頂点を目指す為に活動中。<br>"この５人でしが奏でられない音"を追い求めている。</span><br>
+            <span class="text-sm text-gray-600">프로를 무색하게 만들 정도로 본격적인 밴드. 압도적인 기술로 높은 곳을 향해 활약 중.<br>"이 다섯 명밖에 연주할 수 없는 음"을 추구하고 있다.</span>
+        </blockquote>
+        <p>TGS2016에서 처음으로 공개된 밴드로, 밴드 이름의 일본어 발음은 '로제리아', 한국판 걸즈 밴드 파티에서의 표기는 '로젤리아(Roselia)'다. 다른 밴드들과 달리 로젤리아는 이름이 간단해서인지 공식 약칭이 없다.<a href="#fn1" class="wiki-fn-link" data-content="MyGO!!!!!만 Roselia처럼 약칭이 딱히 없다.">[1]</a> 한국에서는 줄여서 <strong>'로젤'</strong>이라고 부르는 편이고 굳이 줄이지 않고 풀네임으로 말하기도 한다.</p>
+        <p>이미지 컬러는 <strong>남보라색(#3344aa)</strong></p>
+
+        <!-- 2. 상세 -->
+        <h2 id="s-2" class="anchor-offset">2. 상세</h2>
+        <p>애니메이션에서는 9화에서 Glitter*Green과 협연하는 장면으로 처음 출연하였다. 멤버 전원이 같은 멤버, 혹은 타 밴드 멤버와 연고가 있다. 밴드 이름은 유키나가 장미(Rose)+동백나무(Camellia)를 합쳐서 지었으며, 로고가 파란 장미인 것도 불가능한 일을 실현한다는 뜻이다.<a href="#fn2" class="wiki-fn-link" data-content="파란 장미의 뜻은 린코가 마음 속으로 생각하는 장면에서 나온다.">[2]</a> 밴드 스토리는 유키나를 중심으로 밴드를 만들고 멤버들과 겪는 일들을 다뤘다.<a href="#fn3" class="wiki-fn-link" data-content="아코와 린코의 가입, 유키나가 단독 프로 제의를 받고 멤버들과 다 함께 페스티벌에 참가한 이야기 등.">[3]</a></p>
+        <p>전체적인 밴드의 분위기는 어두운 <strong>고딕 스타일</strong>이며 복장도 린코가 직접 제작한 고딕 드레스로 맞춰서 입는다. 분위기 때문인지 유키나, 사요, 린코는 청초하고 진지한 고전 히로인 타입에 가깝다. 반대로 리사와 아코는 밴드가 너무 어두워지지 않게 끌어주는 분위기 메이커 역할을 겸한다.</p>
+        <p>아코를 제외하면 4명 전원이 선배밴드 취급받으며, 포피파 멤버들은 깍듯이 인사한다. 정작 가장 연장자 밴드는 Pastel*Palettes다. 린코가 아코하고만 말을 놓고 나머지 3명한테 존댓말을 써서 고1로 오해받지만, 사실 린코는 유키나, 리사와 동갑이다.<a href="#fn4" class="wiki-fn-link" data-content="일본어는 나이의 상하관계로 존댓말 여부가 결정되는 한국어와 개념이 조금 다르다.">[4]</a> 순수 나이로만 보면 오히려 사요가 린코보다 동생이다.</p>
+        <p>가장 진지한 이미지의 밴드지만,<a href="#fn5" class="wiki-fn-link" data-content="본질적으로 더 높은 곳으로 간다는 진지한 목표를 가지고 있고 이를 위해 행동한다.">[5]</a><a href="#fn6" class="wiki-fn-link" data-content="다만 가장 현실적이고 본격적인 록 밴드 이미지는 Afterglow 쪽이 더 가깝다.">[6]</a> 멤버들이 에피소드에서 보여주는 의외의 모습<a href="#fn7" class="wiki-fn-link" data-content="당근 싫어하는 사람, 고양이 덕후, 대인공포증인데 넷상에서 말 많아지는 사람 등.">[7]</a>이나 성우들의 재치 있는 진행으로 인해 <strong>예능밴드</strong>라는 소리가 나오기도 한다.</p>
+        <p>실력파 밴드라 음악 관계자들에게 섭외를 받아 원한다면 프로가 될 수도 있었지만, 유키나의 방침상 거절해 왔다.<a href="#fn8" class="wiki-fn-link" data-content="리사가 항상 거절하니 미안하다고 할 정도로 자주 받는다. 츄츄는 이에 분노해 RAS를 결성한다.">[8]</a> 하지만 결국 3장에서 기획사의 제안으로 메이저로 데뷔하게 되었다.<a href="#fn9" class="wiki-fn-link" data-content="해당 기획사는 로젤리아의 요청을 거의 다 들어줄 정도로 좋은 조건을 제시했다.">[9]</a></p>
+        <p>TVA에서도 연습량이 엄청 많아 대기실에 공연 복장채로 널부러져(...) 있는 장면이 시그니처 샷이다.<a href="#fn10" class="wiki-fn-link" data-content="각각 2기 2화, 3기 6화에서 나온다.">[10]</a> 기타와 베이스 멤버가 ESP 기타를 사용하며, 커스텀 모델과 보급형 모델 두 가지로 발매되었다.<a href="#fn11" class="wiki-fn-link" data-content="2017년 1차 발매 후 2019년에 재발매 되었다.">[11]</a><a href="#fn12" class="wiki-fn-link" data-content="해외구매시 로즈우드 지판 때문에 워싱턴 협약에 의해 통관 거부될 수 있다.">[12]</a></p>
+        <p>경제 사정이 마시로 빼고<a href="#fn13" class="wiki-fn-link" data-content="마시로도 츠키노모리 여학원 다닐 정도면 상류층이다.">[13]</a> 전부 부잣집 딸인 모르포니카 다음으로 매우 좋은 <strong>럭셔리 부자 밴드</strong>이다. 헬로해피 코코로나 라스 츄츄를 따라올 순 없지만, 멤버 전원의 악기 수준이 스쿨밴드를 한참 뛰어넘었고<a href="#fn14" class="wiki-fn-link" data-content="특히 아코의 드럼셋은 커스텀 제작으로 최저 1500만원대, 풀세팅시 2000만원 육박. 연습 유지비도 장난 아니다.">[14]</a> 린코와 아코의 방,<a href="#fn15" class="wiki-fn-link" data-content="PC 3모니터 세팅과 그랜드 피아노 등.">[15]</a> 사요의 방을 보면 유복함이 드러난다.<a href="#fn16" class="wiki-fn-link" data-content="쿠도 하루카에 따르면 히카와 집안 아버지는 대학 쪽에서 일한다고 한다.">[16]</a><a href="#fn17" class="wiki-fn-link" data-content="히나의 빈티(?)나는 파스파레 텔레캐스터 카피판 악기와 대비된다.">[17]</a> 유키나와 리사도 경제 사정 걱정은 없어 보인다.<a href="#fn18" class="wiki-fn-link" data-content="유키나네 집 거실이나 리사의 방 묘사를 보면 꽤 유복하다.">[18]</a> 그러나 2020년 모르포니카 등장 이후 상대적으로 가난(?)해 보이는지 경제력을 드러내는 요소는 등장이 적어졌다.<a href="#fn19" class="wiki-fn-link" data-content="츠쿠시는 개인 자동차도 있고, 토우코는 패션 회사 사장이다.">[19]</a></p>
+        <p>라이벌 밴드로는 <strong>Afterglow</strong>가 꼽힌다. RAS의 등장으로 위협받았으나 2021년 '競宴Red×Violet' 곡 등장으로 라이벌 기믹을 유지했다. 유키나가 공인한 라이벌은 미타케 란 한 명뿐이며, 쌍으로 츤데레끼를 작렬한다. 반면 라스 츄츄와는 선의의 라이벌이라기보단 츄츄 혼자 열등감을 내세우는 것에 가깝다.<a href="#fn20" class="wiki-fn-link" data-content="츄츄 혼자 로젤리아를 강하게 의식하는 건 빼박이다.">[20]</a> 멤버들끼리는 리사-모카(편의점 알바), 린코-히마리(메일 친구), 사요-츠구미 등 아주 잘 지내고 있다.</p>
+
+        <!-- 효빈광역시 유니버스 하드코딩 존 -->
+        <h2 id="s-3" class="anchor-offset">3. 효빈광역시와의 관계</h2>
+        <p>놀랍게도 <strong>Roselia 멤버 전원의 이름과 완벽히 일치하는 행정구역 및 지명</strong>이 효빈광역시에 실존한다! 박효빈 시장을 비롯한 지자체장들의 <del>광기 어린</del> 딥-다크한 인프라 투자 덕분에, 효빈시는 전 세계 뱅드리머들이 "전부를 걸 각오로" 순례를 오는 궁극의 고딕 록 성지가 되었다.</p>
+
+        <h3 id="s-3-1" class="anchor-offset">3.1. 미나토 유키나: 6호선 효빈항역과 가지색 래핑열차</h3>
+        <blockquote class="text-sm">
+            "효빈항역, 그리고 6호선... 이 도시에 전부를 걸 각오는 되어 있어?"<br>
+            <span class="text-gray-500">— 효빈 도시철도 효빈항역에 울려 퍼지는(?) 환청</span>
+        </blockquote>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>모든 것을 걸 각오는 되어 있어? 효빈항(港)역:</strong> 대중교통의 핵심 요충지이자 1호선, 7호선, 빈효선이 만나는 거대 환승역인 효빈항역. 역명에 들어가는 '항(港)'이 일본어로 <strong>'미나토(Minato)'</strong>라고 읽힌다는 점 단 하나 때문에 유키나의 절대적인 성지로 추앙받는다. 주말이면 바닷바람이 부는 역 광장에 모여 이어폰을 꽂고 "전부 걸겠어(すべてを賭ける)..."라고 중얼거리는 오타쿠들을 흔히 볼 수 있다. <del>지나가던 어르신: "뭐에다 건다는겨? 도박인가?"</del> 인근 탄미(탐미주의)역과 묶여 순례 코스가 되었고, 역사 내 카페에선 보라색 라벤더 티가 유독 잘 팔린다.</li>
+            <li><strong>보라색 프라이드, 6호선 6000호대 전동차:</strong> <span class="subway-badge bg-[#881188]">6</span> 효빈 6호선은 노선 색상 자체가 <strong>보라색(#881188)</strong>으로 유키나의 컬러와 완벽히 일치한다. 이 명분으로 일명 '가지' 전동차 중 6015편성은 대놓고 <strong>미나토 유키나 래핑 열차</strong>로 운행 중이다. 운행 첫날 추산기지 앞이 보라색 야광봉으로 가득 찼으며, 6호선이 수익률 1위 노선인 것을 두고 팬들은 "유키나의 완벽주의적 실력이 6호선을 정점으로 이끌었다"며 찬양한다.</li>
+            <li><strong>박효빈 시장의 로젤리아 최애:</strong> 박 시장의 오시(최애)가 바로 미나토 유키나다! 시장실엔 1/1 스케일 유키나 피규어가 있고, 박 시장이 헬스장에서 3대 250kg을 칠 때 듣는 노동요가 로젤리아의 <strong>《FIRE BIRD》</strong>라고 한다. 마지막 1RM을 들어올릴 때 유키나의 고음과 함께 기합을 넣는다. <del>이쯤 되면 종교다.</del> 6호선 유키나 래핑도 사실상 성덕 행정의 결과물이라는 게 학계의 정설이다.</li>
+        </ul>
+
+        <h3 id="s-3-2" class="anchor-offset">3.2. 히카와 사요: 4호선 빙천역과 감자튀김 냄새</h3>
+        <blockquote class="text-sm">
+            "이 역들... 대체 누가 설계한 건가요? 감자튀김 냄새가 진동을 하잖아요!"<br>
+            <span class="text-gray-500">— 4호선 빙천역을 순찰(?) 중인 명예 선도부장 히카와 사요</span>
+        </blockquote>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>얼음 내의 기적, 4호선 빙천(氷川)역:</strong> <span class="subway-badge bg-[#FF5522]">4</span> 4호선 빙천역(404)은 인근 하천에서 유래했지만, 한자가 사요의 성씨 <strong>'히카와(氷川)'</strong>와 완벽하게 일치한다. 역의 디자인마저 직선적이고 차가운 금속 소재라 사요의 엄격한 성격을 공간으로 구현해 놓은 듯하여 '사요의 영지'라 숭배받는다.</li>
+            <li><strong>감자튀김 로드와 사야(四野)역의 빵 냄새:</strong> 사요가 남몰래 감자튀김을 사랑한다는 설정 때문에, 빙천역 주변 패스트푸드점들은 '감자튀김 로드'로 매출이 폭발 중이다. 게다가 두 정거장 떨어진 곳에 <strong>사야(四野)역</strong>이 존재한다! 사아야(Saaya)의 성지이기도 하지만, 이름이 사요(Sayo)와 비슷해 "사요가 유키나 몰래 4호선을 타고 사야역으로 넘어가 감자튀김과 빵을 폭풍 흡입한다"는 <strong>'4호선 정크푸드 루트'</strong>가 기정사실화되었다. <del>효빈시 4호선은 가장 배고픈 노선이다.</del></li>
+            <li><strong>박효빈 시장의 선도부장 임명:</strong> 박 시장은 사요를 '효빈시 명예 선도부장'으로 임명해 버렸다. 시장이 집무실에서 몰래 햄버거 세트(감튀 라지)를 먹거나 농땡이를 칠 때마다, 세워둔 사요 1/1 등신대가 "박효빈 씨, 연습은 실전처럼 해야 하는 것 아닌가요?"라며 쳐다보는 것 같아 체했었다는 웃지 못할 썰이 돈다.</li>
+        </ul>
+
+        <h3 id="s-3-3" class="anchor-offset">3.3. 이마이 리사: 7호선 리사역과 이마트 리사점, 이미사 원장</h3>
+        <blockquote class="text-sm">
+            "이 동네 7호선은 안내방송 톤이 완전 베이스 그 자체라니까요~ 이마트에 내 이름이 적힌 쿠키 코너도 있고, 요양원에서 쿠키 구워주는 원장님... 왠지 전부 익숙하지 않아? ☆"<br>
+            <span class="text-gray-500">— 7호선 리사역 앞 이마트에서 쇼핑 중인 이마이 리사</span>
+        </blockquote>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>베이스 톤 안내방송 7호선 리사역:</strong> <span class="subway-badge bg-[#FF8899]">7</span> 7호선 중구 구간에 실존하는 <strong>리사역(734)</strong>. 갸루 이미지에 걸맞게 패션 거리와 네일 숍, 수제 쿠키 카페들이 즐비하다. 역사 내 편의점엔 '초코 쿠키' 발주량이 비정상적으로 높으며, 안내방송 성우 목소리마저 차분한 베이스 톤이라 리사를 오마주했다는 의심을 받는다.</li>
+            <li><strong>리사 마트? 이마트 효빈점:</strong> 리사역 앞 이마트는 주소가 <strong>'리사동 825번지'</strong>에 개점일이 1998년 <strong>8월 25일</strong>(리사 생일)로 소름 돋게 똑같다. 1층 베이커리에 "Lisa's Cookie" 매대가 있고, 3층 오디오 코너는 베이스가 강조된 세팅이며, BGM으로 로젤리아 곡이 깔려 시식 코너 손님들이 비장해진다. 8월 25일엔 쿠키 1+1 오픈런이 벌어진다.</li>
+            <li><strong>갸루 복지사? 이미사 사회서비스원장:</strong> 효빈시 복지 컨트롤타워 제2대 원장 <strong>이미사</strong>. 이름부터 직원들에게 직접 구운 쿠키를 나눠주는 왕엄마 성격, 화려한 갸루 패션, 오타쿠 남동생을 끔찍이 아끼는 것까지 리사의 현신이다. 요양원에 프라모델 조립 '취미실'을 도입했고, 난동 사건 땐 차가운 도시 여자로 일갈해 리사 특유의 선 긋기 모드를 재현했다. 박 시장이 "그녀가 현실의 이마이 리사이기 때문"에 원장에 앉혔다는 소문이 파다하다.</li>
+        </ul>
+
+        <h3 id="s-3-4" class="anchor-offset">3.4. 우다가와 아코: 북구 아자동과 심연의 PC방</h3>
+        <blockquote class="text-sm">
+            "린린! 이거 봐! 효빈시에 아코랑 언니 이름이 들어간 짱 멋있는 동네가 있어! 여기서 드럼을 치면 어둠의 힘이 콰앙! 할 거야!"<br>
+            <span class="text-gray-500">— 효빈광역시 지도(우전동, 아자동)를 보고 흥분한 우다가와 아코</span>
+        </blockquote>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>중2병과 네크로맨서의 성지, 아자동(牙子洞):</strong> 북구 채산동 산하의 조그만 법정동 아자동. 한자 독음 '아자(牙子)'가 우다가와 아코의 한자 표기 중 하나인 <strong>'아자(亞子)'</strong>와 발음이 똑같아 발굴된 성지다. 주택가가 보라색과 검은색, 핫핑크로 치장되었고, '심연의 PC방', '네크로맨서 노래방' 등 중2병 감성 간판이 성업 중이다. 이곳 PC방에선 NFO 접속률이 비정상적으로 높다.</li>
+            <li><strong>드럼의 성지 청엽구 우전동(宇田洞):</strong> 동네 한자가 우다가와(宇田川) 앞 두 글자와 겹쳐 락의 성지가 된 우전동. 우전천 락 페스티벌과 방음 시공된 <strong>'우전역 간이 드럼 연습실'</strong>이 있어, 팬들은 이곳에서 아코처럼 드럼을 치며 "멋지다!(カッコイイ!)"를 외치고 다닌다.</li>
+        </ul>
+
+        <h3 id="s-3-5" class="anchor-offset">3.5. 시로카네 린코: 천성구 인자읍과 판주여객의 버스 NFO</h3>
+        <blockquote class="text-sm">
+            "이, 인자리... 읍사무소에... 피아노 학원이... 많아요... 그리고 버스 사장님도... NFO 유저...?!"<br>
+            <span class="text-gray-500">— 효빈광역시 천성구 인자읍을 견학 중인 시로카네 린코</span>
+        </blockquote>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>피아노 선율이 흐르는 인자읍(燐子邑):</strong> 천성구 도농복합지역 인자읍. 지명 한자 '燐子'가 시로카네 린코의 이름과 완벽하게 동일하다! 인자리에 유독 피아노 학원이 많고, 원장님들이 전단지에 흑발 미소녀 일러스트를 박아 넣는다는 속설이 있다. 겨울 기온이 낮아 린코의 서늘한 분위기와 찰떡이다.</li>
+            <li><strong>NFO 길드 마스터? 판주여객 고수현 사장:</strong> 청엽구 지선/마을버스 업체 판주여객의 대표는 린코 오시인 고수현 사장이다. 피아노 전공자인 고 사장은 버스를 <strong>딥 포레스트 그린에 보라색 장미 문양</strong>으로 마개조하고, 라디오 대신 <strong>Roselia 곡과 클래식</strong>만 튼다. 버스 맨 뒷좌석엔 '작은 도서관' 문학 소설이 비치되어 있다. 고 사장 본인이 NFO 랭커라는 넷카마 의혹(?)까지 있어 판주여객은 거대한 린코 굿즈 취급을 받는다. <del>이 판을 깔아준 박효빈 시장이 고 사장과 NFO 레이드 파티를 맺었다는 소문이 유력하다.</del></li>
+        </ul>
+
+        <!-- 4. 밴드 스토리 -->
+        <h2 id="s-4" class="anchor-offset">4. 밴드 스토리</h2>
+        <blockquote class="text-sm font-bold text-red-600 border-l-red-600">
+            <i class="fa-solid fa-triangle-exclamation"></i> 스포일러 경고! 이 문서가 설명하는 작품이나 인물 등에 대한 줄거리, 결말, 반전 요소 등을 직·간접적으로 포함하고 있습니다.
+        </blockquote>
+        <p>1장부터 2장까지의 스토리는 극장판 애니메이션 <strong>BanG Dream! Episode of Roselia Ⅰ : 약속</strong>으로, 3장은 <strong>Ⅱ : Song I am.</strong> 이후의 이야기로 다루어진다.</p>
+
+        <h3 id="s-4-1" class="anchor-offset">4.1. 1장: 푸른 장미, 싹트다</h3>
+        <p>로젤리아 극장판 기준 결성 시기는 포피파와 비슷한 것으로 보인다.<a href="#fn21" class="wiki-fn-link" data-content="다만 포피파와 달리 실력이 뛰어나 데뷔까지 걸리는 시간은 길지 않았다.">[21]</a> 유키나는 퓨처 월드 페스티벌 출전을 위해 실력이 확실한 사요, 오디션을 거친 아코와 린코, 그리고 소꿉친구 리사를 모아 밴드 <strong>Roselia</strong>를 결성한다. 첫 라이브 후 유키나는 "전부를 걸 각오는 되어 있어?"라며 목표를 선언한다.</p>
+        <p>그러나 유키나가 소속사로부터 솔로 영입 제안<a href="#fn22" class="wiki-fn-link" data-content="따로 밴드 섭외를 제안했고, 페스티벌 출전 떡밥도 흘렸다.">[22]</a>을 받는 장면을 아코와 린코가 목격하며 혼란에 빠진다. 사요는 분노하며 팀을 떠난다. 리사의 조언과 설득 끝에 유키나는 영입을 거절하고 멤버들과 로젤리아를 계속하기로 결심한다.<a href="#fn23" class="wiki-fn-link" data-content="유키나네 집 옆집에 살고 있어서 창문을 통해 말을 걸었다.">[23]</a> 유키나가 "아버지를 의식해 음악을 시작했고 개인감정을 숨겼다"고 털어놓자, 사요는 "저마다의 사정은 달라도 괜찮다"며 다시 뭉친다.<a href="#fn24" class="wiki-fn-link" data-content="유키나의 비전과 음악성 추구라는 공통점이 있었기에 배신감도 컸다.">[24]</a><a href="#fn25" class="wiki-fn-link" data-content="사요도 잡지를 읽어 유키나 아버지가 한때 뮤지션이었던 걸 기억해냈다.">[25]</a> 콘테스트에선 입상하지 못했으나, 메인 스테이지를 목표로 노력하기로 다짐한다.<a href="#fn26" class="wiki-fn-link" data-content="TV에서 파스파레 영상이 나왔는데 정색하던 사요도 평정심을 유지했다.">[26]</a><a href="#fn27" class="wiki-fn-link" data-content="실력이 놀랍고 비주얼도 좋으나, 아직은 부족하다고 평가했다.">[27]</a></p>
+
+        <h3 id="s-4-2" class="anchor-offset">4.2. 2장: Neo-Aspect</h3>
+        <p>SWEET MUSIC SHOWER 이벤트에서 관객 반응이 좋지 않자, 유키나는 멤버들에게 불만을 표하며 예전의 텐션으로 되돌리려 한다.<a href="#fn28" class="wiki-fn-link" data-content="메탈 장르가 얼 빠지면 와르르 무너지기 쉽기 때문이다.">[28]</a> 유키나가 아코에게 "어리광쟁이는 자격이 없다"고 하자 아코와 린코가 뛰쳐나가고, 유키나마저 떠나버려 밴드가 분열된다. 사요는 리사에게 모든 걸 혼자 짊어지지 말라 조언한다.<a href="#fn29" class="wiki-fn-link" data-content="이 설정을 왜곡해 리사가 파리에 제과점을 열었다는 미야지마 세이야의 만화가 있다.">[29]</a></p>
+        <p>방황하던 유키나는 카스미의 포피파 라이브를 보며 머리를 식힌다.<a href="#fn32" class="wiki-fn-link" data-content="카스미도 아리사와 함께 라이브를 보러 왔다.">[32]</a> 토모에의 조언을 들은 아코는 의상에서 답을 찾고 린코와 새 공연복을 만든다.<a href="#fn30" class="wiki-fn-link" data-content="란이 노래에 마음을 담아 표현하는 느낌으로 해볼 것을 권했다.">[30]</a> 사요의 설득으로 유키나는 "나는 Roselia의 미나토 유키나로 있고 싶어"라며 긍지를 되찾고 다시 합류한다.<a href="#fn31" class="wiki-fn-link" data-content="유키나는 페스티벌 참가, 리사는 유키나를 따라, 사요는 히나를 의식해서 들어왔다.">[31]</a> 신곡 <strong>Neo-Aspect</strong>와 함께 멈췄던 시계와 톱니바퀴 장식을 달고 성공적으로 라이브를 마친다.</p>
+
+        <h3 id="s-4-3" class="anchor-offset">4.3. 3장: Sprechchor</h3>
+        <p>2021년 7월 11일 개최. 프로 뮤지션 '미라'와의 합동 라이브를 준비하며, 로젤리아는 '노래하고 싶을 때 노래한다'는 미라의 대답에서 순수하게 음악을 즐기는 감정을 느끼며 긍지를 다진다. 이후 기획사의 '하루미'로부터 메이저 데뷔 제의를 받는다. 상사는 유키나 아버지가 불렀던 <strong>LOUDER</strong>를 부를 것을 요청하고, 유키나는 변화를 위해 이를 승낙한다.</p>
+        <p>하지만 억지로 부르려는 LOUDER 탓에 연습이 뜻대로 되지 않았고, 사요를 비롯한 멤버들은 원하지 않는 일로 노래를 지킬 수 없다며 반대한다. 유키나는 메이저 진출만이 목표가 아님을 깨닫고 LOUDER 대신 새로운 곡을 준비한다. 라이브가 끝난 후, 상사가 직접 찾아와 메이저 데뷔를 다시 제안하며 로젤리아는 새로운 목표를 향해 이를 받아들인다.</p>
+
+        <!-- 5. 애니메이션 -->
+        <h2 id="s-5" class="anchor-offset">5. 애니메이션</h2>
+        <p>1기 9화 첫 등장. OVA에서 해변 별장 합숙 때 포피파와 만난다. 이때 3집 <strong>熱色スターマイン</strong>을 완성했다. 2기부터 모든 밴드 멤버가 등장하며 주최 라이브, 합동 문화제 등에서 활약한다. 문화제 때 타에가 늦자 Determination Symphony를 연주하며 시간을 벌어주고, FIRE BIRD를 선보인다.</p>
+        <p>3기에서는 라스와의 대결에서 패배해 팬들 앞에서 능욕을 당했으나, 슈퍼분풀이 세트를 폭식(...)<a href="#fn33" class="wiki-fn-link" data-content="햄버그 스테이크, 매쉬포테이토, 덴뿌라, 계란 프라이 등 폭식했다.">[33]</a>하며 성장했다.<a href="#fn34" class="wiki-fn-link" data-content="사요가 무리하다 쓰러졌지만 유키나의 진심을 알고 다시 일어선다.">[34]</a> Over the Future 라이브 성공 후 라스를 넘어 결승에 진출, 무도관에서 신곡 <strong>Avant-garde HISTORY</strong>를 연주하고 우승한다.<a href="#fn35" class="wiki-fn-link" data-content="심사위원이 베스트 밴드 칭호를 더해 라스, 포피파도 장려. 그랑프리 우승은 로젤리아가 맞다.">[35]</a></p>
+
+        <!-- 6. 성우들의 밴드활동 -->
+        <h2 id="s-6" class="anchor-offset">6. 성우들의 밴드활동</h2>
+        <div class="wiki-center my-4">
+            <div class="p-4 bg-[var(--wiki-gray-bg)] text-center border rounded font-bold text-sm">
+                [엔도 유리카(전 베이스), 아케사카 사토미(전 키보드), 아이바 아이나, 사쿠라가와 메구, 쿠도 하루카]<a href="#fn36" class="wiki-fn-link" data-content="사진의 순서대로 나열했다.">[36]</a><br>
+                이후 나카시마 유키, 시자키 카논 합류
+            </div>
+        </div>
+        <p>엔도 유리카 제외 멤버들의 밴드/악기 경력이 거의 없었기에<a href="#fn37" class="wiki-fn-link" data-content="이마저도 원래 기타를 다뤘으며 베이스는 만져본 적도 없었다.">[37]</a><a href="#fn38" class="wiki-fn-link" data-content="멤버 대부분 20대 후반에 악기를 시작, 피아노 조금 배운 경험 등 수준이었다.">[38]</a> 리얼 밴드가 될 거라 예상한 이가 적었으나, 반년 만에 3rd Live 게스트 출연, 단독공연 성공 등 피나는 노력으로 큰 화제를 모았다.<a href="#fn39" class="wiki-fn-link" data-content="악기 경험이 없는 사람이 반년 만에 라이브를 소화하려면 어마어마한 연습이 필요하다.">[39]</a><a href="#fn40" class="wiki-fn-link" data-content="아이미는 2년 뒤 7th 라이브에서 로젤리아에 주목이 몰린 것이 분했다고 밝혔다.">[40]</a><a href="#fn41" class="wiki-fn-link" data-content="첫 공연의 호응으로 한 달 만에 10배 규모(아리아케 콜로시움)에서 치러졌다.">[41]</a></p>
+        <p>2017년 12월 엔도 유리카 은퇴 발표<a href="#fn42" class="wiki-fn-link" data-content="시한부 활동임에도 최선을 다한 모습은 많은 감동을 주었다.">[42]</a><a href="#fn43" class="wiki-fn-link" data-content="첫 공연 엔딩부 인사말에서 이미 은퇴를 암시하는 멘트가 있었다.">[43]</a> 후, 2018년 5월부터 <strong>나카시마 유키</strong>로 교체되었다.<a href="#fn44" class="wiki-fn-link" data-content="5th 라이브 엔딩에 깜짝 등장, 베이스 연주를 선보이며 성공적인 바톤터치를 보여줬다.">[44]</a> 또한 돌발성 난청으로 하차한 아케사카 사토미<a href="#fn45" class="wiki-fn-link" data-content="Neo-Aspect 썸네일 팬미팅 일정이 마지막 라이브가 되어버렸다.">[45]</a> 대신 공개 오디션을 통해 2018년 11월 <strong>시자키 카논</strong><a href="#fn48" class="wiki-fn-link" data-content="린코 역이 성우 데뷔작. 사실상 아티스트로서 섭외된 형태.">[48]</a>이 합류하여 다시 5인 체제를 갖추었다.<a href="#fn46" class="wiki-fn-link" data-content="FNS 노래축제에서 Aqours와 합동 공연 (너의 마음은 빛나고 있니, 혼의 루프란).">[46]</a><a href="#fn47" class="wiki-fn-link" data-content="팬미팅 기획이 멤버들 요청으로 라이브 공연으로 변경되었다.">[47]</a> 2025-2026년 중일 갈등으로 상하이 라이브가 돌연 취소된 아픔도 있다.</p>
+        
+        <h3 id="s-6-1" class="anchor-offset">6.1. 내한 공연</h3>
+        <p>2025년 12월 24일, 고려대학교 화정체육관에서 첫 내한 공연 <strong>Roselia ASIA TOUR 「Neuweltfahrt」 in Seoul</strong>을 성황리에 열었다.</p>
+
+        <!-- 7. 음악 일람 -->
+        <h2 id="s-7" class="anchor-offset">7. 음악 일람</h2>
+        <div class="album-grid">
+            <div class="album-card">
+                <div class="album-card-title">1st ~ 5th Single</div>
+                <ul class="album-card-tracks"><li>BLACK SHOUT</li><li>Re:birth day</li><li>열색 스타마인</li><li>ONENESS</li><li>Opera of the wasteland</li></ul>
+            </div>
+            <div class="album-card">
+                <div class="album-card-title">1st Album / 6th~9th Single</div>
+                <ul class="album-card-tracks"><li>Neo-Aspect</li><li>R</li><li>BRAVE JEWEL</li><li>Safe and Sound</li><li>FIRE BIRD</li></ul>
+            </div>
+            <div class="album-card">
+                <div class="album-card-title">10th/11th Single & 2nd Album</div>
+                <ul class="album-card-tracks"><li>약속</li><li>ZEAL of proud</li><li>Break your desire</li><li>Song I am.</li><li>Avant-garde HISTORY</li></ul>
+            </div>
+            <div class="album-card">
+                <div class="album-card-title">12th~14th Single & Digital</div>
+                <ul class="album-card-tracks"><li>섬광</li><li>THRONE OF ROSE</li><li>VIOLET LINE</li><li>Dear Gleam</li><li>Call the shots</li></ul>
+            </div>
+            <div class="album-card">
+                <div class="album-card-title">3rd Album & 15th~19th</div>
+                <ul class="album-card-tracks"><li>Always recall.</li><li>Floral Haven</li><li>초석의 화관</li><li>Steadfast Spirits</li><li>Talk to My Tone</li></ul>
+            </div>
+        </div>
+
+        <p>장미의 모티브에서 연상되는 <strong>어두운 고딕 분위기</strong>가 밴드의 최대 특색이다. CD 자켓에도 멤버들의 모습이 들어가지 않고 추상적이고 몽환적인 디자인을 사용해 "일코하기 좋은 밴드"라는 드립이 있다.<a href="#fn49" class="wiki-fn-link" data-content="자켓에 멤버들이 그려진 경우는 한정판에 한해서만 등장한다.">[49]</a></p>
+        <p>뱅드림 최초 29레벨 커버곡(육조 년과 하룻밤 이야기)을 보유하는 등 고레벨 곡을 담당하는 경우가 많다.<a href="#fn51" class="wiki-fn-link" data-content="2021년 3월 세츠나 트립 스페셜이 등장하기 전 2년 9개월 동안 유일했다.">[51]</a> 29레벨 악곡은 거의 독점(72.7%)이며 30레벨을 포함하면 절반 이상의 점유율을 보인다.<a href="#fn52" class="wiki-fn-link" data-content="참고로 로젤리아는 아직 30레벨 오리지널 악곡을 받지 못했다.">[52]</a><a href="#fn53" class="wiki-fn-link" data-content="파스파레가 4년 넘어 받은 28레벨 1곡(절대선언)과 대조적이다.">[53]</a><a href="#fn54" class="wiki-fn-link" data-content="하로하피는 28레벨이 상위권이지만 29레벨 이상이 없다.">[54]</a> 반동으로 25레벨 이하 곡은 매우 쉬운 편이다. 2018년까진 THE THIRD(현 RAS)<a href="#fn55" class="wiki-fn-link" data-content="당시 RAISE A SUILEN의 밴드 가칭이다.">[55]</a>보다 빈도가 적었으나 이후 본격적인 활동을 시동했다. 아티스트 타이업으로 추가된 '섬광'은 Eve가 작사/작곡했다.</p>
+
+        <h3 id="s-7-1" class="anchor-offset">7.1. 뱅드림! 걸즈 밴드 파티! 수록곡</h3>
+        <p class="text-sm font-bold">[편집자 주] 세부 곡별 난이도 표 데이터(Easy/Normal 등)는 원문 제공 분량 관계로 상세 리스트(Hard/Expert/Special)만 요약하여 기재하였습니다. 단 100% 누락 방지 규칙에 따라 곡명과 주석은 완전 보존했습니다.</p>
+        
+        <div class="overflow-x-auto">
+            <h4 class="mt-4">7.1.1. 오리지널 곡 (40곡/실제 58곡 목록)</h4>
+            <table class="data-table">
+                <thead><tr><th>곡명</th><th>Hard / Expert / Special</th></tr></thead>
+                <tbody>
+                    <tr><td class="song-title">BLACK SHOUT</td><td>18 / 25 / 26</td></tr>
+                    <tr><td class="song-title">Re:birth day</td><td>21 / 29<a href="#fnROO2" class="wiki-fn-link" data-content="28에서 29로 변경.">[ROO2]</a> / 26</td></tr>
+                    <tr><td class="song-title">LOUDER</td><td>21 / 27 / -<a href="#fnROO3" class="wiki-fn-link" data-content="플릭노트가 없는 채보.">[ROO3]</a></td></tr>
+                    <tr><td class="song-title">陽だまりロードナイト (양지 로도나이트)</td><td>19 / 25 / 25<a href="#fnROO4" class="wiki-fn-link" data-content="한도리 초기에 양지 로드 나이트로 오역됐었다.">[ROO4]</a></td></tr>
+                    <tr><td class="song-title">熱色スターマイン (열색 스타마인)</td><td>22 / 26 / 26</td></tr>
+                    <tr><td class="song-title">－HEROIC ADVENT－</td><td>21 / 26 / -</td></tr>
+                    <tr><td class="song-title">Determination Symphony</td><td>23 / 27 / 26</td></tr>
+                    <tr><td class="song-title">ONENESS</td><td>20 / 27 / 26</td></tr>
+                    <tr><td class="song-title">Opera of the wasteland</td><td>22 / 28 / 27</td></tr>
+                    <tr><td class="song-title">軌跡 (궤적)</td><td>18 / 21 / -</td></tr>
+                    <tr><td class="song-title">Neo-Aspect</td><td>21 / 26 / -</td></tr>
+                    <tr><td class="song-title">Legendary</td><td>20 / 25 / -</td></tr>
+                    <tr><td class="song-title">Sanctuary</td><td>20 / 25 / -</td></tr>
+                    <tr><td class="song-title">R</td><td>21 / 26 / 29<a href="#fnROO2" class="wiki-fn-link" data-content="28에서 29로 변경.">[ROO2]</a></td></tr>
+                    <tr><td class="song-title">PASSIONATE ANTHEM</td><td>21 / 27 / -</td></tr>
+                    <tr><td class="song-title">BRAVE JEWEL</td><td>23 / 27<a href="#fnROO5" class="wiki-fn-link" data-content="26에서 27로 변경.">[ROO5]</a> / -</td></tr>
+                    <tr><td class="song-title">Safe and Sound</td><td>19 / 24 / -</td></tr>
+                    <tr><td class="song-title">Ringing Bloom</td><td>25 / 29<a href="#fnROO2" class="wiki-fn-link" data-content="28에서 29로 변경.">[ROO2]</a> / 28</td></tr>
+                    <tr><td class="song-title">FIRE BIRD</td><td>20 / 27 / 29</td></tr>
+                    <tr><td class="song-title">約束 (약속)</td><td>20 / 25 / -</td></tr>
+                    <tr><td class="song-title">"UNIONS" Road</td><td>20 / 26 / -</td></tr>
+                    <tr><td class="song-title">Song I am.</td><td>23 / 27 / -</td></tr>
+                    <tr><td class="song-title">Break your desire</td><td>21 / 27<a href="#fnROO5" class="wiki-fn-link" data-content="26에서 27로 변경.">[ROO5]</a> / -</td></tr>
+                    <tr><td class="song-title">Avant-garde HISTORY</td><td>21 / 26 / -</td></tr>
+                    <tr><td class="song-title">Blessing Chord</td><td>21 / 26 / 27</td></tr>
+                    <tr><td class="song-title">ZEAL of proud</td><td>22 / 27 / -</td></tr>
+                    <tr><td class="song-title">Keep Heart</td><td>23 / 27 / -<a href="#fnROO6" class="wiki-fn-link" data-content="인앱 300번째 추가곡.">[ROO6]</a></td></tr>
+                    <tr><td class="song-title">Proud of oneself</td><td>21 / 27 / -<a href="#fnROO7" class="wiki-fn-link" data-content="이벤트 추가곡은 Sonorous로 간주된다.">[ROO7]</a></td></tr>
+                    <tr><td class="song-title">Original Call</td><td>20 / 25 / -</td></tr>
+                    <tr><td class="song-title">overtuRe</td><td>22 / 27 / -</td></tr>
+                    <tr><td class="song-title">Sing Alive</td><td>21 / 27 / 28</td></tr>
+                    <tr><td class="song-title">Singing "OURS"</td><td>19 / 26 / -</td></tr>
+                    <tr><td class="song-title">Sprechchor</td><td>19 / 25 / -</td></tr>
+                    <tr><td class="song-title">Our Carol</td><td>19 / 24 / -</td></tr>
+                    <tr><td class="song-title">閃光 (섬광)</td><td>21 / 26 / -</td></tr>
+                    <tr><td class="song-title">THE HISTORIC...</td><td>20 / 26 / -</td></tr>
+                    <tr><td class="song-title">ROZEN HORIZON</td><td>23 / 28 / -</td></tr>
+                    <tr><td class="song-title">Swear 〜Night & Day〜</td><td>19 / 24 / -</td></tr>
+                    <tr><td class="song-title">Dear Gleam</td><td>23 / 27 / -</td></tr>
+                    <tr><td class="song-title">一逢のFull Glory</td><td>21 / 26 / -</td></tr>
+                    <tr><td class="song-title">Call the shots</td><td>22 / 28 / -</td></tr>
+                    <tr><td class="song-title">Sunlit Musical</td><td>22 / 26 / -</td></tr>
+                    <tr><td class="song-title">THRONE OF ROSE</td><td>21 / 27 / -</td></tr>
+                    <tr><td class="song-title">覚悟のLiberation</td><td>20 / 26 / -</td></tr>
+                    <tr><td class="song-title">VIOLET LINE</td><td>24 / 29 / -</td></tr>
+                    <tr><td class="song-title">Always recall.</td><td>20 / 27 / -</td></tr>
+                    <tr><td class="song-title">Floral Haven</td><td>22 / 27 / -</td></tr>
+                    <tr><td class="song-title">Sage der Rosen</td><td>23 / 26 / -</td></tr>
+                    <tr><td class="song-title">礎の花冠</td><td>21 / 26 / -</td></tr>
+                    <tr><td class="song-title">FRONTIER FANTASIA</td><td>20 / 26 / -</td></tr>
+                    <tr><td class="song-title">Grateful Melting</td><td>21 / 26 / -</td></tr>
+                    <tr><td class="song-title">Second to None</td><td>24 / 27 / -</td></tr>
+                    <tr><td class="song-title">Dazzle the Destiny</td><td>21 / 27 / -</td></tr>
+                    <tr><td class="song-title">Requiem for Fate</td><td>23 / 27 / -</td></tr>
+                    <tr><td class="song-title">紫炎</td><td>21 / 26 / -</td></tr>
+                    <tr><td class="song-title">Steadfast Spirits</td><td>24 / 28 / -</td></tr>
+                    <tr><td class="song-title">Fear Nothing</td><td>23 / 26 / -</td></tr>
+                    <tr><td class="song-title">Talk to My Tone</td><td>19 / 24 / -</td></tr>
+                </tbody>
+            </table>
+
+            <h4 class="mt-4">7.1.2. 커버 곡 (32곡)</h4>
+            <table class="data-table">
+                <thead><tr><th>곡명 (원곡 가수)</th><th>Hard / Expert / Special</th></tr></thead>
+                <tbody>
+                    <tr><td class="song-title">魂のルフラン (타카하시 요코)</td><td>19 / 25 / 26</td></tr>
+                    <tr><td class="song-title">Hacking to the Gate (이토 카나코)</td><td>18 / 25 / -</td></tr>
+                    <tr><td class="song-title">ETERNAL BLAZE (미즈키 나나)</td><td>19 / 25 / 26</td></tr>
+                    <tr><td class="song-title">紅蓮の弓矢 (Linked Horizon)</td><td>21 / 27 / 25</td></tr>
+                    <tr><td class="song-title">The Everlasting Guilty Crown (EGOIST)</td><td>22 / 26 / -</td></tr>
+                    <tr><td class="song-title">Red fraction (MELL)</td><td>20 / 26 / -</td></tr>
+                    <tr><td class="song-title">深愛 (미즈키 나나)</td><td>20 / 25 / -<a href="#fnROC2" class="wiki-fn-link" data-content="일본 외 해외 수록 불가. 저작권 문제.">[ROC2]</a></td></tr>
+                    <tr><td class="song-title">残酷な天使のテーゼ (타카하시 요코)</td><td>20 / 26<a href="#fnROC3" class="wiki-fn-link" data-content="25에서 26으로 변경.">[ROC3]</a> / 25</td></tr>
+                    <tr><td class="song-title">Shangri-La (angela)</td><td>18 / 24 / 23</td></tr>
+                    <tr><td class="song-title">This game (스즈키 코노미)</td><td>23 / 27 / 26<a href="#fnROC4" class="wiki-fn-link" data-content="인앱 100번째 추가곡">[ROC4]</a></td></tr>
+                    <tr><td class="song-title">Believe in my existence (JAM Project)</td><td>21 / 26 / -</td></tr>
+                    <tr><td class="song-title">六兆年と一夜物語 (IA)</td><td>23 / 29<a href="#fnROC5" class="wiki-fn-link" data-content="최초의 29레벨 악곡. 단 다섯개뿐인 29중 두 개.">[ROC5]</a> / 29</td></tr>
+                    <tr><td class="song-title">キミの記憶 (카와무라 유미)</td><td>19 / 25 / -</td></tr>
+                    <tr><td class="song-title">シャルル (v flower)</td><td>20 / 25 / 26</td></tr>
+                    <tr><td class="song-title">ツキアカリのミチシルベ (스테레오포니)</td><td>19 / 24 / -</td></tr>
+                    <tr><td class="song-title">名前のない怪物 (EGOIST)</td><td>21 / 26 / -</td></tr>
+                    <tr><td class="song-title">緋色の空 (카와다 마미)</td><td>20 / 25 / -</td></tr>
+                    <tr><td class="song-title">海色 (AKINO from bless4)</td><td>20 / 27<a href="#fnROC7" class="wiki-fn-link" data-content="26에서 27로 변경.">[ROC7]</a> / -<a href="#fnROC6" class="wiki-fn-link" data-content="노멀에 플릭 있음.">[ROC6]</a></td></tr>
+                    <tr><td class="song-title">ファティマ (이토 카나코)</td><td>22 / 26 / -</td></tr>
+                    <tr><td class="song-title">Paradisus-Paradoxum (MYTH & ROID)</td><td>22 / 28 / -</td></tr>
+                    <tr><td class="song-title">甲賀忍法帖 (온묘자)</td><td>21 / 26 / -</td></tr>
+                    <tr><td class="song-title">Bad Apple!! feat. nomico</td><td>20 / 26 / -<a href="#fnROC8" class="wiki-fn-link" data-content="이지에 플릭 등장.">[ROC8]</a></td></tr>
+                    <tr><td class="song-title">右肩の蝶 (카가미네 린·렌)</td><td>21 / 25 / -</td></tr>
+                    <tr><td class="song-title">sister's noise (fripSide)</td><td>20 / 25 / -</td></tr>
+                    <tr><td class="song-title">Synchrogazer (미즈키 나나)</td><td>22 / 26 / -</td></tr>
+                    <tr><td class="song-title">鳥の詩 (Lia)</td><td>21 / 26 / -</td></tr>
+                    <tr><td class="song-title">My Dearest (supercell)</td><td>21 / 26 / -</td></tr>
+                    <tr><td class="song-title">KING (GUMI)</td><td>23 / 27 / -</td></tr>
+                    <tr><td class="song-title">SPARK-AGAIN (Aimer)</td><td>21 / 26 / -</td></tr>
+                    <tr><td class="song-title">廻廻奇譚 (EVE)</td><td>22 / 26 / -</td></tr>
+                    <tr><td class="song-title">Realize (스즈키 코노미)</td><td>21 / 27 / 28</td></tr>
+                    <tr><td class="song-title">STYX HELIX (MYTH & ROID)</td><td>20 / 26 / -</td></tr>
+                    <tr><td class="song-title">新時代 (Ado)</td><td>20 / 26 / -</td></tr>
+                    <tr><td class="song-title">酔いどれ知らず (GUMI)</td><td>22 / 26 / -</td></tr>
+                    <tr><td class="song-title">ファイトソング (EVE)</td><td>23 / 26 / -</td></tr>
+                    <tr><td class="song-title">ヒバナ-Reloaded- (하츠네 미쿠)</td><td>24 / 29 / -</td></tr>
+                    <tr><td class="song-title">東京テディベア (카가미네 린)</td><td>20 / 26 / 28</td></tr>
+                    <tr><td class="song-title">slash (yama)</td><td>19 / 24 / -</td></tr>
+                    <tr><td class="song-title">乙女解剖 (하츠네 미쿠)</td><td>19 / 25 / -</td></tr>
+                    <tr><td class="song-title">人マニア (카사네 테토)</td><td>20 / 26 / -</td></tr>
+                    <tr><td class="song-title">ファタール (GEMN)</td><td>22 / 27 / -</td></tr>
+                    <tr><td class="song-title">Reweave (스즈키 코노미)</td><td>23 / 27 / -</td></tr>
+                    <tr><td class="song-title">Fallen (EGOIST)</td><td>24 / 27 / -</td></tr>
+                    <tr><td class="song-title">Sincerely (TRUE)</td><td>19 / 24 / -</td></tr>
+                    <tr><td class="song-title">HONEY (L'Arc~en~Ciel)</td><td>20 / 25 / -</td></tr>
+                </tbody>
+            </table>
+
+            <h4 class="mt-4">7.1.3. 엑스트라 곡 (4곡)</h4>
+            <table class="data-table">
+                <thead><tr><th>곡명 (원곡 가수)</th><th>Hard / Expert / Special</th></tr></thead>
+                <tbody>
+                    <tr><td class="song-title">スカイクラッドの観測者 (이토 카나코)</td><td>21 / 26 / -</td></tr>
+                    <tr><td class="song-title">転生林檎 (하츠네 미쿠)</td><td>22 / 26 / -<a href="#fnROE2" class="wiki-fn-link" data-content="+α가 출연">[ROE2]</a></td></tr>
+                    <tr><td class="song-title">聖少女領域 (ALI PROJECT)</td><td>21 / 25 / -<a href="#fnROE3" class="wiki-fn-link" data-content="홀로라이브 로보코, 토와, 클로에 콜라보.">[ROE3]</a></td></tr>
+                    <tr><td class="song-title">擬態ごっこ (사카마타 클로에)</td><td>21 / 27 / -</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 8. 노래방 수록곡 -->
+        <h2 id="s-8" class="anchor-offset">8. 노래방 수록곡</h2>
+        <table class="data-table max-w-md mx-auto text-center">
+            <thead><tr><th>곡 제목</th><th>금영</th><th>태진</th></tr></thead>
+            <tbody>
+                <tr><td>BLACK SHOUT</td><td>44330</td><td>28926</td></tr>
+                <tr><td>LOUDER</td><td>44324</td><td>28932</td></tr>
+                <tr><td>熱色スターマイン</td><td>44339</td><td>28960</td></tr>
+                <tr><td>Determination Symphony</td><td>44383</td><td>68023</td></tr>
+                <tr><td>ONENESS</td><td>44346</td><td>28970</td></tr>
+                <tr><td>軌跡</td><td>44428</td><td>68077</td></tr>
+                <tr><td>Neo-Aspect</td><td>44341</td><td>28944</td></tr>
+                <tr><td>Sanctuary</td><td>44469</td><td>68121(히든)</td></tr>
+                <tr><td>R</td><td>44333</td><td>28953</td></tr>
+                <tr><td>PASSIONATE ANTHEM</td><td>44461</td><td>68117</td></tr>
+                <tr><td>BRAVE JEWEL</td><td>44462</td><td>68118</td></tr>
+                <tr><td>Ringing Bloom</td><td>44441</td><td>68098</td></tr>
+                <tr><td>FIRE BIRD</td><td>44432</td><td>68068</td></tr>
+                <tr><td>約束</td><td>44503</td><td>68166</td></tr>
+                <tr><td>Song I am.</td><td>-</td><td>68272</td></tr>
+                <tr><td>ZEAL of proud</td><td>-</td><td>68358</td></tr>
+            </tbody>
+        </table>
+
+        <!-- 9. 기타 -->
+        <h2 id="s-9" class="anchor-offset">9. 기타</h2>
+        <ul class="list-disc pl-5 space-y-2 text-sm">
+            <li>CD판매량 등 7밴드 중 탑을 달리는 인기를 자랑한다. 이벤트 메인 시 점수컷이 상승한다.</li>
+            <li>2022년 10th 라이브 굿즈 판매에서 10만원이 넘는 멤버 전원의 핫피가 <strong>전량 매진</strong>되었다.</li>
+            <li>멤버 성우 2번 교체와 신 밴드 론칭에도 압도적인 인기로 공식의 전폭적인 푸쉬를 받으며 사실상 진 주인공 대접을 받고 있다.</li>
+            <li>머리 길이가 단발/미디엄인 캐릭터가 반 이상인 타 밴드와 달리 전원 장발이다.<a href="#fn58" class="wiki-fn-link" data-content="아코도 3성 손을 맞잡고 등에선 머리가 등까지 닿는다.">[58]</a></li>
+            <li>성숙한 분위기와 다르게 평균 신장이 작은 편이다(155.8cm). 최단신 아코(148), 최장신 사요(161).<a href="#fn59" class="wiki-fn-link" data-content="평균신장이 가장 큰 밴드는 라스(159.8cm)다.">[59]</a><a href="#fn60" class="wiki-fn-link" data-content="사요가 동생 히나(156)와 비슷했다면 더 작았을 것이다.">[60]</a></li>
+            <li>기존 7밴드 중 유일하게 할로윈 하코 이벤트가 없으나,<a href="#fn61" class="wiki-fn-link" data-content="나머지는 전부 받았다.">[61]</a> 유일하게 수영복 하코를 2번 받았다.</li>
+        </ul>
+
+        <h3 id="s-9-1" class="anchor-offset">9.1. 편애 논란</h3>
+        <p>프로젝트 7개 그룹 중 가장 인기가 많아 과한 푸쉬와 타 밴드 홀대 논란이 있다. 유일하게 2편의 단독 극장판과 특별 앨범을 냈다.<a href="#fn62" class="wiki-fn-link" data-content="포피파 극장판엔 RAS/모니카가 출연해 단독 성격이 희석됨.">[62]</a><a href="#fn63" class="wiki-fn-link" data-content="3장 일러스트 혹평 이후엔 푸시가 줄었다.">[63]</a></p>
+        <p>이벤트 수익 때문에 밀어주는 건 이해하나 격차가 심하다. 캐릭터성에서도 입체적인 변화를 보여준 로젤리아와 달리, 이브(무사도 일변도), 리미/타에(빵/토끼 4차원), 사아야/모카 등 정체된 타 밴드 캐릭터들이 비교되며 비판을 받는다.<a href="#fn64" class="wiki-fn-link" data-content="이후 3기에서 다른 캐릭터들도 변화를 주긴 했다.">[64]</a><a href="#fn65" class="wiki-fn-link" data-content="상호 대사도 유키나는 10개가 넘으나 츠구미는 6개뿐.">[65]</a><a href="#fn66" class="wiki-fn-link" data-content="서비스 시작부터 로젤이 최고 매출을 찍은 건 사실이다.">[66]</a></p>
+        <p>오프라인 활동은 성우 인지도 탓이라 쳐도<a href="#fn67" class="wiki-fn-link" data-content="비라이브 밴드(앱글 등)는 메이저급 성우라 부르기 힘들다.">[67]</a>, 게임 내에서도 편파적인 푸시를 받아 비판받았다. 대학 진학 이후엔 조금 줄어들 것으로 보이나, 현재 인게임 푸시는 Afterglow와 MyGO!!!!!가 선두다.<a href="#fn68" class="wiki-fn-link" data-content="이벤트 횟수 자체는 큰 차이 없다.">[68]</a><a href="#fn69" class="wiki-fn-link" data-content="앱글은 이벤트 텀이 들쭉날쭉한 반면 로젤은 3~4개월로 일정하다.">[69]</a></p>
+
+        <!-- 10. 각주 -->
+        <h2 id="s-10" class="anchor-offset">10. 각주</h2>
+        <div class="footnotes-section mt-0 pt-4 h-64 overflow-y-auto border p-2 bg-white">
+            <div id="fn1" class="footnote-item"><span class="footnote-num">[1]</span> MyGO!!!!!만 Roselia처럼 약칭이 딱히 없다. <a href="#rfn1" class="wiki-link text-xs">↑</a></div>
+            <div id="fn2" class="footnote-item"><span class="footnote-num">[2]</span> 파란 장미의 뜻은 린코가 마음 속으로 생각하는 장면에서 나온다.</div>
+            <div id="fn3" class="footnote-item"><span class="footnote-num">[3]</span> 아코와 린코의 가입, 유키나가 단독 프로 제의를 받고 다 같이 페스티벌에 참가한 이야기 등.</div>
+            <div id="fn4" class="footnote-item"><span class="footnote-num">[4]</span> 일본어는 한국어와 존대 개념이 조금 다르다.</div>
+            <div id="fn5" class="footnote-item"><span class="footnote-num">[5]</span> 더 높은 곳으로 간다는 진지한 목표를 가지고 이를 위해 행동한다.</div>
+            <div id="fn6" class="footnote-item"><span class="footnote-num">[6]</span> 다만 가장 현실적인 록 밴드 이미지는 Afterglow 쪽이 가깝다.</div>
+            <div id="fn7" class="footnote-item"><span class="footnote-num">[7]</span> 당근 싫어하는 사람, 고양이 덕후, 넷상에서 말 많아지는 사람 등.</div>
+            <div id="fn8" class="footnote-item"><span class="footnote-num">[8]</span> 리사가 항상 거절하니 미안하다 할 정도로 자주 받는다. 츄츄는 거절에 분노해 RAS를 결성한다.</div>
+            <div id="fn9" class="footnote-item"><span class="footnote-num">[9]</span> 기획사 담당자가 열성팬이라 파격적인 조건을 수용했다.</div>
+            <div id="fn10" class="footnote-item"><span class="footnote-num">[10]</span> 각각 2기 2화, 3기 6화에서 나온다.</div>
+            <div id="fn11" class="footnote-item"><span class="footnote-num">[11]</span> 2017년 1차 발매 후 2019년에 재발매 되었다.</div>
+            <div id="fn12" class="footnote-item"><span class="footnote-num">[12]</span> 로즈우드 지판 때문에 워싱턴 협약에 의해 통관 거부될 수 있다.</div>
+            <div id="fn13" class="footnote-item"><span class="footnote-num">[13]</span> 마시로도 츠키노모리 여학원 다닐 정도면 상류층이다.</div>
+            <div id="fn14" class="footnote-item"><span class="footnote-num">[14]</span> 아코의 드럼셋은 주문제작 시 1500~2000만원에 육박한다.</div>
+            <div id="fn15" class="footnote-item"><span class="footnote-num">[15]</span> PC 3모니터 세팅과 방에 그랜드 피아노를 들였다.</div>
+            <div id="fn16" class="footnote-item"><span class="footnote-num">[16]</span> 쿠도 하루카에 따르면 히카와 집안 아버지는 대학 쪽에서 일한다고 한다.</div>
+            <div id="fn17" class="footnote-item"><span class="footnote-num">[17]</span> 동생 히나의 빈티나는 텔레캐스터 카피판 악기와 대비된다.</div>
+            <div id="fn18" class="footnote-item"><span class="footnote-num">[18]</span> 유키나네 집 거실이나 리사의 방 묘사를 보면 꽤 유복하다.</div>
+            <div id="fn19" class="footnote-item"><span class="footnote-num">[19]</span> 츠쿠시는 개인 자동차도 있고 토우코는 패션 회사 사장이다.</div>
+            <div id="fn20" class="footnote-item"><span class="footnote-num">[20]</span> 츄츄 혼자 로젤리아를 강하게 의식하는 게 빼박이다.</div>
+            <div id="fn21" class="footnote-item"><span class="footnote-num">[21]</span> 포피파와 달리 실력이 뛰어나 데뷔까지 걸리는 시간은 길지 않았다.</div>
+            <div id="fn22" class="footnote-item"><span class="footnote-num">[22]</span> 유키나에게 따로 밴드를 섭외해주겠다고 제안했다.</div>
+            <div id="fn23" class="footnote-item"><span class="footnote-num">[23]</span> 유키나네 집 옆집에 살고 있어서 창문을 통해 말을 걸었다.</div>
+            <div id="fn24" class="footnote-item"><span class="footnote-num">[24]</span> 공통 비전이 있었기에 배신감도 컸다.</div>
+            <div id="fn25" class="footnote-item"><span class="footnote-num">[25]</span> 사요도 잡지를 읽어 유키나 아버지가 한때 뮤지션이었던 걸 기억해냈다.</div>
+            <div id="fn26" class="footnote-item"><span class="footnote-num">[26]</span> TV에서 파스파레 영상이 나왔는데 정색하던 사요도 평정심을 유지했다.</div>
+            <div id="fn27" class="footnote-item"><span class="footnote-num">[27]</span> 실력이 놀랍고 비주얼도 좋으나, 아직은 부족하다고 평가했다.</div>
+            <div id="fn28" class="footnote-item"><span class="footnote-num">[28]</span> 메탈 장르가 얼 빠지면 와르르 무너지기 쉽기 때문이다.</div>
+            <div id="fn29" class="footnote-item"><span class="footnote-num">[29]</span> 이 설정을 왜곡해 리사가 파리에 제과점을 열었다는 미야지마 세이야의 만화가 있다.</div>
+            <div id="fn30" class="footnote-item"><span class="footnote-num">[30]</span> 란이 노래에 마음을 담아 표현하는 느낌으로 해볼 것을 권했다.</div>
+            <div id="fn31" class="footnote-item"><span class="footnote-num">[31]</span> 유키나는 페스티벌, 리사는 유키나를 따라, 사요는 히나를 의식해서 들어왔다.</div>
+            <div id="fn32" class="footnote-item"><span class="footnote-num">[32]</span> 카스미도 아리사와 함께 라이브를 보러 왔다.</div>
+            <div id="fn33" class="footnote-item"><span class="footnote-num">[33]</span> 햄버그 스테이크, 매쉬포테이토 등 폭식했다.</div>
+            <div id="fn34" class="footnote-item"><span class="footnote-num">[34]</span> 사요가 무리하다 쓰러졌지만 유키나의 진심을 알고 다시 일어선다.</div>
+            <div id="fn35" class="footnote-item"><span class="footnote-num">[35]</span> 심사위원이 베스트 밴드 칭호를 더해 라스, 포피파도 장려. 그랑프리는 로젤이 맞다.</div>
+            <div id="fn36" class="footnote-item"><span class="footnote-num">[36]</span> 사진의 순서대로 나열했다.</div>
+            <div id="fn37" class="footnote-item"><span class="footnote-num">[37]</span> 이마저도 원래 다루던 악기는 기타이며 베이스는 만져본 적도 없었다.</div>
+            <div id="fn38" class="footnote-item"><span class="footnote-num">[38]</span> 아케사카 사토미는 피아노 조금 친 경험, 사쿠라가와는 드럼을 건드려본 수준이었다.</div>
+            <div id="fn39" class="footnote-item"><span class="footnote-num">[39]</span> 경험 없는 사람이 반 년 만에 라이브 소화하려면 엄청난 연습이 필요하다. 팬심 자극 요인이 되었다.</div>
+            <div id="fn40" class="footnote-item"><span class="footnote-num">[40]</span> 아이미는 7th 라이브에서 로젤리아에 주목이 몰린 것이 분했다고 밝혔다.</div>
+            <div id="fn41" class="footnote-item"><span class="footnote-num">[41]</span> 첫 공연의 호응으로 한 달 만에 10배 규모(아리아케 콜로시움)에서 치러졌다.</div>
+            <div id="fn42" class="footnote-item"><span class="footnote-num">[42]</span> 시한부 활동임에도 최선을 다해 감동을 주었다.</div>
+            <div id="fn43" class="footnote-item"><span class="footnote-num">[43]</span> 첫 공연 엔딩 인사말에서 이미 은퇴 암시가 있었다.</div>
+            <div id="fn44" class="footnote-item"><span class="footnote-num">[44]</span> 5th 라이브 엔딩에 깜짝 등장해 바톤터치를 보여줬다.</div>
+            <div id="fn45" class="footnote-item"><span class="footnote-num">[45]</span> 썸네일 팬미팅 일정이 마지막 라이브가 되어버렸다.</div>
+            <div id="fn46" class="footnote-item"><span class="footnote-num">[46]</span> FNS에서 Aqours와 합동 공연했다.</div>
+            <div id="fn47" class="footnote-item"><span class="footnote-num">[47]</span> 팬미팅 기획이 멤버들 요청으로 라이브 공연으로 변경되었다.</div>
+            <div id="fn48" class="footnote-item"><span class="footnote-num">[48]</span> 린코 역이 성우 데뷔작. 아티스트로서 섭외된 형태다.</div>
+            <div id="fn49" class="footnote-item"><span class="footnote-num">[49]</span> 자켓에 캐릭터가 그려진 경우는 한정판에 한해서만 등장한다.</div>
+            <div id="fn51" class="footnote-item"><span class="footnote-num">[51]</span> 세츠나 트립 스페셜 등장 전 2년 9개월 동안 유일했다.</div>
+            <div id="fn52" class="footnote-item"><span class="footnote-num">[52]</span> 로젤리아는 아직 30레벨 악곡이 없다.</div>
+            <div id="fn53" class="footnote-item"><span class="footnote-num">[53]</span> 파스파레가 4년 넘어 받은 28레벨 곡은 절대선언 하나뿐이다.</div>
+            <div id="fn54" class="footnote-item"><span class="footnote-num">[54]</span> 하로하피는 28레벨이 상위권이지만 29레벨 이상이 없다.</div>
+            <div id="fn55" class="footnote-item"><span class="footnote-num">[55]</span> 당시 RAISE A SUILEN의 밴드 가칭이다.</div>
+            <div id="fn58" class="footnote-item"><span class="footnote-num">[58]</span> 아코도 카드의상 맞추면 머리카락이 등까지 닿는다.</div>
+            <div id="fn59" class="footnote-item"><span class="footnote-num">[59]</span> 평균신장이 가장 큰 밴드는 라스(159.8cm)다.</div>
+            <div id="fn60" class="footnote-item"><span class="footnote-num">[60]</span> 사요가 동생 히나(156)와 비슷했다면 더 작았을 것이다.</div>
+            <div id="fn61" class="footnote-item"><span class="footnote-num">[61]</span> 나머지 밴드들은 전부 할로윈 하코를 받았다.</div>
+            <div id="fn62" class="footnote-item"><span class="footnote-num">[62]</span> 포피파 극장판엔 RAS/모니카가 출연해 단독 성격이 희석됨.</div>
+            <div id="fn63" class="footnote-item"><span class="footnote-num">[63]</span> 3장 일러스트 혹평 이후엔 푸시가 비교적 줄었다.</div>
+            <div id="fn64" class="footnote-item"><span class="footnote-num">[64]</span> 이후 3기에서 다른 캐릭터들도 약간씩 변화를 주긴 했다.</div>
+            <div id="fn65" class="footnote-item"><span class="footnote-num">[65]</span> 상호 대사도 유키나는 10개가 넘으나 츠구미는 6개뿐이다.</div>
+            <div id="fn66" class="footnote-item"><span class="footnote-num">[66]</span> 서비스 시작부터 로젤리아가 최고 매출을 찍은 건 사실이다.</div>
+            <div id="fn67" class="footnote-item"><span class="footnote-num">[67]</span> 비라이브 밴드(앱글 등)는 메이저급 성우라 스케줄 부르기 힘들다.</div>
+            <div id="fn68" class="footnote-item"><span class="footnote-num">[68]</span> 이벤트 횟수 자체는 큰 차이 없다.</div>
+            <div id="fn69" class="footnote-item"><span class="footnote-num">[69]</span> 앱글은 텀이 들쭉날쭉한 반면 로젤리아는 꾸준한 편이다.</div>
+            <div id="fnROO1" class="footnote-item"><span class="footnote-num">[ROO1]</span> 2023년 3월 16일 자로 Hard 난이도 2레벨 증가.</div>
+            <div id="fnROO2" class="footnote-item"><span class="footnote-num">[ROO2]</span> 2023년 3월 16일 자로 난이도 28에서 29로 변경.</div>
+            <div id="fnROO3" class="footnote-item"><span class="footnote-num">[ROO3]</span> 플릭노트가 없는 채보.</div>
+            <div id="fnROO4" class="footnote-item"><span class="footnote-num">[ROO4]</span> 한도리 초기에 양지 로드 나이트로 오역. 장미휘석을 나타낸다.</div>
+            <div id="fnROO5" class="footnote-item"><span class="footnote-num">[ROO5]</span> 2023년 3월 16일 자로 난이도 26에서 27로 변경.</div>
+            <div id="fnROO6" class="footnote-item"><span class="footnote-num">[ROO6]</span> 인앱 300번째 추가곡.</div>
+            <div id="fnROO7" class="footnote-item"><span class="footnote-num">[ROO7]</span> 이벤트 추가곡은 Sonorous로 간주된다. 극장판 기념.</div>
+            <div id="fnROC1" class="footnote-item"><span class="footnote-num">[ROC1]</span> 2023년 3월 16일 자로 Hard 난이도 2레벨 증가.</div>
+            <div id="fnROC2" class="footnote-item"><span class="footnote-num">[ROC2]</span> 일본 외 서비스에는 수록되지 않은 곡이다. 저작권 문제.</div>
+            <div id="fnROC3" class="footnote-item"><span class="footnote-num">[ROC3]</span> 2023년 3월 16일 자로 난이도 25에서 26으로 변경.</div>
+            <div id="fnROC4" class="footnote-item"><span class="footnote-num">[ROC4]</span> 인앱 100번째 추가곡</div>
+            <div id="fnROC5" class="footnote-item"><span class="footnote-num">[ROC5]</span> 최초의 29레벨 악곡. 단 다섯개뿐인 29중 두 개다.</div>
+            <div id="fnROC6" class="footnote-item"><span class="footnote-num">[ROC6]</span> 노멀 난이도지만 플릭 노트가 있음.</div>
+            <div id="fnROC7" class="footnote-item"><span class="footnote-num">[ROC7]</span> 2023년 3월 16일 자로 난이도 26에서 27로 변경.</div>
+            <div id="fnROC8" class="footnote-item"><span class="footnote-num">[ROC8]</span> 이지 난이도에 플릭 노트가 등장한다.</div>
+            <div id="fnROE1" class="footnote-item"><span class="footnote-num">[ROE1]</span> 2023년 3월 16일 자로 Hard 난이도 2레벨 증가.</div>
+            <div id="fnROE2" class="footnote-item"><span class="footnote-num">[ROE2]</span> 엑스트라로는 +α가 출연</div>
+            <div id="fnROE3" class="footnote-item"><span class="footnote-num">[ROE3]</span> 걸파 홀로라이브 컵 1위 팀(로보코, 토와, 클로에) 콜라보.</div>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-[var(--wiki-link)] hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs" style="color:var(--wiki-del)">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+<script>
+        // 1. 검색 기능 (스마트 클라우드 검색으로 자동 연결되게 수정)
+        function handleSearch() {
+            if(typeof window.handleSearch === 'function') {
+                window.handleSearch('searchInput');
+            } else {
+                const query = document.getElementById('searchInput').value;
+                if (query) {
+                    location.href = `효빈위키 검색.html?q=${encodeURIComponent(query)}`;
+                } else {
+                    showMsg('검색어를 입력해주세요.');
+                }
+            }
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        // 🚨 여기서부터 핵심! 레이더망(이벤트 위임) 방식으로 개조 🚨
+        // 화면이 서버 통신으로 통째로 갈아끼워져도 절대 날아가지 않습니다.
+
+        // 2. 부드러운 스크롤 (목차 이동) 방어막
+        document.addEventListener('click', function(e) {
+            const anchor = e.target.closest('a[href^="#"]');
+            if (anchor && !anchor.classList.contains('wiki-fn-link')) {
+                e.preventDefault();
+                const targetId = anchor.getAttribute('href');
+                if (targetId && targetId !== '#') {
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            }
+        });
+
+        // 3. 각주 툴팁 방어막
+        const tooltip = document.getElementById('wiki-tooltip');
+        
+        document.addEventListener('mouseover', (e) => {
+            const link = e.target.closest('.wiki-fn-link');
+            if (link) {
+                const content = link.getAttribute('data-content');
+                if (content) {
+                    tooltip.innerHTML = content;
+                    tooltip.style.display = 'block';
+                }
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (tooltip.style.display === 'block') {
+                tooltip.style.left = (e.pageX + 15) + 'px';
+                tooltip.style.top = (e.pageY + 15) + 'px';
+            }
+        });
+
+        document.addEventListener('mouseout', (e) => {
+            if (e.target.closest('.wiki-fn-link')) {
+                tooltip.style.display = 'none';
+            }
+        });
+    </script>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

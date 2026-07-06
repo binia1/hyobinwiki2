@@ -1,0 +1,481 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>다로나의 엑셀 생존기 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        :root { 
+            --wiki-fixed: #7777AA; 
+            --wiki-main: #FF5522; /* 4호선 다로나 테마 컬러 (주황색) */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-fixed: #9999CC;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            word-break: keep-all; 
+            margin: 0; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .wiki-container { 
+            max-width: 1152px; 
+            margin: 0 auto; 
+            padding: 20px 40px; 
+            border-left: 1px solid var(--wiki-border); 
+            border-right: 1px solid var(--wiki-border); 
+            min-height: 100vh; 
+            background-color: var(--wiki-bg);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 표 스타일 */
+        table { 
+            border-collapse: collapse !important; 
+            width: 100% !important; 
+            margin: 15px 0; 
+            border: 1px solid var(--wiki-border) !important; 
+        }
+
+        th, td { 
+            border: 1px solid var(--wiki-border) !important; 
+            padding: 8px 6px; 
+            text-align: center; 
+            vertical-align: middle; 
+            font-size: 0.9rem;
+        }
+
+        th { 
+            background-color: var(--wiki-table-header); 
+            color: var(--wiki-table-header-text); 
+            font-weight: bold; 
+        }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; border-bottom: 2px solid var(--wiki-main); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: bold !important; margin-top: 1.5rem; border-bottom: 1px dashed var(--wiki-border); padding-bottom: 0.2rem; color: #444; }
+        [data-theme='dark'] h3 { color: #ddd; }
+
+        /* 인포박스 */
+        .infobox { 
+            border: 1px solid var(--wiki-main); 
+            background-color: var(--wiki-gray-bg); 
+            width: 100%; max-width: 460px; 
+
+            font-size: 0.85rem; 
+            margin-bottom: 20px; 
+            float: right; 
+            margin-left: 20px; 
+            border-radius: 4px; 
+            overflow: hidden; 
+        }
+        .infobox-top-label { background-color: var(--wiki-main); color: #fff; padding: 5px; text-align: center; font-weight: bold; }
+        .infobox-title-row { display: flex; border-bottom: 1px solid var(--wiki-border); background: #fff; color: #000; align-items: center; justify-content: center; padding: 10px; flex-direction: column; }
+        [data-theme='dark'] .infobox-title-row { background: #2d2f34; color: #fff; }
+        .infobox-logo { width: 100%; display: flex; justify-content: center; background-color: #fff0e6; padding: 10px 0; border-bottom: 1px dashed #ccc; }
+        .infobox-logo img { width: 280px; height: auto; object-fit: contain; }
+        .infobox th { background: var(--wiki-gray-bg); color: var(--wiki-text); width: 100px; text-align: center; padding: 5px 8px; font-weight: bold; border: 1px solid var(--wiki-border); }
+        [data-theme='dark'] .infobox th { background-color: #383b40; }
+        .infobox td { padding: 5px 8px; text-align: left; border: 1px solid var(--wiki-border); }
+
+        /* 효빈위키 요소 스타일 */
+        del, s { text-decoration: line-through; color: #888; }
+        .quote { border-left: 4px solid var(--wiki-main); background: var(--wiki-gray-bg); padding: 10px 15px; margin: 15px 0; color: var(--wiki-text); font-style: italic; }
+        .excel-code { background-color: #f1f8e9; border: 1px solid #c5e1a5; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: #33691e; font-weight: bold; }
+        [data-theme='dark'] .excel-code { background-color: #1b5e20; border-color: #33691e; color: #c5e1a5; }
+        
+        .ep-card { border: 1px solid var(--wiki-border); background: var(--wiki-bg); padding: 15px; margin-bottom: 15px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .ep-card h4 { margin-top: 0; color: var(--wiki-main); border-bottom: 1px dashed var(--wiki-border); padding-bottom: 5px; margin-bottom: 10px; font-size: 1.1rem; }
+
+        /* 위키 툴박스 버튼 */
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn:hover { background-color: #eee; }
+        [data-theme='dark'] .wiki-btn-group { background: #2d2f34; }
+        [data-theme='dark'] .wiki-tool-btn:hover { background-color: #444; }
+
+        /* 내비게이션 박스 (공통) */
+        .nw-box { border: 2px solid var(--wiki-main); margin-bottom: 15px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; clear: both; }
+        .nw-box summary { background-color: #373a3c; color: #fff; padding: 8px 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .nw-tbl { width: 100%; border-collapse: collapse; text-align: center; }
+        .nw-tbl th, .nw-tbl td { border: 1px solid #ddd; padding: 6px; }
+        .nw-img { width: 40px; height: 40px; border-radius: 50%; display: block; margin: 0 auto 5px; object-fit: cover; background: #fff; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <div id="wiki-msg-box" style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none;"></div>
+
+    <!-- 상단바 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-fixed);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="검색 (예: 엑셀 생존기)" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0" id="page-title">다로나의 엑셀 생존기</h1>
+            <div class="wiki-btn-group shadow-sm mb-4">
+                <button onclick="location.href='토론.html'" class="wiki-tool-btn">토론</button>
+                <button onclick="location.href='수정.html'" class="wiki-tool-btn" style="background-color:#0275d8; color:white;">편집</button>
+                <button onclick="location.href='역사.html'" class="wiki-tool-btn">역사</button>
+                <div class="wiki-tool-btn" onclick="showMsg('즐겨찾기에 추가됨')">★</div>
+            </div>
+        </div>
+
+        <div class="category-box" style="background: var(--wiki-gray-bg); border: 1px solid var(--wiki-border); padding: 5px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px;">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="효빈교통공사 미디어 믹스.html" class="wiki-link">효빈교통공사 미디어 믹스</a> | 
+            <a href="웹툰.html" class="wiki-link">웹툰</a> |
+            <a href="오피스물.html" class="wiki-link">오피스/직장인물</a> |
+            <a href="스핀오프.html" class="wiki-link">스핀오프</a>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4 flex-grow">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 md:order-1" style="display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+                <div class="toc-title" style="text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px;">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">줄거리</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">등장인물</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">주요 에피소드 및 엑셀 드립</a>
+                        <ul class="pl-4 mt-1">
+                            <li>4.1. <a href="#s-4-1" class="wiki-link">셀 병합 대참사 (5화)</a></li>
+                            <li>4.2. <a href="#s-4-2" class="wiki-link">사능동 빵집 VLOOKUP (12화)</a></li>
+                            <li>4.3. <a href="#s-4-3" class="wiki-link">진상 민원인과 중첩 IF 함수 (21화)</a></li>
+                            <li>4.4. <a href="#s-4-4" class="wiki-link">피벗 테이블의 기적 (30화)</a></li>
+                            <li>4.5. <a href="#s-4-5" class="wiki-link">순환 참조의 늪 (35화)</a></li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5" class="wiki-link">독자 반응 및 평가</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">여담</a></li>
+                    <li>7. <a href="#s-7" class="wiki-link">둘러보기</a></li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
+                <div class="infobox-top-label" style="background-color: #FF5522;">공식 스핀오프 웹툰</div>
+                <div class="infobox-title-row">
+                    <div class="infobox-logo">
+                        <div class="w-[280px] h-[160px] bg-orange-50 rounded flex flex-col items-center justify-center text-center border-2 border-orange-400 border-dotted p-2">
+                            <span class="text-orange-700 font-black text-2xl">다로나의</span>
+                            <span class="text-orange-600 font-bold text-xl">엑셀 생존기</span>
+                            <span class="text-gray-500 text-xs mt-2">Darona's Excel Survival</span>
+                        </div>
+                    </div>
+                    <div class="infobox-name mt-2 text-center">
+                        <div class="text-lg font-bold">다로나의 엑셀 생존기</div>
+                        <div class="text-[0.7rem] opacity-70">Darona's Excel Survival Guide</div>
+                    </div>
+                </div>
+                <table>
+                    <tr><th>원작</th><td><a href="효빈교통공사.html" class="wiki-link">효빈교통공사</a></td></tr>
+                    <tr><th>글 / 그림</th><td>김도트 & 오피스노예B</td></tr>
+                    <tr><th>장르</th><td>오피스, 블랙 코미디, 일상</td></tr>
+                    <tr><th>연재처</th><td>효빈웹툰 (목요웹툰)</td></tr>
+                    <tr><th>연재 기간</th><td>2024년 2월 1일 ~ 연재 중</td></tr>
+                    <tr><th>주요 소재</th><td>K-직장인 애환, 엑셀 꿀팁, 진상 대처</td></tr>
+                    <tr><th>이용 등급</th><td>전체 이용가 <s>(직장인은 트라우마 주의)</s></td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1">1. 개요</h2>
+        <div class="quote">
+            "제 유일한 무기는 이 클립보드와 매크로 단축키뿐입니다."
+        </div>
+        <p>
+            <a href="효빈교통공사.html" class="wiki-link">효빈교통공사</a>의 공식 4컷 만화 <a href="철도부! ~매일매일 출발 진행~.html" class="wiki-link">&lt;철도부! ~매일매일 출발 진행~&gt;</a>에서 파생된 <strong>공식 스핀오프 웹툰</strong>. 4호선 마스코트인 <a href="다로나.html" class="wiki-link" style="color:#FF5522;">다로나</a>를 단독 주인공으로 내세운 <strong>본격 K-직장인 하이퍼 리얼리즘 생존기</strong>다.
+        </p>
+        <p>
+            다로나는 설정상 특성화고 졸업 후 19세의 어린 나이에 공기업에 '고졸 특채'로 입사한 <strong>정규직 막내 주임</strong>이다. 그러나 압도적이고 미친 엑셀 실력으로 정규직 대리, 과장들이 해야 할 서류 작업과 데이터 관리를 모조리 하드캐리 해버리면서, 부서 내 모든 선배들이 그녀를 <strong>'다로나 주임님'</strong>이라고 부르며 떠받들게 되는(물론 일도 다 떠넘기는) 기형적인 공기업 생태계의 눈물겨운 사투를 그린다. <s>사실상 만화의 탈을 쓴 실무 엑셀 인강이다.</s>
+        </p>
+
+        <!-- 2. 줄거리 -->
+        <h2 id="s-2">2. 줄거리</h2>
+        <p>
+            효빈교통공사 기술본부 산업관리팀. 이곳에는 매일같이 예기치 못한 '변수'들이 쏟아진다. 고장 난 스크린도어, 선로에 뛰어드는 취객, 결재판을 던지는 꼰대 부장님, 그리고 데이터 양식을 무시하고 셀을 마음대로 합쳐버리는 무지성 타 부서 직원들까지. 
+        </p>
+        <p>
+            소심하고 남의 눈치를 심하게 보는 ISFJ 고졸 특채 막내 <strong>다로나</strong>. 그녀는 바스락거리는 소리에도 놀라는 주황색 치와와 같은 성격이지만, 이 미쳐 돌아가는 공기업 생태계에서 '칼퇴'를 사수하기 위해 자신만의 무기를 단련했다. 그것은 바로 1분 1초의 오차도 허용하지 않는 <strong>데이터 통제(엑셀 매크로)</strong>와 <strong>AI 모드 각성</strong>. 
+        </p>
+        <p>
+            "오류 발생. 논리적 인과관계 불일치. 해당 데이터는 텍스트 형식으로 입력되어 연산이 불가능합니다."<br>
+            일개 막내 주임 신분으로 50대 부장님의 마우스를 당당히 압수해버린 다로나. 오늘도 그녀는 밀려드는 실무의 틈바구니에서 생존하기 위해 키보드 단축키를 두드린다!
+        </p>
+
+        <!-- 3. 등장인물 -->
+        <h2 id="s-3">3. 등장인물</h2>
+        
+        <h3 id="s-3-1" style="color:#FF5522;">■ 다로나 (기술본부 산업관리팀 주임 / 주인공)</h3>
+        <p class="pl-4 border-l-4 border-orange-300 mb-4 text-sm">
+            본작의 영원히 고통받는 주인공. 특성화고 출신으로 어린 나이에 고졸 특채 공기업 주임을 달았지만 쏟아지는 부서 실무를 도맡아 하느라 만성 수면 부족에 시달린다. 평소엔 쭈구리처럼 덜덜 떨며 커피 심부름도 눈치 보며 가지만, 모니터 앞에 앉아 엑셀을 켜거나 '안전 위반/양식 파괴' 상황을 목격하면 눈의 동공 하이라이트가 꺼지며 <strong>[터미네이터 AI 모드]</strong>로 각성한다. <code>VLOOKUP</code>과 <code>INDEX/MATCH</code>는 숨 쉬듯 사용하며, VBA 매크로를 직접 짜서 팀 전체의 퇴근 시간을 1시간 앞당겨 선배들을 경악하게 만들었다. 그 공로로 부서의 실세로 떠올랐으나 업무량만 정규직 3인분이 되었다.
+        </p>
+
+        <h3 id="s-3-2" style="color:#666;">■ 김 부장 (기술본부 산업관리팀장 / 메인 빌런)</h3>
+        <p class="pl-4 border-l-4 border-gray-400 mb-4 text-sm">
+            다로나의 직속 상사이자 부서의 <strong>만악의 근원</strong>. 엑셀을 <strong>'디자인 툴'이나 '한글(HWP)'</strong> 쯤으로 생각하는 전형적인 컴맹 꼰대. 데이터베이스용 시트에서 보기 좋게 만들겠다며 <strong>가운데 맞춤 및 무지성 셀 병합</strong>을 남발하여 다로나가 짜놓은 매크로를 주기적으로 박살 낸다. 모니터 선이 빠지거나 프린터에 용지가 걸리면 부하 직원들을 제치고 무조건 제일 만만한 다로나부터 찾으며, "어이, 다 주임. 이것 좀 예쁘게 엑셀로 '느낌 있게' 표로 싹 다 그려봐"라는 추상적인 지시로 혈압을 올린다.
+        </p>
+
+        <h3 id="s-3-3" style="color:#00CCAA;">■ 하루빈 (역무본부 2호선 사원 / 밉상 조력자)</h3>
+        <p class="pl-4 border-l-4 border-teal-300 mb-4 text-sm">
+            다로나의 천적이자 합법적 월급루팡. 다로나가 야근하며 엑셀과 씨름할 때 굳이 타 부서에서 기어와 "우리 AI 주임님~ 아직도 퇴근 안 하셨어? 시리야, 이 서류 좀 대신 써줘~"라며 깐족거린다. 하지만 다로나의 기안서 결재가 윗선에서 막혀 쩔쩔맬 때, 탕비실에서 김 부장과 믹스커피를 타 마시며 특유의 혀 놀림(아부)으로 5분 만에 결재 도장을 받아다 주는 얄밉지만 유능한 처세술 만렙이다.
+        </p>
+
+        <h3 id="s-3-4" style="color:#EE0022;">■ 미소하 (효빈대학교 사회복지정책학과 근로장학생 / 데우스 엑스 마키나)</h3>
+        <p class="pl-4 border-l-4 border-red-400 mb-4 text-sm">
+            다로나의 부서에 단기로 파견 온 5호선 마스코트 <a href="미소하.html" class="wiki-link">미소하</a>. 엘리트 코스를 밟는 <strong>효빈대학교</strong> 소속 근로장학생이다. 엑셀 실무 단축키는 서툴지만, 전공이 전공인지라 통계 분석 프로그램(SPSS, R)과 다중회귀분석에는 혀를 내두를 정도로 통달해 있다. 김 부장이 "요즘 대학생들은 끈기가 없어~"라며 훈수를 두자, 방긋 웃으며 <strong>[빨간 바인더]</strong>를 꺼내 "부장님의 작년도 법인카드 사적 유용 내역과 결재 지연에 따른 부서 내 업무 효율 하락 상관관계를 3D 차트로 정리해 보았는데요 ☺️"라며 부장실을 물리적으로 초토화시키는 사이다 전개를 선사한다.
+        </p>
+
+        <!-- 4. 주요 에피소드 및 엑셀 드립 -->
+        <h2 id="s-4">4. 주요 에피소드 및 엑셀 드립</h2>
+        <p class="mb-4">웹툰의 매 화 마지막에는 다로나가 작중에서 꼰대들을 참교육할 때 사용한 실제 엑셀 함수 꿀팁이 요약본으로 제공된다. 독자들 사이에서는 "이 웹툰만 정주행해도 컴활 1급은 딴다"는 평가를 받는다.</p>
+
+        <div class="ep-card border-t-4" style="border-top-color: #FF5522;">
+            <h4><a id="s-4-1"></a>4.1. 셀 병합 대참사 (5화)</h4>
+            <p class="text-[0.85rem] leading-relaxed">
+                다로나가 쏟아지는 잡무를 미뤄가며 몬스터 에너지를 3캔이나 마시고 3일 밤새워 만든 '전 역사 안전 설비 점검 자동화 매크로' 시트. <br>
+                그러나 김 부장이 결재판을 훑어보더니 "이거 위에 기관장님 보고서로 올라갈 건데 표 양식이 안 예쁘잖아? 칸막이 좀 치워."라며 마우스를 쥐고 데이터 열 전체를 <strong>[셀 병합하고 가운데 맞춤]</strong> 버튼을 딸깍 눌러버린다. 그 순간 매크로의 `For Each` 순환문이 박살 나며 화면에 `#VALUE!`와 `런타임 오류`가 폭포수처럼 쏟아진다. <br>
+                그 순간 다로나의 눈의 초점이 꺼지며 주변 배경이 지옥 불길로 변한다. 다로나는 서랍에서 두꺼운 철도안전법 매뉴얼을 꺼내 부장의 책상에 내리치며 <strong>"부장님, 셀 병합은 데이터베이스 정규화 원칙에 위배되는 명백한 기업 테러 행위입니다."</strong>라며 막내 주임 주제에 부장의 마우스를 압수해버린다. 이어 부장의 손을 강제로 붙잡고 <span class="excel-code">Ctrl + 1 (셀 서식) -> 맞춤 -> 가로: 선택 영역의 가운데로</span>라는 갓-기능을 강제로 주입시킨다.
+            </p>
+        </div>
+
+        <div class="ep-card border-t-4" style="border-top-color: #FFCC11;">
+            <h4><a id="s-4-2"></a>4.2. 사능동 빵집 VLOOKUP (12화)</h4>
+            <p class="text-[0.85rem] leading-relaxed">
+                3호선 <a href="박라미.html" class="wiki-link">박라미</a>가 사능동 유명 빵집의 '한정판 소금빵'을 매번 간발의 차로 놓치고 길거리에서 "이 프레이밍은 무너졌어..."라며 오열하자, 다로나가 나선다. <br>
+                다로나는 빵집 사장님의 인스타 API를 크롤링하고, 요일별 강수량, 기온, 효빈역 주변 유동인구 공공데이터를 긁어와 엑셀에 쑤셔 넣는다. 그리고 <span class="excel-code">=VLOOKUP(TODAY(), 빵집_빅데이터_범위, 예측_남은수량_열, FALSE)</span> 함수와 `INDEX/MATCH`를 중첩하여 빵이 나오는 정확한 1분 1초의 골든 타임을 예측해 낸다. 결국 다로나는 복잡한 인파 속을 마치 엑셀 셀을 이동하듯 최단 거리 직각 스텝으로 파고들어 라미의 셔터보다 빨리 소금빵을 스틸해 가는 기적의 동선 알고리즘을 선보인다.
+            </p>
+        </div>
+
+        <div class="ep-card border-t-4" style="border-top-color: #881188;">
+            <h4><a id="s-4-3"></a>4.3. 진상 민원인과 중첩 IF 함수 (21화)</h4>
+            <p class="text-[0.85rem] leading-relaxed">
+                고객센터로 잘못 연결된 극성 민원인. "야! 지하철이 2분 늦어서 내 귀중한 비즈니스 미팅이 망가졌으니 천만 원 배상해! 너 같은 꼬맹이 말고 당장 책임자 데려와!"라며 억지를 부린다. 주황색 치와와처럼 수화기를 쥐고 덜덜 떨며 눈물을 글썽이던 다로나. 하지만 민원인이 욕설을 내뱉는 순간 AI 모드가 '띠링-' 하고 켜진다.<br>
+                다로나의 뇌 속에서 <span class="excel-code">=IF(욕설여부="O", "형사고발 조치", IF(억지주장="O", "안전법_매뉴얼응대", "친절_사과"))</span>라는 다중 중첩 수식이 0.1초 만에 연산된다. 다로나는 한 치의 떨림 없는 섬뜩한 기계음 톤으로 <strong>"산업안전보건법 제41조에 의거, 폭언 및 욕설에 대한 통화 녹음이 수집 완료되었습니다. 관할 경찰서에 업무방해로 인계하겠습니다. 뚜- 뚜-"</strong>라며 또박또박 읊어 진상 민원인을 단 10초 만에 깨갱하게 만든다.
+            </p>
+        </div>
+
+        <div class="ep-card border-t-4" style="border-top-color: #00CCAA;">
+            <h4><a id="s-4-4"></a>4.4. 피벗 테이블의 기적 (30화)</h4>
+            <p class="text-[0.85rem] leading-relaxed">
+                오후 5시 50분. 퇴근을 10분 남겨두고 가방을 싸던 다로나에게 김 부장이 다가온다. "다 주임~ 내일 임원 회의 자료인데, 이 5만 줄짜리 로우 데이터 가지고 연도별, 호선별, 월별 사고 발생 건수 통계 표 10개만 만들어 놓고 가. 한 시간이면 하지?"라며 악마의 지시를 내린다.<br>
+                부서 전체가 싸해진 가운데, 다로나는 안경을 치켜올리며 <strong>"3분이면 충분합니다."</strong>라고 선언. 다로나는 번개 같은 속도로 데이터 영역을 블록 지정하고 <strong>[삽입 -> 피벗 테이블]</strong>을 누른 뒤, 필드 목록을 드래그 앤 드롭하여 단 3번의 클릭으로 완벽한 교차 집계표를 만들어낸다. 여기에 <strong>[슬라이서 삽입]</strong>을 통해 버튼만 누르면 호선별 데이터가 자동으로 필터링되는 인터랙티브 대시보드까지 얹어준다. 5시 57분에 보고서를 전송하고 유유히 가방을 메고 퇴근하는 다로나의 뒷모습에 김 부장은 입을 다물지 못한다.
+            </p>
+        </div>
+
+        <div class="ep-card border-t-4" style="border-top-color: #6677CC;">
+            <h4><a id="s-4-5"></a>4.5. 순환 참조의 늪 (35화)</h4>
+            <p class="text-[0.85rem] leading-relaxed">
+                다로나가 지독한 감기 몸살로 연차를 낸 날. 기술본부 산업관리팀은 다로나가 없으면 엑셀 파일 하나 제대로 열지 못하는 마비 상태에 빠진다. 이때 타 부서의 <a href="하루빈.html" class="wiki-link">하루빈</a>이 "아~ 내가 또 왕년에 엑셀 좀 만졌지~"라며 다로나의 컴퓨터에 앉아 매크로 코드를 함부로 건드린다.<br>
+                하루빈이 함수 참조 셀을 잘못 지정하는 바람에 A셀이 B셀을 참조하고, B셀이 다시 A셀을 참조하는 무한 루프, 즉 <strong>'순환 참조(Circular Reference)'</strong> 오류가 터져버린다. 화면이 멈추고 사내 서버 컴퓨터 CPU 점유율이 100%를 찍으며 환풍기에서 연기가 피어오른다. 사무실 전체가 아수라장이 된 와중에, 결국 열이 펄펄 끓는 다로나가 콜택시를 타고 회사로 복귀해 <span class="excel-code">Ctrl + Break</span> 키로 강제 중단시킨 뒤 하루빈의 멱살을 잡는 대환장 에피소드.
+            </p>
+        </div>
+
+        <!-- 5. 독자 반응 및 평가 -->
+        <h2 id="s-5">5. 독자 반응 및 평가</h2>
+        <ul class="list-disc pl-5 space-y-3 text-sm">
+            <li><strong>현실 고증의 폭력성:</strong> "작가 양반, 내 모니터 훔쳐보고 그렸소?", "김 부장 얼굴 나올 때마다 PTSD 와서 스크롤 내리기 힘들다", "일개 막내한테 실무 다 떠넘기는 공기업 고증 미쳤네" 등 실제 K-직장인과 신입사원들의 처절한 공감 댓글이 베댓을 장악한다. 대중교통 관련 종사자들 사이에서는 아예 다큐멘터리 취급을 받는다.</li>
+            <li><strong>실용성 200%의 학습 웹툰:</strong> 매 화 끝에 나오는 <strong>'다로나의 실전 엑셀 꿀팁'</strong> 컷만 캡처해서 사내 메신저나 에버노트에 저장해 두는 신입사원들이 엄청나게 많다. 실제로 <em>INDEX/MATCH</em> 함수나 <em>피벗 테이블</em> 사용법을 진짜 컴활 학원 인강이 아니라 이 웹툰을 보고 깨우쳤다는 간증 글이 쏟아진다.</li>
+            <li><strong>주인공의 처절한 인기도:</strong> 매사 치이고 구르면서 쏟아지는 잡무에 치이는 불쌍한 처지임에도, 오직 엑셀 하나로 무능한 꼰대들을 평정(?)하는 '고졸 특채 막내' 다로나의 짠내 나는 모습에 묘한 카타르시스를 느끼는 독자들이 많다. 정규 시리즈 마스코트들을 제치고 단독 스핀오프 주인공으로서 인기 투표에서 1위를 차지하는 기염을 토했다. <s>우리들의 일그러진 영웅 다로나 ㅠㅠ</s></li>
+        </ul>
+
+        <!-- 6. 여담 -->
+        <h2 id="s-6">6. 여담</h2>
+        <ul class="list-disc pl-5 space-y-3 text-sm">
+            <li>효빈시의 오타쿠 시장 <a href="박효빈.html" class="wiki-link">박효빈</a>이 개인 인스타그램 스토리에 이 웹툰의 '셀 병합 참사' 에피소드를 캡처해 올리며 <strong>"시청 공무원 여러분, 앞으로 보고서에 무분별한 셀 병합을 금지합니다. 데이터의 바다를 지킵시다."</strong>라는 특별 행정 지시를 내린 적이 있다. <s>효빈시 공무원들은 다로나를 원망해야 할지 찬양해야 할지 혼란에 빠졌다.</s></li>
+            <li>그림 작가인 '김도트'와 스토리 작가 '오피스노예B' 중, 스토리 작가는 100% 효빈교통공사 현직자이거나 최소 공기업/관공서 인턴 출신일 것이라는 의혹이 파다하다. 결재 서류의 폰트(휴먼명조 15pt) 규격이나 '결재판 던지기 회피 각도', '부장님 모니터 선 꽂아주기', '기안서 반려 사유 양식' 등 실무자가 아니면 절대 알 수 없는 디테일이 난무하기 때문.</li>
+            <li>게임판인 <a href="효빈 대난투: 철도안전법 위반.html" class="wiki-link">효빈 대난투</a>에서 다로나의 필살기가 '철도안전법 공문서 100장 날리기'로 설정된 것도 이 웹툰에서의 AI 각성 모드가 모티브가 되었다.</li>
+            <li>서브컬처 팬덤에서는 다로나가 변수(특히 스킨십)를 혐오한다는 설정 때문에, 옆 동네 밴드 애니메이션의 극한 인싸 기타리스트(카스미 밈)가 <strong>[야생의 고양이 귀 소녀]</strong>로 등장해 엑셀을 치고 있는 다로나를 덮쳐 기절시키는 패러디 짤이 웹툰 덧글란에 꾸준히 등판한다.</li>
+        </ul>
+
+        <!-- 7. 둘러보기 -->
+        <h2 id="s-7">7. 둘러보기</h2>
+        
+        <!-- 효빈교통공사 캐릭터들 둘러보기 틀 -->
+        <details class="nw-box" style="border-color:#555588;" open>
+            <summary class="outline-none">
+                <a href="효빈교통공사.html" class="text-white text-lg hover:underline"><span class="font-bold">효빈교통공사 캐릭터들 (레일루미네)</span></a>
+            </summary>
+            <table class="nw-tbl">
+                <tr>
+                    <th rowspan="4" class="w-[10%] nw-th-col text-white" style="background-color:#555588;">등<br>장<br>인<br>물</th>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #0077DD;"><a href="1호선.html" class="wiki-link text-white hover:underline">1호선</a></td>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #00CCAA;"><a href="2호선.html" class="wiki-link text-white hover:underline">2호선</a></td>
+                    <td class="font-bold text-[#333] w-[18%]" style="background-color: #FFCC11;"><a href="3호선.html" class="wiki-link text-[#333] hover:underline">3호선</a></td>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #FF5522;"><a href="4호선.html" class="wiki-link text-white hover:underline">4호선</a></td>
+                    <td class="font-bold text-white w-[18%]" style="background-color: #EE0022;"><a href="5호선.html" class="wiki-link text-white hover:underline">5호선</a></td>
+                </tr>
+                <tr>
+                    <td><a href="고나미.html" class="wiki-link hover:underline text-[#373a3c]"><img src="이미지/고나미.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/0077DD/FFFFFF?text=1'">고나미</a></td>
+                    <td><a href="하루빈.html" class="wiki-link hover:underline text-[#373a3c]"><img src="이미지/하루빈.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/00CCAA/FFFFFF?text=2'">하루빈</a></td>
+                    <td><a href="박라미.html" class="wiki-link hover:underline text-[#373a3c]"><img src="이미지/박라미.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/FFCC11/333333?text=3'">박라미</a></td>
+                    <td><a href="다로나.html" class="wiki-link hover:underline text-[#373a3c]"><img src="이미지/다로나.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/FF5522/FFFFFF?text=4'">다로나</a></td>
+                    <td><a href="미소하.html" class="wiki-link hover:underline text-[#373a3c]"><img src="이미지/미소하.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/EE0022/FFFFFF?text=5'">미소하</a></td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-white" style="background-color: #881188;"><a href="6호선.html" class="wiki-link text-white hover:underline">6호선</a></td>
+                    <td colspan="2" class="font-bold text-[#333]" style="background-color: #FF8899;"><a href="7호선.html" class="wiki-link text-[#333] hover:underline">7호선</a></td>
+                    <td class="font-bold text-white" style="background-color: #9856FF;"><a href="8호선.html" class="wiki-link text-white hover:underline">8호선</a></td>
+                    <td class="font-bold text-white" style="background-color: #6677CC;"><a href="빈효선.html" class="wiki-link text-white hover:underline">빈효선*</a></td>
+                </tr>
+                <tr>
+                    <td><a href="라세나.html" class="wiki-link hover:underline text-[#373a3c]"><img src="이미지/라세나.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/881188/FFFFFF?text=6'">라세나</a></td>
+                    <td><a href="임세정.html" class="wiki-link hover:underline text-[#373a3c]"><img src="이미지/임세정.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/FF8899/333333?text=7'">임세정</a></td>
+                    <td><a href="임세하.html" class="wiki-link hover:underline text-[#373a3c]"><img src="이미지/임세하.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/FF8899/333333?text=7'">임세하</a></td>
+                    <td><a href="유리아.html" class="wiki-link hover:underline text-[#373a3c]"><img src="이미지/유리아.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/9856FF/FFFFFF?text=8'">유리아</a></td>
+                    <td><a href="전노아.html" class="wiki-link hover:underline text-[#373a3c]"><img src="이미지/전노아.png" class="nw-img" onerror="this.src='https://placehold.co/60x60/6677CC/FFFFFF?text=V'">전노아</a></td>
+                </tr>
+            </table>
+        </details>
+
+        <!-- 효빈교통공사 미디어 믹스 둘러보기 틀 -->
+        <details class="nw-box" style="border-color:#555588;" open>
+            <summary class="outline-none">
+                <a href="효빈교통공사 미디어 믹스.html" class="text-white text-lg hover:underline"><span class="font-bold">효빈교통공사 미디어 믹스 (HYOBIN METRO MEDIA MIX)</span></a>
+            </summary>
+            <table class="nw-tbl" style="width: 100%; text-align: center; border-collapse: collapse;">
+                <tr>
+                    <th class="w-[15%] nw-th-col font-bold text-white" style="background-color: #6677CC; border-bottom: 1px solid #ddd;">TV 애니메이션</th>
+                    <td class="text-left pl-3 py-2" style="background-color: var(--wiki-gray-bg); border-bottom: 1px solid #ddd;">
+                        <a href="철도부!.html" class="wiki-link hover:underline">철도부!</a> (1기) · 
+                        <a href="철도부! 2기.html" class="wiki-link hover:underline">철도부! (2기)</a> <span style="font-size: 0.8em; color: gray;">(방영 예정)</span> · 
+                        <a href="전노아 애니메이션.html" class="wiki-link hover:underline">전노아 주역 시리즈 (제목 미정)</a> <span style="font-size: 0.8em; color: gray;">(제작 예정)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="w-[15%] nw-th-col font-bold text-white" style="background-color: #6677CC; border-bottom: 1px solid #ddd;">숏폼 및 OVA</th>
+                    <td class="text-left pl-3 py-2" style="background-color: var(--wiki-bg); border-bottom: 1px solid #ddd;">
+                        <a href="달려라! 레일루미네 1기.html" class="wiki-link hover:underline">달려라! 레일루미네</a> (1기) · 
+                        <a href="철덕일기.html" class="wiki-link hover:underline">철덕일기</a> · 
+                        <a href="철도부 OVA: F학점 동맹의 우울.html" class="wiki-link hover:underline">철도부 OVA: F학점 동맹의 우울</a> · 
+                        <a href="쁘띠 레일루미네.html" class="wiki-link hover:underline">쁘띠 레일루미네</a> <span style="font-size: 0.8em; color: gray;">(2026년 2쿨 방영)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="w-[15%] nw-th-col font-bold text-white" style="background-color: #6677CC; border-bottom: 1px solid #ddd;">극장판 애니메이션</th>
+                    <td class="text-left pl-3 py-2" style="background-color: var(--wiki-gray-bg); border-bottom: 1px solid #ddd;">
+                        <a href="레일루미네_기적의 스탬프 랠리.html" class="wiki-link hover:underline">극장판 레일루미네 - 기적의 스탬프 랠리 -</a> <span style="font-size: 0.8em; color: gray;">(2025)</span> · 
+                        <a href="궤도를 넘어서.html" class="wiki-link hover:underline">극장판 철도부! &lt;궤도를 넘어서&gt;</a> <span style="font-size: 0.8em; color: gray;">(2027년 개봉 예정)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="w-[15%] nw-th-col font-bold text-white" style="background-color: #885588; border-bottom: 1px solid #ddd;">만화 및 도서</th>
+                    <td class="text-left pl-3 py-2" style="background-color: var(--wiki-bg); border-bottom: 1px solid #ddd;">
+                        <a href="철도부! ~매일매일 출발 진행~.html" class="wiki-link hover:underline">철도부! ~매일매일 출발 진행~</a> <span style="font-size: 0.8em; color: gray;">(공식 4컷 만화)</span> · 
+                        <a href="레일루미네 코믹 앤솔로지.html" class="wiki-link hover:underline">레일루미네 코믹 앤솔로지</a> · 
+                        <a href="다로나의 엑셀 생존기.html" class="wiki-link hover:underline">다로나의 엑셀 생존기</a> <span style="font-size: 0.8em; color: gray;">(스핀오프 웹툰)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="w-[15%] nw-th-col font-bold text-white" style="background-color: #338866; border-bottom: 1px solid #ddd;">게임 (Game)</th>
+                    <td class="text-left pl-3 py-2" style="background-color: var(--wiki-gray-bg); border-bottom: 1px solid #ddd;">
+                        <a href="레일루미네_스마일 페스티벌.html" class="wiki-link hover:underline">레일루미네: 스마일 페스티벌</a> <span style="font-size: 0.8em; color: gray;">(리듬 어드벤처 / 모바일)</span> · 
+                        <a href="효빈 철도 시뮬레이터: 덕업일치 에디션.html" class="wiki-link hover:underline">효빈 철도 시뮬레이터: 덕업일치 에디션</a> <span style="font-size: 0.8em; color: gray;">(시뮬레이션 / PC)</span><br>
+                        <a href="효빈 대난투: 철도안전법 위반.html" class="wiki-link hover:underline">효빈 대난투: 철도안전법 위반</a> <span style="font-size: 0.8em; color: gray;">(액션 격투 / Switch)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="w-[15%] nw-th-col font-bold text-white" style="background-color: #DD5555;">라이브 및 행사</th>
+                    <td class="text-left pl-3 py-2" style="background-color: var(--wiki-bg);">
+                        <a href="레일루미네 1st Live_Next Station!.html" class="wiki-link hover:underline">레일루미네 1st Live: Next Station!</a> · 
+                        <a href="효빈 애니메이션 페스티벌.html" class="wiki-link hover:underline">HAF (효빈 애니메이션 페스티벌) 특별 스테이지</a> · 
+                        <a href="철도부! 팬미팅_종점 없는 티켓.html" class="wiki-link hover:underline">철도부! 팬미팅: 종점 없는 티켓</a>
+                    </td>
+                </tr>
+            </table>
+        </details>
+
+        <footer class="mt-12 border-t pt-6 text-center text-xs pb-10 leading-relaxed text-[#373a3c] bg-transparent">
+            <div class="mb-4">
+                <a href="#" class="font-bold no-underline hover:underline" style="color:var(--wiki-text);">개인정보처리방침</a> | 
+                <a href="#" class="font-bold no-underline hover:underline" style="color:var(--wiki-text);">이용약관</a> | 
+                <a href="#" class="font-bold no-underline hover:underline" style="color:var(--wiki-text);">책임의 한계와 법적고지</a> | 
+                <a href="#" class="font-bold no-underline hover:underline" style="color:var(--wiki-text);">회원정보 고객센터</a>
+            </div>
+            <p class="mb-4 text-gray-500">
+                이 저작물은 <strong>CC BY-NC-SA 2.0 KR</strong>에 따라 이용할 수 있습니다. <br>
+                기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.
+            </p>
+            <div class="mt-4 text-[10px] text-gray-400 font-mono">
+                Powered by HyobinWiki Engine
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        // 목차 부드러운 스크롤 이동
+        document.querySelectorAll('.toc a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    const headerOffset = 60;
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                    });
+                }
+            });
+        });
+    </script>
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

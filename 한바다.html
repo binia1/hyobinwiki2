@@ -1,0 +1,731 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한바다 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        :root { 
+            /* 한바다의 상징색: 오션 블루 */
+            --wiki-main: #0099FF; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #0099FF;
+            --wiki-table-header-text: #ffffff;
+            --wiki-alert-border: #a2a9b1;
+            --wiki-alert-bg: #f8f9fa;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { 
+            font-size: 2.3rem !important; 
+            font-weight: 700 !important; 
+            border-bottom: 1px solid var(--wiki-border); 
+            padding-bottom: 10px; 
+            margin-top: 3.5rem; 
+            margin-bottom: 1.2rem;
+            color: var(--wiki-link) !important; 
+            clear: both; 
+            line-height: 1.3;
+        }
+        h2::before { display: none !important; }
+
+        h3 { 
+            font-size: 1.8rem !important; 
+            font-weight: 700 !important; 
+            margin-top: 2.5rem; 
+            margin-bottom: 1rem;
+            color: var(--wiki-link) !important; 
+            border-left: none !important; 
+            padding-left: 0 !important;
+        }
+
+        /* 위키 요소 */
+        del { color: #7f7f7f; text-decoration: line-through; cursor: help; }
+        .wiki-drip { color: #aaa; font-size: 0.85em; }
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+
+        /* 테이블 스타일 */
+        table.wiki-table-custom { border-collapse: collapse !important; width: 100%; margin: 15px 0; border: 1px solid #ddd !important; font-size: 0.9rem; }
+        table.wiki-table-custom th, table.wiki-table-custom td { border: 1px solid #ddd !important; padding: 6px 10px; vertical-align: middle; }
+        table.wiki-table-custom th { background-color: var(--wiki-table-header); color: white; font-weight: bold; text-align: center; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 380px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.3rem !important; font-weight: bold; }
+        .infobox-image { text-align: center; padding: 10px; border-bottom: 1px solid #ddd; background: white; }
+        .infobox table { border: none !important; margin: 0 !important; width: 100% !important; }
+        .infobox th { background-color: var(--wiki-gray-bg); text-align: center; padding: 8px 5px; border: 1px solid #ddd; width: 30%; font-weight: bold; vertical-align: middle;}
+        .infobox td { padding: 8px 5px; border: 1px solid #ddd; text-align: left; vertical-align: middle;}
+
+        /* 상단 버튼 */
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; }
+
+        /* 각주 & 호버보드 */
+        .footnote-ref { color: var(--wiki-link); font-size: 0.8em; vertical-align: super; cursor: pointer; text-decoration: none; font-weight: bold; }
+        .footnotes-area { margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px; font-size: 0.85rem; color: #555; }
+        
+        /* 인용 박스 (Voice) */
+        .quote-box {
+            background-color: #f0f7ff;
+            border-left: 5px solid var(--wiki-main);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .quote-title { font-weight: bold; color: var(--wiki-link); margin-bottom: 5px; display: block; }
+        .quote-content { font-style: italic; color: #555; }
+
+        /* 시나리오 박스 (대본용) */
+        .scenario-box {
+            background-color: #fafafa;
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .scenario-title {
+            font-weight: 900;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .scenario-line { margin-bottom: 10px; }
+        .char-name { font-weight: bold; margin-right: 5px; }
+        .char-yoon { color: #cc0000; } /* 윤대환: 빨강 */
+        .char-han { color: #0055aa; }  /* 한바다: 파랑 */
+        .char-oh { color: #555; }      /* 오다구: 회색 */
+        .stage-direction { color: #666; font-style: italic; font-size: 0.9em; }
+
+        /* 굿즈 카드 */
+        .goods-card { transition: transform 0.2s; border: 1px solid #eee; border-radius: 8px; overflow: hidden; text-align: center; background: white; }
+        .goods-card:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .goods-card img { width: 100%; height: 200px; object-fit: contain; background-color: #f8f9fa; padding: 10px; }
+        .goods-card-info { padding: 15px; text-align: left; border-top: 1px solid #eee; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <!-- 상단 내비게이션 -->
+    <nav class="bg-[#7777aa] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input id="searchInput" data-hb-search="input" autocomplete="off" type="text" placeholder="검색" class="p-1 px-4 rounded text-black text-sm">
+            <button id="searchBtn" type="button" data-hb-search="button" class="bg-[#555588] p-1 px-3 rounded text-sm font-bold">검색</button>
+        </div>
+    </nav>
+
+<div class="wiki-container shadow-lg">
+        <!-- 문서 제목 -->
+        <div class="title-area">
+            <div class="txt-lvl-1">한바다</div>
+            <div class="flex gap-2 mb-1">
+<button onclick="location.href='토론.html'" style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">토론</button>
+<button onclick="location.href='수정.html'" style="background-color:#0275d8; color:#ffffff; border:1px solid #0275d8 !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">편집</button>
+<button onclick="location.href='역사.html'" style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">역사</button>
+
+            </div>
+        </div>
+
+        <div class="category-box border border-[#ccc] p-2 bg-gray-50 mb-4 rounded">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="효빈광역시청.html" class="wiki-link">효빈광역시청</a> | 
+            <a href="공식마스코트.html" class="wiki-link">공식 마스코트</a> | 
+            <a href="요정.html" class="wiki-link">요정</a>
+        </div>
+<!-- 인포박스 -->
+        <aside class="infobox">
+            <div class="infobox-title">한바다<br><span class="text-sm font-normal">Han Bada | 韓바다</span></div>
+            <!-- 전신 일러스트 영역 -->
+            <div class="infobox-image">
+                <img src="이미지/한바다_전신.png" alt="한바다 공식 전신 일러스트" style="width:100%; height:auto;" onerror="this.src='https://placehold.co/300x400/0099FF/FFFFFF?text=Han+Bada(No+Image)'">
+                <div class="text-xs text-gray-500 mt-1">효빈광역시 공식 마스코트 (2026 Ver.)</div>
+            </div>
+            <!-- SD 캐릭터 추가 영역 -->
+            <div class="infobox-image mt-2">
+                <img src="이미지/한바다 SD.png" alt="한바다 SD 캐릭터" style="width:70%; margin:0 auto;" onerror="this.src='https://placehold.co/200x200/0099FF/FFFFFF?text=Han+Bada+SD'">
+                <div class="text-xs text-gray-500 mt-1">공식 SD 일러스트 (요정 Ver.)</div>
+            </div>
+
+            <table>
+                <tr><th>생일</th><td>2000년 7월 1일<br><span class="text-xs text-gray-500">(밀레니엄의 시작과 함께 탄생)</span></td></tr>
+                <tr><th>나이</th><td>26세 (2000년생)</td></tr>
+                <tr><th>소속</th><td><a href="효빈광역시청.html" class="wiki-link">효빈광역시청</a> 대변인실 홍보팀<br>(명예 주무관 → <strong>홍보대사</strong>)</td></tr>
+                <tr><th>신체 사이즈</th><td>156cm / B97-W59-H87 (G컵)</td></tr>
+                <tr><th>출신지</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> 남구 항동1가<br>(<a href="효빈항.html" class="wiki-link">효빈항</a> 제1국제여객터미널 앞바다)</td></tr>
+                <tr><th>가족 관계</th><td>부모님(효빈 앞바다),<br>친구(<a href="박청권.html" class="wiki-link">박청권</a>)</td></tr>
+                <tr><th>MBTI</th><td><strong>ENFJ</strong> (정의로운 사회운동가)<br><span class="text-xs text-gray-500">※시장님 취임 후 설정됨</span></td></tr>
+                <tr><th>상징</th><td>효빈항의 푸른 바다, 변하지 않는 가치, 시민의 벗</td></tr>
+                <tr><th>강점/특기</th><td>타자 800타, 킹블레이드 오타게, <span class="wiki-drip">리듬게임 쌉고수(30렙 엄지 풀콤)</span></td></tr>
+                <tr><th>약점/트라우마</th><td>폐쇄공포증 (윤대환 치하 지하창고 16개월 유폐 생존)</td></tr>
+                <tr><th>좋아하는 음식</th><td>엠마 베르데 빵, 간식 창고(초콜릿, 젤리, 사탕) 털어먹기</td></tr>
+                <tr><th>싫어하는 음식</th><td>갈색 음식(카레, 짜장면) - 두청운수 갈색 트라우마</td></tr>
+                <tr><th>성우</th><td>한국: <strong>조경이</strong><br>일본: <strong><a href="아이미.html" class="wiki-link">아이미 (愛美)</a></strong></td></tr>
+                <tr><th>팬덤</th><td><strong>항해사</strong> (Navigators)</td></tr>
+                <tr><th>별명</th><td>바다 요정, 하이텐션 긍정왕,<br><del>예산 전사</del>, 팩트체크 봇,<br><strong>생존왕</strong>, <del>글래머</del>, <strong>HAF 여신</strong>,<br><strong>30렙 폭격기</strong></td></tr>
+                <tr><td colspan="2" style="text-align: center; padding: 15px 0; background-color: #f9f9f9;">
+                    <img src="이미지/효빈_효빈시청_한바다_퍼스널_아이콘.svg" alt="한바다 퍼스널 아이콘" style="width:50px; height:auto; display: block; margin: 0 auto 5px;">
+                    <span class="text-xs text-gray-500 font-bold">퍼스널 아이콘</span>
+                </td></tr>
+            </table>
+        </aside>
+
+        <!-- 목차 -->
+        <div class="toc">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">역사 (Relationship Timeline)</a>
+                    <ul>
+                        <li>2.1. <a href="#s-2-1" class="wiki-link">제1막: 창조주 (1998~2006)</a></li>
+                        <li>2.2. <a href="#s-2-2" class="wiki-link">제2막: 박해자 (2006~2008)</a></li>
+                        <li>2.3. <a href="#s-2-3" class="wiki-link">제3막: 수호자 (2014~2022)</a></li>
+                        <li>2.4. <a href="#s-2-4" class="wiki-link">제4막: 영혼의 파트너 (2022~)</a></li>
+                    </ul>
+                </li>
+                <li>3. <a href="#s-3" class="wiki-link">상세 설정</a>
+                    <ul>
+                        <li>3.1. <a href="#s-3-1" class="wiki-link">외모 (Visuals)</a></li>
+                        <li>3.2. <a href="#s-3-2" class="wiki-link">목소리 및 성우</a></li>
+                        <li>3.3. <a href="#s-3-3" class="wiki-link">성격 및 특징</a></li>
+                        <li>3.4. <a href="#s-3-4" class="wiki-link">취미 및 특기</a></li>
+                        <li>3.5. <a href="#s-3-5" class="wiki-link">취향 (Likes & Dislikes)</a></li>
+                    </ul>
+                </li>
+                <li>4. <a href="#s-4" class="wiki-link">팬덤 (항해사)</a></li>
+                <li>5. <a href="#s-5" class="wiki-link">2차 창작 (Secondary Creation)</a></li>
+                <li>6. <a href="#s-6" class="wiki-link">인간 관계</a></li>
+                <li>7. <a href="#s-7" class="wiki-link">관련 굿즈</a></li>
+                <li>8. <a href="#s-8" class="wiki-link">여담</a></li>
+            </ul>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1">1. 개요</h2>
+        <div class="p-4 bg-blue-50 border-l-4 border-blue-400 text-blue-900 mb-6 font-bold italic">
+            "전속 전진! (Yousoro!) 효빈의 바다는 오늘도 맑음입니다!"
+        </div>
+        <p>
+            <a href="효빈광역시.html" class="wiki-link">효빈광역시</a>를 상징하는 공식 마스코트. 2000년 7월 1일, <strong>밀레니엄의 시작</strong>과 함께 <a href="효빈항.html" class="wiki-link">효빈항</a> 앞바다에서 태어난 '바다의 요정'이다.
+        </p>
+        <p>
+            짙은 <strong>네이비 블루(Navy Blue)</strong>의 긴 생머리가 특징이며, 효빈항의 상징인 닻 모양 로고가 박힌 세일러 스타일 제복을 착용한다. 동복과 하복이 구분되어 있는 디테일이 살아있다.
+        </p>
+        <p>
+            한때는 예산 낭비라는 명목으로 폐기될 뻔한 위기를 겪었으나, <a href="윤대환.html" class="wiki-link">암흑기</a>를 견뎌내고 극적으로 생환한 <strong>효빈시 현대사의 산증인</strong>이다. 현재는 <a href="효빈광역시청.html" class="wiki-link">효빈광역시청</a> 대변인실 안쪽 '특별 휴게실'에 거주하며 홍보대사 자격으로 활동 중이다. 2022년 <a href="박효빈.html" class="wiki-link">박효빈</a> 시장 취임 이후 킹블레이드를 장착한 <del>마법소녀</del> 역동적인 이미지로 전성기를 맞이했다.
+        </p>
+
+        <!-- 2. 역사 -->
+        <h2 id="s-2">2. 역사 (Relationship Timeline)</h2>
+        <p>그녀의 삶은 효빈시 역대 시장들과의 관계 속에서 드라마틱하게 변화해왔다. 단순한 마스코트를 넘어, 시장의 철학에 따라 <strong>'지옥'과 '천국'을 오간 파란만장한 생존기</strong> 그 자체다.</p>
+
+        <h3 id="s-2-1">2.1. 제1막: 창조주 (The Creator)</h3>
+        <p>
+            <strong><a href="박현만.html" class="wiki-link">박현만</a> 전 시장 (1958년생)</strong> 시절 탄생했다. 당시 박 시장은 새 천년(Y2K)을 맞아 기존의 촌스러운 '호돌이' 류의 관공서 마스코트 관행을 깨고, <strong>"감성의 시대에 맞는 '사람 형상'의 캐릭터가 필요하다"</strong>며 한바다를 기획했다.
+        </p>
+        <p>
+            당시 40대 초반이었던 박 시장은 소위 <strong>'건담 세대'</strong>이자 서브컬처에 이해도가 깊은 인물이었다. 시의회에서도 일부 <strong>강경 보수 성향의 '꼰대' 의원들</strong>만 "왜놈 만화 캐릭터 같다", "눈이 너무 커서 징그럽다"며 반대했을 뿐, 소장파 의원들이나 젊은 층은 "신선하다", "우리 시도 드디어 트렌드를 탄다"며 옹호론을 펼쳤다. 박 시장은 반대파 의원들을 상대로 <strong>"이것은 21세기형 사이버 펑크 미학이다!"</strong>라고 3시간 동안 일장연설을 하며 예산을 지켜냈다는 전설이 있다. <del>시대를 너무 앞서간 아버지</del>
+        </p>
+        <div class="border-l-4 border-blue-400 bg-blue-50 p-3 my-3 text-sm">
+            <strong class="text-blue-700 block mb-1">🌊 2004년: 전국구 스타로의 도약</strong>
+            <p>
+                탄생 초기에는 지역 마스코트에 불과했지만, 2004년경 초고속 인터넷 보급과 함께 디시인사이드 등지에서 일명 <strong>'효빈시청 눈나'</strong>라는 별명으로 짤방이 돌기 시작하며 폭발적인 인기를 얻었다. 
+                당시 네티즌들은 "공무원들이 이런 거나 만들고 있다니 세금이 아깝지 않다"며 열광했고, 이는 훗날 강력한 팬덤 '항해사'가 형성되는 시발점이 되었다.
+            </p>
+        </div>
+        <p>
+            이러한 인기에 힘입어 <strong>2006년 5월</strong>, 박현만 시장 임기 말에 개최된 <strong>'제1회 HAF (Hyobin Animation Festival)'</strong>는 그야말로 대박을 터뜨렸다. 한바다 코스프레를 한 홍보 도우미들과 한정판 굿즈를 보기 위해 전국에서 수만 명의 인파가 효빈항으로 몰려들었고, 인근 횟집의 광어가 동날 정도였다고 한다. 이는 한바다의 전성기이자, 다가올 암흑기 직전의 마지막 불꽃이었다.
+        </p>
+
+        <h3 id="s-2-2">2.2. 제2막: 박해자 (The Oppressor)</h3>
+        <p>
+            <strong><a href="윤대환.html" class="wiki-link">윤대환</a> 전 시장 (두청운수 일가)</strong> 시절은 한바다에게 그야말로 지옥 그 자체였다. 윤대환은 취임 즉시 <strong>"계집애 그림이 시청의 위엄을 떨어뜨린다"</strong>, <strong>"돈 안 되는 짓거리는 다 치워라"</strong>며 한바다를 폐기 처분하고 지하 2층 비품 창고에 유폐시켰다. <del>문화 파괴자</del>
+        </p>
+        <p>
+            당시의 상황은 단순한 해고가 아닌 <strong>숙청(Purge)</strong>에 가까웠다. 다음은 시청 내부에 암암리에 전해 내려오는, 당시 살벌했던 시장실 상황의 재구성 기록이다.
+        </p>
+
+        <!-- 대본 스타일 박스 -->
+        <div class="scenario-box shadow-md">
+            <span class="scenario-title">📜 [기록] 2006년 7월의 숙청 (The Purge)</span>
+            
+            <div class="text-sm text-gray-600 mb-4 border-b border-gray-300 pb-2">
+                <strong>장소:</strong> 효빈광역시청 시장 집무실<br>
+                <strong>일시:</strong> 2006년 7월 (윤대환 취임 직후)<br>
+                <strong>상황:</strong> 무겁고 권위적인 분위기. 책상 위에는 <a href="두청운수.html" class="wiki-link">두청운수</a> 관련 서류가 산더미처럼 쌓여 있다.
+            </div>
+
+            <div class="scenario-line">
+                <span class="char-name char-yoon">윤대환:</span> 
+                <span class="stage-direction">(빨간 넥타이를 매고 거만하게 앉아 서류를 탁 던지며)</span>
+                "오 사장. 이게 뭡니까? 예산 내역을 보니까, 무슨 '캐릭터 유지 보수비'가 이렇게 많이 들어가?"
+            </div>
+            
+            <div class="scenario-line">
+                <span class="char-name char-oh">오다구:</span> 
+                <span class="stage-direction">(효빈도시공사 사장, 땀을 뻘뻘 흘리며 서 있다)</span>
+                "아, 시장님. 그건 우리 시의 상징인 '한바다'양의 의상 관리와 굿즈 제작비입니다. 시민들 반응이 아주..."
+            </div>
+
+            <div class="scenario-line">
+                <span class="char-name char-yoon">윤대환:</span> 
+                <span class="stage-direction">(말을 끊으며 혐오스럽다는 표정으로)</span>
+                "반응? 돈이 됩니까? 이게 버스 요금처럼 현찰이 딱딱 들어오냐고! 내가 볼 때 이 눈 큰 가시나, 아주 비현실적이야. 우리 시가 무슨 만화 가게야?"
+            </div>
+
+            <div class="scenario-line">
+                <span class="char-name char-han">한바다:</span> 
+                <span class="stage-direction">(당시 6년 차 마스코트, 2000년식 사이버틱한 구형 유니폼을 입은 채 오다구 사장 뒤에 숨어 움찔하며)</span>
+                "저... 저는 효빈의 미래와 희망을..."
+            </div>
+
+            <div class="scenario-line">
+                <span class="char-name char-yoon">윤대환:</span> 
+                "시끄러워! 희망이 밥 먹여줘? 우리한테 필요한 건 <strong>'돈'</strong>이야! 넌 오늘부로 해고야. 당장 짐 싸서 나가."
+            </div>
+
+            <div class="scenario-line">
+                <span class="char-name char-oh">오다구:</span> 
+                "시장님! 한바다는 2000년부터 우리 시의 얼굴이었습니다! 이러시면 안 됩니다!"
+            </div>
+
+            <div class="scenario-line">
+                <span class="char-name char-yoon">윤대환:</span> 
+                "당신도 같이 나가고 싶나? ...아, 이미 해임 처리했지? 둘 다 끌어내!"
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-dashed border-gray-400">
+                <strong>ACT 2. 유폐 (The Imprisonment)</strong><br>
+                <span class="stage-direction">청원경찰들에 의해 지하 2층 먼지 쌓인 비품 창고 앞으로 끌려온 한바다. 손에는 구겨진 '해고 통지서'가 들려 있다.</span><br><br>
+                
+                <span class="char-name char-han">한바다:</span> 
+                <span class="stage-direction">(울먹이며)</span> "저... 정말 여기로 들어가야 해요? <a href="효빈 도시철도 1호선.html" class="wiki-link" style="color:#0077DD;">1호선</a> 개통식에도 가야 하는데..."<br>
+                
+                <span class="stage-direction">(쿠궁- 무거운 철문이 닫히고, 암흑 속에서 그녀가 쓰고 있던 '2000년 밀레니엄 고글'만 희미하게 빛난다. 밖에서는 돈불라의 기괴한 웃음소리가 들려온다.)</span>
+            </div>
+        </div>
+
+        <p>
+            결국 그녀는 <strong>16개월간 지하 창고에 유폐</strong>되었다. 그사이 지상에서는 끔찍한 <strong>'미적 테러(Aesthetic Terrorism)'</strong>가 벌어졌다. 윤대환은 자신의 비자금 조성을 위해 급조한 괴물 캐릭터 <strong>'<a href="돈불라.html" class="wiki-link">돈불라</a>(Donbulla)'</strong>를 시의 상징으로 지정했다. 
+        </p>
+        <p>
+            또한, 2006년 대박을 쳤던 <strong>'제2회 HAF (2007년 예정)'를 "오타쿠들이나 모이는 저질 행사"라며 일방적으로 취소</strong>해버렸다. "그딴 거 할 돈으로 보도블록이나 깔아!"라는 망언과 함께였다. 이에 행사를 준비하던 상인들과 1년을 기다려온 전국의 팬들이 격분했다.
+        </p>
+        <div class="p-3 bg-red-50 border-l-4 border-red-400 text-red-800 my-3">
+            <strong class="block mb-1">📢 시민들의 깨달음: "똥색보단 파란색이 낫다!"</strong>
+            <p>
+                아이러니하게도, 초기 한바다 캐릭터를 "세금 낭비"라며 반대하던 일부 시민들조차 윤대환 시기를 겪으며 태세 전환을 하게 되었다. 
+                칙칙한 갈색(Muddy Brown) 도색의 <a href="두청운수.html" class="wiki-link">두청운수</a> 버스가 도로를 점령하고, 흉물스러운 돈불라 인형이 시청 앞에 서 있는 꼬라지(...)를 1년 넘게 지켜본 시민들은 
+                <strong>"차라리 눈 큰 파란 머리 여자애가 백번 천번 낫다", "그때가 효빈의 리즈 시절이었다"</strong>며 한바다를 그리워하기 시작했다. <del>구관이 명관</del>
+            </p>
+        </div>
+        <p>
+            하지만 2007년 11월 30일, 대법원 판결로 윤대환이 시장직을 상실하자 분노한 시민들이 시청으로 난입해 창고 문을 부수고 그녀를 구출해 냈다. 햇빛을 다시 본 그녀는 <strong>"다시는 이 도시가 갈색으로 물들지 않게 하겠다"</strong>고 다짐하며, 윤대환의 흔적을 지우는 데 앞장섰다고 한다.
+        </p>
+
+
+        <h3 id="s-2-3">2.3. 제3막: 수호자 (The Guardian)</h3>
+        <p>
+            <strong><a href="김성민.html" class="wiki-link">김성민</a> 전 시장 (1972년생)</strong>은 한바다의 든든한 삼촌이자 매니지먼트 사장이었다. <strong>'러브라이브(μ's)' 세대</strong>인 그는 캐릭터가 가진 치유와 통합의 힘을 정확히 알고 있었다.
+        </p>
+        <p>
+            김 시장은 한바다를 단순한 그림이 아니라 <strong>'시정의 파트너'</strong>로 격상시켰다. 딱딱한 행정 명령서나 공사 안내판에 한바다의 부드러운 일러스트를 삽입해 시민들의 거부감을 줄이는 <strong>'감성 행정(Moe Administration)'</strong>을 펼쳤다. 
+        </p>
+        <p>
+            실제로 도로 공사로 인해 민원이 폭주하던 현장에, 땀을 흘리며 "열심히 공사 중이에요! 조금만 참아주세요~"라고 말하는 귀여운 한바다 입간판을 세우자 <strong>민원이 80% 감소했다는 기적적인 통계</strong>가 있다. (...) 보수적인 의회에서 "캐릭터 예산을 삭감하라"고 공격할 때마다, 김 시장은 온몸으로 막아내며 한바다의 품위 유지비(디자인 리뉴얼 비용)를 사수해 냈다. <del>덕업일치의 표본</del>
+        </p>
+
+        <h3 id="s-2-4">2.4. 제4막: 영혼의 파트너 (The Soul Partner)</h3>
+        <p>
+            <strong>현 <a href="박효빈.html" class="wiki-link">박효빈</a> 시장 (1996년생)</strong>은 한바다의 '성덕(성공한 덕후)'이자, 그녀를 전국구 스타로 만든 총괄 프로듀서다. 1996년생인 박 시장에게 2000년생 한바다는 유치원 시절부터 봐온 <strong>'친근한 동네 누나'</strong>이자 <strong>'효빈시 그 자체'</strong>였다.
+        </p>
+        <p>
+            박 시장은 취임 후 <strong>"어릴 적 동경하던 누나와 함께 효빈을 '덕질의 성지'로 만들겠다"</strong>고 선언했다. 그는 한바다에게 단순한 마스코트를 넘어선 '인격'을 부여했다. 유명 성우 섭외는 물론, MBTI(ENFJ) 설정, 맛집 탐방 브이로그 촬영 등 아이돌에 버금가는 매니지먼트를 시전했다.
+        </p>
+        <p>
+            현재 공식 석상에서 시장 본인과 한바다(홀로그램/등신대)가 나란히 서서 브리핑을 하는 <strong>'더블 센터(Double Center)'</strong> 체제는 효빈시만의 명물이 되었다. <span class="wiki-drip">항간에는 박 시장이 월급의 절반을 한바다 굿즈 제작비(사비)로 쓴다는 소문이 있다.</span> 2026년 현재, 한바다는 킹블레이드를 장착한 역동적인 이미지로 제2의 전성기를 누리고 있다.
+        </p>
+
+        <!-- 3. 상세 설정 -->
+        <h2 id="s-3">3. 상세 설정</h2>
+
+<h3 id="s-3-1">3.1. 외모 (Visuals)</h3>
+        <p>
+            공식적으로 <strong>'효빈의 푸른 바다를 의인화한 외모'</strong>를 지녔다. 가장 큰 특징은 머리카락으로, 정수리의 짙은 코발트블루(#0047AB)에서 끝부분의 아쿠아 민트색(#7FFFD4)으로 이어지는 <strong>'오션 웨이브 그라데이션'</strong> 헤어스타일이다. 이는 수심이 깊은 먼바다에서 얕은 해변으로 이어지는 효빈항의 바다색을 상징한다. <del>미용실에서 이대로 염색해달라고 하면 견적이 얼마나 나올지 두려워지는 머리색이다</del>
+        </p>
+        <p>
+            오른쪽 머리에는 <strong>닻(Anchor) 모양의 금속 핀</strong>을, 왼쪽 머리에는 <strong>조개 모양 머리 장식</strong>을 착용해 좌우 비대칭의 조화를 이룬다. 눈동자는 여름철 바다를 쏙 빼닮은 청량한 에메랄드빛 벽안이다.
+        </p>
+        <p>
+            단정한 제복에 가려져 잘 드러나지 않지만, 사실 <strong>효빈교통공사 생태계를 초토화시키는 세계관 최강자급 글래머 체형</strong>의 소유자다. 공식 프로필상 신장은 <strong>156cm</strong>로 아담한 단신에 속하지만, 쓰리사이즈는 무려 <strong>B97 - W59 - H87</strong>에 컵 사이즈는 <strong>G컵</strong>이라는 어마무시한 흉부 장갑(...)을 자랑한다. <del>이게 공무원이야 그라비아 아이돌이야</del> 
+        </p>
+        <p>
+            이 압도적인 바스트 수치 덕분에 지급받은 기본 제복 셔츠 단추가 항상 비명을 지르며 튕겨져 나갈 듯 위태로워 보인다는 묘사가 자주 등장한다. 156cm의 작은 키에 G컵이라는 비현실적인 질량을 견디느라 <del>만성 어깨 결림과 허리 통증에 시달리지 않을까 심히 걱정될 정도다</del> 공식 일러스트에서도 59cm의 잘록한 개미허리와 대비되는 폭발적인 볼륨감이 우월하게 묘사되는데, 팬들 사이에서는 이 엄청난 밸런스가 <del>모든 것을 휩쓰는 거대한 해일</del> <span class="wiki-drip">효빈항 앞바다의 압도적인 풍요로움(...)을 상징한다 카더라.</span>
+        </p>        
+<div class="border-l-4 border-red-400 bg-red-50 p-3 my-3 text-sm">
+            <strong class="text-red-600 block mb-1">※ 윤부자(父子)의 굴욕 사건 : 한바다 대첩</strong>
+            <p>
+                이 압도적인 피지컬(...) 때문에 <a href="윤대환.html" class="wiki-link">윤대환</a>의 아들이자 일베충으로 악명 높은 <a href="윤재훈.html" class="wiki-link">윤재훈</a>이 이끄는 악성 패거리가 시청 민원 게시판에 좌표를 찍고 테러를 가한 사건이다. 이들은 <strong>"공공기관 마스코트가 너무 선정적이다"</strong>, <strong>"시민의 혈세로 저런 야한 캐릭터나 만들고 있다"</strong>며 온갖 생떼를 썼다. <del>평소엔 룸살롱 VIP면서 2D 캐릭터한테 엄격한 내로남불의 정석</del>
+            </p>
+            <p class="mt-2">
+                하지만 윤재훈의 얄팍한 의도와는 정반대로, 이 논란이 각종 서브컬처 커뮤니티로 퍼져나가자 오히려 <strong>"효빈시가 꼴잘알(...)이다"</strong>, <strong>"시장님이 갓캐를 만드셨다"</strong>며 폭발적인 호응을 얻어버렸다. 결과적으로 전국의 성인 오타쿠 계층이 한바다 굿즈를 싹쓸이하기 위해 효빈시청 지하 굿즈샵으로 성지순례를 오는 기현상이 발생했고, <strong>단 일주일 만에 굿즈 1년 치 재고가 완판되며 시 재정에 어마어마한 흑자를 안겨주었다.</strong> <del>오타쿠의 구매력을 얕본 자의 최후</del>
+            </p>
+            <p class="mt-2">
+                이에 단단히 긁힌(...) 윤재훈이 효빈시청 광장 앞에서 '한바다 퇴출' 1인 시위를 감행했으나, 하필 그날이 한바다 한정판 아크릴 스탠드 발매일이었다. 결국 전날 밤부터 오픈런을 뛰러 온 수백 명의 한바다 팬클럽(통칭 <strong>'항해사'</strong>) 인파에 둘러싸여, <strong>오타쿠들의 거대한 파도 속에서 초라하게 찌그러진 굴욕 인증샷만 남기고 도망쳐야 했다.</strong> <span class="wiki-drip">진정한 의미의 물리적 고립</span>
+            </p>
+            <p class="mt-2">
+                이 사태를 집무실 창문으로 여유롭게 지켜보던 <a href="박효빈.html" class="wiki-link">박효빈</a> 시장은 곧바로 시청 공식 SNS에 <strong>"전국 오타쿠 여러분의 막강한 화력이 곧 시 재정 확보이자, 진정한 사회복지 정책의 실현입니다.^^ 매출이 곧 복지!"</strong>라는 도발적인 한 줄 논평을 남겨 윤재훈의 멘탈을 완전히 가루로 만들어 버렸다. <del>사회복지학과 전공자의 무서움</del>
+            </p>
+        </div>
+
+        <h3 id="s-3-2" class="mt-4">3.2. 복장 및 소품</h3>
+        <p>
+            기본 복장은 공무원 특유의 단정함과 신뢰감을 강조하는 <strong>네이비색 더블 버튼 블레이저</strong>와 무릎 위로 살짝 올라오는 회색 플리츠스커트다. 왼쪽 가슴에는 효빈시청 공식 엠블럼 와펜이 금장으로 부착되어 있으며, 행정관으로서의 품위를 위해 항상 티 없이 맑은 <strong>흰색 예식용 장갑</strong>을 착용한다.
+        </p>
+        <p>
+            하지만 앞서 언급된 <strong>G컵의 비현실적인 흉부 장갑</strong> 때문에, 이 단정해야 할 더블 버튼 블레이저의 가슴 쪽 단추 2개가 항상 터지기 직전의 아슬아슬한 텐션을 유지하고 있다. <del>단추: 죽여줘...</del> 숨을 크게 쉴 때마다 팽팽해지는 셔츠 주름과 튕겨져 나갈 것 같은 단추의 조합 덕분에, 단정함보다는 오히려 섹시함과 위태로움(...)이 배가된다는 평이 지배적이다. 
+        </p>
+
+        <div class="p-3 bg-gray-100 rounded text-sm text-gray-600 border border-gray-300 my-2">
+            <strong>💡 소품의 비밀:</strong> 공식 일러스트에서 양손에 소중하게 쥐고 있는 두 개의 두루마리는 각각 공적인 <strong>「효빈시 시민 헌장」</strong>과 사적인 <strong>「효빈광역시 로컬 맛집 지도」</strong>라고 한다. <del>사실 의전 행사 브리핑을 할 때 헌장인 척 펴놓고 맛집 지도를 보며 오늘 점심 메뉴를 고른다는 합리적인 의혹이 제기되고 있다</del> 공무원의 막중한 본분과 개인의 식욕(...)을 동시에 챙기는, 행정의 달인다운 완벽한 밸런스다.
+        </div>
+
+        <h3 id="s-3-2">3.2. 목소리 및 성우</h3>
+        <table class="wiki-table-custom">
+            <tr>
+                <th width="20%">구분</th>
+                <th width="30%">성우</th>
+                <th>연기 톤 & 성우 개그 (Actor Allusions)</th>
+            </tr>
+            <tr>
+                <td><strong>한국어</strong></td>
+                <td><strong>조경이</strong></td>
+                <td>
+                    또렷하고 신뢰감 있는 <strong>'아나운서 톤'</strong>과 장난기 넘치는 <strong>'여동생 톤'</strong>을 자유자재로 오간다. <br>
+                    시장님에게 예산을 타낼 때는 목소리 톤이 3옥타브 올라간다는 소문이 있다. <del>이때만큼은 애교 만렙</del><br><br>
+                    <span class="wiki-drip">※ 결재가 계속 반려되면 갑자기 창을 휘두르는 시늉을 하며 <strong>"오라버니...!"</strong>를 찾으며 흑화한다고 한다. (엘소드 - 아라 한)</span>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>일본어</strong></td>
+                <td><strong><a href="아이미.html" class="wiki-link">아이미 (愛美)</a></strong></td>
+                <td>
+                    특유의 허스키함이 섞인 <strong>'하이텐션 아이돌'</strong> 연기가 특징. 대표 대사는 <em>"Yousoro! 효빈의 바다는 오늘도 맑음!"</em>이다.<br><br>
+                    <span class="wiki-drip">※ 회식 자리 노래방에 가면 갑자기 <strong>별 모양 스티커</strong>를 얼굴에 붙이고 <strong>"반짝반짝 두근두근(키라키라 도키도키)!"</strong>을 외치거나, 기타를 치며 록 스피릿(Rock Spirit)을 발산한다고 한다. (BanG Dream! - 카스미 / 밀리언 라이브 - 줄리아)</span>
+                </td>
+            </tr>
+        </table>
+
+        <h3 id="s-3-3">3.3. 성격 및 특징</h3>
+        <p>
+            기본적으로 <strong>ENFJ (정의로운 사회운동가)</strong> 성향이다. 언제나 에너지가 넘치며, 우울해하는 시민이 있으면 먼저 다가가서 사탕(주로 <a href="엠마 베르데.html" class="wiki-link">엠마 베르데</a> 빵맛)을 건네는 친화력을 가졌다. <del>근데 엠마 빵은 맛없기로 유명하다</del>
+        </p>
+        <!-- HAF 관련 추가 설정 -->
+        <p>
+            평소에는 단정하고 친절한 공무원 모드지만, 매년 10월 열리는 <strong><a href="HAF.html" class="wiki-link">HAF (효빈 애니메이션 페스티벌)</a></strong> 기간만 되면 숨겨왔던 '덕력'을 100% 개방한다. 이때는 시청 유니폼 대신 과감한 코스프레(주로 자신의 아이돌 버전)를 하고 무대 1열에서 킹블레이드를 흔드는 모습이 자주 목격된다. <del>시장님과 쌍으로 흔들고 있다</del> 이 모습이 효빈시의 '덕후 친화적(Otaku-Friendly)' 정책을 상징하는 아이콘이 되었다.
+        </p>
+        <p>
+            하지만 마냥 밝기만 한 것은 아니다. 16개월간의 감금 생활을 버텨낸 <strong>'생존왕'</strong>이다. 윤대환 치하의 지하 창고에서 쥐들과 대화하며 버텼던 경험 때문에 웬만한 악플이나 민원에는 눈 하나 깜짝하지 않는 강철 멘탈을 소유하고 있다. <del>바퀴벌레급 생명력</del> 다만 <strong>어두운 곳이나 좁은 곳에 갇히는 것을 극도로 무서워하는 폐쇄공포증</strong>이 트라우마로 남아있다.
+        </p>
+
+        <h3 id="s-3-4">3.4. 취미 및 특기</h3>
+        <p>
+            가장 큰 취미는 <strong>시내버스 '도색' 감상하기</strong>다. <a href="간선버스.html" class="wiki-link">간선버스</a>의 파란색(#01B7ED)과 <a href="지선버스.html" class="wiki-link">지선버스</a>의 초록색(#37B484) 조합을 보며 심신의 안정을 얻는다고 한다. <span class="wiki-drip">과거 칙칙한 갈색 버스만 보던 시절의 반작용이다.</span>
+        </p>
+        <p>
+            특기로는 <a href="효빈 도시철도 1호선.html" class="wiki-link">1호선</a>부터 <a href="효빈 도시철도 8호선.html" class="wiki-link">8호선</a>, <a href="빈효선광역전철.html" class="wiki-link">빈효선</a>, <a href="7호선.html" class="wiki-link">7호선</a>(트램)까지의 모든 역명을 10초 안에 랩처럼 읊는 <strong>'지하철 노선도 타임 어택'</strong>이 있다. <del>쇼미더머니 나가도 될 기세</del>
+        </p>
+        <!-- 오타게 및 리듬게임 특기 추가 -->
+        <p>
+             또 다른 숨겨진 특기는 바로 <strong>오타게(Wotagei/Cyllalume Dance)</strong>다. HAF 전야제 축하 공연 때 양손에 킹블레이드를 3개씩(발가락 사이까지 끼우면 8개) 들고 <strong>'썬더 스네이크'</strong>와 <strong>'로망스'</strong> 기술을 완벽한 정박자로 구사한다. 그 동작이 얼마나 절도 있고 정확한지, 효빈경찰서 교통과에서 <strong>"교통 수신호 요원으로 스카우트하고 싶다"</strong>는 공문을 보냈을 정도라고 한다. (...) <del>이 재능을 왜 여기서 썩혀</del>
+        </p>
+        <p>
+            또한, 리듬게임 <strong><a href="BanG Dream!.html" class="wiki-link">BanG Dream! 걸즈 밴드 파티!</a></strong>의 초고수이기도 하다. 난이도 <strong>30레벨 곡(육조년과 하룻밤 이야기 등)</strong>을 엄지손가락(...)만으로 풀콤보(Full Combo) 치는 기행을 보여준다. 점심시간에 휴게실에서 "타닥타닥"하는 살벌한 터치 소리가 들린다면 십중팔구 한바다가 헬로해피 곡을 치며 스트레스를 풀고 있는 것이다.
+        </p>
+
+        <h3 id="s-3-5">3.5. 취향 (Likes & Dislikes)</h3>
+        <ul class="list-disc pl-5">
+            <li><strong>좋아하는 것:</strong> <a href="엠마 베르데.html" class="wiki-link">엠마 베르데</a> 빵, <a href="효빈 도시철도 1호선.html" class="wiki-link" style="color:#0077DD;">효빈 1호선</a>(자신의 상징색과 같아서), <a href="박현만.html" class="wiki-link">박현만</a> 전 시장(아버지), <a href="김성민.html" class="wiki-link">김성민</a> 전 시장(삼촌), <strong>킹블레이드</strong>(<a href="박효빈.html" class="wiki-link">박효빈</a> 시장이 사준 보물 1호, HAF 필수템).</li>
+            <li>
+                <strong>선호하는 애니메이션:</strong> 
+                <strong>《<a href="러브 라이브! 선샤인!!.html" class="wiki-link">러브 라이브! 선샤인!!</a>》</strong>과 <strong>《<a href="러브 라이브! 니지가사키 학원 스쿨 아이돌 동호회.html" class="wiki-link">니지동</a>》</strong>의 광팬이다. 이유는 단순한데, <strong>'바다가 많이 나와서'</strong>라고 한다. (...) 특히 선샤인의 와타나베 요우를 동경하여 '요우소로(Yousoro)!' 경례 각도가 현역 해군 부사관급으로 완벽하다. 블루레이 전권을 소장 중이며, 시장실에 몰래 포교용으로 갖다 놓기도 한다.
+            </li>
+            <li><strong>싫어하는 것:</strong> 
+                <ul class="list-disc pl-5 mt-1">
+                    <li><strong>갈색 (Muddy Brown):</strong> <a href="두청운수.html" class="wiki-link">두청운수</a>의 상징색. 보기만 해도 구역질을 한다고 한다. <del>생리적 거부감</del></li>
+                    <li><strong>7,000원:</strong> 윤대환 시절 버스 요금 폭리의 상징. 밥값 계산할 때 7,000원이 나오면 굳이 100원을 더 내서 7,100원을 맞춘다. <del>이쯤 되면 광기다</del></li>
+                    <li><strong><a href="갈매기.html" class="wiki-link">갈매기</a>:</strong> 흉물 마스코트 '돈불라'의 원형이라 트라우마가 있다.</li>
+                    <li><strong>빨간색 넥타이:</strong> <a href="윤대환.html" class="wiki-link">윤대환</a>의 상징 아이템.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <!-- 4. 팬덤 (항해사) -->
+        <h2 id="s-4">4. 팬덤 (항해사)</h2>
+        <div class="p-3 bg-indigo-50 border-l-4 border-indigo-400 text-indigo-900 mb-4">
+            <span class="font-bold">"한바다를 지키는 것은 곧 효빈을 지키는 것이다."</span>
+        </div>
+        <p>
+            공식 팬덤 명칭은 <strong>'항해사(Navigators)'</strong>이다. 
+            단순히 귀여운 캐릭터를 좋아하는 수준을 넘어, <a href="윤대환.html" class="wiki-link">윤대환</a> 시장 시절의 탄압을 함께 견뎌낸 <strong>'전우애'</strong>로 뭉쳐있는 것이 특징이다. 당시 지하 창고에 유폐된 한바다의 등신대를 몰래 구출해 온 것도 이들 팬덤의 소행(?)이었다고 전해진다.
+        </p>
+        <p>
+            팬덤의 규모는 전국적이며, 매년 7월 1일(한바다 생일)이 되면 전국 각지에서 <a href="효빈항.html" class="wiki-link">효빈항</a>으로 몰려드는 <strong>'대순례(Grand Pilgrimage)'</strong> 행렬이 이어진다. 이때 이들이 소비하는 숙박비와 식비가 효빈시 3분기 관광 수입의 40%를 차지할 정도라고 하니, 그야말로 걸어 다니는 기업인 셈.
+        </p>
+        <p>
+            특이하게도 <strong>'자정 작용'</strong>이 매우 강력한 팬덤이다. 
+            행사가 끝나면 <a href="윤재훈.html" class="wiki-link">윤재훈</a> 패거리와는 다르게 쓰레기 하나 남기지 않고 완벽하게 청소를 하고 떠나는데, 이는 "우리가 사고를 치면 바다 누나(언니)가 욕먹는다"는 충성심에서 비롯된 것이다. <span class="wiki-drip">시장님보다 공중도덕을 더 잘 지킨다.</span>
+        </p>
+        <p>
+            응원 구호는 <strong>"효빈의 별을 찾아서! 전속 전진!"</strong>이며, <a href="박효빈.html" class="wiki-link">박효빈</a> 시장도 공식 석상에서 이 구호를 자주 사용한다. <del>시장님이 제일 열성 회원이라는 소문이...</del>
+        </p>
+
+<h2 id="s-5">5. 2차 창작 (Secondary Creation)</h2>
+        <div class="p-3 bg-gray-100 border border-gray-300 mb-3 rounded text-sm">
+            <strong>⚠️ [주의]</strong> 이 문단은 효빈시청의 공식 입장이 아닌, 네티즌 및 동인 작가들의 자발적인 활동을 기술한 것입니다. 시청은 공식적으로 <strong>전연령이 이용 가능한 건전한 창작 활동'만'</strong>을 권장합니다. <strong><del>(어디까지나 '공식적'으로는 그렇다는 뜻입니다. 단, 아래 서술된 '절대 금기' 사항은 예외 없이 철퇴를 맞으니 주의합시다.)</del></strong>
+        </div>
+        <p>
+            한바다는 단순한 지자체 마스코트를 넘어, 한국 서브컬처 역사에 전무후무한 획을 그은 생태계 파괴종(...)으로 평가받는다. 2000년대 초반의 근본 넘치는 디자인부터 2026년 현재의 세련된 제복 스타일, <strong>'부패 정권에 의해 지하실에 유폐되었던 비운의 공주님'</strong>이라는 완벽한 서사, 그리고 무엇보다 <strong>156cm에 G컵</strong>이라는 상식을 파괴하는 피지컬이 환상적인 시너지를 일으켜 2차 창작이 폭발적으로 활발하다.
+        </p>
+        <ul class="list-disc pl-5 space-y-4 mt-3">
+            <li>
+                <strong>건전 창작 (Wholesome & Lore):</strong>
+                <a href="윤대환.html" class="wiki-link">윤대환</a> 시장 시절, 암흑의 지하 창고에 방치되었던 그녀를 구출하자는 <strong>#Free_Bada</strong> 해시태그 운동과 함께 쏟아져 나온 릴레이 팬아트는 아직도 전설로 회자된다. 먼지 쌓인 창고 속에서도 에메랄드빛 눈동자를 빛내며 시민들을 기다리는 아련한 모습이나, 낡은 제복을 입고 철창 밖의 빛을 향해 손을 뻗는 일러스트들은 오타쿠들의 눈물샘을 자극하는 명작들로 꼽힌다.
+            </li>
+            <li>
+                <strong>전투/개그물 (Action & Meme):</strong>
+                MUGEN 등의 격투 게임 엔진에 <strong>'한바다 vs 돈불라'</strong> 캐릭터가 유저 패치로 제작되어 배포되기도 했다. 한바다가 평소 들고 다니는 「시민 헌장」 두루마리를 광선검처럼 전개해 돈불라의 뚝배기를 깨버리는(...) 필살기가 압권이다. 다만 <strong>가슴 쪽 피격 판정이 기형적으로 넓어서</strong> 화살이나 장풍에 너무 쉽게 맞는다는 <del>쓸데없이 현실적인</del> 치명적인 버그가 있어 똥캐로 분류된다.
+            </li>
+            <li>
+                <strong>어둠의 영역 (NSFW / R-18):</strong>
+                <span class="text-sm text-red-500 font-bold">(후방주의)</span> 워낙 출중한 미모와 터지기 직전의 단추(...) 덕분에 <strong><a href="pixiv.html" class="wiki-link">Pixiv</a></strong>나 X(트위터) 등지에서 R-18 태그가 붙은 일러스트 개수가 웬만한 메이저 분기 패권 애니메이션의 메인 히로인들을 압살하는 수준이다. 
+                <br><br>
+                효빈시청도 이런 아사리판(...)을 인지하고 있으나, 기본 방침은 <strong>'도가 지나치지 않는 선에서는 주의 및 경고 조치'</strong>로 꽤나 관대하게 끝나는 편이다. 사회복지정책을 전공한 <a href="박효빈.html" class="wiki-link">박효빈</a> 시장이 "시민들의 성적 도파민과 2D 욕구를 충족시켜 주는 것 또한 매우 훌륭한 맞춤형 복지 정책의 일환"이라는 기적의 논리를 펼치며 암묵적으로 묵인하고 있기 때문. <span class="wiki-drip">실제로 시장실 컴퓨터의 '비밀 폴더' 용량이 2테라바이트를 돌파했다 카더라.</span>
+            </li>
+            <li class="bg-red-50 p-3 rounded border border-red-200 mt-2">
+                <strong>🚫 절대 금기 (The Forbidden Zone - 능욕/NTR):</strong>
+                <span class="text-sm text-red-600 font-bold block mb-1">※ 주의: 이 영역을 건드리면 효빈시 법무팀의 진심 모드를 볼 수 있다.</span>
+                일반적인 19금 창작물은 적당히 넘어가 주지만, <strong>한바다를 전임 적폐 시장인 <a href="윤대환.html" class="wiki-link">윤대환</a>이나 그의 아들 <a href="윤재훈.html" class="wiki-link">윤재훈</a>과 엮거나, 악당 <a href="돈불라.html" class="wiki-link">돈불라</a>에게 굴복하여 능욕당하는(...) 료나/NTR 계열의 작품</strong>으로 제작할 경우 이야기가 완전히 달라진다. 
+                <br><br>
+                시청에서는 이를 단순한 2차 창작이 아닌, <strong>'효빈시의 뼈아픈 흑역사와 비극을 조롱하는 악의적 테러 행위'</strong>로 간주한다. 적발 즉시 경고 따위는 생략하고 <strong>자비 없는 게시물 삭제 요구 및 시청 법무팀을 동원한 막대한 행정적/법적 제재(금융치료)</strong>가 다이렉트로 꽂힌다. <del>시민의 성욕(NSFW)은 챙겨주되, 적폐와의 타협(NTR)은 결코 용서치 않는 박효빈 시장님의 확고한 철학</del> <span class="wiki-drip">실제로 HAF 행사에서 윤재훈과 엮는 얇은 책을 내려던 모 서클이 시청 법무팀의 내용증명을 받고 3일 만에 공중분해되었다 카더라.</span>
+            </li>
+        </ul>
+        <!-- 6. 인간 관계 -->
+        <h2 id="s-6">6. 인간 관계</h2>
+        
+        <h3 style="border-left:none; padding-left:0; color:#373a3c; margin-top:20px;">[한바다의 시선으로 본 시장들 (Voice)]</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="quote-box">
+                <span class="quote-title">TO. 박현만 (아버지)</span>
+                <span class="quote-content">"저를 세상에 태어나게 해주시고, 흉물(돈불라)로부터 구해주신 분."</span>
+            </div>
+            <div class="quote-box" style="border-left-color: #EE0022; background-color: #FFF0F0;">
+                <span class="quote-title" style="color: #EE0022;">TO. 윤대환 (그 인간)</span>
+                <span class="quote-content">"(찌릿) 다시는 마주치고 싶지 않은 끔찍한 기억." <del>제발 눈앞에서 사라져</del></span>
+            </div>
+            <div class="quote-box" style="border-left-color: #00CCAA; background-color: #F0FFFA;">
+                <span class="quote-title" style="color: #00CCAA;">TO. 김성민 (삼촌)</span>
+                <span class="quote-content">"제가 예쁘게 활동할 수 있도록 뒤에서 묵묵히 챙겨주신 고마운 분."</span>
+            </div>
+            <div class="quote-box" style="border-left-color: #881188; background-color: #F8F0FF;">
+                <span class="quote-title" style="color: #881188;">TO. 박효빈 (시장님/파트너)</span>
+                <span class="quote-content">"어릴 때 나를 보며 웃던 꼬마가, 이제는 나를 월드 스타로 만들어주고 있어!" <del>근데 덕질 좀 그만해</del></span>
+            </div>
+        </div>
+
+        <ul class="list-disc pl-5 space-y-2 mt-4">
+            <li>
+                <strong><a href="박청권.html" class="wiki-link">박청권</a> (국회의원):</strong> 나이대가 비슷한(99년생, 00년생) '찐친'. 국회 업무가 끝나면 같이 코인 노래방에 가거나 덕질 이야기를 나누는 사이. <del>둘이 사귄다는 소문이 돌았으나 서로 극구 부인했다</del>
+            </li>
+            <li>
+                <strong><a href="임세하.html" class="wiki-link">임세하</a> (7호선 마스코트):</strong> 아끼는 동생. 윤대환 시절 7호선 폐지 저지 시위 현장에서 함께 싸웠던 '전우'는 그녀의 언니인 <strong><a href="임세정.html" class="wiki-link">임세정</a></strong>이다. (당시엔 임세하 캐릭터가 없었다.) 한바다는 당시 임세정이 확성기를 들고 싸우던 모습을 생생히 기억하며 리스펙트한다.
+            </li>
+        </ul>
+
+        <!-- 7. 관련 굿즈 -->
+        <h2 id="s-7">7. 관련 굿즈</h2>
+        <p><a href="효빈광역시청.html" class="wiki-link">효빈광역시청</a> 1층 기념품샵 및 <a href="효빈항.html" class="wiki-link">효빈항</a> 터미널 팝업스토어에서 구매 가능하다. <span class="wiki-drip">윤재훈 덕분에 3차 재입고 중이다.</span></p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+            <div class="goods-card cursor-pointer" onclick="alert('상품 상세 페이지로 이동합니다.')">
+                <img src="이미지/한바다 네소베리.png" alt="한바다 스케일 피규어" onerror="this.src='https://placehold.co/200x200/eee/999?text=King+Blade'">
+                <div class="goods-card-info">
+                    <div class="text-sm font-bold text-gray-800 mb-1">한바다의 캐릭터 스케일 피규어</div>
+                    <div class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 inline-block rounded">세가와 협약 및 정식 콜라보</div>
+                    <div class="text-lg font-black text-blue-600 mt-2">45,000원</div>
+                </div>
+            </div>
+            <div class="goods-card cursor-pointer" onclick="alert('상품 상세 페이지로 이동합니다.')">
+                <img src="이미지/한바다 넨도.png" alt="봉제인형" onerror="this.src='https://placehold.co/200x200/eee/999?text=Plushie'">
+                <div class="goods-card-info">
+                    <div class="text-sm font-bold text-gray-800 mb-1">한바다 대형 봉제인형</div>
+                    <div class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 inline-block rounded">말랑말랑 모찌 재질</div>
+                    <div class="text-lg font-black text-blue-600 mt-2">38,000원</div>
+                </div>
+            </div>
+            <div class="goods-card cursor-pointer" onclick="alert('상품 상세 페이지로 이동합니다.')">
+                <img src="이미지/한바다 스케일피규어.png" alt="넨도로이드" onerror="this.src='https://placehold.co/200x200/eee/999?text=Badge+Set'">
+                <div class="goods-card-info">
+                    <div class="text-sm font-bold text-gray-800 mb-1">sd스타일의 귀여운 버전!</div>
+                    <div class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 inline-block rounded">goodsmile 협약 정식 콜라보</div>
+                    <div class="text-lg font-black text-blue-600 mt-2">35,000원</div>
+                </div>
+            </div>
+            <div class="goods-card cursor-pointer" onclick="alert('상품 상세 페이지로 이동합니다.')">
+                <img src="이미지/효빈교통카드.png" alt="한바다 에코백" onerror="this.src='https://placehold.co/200x200/eee/999?text=Bread+Collab'">
+                <div class="goods-card-info">
+                    <div class="text-sm font-bold text-gray-800 mb-1">한바다 에코백</div>
+                    <div class="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 inline-block rounded">편한 디자인의 에코백</div>
+                    <div class="text-lg font-black text-blue-600 mt-2">8,500원</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. 여담 -->
+        <h2 id="s-8">8. 여담</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li>
+                <strong>캐릭터별 관리 주체:</strong>
+                <ul class="list-disc pl-5 mt-1">
+                    <li><strong>한바다 (시청 소속):</strong> 박효빈 시장이 직접 대본을 쓰고 컨셉을 잡는 '직할' 캐릭터다. 사실상 시장 비서실 제2의 직원. <del>시장보다 더 바쁘다는 소문이 있다</del></li>
+                    <li><strong><a href="하루빈.html" class="wiki-link">하루빈</a> (2호선 소속):</strong> 효빈교통공사 직원들이 애지중지 키우는 캐릭터. 박 시장은 무기 아이템과 성우 예산만 지원하고 운영에는 개입하지 않는다.</li>
+                    <li><strong><a href="돈불라.html" class="wiki-link">돈불라</a> (폐기됨):</strong> 현재 효빈시 환경미화 캠페인에서 '쓰레기 투기범' 역할로 부활해, 포스터 속에서 한바다에게 참교육 당하는 샌드백으로 활용 중이다. (...) <del>영원히 고통받는 돈불라</del></li>
+                </ul>
+            </li>
+            <li>
+                주말마다 본가인 <a href="효빈항.html" class="wiki-link">효빈항</a>을 방문할 때, 절대 관용차를 타지 않고 대중교통을 이용한다. <a href="시청역.html" class="wiki-link" style="color:#00CCAA;">시청역</a>(2호선)에서 <a href="중앙로역.html" class="wiki-link" style="color:#0077DD;">중앙로역</a>(1호선)으로 환승하는 루트를 고집하는데, 환승 통로에 붙은 자기 포스터를 점검하기 위해서라고 한다. <span class="wiki-drip">본인 얼굴을 보며 흡족해한다고.</span>
+            </li>
+            <li>
+                <a href="박청권.html" class="wiki-link">박청권</a> 의원의 증언에 따르면, 이슬톡톡 한 캔만 마셔도 얼굴이 홍당무가 되어 유창한 일본어로 잠꼬대를 한다고 한다. <span class="wiki-drip">"젠소쿠 젠진..."</span> <del>술주정도 글로벌하다</del>
+            </li>
+            <li>
+                머리에 꽂고 있는 닻 모양의 머리핀은 단순한 장식이 아니라, 비상시에 부메랑처럼 날려서 무기로 쓸 수 있다는 소문이 있다. (본인은 긍정도 부정도 하지 않음) <del>맞으면 최소 전치 3주</del>
+            </li>
+            <li>
+                <a href="윤재훈.html" class="wiki-link">윤재훈</a> 패거리가 SNS에 헛소문을 퍼뜨리면, 시청 통계 자료를 기반으로 논리정연하게 반박하는 댓글을 다는데 타자 속도가 무려 800타에 달한다. <del>키보드 워리어</del>
+            </li>
+            <li>
+                평소에는 세상 밝고 친절한 '파워 ENFJ'지만, <strong><a href="윤대환.html" class="wiki-link">윤대환</a> 전 시장</strong>의 이름만 나오면 표정이 영하 273도로 급속 냉각된다. <span class="wiki-drip">일명 '절대영도(Absolute Zero)의 시선'.</span> 시청 직원들이 윤대환 시절의 서류를 정리하다가 실수로 그녀 앞에서 언급하면, <strong>"그 더러운 이름은 제 앞에서 꺼내지 말아주세요(웃음)"</strong>라며 살벌하게 웃는다고 한다. <del>눈은 웃고 있는데 입은 욕을 하고 있다</del>
+            </li>
+            <li>
+                갈색(Muddy Brown)에 대한 트라우마가 상상을 초월한다. 시청 구내식당 메뉴로 '카레라이스'나 '짜장면'이 나오면 그날은 구내식당 근처에도 가지 않고 편의점에서 삼각김밥을 사 먹는다. <a href="두청운수.html" class="wiki-link">두청운수</a> 버스의 상징색과 비슷해서 식욕이 떨어진다는 이유. 최근에는 효빈시 디자인 가이드라인에서 <strong>'탁한 갈색 사용 금지'</strong> 조항을 넣자고 강력히 건의 중이다.
+            </li>
+            <li>
+                <a href="박효빈.html" class="wiki-link">박효빈</a> 시장과는 공적인 파트너지만, 사석에서는 <strong>'철없는 남동생'</strong> 취급을 하기도 한다. 시장이 피규어를 사느라 월급을 탕진하고 라면을 먹고 있으면, 한숨을 쉬며 몰래 숨겨둔 간식(주로 마카롱)을 꺼내 준다고. <span class="wiki-drip">이때 대사는 "시장님, 시민들 굶기지 말고 본인부터 챙기세요."</span>
+            </li>
+            <li>
+                의외로 칭찬에 면역이 없다. 시민들이 "실물이 더 예뻐요!", "오늘 옷 잘 어울려요!"라고 칭찬하면, 평소의 당당함은 어디 가고 귀 끝까지 빨개져서 어버버거린다. <del>이 갭모에가 덕통사고 유발 포인트</del>
+            </li>
+            <li>
+                사무실 책상 서랍 3번째 칸은 <strong>'비상 식량 창고'</strong>다. 스트레스를 받으면 당을 충전해야 한다며 초콜릿, 젤리, 사탕 등을 종류별로 쟁여두는데, 감사 시즌이 되면 이걸 들킬까 봐 필사적으로 사수한다. <span class="wiki-drip">감사관도 모른 척 넘어가는 게 국룰이다.</span>
+            </li>
+            <li>
+                <strong>공포 영화를 절대 못 본다.</strong> 시청 직원들과 단체로 영화 관람을 갔다가, 귀신이 나오는 장면에서 비명을 지르며 옆에 있던 <a href="박청권.html" class="wiki-link">박청권</a> 의원의 팝콘 통을 엎어버린 전적이 있다. 정작 본인은 "16개월 동안 지하 창고 귀신이랑 살아서 안 무섭다"고 허세를 부리지만, 아무도 믿지 않는다.
+            </li>
+            <li>
+                지하 2층 창고(과거 유폐 장소) 근처에는 얼씬도 하지 않는다. 엘리베이터를 탔는데 실수로 B2 버튼이 눌리면 사색이 되어 내린 다음 계단으로 뛰어 올라온다. 이를 안쓰럽게 여긴 시설관리팀이 지하 2층 입구에 <strong>'한바다 주무관 출입 금지 구역(트라우마 보호용)'</strong>이라는 팻말을 붙여주었다.
+            </li>
+        </ul>
+
+        <!-- 하단 각주 영역 -->
+        <div class="footnotes-area">
+            <h3 style="margin-top:0; font-size:1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px;">각주</h3>
+            <!-- 각주 내용이 있다면 여기에 추가 -->
+        </div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-400 text-xs pb-10">
+            <p>이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)</p>
+            <p>기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            <br>
+            <p>효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</p>
+            <p>효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.</p>
+        </footer>
+    </div>
+
+    <script>
+        // 각주 호버보드 (툴팁) 기능
+        document.addEventListener('DOMContentLoaded', () => {
+            const refs = document.querySelectorAll('.footnote-ref a');
+            const tooltip = document.getElementById('footnote-tooltip');
+
+            refs.forEach(ref => {
+                ref.addEventListener('mouseenter', (e) => {
+                    e.preventDefault(); 
+                    const targetId = ref.getAttribute('href').substring(1); 
+                    const targetContent = document.querySelector(`.footnote-content[id="${targetId}"]`);
+                    
+                    if (targetContent) {
+                        tooltip.innerHTML = targetContent.innerHTML;
+                        tooltip.style.display = 'block';
+                        moveTooltip(e);
+                    }
+                });
+
+                ref.addEventListener('mousemove', (e) => {
+                    moveTooltip(e);
+                });
+
+                ref.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+            });
+
+            function moveTooltip(e) {
+                const x = e.clientX + 15;
+                const y = e.clientY + 15;
+                
+                const tooltipRect = tooltip.getBoundingClientRect();
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+
+                let finalX = x;
+                let finalY = y;
+
+                if (x + tooltipRect.width > windowWidth) {
+                    finalX = x - tooltipRect.width - 20;
+                }
+                if (y + tooltipRect.height > windowHeight) {
+                    finalY = y - tooltipRect.height - 20;
+                }
+
+                tooltip.style.left = finalX + 'px';
+                tooltip.style.top = finalY + 'px';
+            }
+        });
+    </script>
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

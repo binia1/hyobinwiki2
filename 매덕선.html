@@ -1,0 +1,473 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>매덕선 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #0054A6; /* 코레일 블루 (문서 테마) */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #0054A6;
+            --wiki-table-header-text: #ffffff;
+            
+            /* 매덕선 고유 색상 (슬레이트 그레이) - 노선 식별용 */
+            --line-identity-color: #708090;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1400px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 2.5rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 5px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.1rem !important; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; }
+
+        /* 위키 버튼 스타일 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; line-height: 1.2; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 표 스타일 */
+        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: auto !important; font-size: 0.85rem; }
+        th, td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; text-align: center; vertical-align: middle; }
+        th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; }
+        
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 420px; font-size: 0.85rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: #ffffff; padding: 10px; text-align: center; font-size: 1.3rem !important; font-weight: bold; text-shadow: -0.5px 0 #888, 0 0.5px #888, 0.5px 0 #888, 0 -0.5px #888; }
+        .infobox-image { text-align: center; padding: 15px; border-bottom: 1px solid var(--wiki-border); background: white; }
+        .infobox table { border: none !important; margin: 0 !important; }
+        .infobox th { background-color: #f0f8ff !important; color: var(--wiki-main) !important; width: 110px; text-align: center; padding: 5px 8px; border: 1px solid #dee2e6 !important; font-weight: bold; }
+        .infobox td { text-align: left; padding: 5px 8px; border: 1px solid #dee2e6 !important; }
+
+        .wiki-link { color: var(--wiki-link); cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* 하단 네비박스 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 1.8; }
+        
+        /* 인용구 */
+        blockquote { border-left: 5px solid var(--wiki-main); background-color: #f0f8ff; padding: 15px; margin: 15px 0; font-style: italic; color: #555; }
+
+        /* 유틸리티 */
+        .text-nowrap { white-space: nowrap; }
+        
+        /* 노선 뱃지 */
+        .line-badge { 
+            display: inline-block; padding: 2px 6px; border-radius: 4px; color: white; 
+            font-weight: bold; margin-right: 4px; font-size: 0.8em; vertical-align: middle; 
+        }
+        .line-badge.gyeongbin { background-color: #FF0000; } /* 경빈선: 빨강 */
+        .line-badge.deokbin { background-color: #006400; } /* 덕빈선: 짙은 녹색 */
+        .line-badge.deokju1 { background-color: #FF4F91; } /* 덕주 1호선: 핫핑크 */
+        .line-badge.manak { background-color: #800000; } /* 마낙선: 마룬 */
+
+        /* 본문 표 스타일 (역 목록) */
+        .station-table th { background-color: var(--wiki-main); color: white; border: 1px solid #ddd; padding: 6px; }
+        .station-table td { border: 1px solid #ddd; padding: 8px; vertical-align: middle; }
+
+        /* === 둘러보기 틀 스타일 === */
+        .wiki-nav-table { width: 100%; border-collapse: collapse; background-color: white; font-size: 0.9rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin: 10px 0; border: 1px solid #ccc; }
+        .wiki-nav-table td { padding: 5px 10px; border: 1px solid #ddd; vertical-align: middle; }
+        .small-text { font-size: 11px; display: inline-block; color: #666; margin-left: 4px; }
+
+        /* 국철/전용철도 틀 스타일 */
+        .wiki-nav-header { padding: 4px; background: linear-gradient(120deg, #fff 5%, #000 5.1% 9%, #fff 9.1% 10%, #000 10.1% 14%, #fff 14.1% 15%, #000 15.1% 19%, #fff 19.1% 81%, #cd313a 81.1% 90%, #0047a0 90.1%); color: black; font-weight: bold; text-align: center; border-bottom: 2px solid #000; }
+        .header-content { background-color: rgba(255, 255, 255, 0.9); display: inline-block; padding: 2px 10px; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.2); font-size: 0.9rem;}
+        .col-category { width: 100px; text-align: center; font-weight: bold; color: white; vertical-align: middle; border-bottom: 1px solid #fff; padding: 5px 0; font-size: 0.85rem; }
+        .col-content { padding: 5px 10px; background-color: #fff; border-bottom: 1px solid #ccc; text-align: left; vertical-align: middle; line-height: 1.6; font-size: 0.85rem; }
+        .nav-item { display: inline-block; width: 9rem; padding: 1px 0; vertical-align: top; }
+        .nav-item.wide { width: 18rem; }
+        .nav-item.fictional a { font-weight: bold; color: #0044BB; }
+        
+        .bg-high-speed { background-color: #c81010; color: white; }
+        .bg-semi-high { background-color: #ffbb04; color: black; text-shadow: none; }
+        .bg-trunk { background-color: #1063c8; color: white; }
+        .bg-branch { background-color: #51c810; color: #191919; }
+        .bg-industrial { background-color: #2d2d2d; color: white; }
+        .bg-planned { background-color: #454545; color: #ddd; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <!-- 상단 내비게이션 (무조건 #7777AA) -->
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+
+            <span class="font-bold text-xl" style="text-shadow: 0 1px 2px rgba(0,0,0,0.3);">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="검색어를 입력하세요" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner">
+                <button class="bg-[#555588] p-1.5 px-5 rounded text-sm hover:bg-[#444477] font-bold transition-colors">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">토론</button>
+                <button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">편집</button>
+                <button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">역사</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <!-- 문서 제목 영역 -->
+        <div class="title-area">
+            <h1 class="txt-lvl-1">매덕선</h1>
+            <div class="flex gap-2 mb-1">
+<button onclick="location.href='토론.html'" style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">토론</button>
+<button onclick="location.href='수정.html'" style="background-color:#0275d8; color:#ffffff; border:1px solid #0275d8 !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">편집</button>
+<button onclick="location.href='역사.html'" style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">역사</button>
+
+            </div>
+        </div>
+
+        <!-- 분류 영역 -->
+        <div class="category-box">
+            <span class="font-bold text-[#0054A6]">분류:</span> 
+            <a href="매덕선.html" class="wiki-link">매덕선</a> | 
+            <a href="한국철도공사의 노선.html" class="wiki-link">한국철도공사의 노선</a> | 
+            <a href="일반철도.html" class="wiki-link">일반철도</a> | 
+            <a href="1964년 개통한 철도 노선.html" class="wiki-link">1964년 개통한 철도 노선</a>
+        </div>
+
+        <!-- === 둘러보기 틀 영역 === -->
+        <table class="wiki-nav-table">
+            <thead>
+                <tr>
+                    <td colspan="2" class="wiki-nav-header">
+                        <div class="header-content">
+                            <span style="display: inline-flex; width: 20px; height: 14px; border: 1px solid #ccc; vertical-align: middle; background: url('대한민국_국기.png') center/cover no-repeat; margin-right: 5px;"></span>
+                            대한민국의 국가철도 및 전용철도 노선
+                        </div>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-category bg-high-speed"><a href="https://namu.wiki/w/고속철도" target="_blank" style="color:white;">고속철도</a></td>
+                    <td class="col-content">
+                        <div class="nav-item"><a href="https://namu.wiki/w/경부고속선" target="_blank">경부고속선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/호남고속선" target="_blank">호남고속선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/수서평택고속선" target="_blank">수서평택고속선</a></div>
+                        <div class="nav-item fictional"><a href="빈효고속선.html">빈효고속선</a></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-category bg-semi-high"><a href="https://namu.wiki/w/대한민국의 준고속철도" target="_blank" style="color:black;">준고속철도</a></td>
+                    <td class="col-content">
+                        <div class="nav-item"><a href="https://namu.wiki/w/경강선" target="_blank">경강선(원주~강릉)</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/서해선" target="_blank">서해선(홍성~서화성)</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/중앙선" target="_blank">중앙선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/중부내륙선" target="_blank">중부내륙선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/동해선" target="_blank">동해선(태화강~삼척)</a></div>
+                        <div class="nav-item fictional"><a href="덕빈선.html">덕빈선</a></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-category bg-trunk"><a href="https://namu.wiki/w/간선철도" target="_blank" style="color:white;">간선철도</a></td>
+                    <td class="col-content">
+                        <div class="nav-item"><a href="https://namu.wiki/w/경인선" target="_blank">경인선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/경부선" target="_blank">경부선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/경의선" target="_blank">경의선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/호남선" target="_blank">호남선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/경원선" target="_blank">경원선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/충북선" target="_blank">충북선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/경전선" target="_blank">경전선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/장항선" target="_blank">장항선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/전라선" target="_blank">전라선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/경춘선" target="_blank">경춘선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/동해선" target="_blank">동해선(부산진~태화강)</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/영동선" target="_blank">영동선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/경북선" target="_blank">경북선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/태백선" target="_blank">태백선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/안산선" target="_blank">안산선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/과천선" target="_blank">과천선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/분당선" target="_blank">분당선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/일산선" target="_blank">일산선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/신분당선" target="_blank">신분당선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/서해선" target="_blank">서해선(대곡~원시)</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/인천국제공항철도" target="_blank">인천국제공항선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/경강선" target="_blank">경강선(성남~여주)</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/진접선" target="_blank">진접선</a></div>
+                        <div class="nav-item wide"><a href="https://namu.wiki/w/수도권 광역급행철도 A노선" target="_blank">수도권광역급행철도에이선</a></div>
+                        <div class="nav-item fictional"><a href="빈효선.html">빈효선</a></div>
+                        <div class="nav-item fictional"><a href="강빈선.html">강빈선</a></div>
+                        <div class="nav-item fictional"><a href="경빈선.html">경빈선</a></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-category bg-branch"><a href="https://namu.wiki/w/지선철도" target="_blank" style="color:#191919;">지선철도</a></td>
+                    <td class="col-content">
+                        <div class="nav-item"><a href="https://namu.wiki/w/경부고속선" target="_blank">경부고속지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/경강선" target="_blank">경강지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/안산연결선" target="_blank">서해지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/중앙선" target="_blank">중앙지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/경부선" target="_blank">경부지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/경의선" target="_blank">경의지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/호남선" target="_blank">호남지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/경전선" target="_blank">경전지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/장항선" target="_blank">장항지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/전라선" target="_blank">전라지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/평내기지선" target="_blank">경춘지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/동해선" target="_blank">동해지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/영동선" target="_blank">영동지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/문경선" target="_blank">경북지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/태백선" target="_blank">태백지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/시흥기지선" target="_blank">안산지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/분당기지선" target="_blank">분당지선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/인천국제공항철도" target="_blank">인천국제공항지선</a></div>
+                        <div class="nav-item fictional"><a href="상빈선.html">상빈선</a></div>
+                        <div class="nav-item fictional"><a href="매덕선.html">매덕선</a></div>
+                        <div class="nav-item fictional"><a href="마낙선.html">마낙선</a></div>
+                        <div class="nav-item fictional"><a href="효빈항선.html">효빈항선</a></div>
+                        <div class="nav-item fictional"><a href="서진항선.html">서진항선</a></div>
+                        <div class="nav-item fictional"><a href="청선인자선.html">청선인자선</a></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-category bg-industrial"><a href="https://namu.wiki/w/전용철도" target="_blank" style="color:white;">전용철도</a></td>
+                    <td class="col-content">
+                        <div class="nav-item"><a href="https://namu.wiki/w/광양제철소선" target="_blank">광양제철소선</a></div>
+                        <div class="nav-item wide"><a href="https://namu.wiki/w/현대제철" target="_blank">당진제철소 내부 철도</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/석탄부두선" target="_blank">석탄부두선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/제1전투비행단선" target="_blank">공군 제1전투비행단선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/포항제철소선" target="_blank">포항제철소선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/제11전투비행단선" target="_blank">공군 제11전투비행단선</a></div>
+                        <div class="nav-item wide fictional"><a href="효빈공단인입선.html">효빈공단인입선</a></div>
+                        <div class="nav-item fictional"><a href="수포현대선.html">수포현대선</a></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-category bg-planned"><span style="color:#ddd">운행 예정</span></td>
+                    <td class="col-content">
+                        <div class="nav-item"><a href="https://namu.wiki/w/부전-마산 복선전철" target="_blank">경전선(부전~마산)</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/신안산선" target="_blank">신안산선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/춘천속초선" target="_blank">춘천속초선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/경강선" target="_blank">경강선(시흥~성남)</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/인덕원동탄선" target="_blank">동탄인덕원선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/수도권 광역급행철도 B노선" target="_blank">수도권 광역급행철도 B선</a></div>
+                        <div class="nav-item"><a href="https://namu.wiki/w/수도권 광역급행철도 C노선" target="_blank">수도권 광역급행철도 C선</a></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 md:order-1">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">특징</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">운행 열차</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">역 목록</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">역 상세</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">관련 문서</a></li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
+                <div class="infobox-title">매덕선<br><span class="text-sm font-normal">梅德線<br>Maedeok Line</span></div>
+                <div class="infobox-image">
+                    <img src="이미지/매덕선_노선도.png" alt="매덕선 노선도" class="w-full rounded">
+                </div>
+                <table>
+                    <tr><th>노선 색상</th><td><span style="color:#708090">■</span> 슬레이트 그레이 (Slate Gray)</td></tr>
+                    <tr><th>운영 기관</th><td><a href="한국철도공사.html" class="wiki-link">한국철도공사</a></td></tr>
+                    <tr><th>개통일</th><td>1932년 11월 1일</td></tr>
+                    <tr><th>기점</th><td><a href="비천항역.html" class="wiki-link">비천항역</a> (북쪽)</td></tr>
+                    <tr><th>종점</th><td><a href="운진항역.html" class="wiki-link">운진항역</a> (남쪽)</td></tr>
+                    <tr><th>역 수</th><td>15개</td></tr>
+                    <tr><th>거리</th><td>162.5km</td></tr>
+                    <tr><th>등급</th><td>간선철도</td></tr>
+                    <tr><th>전철화</th><td>덕주 ~ 운진 (그 외 비전철)</td></tr>
+                    <tr><th>사용 차량</th><td><a href="ITX-새마을.html" class="wiki-link">ITX-새마을</a>, <a href="새마을호.html" class="wiki-link">새마을호</a><br><a href="무궁화호.html" class="wiki-link">무궁화호</a></td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <!-- 본문 내용 -->
+        <h2 id="s-1">1. 개요</h2>
+        <blockquote>
+            <strong>"덕빈남도의 북쪽 바다와 남쪽 바다를 잇는 종단 간선"</strong>
+        </blockquote>
+        <p>
+            <a href="덕빈남도.html" class="wiki-link">덕빈남도</a> 북부(서해안)에 위치한 <strong><a href="비천항역.html" class="wiki-link">비천항역</a></strong>과 남부 끝자락의 <strong><a href="운진항역.html" class="wiki-link">운진항역</a></strong>을 남북으로 연결하는 <a href="일반철도.html" class="wiki-link">일반철도</a> 노선이다.
+        </p>
+        <p>
+            덕빈남도의 도청 소재지인 <strong><a href="덕주시.html" class="wiki-link">덕주시</a></strong>를 중심으로 북쪽의 <strong><a href="매성시.html" class="wiki-link">매성시</a></strong>, <strong><a href="하정시.html" class="wiki-link">하정시</a></strong>와 남쪽의 <strong><a href="마진시.html" class="wiki-link">마진시</a></strong>, <strong><a href="운진군.html" class="wiki-link">운진군</a></strong>을 관통한다. 
+            덕빈남도를 세로로 가로지르며 북부 항만과 남부 항만, 그리고 내륙의 거점 도시들을 유기적으로 연결하는 핵심 노선이다.
+        </p>
+
+        <h2 id="s-2">2. 특징</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>남북 종단 노선:</strong> 서해안에 위치한 북쪽의 <strong>비천시(비천항)</strong>에서 시작하여 내륙의 <strong>덕주시</strong>를 거쳐 남쪽 해안인 <strong>운진군(운진항)</strong>으로 내려오는 선형을 그린다.</li>
+            <li><strong>극과 극의 선로 환경:</strong> 노선 하나에 다양한 선로 형태가 공존하는 '철도 박물관' 같은 노선이다.
+                <ul class="list-disc pl-5 text-sm">
+                    <li><strong>비천항 ~ 매성 (북부):</strong> 단선 비전철. 화물 수송 비중이 높고 여객 수요는 적다.</li>
+                    <li><strong>매성 ~ 덕주 (중북부):</strong> 복선 비전철. 선로는 두 개지만 전차선이 없어 디젤 열차만 다닌다.</li>
+                    <li><strong>덕주 ~ 운진 (중남부):</strong> <strong>복선 전철</strong>. 가장 현대화된 구간으로, ITX-새마을 셔틀이 다니는 핵심 구간이다.</li>
+                    <li><strong>운진 ~ 운진항 (남부):</strong> 복선 비전철. 항만 물동량 처리를 위해 복선으로 지어졌으나 전철화는 되지 않았다.</li>
+                </ul>
+            </li>
+            <li><strong>덕주-운남 셔틀열차:</strong> 전철화 구간인 <strong><a href="덕주역.html" class="wiki-link">덕주역</a></strong>과 <strong><a href="운진역.html" class="wiki-link">운진역</a></strong>을 중심으로 <strong><a href="운남역.html" class="wiki-link">운남역</a></strong>까지 운행하는 <strong>ITX-새마을 셔틀 열차</strong>가 존재한다. 덕주시와 남부의 마진시, 운진군 간의 통근 수요를 책임진다.</li>
+        </ul>
+
+        <h2 id="s-3">3. 운행 열차</h2>
+        <ul class="list-disc pl-5">
+            <li><strong><a href="ITX-새마을.html" class="wiki-link">ITX-새마을</a> (셔틀):</strong> 덕주역 ~ 운남역 구간을 집중적으로 운행한다.</li>
+            <li><strong><a href="새마을호.html" class="wiki-link">새마을호</a>:</strong> 매성역 ~ 운남역 구간의 주요 역에 정차한다.</li>
+            <li><strong><a href="무궁화호.html" class="wiki-link">무궁화호</a>:</strong> 전 구간을 운행하며, 비천항, 운진항 등 양 끝단의 화물역에도 유일하게 들어가는 열차다.</li>
+        </ul>
+
+<h2 id="s-4">4. 역 목록</h2>
+        <div class="mb-2 text-sm bg-gray-100 p-2 rounded">
+            <strong>운행 등급 범례:</strong> 
+            <span class="font-bold text-[#dd2222]">셔</span>(ITX셔틀) / 
+            <span class="font-bold text-[#0054A6]">새</span>(새마을) / 
+            <span class="font-bold text-[#ff9900]">무</span>(무궁화)<br>
+            ● 필수 정차 / ▲ 일부 정차 / ｜ 통과<br>
+            <strong>인프라:</strong> ⚡ 전철화 / ∥ 복선 / │ 단선
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-center text-sm station-table">
+                <thead>
+                    <tr>
+                        <th>역명</th>
+                        <th>거리(km)</th>
+                        <th>환경</th>
+                        <th>셔</th>
+                        <th>새</th>
+                        <th>무</th>
+                        <th style="min-width: 200px;">접속 노선 (비고)</th>
+                        <th>소재지</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><a href="비천항역.html" class="wiki-link">비천항</a></td><td>0.0</td><td>│</td><td></td><td></td><td>▲</td><td class="text-left"></td><td rowspan="1">덕빈남도<br>비천시</td></tr>
+                    <tr><td><a href="매성역.html" class="wiki-link">매 성</a></td><td>11.31</td><td>∥</td><td></td><td>●</td><td>●</td><td class="text-left"><span class="line-badge gyeongbin">경빈</span></td><td>덕빈남도<br>매성시</td></tr>
+                    <tr><td><a href="강운역.html" class="wiki-link">강 운</a></td><td>19.51</td><td>∥</td><td></td><td>｜</td><td>▲</td><td class="text-left"></td><td>덕빈남도<br>매산군</td></tr>
+                    <tr><td><a href="석창역.html" class="wiki-link">석 창</a></td><td>30.40</td><td>∥</td><td></td><td>●</td><td>●</td><td class="text-left"></td><td>덕빈남도<br>석창군</td></tr>
+                    
+                    <tr style="color: #999; background-color: #f9f9f9;">
+                        <td><del><a href="동석역.html" class="wiki-link" style="color: #999;">동 석</a></del></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td></td><td></td><td></td>
+                        <td class="text-left" style="font-size: 0.9em;">1987년 폐역 (선로 이설 및 수요 감소)</td>
+                        <td>덕빈남도<br>하정시</td>
+                    </tr>
+                    <tr style="color: #999; background-color: #f9f9f9;">
+                        <td><del><a href="등전역.html" class="wiki-link" style="color: #999;">등 전</a></del></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td></td><td></td><td></td>
+                        <td class="text-left" style="font-size: 0.9em;">폐역</td>
+                        <td>덕빈남도<br>하정시</td>
+                    </tr>
+                    
+                    <tr><td><a href="하정역.html" class="wiki-link">하 정</a></td><td>48.71</td><td>∥</td><td></td><td>▲</td><td>●</td><td class="text-left"></td><td>덕빈남도<br>하정시</td></tr>
+                    
+                    <tr style="color: #999; background-color: #f9f9f9;">
+                        <td><del><a href="해성역.html" class="wiki-link" style="color: #999;">해 성</a></del></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td></td><td></td><td></td>
+                        <td class="text-left" style="font-size: 0.9em;">2008년 폐역 (선로 이설)</td>
+                        <td>덕빈남도<br>하정시</td>
+                    </tr>
+                    <tr style="color: #999; background-color: #f9f9f9;">
+                        <td><del><a href="내덕역.html" class="wiki-link" style="color: #999;">내 덕</a></del></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td></td><td></td><td></td>
+                        <td class="text-left" style="font-size: 0.9em;">2020년 폐역 (선로 이설 및 인구 감소)</td>
+                        <td>덕빈남도<br>하정시</td>
+                    </tr>
+                    <tr style="color: #999; background-color: #f9f9f9;">
+                        <td><del><a href="산서역.html" class="wiki-link" style="color: #999;">산 서</a></del></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td></td><td></td><td></td>
+                        <td class="text-left" style="font-size: 0.9em;">1987년 폐역 (선로 이설 및 수요 감소)</td>
+                        <td>덕빈남도<br>하정시</td>
+                    </tr>
+                    
+                    <tr><td><a href="전진역.html" class="wiki-link">전 진</a></td><td>69.12</td><td>∥</td><td></td><td>｜</td><td>▲</td><td class="text-left"></td><td rowspan="2">덕빈남도<br>덕주시</td></tr>
+                    <tr><td><a href="덕주역.html" class="wiki-link">덕 주</a></td><td>74.99</td><td>⚡∥</td><td>●</td><td>●</td><td>●</td><td class="text-left"><span class="line-badge deokbin">덕빈</span> <span class="line-badge deokju1">1호선</span></td></tr>
+                    <tr><td><a href="팔원역.html" class="wiki-link">팔 원</a></td><td>83.12</td><td>⚡∥</td><td>｜</td><td>▲</td><td>●</td><td class="text-left"></td><td rowspan="3">덕빈남도<br>마진시</td></tr>
+                    <tr><td><a href="유록역.html" class="wiki-link">유 록</a></td><td>99.43</td><td>⚡∥</td><td>｜</td><td>｜</td><td>▲</td><td class="text-left"></td></tr>
+                    <tr><td><a href="마진역.html" class="wiki-link">마 진</a></td><td>108.35</td><td>⚡∥</td><td>●</td><td>●</td><td>●</td><td class="text-left"><span class="line-badge manak">마낙</span></td></tr>
+                    <tr><td><a href="상정역.html" class="wiki-link">상 정</a></td><td>116.70</td><td>⚡∥</td><td>｜</td><td>｜</td><td>▲</td><td class="text-left"></td><td>덕빈남도<br>두원군</td></tr>
+                    <tr><td><a href="두원역.html" class="wiki-link">두 원</a></td><td>136.02</td><td>⚡∥</td><td>｜</td><td>▲</td><td>●</td><td class="text-left"></td><td rowspan="4">덕빈남도<br>운진군</td></tr>
+                    <tr><td><a href="운진역.html" class="wiki-link">운 진</a></td><td>151.14</td><td>⚡∥</td><td>●</td><td>●</td><td>●</td><td class="text-left"></td></tr>
+                    <tr><td><a href="운남역.html" class="wiki-link">운 남</a></td><td>156.37</td><td>∥</td><td>●</td><td>▲</td><td>●</td><td class="text-left"></td></tr>
+                    <tr><td><a href="운진항역.html" class="wiki-link">운진항</a></td><td>162.50</td><td>∥</td><td></td><td></td><td>▲</td><td class="text-left"></td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="mt-2 text-sm text-gray-600">
+            <strong>인프라 상세:</strong><br>
+            - <strong>비천항~매성:</strong> 단선 비전철<br>
+            - <strong>매성~덕주:</strong> 복선 비전철<br>
+            - <strong>덕주~운진:</strong> 복선 전철화 (⚡)<br>
+            - <strong>운진~운진항:</strong> 복선 비전철
+        </div>
+        <h2 id="s-5">5. 역 상세</h2>
+        <ul class="list-disc pl-5">
+            <li><strong><a href="비천항역.html" class="wiki-link">비천항역</a>:</strong> 매덕선의 기점으로 북쪽 끝(서해안)에 위치한다. 화물 처리가 주력이며, 여객 취급 중지가 예정되어 있다.</li>
+            <li><strong><a href="매성역.html" class="wiki-link">매성역</a>:</strong> 북부 지역의 주요 환승역으로 <a href="경빈선.html" class="wiki-link">경빈선</a>과 만난다.</li>
+            <li><strong><a href="덕주역.html" class="wiki-link">덕주역</a>:</strong> 노선의 허리이자 덕빈남도의 중심. 여기서부터 남쪽으로 향하는 전철화 구간이 시작된다.</li>
+            <li><strong><a href="마진역.html" class="wiki-link">마진역</a>:</strong> 남부 마진시의 중심역.</li>
+            <li><strong><a href="운진항역.html" class="wiki-link">운진항역</a>:</strong> 매덕선의 종점으로 남쪽 끝에 위치한다. 비천항역과 마찬가지로 항만 물류 수송이 핵심이다.</li>
+        </ul>
+
+        <h2 id="s-6">6. 관련 문서</h2>
+        <ul class="list-disc pl-5">
+            <li><a href="한국철도공사.html" class="wiki-link">한국철도공사</a></li>
+            <li><a href="덕주시.html" class="wiki-link">덕주시</a></li>
+            <li><a href="경빈선.html" class="wiki-link">경빈선</a></li>
+            <li><a href="덕빈선.html" class="wiki-link">덕빈선</a></li>
+        </ul>
+
+<div id="wiki-footer-area"></div>
+<script src="assets/wiki_main.js"></script>
+
+<script src="wiki_index.js"></script>
+<script src="hb_wiki_core.js"></script>
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

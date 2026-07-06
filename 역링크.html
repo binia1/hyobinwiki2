@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>역링크 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root {
+            --wiki-main: #7777AA;
+            --wiki-border: #ccc;
+            --wiki-bg: #ffffff;
+            --wiki-text: #373a3c;
+            --wiki-gray-bg: #f9f9f9;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f4f5f7; color: var(--wiki-text); line-height: 1.6; margin: 0; }
+        
+        .wiki-container { max-width: 1100px; margin: 30px auto; background: white; padding: 40px; border: 1px solid var(--wiki-border); box-shadow: 0 4px 6px rgba(0,0,0,0.05); min-height: 80vh; }
+        
+        .wiki-title { font-size: 2rem; font-weight: 900; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--wiki-main); color: var(--wiki-text); }
+        .wiki-title .sub { font-size: 1.2rem; color: #666; font-weight: normal; }
+
+        /* 나무위키 역링크 특유의 필터 및 탭 UI */
+        .filter-box { background: var(--wiki-gray-bg); border: 1px solid var(--wiki-border); padding: 15px; margin-bottom: 30px; display: flex; align-items: center; gap: 15px; border-radius: 4px; }
+        .filter-box select { padding: 6px 10px; border: 1px solid var(--wiki-border); border-radius: 4px; font-size: 0.9rem; }
+        
+        /* 다단 리스트 (역링크 목록) */
+        .namespace-group { margin-bottom: 40px; }
+        .namespace-title { font-size: 1.3rem; font-weight: bold; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-bottom: 15px; color: var(--wiki-text); }
+        
+        .backlink-list { 
+            list-style-type: square; 
+            padding-left: 20px; 
+            column-count: 3; /* 3단 나누기 */
+            column-gap: 40px; 
+            font-size: 0.95rem; 
+        }
+        .backlink-list li { margin-bottom: 8px; break-inside: avoid; }
+        .backlink-list a { color: #0055AA; text-decoration: none; cursor: pointer; }
+        .backlink-list a:hover { text-decoration: underline; }
+
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+
+        /* 모바일 대응 (1단/2단) */
+        @media (max-width: 768px) {
+            .backlink-list { column-count: 2; }
+        }
+        @media (max-width: 480px) {
+            .backlink-list { column-count: 1; }
+            .filter-box { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="bg-[#7777AA] text-white p-3 shadow-md sticky top-0 z-50">
+        <div class="max-w-[1300px] mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="nav-logo-box">H</div>
+                <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white hover:opacity-90 transition">HyobinWiki</a>
+                <div class="hidden md:flex gap-4 text-sm opacity-90 ml-6">
+                    <a href="index.html" class="hover:underline text-white no-underline">대문</a>
+                    <a href="최근_변경.html" class="hover:underline text-white no-underline">최근 변경</a>
+                    <a href="최근_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="goToDoc()" class="bg-[#555588] hover:bg-[#444477] text-white px-4 py-1.5 rounded text-sm font-bold transition flex items-center gap-2 shadow-inner border-none cursor-pointer">
+                    <i class="fa-solid fa-file-lines"></i> 문서로 돌아가기
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container relative">
+        <h1 class="wiki-title">
+            <span id="docTitleMain" class="text-[#7777AA]">...</span> <span class="sub">(역링크)</span>
+        </h1>
+
+        <div class="filter-box">
+            <div>
+                <strong>이름공간 : </strong>
+                <select id="namespaceFilter" onchange="renderBacklinks()">
+                    <option value="all">(전체)</option>
+                    <option value="문서">문서</option>
+                    <option value="틀">틀</option>
+                    <option value="분류">분류</option>
+                    <option value="사용자">사용자</option>
+                </select>
+            </div>
+            <div class="text-sm text-gray-500 ml-auto">
+                <i class="fa-solid fa-circle-info"></i> 현재 문서로 링크가 연결된 모든 문서들의 목록입니다.
+            </div>
+        </div>
+
+        <div id="backlinkArea">
+            <!-- JS 동적 생성 영역 -->
+            <div class="text-center py-20 text-gray-400">
+                <i class="fa-solid fa-spinner fa-spin fa-2x mb-3"></i><br>역링크 데이터를 수집 중입니다...
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/wiki_index.js"></script>
+    <script src="secret_search.js"></script>
+    <script src="assets/hb_wiki_core.js?v=2"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+
+    <script>
+        // ==========================================
+        // 1. 역추적 앵커 시스템 (토론.html과 동일한 마법의 추적 로직)
+        // ==========================================
+        const urlParams = new URLSearchParams(window.location.search);
+        let docName = urlParams.get("doc"); 
+        
+        if (!docName && window.location.hash) {
+            docName = window.location.hash.substring(1); 
+        }
+        
+        if (!docName && document.referrer) {
+            try {
+                let refUrl = new URL(document.referrer);
+                let pathName = refUrl.pathname.split('/').pop(); 
+                if (pathName && pathName.endsWith('.html') && !pathName.includes('역링크') && !pathName.includes('index')) {
+                    docName = pathName.replace('.html', ''); 
+                }
+            } catch (e) { console.error("이전 페이지 추적 실패", e); }
+        }
+        
+        if (docName) {
+            docName = decodeURIComponent(docName);
+        } else {
+            docName = "효빈광역시"; 
+        }
+        
+        document.title = `${docName} (역링크) - 효빈위키`;
+        document.getElementById("docTitleMain").innerText = docName;
+
+        window.goToDoc = function() {
+            location.href = `${docName.replace(/ /g, "_")}.html`;
+        };
+
+        // ==========================================
+        // 2. 효빈위키 초거대 세계관 키워드 & 유저 마스터 풀 (단 하나도 생략 안함)
+        // ==========================================
+        const loreKeywords = [
+            // 마스코트
+            "고나미", "하루빈", "박라미", "다로나", "미소하", "라세나", "임세하", "임세정", "유리아", "전노아", "박빛나", "김소빈", "이덕희", "심세이", "한바다",
+            // 뱅드림
+            "토야마 카스미", "하나조노 타에", "야마부키 사아야", "우시고메 리미", "이치가야 아리사", "아오바 모카", "미타케 란", "우다가와 토모에", "우에하라 히마리", "하자와 츠구미", 
+            "마루야마 아야", "시라사기 치사토", "와카미야 이브", "야마토 마야", "히카와 히나", "미나토 유키나", "히카와 사요", "이마이 리사", "우다가와 아코", "시로카네 린코",
+            "츠루마키 코코로", "오쿠사와 미사키", "마츠바라 카논", "세타 카오루", "키타자와 하구미", "쿠라타 마시로", "야시오 루이", "후타바 츠쿠시", "키리가야 토우코", "히로마치 나나미",
+            "타카마츠 토모리", "치하야 아논", "시이나 타키", "카나메 라나", "나가사키 소요", "토가와 사키코", "와카바 무츠미", "유텐지 냐무", "야하타 우미리", "미스미 우이카",
+            // 럽라/애니
+            "야자와 니코", "토죠 노조미", "아야세 에리", "니시키노 마키", "호시조라 린", "코이즈미 하나요", "소노다 우미", "미나미 코토리", "코사카 호노카",
+            "타카미 치카", "와타나베 요우", "사쿠라우치 리코", "마츠우라 카난", "오하라 마리", "쿠로사와 다이아", "쿠로사와 루비", "쿠니키다 하나마루", "츠시마 요시코",
+            "나카스 카스미", "오사카 시즈쿠", "유키 세츠나", "미후네 시오리코", "엠마 베르데", "미야시타 아이", "아사카 카린", "코노에 카나타", "쇼우 란쥬", "미아 테일러", "타카사키 유우", "텐노지 리나", "우에하라 아유무",
+            "시부야 카논", "헤안나 스미레", "탕 쿠쿠", "하즈키 렌", "아라시 치사토", "사쿠라코지 키나코", "빈 마르가레테", "오니츠카 토마리", "오니츠카 나츠미", "와카나 시키", "요네메 메이",
+            "후지시마 메구미", "카츠라기 이즈미", "안요지 히메", "고토 아키라",
+            "코토부키 츠무기", "히라사와 유이", "히라사와 우이", "나카노 아즈사", "아키야마 미오", "타이나카 릿츠", "고토 히토리", "키타 이쿠요", "이지치 니지카", "야마다 료",
+            "이세리 니나", "카와라기 모모카", "루파", "에비즈카 토모", "아와 스바루",
+            // 지역/교통/이슈
+            "효빈광역시", "빈주시", "덕현군", "비천시", "1호선", "2호선", "3호선", "4호선", "5호선", "6호선", "7호선", "8호선", "빈효선", "창전선", "빈주1호선", "빈주2호선", "덕주1호선", "빈주권광역철도",
+            "2세대 시내버스", "두청운수", "스타더스트 작전", "효빈교통공사", "효빈항차량주박기지", "국민건강보험공단 효빈지사", "효빈복지대학교", "천주폴리텍대학", "효빈종합고", "청엽국제학교",
+            "비마 종합사회복지관", "중수 종합사회복지관", "팔망성 종합사회복지관", "고송/토모리 복지관", "하가 복지관", "월천 복지관", "창전 복지관",
+            "박효빈", "윤대환", "강수성", "광역철도 중단사건", "윤재훈 지리기 챌린지", "비상계엄", "홈플러스 고송점", "조천산역", "토모리해수욕장", "효빈빈주고속도로", "나두길",
+            "SQLD", "컴퓨터활용능력", "리버스 컬", "HAF", "에브리타임"
+        ];
+
+        const userAuthors = [
+            "Admin_01", "TransitNerd", "BusManiac", "사건사고기록반", "팩트체커", "시장님바라기", "정치부기자", "여의도통신", "마트오픈런", "창전구_주민", "효빈산악회", "로드뷰매니아", "효빈택시연합", "두청운수_피해자모임",
+            "급식충", "학부모연합", "VVVF_마니아", "익명의효빈시민", "HyobinUniv_22", "효빈대_화석", "복지대_노예", "Welfare_worker", "동조희타로마스터", "피방수면협회", "NHIS_준비생", "교통공사_알바",
+            "CityHall_PR", "Kasumi_Oshi", "Harubin_Conductor", "Park_Rami_3rd", "NicoNicoNi", "Morfonica_Fan", "Yohane_Magic", "MyGO_Official", "HTT_Forever", "기타히어로", "TogeToge_Fan",
+            "동사무소_노예", "법조계_인사", "물놀이안전요원", "데이터분석가", "근육맨", "효빈시_주부"
+        ];
+
+        const templateNames = [
+            "틀:효빈광역시의 행정구역", "틀:효빈도시철도 노선", "틀:뱅드림 등장인물", "틀:러브라이브 스쿨 아이돌", "틀:효빈시 시내버스 도색", "틀:효빈시 주요 사건사고", "틀:효빈시 마스코트"
+        ];
+
+        const categoryNames = [
+            "분류:효빈광역시", "분류:효빈도시철도", "분류:뱅드림", "분류:러브라이브", "분류:사건사고", "분류:대한민국의 정치인", "분류:애니메이션", "분류:가상세계", "분류:대중교통", "분류:사회복지시설"
+        ];
+
+        // ==========================================
+        // 3. 역링크 데이터 동적 생성 엔진
+        // ==========================================
+        let allBacklinks = [];
+
+        function generateBacklinkData() {
+            // 나무위키 역링크는 한 문서에 수십~수백개가 걸려있음.
+            // 랜덤으로 40~100개의 데이터를 섞어서 추출
+            const count = Math.floor(Math.random() * 60) + 40;
+            const generated = new Set(); // 중복 방지
+
+            for (let i = 0; i < count; i++) {
+                // 확률적으로 이름공간 분배 (문서 70%, 틀 10%, 분류 10%, 사용자 10%)
+                const rand = Math.random();
+                let type = "문서";
+                let name = "";
+                let link = "";
+
+                if (rand < 0.7) {
+                    type = "문서";
+                    name = loreKeywords[Math.floor(Math.random() * loreKeywords.length)];
+                    link = `${name}.html`;
+                } else if (rand < 0.8) {
+                    type = "틀";
+                    name = templateNames[Math.floor(Math.random() * templateNames.length)];
+                    link = `${name}.html`;
+                } else if (rand < 0.9) {
+                    type = "분류";
+                    name = categoryNames[Math.floor(Math.random() * categoryNames.length)];
+                    link = `${name}.html`;
+                } else {
+                    type = "사용자";
+                    name = `사용자:${userAuthors[Math.floor(Math.random() * userAuthors.length)]}`;
+                    link = `작성자문서.html#${name.split(':')[1]}`;
+                }
+
+                if (!generated.has(name)) {
+                    generated.add(name);
+                    allBacklinks.push({ type, name, link });
+                }
+            }
+
+            // 본인 문서가 역링크에 등장하면 어색하므로 제외
+            allBacklinks = allBacklinks.filter(b => b.name !== docName);
+            
+            // 이름(가나다) 순으로 정렬
+            allBacklinks.sort((a, b) => a.name.localeCompare(b.name));
+        }
+
+        // ==========================================
+        // 4. 필터 및 렌더링 로직
+        // ==========================================
+        window.renderBacklinks = function() {
+            const filterValue = document.getElementById('namespaceFilter').value;
+            const container = document.getElementById('backlinkArea');
+            container.innerHTML = "";
+
+            // 이름공간별로 묶기
+            const grouped = {
+                "문서": [], "틀": [], "분류": [], "사용자": []
+            };
+
+            allBacklinks.forEach(item => {
+                if (filterValue === "all" || filterValue === item.type) {
+                    grouped[item.type].push(item);
+                }
+            });
+
+            // 렌더링
+            let hasAnyData = false;
+
+            ["문서", "틀", "분류", "사용자"].forEach(type => {
+                if (grouped[type].length > 0) {
+                    hasAnyData = true;
+                    let listHtml = '';
+                    grouped[type].forEach(item => {
+                        listHtml += `<li><a href="${item.link}">${item.name}</a></li>`;
+                    });
+
+                    const sectionHtml = `
+                        <div class="namespace-group">
+                            <div class="namespace-title">[${type}] 이름공간</div>
+                            <ul class="backlink-list">
+                                ${listHtml}
+                            </ul>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', sectionHtml);
+                }
+            });
+
+            if (!hasAnyData) {
+                container.innerHTML = `<div class="text-center py-20 text-gray-500 font-bold border border-dashed border-gray-300 rounded">해당 이름공간에 역링크가 존재하지 않습니다.</div>`;
+            }
+        }
+
+        // 초기 실행
+        window.addEventListener('DOMContentLoaded', () => {
+            generateBacklinkData();
+            renderBacklinks();
+        });
+    </script>
+</body>
+</html>

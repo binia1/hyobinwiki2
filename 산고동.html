@@ -1,0 +1,454 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>산고동 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        /* 북구 테마: 주거지의 편안한 녹색/회색 톤 */
+        :root { 
+            --wiki-fixed: #7777AA; 
+            --wiki-main: #557A95; 
+            --wiki-point: #334e64; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+            
+            /* 노선 색상 */
+            --line-1: #0077DD;
+            --line-2: #00CCAA;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-fixed: #9999CC;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+            --wiki-table-header-text: #000000;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; margin: 0; }
+        .wiki-container { max-width: 1152px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); display: flex; flex-direction: column; }
+
+        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: fixed !important; }
+        th, td { border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 2px solid var(--wiki-main); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: var(--wiki-point); border-left: 4px solid var(--wiki-main); padding-left: 12px; }
+
+        .infobox { border: 1px solid var(--wiki-main); background-color: var(--wiki-bg); width: 100%; max-width: 360px; font-size: 0.82rem; margin-bottom: 20px; border-radius: 4px; overflow: hidden; }
+        
+        .nav-box { border: 1px solid var(--wiki-main); margin-bottom: 15px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; clear: both; }
+        .nav-box-header { background-color: var(--wiki-main); color: #fff; padding: 8px 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; }
+        .nav-table { width: 100%; border-collapse: collapse; text-align: center; }
+        .nav-table th { background-color: var(--wiki-main) !important; color: #fff !important; border: 1px solid white !important; }
+        .nav-table td { background-color: var(--wiki-gray-bg); border: 1px solid white !important; }
+
+        .category-box { background: #fff; border: 1px solid var(--wiki-border); padding: 5px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn.active { background-color: var(--wiki-main); color: white !important; font-weight: bold; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+
+        /* 상세 행정구역 표 스타일 */
+        .admin-dong-grid { width: 100%; border-collapse: collapse; background: #fff; table-layout: fixed; }
+        [data-theme='dark'] .admin-dong-grid { background: #2d2f34; }
+        .admin-dong-grid td, .admin-dong-grid th { border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.9rem; text-align: center; vertical-align: middle; }
+        .admin-dong-grid th { background-color: var(--wiki-main); color: white; font-weight: bold; }
+        .admin-dong-grid td.admin-name-cell { font-weight: bold; background-color: #f9f9f9; color: var(--wiki-main); }
+        [data-theme='dark'] .admin-dong-grid td.admin-name-cell { background-color: #383b40; color: #DDBBFF; }
+        .legal-dong-cell { text-align: left; padding-left: 10px; }
+
+        /* 법정동 요약 틀 (효빈위키 우측 틀 스타일) */
+        .legal-dong-box { float: right; width: 320px; margin-left: 20px; margin-bottom: 20px; border: 1px solid #cccccc; background-color: #ffffff; font-size: 0.85rem; }
+        [data-theme='dark'] .legal-dong-box { background-color: #2d2f34; border-color: #555; }
+        .legal-dong-box table { margin: 0 !important; width: 100% !important; table-layout: auto !important; }
+        .legal-dong-box th { background-color: #ed6d1e !important; color: #ffffff !important; width: 35%; padding: 6px 8px; font-size: 0.8rem; text-align: center; border: 1px solid #cccccc !important; }
+        .legal-dong-box td { padding: 6px 8px; text-align: center; border: 1px solid #cccccc !important; }
+        [data-theme='dark'] .legal-dong-box th, [data-theme='dark'] .legal-dong-box td { border-color: #555 !important; }
+        .legal-dong-header { background-color: #ffffff; color: #000000; padding: 10px; text-align: center; border-bottom: 1px solid #cccccc; }
+        [data-theme='dark'] .legal-dong-header { background-color: #2d2f34; color: #eeeeee; border-color: #555; }
+        
+        .clear-both { clear: both; }
+        del { color: gray; text-decoration: line-through; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <div id="wiki-msg-box"></div>
+
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-fixed);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">산고동</h1>
+            <div class="wiki-btn-group shadow-sm mb-4">
+                <a href="토론.html" class="wiki-tool-btn">토론</a>
+                <a href="수정.html" class="wiki-tool-btn">편집</a>
+                <a href="역사.html" class="wiki-tool-btn">역사</a>
+                <div class="wiki-tool-btn" onclick="showMsg('즐겨찾기에 추가됨')">★</div>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="북구.html" class="wiki-link">북구(효빈광역시)</a> | 
+            <a href="북구.html" class="wiki-link">북구(효빈광역시)의 행정동</a> |
+            <a href="효빈광역시.html" class="wiki-link">효빈광역시의 구도심</a>
+        </div>
+
+        <div class="no-autolink">
+            <div class="hb-bukgu-nav"></div>
+            <script src="js/북구행정.js"></script>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4 flex-grow">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 md:order-1 w-full md:w-auto">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">역사</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">행정 구역 현황</a>
+                        <ul class="pl-4 mt-1">
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">사연동</a></li>
+                            <li>3.2. <a href="#s-3-2" class="wiki-link">서도동</a></li>
+                            <li>3.3. <a href="#s-3-3" class="wiki-link">추산동</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">주요 시설</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">교통</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">정치</a></li>
+                    <li>7. <a href="#s-7" class="wiki-link">여담</a></li>
+                </ul>
+            </div>
+
+            <!-- 행정동 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
+                <div class="text-center border-b border-[var(--wiki-border)] p-4" style="background-color: var(--wiki-bg);">
+                    <div class="font-bold text-[0.8rem]" style="color: var(--wiki-text);">효빈광역시 북구의 행정동</div>
+                    <div class="font-bold text-2xl my-1" style="color: var(--wiki-text);">산고동</div>
+                    <div class="text-[0.75rem]" style="color: var(--wiki-text); opacity: 0.8;">山高洞 | Sango-dong</div>
+                </div>
+                <table class="w-full text-sm border-collapse m-0 table-fixed" style="background-color: var(--wiki-bg);">
+                    <colgroup>
+                        <col style="width: 33%;">
+                        <col style="width: 67%;">
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <th class="bg-[var(--wiki-main)] text-white border border-[var(--wiki-border)] p-2 font-bold">광역자치단체</th>
+                            <td class="border border-[var(--wiki-border)] p-2"><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-[var(--wiki-main)] text-white border border-[var(--wiki-border)] p-2 font-bold">기초자치단체</th>
+                            <td class="border border-[var(--wiki-border)] p-2"><a href="북구.html" class="wiki-link">북구</a></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-[var(--wiki-main)] text-white border border-[var(--wiki-border)] p-2 font-bold">행정표준코드</th>
+                            <td class="border border-[var(--wiki-border)] p-2">79040180</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-[var(--wiki-main)] text-white border border-[var(--wiki-border)] p-2 font-bold">관할 법정동</th>
+                            <td class="border border-[var(--wiki-border)] p-2 text-xs">사연동, 서도동, 추산동</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-[var(--wiki-main)] text-white border border-[var(--wiki-border)] p-2 font-bold">면적</th>
+                            <td class="border border-[var(--wiki-border)] p-2">4.15㎢</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-[var(--wiki-main)] text-white border border-[var(--wiki-border)] p-2 font-bold">인구</th>
+                            <td class="border border-[var(--wiki-border)] p-2">7,810명 <sup class="text-[10px]"><a href="#" title="북구 최하위" class="text-[var(--wiki-link)] no-underline">[1]</a></sup></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-[var(--wiki-main)] text-white border border-[var(--wiki-border)] p-2 font-bold">인구밀도</th>
+                            <td class="border border-[var(--wiki-border)] p-2">1,881.93명/㎢</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-[var(--wiki-main)] text-white border border-[var(--wiki-border)] p-2 font-bold align-middle">정치</th>
+                            <td class="border border-[var(--wiki-border)] p-0">
+                                <table class="w-full m-0 border-none table-fixed text-center" style="background-color: var(--wiki-bg);">
+                                    <tbody>
+                                        <tr><td colspan="2" class="bg-[#7B1517] text-white font-bold py-1 border-b border-[var(--wiki-border)] text-xs">국회의원 | 북구 을</td></tr>
+                                        <tr>
+                                            <td class="w-[45%] border-r border-b border-[var(--wiki-border)] p-1"><span class="bg-[#004EA2] text-white px-1.5 py-0.5 rounded text-[11px] font-bold">더불어민주당</span></td>
+                                            <td class="w-[55%] border-b border-[var(--wiki-border)] p-1 text-[#004EA2] font-bold">원성준 <span class="text-[10px]" style="color: var(--wiki-text); font-weight: normal;">(4선)</span></td>
+                                        </tr>
+                                        <tr><td colspan="2" class="bg-[#004EA2] text-white font-bold py-1 border-b border-[var(--wiki-border)] text-xs">효빈광역시의원 | 제4선거구</td></tr>
+                                        <tr>
+                                            <td class="border-r border-b border-[var(--wiki-border)] p-1"><span class="bg-[#004EA2] text-white px-1.5 py-0.5 rounded text-[11px] font-bold">더불어민주당</span></td>
+                                            <td class="border-b border-[var(--wiki-border)] p-1 text-[#004EA2] font-bold">원수현 <span class="text-[10px]" style="color: var(--wiki-text); font-weight: normal;">(재선)</span></td>
+                                        </tr>
+                                        <tr><td colspan="2" class="bg-[#EF7C1C] text-white font-bold py-1 border-b border-[var(--wiki-border)] text-xs">북구의원 | 북구 바 선거구</td></tr>
+                                        <tr>
+                                            <td class="border-r border-b border-[var(--wiki-border)] p-1"><span class="bg-[#004EA2] text-white px-1.5 py-0.5 rounded text-[11px] font-bold">더불어민주당</span></td>
+                                            <td class="border-b border-[var(--wiki-border)] p-1 text-[#004EA2] font-bold">엄밀희 <span class="text-[10px]" style="color: var(--wiki-text); font-weight: normal;">(초선)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border-r border-b border-[var(--wiki-border)] p-1"><span class="bg-[#004EA2] text-white px-1.5 py-0.5 rounded text-[11px] font-bold">더불어민주당</span></td>
+                                            <td class="border-b border-[var(--wiki-border)] p-1 text-[#004EA2] font-bold">남도율 <span class="text-[10px]" style="color: var(--wiki-text); font-weight: normal;">(재선)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border-r border-b border-[var(--wiki-border)] p-1"><span class="bg-[#004EA2] text-white px-1.5 py-0.5 rounded text-[11px] font-bold">더불어민주당</span></td>
+                                            <td class="border-b border-[var(--wiki-border)] p-1 text-[#004EA2] font-bold">심재희 <span class="text-[10px]" style="color: var(--wiki-text); font-weight: normal;">(재선)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border-r border-[var(--wiki-border)] p-1"><span class="bg-[#D6001C] text-white px-1.5 py-0.5 rounded text-[11px] font-bold">진보당</span></td>
+                                            <td class="border-[var(--wiki-border)] p-1 text-[#D6001C] font-bold">노태훈 <span class="text-[10px]" style="color: var(--wiki-text); font-weight: normal;">(재선)</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-[var(--wiki-main)] text-white border border-[var(--wiki-border)] p-2 font-bold">행정복지센터</th>
+                            <td class="border border-[var(--wiki-border)] p-2 text-xs">
+                                효빈광역시 북구 추산동 9<br>
+                                <a href="#" class="inline-block mt-1 bg-[#238B45] text-white px-2 py-0.5 rounded text-[11px] font-bold no-underline"><i class="fa-solid fa-link"></i> 산고동 행정복지센터</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </aside>
+        </div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <p>효빈광역시 <a href="북구.html" class="wiki-link">북구</a>의 행정동. <strong>사연동, 서도동, 추산동</strong> 3개의 법정동을 묶어서 관할하고 있다.</p>
+        <p>북구의 외곽에 위치한 오래된 주거 지역으로, 인구는 고작 7,810명에 불과해 <strong>북구 전체를 통틀어 인구가 가장 적은 행정동</strong>이다. 고령화 비율이 무진장 높고 단독주택과 낡은 빌라가 밀집해 있어 재개발 떡밥이 선거철마다 꾸준히 제기되는 곳이기도 하다. <del>물론 선거 끝나면 귀신같이 조용해진다</del></p>
+        <p>그러나 인구수에 비해 과분할 정도로(...) 1호선과 2호선이 모두 지나가는 정신 나간 대중교통 인프라를 자랑하며, <a href="고송동.html" class="wiki-link">고송동</a>이나 <a href="중수동.html" class="wiki-link">중수동</a> 같은 핵심 도심과 인접해 있어 배후 주거지로서의 알짜배기 잠재력은 높게 평가받는다.</p>
+
+        <h2 id="s-2">2. 역사</h2>
+        <p>본래 효빈군 <strong>고송면(高松面)</strong>에 속했던 <strong>사연리, 추산리, 서도리</strong> 지역이었다. <strong>1971년</strong> 고송면이 폐지되면서 쿨하게 북구로 편입, 각각 동(洞)으로 승격되었다.</p>
+        <p>초기에는 인구가 너무 없어서 별개의 행정동으로 운영하기엔 가성비가 안 맞았기에, 지대가 높은 이 동네의 특성을 대충 살려 '산이 높다'는 뜻의 <strong>산고동(山高洞)</strong>이라는 이름으로 하나로 묶어 행정동을 출범시켰다.</p>
+
+        <h2 id="s-3">3. 행정 구역 현황</h2>
+        <table class="data-table text-center my-4 w-full text-sm">
+            <thead>
+                <tr>
+                    <th class="w-[15%]">법정동</th>
+                    <th class="w-[15%]">인구</th>
+                    <th class="w-[15%]">면적</th>
+                    <th class="w-[20%]">주요 특징</th>
+                    <th class="w-[35%]">관할 구역 및 역세권</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="font-bold">사연동</td>
+                    <td>3,800명</td>
+                    <td>1.35㎢</td>
+                    <td>산고동의 핵심</td>
+                    <td class="text-xs text-left px-2"><a href="사연역.html" class="wiki-link" style="color:var(--line-2);">●</a> 2호선 사연역, 평안명대</td>
+                </tr>
+                <tr>
+                    <td class="font-bold">서도동</td>
+                    <td>2,010명</td>
+                    <td>1.12㎢</td>
+                    <td>북구청 인접</td>
+                    <td class="text-xs text-left px-2"><a href="서도역.html" class="wiki-link" style="color:var(--line-1);">●</a> 1호선 서도역, 노후 주택가</td>
+                </tr>
+                <tr>
+                    <td class="font-bold">추산동</td>
+                    <td>2,000명</td>
+                    <td>1.68㎢</td>
+                    <td><del>덕후들의 성지</del></td>
+                    <td class="text-xs text-left px-2"><a href="추산역.html" class="wiki-link" style="color:var(--line-1);">●</a> 1호선 추산역, 추산초등학교</td>
+                </tr>
+                <tr class="bg-gray-100 font-bold">
+                    <td>계</td>
+                    <td>7,810명</td>
+                    <td>4.15㎢</td>
+                    <td colspan="2"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 하위 문단: 사연동 -->
+        <h3 id="s-3-1">3.1. 사연동</h3>
+        <div class="legal-dong-box">
+            <table>
+                <tbody>
+                    <tr>
+                        <td colspan="2" class="p-0 border-none">
+                            <div class="legal-dong-header">
+                                <div class="font-bold text-[0.75rem] text-gray-500">효빈광역시 북구의 법정동</div>
+                                <div class="font-bold text-xl my-1">사연동</div>
+                                <div class="text-[0.7rem] text-gray-500">四恋洞 | Sayeon-dong</div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr><th>광역자치단체</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></td></tr>
+                    <tr><th>기초자치단체</th><td><a href="북구.html" class="wiki-link">북구</a></td></tr>
+                    <tr><th>관할 행정동</th><td><a href="산고동.html" class="wiki-link">산고동</a></td></tr>
+                    <tr><th>면적</th><td>1.35㎢</td></tr>
+                    <tr><th>인구</th><td>3,800명</td></tr>
+                    <tr><th>행정표준코드</th><td>7914010700</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p><strong>산고동 인구의 절반을 책임지는 실질적인 본진.</strong></p>
+        <p>효빈도시철도 2호선 <a href="사연역.html" class="wiki-link">사연역</a>을 중심으로 상권과 주거지가 형성되어 있다. 평안명대가 이곳에 위치해 있어 대학생들의 자취방 수요가 꽤 있는 편이며, 동네 분위기도 세 법정동 중에서 가장 활기차다.</p>
+        <p>특히 사연역 앞으로는 스타더스트 작전 이후 도입된 스카이 블루(<span style="color:#01B7ED; font-weight:bold;">#01B7ED</span>) 도색의 간선 버스와 제이드 그린(<span style="color:#37B484; font-weight:bold;">#37B484</span>) 도색의 지선 버스들이 쉴 새 없이 지나다닌다. <del>과거 두청운수가 똥색 버스에 75명씩 쑤셔 넣고 요금 폭리를 취하던 흑역사를 생각하면 진짜 상전벽해가 따로 없다.</del></p>
+        <div class="clear-both"></div>
+
+        <!-- 하위 문단: 서도동 -->
+        <h3 id="s-3-2">3.2. 서도동</h3>
+        <div class="legal-dong-box">
+            <table>
+                <tbody>
+                    <tr>
+                        <td colspan="2" class="p-0 border-none">
+                            <div class="legal-dong-header">
+                                <div class="font-bold text-[0.75rem] text-gray-500">효빈광역시 북구의 법정동</div>
+                                <div class="font-bold text-xl my-1">서도동</div>
+                                <div class="text-[0.7rem] text-gray-500">西道洞 | Seodo-dong</div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr><th>광역자치단체</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></td></tr>
+                    <tr><th>기초자치단체</th><td><a href="북구.html" class="wiki-link">북구</a></td></tr>
+                    <tr><th>관할 행정동</th><td><a href="산고동.html" class="wiki-link">산고동</a></td></tr>
+                    <tr><th>면적</th><td>1.12㎢</td></tr>
+                    <tr><th>인구</th><td>2,010명</td></tr>
+                    <tr><th>행정표준코드</th><td>7914010900</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p>산고동 관할 구역 중에서 북구청과 가장 인접한 동네. 1호선 <a href="서도역.html" class="wiki-link">서도역</a>이 주민들의 든든한 발이 되어주고 있다.</p>
+        <p>오래된 단독주택과 낡은 빌라들이 빽빽하게 들어서 있는 전형적인 구도심 주거지다.</p>
+        <div class="clear-both"></div>
+
+        <!-- 하위 문단: 추산동 -->
+        <h3 id="s-3-3">3.3. 추산동</h3>
+        <div class="legal-dong-box">
+            <table>
+                <tbody>
+                    <tr>
+                        <td colspan="2" class="p-0 border-none">
+                            <div class="legal-dong-header">
+                                <div class="font-bold text-[0.75rem] text-gray-500">효빈광역시 북구의 법정동</div>
+                                <div class="font-bold text-xl my-1">추산동</div>
+                                <div class="text-[0.7rem] text-gray-500">秋山洞 | Chusan-dong</div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr><th>광역자치단체</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></td></tr>
+                    <tr><th>기초자치단체</th><td><a href="북구.html" class="wiki-link">북구</a></td></tr>
+                    <tr><th>관할 행정동</th><td><a href="산고동.html" class="wiki-link">산고동</a></td></tr>
+                    <tr><th>면적</th><td>1.68㎢</td></tr>
+                    <tr><th>인구</th><td>2,000명</td></tr>
+                    <tr><th>행정표준코드</th><td>7914012500</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p>인구 2,000명 턱걸이를 유지 중인 조용한 동네. 1호선 <a href="추산역.html" class="wiki-link">추산역</a>과 추산초등학교가 있다.</p>
+        <p>동네 자체는 아주 평화로운 노인정 감성의 주택가지만, 우연의 일치로 동 이름의 한자 표기(秋山)가 애니메이션 <strong>케이온!</strong>의 등장인물 <a href="아키야마 미오.html" class="wiki-link">아키야마 미오</a>(秋山 澪)의 성씨와 완벽하게 일치한다! 덕분에 덕주1호선에 버금가는 마이너 성지로 취급받으며, 심심하면 추산역 역명판 앞에서 인증샷을 찍고 가는 오타쿠들을 심심찮게 목격할 수 있다. <del>역내 안내방송을 미오 성우에게 맡겨달라는 민원이 북구청에 꾸준히 들어간다 카더라</del></p>
+        <div class="clear-both"></div>
+
+
+        <h2 id="s-4">4. 주요 시설</h2>
+        <ul class="list-disc pl-5 mb-4">
+            <li><strong>평안명대</strong> (사연동): 인구 대비 유동 인구가 많은 이유 중 하나. 축제 기간만 되면 사연역 일대가 마비된다.</li>
+            <li>사연초등학교, 추산초등학교</li>
+        </ul>
+
+        <h2 id="s-5">5. 교통</h2>
+        <p>인구는 적지만 교통 인프라만큼은 북구 내에서도 손에 꼽힐 정도로 우수하다. 1호선과 2호선이 동네를 사이좋게 관통해 준다.</p>
+        <ul class="list-disc pl-5 mt-2">
+            <li><strong><a href="사연역.html" class="wiki-link">사연역</a></strong> (<span style="color:var(--line-2); font-weight:bold;">●</span> 2호선): 사연동 중심에 위치. 역명에 '연(恋, 사랑)'자가 들어가서, 밸런타인데이나 크리스마스만 되면 역명판 앞에서 커플 사진을 찍는 꼴불견(...)이 속출한다. <del>헤어지지 않는다는 전설이 있다는데, 어차피 헤어질 놈들은 다 헤어진다</del> 참고로 2호선 마스코트인 <strong>하루빈</strong>의 발랄한 이미지와 가장 잘 어울리는 역 중 하나.</li>
+            <li><strong><a href="서도역.html" class="wiki-link">서도역</a></strong> (<span style="color:var(--line-1); font-weight:bold;">●</span> 1호선): 서도동 주민들의 발. 북구청역과 한 정거장 차이라 공무원들의 거주 수요도 일부 있다. 1호선 마스코트 <strong>고나미</strong>가 그려진 환승 안내 포스터가 역내에 도배되어 있다.</li>
+            <li><strong><a href="추산역.html" class="wiki-link">추산역</a></strong> (<span style="color:var(--line-1); font-weight:bold;">●</span> 1호선): 위에서 언급했듯 이름 덕분에 성지순례객이 찾는다.</li>
+        </ul>
+
+        <h2 id="s-6">6. 정치</h2>
+        <p>국회의원 선거구는 <strong>북구 을</strong>(중수1동, 고송8동 등과 공유)에 속한다. 현역 의원은 더불어민주당 <strong>원성준</strong>이다.</p>
+        <p>원래는 노년층 인구가 압도적이라 전통적으로 보수세가 강한 동네였으나, 최근 역세권 버프와 재개발 기대감으로 젊은 층과 평안명대 대학생들이 유입되면서 표심이 꽤나 유동적으로 변했다. 선거 유세 차량이 비좁은 빌라 골목을 비집고 들어오느라 고생하는 모습을 흔히 볼 수 있다.</p>
+
+        <h2 id="s-7">7. 여담</h2>
+        <ul class="list-disc pl-5 space-y-2 text-sm">
+            <li>행정동 이름은 '산고(山高)'지만, 정작 동네 자체는 평지나 완만한 언덕에 위치해 있다. <del>이름값 못하는 동네 1순위</del> 과거 고송면 시절 뒷산이 높아서 붙여진 이름이라는 설이 유력하다.</li>
+            <li>총 인구가 7천 명 대밖에 안 돼서 잊힐 만하면 <strong>"동주민센터(행정복지센터) 통합해버리자"</strong>는 떡밥이 나오지만, 사연동·서도동·추산동 3개 법정동 주민들의 필사적인 반대와 밥그릇 챙기기로 매번 무산되고 있다.</li>
+        </ul>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-500 text-xs pb-10 leading-relaxed">
+            <p class="mb-4">이 저작물은 <strong>CC BY-NC-SA 2.0 KR</strong>에 따라 이용할 수 있습니다.</p>
+        </footer>
+    </div>
+
+    <!-- 인라인 스크립트 -->
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+        function toggleNav(id, labelId) {
+            const content = document.getElementById(id);
+            const label = document.getElementById(labelId);
+            if (content.style.maxHeight === '0px') {
+                content.style.maxHeight = '2000px';
+                label.innerText = '[접기]';
+            } else {
+                content.style.maxHeight = '0px';
+                label.innerText = '[펼치기]';
+            }
+        }
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
+            
+            const guNav = document.getElementById('guNav');
+            if(guNav) guNav.style.maxHeight = '0px';
+        };
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                location.href = this.value.trim() + ".html";
+            }
+        });
+    </script>
+
+    <!-- 효빈위키 코어 스크립트 파일들 -->
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

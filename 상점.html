@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAILUMINAE SMILE FESTIVAL - 상점</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Orbitron:wght@700&display=swap');
+
+        :root {
+            --color-active: #0077DD;
+            --color-festival: #C455F6;
+            --color-accent: #FF4F91;
+            --header-height: 80px;
+            --bg-dark: #050510;
+        }
+
+        body {
+            margin: 0; overflow: hidden; background-color: var(--bg-dark);
+            font-family: 'Noto Sans KR', sans-serif; display: flex;
+            justify-content: center; align-items: center; height: 100vh;
+            color: white; user-select: none;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(196, 85, 246, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 119, 221, 0.08), transparent 25%);
+        }
+
+        #app-container {
+            position: relative; width: 1280px; height: 720px;
+            background: linear-gradient(135deg, rgba(10,11,26,0.95) 0%, rgba(15,15,30,0.95) 100%);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255,255,255,0.05);
+            overflow: hidden; transform-origin: center; display: flex; flex-direction: column;
+        }
+
+        .top-bar {
+            height: var(--header-height);
+            background: linear-gradient(to bottom, rgba(10, 11, 26, 0.9), rgba(10, 11, 26, 0.4));
+            backdrop-filter: blur(12px); border-bottom: 2px solid var(--color-festival);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 30px; z-index: 20; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .shop-wrapper {
+            display: flex; flex: 1; width: 100%; height: calc(100% - var(--header-height));
+            position: relative; overflow: hidden;
+        }
+
+        .character-pane {
+            width: 38%; min-width: 450px; position: relative; display: flex;
+            align-items: flex-end; justify-content: center; pointer-events: none; z-index: 10;
+        }
+
+        .character-pane img {
+            max-height: 95%; max-width: 100%; object-fit: contain; object-position: bottom;
+            filter: drop-shadow(0 0 25px rgba(0,0,0,0.8)) drop-shadow(0 0 10px rgba(196,85,246,0.4));
+            animation: breathe 5s infinite ease-in-out; pointer-events: auto; cursor: pointer;
+            transition: transform 0.2s, filter 0.3s;
+        }
+        .character-pane img:active { transform: scale(0.97); }
+
+        @keyframes breathe {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .speech-bubble {
+            position: absolute; top: 25%; right: -20px; background: rgba(255, 255, 255, 0.95);
+            color: #111; padding: 15px 25px; border-radius: 20px 20px 20px 0; font-weight: 800;
+            font-size: 16px; line-height: 1.4; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 15; opacity: 0; transform: translateY(15px); transition: all 0.3s;
+            pointer-events: none; width: 280px; word-wrap: break-word; border-left: 5px solid var(--color-festival);
+        }
+        .speech-bubble.show { opacity: 1; transform: translateY(0); }
+
+        .shop-layout {
+            flex: 1; display: flex; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(15px);
+            border-left: 2px solid rgba(255,255,255,0.1); border-top-left-radius: 40px;
+            margin: 20px 20px 0 0; box-shadow: -10px 0 40px rgba(0,0,0,0.7); overflow: hidden;
+            position: relative; z-index: 5;
+        }
+
+        .sidebar {
+            width: 220px; background: rgba(0, 0, 0, 0.3); border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; padding: 30px 0; gap: 15px; z-index: 10;
+        }
+
+        .tab-btn {
+            padding: 15px 25px; font-size: 16px; font-weight: 700; color: rgba(255,255,255,0.5);
+            text-align: left; cursor: pointer; transition: all 0.3s ease; border-left: 4px solid transparent;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .tab-btn:hover { background: rgba(255,255,255,0.05); color: white; }
+        .tab-btn.active {
+            background: linear-gradient(90deg, rgba(196,85,246,0.2) 0%, transparent 100%);
+            color: white; border-left-color: var(--color-festival); text-shadow: 0 0 10px rgba(196,85,246,0.5);
+        }
+
+        .content-area {
+            flex: 1; padding: 30px 40px; overflow-y: auto; position: relative;
+        }
+        .content-area::-webkit-scrollbar { width: 8px; }
+        .content-area::-webkit-scrollbar-thumb { background: rgba(196,85,246,0.5); border-radius: 4px; }
+
+        .banner {
+            width: 100%; height: 160px; border-radius: 16px; background: linear-gradient(45deg, #2a0845 0%, #6441A5 100%);
+            margin-bottom: 25px; display: flex; align-items: center; padding: 0 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .item-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; padding-bottom: 40px;
+        }
+
+        .item-card {
+            background: rgba(20, 22, 45, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;
+            padding: 20px; display: flex; flex-direction: column; transition: all 0.3s; position: relative; overflow: hidden;
+        }
+        .item-card:hover {
+            transform: translateY(-5px); background: rgba(40, 45, 80, 0.9);
+            border-color: rgba(196,85,246,0.5); box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 15px rgba(196,85,246,0.2);
+        }
+        .item-card.rare { border: 1px solid rgba(255, 204, 17, 0.5); }
+        .item-card.epic { border: 1px solid rgba(255, 79, 145, 0.5); }
+
+        .item-icon {
+            width: 70px; height: 70px; background: rgba(0,0,0,0.6); border-radius: 12px;
+            display: flex; justify-content: center; align-items: center; font-size: 35px;
+            margin: 0 auto 15px auto; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+        }
+
+        .buy-btn {
+            margin-top: auto; width: 100%; padding: 10px; border-radius: 8px; font-weight: 900;
+            display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;
+        }
+        .buy-btn.gem { background: #1a365d; color: #63b3ed; border: 1px solid #2b6cb0; }
+        .buy-btn.gem:hover { background: #2b6cb0; color: white; box-shadow: 0 0 15px rgba(66, 153, 225, 0.6); }
+        .buy-btn.coin { background: #4a3f12; color: #f6e05e; border: 1px solid #975a16; }
+        .buy-btn.coin:hover { background: #975a16; color: white; box-shadow: 0 0 15px rgba(236, 201, 75, 0.6); }
+
+        .custom-modal {
+            position: absolute; inset: 0; background: rgba(5,5,16,0.95); backdrop-filter: blur(15px);
+            z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .custom-modal.show { opacity: 1; pointer-events: auto; }
+
+        .toast-container {
+            position: absolute; top: 100px; left: 50%; transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9); border: 2px solid var(--color-festival);
+            padding: 15px 35px; border-radius: 50px; text-align: center; font-size: 18px; font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 300; opacity: 0; pointer-events: none; transition: all 0.3s;
+        }
+        .toast-container.show { opacity: 1; transform: translate(-50%, 20px); pointer-events: auto; }
+
+        /* 가챠 결과 카드 (개별 및 10연차 뷰 지원) */
+        .gacha-card-mini {
+            width: 140px; height: 200px; background: linear-gradient(to bottom, #2d3748, #1a202c);
+            border-radius: 12px; border: 2px solid #4a5568; display: flex; flex-direction: column;
+            align-items: center; justify-content: flex-end; padding: 10px; position: relative; overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); transform: scale(0); animation: popIn 0.4s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { 100% { transform: scale(1); } }
+        
+        .gacha-card-mini img { position: absolute; bottom: 40px; max-height: 140px; object-fit: contain; z-index: 5; }
+        
+        .rarity-R { border-color: #A0AEC0; } 
+        .rarity-SR { border-color: #F6E05E; background: linear-gradient(to bottom, #744210, #1a202c); box-shadow: 0 0 10px rgba(246, 224, 94, 0.5); }
+        .rarity-SSR { border-color: #D53F8C; background: linear-gradient(to bottom, #702459, #1a202c); box-shadow: 0 0 15px rgba(213, 63, 140, 0.6); }
+        .rarity-UR { border-color: #38B2AC; background: linear-gradient(to bottom, #234E52, #1a202c); box-shadow: 0 0 20px rgba(56, 178, 172, 0.8); }
+        .rarity-UUR { border-color: #FFFFFF; background: linear-gradient(to bottom, #FFFFFF, #ECC94B); box-shadow: 0 0 30px rgba(255, 255, 255, 1); animation: popIn 0.4s forwards, flash 1s infinite alternate; }
+        
+        @keyframes flash { 0% { box-shadow: 0 0 20px #fff; } 100% { box-shadow: 0 0 40px #FFD700; } }
+
+        .gacha-badge { position: absolute; top: -5px; right: -5px; padding: 3px 8px; border-radius: 8px; font-size: 10px; font-weight: 900; z-index: 20; transform: rotate(15deg); }
+        .badge-new { background: #EE0022; color: white; border: 2px solid white; }
+        .badge-dup { background: #4A5568; color: #E2E8F0; border: 2px solid #A0AEC0; }
+        
+        .qty-btn { width: 30px; height: 30px; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .qty-btn:hover { background: var(--color-festival); }
+        .qty-input { width: 50px; height: 30px; background: black; border: 1px solid gray; color: white; text-align: center; border-radius: 6px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <div class="top-bar">
+        <div class="flex items-center gap-4">
+            <button class="w-12 h-12 bg-gray-800 hover:bg-gray-700 border border-gray-500 rounded-full flex items-center justify-center text-xl transition shadow-lg" onclick="goToLobby()" title="로비로 돌아가기">◀</button>
+            <div>
+                <div class="text-xs text-yellow-300 font-bold tracking-widest uppercase">SHOP & GACHA</div>
+                <div class="font-black text-2xl font-['Montserrat'] leading-tight tracking-tight text-white">RAILUMINAE STORE</div>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-5">
+            <div class="flex items-center bg-black/60 border border-gray-500 rounded-full px-5 py-2 shadow-inner">
+                <span class="text-xl">🪙</span><span id="player-coin" class="font-bold font-['Orbitron'] ml-3 text-lg text-gray-200">0</span>
+            </div>
+            <div class="flex items-center bg-black/60 border border-blue-500 rounded-full px-5 py-2 shadow-[0_0_10px_rgba(0,119,221,0.3)]">
+                <span class="text-xl">💎</span><span id="player-gem" class="font-bold font-['Orbitron'] ml-3 text-lg text-blue-300">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="shop-wrapper">
+        <!-- 왼쪽 캐릭터 패널 -->
+        <div class="character-pane">
+            <img id="shop-character-img" src="이미지/고나미.png" alt="상점 마스코트">
+            <div id="shop-speech-bubble" class="speech-bubble">어서오십시오. 무엇을 찾으십니까?</div>
+        </div>
+
+        <!-- 오른쪽 카테고리 탭 및 상품 목록 -->
+        <div class="shop-layout">
+            <div class="sidebar">
+                <div class="tab-btn active" onclick="switchTab('gacha', this)"><span class="text-2xl">✨</span> 픽업 가챠</div>
+                <div class="tab-btn" onclick="switchTab('consumables', this)"><span class="text-2xl">⚡</span> 에너지 회복</div>
+                <div class="tab-btn" onclick="switchTab('gifts', this)"><span class="text-2xl">🎁</span> 호감도 선물</div>
+                <div class="tab-btn" onclick="switchTab('equip', this)"><span class="text-2xl">🔧</span> 부서별 장비</div>
+            </div>
+
+            <div class="content-area" id="content-area">
+                <!-- JS에서 동적 렌더링 -->
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-confirm" class="custom-modal">
+        <div class="bg-gray-900/95 p-8 rounded-2xl border border-gray-600 shadow-2xl backdrop-blur-md w-[480px] text-center">
+            <div id="confirm-icon" class="text-6xl mb-4 drop-shadow-lg">🎁</div>
+            <h2 id="confirm-title" class="text-2xl font-black mb-2 text-white break-keep">아이템 이름</h2>
+            <p id="confirm-desc" class="text-gray-400 mb-6 text-sm leading-relaxed break-keep h-14 overflow-hidden">아이템 설명이 여기에 표시됩니다.</p>
+            
+            <div class="bg-black/60 rounded-xl p-5 mb-6 border border-gray-700">
+                <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-700" id="quantity-selector-area">
+                    <span class="text-gray-300 font-bold">구매 수량</span>
+                    <div class="flex items-center gap-2">
+                        <button class="qty-btn" onclick="changeQty(-10)">-10</button>
+                        <button class="qty-btn" onclick="changeQty(-1)">-</button>
+                        <input type="number" id="input-qty" class="qty-input" value="1" min="1" max="999" onchange="updateTotalPrice()">
+                        <button class="qty-btn" onclick="changeQty(1)">+</button>
+                        <button class="qty-btn" onclick="changeQty(10)">+10</button>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300 font-bold">총 결제 금액</span>
+                    <span id="confirm-total-price" class="text-3xl font-black font-['Orbitron'] text-yellow-400">💎 300</span>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button class="flex-1 py-4 bg-gray-700 hover:bg-gray-600 rounded-xl font-bold text-white transition border border-gray-500" onclick="closeModal('modal-confirm')">취소</button>
+                <button id="btn-process-buy" class="flex-1 py-4 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold text-white transition border border-blue-400 shadow-[0_0_15px_rgba(37,99,235,0.5)]">구매 확정</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-gacha" class="custom-modal" style="background: rgba(0,0,0,0.98);">
+        <div class="text-center w-full max-w-5xl">
+            <h2 class="text-5xl font-black mb-2 text-yellow-300 drop-shadow-[0_0_20px_rgba(255,255,0,0.8)] tracking-widest">RECRUIT RESULT</h2>
+            <p class="text-gray-300 text-lg mb-8">새로운 카드와 인연을 획득했습니다!</p>
+            
+            <div id="gacha-results-grid" class="flex flex-wrap justify-center gap-4 mb-10 min-h-[420px]">
+                <!-- JS에서 카드 1장 ~ 10장 렌더링 -->
+            </div>
+
+            <button class="px-16 py-4 bg-white hover:bg-gray-300 text-black rounded-full font-black text-2xl transition shadow-[0_0_25px_rgba(255,255,255,0.8)]" onclick="closeModal('modal-gacha')">확인 (로비 연동됨)</button>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container">메시지</div>
+</div>
+
+<script>
+    // 반응형 대응
+    const appContainer = document.getElementById('app-container');
+    function resize() {
+        const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+        appContainer.style.transform = `scale(${scale})`;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // 토스트 알림 (큐 시스템 도입)
+    const toast = document.getElementById('toast-container');
+    let toastQueue = [];
+    let isToastShowing = false;
+
+    function showToast(message, isError = false) {
+        toastQueue.push({ msg: message, err: isError });
+        if(!isToastShowing) processToastQueue();
+    }
+
+    function processToastQueue() {
+        if(toastQueue.length === 0) { isToastShowing = false; return; }
+        isToastShowing = true;
+        const current = toastQueue.shift();
+        
+        toast.innerText = current.msg;
+        toast.style.borderColor = current.err ? '#EF4444' : 'var(--color-festival)';
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(processToastQueue, 400); // 간격 두고 다음 알림
+        }, 2200);
+    }
+
+    function goToLobby() {
+        showToast('로비로 이동합니다...', false);
+        setTimeout(() => { location.href = '레일루미네_스마일_페스티벌_게임.html'; }, 600);
+    }
+
+    const STORAGE_KEY = 'railumina_save_data_v7_final'; 
+    let gameState = {
+        playerName: '신입매니저', level: 1, exp: 0, maxExp: 100,
+        coin: 0, gem: 0, activeCharId: '1호선',
+        ownedChars: ['1호선'], // 캐릭터 잠금 해제용
+        ownedCards: [], // 114종 가챠 카드 수집용
+        inventory: {}
+    };
+
+    function loadGame() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try { 
+                const parsed = JSON.parse(saved);
+                gameState = { 
+                    ...gameState, 
+                    ...parsed,
+                    inventory: parsed.inventory || gameState.inventory,
+                    ownedChars: parsed.ownedChars || ['1호선'],
+                    ownedCards: parsed.ownedCards || []
+                }; 
+            } 
+            catch(e) { console.error("Save file corrupted"); }
+        }
+        updateCurrencyUI();
+        initShopCharacter();
+    }
+
+    function saveGame() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+        updateCurrencyUI();
+    }
+
+    function updateCurrencyUI() {
+        document.getElementById('player-coin').innerText = gameState.coin.toLocaleString();
+        document.getElementById('player-gem').innerText = gameState.gem.toLocaleString();
+    }
+
+    // 상점용 대사 및 캐릭터 이미지 설정
+    const charFiles = {
+        '1호선': '고나미.png', '2호선': '하루빈.png', '3호선': '박라미.png', '4호선': '다로나.png', 
+        '5호선': '미소하.png', '6호선': '라세나.png', '7호선': '임세정.png', '7호선(세하)': '임세하.png', 
+        '8호선': '유리아.png', '빈효선': '전노아.png', '창전선': '심세이.png', '빈주1호선': '박빛나.png', 
+        '빈주2호선': '김소빈.png', '덕주1호선': '이덕희.png', '효빈시청': '한바다_전신.png'
+    };
+
+    const charShopLines = {
+        '1호선': ["보급품 신청서 작성하셨습니까?", "공금 횡령은 규정 위반입니다.", "예산 내에서 합리적인 소비를 권장합니다."],
+        '2호선': ["매니저님~ 제 간식도 하나 사주시면 안 돼요?", "월급 털어서 플렉스 할 시간~!", "아바라 벤티 기프티콘은 없나?"],
+        '3호선': ["여기 인스타 감성템은 없네요. 빵은요?", "영수증은 버리지 말고 주세요! 다꾸하게요.", "돈 아껴서 카메라 렌즈 사야 하는데..."],
+        '4호선': ["구매 리스트 엑셀로 정리해 드릴까요?", "재고 파악 완료. 원하시는 품목을 말씀하십시오.", "충동구매는 재무 안정성에 치명적입니다."],
+        '5호선': ["예산팀 명치 부수기 전에 합리적으로 소비하세요~", "매니저님 용돈 통계 분석해 드릴까요?", "사각지대 없는 완벽한 보급품 지원이네요."],
+        '6호선': ["음, 굿즈는 안 파나요...? 아, 아닙니다!", "빨리 사고 가시죠. 제 스케줄 꼬인다고요.", "효율적인 동선으로 구매 리스트를 클리어하죠."],
+        '7호선': ["현장에서 필요한 장비만 쏙쏙 골라 가라고.", "내 동생 밥 먹일 돈 남겨두고 써라?", "필요한 거 있으면 말해! 든든하게 챙겨줄 테니까."],
+        '7호선(세하)': ["WD-40 특대용량... 저거 내 건데.", "모터 부품은 안 팔아? 에이, 시시해.", "여기 기계들 다 뜯어보고 싶게 생겼네."],
+        '8호선': ["요소로~! 지갑 전속 전진!!", "우와! 저거 다 사면 안 돼요?!", "앗, 몽키스패너! 저거 내 얼굴만 한데?"],
+        '빈효선': ["법카로 긁을 수 있는 건 다 긁어버리시죠!", "3줄 요약: 매니저님, 돈, 탕진.", "여기서 구매하신 내역은 제가 영수증 처리할까요?"],
+        '창전선': ["우아한 저에게 어울리는 디저트는 없나요?", "¡Dios mío! 가격이 왜 이래요?", "이 정도는 제 용돈으로 다 살 수 있다고요~"],
+        '빈주1호선': ["하아... 결제는 카드로 하시나요?", "생명수(믹스커피) 재고 확인 부탁드려요...", "영수증 처리도 제 업무인가요? (체념)"],
+        '빈주2호선': ["매니저님 지갑 털어버리기~ 헤헤!", "사장님 법카면 제가 300% 긁어드릴 텐데~", "노동법상 스트레스 해소용 쇼핑은 합법이랍니다!"],
+        '덕주1호선': ["성지순례 갈 돈 남겨둬야 하는데...", "오! 뼈해장국 특대?! 당장 결제해 주세요!", "굿즈는 안 파나요?! 핫핑크 굿즈요!"],
+        '효빈시청': ["효빈시청 공식 상점에 오신 것을 환영합니다!", "매니저님의 킹블레이드는 여기서 충전하세요!", "시장님 결재 없이 막 쓰시면 안 돼요~"]
+    };
+
+    let bubbleTimeout;
+    function initShopCharacter() {
+        const charImg = document.getElementById('shop-character-img');
+        const activeChar = gameState.activeCharId || '1호선';
+        charImg.src = `이미지/${charFiles[activeChar]}`;
+        
+        const bubble = document.getElementById('shop-speech-bubble');
+        charImg.addEventListener('click', () => {
+            if(bubbleTimeout) clearTimeout(bubbleTimeout);
+            const lines = charShopLines[activeChar] || ["어서오세요! 무엇을 도와드릴까요?"];
+            bubble.innerText = lines[Math.floor(Math.random() * lines.length)];
+            bubble.classList.add('show');
+            bubbleTimeout = setTimeout(() => { bubble.classList.remove('show'); }, 3500);
+        });
+    }
+
+    const charsList = [
+        {id: '1호선', name: '고나미'}, {id: '2호선', name: '하루빈'}, {id: '3호선', name: '박라미'}, 
+        {id: '4호선', name: '다로나'}, {id: '5호선', name: '미소하'}, {id: '6호선', name: '라세나'}, 
+        {id: '7호선', name: '임세정'}, {id: '7호선(세하)', name: '임세하'}, {id: '8호선', name: '유리아'}, 
+        {id: '빈효선', name: '전노아'}, {id: '창전선', name: '심세이'}, {id: '빈주1호선', name: '박빛나'}, 
+        {id: '빈주2호선', name: '김소빈'}, {id: '덕주1호선', name: '이덕희'}, {id: '효빈시청', name: '한바다'}
+    ];
+    
+    const cardPool = [];
+    // R (15개)
+    charsList.forEach(c => cardPool.push({ cardId: `R_${c.id}`, name: `${c.name} (일반 역무원)`, rarity: 'R', charId: c.id, file: charFiles[c.id] }));
+    // SR (45개)
+    charsList.forEach(c => {
+        cardPool.push({ cardId: `SR1_${c.id}`, name: `${c.name} (트램 운행 준비)`, rarity: 'SR', charId: c.id, file: charFiles[c.id] });
+        cardPool.push({ cardId: `SR2_${c.id}`, name: `${c.name} (휴식 시간)`, rarity: 'SR', charId: c.id, file: charFiles[c.id] });
+        cardPool.push({ cardId: `SR3_${c.id}`, name: `${c.name} (현장 출동)`, rarity: 'SR', charId: c.id, file: charFiles[c.id] });
+    });
+    // SSR (34개)
+    charsList.forEach(c => {
+        cardPool.push({ cardId: `SSR1_${c.id}`, name: `${c.name} (경전철의 에이스)`, rarity: 'SSR', charId: c.id, file: charFiles[c.id] });
+        cardPool.push({ cardId: `SSR2_${c.id}`, name: `${c.name} (페스티벌 라이브)`, rarity: 'SSR', charId: c.id, file: charFiles[c.id] });
+    });
+    cardPool.push({ cardId: 'SSR_G1', name: '1호선 삼남매의 휴일', rarity: 'SSR', charId: 'group', file: '고나미.png' });
+    cardPool.push({ cardId: 'SSR_G2', name: '7호선 자매의 합동 작전', rarity: 'SSR', charId: 'group', file: '임세정.png' });
+    cardPool.push({ cardId: 'SSR_G3', name: '빈주 3노선 야근 파티', rarity: 'SSR', charId: 'group', file: '박빛나.png' });
+    cardPool.push({ cardId: 'SSR_G4', name: '효빈시청과 아이들', rarity: 'SSR', charId: 'group', file: '한바다_전신.png' });
+    // UR (18개)
+    charsList.forEach(c => {
+        cardPool.push({ cardId: `UR_${c.id}`, name: `${c.name} (중형 중전철의 지배자)`, rarity: 'UR', charId: c.id, file: charFiles[c.id] });
+    });
+    cardPool.push({ cardId: 'UR_G1', name: '전 노선 합동 훈련', rarity: 'UR', charId: 'group', file: '고나미.png' });
+    cardPool.push({ cardId: 'UR_G2', name: '페스티벌 피날레 무대', rarity: 'UR', charId: 'group', file: '한바다_전신.png' });
+    cardPool.push({ cardId: 'UR_G3', name: '매니저님과 함께', rarity: 'UR', charId: 'group', file: '고나미.png' });
+    // UUR (2개)
+    cardPool.push({ cardId: 'UUR_1', name: '임세하 & 유리아 (궁극의 정비 콜라보)', rarity: 'UUR', charId: 'group', file: '임세하.png' });
+    cardPool.push({ cardId: 'UUR_2', name: '박라미 (찰나의 골든아워)', rarity: 'UUR', charId: '3호선', file: '박라미.png' });
+
+    const shopData = {
+        gacha: [
+            { id: 'g1', name: '일반 영입 (1회)', desc: '효빈교통공사 인력풀에서 카드를 1장 모집합니다. (R~UR 등장)', icon: '🎫', price: 300, currency: 'gem', type: 'gacha', count: 1 },
+            { id: 'g2', name: '특별 영입 (10회)', desc: 'SR 등급 이상 1장 확정! 10장의 카드를 한 번에 뽑습니다.', icon: '🌟', price: 3000, currency: 'gem', type: 'gacha', count: 10 },
+            { id: 'g3', name: '페스티벌 픽업 가챠', desc: '[기간 한정] UUR 특수 카드 및 SSR 확률 대폭 상승!', icon: '🎇', price: 4500, currency: 'gem', type: 'gacha', count: 10, rarity: 'epic' }
+        ],
+        consumables: [
+            { id: 'c1', name: '모카골드 믹스커피', desc: '직장인들의 생명수. 누군가에게는 최고의 사치일 수도 있다.', icon: '☕', price: 1000, currency: 'coin' },
+            { id: 'c2', name: '아바라 (벤티 사이즈)', desc: '하루빈의 최애 음료. 1시간 동안 획득 경험치 1.5배 상승.', icon: '🥤', price: 2500, currency: 'coin' },
+            { id: 'c3', name: '에스프레소 투 샷', desc: '라세나의 이성 각성제. 다음 라이브 시 판정 감도가 대폭 완화.', icon: '🍵', price: 1500, currency: 'coin' },
+            { id: 'c4', name: '특대 뼈해장국 (들깨 팍팍)', desc: '이덕희 명예차장과 유리아의 소울푸드. 스태미나 100% 즉시 회복.', icon: '🍲', price: 5000, currency: 'coin' },
+            { id: 'c5', name: '참이슬 프레시 & 숙취해소제', desc: '전노아(어뮤즈 광견)의 텐션 부스터. 라이브 점수 1.2배 상승.', icon: '🍶', price: 3500, currency: 'coin' },
+            { id: 'c6', name: '캡사이신 5단계 엽떡', desc: '미소하 주임 전용 매운맛 부스터. 스코어 게이지 획득량 1.5배.', icon: '🌶️', price: 4000, currency: 'coin' },
+            { id: 'c7', name: '참치김밥 (치즈 추가)', desc: '생존왕 박빛나 주임의 소소한 인생 최대 사치. 기력(AP 10) 회복.', icon: '🍙', price: 800, currency: 'coin' },
+            { id: 'c8', name: '맑은 곰탕 정식', desc: '고나미 대리의 든든한 점심 메뉴. 라이브 HP 50 회복.', icon: '🥣', price: 3000, currency: 'coin' }
+        ],
+        gifts: [
+            { id: 'gf1', name: '사능동 소금빵', desc: '엑셀로 출빵 시간을 분석해야만 살 수 있는 전설의 소금빵.', icon: '🥐', price: 1500, currency: 'coin' },
+            { id: 'gf2', name: '초코 소라빵', desc: '세상이 멸망해도 감성 대학생 박라미를 평온하게 만드는 마법의 빵.', icon: '🍩', price: 1200, currency: 'coin' },
+            { id: 'gf3', name: '비싼 인스타 마카롱', desc: '심세이와 하루빈이 좋아하는 예쁜 마카롱. 가성비 파괴.', icon: '🍡', price: 3000, currency: 'coin' },
+            { id: 'gf4', name: '통귤 탕후루', desc: '맑눈광 김소빈이 가장 좋아하는 달콤바삭한 간식.', icon: '🍊', price: 2000, currency: 'coin' },
+            { id: 'gf5', name: '러브라이브 굿즈', desc: '특정 역무원들을 미치게 만드는 전설의 마젠타/핫핑크 굿즈.', icon: '🎀', price: 500, currency: 'gem', rarity: 'rare' },
+            { id: 'gf6', name: '창전동 타워팰리스 판다 브로치', desc: '우아함을 연기하는 심세이의 트레이드 마크.', icon: '🐼', price: 800, currency: 'gem', rarity: 'rare' },
+            { id: 'gf7', name: 'K-장녀의 3단 고기반찬 도시락', desc: '임세정 대리가 동생을 위해 직접 싼 정성 가득한 한식.', icon: '🍱', price: 4500, currency: 'coin' },
+            { id: 'gf8', name: '니지동 카나타 아크릴 스탠드', desc: '라세나의 숨덕을 완벽하게 저격하는 굿즈.', icon: '🎭', price: 600, currency: 'gem', rarity: 'rare' },
+            { id: 'gf9', name: '일본 철도 성지순례 비행기표', desc: '고나미 대리를 폭주하게 만드는 전설의 아이템. (UR 호감도 템)', icon: '✈️', price: 3000, currency: 'gem', rarity: 'epic' },
+            { id: 'gf10', name: '엠마 베르데 특제 빵', desc: '바다 요정 한바다가 제일 좋아하는 빵. 맛있게 먹으면 0칼로리!', icon: '🍞', price: 2500, currency: 'coin' },
+            { id: 'gf11', name: '오렌지색 볼펜 세트', desc: '전노아가 3줄 요약을 작성할 때 쓰는 펜.', icon: '🖊️', price: 900, currency: 'coin' },
+            { id: 'gf12', name: '모카골드 믹스커피 1박스', desc: '상자로 선물하면 박빛나가 오열하며 감동합니다.', icon: '📦', price: 9500, currency: 'coin' },
+            { id: 'gf13', name: '참이슬 프레시', desc: '회식의 꽃. 단품 선물 시 평범한 반응.', icon: '🍾', price: 1000, currency: 'coin' },
+            { id: 'gf14', name: '하스노소라 한정 굿즈', desc: '이덕희 전용 SSR 호감도 템.', icon: '🎀', price: 600, currency: 'gem', rarity: 'rare' },
+            { id: 'gf15', name: '사능동 특제 소금빵', desc: '다로나 전용 고급 선물.', icon: '🥐', price: 500, currency: 'gem' }
+        ],
+        equip: [
+            { id: 'e1', name: 'WD-40', desc: '모든 고착된 관절과 뻑뻑한 기계를 부드럽게 만들어주는 마법의 액체.', icon: '🛢️', price: 5000, currency: 'coin' },
+            { id: 'e2', name: '몽키스패너 (대형)', desc: '유리아의 필수 장착템. 현장 파괴력과 조립 기동력 상승.', icon: '🔧', price: 8000, currency: 'coin' },
+            { id: 'e3', name: '한정판 킹블레이드 세트', desc: '한바다의 오타게를 위한 최강의 발광력.', icon: '🔦', price: 400, currency: 'gem', rarity: 'rare' },
+            { id: 'e4', name: 'V2000 결제 단말기', desc: '박빛나와 김소빈의 진상 퇴치용 퀵드로우(건카타) 무기.', icon: '📱', price: 300, currency: 'gem' },
+            { id: 'e5', name: '고음질 지향성 마이크', desc: '고나미 대리의 안내방송 딕션과 구동음 녹음 퀄리티를 최상으로.', icon: '🎙️', price: 600, currency: 'gem' },
+            { id: 'e6', name: '다중회귀분석 바인더 (Red)', desc: '미소하 주임의 주무기. 예산팀 명치를 부술 때 데미지가 증폭.', icon: '📕', price: 500, currency: 'gem', rarity: 'rare' },
+            { id: 'e7', name: '에어팟 맥스 실버', desc: '김소빈의 의료기기. 라떼 가스라이팅 완벽 차단.', icon: '🎧', price: 800, currency: 'gem', rarity: 'epic' },
+            { id: 'e8', name: '100배줌 미러리스 카메라', desc: '박라미가 할부로 결제한 감성 출사용 최종 병기.', icon: '📸', price: 1200, currency: 'gem', rarity: 'epic' },
+            { id: 'e9', name: '현장용 메가폰 (확성기)', desc: '현장의 화신 임세정 대리의 전용 통제 무기.', icon: '📢', price: 5500, currency: 'coin' },
+            { id: 'e10', name: '법인 카드 (골드)', desc: '전노아의 진정한 힘을 개방하는 무기.', icon: '💳', price: 1500, currency: 'gem', rarity: 'epic' },
+            { id: 'e11', name: 'WD-40 특대용량', desc: '임세하 전용 거대 방청제.', icon: '🛢️', price: 900, currency: 'gem', rarity: 'rare' }
+        ]
+    };
+
+    let currentSelectedItem = null;
+    let selectedQuantity = 1;
+
+    window.switchTab = function(category, element) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        if(element) element.classList.add('active');
+        renderContent(category);
+    }
+
+    function renderContent(category) {
+        const container = document.getElementById('content-area');
+        let html = '';
+
+        if(category === 'gacha') {
+            html += `
+                <div class="banner">
+                    <div class="z-10">
+                        <div class="text-yellow-300 font-bold tracking-widest text-sm mb-1">NEW CARDS!</div>
+                        <h2 class="text-4xl font-black text-white mb-2">효빈행 교향곡 영입 축제</h2>
+                        <p class="text-gray-300 font-medium">UUR 특수 카드와 등급별 114종 카드가 새롭게 추가되었습니다!</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            const titles = {
+                'consumables': '⚡ 페스티벌 티켓 & 캐릭터별 소모품',
+                'gifts': '🎁 특별한 인연을 위한 호감도 선물',
+                'equip': '🔧 부서별 전용 특수 장비 지원처'
+            };
+            html += `<h2 class="text-2xl font-black text-white mb-6 border-b border-gray-600 pb-3">${titles[category]}</h2>`;
+        }
+
+        html += `<div class="item-grid">`;
+        shopData[category].forEach(item => {
+            const btnClass = item.currency === 'gem' ? 'buy-btn gem' : 'buy-btn coin';
+            const priceIcon = item.currency === 'gem' ? '💎' : '🪙';
+            const priceFmt = item.price.toLocaleString();
+            const cardClass = item.rarity ? `item-card ${item.rarity}` : 'item-card';
+            
+            let rarityBadge = '';
+            if(item.rarity === 'epic') rarityBadge = `<div class="absolute top-2 right-2 bg-pink-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg">EPIC</div>`;
+            if(item.rarity === 'rare') rarityBadge = `<div class="absolute top-2 right-2 bg-yellow-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg">RARE</div>`;
+
+            html += `
+                <div class="${cardClass}">
+                    ${rarityBadge}
+                    <div class="item-icon">${item.icon}</div>
+                    <div class="text-[16px] font-black text-white text-center mb-1 break-keep leading-tight h-10 flex items-center justify-center">${item.name}</div>
+                    <div class="text-xs text-gray-400 text-center mb-4 break-keep h-14 overflow-hidden leading-snug">${item.desc}</div>
+                    <button class="${btnClass}" onclick="openConfirmModal('${item.id}', '${category}')">
+                        ${priceIcon} ${priceFmt}
+                    </button>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        container.innerHTML = html;
+    }
+
+    window.openConfirmModal = function(itemId, category) {
+        const item = shopData[category].find(i => i.id === itemId);
+        if(!item) return;
+        currentSelectedItem = item;
+        selectedQuantity = 1;
+
+        document.getElementById('confirm-icon').innerText = item.icon;
+        document.getElementById('confirm-title').innerText = item.name;
+        document.getElementById('confirm-desc').innerText = item.desc;
+        
+        // 가챠는 수량 조절 숨김 (정해진 카운트대로)
+        if(category === 'gacha') {
+            document.getElementById('quantity-selector-area').style.display = 'none';
+            selectedQuantity = 1;
+        } else {
+            document.getElementById('quantity-selector-area').style.display = 'flex';
+            document.getElementById('input-qty').value = 1;
+        }
+
+        updateTotalPrice();
+        document.getElementById('modal-confirm').classList.add('show');
+    }
+
+    window.changeQty = function(amount) {
+        selectedQuantity += amount;
+        if(selectedQuantity < 1) selectedQuantity = 1;
+        if(selectedQuantity > 999) selectedQuantity = 999;
+        document.getElementById('input-qty').value = selectedQuantity;
+        updateTotalPrice();
+    }
+
+    window.updateTotalPrice = function() {
+        if(!currentSelectedItem) return;
+        if(currentSelectedItem.type !== 'gacha') {
+            let val = parseInt(document.getElementById('input-qty').value);
+            if(isNaN(val) || val < 1) val = 1;
+            selectedQuantity = val;
+        }
+        
+        const total = currentSelectedItem.price * selectedQuantity;
+        const priceIcon = currentSelectedItem.currency === 'gem' ? '💎' : '🪙';
+        document.getElementById('confirm-total-price').innerText = `${priceIcon} ${total.toLocaleString()}`;
+    }
+
+    window.closeModal = function(id) {
+        document.getElementById(id).classList.remove('show');
+    }
+
+    document.getElementById('btn-process-buy').addEventListener('click', () => {
+        if(!currentSelectedItem) return;
+        const item = currentSelectedItem;
+        const totalPrice = item.price * selectedQuantity;
+        
+        if (item.currency === 'gem') {
+            if (gameState.gem < totalPrice) {
+                showToast("보석(💎)이 부족합니다!", true);
+                closeModal('modal-confirm');
+                return;
+            }
+            gameState.gem -= totalPrice;
+        } else {
+            if (gameState.coin < totalPrice) {
+                showToast("코인(🪙)이 부족합니다!", true);
+                closeModal('modal-confirm');
+                return;
+            }
+            gameState.coin -= totalPrice;
+        }
+
+        // 인벤토리 추가
+        if (item.type !== 'gacha') {
+            if (!gameState.inventory) gameState.inventory = {};
+            gameState.inventory[item.name] = (gameState.inventory[item.name] || 0) + selectedQuantity;
+        }
+
+        saveGame();
+        closeModal('modal-confirm');
+
+        if (item.type === 'gacha') {
+            executeGacha(item.count, item.id === 'g3'); // g3는 픽업
+        } else {
+            showToast(`[${item.name}] ${selectedQuantity}개 구매 완료! (가방 확인)`);
+        }
+    });
+
+    function executeGacha(count, isPickup) {
+        setTimeout(() => {
+            const grid = document.getElementById('gacha-results-grid');
+            grid.innerHTML = '';
+            
+            // 확률: UUR 0.2%, UR 1.8%, SSR 8%, SR 30%, R 60%
+            // 픽업일 경우 SSR 이상 확률 보정
+            
+            for(let i=0; i<count; i++) {
+                let rVal = Math.random() * 100;
+                let drawnRarity = 'R';
+                
+                if(isPickup) {
+                    if(rVal < 0.5) drawnRarity = 'UUR';
+                    else if(rVal < 3) drawnRarity = 'UR';
+                    else if(rVal < 15) drawnRarity = 'SSR';
+                    else if(rVal < 45) drawnRarity = 'SR';
+                } else {
+                    if(rVal < 0.2) drawnRarity = 'UUR';
+                    else if(rVal < 2.0) drawnRarity = 'UR';
+                    else if(rVal < 10.0) drawnRarity = 'SSR';
+                    else if(rVal < 40.0) drawnRarity = 'SR';
+                }
+                
+                // 특별 영입 10연차 마지막 보정 (SR 확정)
+                if (count >= 10 && i === 9 && drawnRarity === 'R') drawnRarity = 'SR';
+
+                // 해당 레어도 풀에서 카드 추출
+                const subPool = cardPool.filter(c => c.rarity === drawnRarity);
+                const drawnCard = subPool[Math.floor(Math.random() * subPool.length)];
+
+                // 소유 여부 판별 (카드 컬렉션)
+                let isDup = gameState.ownedCards.includes(drawnCard.cardId);
+                if(!isDup) {
+                    gameState.ownedCards.push(drawnCard.cardId);
+                    // 캐릭터 해금 연동 로직: 그룹카드가 아니고, 해당 캐릭터가 없으면 로비에 해금
+                    if(drawnCard.charId !== 'group' && !gameState.ownedChars.includes(drawnCard.charId)) {
+                        gameState.ownedChars.push(drawnCard.charId);
+                    }
+                } else {
+                    // 중복 페이백
+                    if(drawnRarity==='UUR') gameState.gem += 1000;
+                    else if(drawnRarity==='UR') gameState.gem += 500;
+                    else if(drawnRarity==='SSR') gameState.gem += 300;
+                    else if(drawnRarity==='SR') gameState.gem += 100;
+                    else gameState.coin += 500;
+                }
+
+                // 렌더링
+                const cardEl = document.createElement('div');
+                cardEl.className = `gacha-card-mini rarity-${drawnRarity}`;
+                cardEl.style.animationDelay = `${i * 0.1}s`;
+                
+                const badgeHtml = isDup 
+                    ? `<div class="gacha-badge badge-dup">DUP</div>` 
+                    : `<div class="gacha-badge badge-new">NEW</div>`;
+                
+                let rareTitleColor = "text-white";
+                if(drawnRarity==='UUR') rareTitleColor = "text-yellow-300 font-black";
+                if(drawnRarity==='UR') rareTitleColor = "text-cyan-300 font-bold";
+
+                cardEl.innerHTML = `
+                    ${badgeHtml}
+                    <div class="text-[10px] font-bold text-gray-400 mb-auto">${drawnRarity}</div>
+                    <img src="이미지/${drawnCard.file}">
+                    <div class="text-[11px] text-center mt-2 ${rareTitleColor} leading-tight break-keep z-10 bg-black/60 w-full p-1 rounded">${drawnCard.name}</div>
+                `;
+                grid.appendChild(cardEl);
+            }
+
+            saveGame();
+            document.getElementById('modal-gacha').classList.add('show');
+        }, 400);
+    }
+
+    // Initialize Game & Shop UI
+    loadGame();
+    switchTab('gacha');
+
+</script>
+</body>
+</html>

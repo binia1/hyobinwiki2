@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우에하라 아유무/애니메이션 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        :root { 
+            /* 상단바 및 검색창 배경색 무조건 #7777aa */
+            --wiki-nav: #7777aa; 
+            
+            /* 모든 헤더 및 항목열 배경색 (아유무 퍼스널 컬러 - 라이트 핑크) */
+            --wiki-header: #ed7d95;
+            --wiki-header-text: #ffffff; 
+            
+            /* 테마 컬러 */
+            --wiki-main: #ed7d95; 
+            --wiki-point: #d15a75; /* 가독성과 대비를 위한 진한 핑크 */
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            
+            /* 노선 색상 (효빈시 규격) */
+            --line-1: #0077DD;
+            --line-2: #00CCAA;
+            --line-3: #FFCC11;
+            --line-4: #FF5522;
+            --line-5: #EE0022;
+            --line-6: #881188;
+            --line-7: #FF8899;
+            --line-8: #9856FF;
+            --line-binhyo: #6677CC;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-nav: #555588;
+            --wiki-header: #c55a73;
+            --wiki-header-text: #ffffff;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2b2d31; 
+            --wiki-link: #aaaadd; 
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; margin: 0; }
+        .wiki-container { max-width: 1152px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); display: flex; flex-direction: column; }
+
+        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: fixed !important; }
+        th { background-color: var(--wiki-header) !important; color: var(--wiki-header-text) !important; font-weight: bold; border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        td { border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        
+        .item-label { background-color: var(--wiki-header) !important; color: var(--wiki-header-text) !important; font-weight: bold; width: 120px; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 2px solid var(--wiki-point); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-point); }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: var(--wiki-point); border-left: 4px solid var(--wiki-point); padding-left: 12px; }
+        h4 { font-size: 1.15rem !important; font-weight: bold !important; margin-top: 1.2rem; margin-bottom: 0.5rem; }
+
+        nav { background-color: var(--wiki-nav) !important; }
+
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn.active { background-color: var(--wiki-header); color: var(--wiki-header-text) !important; font-weight: bold; }
+
+        /* 하이라이트 박스 (아유무/효빈시) */
+        .ayumu-box { border: 2px solid var(--wiki-point); background-color: #fdf2f4; color: #333; padding: 15px; border-radius: 8px; margin-top: 10px; font-size: 0.95rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
+        .ayumu-box::before { content: "🎀"; position: absolute; top: -10px; left: 10px; font-size: 20px; background: #fff; padding: 0 5px; border-radius: 50%; }
+        [data-theme='dark'] .ayumu-box { background-color: #381f25; color: #eee; }
+        [data-theme='dark'] .ayumu-box::before { background: #121212; }
+
+        /* 스포일러 경고 박스 */
+        .spoiler-box { border-left: 4px solid #ff4444; background-color: #ffeeee; padding: 15px; margin: 15px 0; color: #d32f2f; font-weight: bold; font-size: 0.9rem; }
+        [data-theme='dark'] .spoiler-box { background-color: #3a1c1c; color: #ff6b6b; border-color: #ff4444; }
+
+        /* 인용구 박스 */
+        .quote-box { border-left: 4px solid var(--wiki-point); background-color: #fcf4f6; padding: 10px 15px; margin: 10px 0; color: #555; font-weight: bold; border-radius: 0 8px 8px 0; }
+        [data-theme='dark'] .quote-box { background-color: #2b2d31; color: #ccc; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        
+        .category-box, #toc-box { background-color: var(--wiki-gray-bg); border-color: var(--wiki-border); }
+        [data-theme='dark'] .category-box, [data-theme='dark'] #toc-box { background-color: #2b2d31 !important; border-color: #444 !important; color: #e5e7eb !important; }
+
+        .wiki-fn { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; font-size: 0.8em; vertical-align: super; }
+        .wiki-tooltip { position: absolute; background: white; border: 1px solid var(--wiki-border); padding: 10px; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 9999; display: none; max-width: 320px; font-size: 0.85rem; line-height: 1.4; color: var(--wiki-text); word-break: keep-all; }
+        [data-theme='dark'] .wiki-tooltip { background: #2b2d31; border-color: #444; color: #eee; }
+        
+        del { color: #aaa; text-decoration: line-through; }
+        [data-theme='dark'] del { color: #777; }
+        
+        .ayumu-text { color: var(--wiki-point); font-weight: bold; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-tooltip-container" class="wiki-tooltip"></div>
+
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[rgba(0,0,0,0.2)] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="text-xs text-gray-500 text-right mb-2">최근 수정 시각: 2026-04-26 13:51:02</div>
+        
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">우에하라 아유무/애니메이션</h1>
+            <div class="wiki-btn-group shadow-sm mb-4">
+                <a href="토론.html" class="wiki-tool-btn">토론</a>
+                <a href="수정.html" class="wiki-tool-btn">편집</a>
+                <a href="역사.html" class="wiki-tool-btn">역사</a>
+                <div class="px-3 py-1 text-[11px] cursor-pointer hover:bg-gray-100" onclick="showMsg('즐겨찾기에 추가됨')">★</div>
+            </div>
+        </div>
+
+        <!-- 분류 박스 -->
+        <div class="category-box border p-2 mb-4 text-xs rounded">
+            <span class="font-bold ayumu-text">분류:</span> 
+            <a href="니지가사키 학원 스쿨 아이돌 동호회.html" class="wiki-link">니지가사키 학원 스쿨 아이돌 동호회/등장인물</a> |
+            <a href="우에하라 아유무.html" class="wiki-link">우에하라 아유무</a>
+        </div>
+
+        <div class="border border-gray-300 bg-gray-50 p-2 text-sm text-center mb-6 dark:bg-[#2b2d31] dark:border-[#444]">
+            ⇦ 상위 문서: <strong><a href="우에하라 아유무.html" class="wiki-link text-[#ed7d95]">우에하라 아유무</a></strong>
+        </div>
+
+        <!-- 니지동 멤버 테이블 (아유무 하이라이트) -->
+        <table class="w-full text-center my-4 border-collapse border border-gray-300 text-sm">
+            <tr class="bg-gray-100 dark:bg-[#2b2d31]">
+                <td class="p-2 border border-gray-300"><a href="타카사키 유우.html" class="wiki-link">타카사키 유우</a><br><span class="text-xs text-gray-500">(CV. 야노 히나키)</span></td>
+                <td class="p-2 border border-gray-300 bg-pink-100 dark:bg-pink-900 font-bold text-[#ed7d95]"><a href="우에하라 아유무.html" class="wiki-link text-[#ed7d95]">우에하라 아유무</a><br><span class="text-xs text-gray-600 dark:text-gray-300">(CV. 오오니시 아구리)</span></td>
+                <td class="p-2 border border-gray-300"><a href="나카스 카스미.html" class="wiki-link">나카스 카스미</a><br><span class="text-xs text-gray-500">(CV. 사가라 마유)</span></td>
+                <td class="p-2 border border-gray-300"><a href="오사카 시즈쿠.html" class="wiki-link">오사카 시즈쿠</a><br><span class="text-xs text-gray-500">(CV. 마에다 카오리)</span></td>
+            </tr>
+            <tr class="bg-gray-100 dark:bg-[#2b2d31]">
+                <td class="p-2 border border-gray-300"><a href="아사카 카린.html" class="wiki-link">아사카 카린</a><br><span class="text-xs text-gray-500">(CV. 쿠보타 미유)</span></td>
+                <td class="p-2 border border-gray-300"><a href="미야시타 아이.html" class="wiki-link">미야시타 아이</a><br><span class="text-xs text-gray-500">(CV. 무라카미 나츠미)</span></td>
+                <td class="p-2 border border-gray-300"><a href="코노에 카나타.html" class="wiki-link">코노에 카나타</a><br><span class="text-xs text-gray-500">(CV. 키토 아카리)</span></td>
+                <td class="p-2 border border-gray-300"><a href="유키 세츠나.html" class="wiki-link">유키 세츠나</a><br><span class="text-xs text-gray-500">(CV. 쿠스노키 토모리 → 하야시 코코)</span></td>
+            </tr>
+            <tr class="bg-gray-100 dark:bg-[#2b2d31]">
+                <td class="p-2 border border-gray-300"><a href="엠마 베르데.html" class="wiki-link">엠마 베르데</a><br><span class="text-xs text-gray-500">(CV. 사시데 마리아)</span></td>
+                <td class="p-2 border border-gray-300"><a href="텐노지 리나.html" class="wiki-link">텐노지 리나</a><br><span class="text-xs text-gray-500">(CV. 타나카 치에미)</span></td>
+                <td class="p-2 border border-gray-300"><a href="미후네 시오리코.html" class="wiki-link">미후네 시오리코</a><br><span class="text-xs text-gray-500">(CV. 코이즈미 모에카)</span></td>
+                <td class="p-2 border border-gray-300"><a href="미아 테일러.html" class="wiki-link">미아 테일러</a><br><span class="text-xs text-gray-500">(CV. 우치다 슈우)</span></td>
+            </tr>
+            <tr class="bg-gray-100 dark:bg-[#2b2d31]">
+                <td colspan="4" class="p-2 border border-gray-300"><a href="쇼우 란쥬.html" class="wiki-link">쇼우 란쥬</a><br><span class="text-xs text-gray-500">(CV. 호모토 아키나)</span></td>
+            </tr>
+        </table>
+
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-8 mt-4">
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit w-full md:w-auto border p-4 rounded">
+                <div class="text-center font-bold border-b border-gray-300 mb-2 pb-1">목차</div>
+                <ul class="text-sm list-none p-0 m-0">
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">작중 행적</a>
+                        <ul>
+                            <li>2.1. <a href="#s-2-1" class="wiki-link">1기</a></li>
+                            <li>2.2. <a href="#s-2-2" class="wiki-link">2기</a></li>
+                            <li>2.3. <a href="#s-2-3" class="wiki-link">니지욘</a></li>
+                            <li>2.4. <a href="#s-2-4" class="wiki-link">극장판 1장</a></li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3" class="wiki-link">평가</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">어록</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">기타</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <p>애니메이션에서 <a href="우에하라 아유무.html" class="wiki-link">우에하라 아유무</a>에 대한 평가 및 행적을 다루는 페이지.</p>
+
+        <h2 id="s-2">2. 작중 행적</h2>
+        <div class="spoiler-box">
+            <strong>이 문서에 스포일러가 포함되어 있습니다.</strong><br>
+            이 문서가 설명하는 작품이나 인물 등에 대한 줄거리, 결말, 반전 요소 등을 직·간접적으로 포함하고 있습니다.
+        </div>
+
+        <h3 id="s-2-1">2.1. 1기</h3>
+        <p>고등학생 2학년으로 유우와 함께 오다이바에서 노는 것으로 1화가 시작되는데, 여기서 유우가 귀여운 의상을 목격하고 아유무에게 잘 어울릴 것 같다고 이야기하지만, 아유무는 너무 어린이 같다며 거부한다. 또, 그 옆에 있는 토끼 의상을 보고 유우는 밑에 명대사와 함께 어렸을 적의 아유무를 회상한다.#<a href="#fn-1" id="rfn-1" class="wiki-fn" data-note="fn-1">[1]</a></p>
+
+        <p>이후 공원에서 쿠페빵을 먹다가 <a href="유키 세츠나.html" class="wiki-link">유키 세츠나</a>의 무대를 우연찮게 본 뒤 유우가 스쿨 아이돌에 빠지는 것을 목격한다. 세츠나가 자신의 학교인 니지가사키 학원 소속 스쿨 아이돌이라는 것을 깨닫고 유우와 함께 놀랐다.</p>
+
+        <p>유우와 함께 스쿨 아이돌 동호회 부실을 찾았으나, 찾는 데 어려움을 겪는 와중 아이의 도움을 받아 부실을 찾을 수 있게 된다.<a href="#fn-2" id="rfn-2" class="wiki-fn" data-note="fn-2">[2]</a> 아이와 같이 있던 리나가 유우와 아유무에게 스쿨 아이돌을 좋아하냐고 질문했는데, 유우는 확실하게 좋아한다고 언급한 데 비해 아유무는 확실하지는 않지만 좋아한다고 애매하게 대답한다.</p>
+
+        <p>세츠나가 스쿨 아이돌을 그만두고 동호회가 폐부되었다는 소식을 학생회장 나카가와 나나에게 전해 들은 아유무는 세츠나가 학교에 재학 중인 건 틀림없으니 찾아보면 된다고 유우에게 이야기하만, 유우는 그렇지 않아도 괜찮다고 아유무에게 이야기한다. 하지만 동시에 자신에게 꿈은 없지만, "꿈을 향해 달려가는 사람들을 도와주면 나에게도 무언가가 시작되지 않았을까" 라고 언급하며 내심 아쉬워한다.</p>
+
+        <p>계속 이를 신경쓰고 있던 아유무는 자신의 진심을 밝히며, 솔직하게 말하지는 못했지만 자신도 스쿨 아이돌을 좋아하고, 유우와 함께 스쿨 아이돌을 하고 싶다고 이야기했다. 그리고 계단 위로 올라가 노래를 부른다.<a href="#fn-3" id="rfn-3" class="wiki-fn" data-note="fn-3">[3]</a> 노래를 부른 후 아유무는 오다이바에서 산 카드 케이스를 유우에게 건네며, 아직 용기와 자신이 없지만, 최선을 다했다고 이야기하며, 유우에게 자신의 꿈을 함께 보지 않겠냐고 이야기한다. 유우는 감동하며, 아유무에게 항상 옆에 있겠다고 말하며 1화가 끝난다.</p>
+
+        <p>카스미의 메인 에피소드였던 2화에서도 많은 비중을 부여받았다. 스쿨 아이돌을 하려면 무엇을 해야할까 고민을 하던 도중 그걸 귀신같이 듣고 달려온 카스미에게 입부 요청을 받게 되고 유우와 함께 동반 입부를 하게 된다. 이후 유우가 카스미에게 귀엽다고 한다던가, 매니지먼트를 한다고 했을때 카스미가 지나치게 유우에게 달라붙는걸 불편한 시선으로 쳐다보는 것으로 미루어보아 조금은 원작 성격이 반영된 듯. 카스미의 사정 상 실내에서 부실을 찾지 못하고 야외에서 세 사람이 부실을 찾으러 갔는데, 여기서 게이트볼, 인형극에 상당한 소질을 보이기도 했다.</p>
+
+        <p>어쨌든 성공적으로 연습 장소를 찾아냈고, 카스미는 이곳이 우리의 부실이라고 이야기하면며 학생회실에서 훔쳐 온 스쿨 아이돌 동호회 간판을 꺼낸다. 이 내막을 알게 된 아유무의 팩트폭력은 압권. 카스미는 부원을 늘려서 자신의 귀여움을 더 빛나게 하기 위해서는 자기소개 영상을 찍어야 한다며, 자기소개를 완벽하게 성공한다. 카스미의 자기소개를 보고 나서 귀여움이 강조된 자기소개를 찍으라는 카스미의 압박에 얼굴이 터질듯이 빨개지면서도 하려고는 하고 결국 귀엽다(카와이)와 무섭다(코와이)를 번갈아 외치며 멘탈이 박살나버린다. 이후 카스미가 귀여움을 언급했을때는 PTSD증상도 일으키며 그날 하루는 종결...<a href="#fn-4" id="rfn-4" class="wiki-fn" data-note="fn-4">[4]</a></p>
+
+        <p>다음 날, 아무도 없는 공간에서 자신을 비춰주는 유리 앞에서 귀여움을 한껏 어필하는 자기소개를 연습하는데 호기롭게 연습하는걸 하필 카린이 옆에서 보게 되고, 이내 다시 멘탈이 흔들리나 카린의 "전하고자 하는 사람을 떠올려라"하는 말에 유우의 웃는 모습을 떠올리며 이내 뭔가 결심한듯 카스미를 찾아간다.</p>
+
+        <p>때마침 자신이 세츠나와 같은 짓을 답습했다고 자책하는 카스미와 그걸 들어주던 유우, 그녀들 앞에 나타난 아유무는 자신이 하고 싶은 말대로 자기소개 영상을 찍게 되고 이내 감정이 복받쳐오른 유우가 귀엽다고 끌어안자 좋아한다. 이내 카스미의 무대를 감상하고 카스미를 안고 좋아하는 유우를 어떻게 떼어낼까 생각하며 카스미를 쓰다듬어주며 2화가 마무리 된다.</p>
+
+        <p>3화에서는 음악실에서 대화를 하던 유우와 나나를 목격하는 장면에서 첫 등장. 이후 유우와 함께 학교를 걸어다니다가 뒤에서 유우의 팔을 잡으며 채가는 카스미의 뒤를 쫓아가는 장면이 나온다. 나나=세츠나라는 사실을 접하게 된 이후, 카린이 세츠나를 제외한 나머지 멤버들끼리 동호회 신청을 하자는 말을 듣고, 동호회 멤버들과 마찬가지로 "나와 유우의 꿈을 만들어 준 사람"이라고 세츠나를 지칭하며 동호회 원년 멤버들의 의견에 찬성한다. 이후 유우의 계획을 따라, 카스미와 함께 방송실을 빌려 나나와 세츠나를 학교 옥상으로 불러내는 안내방송을 송출하고, 옥상에서 유우가 세츠나를 동호회에 돌아오도록 설득하면서 결국 스쿨 아이돌 동호회가 정상화되는 데 기여한다.</p>
+
+        <p>4화에서 새롭게 얻은 부실을 청소하는 걸로 등장. 입부 신청하러 온 아이와 리나를 알아보며 아이의 손을 붙잡고 세츠나의 무대를 대단했다고 하는 유우를 약간 불편한 눈빛으로바라본다. 하고 싶은 무대 회의에서 화약을 써 불꽃 연출을 하고 싶다는 세츠나의 말에 걱정을 표하며, 자신은 귀여운 무대를 하고 싶다고 한다. 그리고 "어쨌든 즐거운 무대가 하고 싶다." 는 아이의 대답에 중요한 부분이라고 공감한다.</p>
+
+        <p>댄스/보컬 연습으로 쪼개진 멤버들 중에서는 보컬 연습을 하는 걸로 등장. 노래 상태가 형편없었다고 자책하지만 유우의 귀여웠다는 대답과 세츠나, 아이의 조언을 듣고 기운을 차린다. 그러다 멤버들에게 별명을 붙여주는 아이에게 "아유뿅"이라 불리고 또 양 손으로 귀를 감싸쥐며 부끄러워한다.이후 연습이 끝나곤 아이의 할머니가 싸 주신 누카즈케 도시락을 칭찬한다. 토요일 오다이바에서 조깅하기로 약속을 잡은 멤버들에게 약간의 불안감을 드러낸다. 약속한 토요일 오전엔 아이의 무대를 보며 의욕을 태우고, 에필로그에서 아이의 말장난 연발에 자지러진 유우에게 개그 감각이 어린애 레벨이라고 디스하는 걸로 등장 종료.</p>
+
+        <p>5화에서는 카나타를 쓰다듬는 엠마가 고향 스위스에서 키우는 아기 염소 네베를 떠올리는 걸 보는 장면으로 등장한다. 엠마에게 향수병은 괜찮냐고 묻고, 세츠나와의 상의가 끝나고 돌아온 카스미가 찍은 자신의 소개 영상을 보곤 당황한 목소리로 멤버들에게 이걸 보여주는 이유를 묻는다. 영상에 달린 댓글을 보며 감탄하다, 자신에 대한 걸 어필하는 PV를 제작하자는 세츠나의 제안에 유우에게 자신이 어필할 만한 점을 물어봤는데, 웃는 듯 하다가 금방 울고 볼을 부풀리며 화내는 점이 귀엽다는 답을 듣자 전혀 어필할 만한 점이 아니라며 볼을 부풀리며 화를 낸다.<a href="#fn-5" id="rfn-5" class="wiki-fn" data-note="fn-5">[5]</a> PV에서 어필할 "모두를 치유하는 아이돌"에 대한 갈피를 잡지 못 하는 엠마를 위해 다른 멤버들이 자신이 치유받는 것에 대해 이야기할 때는 인형을 언급하며, 전원의 의견이 갈리자 엠마의 생각이 중요하다고 하는 유우의 말을 긍정한다.</p>
+
+        <p>엠마의 PV 제작 당일, 옷을 갈아입으러 부실에 돌아가서는 돌아오지 않는 엠마를 유우와 함께 찾아 나선다. 이후 카린이 하고 싶은 것을 솔직하게 털어 놓은 인터뷰용 설문지를 보고 카린을 찾으러 나간 엠마를 영문 모른 채 바라본다. 에필로그에서는 부원이 늘어나 기뻐하는 유우를 보고 어쩔 수 없다는 표정을 지으며 등장 끝.</p>
+
+        <p>6화에서는 리나, 아이<a href="#fn-6" id="rfn-6" class="wiki-fn" data-note="fn-6">[6]</a>와 함께 게임 센터에서 게임하는 모습으로 등장한다. 휴식 시간에 어렸을 적에도 와 본 적은 있지만 그 때는 없었던 새 게임이 생겨 감탄하며, 리나에게 게임은 잘 하냐고 묻는다. 한창 멤버들과 수다를 떠는데 자신을 알아보고 팬이라며 감상을 늘여놓는 리나와 같은 반인 학생들의 말을 들으며 직접 감상을 듣는 건 처음이라 기쁘다고 감사를 표한다. 그러다가 게임 센터에 라이브하러 왔냐는 말과 함께 매 주 스쿨 아이돌들이 라이브를 하러 온다는 정보를 듣다가, 갑작스러운 리나의 라이브 선언에 놀란다.</p>
+
+        <p>부실에 돌아와서 라이브를 하겠다고 선언한 리나의 이유를 들으며, 다른 멤버들과 함께 리나를 돕겠다고 한다. 리나의 서포트 장면에서 MC 연습을 같이 하는 걸로 나오는데, 유우의 과도한 리액션에 엄청나게 부끄러워한다. 연습이 끝나고 아이, 유우와 함께 리나의 집에 방문하게 되고, 집안일을 전부 스마트폰으로 조정하고 있는 리나를 보고 감탄한다. 방에 있는 작업실에서 작업을 하며 스쿨 아이돌 부에 대한 솔직한 감상을 말하며 감사를 표하는 리나를 놀랍다는 눈빛으로 바라본다. 리나의 안무 연습을 돕는 장면이 스쳐 지나가는 걸로 전반부가 끝난다.</p>
+
+        <p>후반부인 금요일에는 자신이 바뀔 수 없다며 절망하고 방에 틀어박힌 리나를 걱정하며, 다른 멤버들과 함께 리나의 집으로 달려가는 아이와 유우를 뒤쫒는다. 골판지 상자를 뒤집어 쓰고 자책하는 리나에게 아직 시간이 있다(그러니까 다른 멤버들과 함께 논의해보자)고 한다. 라이브 당일 보드를 쓰고 무대에 나갈 준비를 하는 리나를 다른 멤버들과 함께 응원하고, 라이브가 끝나자 기립박수한다.</p>
+
+        <p>7화에서는 유우, 세츠나와 함께 부 활동 견학을 온 하루카를 학교 정문에서 맞이한다. 하루카를 보고 폭주하는 유우에게 다른 스쿨 아이돌도 체크하고 있었느냐고 묻는다. 열의를 불태우는 카나타를 뒤로 하고, 하루카에게 언니의 상태를 보러 견학까지 하러 오는 멋진 관계라며 칭찬한다. 트레이닝 시간엔 스트레칭 장면에서 카나타를 도와준다. 하루카가 스쿨 아이돌을 그만두겠다고 해 실의에 빠진 카나타, 그리고 다른 멤버들과 같이 점심을 먹는 다음 날엔 카나타에게 하루카도 카나타의 행복을 바라고 있을 거라고 한다.</p>
+
+        <p>8화에서 교내 신문에 실릴 프로필 사진을 찍는 장면으로 등장해, 유우에게 귀엽다고 칭찬받는다. 이후 멤버들과 함께 시즈쿠를 위한 종이 목걸이와 응원 카드를 만드는 장면이나, 합동 연극제에서 시즈쿠의 연극을 감상하는 장면에서 등장한다.</p>
+
+        <p>9화 프롤로그에서 자신이 찍힌 사진을 보여주는 카스미를 보며 감탄한다. 시노노메, 토오 학원과 같이 다이버 페스에 나가게 되지만, 니지동은 분량 문제상 한 명만 나갈 수 있다는 게 밝혀지자 멤버들끼리 회의에 들어가는데, 서로 눈치만 보고 있자 제비뽑기라도 하는 게 어떠냐고 제안한다.</p>
+
+        <p>다음 날, 길을 해매던 카린을 세츠나, 유우와 함께 게이머즈 입구에서 만난다. 게이머즈 안에 들어가 카린, 유우와 함께 스쿨 아이돌 굿즈 목록을 보거나, 카린의 목적지인 댄스 학원이 바로 앞이라는 걸 알려주거나, 카린이 의외로 길치였다는 반응을 보이거나, 라이벌=자신들에게 뒤쳐질 수 없다는 카린의 말을 듣는다. 이후 다른 멤버들을 생각해 주는 카린은 착실하다는 유우의 말에 맞장구를 친다. 그리고 세츠나에게 다이버 페스에 나갈 멤버를 정하자고 권유받는다.</p>
+
+        <p>라이브 당일, 자기도 나가고 싶었으며 분해하는 카스미에게 전원 입후보했다고 언급한다. 그리고 현장을 견학하고 싶다 하는 유우를 따라나선다. 곧 순서인데도 연락이 없는 카린이 미아가 된 거 아니냐고 유우가 생각하자 그럴 수도 있다며 세츠나와 공감하고, 겨우 찾아낸 카린이 멤버 전원의 응원으로 기운을 차여 무대에 나서면서 달려나가는 유우에게 어디 가냐고 물어본다.</p>
+
+        <p>10화에서 멤버들이 하고 싶은 라이브 이야기를 할 때, 아유무는 스테이지에 서는 것 만으로도 가슴이 벅차오를 것 같다고 한다. 저녁 식사를 마치고 유우와 설거지에 들어가는데 초등학교 여름 캠프 때도 이렇게 같이 설거지를 했다고 회상한다. 그 때 카레를 만들지 않았냐고 유우가 답하자 그건 중학생 때 라고 바로잡고, 유우가 늘 둘이 같이 있었다고 하자 앞으로도 같이 있었으면 좋겠다고 한다. 늦은 저녁, 숙직실에 돌아왔지만 보이지 않는 유우를 찾아 전화를 걸어보지만 스마트폰을 놓고 나가서 결국 직접 찾아 나선다. 한참 찾아도 안 보이다가, 발을 헛딛어 넘어진 세츠나를 안아서 잡아 준 유우를 보고 두 사람이 사적 감정으로 끌어안는 것 같아 보여 당혹스럽고 절망하는 표정으로 둘을 올려본다. 그 날 밤에도 잠들지 못 하는 유우를 심란한 표정으로 지켜본다.</p>
+
+        <p>저녁에 멤버 전원이 교내 풀장에서 놀 때 아유무와 함께 벤치에서 이야기를 나눈다. 원래라면 보통과인 둘은 진학 강의를 들었어야 했을 지도 몰랐다면서 그래도 같이 있다고 하고, 동호회에 들어가자고 할 때의 일을 회상한다. 유우에게 스쿨 아이돌이라는 꿈을 같이 관철하자고 할 때 정말 기뻤다고 한다. 그렇게 유우에게 아유무 덕에 스쿨 아이돌을 좋아하는 모두와 만날 수 있었고 커다란 힘이 태어났다며 감사를 받고, 지금의 유우가 할 수 있는 걸 들으려던 찰나 불꽃놀이가 시작된다. 그렇게 유우가 하고 싶은 것=학교를 초월해 모든 스쿨아이돌이 모인 축제 같은 라이브를 들으며 생각에 잠기고, 유우의 말에 동조하는 세츠나를 바라보며 다시 고개를 돌린다.</p>
+
+        <p>11화<a href="#fn-7" id="rfn-7" class="wiki-fn" data-note="fn-7">[7]</a>, 스쿨 아이돌 페스티벌 개최 신청서를 내러 갔다가 내용이 미비해서 퇴짜를 맞은 유우에게 도와주겠다고 하지만 연습으로 바쁘니까 괜찮다며 거절당한다. 날이 바뀌고 버스 정류장에서 유우와 함께 여름 방학 숙제 이야기를 한다. 고전 문학과 수학은 곧 끝나며 유우는 언제나 방학이 끝나갈 때 쯤 몰아서 한다고 지적한다. 그러다 페스티벌에 나갈 타교 스쿨 아이돌을 영입하기 위한 미팅을 하러 가는 유우를 배웅하고, 10화처럼 또 표정이 굳어진다.</p>
+
+        <p>이후, 부실에서 멤버들이 모여 스테이지로 쓸 장소를 선정할 때 유우에게 어디가 좋냐고 질문받지만 제대로 답을 못 한다. 회의를 마치고 라이브 대비 스테미너 증진을 위해 달리기로 트레이닝을 하다 지나가는 유우를 알아보고 인사하려 하지만, 유우는 다른 일로 세츠나와 이야기하게 된다. 그 날 저녁, 일이 남은 유우와 세츠나를 뺀 나머지 멤버들이 먼저 귀가할 때 부실 책상에 엎어져서 하염없이 유우를 기다린다. 1화에서 유우에게 Dream with You를 선보일 때 같이 줬던 카드 모양 스트랩과 함께...</p>
+
+        <p>한참 시간이 흘러 밤이 되자 유우가 깨우러 온다. 세츠나랑 같이 돌아가지 않냐고 물어보지만 아직 일이 남았다고 듣고, 약간 기뻐하는 표정을 짓는다. 그 외에는 카스밍 박스의 내용물을 읽을 때, 리나와 함께 쿠키 동아리를 방문해서 니지동 멤버들 모양의 쿠키를 대접받는 장면으로 나온다. 어쨌든 페스티벌 개최 허가를 따 내서 기뻐하지만, 다른 멤버들에게 둘러싸인 유우를 보며 또 불안해 하다 새 음료를 가져오겠다며 나간다. 그리고 아유무를 따라 나온 세츠나와 서로 이야기하며 걸어다니다 자기는 유우를 하나도 도와줄 수 없었다고 하고, 10화 합숙 때 일을 물어본다. 그러다 자기는 모르는 일인 유우가 피아노 연습을 하고 있다는 걸 세츠나에게 듣고 혼란에 빠지며 자기는 처음 듣는 일이라고 좌절하고, 괜찮냐고 묻는 세츠나에게 별 일 없다며 넘어간다.</p>
+
+        <p>그리고 당일 저녁 방 침대에서 엎어져 내가 유우에 대해 모르는 게 있었다며 혼란스러워 하다 지금 올 수 있냐는 유우의 메세지를 받는다.<a href="#fn-8" id="rfn-8" class="wiki-fn" data-note="fn-8">[8]</a> 방에 들어가 보니 없던 피아노가 생겨 경직되고, 유우가 하고 싶은 말이 있었다고 하자 혹시 피아노 관련이냐고 물어보고 왜 세츠나에게는 말했냐고 하곤 세츠나가 더 소중하냐고 화를 내지만 바로 부정당한다. 그리고 유우가 하고 싶은 말은 그 다음의 것이라며 꿈이 생겼다고 하는 유우의 말을 가로막으며 유우를 소파에 엎어놓고 꽉 끌어안는다. 옆에서 내 꿈을 이루는 걸 보아 주겠다고, 계속 옆에 있어 주겠다고 했던 유우를 보내기 싫어하며 유우만의 스쿨 아이돌이 되고 싶으니까 나만의 유우로 남아 줘라고 한다. 그리고 두 사람이 엎어질 때 두 사람의 스마트폰이 떨어지는데, 소파에 끌어안은 모양새랑 같은 구도로 유우의 스마트폰이 아유무의 스마트폰 밑에 깔리는 장면이 지나간다.</p>
+
+        <p>12화<a href="#fn-9" id="rfn-9" class="wiki-fn" data-note="fn-9">[9]</a>, 어제 그런 일이 있었는데도 의외로 평범하게 유우를 맞이한다. 어제 일에 대해 이야기하려는 유우에게 이상한 말 해서 미안하다고 대충 얼버무리고 오늘은 같이 등교할 수 있다며 좋아하다 다시 표정이 굳어지고, "떨어지고 싶지 않아" 라고 독백한다. 연습 직전 부실에 모인 멤버들 사이에서도 다과가 놓인 테이블 앞에 앉아 멍하니 있다가, 아이가 부르자 대강 얼버무린다. 그러다 스테이지를 도와주러 온 학생들이 니지동 멤버들을 불러서 한명한명 나가자, 혼자 남은 카스미가 엄청나게 진중한 표정으로 연습하자고 권유하지만 결국 쿄코가 불러서 스테이지 제작을 위해 나간다.</p>
+
+        <p>스테이지 제작 회의에서 다른 팬들에게도 아유무가 얼마나 대단한지 보여줄 수 있도록 아이디어를 내 보자고 쿄코에게 듣고, 분수대 앞에 앉아서 스쿨 아이돌과 팬이 하나가 되어 점점 세계가 넓어지고 있다, 그리고 유우도 엄청 분발하고 즐기고 있다고 돌아보지만, 그러면서도 어제 밤 그 일을 떠올리면서 엄청나게 부끄러워한다. 그리고 연습하러 돌아가다 유우와 만난다. 어제 그 일에 대해 좀 더 이야기하자는 유우. 그리고 유우가 꿈이 생겼다고 하자 또 당황스러워하면서 유우가 이러는 건 처음이라며 어차피 자신에게서 떠나 더 이상 같이 있을 수 없다는 이야기를 할 거니까 싫다고 한다. 그렇게 유우가 곁에 없으면 이제 막 시작한 내 꿈은 앞으로 나아갈 수 없다며 울고, 결국 꿈이 생겼다는 이야기를 관둔 유우와 함께 연습하러 돌아간다.</p>
+
+        <p>스테이지 구상 시간에도 표정이 좋지 않은 아유무. 결국 페스티벌 1주일 전 시점에서도 무대 내용을 정하지 못 해 다른 멤버들에게 걱정을 받는다. 그리고 며칠 뒤 자다가 스테이지 준비를 위해 먼저 나간다며 힘내라는 유우의 메세지를 받고 일어난다. 준비가 끝나면 만나러 가도 되냐고 답변하려다 내용을 다 지우고, 어떻게 해야 할 지 모르겠다며 고민한다. 그리고 페스티벌 2일 전, 각자의 무대를 점검하러 떠난 멤버들을 배웅하다 세츠나와 함께 걷는다.</p>
+
+        <p>동아리가 시작되고 많은 게 바뀌었다며 그런 우리들을 지탱한 팬들을 위해서라도 나아가야 한다는 세츠나에게 스테이지를 향해 걸어가다 멈추고는 더 이상 나아갈 수 없다며, 스쿨 아이돌을 시작하게 된 계기가 모두가 아닌 단 한 명 분이라며 털어놓는다. 그래도 이런 자신을 괜찮다며 바라봐주고 응원하는 사람들이 있어 이 감정은 기쁘고 중요하지만 가장 좋아하는 사람이 유우 하나가 아니게 되어서 사실은 떨어지지 말아달라고 했던 자신이 유우에게 멀어지는 게 아닌가하고 생각한다. 그런 아유무에게 세츠나 또한 한때 자신이 좋아했던 걸 관두려고 했지만 그렇지 않았다며 한 번 시작했다면 계속 나아갈 뿐이라고 조언하고 주먹을 내민다. 그렇게 멈추면 안 된다, 참으면 안 된다라는 걸 깨달은 아유무는 달려나가면서 세츠나에게 주먹을 맞대고 자신의 스테이지로 달려나간다.</p>
+
+        <p>스테이지에 도착한 아유무, 그리고 유우와 팬 학생들이 완성한 아유무의 플라워 로드 스테이지. 팬 학생들이 내미는 아유무에 대한 사랑을 표현한 노란 가베라를 보고 이런 나에게...라고 하지만 순수하고 귀여우며 항상 열심히 노력하는 아유무를 좋아한다는 학생들의 말을 들으며 기뻐한다. 그리고 유우에게 변하지 않는 마음을 상징하는 자주빛 로단세를 받는다. 아무리 유우가 변해 나가도 아유무를 향한 마음만큼은 변하지 않는다는 걸 깨달은 아유무는 유우를, 그리고 스테이지를 도와준 팬들을 끌어안으며 정말 좋아한다고 감사를 표한다.</p>
+
+        <p>스테이지 제작이 끝나고 유우와 함께 돌아가면서 어리광 부려서 미안하다고 하며, 평상시와 달리 버스에 타지 않고 같이 걸어서 집으로 간다. 돌아가는 길, 앞으로 나아간다는 건 좋아하는 것들이 늘어나는 거냐고 유우에게 물어보고 처음부터 아유무를 귀엽다고 생각한 사람은 유우 자신이라는 유우에게 부끄러워하면서도 감사를 표한다. 그리고 1화에서 Dream with You를 선보였던 그 계단에서, 유우의 새 꿈인 음악과 진학을 듣고 자신도 모두의 앞에서 노래하겠다고 앞으로의 꿈을 이야기하며 유우에게 스쿨 아이돌을 이어나가게 해 줘서 고맙다고 감사를 표한다. 그렇게 1화처럼 계단 위로 올라가 유우가 만들어 줬던 로단세를 머리에 달고, 새 노래인 Awakening Promise를 선보인다. 에필로그에선 유우의 방에서 미완성 자작곡을 감상한다.</p>
+
+        <p>13화, 부실에서 음악과 전과를 선언한 유우가 멤버들에게 응원을 받는 걸 들으면서, 내일부터 힘내보자고 한다. 라이브 당일, 무언가 적어서 세츠나에게 넘기는 장면이 나온다. 페스티벌이 시작되고 준비된 스테이지로 이동하며 스테이지를 준비해 준 쿄코를 알아보고<a href="#fn-10" id="rfn-10" class="wiki-fn" data-note="fn-10">[10]</a>무대로 뛰어가며 밝게 웃으면서 모두에게 감사를 표한다. 스테이지가 끝나고 공통 티셔츠를 입은 상태로 돌아다니며 팬들의 환호를 받다가, 히메노와 토오 학원 아이돌들과 만난다. 그 후 바로 뒤에서 페스티벌에 대해 이야기하는 엑스트라들에게 홍보 전단을 나눠주는 유우를 보고 달려간다. 여기저기 뛰는 유우에게 다른 멤버들의 라이브도 보는 게 어땠냐고 하며 수분 보급 등을 걱정한다.</p>
+
+        <p>그렇게 잘 진행되다가 비가 와서 일정 대부분을 날려먹고, 모인 사람들도 없어져서 절망하고 있는 유우에게 이대로 끝낼 수 없다며 기운을 복돋아주고 페스티벌을 다시 시작할 수 있다는 연락을 받자 유우의 손을 잡고 같이 메인 스테이지로 달려간다. 그리고 유우에게 이번 스테이지는 관객석에서 봐 달라고 한다. 그렇게 재개된 스테이지에서 관객들에게의 메세지를 전할 때, 제일 마지막에 나와 이 다음부터도 힘든 일이 있겠지만 우리들에게 당신(아나타)이 있듯이 당신의 옆에는 우리들이 있다며 니지동 9인의 그룹곡 시작을 선언한다. 이렇게 니지동 9명의 곡 夢がここからはじまるよ가 시작한다.</p>
+
+        <h3 id="s-2-2">2.2. 2기</h3>
+        <p>1화 내내 음악과에 전과한 유우가 무리한다고 생각하고 걱정하는 모습을 보인다.</p>
+
+        <p>학교 설명회 부스 물건을 옮기던 중 갑자기 등장한 란쥬에게 덮쳐진다. 이후 역할 분담으로 전단지를 뿌리다가 동쪽 관으로 란쥬를 안내하는 포지션을 맡는다. 전단지를 나눠줄 때 학교에 찾아온 학생들에게 사진 촬영 요청을 받는다.</p>
+
+        <p>이후 란쥬에게 동호회를 떠나 자기 꿈을 쫓아가라는 충고를 받은 유우에게 꿈은 달라도 우리는 항상 힘이 될 거라고 이야기한다.</p>
+
+        <p>2화에서는 분량이 적으나, 막판에 쿼츠가 화음을 연습하는 것을 지켜본다.</p>
+        <p>3화와 4화에서는 얼굴만 비추지만, 5화에선 비중 있게 등장한다. 당시 유우는 문화제를 앞둔 연극 전야제를 준비하던 시즈쿠의 제안에 따라 아이디어 구상에 도움을 줄 겸 둘이서 놀러 갔는데, 아유무는 유우가 신경쓰여서 미행하다가 우연히 마주친 세츠나까지 포함한 넷이서 놀러다니게 된다. 그러다가 스쿨 아이돌 박물관 앞에서 란쥬와 만났을 때는 란쥬가 유우의 음악과 수업과 동호회 활동은 동시에 잘할 수 없다고 말했을 때는 표정이 좋지 못했는데, 대화에 끼어들려고 할 때는 유우가 만류해서 그만뒀다. 이후 세츠나와 함께 연극 시범을 보여주면서 시즈쿠에게 도움을 준 뒤에는 유우와 케이블카를 같이 탄다.</p>
+
+        <p>마지막회인 13화의 라이브에서 시즈쿠 차례 때 아즈나 모두가 올라가 서프라이즈를 하고는 세츠나→본인 순서로 개인 무대를 하여 開花宣言(개화선언)을 부른다. 후일담에서는 자신이 유학을 간 나라인 영국에서 자신의 팬을 만났다.</p>
+
+        <h3 id="s-2-3">2.3. 니지욘</h3>
+        <p>1화: 유우가 갑자기 기습 영상촬영을 시작하자 평범하게 당황한다.</p>
+        <p>2화에서 엠마가 너무 후한 점수를 준다고 츳코미를 날린다.</p>
+        <p>3화에서는 아즈나 멤버들과 함께 호러 영화를 보는 것으로 나오며, 미아는 어리니까 안 봐도 된다고 얘기하는데 3학년인 미아가 아유무보다 선배니까 자존심을 상해하는 반응을 보이다가 막상 영화가 시작되니 자기는 14살이니까 봐달라는 얘기를 한다. 또 덜덜 떨면서 아유무를 지켜주겠다고 얘기하는 유우에게 무리하지 말라고 얘기한다.</p>
+        <p>이후 미아의 악몽 속에서 등장한다. 미아가 홀로 교정에 서 있는 아유무를 보고 달려가지만 갑자기 경단이 떨어지고 아유무가 쓰러지는 상황이 펼쳐져 미아는 패닉이 되고 그 경단이 아유무 목소리로 "놀자"라고 계속 얘기하는 악몽을 꾸게 된다. 이후 꿈에서 깬 미아는 악몽의 여파인지 아유무를 피해 유우 등 뒤로 숨는다.</p>
+        <p>6화 마지막에 리나가 만든 게임에서 1등을 매번 차지하고 있는 플레이어로 언급된다. 닉네임이 SASUKE라서 유우 외에는 알아차리지 못 하는 게 웃음 포인트.</p>
+
+        <h3 id="s-2-4">2.4. 극장판 1장</h3>
+        <p>스쿨 아이돌 그랑프리를 위해 오키나와에 가기 전, 부실에서 카스미가 스쿨 아이돌 그랑프리를 소개할 때 란쥬가 아유무를 콕 집어서 '절대 지지 않을 거야'라고 말하자 당황한다. 이후 저녁 하교 길에서 유우와 그랑프리에 관해서 이야기를 나누는데, 아유무는 경쟁이 내키지 않지만 보다 많은 사람들에게 자신을 알리기 위해 참가하겠다고 말한다. 유우는 작곡 콩쿠르와 일정이 겹쳐서 함께 갈 수 없었고, 매일 모두의 중계를 보면서 응원하겠다고 하자 '그럼 작곡을 못 하잖아'란 츳코미를 날린다.</p>
+
+        <p>실내 수영장에선 수영장 물 속에 있었는데, 란쥬가 밖에서 공을 엄청나게 세게 던지자 당황면서도 받아낸다. 다만 그 충격으로 옆에 튜브 위에서 편하게 물놀이를 즐기던 카스미가 침몰했다.</p>
+
+        <p>1일차에서는 엠마와 함께 식물원을 향해 가는 길에 팬을 만나 악수도 하고, 식물원에서는 우연히 아카미네 텐의 산신 연주를 듣고 감탄한다. 이후 1일차의 이벤트 일정이 끝나자 저녁 관광을 돌아다니다가 유우 인형을 유우 삼아 투샷을 찍으려고 했다가 카스미에게 들켜서 부끄러워한다.</p>
+
+        <p>1일차 랭킹 최종 순위는 24위로 집계됐다.<a href="#fn-11" id="rfn-11" class="wiki-fn" data-note="fn-11">[11]</a> 2일차 아침 조식 뷔페에서는 란쥬가 양손에 각각 고기를 산더미처럼 쌓은 접시를 들고 옆자리에 앉자 약간 헛웃음을 짓는다. 2일차에서 목적지가 전부 달라 개별 활동이고 카스미는 같이 다니면 표가 갈라지니 따로따로 다니는 편이 낫다고 하자 시즈쿠와 유이하게 표정이 어두워진다. 2일차 개별 활동 중에는 팬들이 '아유무라면 10위권 안에 반드시 들 수 있을 거예요'란 말을 듣자 약간 석연치 않은 표정을 짓는다. 이후 란쥬가 스폰서인 엄마가 자신을 편애하려고 하니 이상한 일이 생기기 전에 사퇴하겠다고 소란을 피우고 '난 너희와 진심으로 겨루고 싶었다'라고 분해하자 아유무의 표정이 안 좋아진다. 아유무는 저녁에 유우에게 전화를 걸어서 대화를 하는데,<a href="#fn-12" id="rfn-12" class="wiki-fn" data-note="fn-12">[12]</a> 유우는 아유무의 상태가 이상한 걸 눈치 채고는 상담을 시도했고, 아유무는 그저 많은 사람들에게 자신을 알리기 위한 마음만으로 참가한 게 잘한 짓인지 의문이라며 자신을 잃은 말을 한다. 자신은 경쟁이 석연치 않으며 란쥬는 엄마가 자신을 편애하려고 한다니까 사퇴 시도를 하면서까지 경쟁에 진지하게 임하는데, 진지하게 임하지 않는 자신이 이곳에 있어도 되는 건지 모르겠다고 말한다.</p>
+
+        <p>3일차 노을이 지는 시각에 유우와 통화하면서 어제의 화제를 이어하며 모두가 경쟁하여 모두의 마음이 부딪쳤을 때 그 다음은 어떻게 되는 거냐고 말하던 중 갑자기 유우가 앞에 나타나 핸드폰의 음성이 아닌 본인의 입으로 직접 '그래도 모두 나아갈 거야'라고 대답을 한다. 아유무의 상태가 이상해 보여서 바로 오키나와에 왔다고 한다. 아유무는 부실에서 란쥬가 왜 자신에게 선전포고를 했는지 모르겠다고 하자 유우는 그건 란쥬에게 직접 물으라고 대답한다. 이후 란쥬에게 전화하여 란쥬를 불러내고 란쥬는 또 아유무에게 '절대 지지 않겠다'라고 선언한다. 아유무는 어째서 자신을 콕 집어서 말하는 거냐고 하자 란쥬는 존경하고 있기 때문이라고 대답한다. 자신은 자신이 스쿨 아이돌이 되기 위해 바다를 건넜지만, 아유무는 스쿨 아이돌의 문화를 전파하기 위해 바다를 건넜다며 지금은 아이라 1명을 바꾼 걸지 몰라도 아유무가 퍼뜨린 건 널리 퍼질 것이고, 자신은 그런 대단한 아유무와 동료 사이로만 있는 건 만족할 수 없다며 함께 경쟁하며 절차탁마할 수 있는 상대이고 싶다고 대답한다. 란쥬는 자신은 지금 가슴이 매우 두근두근하며 이건 논리로 설명할 수 없다고 흥분하고, 아유무 역시 자신도 가슴이 두근두근하다며 망설임을 끊어낸 모습을 보인다.</p>
+
+        <p>이후 마지막 4일차에서 란쥬 엄마가 준비해준 라이브 무대에서 란쥬 다음 2번째 타자로서 라이브를 선보인다.<a href="#fn-13" id="rfn-13" class="wiki-fn" data-note="fn-13">[13]</a><a href="#fn-14" id="rfn-14" class="wiki-fn" data-note="fn-14">[14]</a> 라이브가 끝나자 아유무는 란쥬에게 우승할지는 모르겠지만 자신의 최선을 전부 쏟아부웠다고 만족한 얼굴을 한다.</p>
+
+        <h2 id="s-3">3. 평가</h2>
+        <p>기존 아유무가 가지고 있던 여러 문제점과 딜레마를 크게 개선했다는 평을 받고 있었다.</p>
+
+        <p>아유무는 첫 등장 당시 순수한 정통파 아이돌이라는 상당히 밋밋한 캐릭터였고, 이를 반전시키기 위해 이런저런 무리수가 붙어 캐릭터성이 상당히 난잡해진 상태였다. 시작은 소위 '쵸보 아유무'라는, 악령에 빙의되어 질투와 인성질을 일삼는다던지, 화성에 라이브를 하러 간다던지, 아나콘다를 키운다던지, 똥겜 매니아라던지 괴악한 설정이 잔뜩 붙어 있었다.</p>
+
+        <p>이것이 반발을 불러 일으키자 다음으로 등장한 스쿠스타에서는 쵸보 아유무 설정 대부분이 폐기되고 '아나타 바라기'라는 새로운 설정이 붙어 아나타를 매우 소중하게 생각한다는 것이 강조되었다. 문제는 이게 다소 과했기 때문에 아나타의 의견에 따라 움직이고, 아나타가 자신을 신경쓰지 않는다면 아이돌을 그만둘 정도로 상당히 수동적이고 의존적인 캐릭터가 되어버렸다<a href="#fn-15" id="rfn-15" class="wiki-fn" data-note="fn-15">[15]</a>. 이러한 캐릭터성은 게임 상에서 '아나타'인 플레이어들에게 큰 어필로 다가오기도 했고 아유무에게 전에 없던 강렬한 개성을 부여하긴 했지만, 동시에 아유무가 얀데레로 묘사되거나, 멤버 중 아이돌에 대한 열의가 가장 떨어진다는 등 아유무가 굉장히 극단적인 캐릭터로 그려지는 반작용도 있었다.</p>
+
+        <p>애니메이션에서는 이런 아유무의 극단적인 캐릭터성을 전면적으로 재개편하여 기존 캐릭터성과 충돌하지 않으면서도 지나치게 네타화되지 않는 선에서 조율했다. 먼저 아나타에게 지나치게 의존해 아이돌을 하게 된 계기조차 '아나타의 권유'였던 것과 달리 애니메이션에서는 유우와 아유무가 함께 세츠나의 무대를 감상하고, 그 무대 감상을 계기로 '귀여운 것에서 졸업해야 한다'라고 억눌려 있던 자신의 생각에서 벗어나, 역시 아이돌에 관심을 가지고 있던 유우에게 아이돌을 하고 싶다고 먼저 이야기하는 것으로 바뀌었다.</p>
+
+        <p>가장 말이 많았던 '아나타 바라기' 설정의 경우 약간 사정이 복잡했는데, 애정으로 놀려먹기 위해 웃자고 왜곡하는 느낌이 강한 다른 캐릭터들의 네타화와는 달리 아유무의 경우는 얀데레 밈이 정말로 그녀의 가장 강력한 개성이었기 때문에 다른 캐릭터성처럼 마냥 순화시킬 수는 없었다. 아나타와의 연결고리는 아유무에게 있어 가장 중요하고, 반드시 짚고 넘어가야 하는 요소였다. 이는 아나타가 실체화된 '유우' 캐릭터가 전면에 등장하면서 쌍방의 친밀한 관계로 수정되고, 스쿠스타에서처럼 극단적인 관계가 아닌 쌍방의 메가데레에 조금 더 가까워지며 크게 개선되었다.</p>
+
+        <p>11화에서 폭발하기는 했지만 이때 아유무가 거의 이성을 잃은 상태였다는 암시는 꾸준히 나왔고, 12화에서는 단순히 유우가 성장하여 자신에게서 멀어지는 것만이 아니라 자신이 성장해서 유우와 멀어지는 것까지도 두려워했다는 것이 밝혀졌다. 이후 아유무와 유우가 아무리 성장해도 서로에게 가장 소중한 사람은 서로라는 것을 확인하며 정신적으로 한 단계 성장하는 이야기로 전개되었다. 이는 여러모로 기존에 볼 수 없었던 전개로, 기존의 신파적 전개를 배제한 것은 물론이고 지금껏 멤버의 추락을 이 정도로 정성들여 묘사했던 적이 없었기 때문에 많은 호평을 받았다.</p>
+
+        <p>즉 애니의 아유무는 여러 모로 순화되었을 뿐 전반적으로 기존 아유무의 캐릭터에서 아예 이탈한 것은 아니다. 초기 아유무 시절 있었던 애완동물 사스케가 인형으로 등장하고, 화성인 캐릭터가 VR게임에 출현하는 등 폐기된 설정은 팬 서비스용 이스터 에그로만 살짝 언급되고, 수동적으로 보일 수 있었던 기존과 달리 스스로 아이돌 활동과 귀여움에 열의를 보이며 유우와의 관계를 재확인하며 독립에 성공하는 등 기존의 지나치게 과격했던 아유무의 캐릭터성을 보다 구체적이고 무난하게 정돈했다고 볼 수 있다.</p>
+
+        <h2 id="s-4">4. 어록</h2>
+        <div class="quote-box">
+            그래도, 움직이기 시작했다면, 멈추면 안 돼. 참으면 안 돼.<br>
+            <span class="text-sm font-normal text-gray-500">- 1기 1화, 유우에게 스쿨 아이돌에 대한 관심을 드러낼 때<br>
+            - 밑줄의 대사는 1기 12화에서 세츠나의 조언을 듣고 떠올린 생각이다.</span>
+        </div>
+        <div class="quote-box">
+            지금은 아직 용기도 자신감도 부족하니까, 이게 최선을 다한 거야. 나의 꿈을 같이 지켜봐 줄래?<br>
+            <span class="text-sm font-normal text-gray-500">- 1기 1화, 라이브를 끝낸 뒤 유우에게</span>
+        </div>
+        <div class="quote-box">
+            응원해주는 사람이라면... 있어요!<br>
+            <span class="text-sm font-normal text-gray-500">- 1기 2화, 카린에게 전달할 사람을 신경쓰라는 조언을 듣고</span>
+        </div>
+        <div class="quote-box">
+            싫어! 듣고 싶지 않아...<br>
+            내 꿈을 함께 지켜봐 주겠다고, 계속 곁에 있어준다고 말했잖아...<br>
+            난 유우만의 스쿨 아이돌이고 싶어... 그러니까... 나만의 유우로 남아 줘...<br>
+            <span class="text-sm font-normal text-gray-500">- 1기 11화, 자신의 꿈을 말하려던 유우를 저지하며<a href="#fn-16" id="rfn-16" class="wiki-fn" data-note="fn-16">[16]</a></span>
+        </div>
+        <div class="quote-box">
+            이런 나를 좋다고 응원해 주는 사람이 많이 있고 그런 마음이 기쁘고 소중해서...<br>
+            이젠 나에게 소중한 대상이 유우만이 아니게 돼서 사실은 나도 멀어지고 있는 것 같아.<br>
+            <span class="text-sm font-normal text-gray-500">- 1기 12화, 세츠나에게 속 안에 품고 있던 고민을 털어놓으며</span>
+        </div>
+        <div class="quote-box">
+            내가 꿈을 찾게 된 거는 아유무 덕분이야.<br>
+            나도 유우가 있어서 스쿨 아이돌을 시작할 수 있던 거야.<br>
+            유우, 지금까지 고마웠어!<br>
+            아유무, 지금까지 고마웠어!<br>
+            (Awakening Promise 무대)<br>
+            앞으로도, 잘 부탁해!<br>
+            <span class="text-sm font-normal text-gray-500">- 1기 12화, 유우와 아유무의 대화</span>
+        </div>
+        <div class="quote-box">
+            아니, 잠깐 생각했을 뿐이야. 시작하기 잘했다고!<br>
+            <span class="text-sm font-normal text-gray-500">- 1기 13화, 리나의 물음에 답하며</span>
+        </div>
+        <div class="quote-box">
+            아유뿅다뿅!<br>
+            <span class="text-sm font-normal text-gray-500">- 1화, 아유무의 어린 시절</span>
+        </div>
+
+        <h2 id="s-5">5. 기타</h2>
+        <ul class="list-disc pl-5 space-y-2 text-sm mt-3">
+            <li>1화의 장면 중 아유무가 휴대전화를 사용하는 장면이 등장하였다. 하지만 후면만 보인 탓에 정확한 기종은 타나카 진 감독 이 공식적으로 언급하지 않는한 알 수 없다. 삼성전자의 갤럭시 노트10<a href="#fn-17" id="rfn-17" class="wiki-fn" data-note="fn-17">[17]</a> 또는 소니 모바일의 엑스페리아 5로 추정되고 있다.</li>
+            <li>유독 아유무한테 귀여운 것을 시키려는 의도가 보이는건지 뿅과 관련한 제작진의 집착이 1,2화를 걸쳐 많이 보여졌다. 어렸을 적 아유뿅다뿅부터 해서 갑자기 2화에서 귀여운 자기소개 연습이랍시고 대놓고 뿅을 하라고 카스미가 시킨다던가...그걸 다 따라하고서 PTSD가 온 아유무는 덤. 그리고 4화에서 어떤 라이브가 하고 싶냐는 대답에 귀여운 걸 하고 싶다는 대답까지.</li>
+            <li>다른 사람들이 보기에도 미인은 맞는지 유우를 포함해 다른 멤버들이 귀엽다고 많이 해주고 카스미가 아유무에게 질투를 하는 장면이 많이 포착된다.</li>
+            <li>2화 이후로 뿅에 트라우마가 생긴 것으로 추측된다. 4화에서 아이가 아유무에게 아유뿅이라는 별명을 붙이자 귀까지 막아대며 뿅을 빼달라고 한다.</li>
+            <li>엔딩 처음에 멤버들 상징색의 우산이 차례대로 나오는데 이는 에피소드의 주역 순서를 뜻하는 걸로 추정되며 엔딩에서 아유무를 뜻하는 연분홍색 우산은 첫번째로 나와 그녀가 1화 주역인 것을 뜻한다. 오프닝 후반의 사진씬도 그녀가 첫번째로 나왔다.</li>
+            <li>애니메이션에서 유일하게 신 솔로곡 2개를 받았다.<a href="#fn-18" id="rfn-18" class="wiki-fn" data-note="fn-18">[18]</a></li>
+        </ul>
+
+        <!-- 각주 -->
+        <div class="mt-10 border-t pt-4 text-xs text-gray-500">
+            <div id="fn-1" class="mt-1 pl-2">[1] 본인(아유무)도 이를 의식하는지 이때를 흑역사 취급하고 있다(..) 링크와 다르게 아유뽕은 안녕하살법급의 파급력을 갖지는 못했다.</div>
+            <div id="fn-2" class="mt-1 pl-2">[2] 정확히는 리나에게 먼저 물었는데 놀라서 굳어버렸고, 아이가 보고 도와주러 나온 것.</div>
+            <div id="fn-3" class="mt-1 pl-2">[3] 이 때 묘사되는 의상은 앞서 쇼핑할 때 본 귀여운 의상이다.#</div>
+            <div id="fn-4" class="mt-1 pl-2">[4] 여기서 PTSD를 일으키며 카스미에게 한 말이 있는데. "귀여움이 뭐야?, 귀여움은 왜 이렇게 어려운 거야"라고 떨면서 말했다. 결론적으로 이 말이 후반부에 카스미를 일깨워 주었다.</div>
+            <div id="fn-5" class="mt-1 pl-2">[5] 이 장면은 공식 4컷 만화인 니지욘 39~40화 부분을 참고한 듯 하다.</div>
+            <div id="fn-6" class="mt-1 pl-2">[6] 이 셋은 패미통 App 분실조였다.</div>
+            <div id="fn-7" class="mt-1 pl-2">[7] 부제는 모두의 꿈, 나의 꿈</div>
+            <div id="fn-8" class="mt-1 pl-2">[8] 문자를 받을 때 눈에 생기가 돌아오는 연출이 있다.#</div>
+            <div id="fn-9" class="mt-1 pl-2">[9] 부제는 꽃피는 미래</div>
+            <div id="fn-10" class="mt-1 pl-2">[10] 이 때 유우에게 받았던 로단세를 머리에 달고 있다.</div>
+            <div id="fn-11" class="mt-1 pl-2">[11] 시즈쿠는 5위, 카나타는 8위, 란쥬는 17위, 엠마는 29위, 카스미는 88위. 참고로 대사로 언급되지 않고 깨알같이 지나가서 놓치기 쉬운데 다른 지역에 있는 시오리코는 6위다.</div>
+            <div id="fn-12" class="mt-1 pl-2">[12] 유우의 방에는 반대로 아유무의 인형이 있다.</div>
+            <div id="fn-13" class="mt-1 pl-2">[13] 원래 니지동 멤버가 라이브를 시작하면 엔트리 '(라이브를 하는 멤버 이름)'이 뜨면서 그 멤버가 귀여운 포즈와 함께 '라이브를 시작하겠다'라고 선언하는 엔트리씬이 떴으나, 아유무의 라이브는 란쥬의 라이브가 끝나자마자 화면 끊김 없이 원테이크로 건너편의 아유무의 무대를 비추면서 시작하기 때문에 엔트리씬이 유일하게 없다. 단, 라이브의 하이라이트 시작 시엔 엔트리씬의 뒷부분인 '귀여운 포즈로 자신을 어필하기' 부분은 나온다.</div>
+            <div id="fn-14" class="mt-1 pl-2">[14] 시즈쿠, 카나타, 엠마는 니지동 1기 애니에서 흔히 썼던 영역 전개식 라이브를 선보였다면 란쥬와 아유무는 제대로 라이브 복장을 갖춰입고 본격적인 라이브를 했다.</div>
+            <div id="fn-15" class="mt-1 pl-2">[15] 물론, 13장에서처럼 본인이 아나타의 권유에 의해 시작한 아이돌 일에 열의를 가지는 모습을 보여주기도 했다.</div>
+            <div id="fn-16" class="mt-1 pl-2">[16] 해당 장면은 11화의 명장면으로 꼽힌다. 상황을 모르고 이 대사를 본다면 조금 충격적일 수도 있으며, 1화의 고백 장면만큼 장르가 달라지는 수준으로 바뀌니 시청에 유의해야한다.</div>
+            <div id="fn-17" class="mt-1 pl-2">[17] 역시나 한국 팬들 사이에서 나오는 주장으로, 물갤 등지에서는 이를 가지고 친한(親韓) 떡밥이 돌기도 했다.</div>
+            <div id="fn-18" class="mt-1 pl-2">[18] 세츠나도 애니에서 2곡이 나왔지만 신곡은 1곡 뿐이다.</div>
+        </div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-500 text-xs pb-10 leading-relaxed">
+            <div class="font-bold text-lg mb-3">HyobinWiki</div>
+            <div class="mb-4">
+                <span class="font-bold">크리에이티브 커먼즈 라이선스</span><br>
+                이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다.<br>
+                기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.
+            </div>
+            <div>
+                효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+                효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+        
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
+        };
+        
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                location.href = this.value.trim() + ".html";
+            }
+        });
+
+        document.querySelectorAll('.wiki-fn').forEach(el => {
+            el.addEventListener('mouseover', function(e) {
+                const noteId = this.getAttribute('data-note');
+                const noteEl = document.getElementById(noteId);
+                if (noteEl) {
+                    const tooltip = document.getElementById('wiki-tooltip-container');
+                    tooltip.innerHTML = noteEl.innerHTML;
+                    tooltip.style.display = 'block';
+                    
+                    let left = e.pageX + 10;
+                    let top = e.pageY + 10;
+                    if (left + 320 > window.innerWidth) left = window.innerWidth - 330;
+                    
+                    tooltip.style.left = left + 'px';
+                    tooltip.style.top = top + 'px';
+                }
+            });
+            el.addEventListener('mouseout', function() {
+                document.getElementById('wiki-tooltip-container').style.display = 'none';
+            });
+        });
+    </script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

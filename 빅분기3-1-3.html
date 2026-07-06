@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>추론통계 (구간추정 및 가설검정) - 효빈위키</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Mermaid.js (최신 안정화 버전, 구문오류 원천차단) -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
+    <!-- MathJax for LaTeX Rendering -->
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      chtml: {
+        fontURL: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2'
+      }
+    };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #00CCAA; 
+            --wiki-line-color: #00CCAA; 
+            
+            --wiki-header-bg: var(--wiki-line-color);
+            --wiki-header-text: #ffffff;
+            --wiki-table-header-bg: #e6faf6;
+            --wiki-table-header-text: #000000;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f8f9fa; 
+            --wiki-link: #008877; 
+            --wiki-footer-bg: #f0f0f0;
+            --wiki-footer-text: #777;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #33eebb; 
+            --wiki-table-header-bg: #222;
+            --wiki-table-header-text: #ffffff;
+            --wiki-footer-bg: #1a1a1a;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.7; word-break: keep-all; margin: 0; transition: background-color 0.3s, color 0.3s; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 30px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1.5px; border-bottom: 3px solid var(--wiki-main); padding-bottom: 15px;} 
+        
+        h2 { font-size: 2rem; font-weight: 900; border-bottom: 2px solid var(--wiki-line-color); padding-bottom: 8px; margin-top: 3.5rem; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; color: var(--wiki-text); }
+        h2::before { content: ""; display: inline-block; width: 6px; height: 2rem; background: var(--wiki-line-color); }
+        h3 { font-size: 1.5rem; font-weight: 800; margin-top: 2.5rem; margin-bottom: 15px; border-left: 6px solid var(--wiki-line-color); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 10px; color: var(--wiki-text); }
+
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; border: 1px solid var(--wiki-border); font-size: 0.95rem; }
+        th, td { border: 1px solid var(--wiki-border); padding: 10px 12px; text-align: left; vertical-align: middle; color: var(--wiki-text); }
+        th { background-color: var(--wiki-table-header-bg); font-weight: 800; text-align: center; border-bottom: 2px solid var(--wiki-main);}
+
+        .infobox { float: right; margin-left: 25px; margin-bottom: 20px; width: 350px; clear: right; border: 2px solid var(--wiki-main); border-radius: 4px; background-color: var(--wiki-bg); }        
+        .infobox-top { background-color: var(--wiki-main); padding: 20px 10px; text-align: center; border-bottom: 1px solid var(--wiki-border); color: #fff; }
+        .infobox-top b { font-size: 1.8rem; line-height: 1.2; letter-spacing: -1px; font-weight: 900; }
+
+        .toc { display: inline-block; min-width: 300px; margin-bottom: 25px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 20px; border-radius: 4px; }        
+        .toc-title { text-align: center; font-weight: 900; border-bottom: 1px solid var(--wiki-border); margin-bottom: 15px; padding-bottom: 10px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding: 0; margin: 0; line-height: 1.6; font-weight: 600;}
+        .toc li { margin-bottom: 4px; }
+        .toc .pl-5 { padding-left: 20px; font-weight: 400;}
+
+        .wiki-link { color: var(--wiki-link); font-weight: 700; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        .quote-box { background: var(--wiki-gray-bg); padding: 15px 20px; font-weight: 600; border-left: 5px solid var(--wiki-line-color); margin-bottom: 20px; color: var(--wiki-text); border-radius: 4px;}
+        .exam-box { border: 2px solid #ff4444; background-color: #fffafa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        [data-theme='dark'] .exam-box { background-color: #2a1111; border-color: #cc3333; }
+        .exam-title { font-weight: 900; color: #ff4444; margin-bottom: 10px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;}
+        
+        .anime-box { border: 2px dashed; background-color: #fdf5fd; padding: 20px; border-radius: 8px; margin: 20px 0; color: #333; display: flex; gap: 15px; align-items: flex-start;}
+        [data-theme='dark'] .anime-box { background-color: #2a1a2a; color: #eee;}
+        .anime-box-title { font-weight: 900; font-size: 1.15rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;}
+        .anime-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid; flex-shrink: 0; background-color: #fff;}
+
+        .mermaid { background: var(--wiki-bg); padding: 15px; border-radius: 8px; margin: 15px 0; display: flex; justify-content: center; overflow-x: auto; border: 1px solid var(--wiki-border);}
+        
+        del { color: #999; text-decoration: line-through; }
+        
+        /* 완벽한 LaTeX 렌더링을 위한 수학 수식 박스 */
+        .math-formula { background: var(--wiki-gray-bg); padding: 15px 20px; border-radius: 8px; text-align: center; margin: 20px 0; border: 1px solid var(--wiki-border); overflow-x: auto; font-size: 1.1rem; line-height: 1.8;}
+
+        /* 각주 및 툴팁 전용 CSS */
+        .fn-link { color: var(--wiki-link); font-size: 0.75em; vertical-align: super; margin: 0 1px; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .fn-link:hover { text-decoration: underline; }
+        
+        .wiki-footnotes { margin-top: 60px; padding-top: 20px; border-top: 2px solid var(--wiki-border); }
+        .wiki-footnotes h4 { font-size: 1.1rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 10px; }
+        .wiki-footnotes ul { list-style: none; padding: 0; margin: 0; }
+        .wiki-footnotes li { margin-bottom: 8px; font-size: 0.9rem; line-height: 1.6; padding: 4px 8px; border-radius: 4px; transition: background-color 0.3s; }
+        .wiki-footnotes li:target { background-color: rgba(0, 204, 170, 0.15); }
+    
+        /* 효빈위키 전용 하단 내비게이션 틀 CSS */
+        .wiki-nav-box { margin: 40px auto 10px; border: 1px solid var(--wiki-border); border-radius: 4px; background: var(--wiki-bg); overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .wiki-nav-header { display: flex; align-items: center; justify-content: center; padding: 12px; font-weight: 900; font-size: 1.1rem; color: #fff; background: linear-gradient(to right, #005BAC, #00CCAA); letter-spacing: 1px; }
+        .wiki-nav-toggle { text-align: center; padding: 6px; background: var(--wiki-gray-bg); border-bottom: 1px solid var(--wiki-border); border-top: 1px solid var(--wiki-border); cursor: pointer; font-size: 0.85rem; user-select: none; color: var(--wiki-text); font-weight: bold; }
+        .wiki-nav-toggle:hover { filter: brightness(0.95); }
+        .wiki-nav-content { display: none; }
+        .wiki-nav-content.active { display: block; }
+        .wiki-nav-table { width: 100%; border-collapse: collapse; text-align: center; margin: 0; font-size: 0.9rem; }
+        .wiki-nav-table th, .wiki-nav-table td { border: 1px solid var(--wiki-border); padding: 12px; }
+        .wiki-nav-table th { color: #fff; font-weight: bold; vertical-align: middle; }
+        .wiki-nav-table td { text-align: left; line-height: 1.8; word-break: keep-all; }
+        .bg-nav-red { background-color: #D81C2F; } /* 효빈 시내버스 급행 레드 */
+        .bg-nav-blue { background-color: #485EC6; } /* 효빈 시내버스 광역 블루 */
+        .wiki-nav-item { display: inline-block; margin-right: 12px; white-space: nowrap; }
+        .wiki-nav-item a { color: var(--wiki-link); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .wiki-nav-item a:hover { color: #FF4F91; text-decoration: underline; font-weight: bold; }
+
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <nav class="bg-[#00CCAA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50 border-b border-[#009988]">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl tracking-tight text-white">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1.5 px-4 rounded text-black text-sm w-64 focus:outline-none shadow-inner">
+            <button class="bg-[#008877] p-1.5 px-4 rounded text-sm hover:bg-[#006655] font-bold transition-colors text-white">검색</button>
+            <button onclick="document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')" class="bg-[#009988] p-1.5 px-3 rounded text-xs border border-[#006655] text-white shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="txt-lvl-1">추론통계 (SECTION 02)</div>
+
+        <div class="category-box bg-[#f9f9f9] border border-[#ccc] p-3 mb-5 rounded text-sm font-bold">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="빅데이터분석기사_필기.html" class="wiki-link">빅데이터분석기사 필기</a> | <a href="빅데이터분석기사.html" class="wiki-link">빅데이터분석기사</a> | <a href="데이터_탐색.html" class="wiki-link">데이터 탐색</a> | <a href="군집분석.html" class="wiki-link">군집분석</a> | <a href="통계학.html" class="wiki-link">통계학</a> | <a href="확률론.html" class="wiki-link">확률론</a> | <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> | <a href="효빈광역시_시내버스.html" class="wiki-link">효빈광역시 시내버스</a> | <a href="BanG_Dream!.html" class="wiki-link">BanG Dream!</a>
+        </div>
+        
+
+        <aside class="infobox shadow-sm">
+            <div class="infobox-top">
+                <b>빅데이터분석기사 필기</b><br>
+                <span class="text-sm opacity-80">PART 03. 통계기법의 이해</span>
+            </div>
+            <table>
+                <tr><th>과목명</th><td>제2과목 빅데이터 탐색</td></tr>
+                <tr><th>섹션</th><td>SECTION 02. 추론통계</td></tr>
+                <tr><th>출제빈도</th><td>상 (☑) 중( ) 하( )</td></tr>
+                <tr><th>반복학습</th><td>[1] [2] [3] 회독</td></tr>
+                <tr><th>빈출태그</th><td>#점추정 #적률 #편향 #우도함수 #신뢰구간 #가설검정</td></tr>
+            </table>
+        </aside>
+
+        <div class="toc shadow-sm">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li><a href="#s-1" class="wiki-link">1. 통계적 추론 (Statistical Inference)</a></li>
+                <li><a href="#s-2" class="wiki-link">2. 점추정 (Point Estimate)</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-2-1" class="wiki-link">1) 추정량의 선택기준 (불편성, 효율성, 일치성, 충분성)</a></li>
+                        <li><a href="#s-2-2" class="wiki-link">2) 점추정량 (모평균, 모분산, 모비율)</a></li>
+                        <li><a href="#s-2-3" class="wiki-link">3) 적률 방법 (Moment Method)</a></li>
+                        <li><a href="#s-2-4" class="wiki-link">4) 편향 및 5) 평균제곱오차 (MSE)</a></li>
+                        <li><a href="#s-2-6" class="wiki-link">6) 최대우도점추정 (MLE, 우도함수)</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-3" class="wiki-link">3. 구간추정 (Interval Estimation)</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-3-1" class="wiki-link">1) 구간추정의 개념 & 2) 신뢰구간의 의미</a></li>
+                        <li><a href="#s-3-3" class="wiki-link">3) 모평균의 구간추정 (Z-통계량, t-통계량)</a></li>
+                        <li><a href="#s-3-4" class="wiki-link">4) 모분산의 신뢰구간 & 5) 모비율의 신뢰구간</a></li>
+                        <li><a href="#s-3-6" class="wiki-link">6) 신뢰구간 표본 크기의 결정</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-4" class="wiki-link">4. 가설검정 (Testing Hypothesis)</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-4-1" class="wiki-link">1) 가설검정의 절차 (1종, 2종 오류)</a></li>
+                        <li><a href="#s-4-2" class="wiki-link">2~4) 검정통계량 및 기각역의 결정, p-value</a></li>
+                        <li><a href="#s-4-5" class="wiki-link">5) 표본의 평균 검정 (Z-검정 vs t-검정)</a></li>
+                        <li><a href="#s-4-8" class="wiki-link">8) 단일표본 모분산에 대한 가설검정 (χ² 검정)</a></li>
+                        <li><a href="#s-4-9" class="wiki-link">9) 두 모분산비에 대한 가설 검정 (F 검정)</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-5" class="wiki-link">5. 합격을 다지는 예상문제</a></li>
+            </ul>
+        </div>
+
+
+        <h2 id="s-1">01 통계적 추론 (Statistical Inference)</h2>
+        <p>통계적 추론 또는 통계적 추측은 <b>모집단에 대한 어떤 미지의 양상을 알기 위해 통계학을 이용하여 추측하는 과정</b>을 지칭하며 통계학의 한 부분으로서 추론 통계학이라고 불린다. 이것은 데이터를 요약하는 기술 통계학(Descriptive Statistics)과 구별되는 개념이다.</p>
+        
+        <ul class="list-disc pl-6 space-y-2 mb-4 mt-2 text-sm">
+            <li><b>① 추정(estimation):</b> 표본을 통해 모집단 특성이 어떠한가에 대해 추측하는 과정이다. 표본평균 계산을 통해 모집단평균을 추측해 보거나, 모집단 평균에 대한 95% 신뢰구간의 계산 과정을 나타낸다.</li>
+            <li><b>② 가설검정(testing hypothesis):</b> 모집단의 실제값이 얼마나 되는가 하는 주장과 관련해서, 표본이 가지고 있는 정보를 이용해 가설이 올바른지 그렇지 않은지 판정하는 과정을 나타낸다.</li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #00CCAA; background-color: #E6FAF6;">
+            <img src="이미지/하루빈.png" alt="하루빈" class="anime-img" onerror="this.style.display='none'" style="border-color: #00CCAA;">
+            <div>
+                <div class="anime-box-title" style="color: #008877;">🚉 [효빈위키 1타 강사] 2호선 하루빈의 추론 통계학 한눈에 보기!</div>
+                <p class="text-sm text-gray-800">글로만 보면 헷갈리니까 다이어그램으로 깔끔하게 정리해 둘게요. 이거 하나면 추론 통계학의 뼈대는 완벽하게 잡힌 셈이랍니다!</p>
+                <div class="mermaid mt-2 mb-2">
+                    graph TD
+                        A["통계학 (Statistics)"] --> B("기술 통계학<br>(Descriptive)")
+                        A --> C("추론 통계학<br>(Inferential)")
+                        C --> D["추정<br>(Estimation)"]
+                        C --> E["가설검정<br>(Testing Hypothesis)"]
+                        D --> F["점추정<br>(Point Estimate)"]
+                        D --> G["구간추정<br>(Interval Estimate)"]
+                        
+                        style A fill:#f9f9f9,stroke:#333,stroke-width:2px
+                        style C fill:#e1f5fe,stroke:#0288d1,stroke-width:2px
+                        style D fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
+                        style E fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
+                </div>
+            </div>
+        </div>
+
+        <h2 id="s-2">02 점추정(Point Estimate)</h2>
+        <p>모수에 대한 즉 모평균($\mu$)이나 모표준편차($\sigma$) 등과 같은 추정치를 <b>이에 대응하는 통계량(단일값)으로 추정</b>하는 것이다.</p>
+
+        <h3 id="s-2-1">1) 추정량의 선택기준</h3>
+        <ul class="list-disc pl-6 space-y-4 mb-4">
+            <li><b>① 불편성(Unbiasedness):</b> 표본 통계량의 기댓값이 모수의 실제값과 같을 때 이 추정량은 불편성을 가진다.
+                <div class="math-formula text-sm my-1">
+                    $$E(\hat{\theta}) = \theta \quad (\hat{\theta} = \text{모수의 추정량}, \theta = \text{모수})$$
+                </div>
+            </li>
+            <li><b>② 효율성(Efficiency):</b> 추정량 중에서 <b>최소의 분산을 가진 추정량(표준 편차가 작은 추정량)이 가장 효율적</b>이다.<br>
+                <span class="text-sm text-gray-600">즉, $\hat{\theta}_1$과 $\hat{\theta}_2$ 둘 다 불편추정량이라고 하더라도 $VAR(\hat{\theta}_1) < VAR(\hat{\theta}_2)$이면, $\hat{\theta}_1$이 $\hat{\theta}_2$보다 더 효율적이라고 할 수 있다. (최소분산불편추정량, MVUE)</span>
+            </li>
+            <li><b>③ 일치성(Consistency):</b> 표본크기가 증가할수록 좋은 추정값을 제시한다. 즉 표본의 크기($n$)가 커지면 커질수록 추정량 $\hat{\theta}$이 모수 $\theta$에 근접하게 되는 특성이다.</li>
+            <li><b>④ 충분성(Sufficiency):</b> 추정량이 모수에 대하여 가장 많은 정보를 제공할 때 그 추정량은 충분추정량이 된다.</li>
+        </ul>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm">
+            <b>[효율성 증명 예제]</b> 기댓값을 나타내는 두 추정량을 불편성과 효율성 측면에서 비교하여 보자.<br>
+            $$\hat{\theta}_1 = \frac{1}{4}X_1 + \frac{1}{4}X_2 + \frac{1}{4}X_3 + \frac{1}{4}X_4$$
+            $$\hat{\theta}_2 = \frac{1}{4}X_1 + \frac{1}{4}X_2 + \frac{2}{4}X_3$$
+            <span class="text-gray-500">(단, $E(X_i) = \mu, VAR(X_i) = \sigma^2$)</span><br>
+            두 식 모두 기댓값을 구하면 $\mu$가 되므로 <b>둘 다 불편추정량</b>이다. 그러나 분산을 비교하여 보면:<br>
+            $$VAR(\hat{\theta}_1) = \frac{1}{16}VAR(X_1) + \frac{1}{16}VAR(X_2) + \frac{1}{16}VAR(X_3) + \frac{1}{16}VAR(X_4) = \frac{4}{16}\sigma^2 = \frac{1}{4}\sigma^2$$
+            $$VAR(\hat{\theta}_2) = \frac{1}{16}VAR(X_1) + \frac{1}{16}VAR(X_2) + \left(\frac{2}{4}\right)^2 VAR(X_3) = \frac{2}{16}\sigma^2 + \frac{4}{16}\sigma^2 = \frac{6}{16}\sigma^2 = \frac{3}{8}\sigma^2$$
+            $\therefore VAR(\hat{\theta}_1) < VAR(\hat{\theta}_2)$ 이므로, <b>$\hat{\theta}_1$이 $\hat{\theta}_2$보다 분산이 작아 더 효율적인 추정량</b>이라고 말할 수 있다.
+        </div>
+
+        <h3 id="s-2-2">2) 점추정량(Point Estimator)</h3>
+        <p>모집단의 특성을 단일값으로 추정(특정)하는 것을 말한다. $\hat{\theta}$를 모수 $\theta$에 대한 점추정량이라고 하면 $\hat{\theta} = h(X_1, X_2, \cdots, X_n)$이다. 즉, 모수가 평균($\theta = E(X)$)이면 추정량 $\hat{\theta} = \bar{X} = \frac{X_1 + \cdots + X_n}{n}$ 이 된다.</p>
+
+        <table class="text-sm w-full mt-4 mb-4 text-center">
+            <tr>
+                <th class="bg-gray-100">모수</th>
+                <th class="bg-blue-50">추정량</th>
+                <th class="bg-gray-100">비고 (표준오차)</th>
+            </tr>
+            <tr>
+                <td class="font-bold">모평균($\mu$)</td>
+                <td>표본평균 $\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i$</td>
+                <td class="text-left px-2">• 무한모집단: $\frac{\sigma}{\sqrt{n}}$<br>• 유한모집단: $\sqrt{\frac{N-n}{N-1}} \cdot \frac{\sigma}{\sqrt{n}}$</td>
+            </tr>
+            <tr>
+                <td class="font-bold">모분산($\sigma^2$)</td>
+                <td>표본분산 $s^2 = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2$</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td class="font-bold">모비율($p$)</td>
+                <td>표본비율 $\hat{p} = \frac{X}{n}$</td>
+                <td>$\sqrt{\frac{\hat{p}\hat{q}}{n}}$ <br><span class="text-xs text-gray-500">(단, $\hat{q} = 1-\hat{p}$)</span></td>
+            </tr>
+        </table>
+
+        <div class="anime-box" style="border-color: #FF5522; background-color: #FFF2EE;">
+            <img src="이미지/다로나.png" alt="다로나" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF5522;">
+            <div>
+                <div class="anime-box-title" style="color: #DD4411;">💡 [효빈위키 나무위키식 해설] 4호선 다로나의 불편성(Unbiasedness) 팩트체크!</div>
+                <p class="text-sm text-gray-800">수험서에는 <i>'기댓값이 모수의 실제값과 같을 때'</i> 라고 점잖게 써놨지만, 쉽게 말해 <b>"편향(Bias)이 없다(Un-)"</b>는 뜻입니다! <del>마음이 불편하다는 뜻이 절대 아니에요(...).</del></p>
+                <p class="text-sm text-gray-800 mt-1">특히 표본분산 공식 보면 $n$이 아니라 $n-1$로 나누죠? 왜냐고요? $n$으로 그냥 나누면 통계량이 모분산보다 작게 나오는 <b>편향(Bias)</b>이 발생하기 때문이에요! 그래서 $n-1$이라는 자유도(Degree of Freedom)를 써서 강제로 크기를 보정해 '불편추정량'으로 만들어주는 겁니다. 이건 빅분기 시험에서 아주 단골로 나오는 '함정' 포인트니, 무조건 뇌에 박아두셔야 해요!</p>
+            </div>
+        </div>
+
+        <h3 id="s-2-3">3) 적률 방법(Moment Method)</h3>
+        <p>양수 $n$에 대해 확률변수 $X^n$의 기댓값 $E(X^n)$을 확률변수 $X$의 <b>원점에 대한 n차 적률</b>이라고 한다. 1차 적률은 기댓값(평균)이 된다.</p>
+        
+        <div class="math-formula text-sm mb-4">
+            $$\text{이산형 적률생성함수: } M_X(t) = E(e^{tX}) = \sum_{x \in S} e^{tx} f(x)$$
+            $$\text{미분 시: } \frac{d}{dt} M_X(t) = \sum_{x \in S} x e^{tx} f(x)$$
+            $$\text{이때 } t=0 \text{ 을 대입하면: } \frac{d}{dt} M_X(0) = \sum x f(x) = E(X) \text{ (1차 적률, 평균)}$$
+        </div>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm">
+            <b>[포아송분포의 경우 적률에 의한 평균과 분산 증명]</b><br>
+            포아송분포의 확률질량함수 $f(x) = \frac{\lambda^x e^{-\lambda}}{x!}$ 이다. 적률생성함수는:<br>
+            $$M_X(t) = \sum_{x=0}^{\infty} e^{tx} \frac{\lambda^x e^{-\lambda}}{x!} = e^{-\lambda} \sum_{x=0}^{\infty} \frac{(\lambda e^t)^x}{x!} = e^{-\lambda} e^{\lambda e^t} = e^{\lambda(e^t - 1)}$$
+            이를 $t$에 대해 미분하여 $t=0$을 대입하면:<br>
+            $$M'_X(t) = \lambda e^t e^{\lambda(e^t - 1)} \quad \rightarrow \quad M'_X(0) = \lambda e^0 e^0 = \lambda = E(X)$$
+            그러므로 포아송분포는 기댓값 $E(X)=\lambda$, 분산 $Var(X)=\lambda$ 임을 수학적으로 증명할 수 있다.
+        </div>
+
+        <div class="anime-box" style="border-color: #33AAFF; background-color: #E6F3FF;">
+            <img src="이미지/심세이.png" alt="심세이" class="anime-img" onerror="this.style.display='none'" style="border-color: #33AAFF;">
+            <div>
+                <div class="anime-box-title" style="color: #0077DD;">💻 [효빈위키 팩폭 해설] 창전선 심세이의 적률생성함수 번역기!</div>
+                <p class="text-sm text-gray-800"><b>적률생성함수(MGF)? 외계어 아니니까 쫄지 마!</b></p>
+                <p class="text-sm text-gray-800 mt-1">페이지 전체가 온통 시그마($\Sigma$)와 미분 기호로 도배되어 있어서 순간 전공책 찢고 싶어지겠지만, 핵심은 딱 이거 하나야. <b>"함수를 한 번 미분하고 0 넣으면 평균, 두 번 미분하고 0 넣으면 분산 구할 때 쓰는 재료가 튀어나온다."</b> 파이썬 `scipy.stats` 라이브러리로 포아송 분포 딸깍 하면 1초 만에 나오는 걸 굳이 수학자들이 손으로 미분해서 증명해 보여주는 똥꼬쇼일 뿐이니까, 수식 전개 과정을 토씨 하나 안 틀리고 외울 필요는 전혀 없어. 어차피 객관식 시험장에서는 이런 거 풀 시간도 없거든!</p>
+            </div>
+        </div>
+
+        <h3 id="s-2-4">4) 편향 (Bias) & 5) 평균제곱오차 (MSE: Mean Square Error)</h3>
+        <ul class="list-disc pl-6 space-y-2 mb-4 text-sm">
+            <li><b>편향:</b> 기대하는 추정량과 모수의 차이다. $B(\hat{\theta}) = E(\hat{\theta}) - \theta$. 편향이 0이 되는 상황의 추정량 $\hat{\theta}$를 불편추정량이라고 한다.</li>
+            <li><b>평균제곱오차(MSE):</b> 정확도에 대한 척도로 많이 사용되며, 오차(Error = $\hat{\theta} - \theta$)를 제곱한 값의 기댓값으로 정의한다. 빅분기 머신러닝 평가 지표로 귀에 딱지가 앉도록 들을 예정이니 식 형태를 꼭 외워두자.
+                <div class="math-formula my-1">$$MSE(\hat{\theta}) = E[(\hat{\theta} - \theta)^2]$$</div>
+            </li>
+        </ul>
+
+        <h3 id="s-2-6">6) 최대우도점추정 (MLE: Maximum Likelihood Estimation)</h3>
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-2 my-2 text-sm">
+            <b>[참고/날개 📌] 우도(가능도, Likelihood):</b> 데이터가 관측된 상태에서 특정 확률분포에 대한 모수의 강도를 나타내는 값.
+        </div>
+        <p>표본 $X_1, \cdots, X_n$을 얻을 확률이 <b>가장 높은 $\hat{\theta}$(최대우도)</b>, 즉 주어진 관찰값을 가장 잘 설명해 주는 모수 $\theta$를 추정하는 기법이다. 각각 독립인 확률밀도함수의 곱(product, $\prod$)으로 표현되며, <b>로그($\ln$)를 취한 후 미분하여 극댓값(기울기 0)을 찾는 방식</b>으로 구한다.</p>
+        
+        <div class="math-formula text-sm mb-4">
+            $$L(x_1, \cdots, x_n; \theta) = \prod_{i=1}^{n} f(x_i; \theta) \quad \text{(우도함수)}$$
+            $$\frac{d}{d\theta} \ln L(x_1, \cdots, x_n; \theta) = 0 \quad \text{(로그우도함수를 미분하여 0이 되는 } \hat{\theta} \text{ 찾기)}$$
+        </div>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm">
+            <b>[베르누이 시행의 최대우도추정 예제]</b><br>
+            성공확률 $p$, 실패확률 $1-p$인 베르누이 시행의 질량함수는 $f(x, p) = p^x (1-p)^{1-x}$ 이다.<br>
+            우도함수: $L(p) = \prod_{i=1}^{n} p^{x_i} (1-p)^{1-x_i} = p^{\sum x_i} (1-p)^{n-\sum x_i}$ <br>
+            양변에 로그($\ln$)를 취하면: $\ln L(p) = (\sum x_i)\ln p + (n-\sum x_i)\ln(1-p)$ <br>
+            $p$에 대해 미분하여 $0$으로 두면: $\frac{\sum x_i}{p} - \frac{n-\sum x_i}{1-p} = 0$<br>
+            정리하면 $p \cdot n - p \sum x_i = \sum x_i - p \sum x_i \quad \rightarrow \quad p = \frac{\sum x_i}{n} = \bar{x}$<br>
+            <b>결론:</b> 베르누이 시행의 성공 확률 추정치 $\hat{p}$ 는 그냥 표본들의 <b>산술평균(표본비율)</b>과 완벽히 동일하다!
+        </div>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm">
+            <b>[포아송 분포의 최대우도추정 예제 (교재 오류 수정)]</b><br>
+            포아송 분포의 질량함수 $f(x) = \frac{\lambda^x e^{-\lambda}}{x!}$ 이다. (교재 원문에 $p$로 오타 난 것을 $\lambda$로 교정)<br>
+            우도함수: $L(\lambda) = \prod_{i=1}^{n} \frac{\lambda^{x_i} e^{-\lambda}}{x_i!} = \frac{\lambda^{\sum x_i} e^{-n\lambda}}{\prod x_i!}$ <br>
+            로그우도함수: $\ln L(\lambda) = (\sum x_i)\ln\lambda - n\lambda - \ln(\prod x_i!)$ <br>
+            $\lambda$에 대해 미분하여 $0$으로 두면: $\frac{d}{d\lambda} \ln L = \frac{\sum x_i}{\lambda} - n = 0$<br>
+            <b>결론:</b> 모수 $\lambda$의 최대우도추정량 $\hat{\lambda} = \frac{\sum x_i}{n} = \bar{x}$ 로, 이 역시 표본평균과 일치한다!
+        </div>
+
+        <div class="anime-box" style="border-color: #6677CC; background-color: #F0F2FA;">
+            <img src="이미지/전노아.png" alt="전노아" class="anime-img" onerror="this.style.display='none'" style="border-color: #6677CC;">
+            <div>
+                <div class="anime-box-title" style="color: #4455AA;">🗺️ [효빈위키 기적의 해설] 빈효선 전노아의 가챠 확률 역추적!</div>
+                <p class="text-sm text-gray-800">이름부터 한자어라 기선제압을 쎄게 하지만, <b>'최대우도추정(MLE)'</b>의 본질은 의외로 아주 간단해요!</p>
+                <p class="text-sm text-gray-800 mt-1">예를 들어, 뱅드림 가챠를 10번 돌렸는데 4성 픽업이 딱 1장 나왔다고 쳐요. 이때 우리의 뇌는 자연스럽게 <b>"아, 내가 겪은 이 결과(10뽑 1성공)가 나올 확률이 가장 높은 세팅값은 무엇일까? 픽업 확률($p$)이 대충 10%겠구나!"</b> 라고 합리적 갓심을 하게 되죠. 이처럼 <b>'이미 일어난 데이터(표본)를 바탕으로, 이 결과가 나오기에 가장 적합했던 확률(모수)을 역으로 추정하는 수학적 기법'</b>이 바로 최대우도추정(MLE)입니다. <del>물론 현실의 픽업 확률은 1%도 안 돼서 결국 천장을 쳐야만 하지만요(...).</del></p>
+                <p class="text-sm text-gray-800 mt-2"><b>왜 멀쩡한 식에 로그($\ln$)를 씌우고 난리인가?</b><br>
+                수학자들이 할 짓이 없어서 식을 꼬아놓은 게 아니에요. 서로 독립된 확률들을 계속 곱하다 보면($\prod$), $0.1 \times 0.1 \times 0.1 \dots$ 처럼 숫자가 한없이 작아져서 결국 컴퓨터가 계산하다가 0으로 인식해버리는 언더플로우(Underflow) 대참사가 발생합니다. 그런데 여기에 로그를 씌우면? <b>곱하기가 더하기($\sum$)로 변신하는 마법</b>이 일어나죠! 미분하기도 100배 쉬워지고 컴퓨터 연산도 안정되니 머신러닝에서 안 쓸 이유가 없답니다!</p>
+            </div>
+        </div>
+
+
+        <h2 id="s-3">03 구간추정 (Interval Estimation)</h2>
+        <p>점추정은 모집단의 모수를 하나의 값으로 추정해 주는 것이다. 그러나 표본으로부터 계산된 추정값이 목표값을 100% 정확하게 짚어낸다고 주장할 수는 없다. 점추정에 오차(error)의 개념을 도입하여 <b>모수가 포함되는 확률변수구간을 어떤 신뢰성 아래 추정</b>하는 것이 구간추정(신뢰구간)이다.</p>
+
+        <h3 id="s-3-1">1) 구간추정의 개념 & 2) 신뢰구간의 의미</h3>
+        <ul class="list-disc pl-6 space-y-1 mb-4 text-sm">
+            <li><b>신뢰수준(Confidence Level, $1-\alpha$):</b> 추정한 구간 $[\hat{\theta}_L, \hat{\theta}_U]$ 에 실제 모수가 들어갈 확률. 95%의 신뢰수준은 같은 조사를 100번 하면 실제 모수를 포함하는 구간이 95번 나온다는 의미이다.</li>
+            <li><b>유의수준(Significance Level, $\alpha$):</b> 오차의 가능성, 오류를 범할 허용 한계. 신뢰수준이 95%라면 유의수준 $\alpha$는 0.05(5%)이다.</li>
+            <li>구간의 크기가 작을수록(오차 범위가 좁을수록) 실제 모수를 좀 더 정밀하게 추정할 수 있다. 단, 표본의 크기($n$)가 커져야만 신뢰구간의 길이를 줄일 수 있다.</li>
+        </ul>
+
+        <h3 id="s-3-3">3) 모평균의 구간추정 (★핵심 공식)</h3>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">① 모집단의 분산($\sigma^2$)을 알고 있는 경우: Z-통계량 사용</h4>
+        <div class="math-formula text-sm mb-4">
+            $$\bar{X} - Z_{\alpha/2} \frac{\sigma}{\sqrt{n}} \le \mu \le \bar{X} + Z_{\alpha/2} \frac{\sigma}{\sqrt{n}}$$
+        </div>
+        <p class="font-bold text-gray-800 ml-4">▶ Z-통계량 암기 치트키 (표준정규분포 임계값)</p>
+        <table class="text-sm text-center w-full mt-2 mb-4">
+            <tr><th class="bg-gray-100">신뢰수준 ($1-\alpha$)</th><th class="bg-blue-50">Z값 ($Z_{\alpha/2}$)</th></tr>
+            <tr><td>90%</td><td class="font-bold text-blue-600">1.645</td></tr>
+            <tr><td>95%</td><td class="font-bold text-red-600">1.960 ⭐️</td></tr>
+            <tr><td>99%</td><td class="font-bold text-blue-600">2.576</td></tr>
+        </table>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm">
+            <b>[고등학생 수면시간 예제 (Z-분포)]</b><br>
+            고등학교 3학년 학생 100명($n=100$) 조사 결과 표본평균 $\bar{X}=6$시간, 모표준편차 $\sigma=1$시간 이었다. 평균 수면시간의 95% 신뢰구간을 구하라.<br>
+            • 95% 신뢰수준이므로 $Z_{0.025} = 1.960$<br>
+            $$6 - 1.960 \times \frac{1}{\sqrt{100}} \le \mu \le 6 + 1.960 \times \frac{1}{\sqrt{100}}$$
+            $$6 - 0.196 \le \mu \le 6 + 0.196 \quad \rightarrow \quad 5.804 \le \mu \le 6.196$$
+        </div>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">② 모집단의 분산을 모르는 경우: t-통계량 사용</h4>
+        <p>현실에서는 모집단의 진짜 표준편차 $\sigma$를 아는 경우는 매우 드물다. 이럴 때는 <b>표본의 표준편차 $S$로 땜빵하여 추정</b>하며, 표본이 작을 때는 Z-분포 대신 양 꼬리가 두꺼운 <b>자유도 $n-1$의 t-분포</b>를 사용한다.</p>
+        <div class="math-formula text-sm mb-4">
+            $$\bar{X} - t_{\alpha/2, \ n-1} \frac{S}{\sqrt{n}} \le \mu \le \bar{X} + t_{\alpha/2, \ n-1} \frac{S}{\sqrt{n}}$$
+        </div>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm">
+            <b>[초등학생 혈압 예제 (t-분포) - 교재 계산 오류 정정판]</b><br>
+            여학생 5명($n=5$)의 혈압 표본 [102, 92, 98, 88, 104]. 표본평균 $\bar{X}=96.8$, 표본표준편차 $S=6.72$. 95% 신뢰구간은?<br>
+            • 자유도 $n-1 = 4$, $t_{0.025, 4} = 2.78$ (부록 표 참고)<br>
+            $$96.8 \pm 2.78 \left( \frac{6.72}{\sqrt{5}} \right) = 96.8 \pm 2.78 \left( \frac{6.72}{2.24} \right) = 96.8 \pm 2.78 \times 3 = 96.8 \pm 8.34$$
+            결과적으로 신뢰구간은 $88.46 \le \mu \le 105.14$ 이다. <span class="text-red-500 font-bold">(※ 교재 원본은 8.32로 오타가 나 있음!)</span>
+        </div>
+
+        <div class="anime-box" style="border-color: #EE0022; background-color: #FFF0F2;">
+            <img src="이미지/미소하.png" alt="미소하" class="anime-img" onerror="this.style.display='none'" style="border-color: #EE0022;">
+            <div>
+                <div class="anime-box-title" style="color: #CC0011;">🎀 [효빈위키 기적의 TIP] 5호선 미소하의 점추정 vs 구간추정!</div>
+                <p class="text-sm text-gray-800">효빈광역시 간선버스의 평균 배차간격을 분석한다고 가정해 봐요. 정류장에 서서 몇 번 재봤더니 12분이 나왔어요. 이때 <b>"이 버스는 정확히 12분마다 옵니다!"</b> 라고 단언하는 것이 점추정이에요. 하지만 실제 버스가 13분 만에 오면 이 추정은 보기 좋게 틀린 것이 되죠. <del>그리고 시청 교통과로 쏟아지는 분노의 민원은 덤이랍니다.</del></p>
+                <p class="text-sm text-gray-800 mt-1">반면 <b>"이 버스의 배차간격은 95%의 확률로 10분에서 14분 사이일 것입니다."</b> 라고 오차 범위를 두고 안전하게 말하는 것이 <b>구간추정</b>이에요! 오차가 존재할 수밖에 없는 현실 세계에서 훨씬 타당하고 살아남기 좋은(?) 방식이랍니다. 아, 그리고 위 표에 있는 <b>1.960 (95%)</b> 수치는 자다가도 벌떡 일어나서 외울 수 있게 머리에 새겨두세요!</p>
+            </div>
+        </div>
+
+        <h3 id="s-3-4">4) 모분산의 신뢰구간 & 5) 모비율의 신뢰구간</h3>
+        <ul class="list-disc pl-6 space-y-2 mb-4 text-sm">
+            <li><b>모분산($\sigma^2$):</b> $\chi^2$ (카이제곱) 분포를 사용한다. $\left[ \frac{(n-1)S^2}{\chi^2_{\alpha/2}}, \frac{(n-1)S^2}{\chi^2_{1-\alpha/2}} \right]$</li>
+            <li><b>모비율($p$):</b> 중심극한정리에 의해 정규분포로 근사한다. $\left[ \hat{p} - Z_{\alpha/2} \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}, \ \hat{p} + Z_{\alpha/2} \sqrt{\frac{\hat{p}(1-\hat{p})}{n}} \right]$</li>
+        </ul>
+
+        <h3 id="s-3-6">6) 신뢰구간 표본 크기의 결정</h3>
+        <p>허용 오차($d$) 내에서 추정하기 위해 최소 몇 명을 조사해야 하는지 역산하는 공식이다.</p>
+        <div class="math-formula text-sm mb-4">
+            $$\text{모평균 추정 시 표본 크기: } n = \left( \frac{Z_{\alpha/2} \sigma}{d} \right)^2$$
+            $$\text{모비율 추정 시 표본 크기: } n = p(1-p) \left( \frac{Z_{\alpha/2}}{d} \right)^2$$
+            <span class="text-red-500 font-bold">※ 모비율 $p$에 대한 사전 정보가 전혀 없으면, 분산이 가장 커져서 안전하게 계산되는 $p = 1/2 \ (0.5)$ 로 놓고 계산한다!</span>
+        </div>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm">
+            <b>[여당후보 지지율 여론조사 예제]</b><br>
+            여당후보지지율의 95% 추정오차한계가 5% 이내($d=0.05$)가 되기 위한 표본크기는? (단, 과거 지지율 정보는 없다.)<br>
+            • $\alpha=0.05 \rightarrow Z_{0.025} = 1.960$, 모비율 정보가 없으므로 $p = 0.5$<br>
+            $$n = 0.5(1-0.5) \left( \frac{1.960}{0.05} \right)^2 = 0.25 \times (39.2)^2 = 0.25 \times 1536.64 = 384.16$$
+            따라서 안전하게 오차를 맞추려면 <b>최소 385명</b> 이상을 조사해야 한다.
+        </div>
+
+
+        <h2 id="s-4">04 가설검정 (Testing Hypothesis)</h2>
+        <p>모집단에 대해 어떤 가설을 설정하고, 표본을 분석함으로써 그 가설의 타당성 여부를 결정(검정)하는 통계적 기법이다.</p>
+
+        <h3 id="s-4-1">1) 가설검정의 절차</h3>
+        <ul class="list-disc pl-6 space-y-2 mb-4 text-sm">
+            <li><b>귀무가설(Null Hypothesis, $H_0$):</b> 현재 통념적으로 믿어지고 있는 모수에 대한 주장 또는 원래 기준. (예: "약 효과 없음", "무죄다")</li>
+            <li><b>대립가설(Alternative Hypothesis, $H_1$):</b> 연구자가 새롭게 통계적으로 입증하고자 하는 강력한 가설. (예: "새 약 효과 있음!", "유죄다!")</li>
+        </ul>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">② 유의수준 $\alpha$ 와 제1종/제2종 오류</h4>
+        <table class="text-sm text-center w-full mt-2 mb-4">
+            <tr>
+                <th class="bg-gray-100">검정결과 \ 실제상황</th>
+                <th class="bg-blue-50">$H_0$ (귀무가설 참)</th>
+                <th class="bg-red-50">$H_1$ (대립가설 참)</th>
+            </tr>
+            <tr>
+                <td class="font-bold bg-gray-50">$H_0$ 채택</td>
+                <td class="text-green-600 font-bold">올바른 결정 (SUCCESS)</td>
+                <td class="text-red-600 font-bold">제2종 오류 (Type II Error)</td>
+            </tr>
+            <tr>
+                <td class="font-bold bg-gray-50">$H_0$ 기각</td>
+                <td class="text-red-600 font-bold bg-red-100">제1종 오류 (Type I Error, $\alpha$)</td>
+                <td class="text-green-600 font-bold">올바른 결정 (SUCCESS)</td>
+            </tr>
+        </table>
+        <ul class="list-disc pl-6 space-y-1 mb-4 text-sm">
+            <li><b>제1종 오류:</b> 귀무가설이 <b>참인데 억울하게 기각</b>해버리는 오류 (무죄인데 유죄 판결). 가장 심각하게 취급된다.</li>
+            <li><b>유의수준($\alpha$):</b> <b>제1종 오류를 범할 확률의 최대 허용한계</b>. (보통 0.05, 0.01로 깐깐하게 설정)</li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #0077DD; background-color: #EBF5FF;">
+            <img src="이미지/고나미.png" alt="고나미" class="anime-img" onerror="this.style.display='none'" style="border-color: #0077DD;">
+            <div>
+                <div class="anime-box-title" style="color: #0055AA;">🎙️ [효빈위키 족집게 특강] 1호선 고나미의 가설검정 재판장!</div>
+                <p class="text-sm text-gray-800"><b>"피가($p < \alpha$) 작으면 무조건 기각!!"</b></p>
+                <p class="text-sm text-gray-800 mt-1">수험서의 복잡한 말 다 집어치우고 실전 압축으로 갈게요. 파이썬 `scipy` 로 분석을 돌렸을 때 나오는 <b>p-value(유의확률)가 유의수준 $\alpha$(보통 0.05)보다 작으면 무조건 귀무가설 아웃(기각)입니다!</b> 즉, 내가 세운 새로운 주장(대립가설)이 성공적으로 통계적 입증을 해냈다는 짜릿한 뜻이죠!</p>
+                <p class="text-sm text-gray-800 mt-1">만약 효빈광역시 간선버스의 평균 배차간격이 10분($H_0$)이라는 시청의 주장에 빡쳐서, "아니다! 10분보다 더 걸린다!($H_1$)" 라고 민원을 넣었다고 치죠. 표본을 뽑아 검정한 <b>p-value가 0.01이 떴다면?</b> 0.05보다 작으니까 시청의 10분 주장은 기각(거짓말)되고 민원인의 승리가 되는 통계학의 짜릿한 사이다 논리랍니다!</p>
+            </div>
+        </div>
+
+        <h3 id="s-4-2">2) 검정통계량 및 표본분포의 결정 ~ 4) 기각역과 p-value</h3>
+        <ul class="list-disc pl-6 space-y-1 mb-4 text-sm">
+            <li><b>임계치(Critical Value)와 기각역:</b> 귀무가설을 기각하게 되는 검정통계량의 범위를 기각역이라 하며, 그 경계선이 임계치다. 대립가설 형태에 따라 <b>양측 검정</b>(기각역이 양쪽에 분산)과 <b>단측 검정</b>(우측 혹은 좌측 몰빵)으로 나뉜다.</li>
+            <li>계산된 Z(t) 값이 <b>기각역 안에 꽂히면 귀무가설을 기각</b>($H_1$ 채택)한다.</li>
+        </ul>
+
+        <div class="mermaid mt-4 mb-4">
+        graph TD
+            subgraph TwoTailed ["양측검정 (Two-tailed Test) : H1이 '같지 않다(≠)'일 때"]
+                A["좌측 기각역<br>면적: α/2"] --- B(("채택역<br>중앙 1-α (95%)"))
+                B --- C["우측 기각역<br>면적: α/2"]
+                A -.-> D("-1.96 임계값")
+                C -.-> E("1.96 임계값")
+            end
+            
+            subgraph OneTailed ["단측검정 (One-tailed Test) : H1이 크다(>) 또는 작다(<)일 때"]
+                F(("채택역<br>좌측 전체 (95%)")) --- G["우측 기각역<br>면적: α 전체 몰빵"]
+                G -.-> H("1.64 임계값")
+            end
+            
+            style A fill:#ffcdd2,stroke:#e53935
+            style B fill:#e8f5e9,stroke:#43a047
+            style C fill:#ffcdd2,stroke:#e53935
+            style F fill:#e8f5e9,stroke:#43a047
+            style G fill:#ffcdd2,stroke:#e53935
+        </div>
+
+        <h3 id="s-4-5">5) 표본의 평균 검정 (Z-검정 vs t-검정)</h3>
+        <p>단일 표본에서 모평균 검정은 집단 크기(n)와 모분산 인지 여부에 따라 나뉜다.</p>
+        <ul class="list-disc pl-6 space-y-2 mb-4 text-sm">
+            <li><b>모분산을 알거나 대표본:</b> Z-검정 $Z = \frac{\bar{X} - \mu}{\sigma/\sqrt{n}}$</li>
+            <li><b>모분산을 모르고 소표본:</b> t-검정 $T = \frac{\bar{X} - \mu}{S/\sqrt{n}}$ (자유도 $n-1$)</li>
+        </ul>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm">
+            <b>[고등학교 용돈수준 검정 예제 (단측검정)]</b><br>
+            16명 학생($n=16$) 용돈 표본평균 96,000원($\bar{X}$). 학교 전체 <b>모표준편차가 6,000원($\sigma$)</b>일 때, 한 달 용돈이 10만원 이상($\mu \ge 100,000$)이라 할 수 있을까? ($\alpha=0.05$)<br>
+            • 가설: $H_0 : \mu \ge 100,000$, $\quad H_1 : \mu < 100,000$ (좌측 단측검정)<br>
+            • $\alpha=0.05$ 좌측검정 임계치는 $Z = -1.64$ (기각역 $Z < -1.64$)<br>
+            $$Z = \frac{96000 - 100000}{6000/\sqrt{16}} = \frac{-4000}{1500} = -2.67$$
+            계산된 Z값 $-2.67$ 은 $-1.64$ 보다 작아 <b>기각역에 속하므로 귀무가설($H_0$) 기각!</b><br>
+            결론: 학생들의 용돈이 10만원 이상이라고 결코 볼 수 없다.
+        </div>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm">
+            <b>[다이어트 약 효능 t-검정 예제 (짝을 이룬 표본)]</b><br>
+            비만증 환자 10명($n=10$) 임상실험. 약 투여 전후 체중 감소량 표본평균 $\bar{D} = 0.54\text{kg}$, 표본표준편차 $S_D = 2.15$. 약이 감소에 효과적인가? ($\alpha=0.01$)<br>
+            • 가설: $H_0 : \mu_D = 0$, $\quad H_1 : \mu_D > 0$ (우측 단측검정)<br>
+            • 모분산을 모르므로 t-검정 사용. 자유도 $n-1 = 9$, 임계치 $t_{0.01, 9} = 2.821$<br>
+            $$T = \frac{0.54}{2.15/\sqrt{10}} = \frac{0.54}{0.68} \approx 0.79$$
+            계산된 T값 $0.79$ 는 기각역 $2.821$ 보다 훨씬 작으므로 <b>귀무가설($H_0$) 채택!</b><br>
+            결론: 고작 0.54kg 빠진 걸로는 약이 체중감소에 효과가 있다는 통계적 근거가 없다.
+        </div>
+
+        <h3 id="s-4-8">8) 단일표본 모분산에 대한 가설검정 ($\chi^2$ 검정)</h3>
+        <p>집단이 1개일 때, 분산 $\sigma^2$ 에 대한 가설검정은 <b>카이제곱($\chi^2$) 검정통계량</b>을 사용한다.</p>
+        <div class="math-formula text-sm mb-4">
+            $$\chi^2 = \frac{\sum(x_i - \bar{x})^2}{\sigma_0^2} = \frac{(n-1)s^2}{\sigma_0^2}$$
+        </div>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm">
+            <b>[기계회사 수명 분산 카이제곱 예제]</b><br>
+            기존 수명 분산이 1200시간($H_0: \sigma^2 = 1200$). 새 공정 제품 30개($n=30$) 추출 조사 결과 분산이 1050($s^2=1050$)이었다. 변동이 적어졌다고 할 수 있나? ($H_1: \sigma^2 < 1200$, 좌측검정, $\alpha=0.05$)<br>
+            • 자유도 $\Phi = 30-1 = 29$<br>
+            • 검정통계량 $\chi^2 = \frac{29 \times 1050}{1200} = 25.375$<br>
+            • 부록의 카이제곱 표에서 임계치(기각역) $\chi^2(29, 0.95) = 17.71$<br>
+            계산된 $\chi^2$ 값 $25.375$ 가 $17.71$ 보다 커서 기각역($\chi^2 < 17.71$)에 들어가지 못하므로 <b>귀무가설 채택!</b> 새 공정으로 바꿔도 변동은 별로 안 줄어들었다.
+        </div>
+
+        <h3 id="s-4-9">9) 두 모분산비에 대한 가설 검정 (F 검정)</h3>
+        <p>집단이 2개일 때, <b>두 집단의 분산 비율($\sigma_1^2 / \sigma_2^2$)을 비교</b>하여 차이가 있는지(등분산성) 검정하는 것은 <b>F 검정통계량</b>을 사용한다.</p>
+        <div class="math-formula text-sm mb-4">
+            $$F = \frac{s_1^2}{s_2^2} \quad (\text{자유도 } \Phi_1 = n_1-1, \ \Phi_2 = n_2-1)$$
+        </div>
+
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4 text-sm">
+            <b>[화장품 회사 샴푸 내용물 F-검정 예제]</b><br>
+            1공장 20병($n_1=20$) 분산 $s_1^2=39.0$, 2공장 20병($n_2=20$) 분산 $s_2^2=26.12$. 내용물 변동에 차이가 있는지 $\alpha=0.05$ 양측검정($H_1: \sigma_1^2 \neq \sigma_2^2$).<br>
+            • 검정통계량 $F = \frac{39.0}{26.12} = 1.493$<br>
+            • 자유도는 $(19, 19)$. F 분포표의 상한 임계치 $F(19, 19; 0.025) \approx 2.526$, 하한 $F(19, 19; 0.975) \approx \frac{1}{2.526} \approx 0.396$<br>
+            계산된 F값 $1.493$ 이 $0.396 \le F \le 2.526$ 채택역 사이에 존재하므로 <b>귀무가설(등분산) 채택!</b> 즉, 두 공장의 내용물 변동 차이는 없다고 할 수 있다.
+        </div>
+
+        <div class="anime-box" style="border-color: #881188; background-color: #FDF5FD;">
+            <img src="이미지/라세나.png" alt="라세나" class="anime-img" onerror="this.style.display='none'" style="border-color: #881188;">
+            <div>
+                <div class="anime-box-title" style="color: #660066;">🚇 [효빈위키 족집게 특강] 6호선 라세나의 검정통계량 정리!</div>
+                <p class="text-sm text-gray-800">이거 하나만 외우면 통계학 필기 검정 파트 5점은 그냥 거저먹는 거야!</p>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>Z-검정과 t-검정:</b> 오직 <b>'평균($\mu$)'</b>을 가지고 싸우는 애들이야. 모분산을 알면 Z, 모르면 t를 쓰는 거지.</li>
+                    <li><b>$\chi^2$(카이제곱)과 F-검정:</b> 오로지 <b>'분산($\sigma^2$)'</b>의 덩치를 가지고 싸우는 애들이야.
+                        <ul class="list-circle pl-6 mt-1">
+                            <li>집단이 <b>1개</b>일 때 분산 변동을 확인하면 <b>카이제곱 검정</b>!</li>
+                            <li>집단이 <b>2개</b>일 때 (1공장 vs 2공장) 분산 비율을 비교하면 <b>F 검정</b>! (그래서 식이 $s_1^2 / s_2^2$ 분수인 거야!)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+        <h2 id="s-5">05 합격을 다지는 예상문제</h2>
+        
+        <div class="exam-box">
+            <div class="exam-title">문항 01. 다음 아래의 설명은 표본추출 중의 하나를 설명한 것이다. 해당하는 추출방법은 무엇인가?</div>
+            <p class="font-semibold bg-white p-3 border rounded mb-2 text-sm">
+                • 모집단을 서로 겹치지 않게 여러 층(strata)으로 나누어 분할된 층(stratum)별로 배정된 표본을 단순 임의 추출법에 따라 추출하는 방법이다.<br>
+                • 각 집단별 분석이 필요한 분석의 경우나 모집단 전체에 대한 특성치의 효율적 추정(추론)이 필요한 경우 시행한다.
+            </p>
+            <p class="text-sm space-y-1">
+                ① 계통추출 <br>
+                ② 군집추출 <br>
+                <b>③ 층화추출</b> <br>
+                ④ 단순무작위추출
+            </p>
+            <p class="text-xs text-gray-600 mt-2"><b>[효빈위키 💡 정답 및 해설] 정답: ③</b><br>
+            보기 박스 안에 대놓고 <b>'층(strata)'</b>이라고 답을 떠먹여 주고 있습니다. 집단 내는 동질하고 집단 간은 이질적인 경우(예: 남녀 성별로 나누기) 비율에 맞춰 뽑는 층화추출입니다.</p>
+        </div>
+
+        <div class="exam-box">
+            <div class="exam-title">문항 02. 다음은 표본추출오차에 관한 설명이다. 설명 중 틀린 것은?</div>
+            <p class="text-sm space-y-1">
+                ① 표본추출 시 표본의 크기(Sample Size)보다는 대표성을 가지는 표본을 추출하는 것이 중요하다.<br>
+                ② 과잉대표는 중복선택 등의 원인으로 모집단이 반복·중복된 데이터만으로 규정되는 현상을 지칭한다.<br>
+                ③ 최소대표는 실제모집단의 대표성을 나타낼 표본이 아닌 다른 데이터가 표본이 되는 현상이다.<br>
+                <b>④ 최대대표는 모집단에서 추출된 표본이 너무 많이 추출되어 전수조사에 가까운 조사가 되는 현상이다.</b>
+            </p>
+            <p class="text-xs text-gray-600 mt-2"><b>[효빈위키 💡 정답 및 해설] 정답: ④</b><br>
+            통계학에서 '최대대표'라는 용어는 아예 존재하지 않습니다. 출제자가 그럴싸하게 지어낸 오답 낚시입니다. 표본추출 오차에는 과잉대표와 최소대표(과소대표)만 존재합니다.</p>
+        </div>
+
+        <div class="exam-box">
+            <div class="exam-title">문항 03. 군집추출에 대한 설명 중 틀린 것은?</div>
+            <p class="text-sm space-y-1">
+                <b>① 추출 모집단에 대해 사전지식이 많지 않은 경우 시행하는 방법이다.</b><br>
+                ② 모집단을 차이가 없는 여러 개 군집으로 나누어 군집 단위의 일부 또는 전체에 대한 분석을 시행한다.<br>
+                ③ 모집단에 대한 추출기반을 마련하기가 어려운 경우 사용하면 편리하다.<br>
+                ④ 표본크기가 같은 경우 단순 임의추출에 비해 표본오차가 증대할 가능성이 있다.
+            </p>
+            <p class="text-xs text-gray-600 mt-2"><b>[효빈위키 💡 정답 및 해설] 정답: ①</b><br>
+            1번 보기는 아무것도 모를 때 파이썬 랜덤 모듈 돌리듯 무지성으로 뽑는 <b>'단순무작위추출'</b>에 대한 시그니처 설명입니다.</p>
+        </div>
+
+        <div class="exam-box">
+            <div class="exam-title">문항 04. 확률에 대한 설명 중 틀린 것은?</div>
+            <p class="text-sm space-y-1">
+                ① 표본공간 S의 각 근원 사건이 일어날 가능성이 동등할 때, 사건 A에 대하여 $n(A)/n(S)$를 사건 A의 수학적 확률이라고 한다.<br>
+                ② 일반적인 자연 현상이나 사회 현상에서 일어날 가능성이 동일한 현상은 드물고 분명하지 않은 경우가 대부분이다.<br>
+                <b>③ 수학적 확률을 무한 번 시행하면 그 값은 통계적 확률의 값으로 수렴한다.</b><br>
+                ④ 확률은 통계적 현상의 확실함의 정도를 나타내는 척도이며, 랜덤 시행에서 어떠한 사건이 일어날 정도를 나타내는 사건에 할당된 수를 말한다.
+            </p>
+            <p class="text-xs text-gray-600 mt-2"><b>[효빈위키 💡 정답 및 해설] 정답: ③</b><br>
+            앞뒤가 완벽하게 뒤집혔습니다. 동전을 무한 번 던지는 노가다인 <b>'통계적 확률(경험적 상대도수)'</b>을 무한히 반복했을 때, 마침내 책상머리에서 계산한 <b>'수학적 확률(대수적 값, 1/2)'</b>로 수렴하는 것입니다. (큰 수의 법칙)</p>
+        </div>
+
+        <div class="exam-box">
+            <div class="exam-title">문항 05. 정규화 식 중 맞는 것을 고르시오 ($\mu$ : 평균, $\sigma$ : 표준편차).</div>
+            <p class="text-sm space-y-1">
+                <b>① $Z = \frac{X - \mu}{\sigma}$</b> <br>
+                ② $Z = \frac{X - \mu}{\sigma^2}$ <br>
+                ③ $Z = \frac{X - \mu}{\sqrt{\sigma}}$ <br>
+                ④ $Z = \frac{X - \mu}{\sqrt{\sigma}/n}$
+            </p>
+            <p class="text-xs text-gray-600 mt-2"><b>[효빈위키 🛠️ 정답 및 팩트폭력 해설] 정답: ①</b><br>
+            <del>출판사가 또 '표준화(Standardization)'를 '정규화(Normalization)'라고 대놓고 오타를 냈습니다!</del> 용어는 틀렸지만 우리가 죽어라 외워야 할 그 Z-스코어 표준화 공식은 1번이 맞습니다. 내 점수($X$)에서 평균($\mu$)을 빼고 표준편차($\sigma$)로 시원하게 나눈 절대적 랭킹 값입니다.</p>
+        </div>
+
+    
+        <!-- 나무위키식 하단 내비게이션 틀 시작 -->
+        <div class="wiki-nav-box" id="bigbunNav">
+            <div class="wiki-nav-header">
+                📊 빅데이터분석기사 필기 전체 문서 목록
+            </div>
+            <div class="wiki-nav-toggle" onclick="document.getElementById('bigbunNavContent').classList.toggle('active')">
+                [ 펼치기 · 접기 ]
+            </div>
+            <div class="wiki-nav-content" id="bigbunNavContent">
+                <table class="wiki-nav-table">
+                    <tbody>
+                        <tr>
+                            <th class="bg-nav-red" style="width: 18%;">제1과목<br>빅데이터 분석 기획</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기1-1.html">빅분기1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-1.html">빅분기1-2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-2.html">빅분기1-2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-3.html">빅분기1-2-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-1.html">빅분기1-3-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-2.html">빅분기1-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-3.html">빅분기1-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-4.html">빅분기1-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-1.html">빅분기1-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-2.html">빅분기1-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-1.html">빅분기1-5-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-2.html">빅분기1-5-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-6.html">빅분기1-6</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제2과목<br>빅데이터 탐색</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기2-1.html">빅분기2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-2.html">빅분기2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-3.html">빅분기2-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-red">제3과목<br>빅데이터 모델링</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-1.html">빅분기3-1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-2.html">빅분기3-1-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-3.html">빅분기3-1-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-2.html">빅분기3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-2.html">빅분기3-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-3.html">빅분기3-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-4.html">빅분기3-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-1.html">빅분기3-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-2.html">빅분기3-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-3.html">빅분기3-4-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제4과목<br>빅데이터 결과 해석</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기4-1.html">빅분기4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-2.html">빅분기4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-3.html">빅분기4-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-4.html">빅분기4-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-5.html">빅분기4-5</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-6.html">빅분기4-6</a></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 나무위키식 하단 내비게이션 틀 끝 -->
+
+    </div> <!-- wiki-container end -->
+
+    <footer class="wiki-footer p-6 text-center border-t border-[var(--wiki-border)] bg-[var(--wiki-footer-bg)] text-[var(--wiki-footer-text)]">
+        <div class="font-bold text-sm">
+            이 저작물은 <span class="text-[var(--wiki-text)]">효빈위키</span> 규정에 따라 이용할 수 있습니다.<br>
+            ※ 본 문서는 빅데이터분석기사 필기 제2과목(추론통계 및 가설검정 핵심요약)의 완전판입니다.
+        </div>
+    </footer>
+
+    <!-- 각주 툴팁 구동 JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'wiki-tooltip';
+            document.body.appendChild(tooltip);
+
+            const fnLinks = document.querySelectorAll('a.fn-link');
+            
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        const childNodes = Array.from(targetElement.childNodes);
+                        const tooltipContent = childNodes
+                            .filter(node => node.nodeName !== 'A')
+                            .map(node => node.nodeType === Node.TEXT_NODE ? node.textContent : node.outerHTML)
+                            .join('')
+                            .trim();
+                        
+                        tooltip.innerHTML = tooltipContent;
+                        tooltip.classList.add('visible');
+                        
+                        const rect = this.getBoundingClientRect();
+                        let topPos = rect.bottom + window.scrollY + 8;
+                        let leftPos = rect.left + window.scrollX;
+                        
+                        tooltip.style.display = 'block';
+                        if (leftPos + tooltip.offsetWidth > window.innerWidth) {
+                            leftPos = window.innerWidth - tooltip.offsetWidth - 20;
+                        }
+                        
+                        tooltip.style.left = leftPos + 'px';
+                        tooltip.style.top = topPos + 'px';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    tooltip.classList.remove('visible');
+                });
+            });
+        });
+    </script>
+    
+    <!-- 4대 필수 외부 스크립트 완벽 영구 유지 -->
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

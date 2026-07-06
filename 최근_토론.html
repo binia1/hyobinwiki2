@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>최근 토론 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA; 
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; margin: 0; }
+        
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .wiki-title { font-size: 2.2rem !important; font-weight: 900 !important; border-bottom: 1px solid var(--wiki-border); padding-bottom: 10px; margin-bottom: 20px; margin-top: 20px; } 
+        
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* 필터 컨트롤 박스 */
+        .filter-box { border: 1px solid var(--wiki-border); padding: 15px; margin-bottom: 20px; background: var(--wiki-gray-bg); font-size: 0.9rem; border-radius: 4px; display: flex; flex-wrap: wrap; gap: 20px; align-items: center; }
+        .filter-row { display: flex; align-items: center; gap: 10px; }
+        .filter-box select, .filter-box input[type="text"] { padding: 6px 10px; border: 1px solid var(--wiki-border); border-radius: 2px; outline: none; font-size: 0.9rem; }
+        .filter-btn { background: white; border: 1px solid var(--wiki-border); padding: 6px 16px; cursor: pointer; border-radius: 2px; font-weight: bold; transition: background 0.2s; }
+        .filter-btn:hover { background: #eee; }
+
+        /* 최근 토론 테이블 */
+        table.discuss-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; border-top: 2px solid var(--wiki-main); border-bottom: 1px solid var(--wiki-border); }
+        table.discuss-table th, table.discuss-table td { padding: 12px 15px; border-bottom: 1px solid var(--wiki-border); text-align: left; }
+        table.discuss-table th { background-color: var(--wiki-gray-bg); font-weight: bold; text-align: center; }
+        table.discuss-table tr:hover { background-color: #fdfdfd; }
+
+        /* 상태 배지 */
+        .status-badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 0.75rem; font-weight: bold; color: white; text-align: center; width: 60px; }
+        .status-normal { background-color: #0275d8; } /* 진행 중 */
+        .status-close { background-color: #6c757d; }  /* 합의됨/닫힘 */
+        .status-pause { background-color: #f0ad4e; }  /* 중단됨 */
+
+        .topic-link { color: var(--wiki-text); font-weight: bold; text-decoration: none; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 400px; }
+        .topic-link:hover { color: var(--wiki-link); text-decoration: underline; }
+        
+        .time-text { color: #666; font-size: 0.85rem; text-align: center; }
+        
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+    <!-- 헤더 내비게이션 -->
+    <nav class="bg-[#7777AA] text-white p-3 shadow-md sticky top-0 z-50">
+        <div class="max-w-[1300px] mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="nav-logo-box">H</div>
+                <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white hover:opacity-90 transition">HyobinWiki</a>
+                <div class="hidden md:flex gap-4 text-sm opacity-90 ml-6">
+                    <a href="index.html" class="hover:underline text-white no-underline">대문</a>
+                    <a href="최근_변경.html" class="hover:underline text-white no-underline">최근 변경</a>
+                    <a href="최근_토론.html" class="hover:underline text-white no-underline font-bold">최근 토론</a>
+                </div>
+            </div>
+            <div class="flex gap-2 items-center">
+                <input type="text" placeholder="문서 검색" class="p-1.5 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48">
+                <button class="bg-[#555588] p-1.5 px-3 rounded text-sm transition-colors shadow-inner font-bold hover:bg-[#444477] cursor-pointer border-none text-white">🔍</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <h1 class="wiki-title">최근 토론</h1>
+        <div class="category-box mb-6"></div>
+
+        <!-- 나무위키식 필터 UI 고증 -->
+        <div class="filter-box">
+            <div class="filter-row">
+                <strong>상태</strong>
+                <select id="statusFilter">
+                    <option value="all">(전체)</option>
+                    <option value="normal">normal (진행 중)</option>
+                    <option value="close">close (닫힘/합의)</option>
+                    <option value="pause">pause (중단됨)</option>
+                </select>
+            </div>
+            <div class="filter-row">
+                <strong>문서명</strong>
+                <input type="text" placeholder="문서명 검색" style="width: 250px;">
+            </div>
+            <div class="filter-row ml-auto">
+                <button class="filter-btn" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i> 새로고침</button>
+            </div>
+        </div>
+
+        <!-- 동적 렌더링 테이블 -->
+        <table class="discuss-table">
+            <colgroup>
+                <col width="10%">
+                <col width="25%">
+                <col width="50%">
+                <col width="15%">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>상태</th>
+                    <th>문서명</th>
+                    <th>토론 주제</th>
+                    <th>마지막 업데이트</th>
+                </tr>
+            </thead>
+            <tbody id="discuss-body">
+                <!-- JS로 자동 생성됨 -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 외부 스크립트 연결 -->
+    <script src="assets/wiki_index.js"></script>
+    <script src="secret_search.js"></script>
+    <script src="assets/hb_wiki_core.js?v=2"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+
+    <script>
+        // ==========================================
+        // 효빈위키 초거대 로어 기반 동적 토론 생성 엔진
+        // ==========================================
+
+        // 토론이 열릴 타겟 문서명 (사용자님이 제공한 세계관 데이터 총망라)
+        const docKeywords = [
+            // 마스코트
+            "고나미", "하루빈", "박라미", "다로나", "미소하", "라세나", "임세하·임세정", "유리아", "전노아", "박빛나", "김소빈", "이덕희", "심세이", "한바다",
+            // 뱅드림
+            "토야마 카스미", "하나조노 타에", "야마부키 사아야", "미타케 란", "아오바 모카", "시라사기 치사토", "미나토 유키나", "히카와 사요", "츠루마키 코코로", "쿠라타 마시로", "타카마츠 토모리", "치하야 아논", "시이나 타키", "토가와 사키코",
+            // 럽라 / 기타 서브컬처
+            "야자와 니코", "토죠 노조미", "와타나베 요우", "사쿠라우치 리코", "마츠우라 카난", "나카스 카스미", "오사카 시즈쿠", "유키 세츠나", "쇼우 란쥬", "시부야 카논", "헤안나 스미레", "탕 쿠쿠", "고토 히토리", "이지치 니지카", "이세리 니나",
+            // 세계관 인프라 / 지역 / 이슈
+            "2세대 시내버스", "효빈교통공사", "국민건강보험공단 효빈지사", "빈효선", "창전선", "환승역", "비마 종합사회복지관", "효빈복지대학교", "효빈종합고", "박효빈", "윤대환", "광역철도 중단사건", "윤재훈 지리기 챌린지", "홈플러스 고송점", "조천산역", "토모리해수욕장", "효빈빈주고속도로", "선곡군 농어촌버스", "SQLD", "컴퓨터활용능력"
+        ];
+
+        // 찌질하고 현실적인 나무위키식 토론 주제 템플릿
+        const topicTemplates = [
+            "공식 헥스코드 규정 위반 서술 롤백 건",
+            "취소선 및 드립 뇌절 정리 합의",
+            "에타발 찌라시 출처 불명 서술 삭제 논의",
+            "팬아트 기반 뇌피셜 설정 공식 편입 여부",
+            "캐릭터 간 악의적 비교 서술 제재 요청",
+            "문서 내용 방대로 인한 하위 분리 제안",
+            "반달리즘 지속에 따른 문서 보호 요청",
+            "특정 밴드/팬덤 편향적 서술 중립화",
+            "과거 사건사고 미화 서술 전면 수정",
+            "지역 상권 젠트리피케이션 최신화 반영",
+            "마스코트 공식 프롬프트 설정 충돌 해결",
+            "서술 방향성 및 NPOV(중립적 시각) 위반 지적",
+            "과도한 볼드체 및 색상 남용 정리",
+            "비공식 명칭(일반버스 등) 사용 금지 규정 신설",
+            "문단 배치 및 가독성 개선안"
+        ];
+
+        // 상태값 정의
+        const statuses = [
+            { code: "normal", label: "normal", cssClass: "status-normal" },
+            { code: "normal", label: "normal", cssClass: "status-normal" },
+            { code: "normal", label: "normal", cssClass: "status-normal" }, // 진행 중 확률을 높게
+            { code: "close", label: "close", cssClass: "status-close" },
+            { code: "pause", label: "pause", cssClass: "status-pause" }
+        ];
+
+        // 랜덤 토론 데이터 40개 생성
+        const discussionList = [];
+        let timeOffsetMin = 1;
+
+        for(let i = 0; i < 40; i++) {
+            const doc = docKeywords[Math.floor(Math.random() * docKeywords.length)];
+            const topic = topicTemplates[Math.floor(Math.random() * topicTemplates.length)];
+            const status = statuses[Math.floor(Math.random() * statuses.length)];
+            
+            // 시간은 위에서부터 최근순 (분 단위로 증가)
+            timeOffsetMin += Math.floor(Math.random() * 15) + 1; 
+            let timeStr = "";
+            if (timeOffsetMin < 60) {
+                timeStr = `${timeOffsetMin}분 전`;
+            } else if (timeOffsetMin < 1440) {
+                timeStr = `${Math.floor(timeOffsetMin / 60)}시간 전`;
+            } else {
+                timeStr = `${Math.floor(timeOffsetMin / 1440)}일 전`;
+            }
+
+            discussionList.push({
+                docName: doc,
+                topic: topic,
+                status: status,
+                time: timeStr
+            });
+        }
+
+        // HTML 렌더링 함수
+        function renderDiscussions() {
+            const tbody = document.getElementById('discuss-body');
+            let rows = '';
+
+            discussionList.forEach(item => {
+                // 토론 주제나 문서명을 클릭하면 완벽하게 앵커를 달고 토론.html로 넘어감
+                const encodedDoc = encodeURIComponent(item.docName);
+                const discussLink = `토론.html?doc=${encodedDoc}`;
+
+                rows += `
+                    <tr>
+                        <td class="text-center">
+                            <span class="status-badge ${item.status.cssClass}">${item.status.label}</span>
+                        </td>
+                        <td>
+                            <a href="${item.docName}.html" class="wiki-link">${item.docName}</a>
+                        </td>
+                        <td>
+                            <a href="${discussLink}" class="topic-link">${item.topic}</a>
+                        </td>
+                        <td class="time-text">${item.time}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = rows;
+        }
+
+        window.addEventListener('DOMContentLoaded', renderDiscussions);
+    </script>
+</body>
+</html>

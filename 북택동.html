@@ -1,0 +1,828 @@
+﻿<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>북택동 - 효빈위키</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        /* [핵심 설정] 위키 테마 변수 - 안천구(보라) + 북택동 포인트(주황) */
+        :root { 
+            --wiki-fixed: #7777AA; 
+            --wiki-main: #AA66DD; /* 안천구 메인 컬러 */
+            --wiki-point: #FF8800; /* 북택동 포인트 컬러 (하구미 오렌지) */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            --wiki-table-header: var(--wiki-point);
+            --wiki-table-header-text: #ffffff;
+            --wiki-tooltip-bg: #ffffff;
+            --wiki-tooltip-border: #aaaaaa;
+            --wiki-tooltip-text: #333333;
+
+            /* 지하철 노선 색상 */
+            --line-4: #FF5522; /* 4호선 주황색 */
+            --line-bh: #6677CC; /* 빈효선 연청색 */
+        }
+
+        [data-theme='dark'] { 
+            --wiki-fixed: #9999CC;
+            --wiki-main: #BB88EE; 
+            --wiki-point: #FFAA33;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+            --wiki-table-header-text: #ffffff;
+            --wiki-tooltip-bg: #2d2f34;
+            --wiki-tooltip-border: #666666;
+            --wiki-tooltip-text: #eeeeee;
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            margin: 0; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .wiki-container { 
+            max-width: 1152px; 
+            margin: 0 auto; 
+            padding: 20px 40px; 
+            border-left: 1px solid var(--wiki-border); 
+            border-right: 1px solid var(--wiki-border); 
+            min-height: 100vh; 
+            background-color: var(--wiki-bg);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: fixed !important; }
+        th, td { border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-link[href^="http"]::after {
+            content: "\f35d";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 0.7em;
+            margin-left: 4px;
+            opacity: 0.7;
+        }
+
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 3px solid var(--wiki-main); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ""; display: inline-block; width: 8px; height: 1.8rem; background: var(--wiki-main); margin-right: 5px; }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: var(--wiki-text); border-left: 5px solid var(--wiki-main); padding-left: 12px; display: flex; align-items: center;}
+        
+        .wiki-quote { border-left: 5px solid var(--wiki-point); padding: 10px 15px; background-color: rgba(255, 136, 0, 0.1); margin: 15px 0; font-style: italic; color: var(--wiki-text); }
+
+        .infobox { border: 2px solid var(--wiki-point); background-color: var(--wiki-gray-bg); width: 100%; max-width: 380px; font-size: 0.85rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .infobox-top-label { background-color: var(--wiki-point); color: #fff; padding: 8px; text-align: center; font-weight: bold; font-size: 1.1em; }
+        .infobox-title-row { display: flex; border-bottom: 1px solid var(--wiki-border); background: #fff; color: #000; align-items: center; min-height: 80px; }
+        [data-theme='dark'] .infobox-title-row { background: #2d2f34; color: #fff; }
+        .infobox-logo { width: 100px; height: 100px; border-right: 1px solid var(--wiki-border); display: flex; align-items: center; justify-content: center; padding: 5px; background: #fff; }
+        .infobox-name { flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 10px; }
+        .infobox th { background: var(--wiki-point); color: #fff; width: 110px; text-align: center; padding: 6px 8px; font-weight: bold; border-color: #fff !important; }
+        .infobox td { padding: 6px 10px; text-align: left; }
+        
+        del { color: #999; text-decoration: line-through; }
+        
+        .nav-box { border: 2px solid var(--wiki-main); margin-bottom: 15px; font-size: 0.85rem; border-radius: 6px; overflow: hidden; clear: both; }
+        .nav-box-header { background-color: var(--wiki-main); color: #fff; padding: 8px 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; }
+        .nav-toggle-btn { position: absolute; right: 12px; font-size: 10px; background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px; }
+        .nav-table { width: 100%; border-collapse: collapse; text-align: center; }
+        .nav-table th { background-color: var(--wiki-main) !important; color: #fff !important; width: 100px; font-weight: bold; border: 1px solid white !important; }
+        .nav-table td { background-color: var(--wiki-gray-bg); border: 1px solid white !important; }
+        [data-theme='dark'] .nav-table td { background-color: #2d2f34; border: 1px solid #444 !important; }
+
+        /* 안천구 표 스타일 이식 (내비게이션 박스용) */
+        .admin-dong-grid { width: 100%; border-collapse: collapse; background: #fff; table-layout: fixed; }
+        .admin-dong-grid td, .admin-dong-grid th { border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.9rem; text-align: center; vertical-align: middle; }
+        .admin-dong-grid th { background-color: var(--wiki-point); color: white; font-weight: bold; }
+        .admin-name-cell { font-weight: bold; background-color: #f9f9f9; color: var(--wiki-point); }
+        .legal-dong-cell { text-align: left; padding-left: 10px; }
+        [data-theme='dark'] .admin-name-cell { background-color: #383b40; color: #DDBBFF; }
+        [data-theme='dark'] .admin-dong-grid { background-color: #2d2f34; }
+
+        .category-box { background: #fff; border: 1px solid var(--wiki-border); padding: 5px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        [data-theme='dark'] .category-box { background: #2d2f34; border-color: #444; }
+
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc li { margin-bottom: 4px; }
+
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        [data-theme='dark'] .wiki-btn-group { background: #2d2f34; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn.active { background-color: var(--wiki-main); color: white !important; font-weight: bold; }
+        
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+
+        sup.wiki-fn { font-size: 0.75rem; vertical-align: super; font-weight: normal; cursor: pointer; color: var(--wiki-link); }
+        sup.wiki-fn:hover { text-decoration: underline; }
+        
+        .wiki-footnote-area { margin-top: 40px; border-top: 1px solid var(--wiki-border); padding-top: 10px; font-size: 0.85rem; color: var(--wiki-text); }
+        .wiki-footnote-area ol { padding-left: 25px; }
+        .wiki-footnote-area li { margin-bottom: 5px; }
+        .wiki-footnote-area li:target { background-color: rgba(255, 136, 0, 0.2); transition: background-color 0.5s; }
+
+        #wiki-tooltip {
+            position: absolute;
+            display: none;
+            background-color: var(--wiki-tooltip-bg);
+            border: 1px solid var(--wiki-tooltip-border);
+            color: var(--wiki-tooltip-text);
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 9999;
+            max-width: 320px;
+            line-height: 1.4;
+            pointer-events: none;
+        }
+        #wiki-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 20px;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--wiki-tooltip-border) transparent transparent transparent;
+        }
+
+        /* 정당 뱃지 스타일 */
+        .party-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: white !important;
+            font-weight: bold;
+            font-size: 0.75em;
+            line-height: 1.2;
+            text-decoration: none !important;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+        .badge-minju { background-color: #004EA2; border: 1px solid #004EA2; }
+
+        /* 행정동 전용 상세 인포박스 스타일 */
+        .admin-dong-infobox {
+            float: right;
+            clear: right;
+            width: 320px;
+            margin: 0 0 15px 20px;
+            font-size: 0.85rem;
+            border: 1px solid var(--wiki-border);
+            background-color: var(--wiki-gray-bg);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .admin-dong-infobox table { margin: 0 !important; border: none !important; }
+        .admin-dong-infobox th, .admin-dong-infobox td { padding: 6px; border: 1px solid var(--wiki-border) !important; }
+        .admin-dong-infobox .title-header { text-align: center; padding: 10px; border-bottom: 1px solid var(--wiki-border); background-color: var(--wiki-bg); }
+        .admin-dong-infobox th.label-col { background-color: var(--wiki-point); color: white; width: 32%; text-align: center; font-weight: bold; }
+        .admin-dong-infobox td.data-col { background-color: var(--wiki-bg); text-align: center; width: 68%; }
+        
+        /* 정치 섹션 전용 컬러링 */
+        .admin-dong-infobox th.politics-main { background-color: #28a745; color: white; vertical-align: middle; }
+        .admin-dong-infobox th.dist-header { background-color: #6a0000; color: white; padding: 4px !important; }
+        .admin-dong-infobox th.metro-dist-header { background-color: #003388; color: white; padding: 4px !important; }
+        .admin-dong-infobox th.local-dist-header { background-color: var(--wiki-point); color: white; padding: 4px !important; }
+        .admin-dong-infobox th.center-header { background-color: #0055A4; color: white; vertical-align: middle;}
+        
+        .admin-dong-infobox .politics-cell { padding: 0 !important; }
+        .politics-table { width: 100% !important; margin: 0 !important; border-collapse: collapse !important; border: none !important;}
+        .politics-table td { border: none !important; border-bottom: 1px solid var(--wiki-border) !important; padding: 4px; text-align: center; background-color: var(--wiki-bg);}
+        .politics-table tr:last-child td { border-bottom: none !important; }
+
+        /* 법정동 전용 좁은 인포박스 */
+        .legal-dong-infobox { 
+            float: right; 
+            clear: right; 
+            width: 280px; 
+            margin: 0 0 15px 20px; 
+            font-size: 0.8rem; 
+            border: 1px solid var(--wiki-border); 
+            background-color: var(--wiki-gray-bg); 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+        }
+        .legal-dong-infobox table { margin: 0 !important; border: none !important; }
+        .legal-dong-infobox th, .legal-dong-infobox td { padding: 6px; border: 1px solid var(--wiki-border) !important; }
+        .legal-dong-infobox .title-header { text-align: center; padding: 8px; border-bottom: 1px solid var(--wiki-border); background-color: var(--wiki-bg); }
+        .legal-dong-infobox th.label-col { background-color: #E66A00; color: white; width: 35%; text-align: center; font-weight: bold; }
+        .legal-dong-infobox td.data-col { background-color: var(--wiki-bg); text-align: center; width: 65%; }
+        
+        .section-content { overflow: hidden; }
+
+        /* 푸터 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; clear: both;}
+        .anchor-offset { scroll-margin-top: 70px; }
+
+        /* 노선 뱃지 */
+        .subway-icon { display: inline-flex; justify-content: center; align-items: center; width: 1.2em; height: 1.2em; border-radius: 50%; color: white; font-size: 0.8rem !important; font-weight: bold; margin-right: 2px; vertical-align: middle; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+<div id="wiki-msg-box"></div>
+<div id="wiki-tooltip"></div>
+<nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-fixed);">
+<div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+<span class="font-bold text-xl">HyobinWiki</span>
+</div>
+<div class="flex items-center gap-2">
+<input class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner" id="searchInput" placeholder="문서 검색 (Enter)" type="text"/>
+<button class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner hover:bg-[#444477] transition" id="themeBtn" onclick="toggleTheme()">다크모드</button>
+</div>
+</nav>
+<div class="wiki-container shadow-lg">
+<div class="flex justify-between items-end mb-4">
+<h1 class="m-0 border-none p-0">북택동</h1>
+<div class="wiki-btn-group shadow-sm mb-4">
+<a class="wiki-tool-btn" href="토론.html">토론</a>
+<a class="wiki-tool-btn" href="수정.html">편집</a>
+<a class="wiki-tool-btn" href="역사.html">역사</a>
+<div class="wiki-tool-btn" onclick="showMsg('★ 즐겨찾기에 추가됨')">★</div>
+</div>
+</div>
+<div class="category-box">
+<span class="font-bold text-[#AA66DD]">분류:</span>
+<a class="wiki-link" href="안천구.html">안천구</a> | 
+            <a class="wiki-link" href="안천구의_행정동.html">안천구의 행정동</a> |
+            <a class="wiki-link" href="안천구의_법정동.html">안천구의 법정동</a> |
+            <a class="wiki-link" href="https://namu.wiki/w/BanG Dream!/성지순례" target="_blank">BanG Dream!/성지순례</a>
+</div>
+<!-- 안천구 행정구역 틀 -->
+<div class="nav-box rounded overflow-hidden shadow-sm" style="border-color: var(--wiki-main);">
+<div class="nav-box-header" onclick="toggleNav('guNav', 'guLabel')">
+<span class="flex items-center">
+<span><a class="wiki-link text-white" href="효빈광역시.html">효빈광역시</a> <a class="wiki-link text-white" href="안천구.html">안천구</a>의 <a class="wiki-link text-white" href="행정구역.html">행정구역</a></span>
+</span>
+<span class="text-[10px] bg-white/20 px-2 py-0.5 rounded nav-toggle-btn" id="guLabel">[접기]</span>
+</div>
+<div class="nav-box-body transition-all duration-300 overflow-hidden" id="guNav" style="max-height: 2000px;">
+<table class="admin-dong-grid w-full border-collapse bg-white table-fixed">
+<colgroup>
+<col class="w-1/4"/>
+<col class="w-1/4"/>
+<col class="w-1/4"/>
+<col class="w-1/4"/>
+</colgroup>
+<tr class="text-white">
+<th class="border border-[#ccc] p-1" style="background-color: var(--wiki-point);">행정동</th>
+<th class="border border-[#ccc] p-1" colspan="3" style="background-color: var(--wiki-point);">법정동</th>
+</tr>
+<!-- 뇌전동 -->
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-1" rowspan="2"><a class="wiki-link" href="뇌전동.html">뇌전동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="치장동.html">치장동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="팔월동.html">팔월동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="세익동.html">세익동</a></td>
+</tr>
+<tr>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="뇌전동.html">뇌전동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="하가동.html">하가동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="상가동.html">상가동</a></td>
+</tr>
+<!-- 당가동 -->
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="당가1동.html">당가1동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1" colspan="3" rowspan="2"><a class="wiki-link" href="당가동.html">당가동</a></td>
+</tr>
+<tr><td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="당가2동.html">당가2동</a></td></tr>
+<!-- 북택동 (현재 페이지 강조) -->
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-1" style="font-weight:900; color:var(--wiki-point); text-decoration:underline;"><a class="wiki-link" href="북택동.html">북택동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="북택동.html">북택동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1" colspan="2"><a class="wiki-link" href="하구동.html">하구동</a></td>
+</tr>
+<!-- 안천동 -->
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="안천1동.html">안천1동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1" colspan="3" rowspan="7"><a class="wiki-link" href="안천동.html">안천동</a></td>
+</tr>
+<tr><td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="안천2동.html">안천2동</a></td></tr>
+<tr><td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="안천3동.html">안천3동</a></td></tr>
+<tr><td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="안천4동.html">안천4동</a></td></tr>
+<tr><td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="안천5동.html">안천5동</a></td></tr>
+<tr><td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="안천6동.html">안천6동</a></td></tr>
+<tr><td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="안천7동.html">안천7동</a></td></tr>
+<!-- 성저동 -->
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="성저동.html">성저동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1" colspan="3"><a class="wiki-link" href="성저동.html">성저동</a></td>
+</tr>
+<!-- 창건동 -->
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="창건동.html">창건동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1" colspan="3"><a class="wiki-link" href="창건동.html">창건동</a></td>
+</tr>
+<!-- 이자동 -->
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="이자1동.html">이자1동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="이자동.html">이자동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="신동.html">신동</a></td>
+<td class="bg-[#f9f9f9] border border-[#ccc] p-1"></td>
+</tr>
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="이자2동.html">이자2동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1" colspan="3"><a class="wiki-link" href="이자동.html">이자동</a></td>
+</tr>
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="이자3동.html">이자3동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="이자동.html">이자동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="탄자동.html">탄자동</a></td>
+<td class="bg-[#f9f9f9] border border-[#ccc] p-1"></td>
+</tr>
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="이자4동.html">이자4동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1" colspan="3"><a class="wiki-link" href="이자동.html">이자동</a></td>
+</tr>
+<!-- 악부동 -->
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-1" rowspan="4"><a class="wiki-link" href="악부동.html">악부동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="악부동.html">악부동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="제택동.html">제택동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="무로동.html">무로동</a></td>
+</tr>
+<tr>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="타천동.html">타천동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="천문동.html">천문동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="팔망성동.html">팔망성동</a></td>
+</tr>
+<tr>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="천본동.html">천본동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="군청동.html">군청동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="일화동.html">일화동</a></td>
+</tr>
+<tr>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="초음동.html">초음동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="광상동.html">광상동</a></td>
+<td class="bg-[#f9f9f9] border border-[#ccc] p-1"></td>
+</tr>
+<!-- 이십기동 -->
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-1" rowspan="2"><a class="wiki-link" href="이십기동.html">이십기동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="이십기동.html">이십기동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="추자동.html">추자동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="리의동.html">리의동</a></td>
+</tr>
+<tr>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="심회동.html">심회동</a></td>
+<td class="bg-[#f9f9f9] border border-[#ccc] p-1"></td>
+<td class="bg-[#f9f9f9] border border-[#ccc] p-1"></td>
+</tr>
+<!-- 백합동 -->
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-1"><a class="wiki-link" href="백합동.html">백합동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="백합동.html">백합동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1" colspan="2"><a class="wiki-link" href="상점동.html">상점동</a></td>
+</tr>
+<!-- 칠채동 -->
+<tr>
+<td class="admin-name-cell border border-[#ccc] p-1" rowspan="3"><a class="wiki-link" href="칠채동.html">칠채동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="칠채동.html">칠채동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="능릉동.html">능릉동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="월삼동.html">월삼동</a></td>
+</tr>
+<tr>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="융문동.html">융문동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="남동.html">남동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="정치동.html">정치동</a></td>
+</tr>
+<tr>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="서수동.html">서수동</a></td>
+<td class="legal-dong-cell border border-[#ccc] p-1"><a class="wiki-link" href="영색무동.html">영색무동</a></td>
+<td class="bg-[#f9f9f9] border border-[#ccc] p-1"></td>
+</tr>
+</table>
+</div>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4 flex-grow">
+<!-- 목차 -->
+<div class="toc shrink-0 shadow-sm h-fit order-2 md:order-1" id="toc-box">
+<div class="toc-title">목차</div>
+<ul>
+<li>1. <a class="wiki-link" href="#s-1">개요</a></li>
+<li>2. <a class="wiki-link" href="#s-2">역사 (행정구역 변천사)</a></li>
+<li>3. <a class="wiki-link" href="#s-3">관할 행정동 및 상세</a>
+<ul class="pl-4 text-xs text-gray-500">
+<li>3.1. <a class="wiki-link" href="#s-3-1">북택동 (행정동)</a></li>
+</ul>
+</li>
+<li>4. <a class="wiki-link" href="#s-4">관할 법정동 상세</a>
+<ul class="pl-4 text-xs text-gray-500">
+<li>4.1. <a class="wiki-link" href="#s-4-1">북택동 (법정동)</a></li>
+<li>4.2. <a class="wiki-link" href="#s-4-2">하구동</a></li>
+</ul>
+</li>
+<li>5. <a class="wiki-link" href="#s-5">교통</a></li>
+<li>6. <a class="wiki-link" href="#s-6">정치</a></li>
+<li>7. <a class="wiki-link" href="#s-7">여담: 지독한 오렌지 사랑</a></li>
+<li>8. <a class="wiki-link" href="#s-8">각주</a></li>
+</ul>
+</div>
+<!-- 인포박스 -->
+<aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
+<div class="infobox-top-label">
+<a class="wiki-link text-white" href="효빈광역시.html">효빈광역시</a> <a class="wiki-link text-white" href="안천구.html">안천구</a>의 <a class="wiki-link text-white" href="행정동.html">행정동</a><br/>
+<span class="text-xl">북택동</span><br/>
+<span class="text-xs font-normal opacity-80">Buktaek-dong | 北沢洞</span>
+</div>
+<div class="infobox-title-row">
+<div class="infobox-logo">
+<img onerror="this.parentNode.innerHTML='&lt;span class=\'text-2xl font-bold text-gray-400\'&gt;안천&lt;/span&gt;'" src="이미지/안천구.png"/>
+</div>
+<div class="infobox-name">
+<div class="text-xs">상징 문구</div>
+<div class="font-bold text-[#FF8800]">"우연이 겹치면 운명,<br/>이름부터 하구미(北沢+河口)"</div>
+</div>
+</div>
+<div class="infobox-map border-b border-[#ccc]" style="width: 100%; height: 250px; overflow: hidden; position: relative; display: block !important;">
+<iframe src="https://binia1.github.io/mymap/" style="width: 160%; height: 160%; border: none; 
+                       position: absolute; top: 0; left: 0;
+                       transform: scale(0.625); transform-origin: 0 0;">
+</iframe>
+</div>
+
+<table>
+<tr><th>광역자치단체</th><td><a class="wiki-link" href="효빈광역시.html">효빈광역시</a></td></tr>
+<tr><th>기초자치단체</th><td><a class="wiki-link" href="안천구.html">안천구</a></td></tr>
+<tr><th>행정표준코드</th><td>79070050</td></tr>
+<tr>
+<th>관할 법정동</th>
+<td class="text-xs p-0">
+<details class="group w-full text-center" open="">
+<summary class="cursor-pointer font-bold py-1 bg-gray-50 border-b border-[#ccc] hover:bg-gray-100">[ 펼치기 · 접기 ]</summary>
+<div class="py-1 bg-white">
+<a class="wiki-link" href="#s-4-1">북택동</a>, <a class="wiki-link" href="#s-4-2">하구동</a>
+</div>
+</details>
+</td>
+</tr>
+<tr><th>구 행정구역</th><td>당가면 (1914년)</td></tr>
+<tr><th>면적</th><td>3.60㎢</td></tr>
+<tr><th>인구</th><td>31,708명 <span class="text-[0.7rem] text-gray-500">(2025년 기준)</span><sup class="wiki-fn" data-target="fn-1" id="ref-1">[1]</sup></td></tr>
+<tr>
+<th>주요 시설</th>
+<td class="text-xs">
+<strong><a class="wiki-link" href="북택역.html">북택역</a></strong>, <a class="wiki-link" href="치구역.html">치구역</a>,<br/>
+                            안천구민체육센터, 북택소프트볼경기장,<br/>
+                            북택시장(고로케 성지)
+                        </td>
+</tr>
+<tr><th class="text-center" colspan="2" style="background:#f0f0f0; color:#333; font-weight:bold;">정치 (국회의원)</th></tr>
+<tr><th>안천 갑</th><td><a class="party-badge badge-minju" href="https://namu.wiki/w/더불어민주당" target="_blank">더불어민주당</a> <a class="wiki-link" href="고선규.html">고선규</a> (초선)</td></tr>
+</table>
+</aside>
+</div>
+<!-- 본문 내용 -->
+<h2 class="anchor-offset" id="s-1">1. 개요</h2>
+<div class="wiki-quote">
+            "우연이 겹치면 운명이라더니..."<br/>
+            "이름부터가 '하구미(北沢+河口)' 그 자체인 기적의 동네"<br/>
+            - <a class="wiki-link" href="효빈광역시.html">효빈</a> 위키 사용자
+        </div>
+<p>
+<a class="wiki-link" href="효빈광역시.html">효빈광역시</a> <a class="wiki-link" href="안천구.html">안천구</a>의 행정동 및 법정동.
+            안천구 북서쪽에 위치하며, <a class="wiki-link" href="당가동.html">당가동</a>과 어깨를 나란히 하는 활기찬 생활 거점이다.
+            지명인 <strong>'북택(北沢)'</strong>과 관할 법정동인 <strong>'하구(河口)'</strong>는 예로부터 전해져 내려오는 유서 깊은 자연 지명이다.
+            '북택'은 마을 북쪽에 큰 연못(澤)이 있었다는 뜻이고, '하구'는 강물이 바다로 들어가는 어귀(河口)라는 뜻으로, 이름 자체에는 아무런 문제가 없었다.
+        </p>
+<p class="mt-2">
+<strong>그런데 하필이면</strong>, 이 두 동네 이름을 합치면 <a class="wiki-link" href="https://namu.wiki/w/BanG%20Dream!" target="_blank">BanG Dream!</a>의 <strong><a class="wiki-link" href="https://namu.wiki/w/키타자와%20하구미" target="_blank">키타자와 하구미</a>(北沢 + 河口 = 北沢はぐみ)</strong>가 완성되어 버린다(...). <del>이 정도면 도시계획자가 헬로해피 오시였던 게 학계의 정설.</del>
+            이 기막힌 우연 덕분에 동네 전체가 <strong>'<a class="wiki-link" href="https://namu.wiki/w/헬로,%20해피%20월드!" target="_blank">헬로, 해피 월드!</a>'</strong>스러운 미친 텐션과 정신없는(?) 분위기로 가득 차 있으며, 안천구 전체가 뱅드림 테마파크화 되는 데 지대한 공헌을 했다.
+        </p>
+<h2 class="anchor-offset" id="s-2">2. 역사 (행정구역 변천사)</h2>
+<ul class="list-disc pl-5 space-y-2">
+<li><strong>1914년</strong>: 탄성군 <strong>당가면</strong> 북택리, 하구리. 당시만 해도 그저 평범한 농촌 마을이었다.</li>
+<li><strong>1971년 3월 2일</strong>: 탄성군 당가면 전역이 효빈시 <strong>북구</strong>로 편입되었다.
+                <ul class="list-[circle] ml-5 mt-1 text-sm text-gray-700">
+<li>이때 <strong>북택리</strong>는 <strong>북택동</strong>으로 정상적으로 편입되었으나, <strong>하구리</strong>는 뜬금없이 옆 동네인 뇌전리 등과 묶여 <strong><a class="wiki-link" href="뇌전동.html">뇌전동</a>(행정동)</strong> 관할로 강제로 찢어졌다. <del>이산가족의 슬픔.</del></li>
+</ul>
+</li>
+<li><strong>1983년 5월 1일</strong>: 안천시가 효빈직할시 <strong>안천구</strong>로 승격되면서 북구에서 안천구 관할로 넘어왔다.</li>
+<li><strong>1999년 1월 15일</strong>: 대대적인 행정동 개편(통폐합) 당시, 생활권 조정을 명분으로 뇌전동에 붙어있던 <strong>하구동</strong>을 다시 떼어와 <strong>북택동</strong>에 합쳤다.
+                <ul class="list-[circle] ml-5 mt-1 text-sm text-gray-700">
+<li>마침내 28년 만에 <strong>'북택+하구'</strong> 완전체가 결성되었다! <del>운명의 눈물겨운 재회.</del></li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor-offset" id="s-3">3. 관할 행정동 및 상세</h2>
+<div class="section-content">
+<h3 class="text-lg font-bold mt-4 mb-2 text-[#FF8800] anchor-offset" id="s-3-1">3.1. 북택동 (행정동)</h3>
+<div class="admin-dong-infobox" style="border: none; background: transparent; box-shadow: none;">
+<table style="background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid var(--wiki-border) !important; margin-bottom: 20px;">
+<colgroup>
+<col style="width: 32%;"/>
+<col style="width: 68%;"/>
+</colgroup>
+<tbody>
+<tr>
+<td class="text-center p-2 border-b border-[#ccc] bg-white" colspan="2">
+<div class="text-[0.75rem] font-bold text-black">효빈광역시 안천구의 행정동</div>
+<div class="font-bold text-2xl text-black my-1">북택동</div>
+<div class="text-[0.8rem] text-black">北澤洞 | Buktaek-dong</div>
+</td>
+</tr>
+<tr><th class="label-col">광역자치단체</th><td class="data-col"><a class="wiki-link" href="효빈광역시.html">효빈광역시</a></td></tr>
+<tr><th class="label-col">기초자치단체</th><td class="data-col"><a class="wiki-link" href="안천구.html">안천구</a></td></tr>
+<tr><th class="label-col">행정표준코드</th><td class="data-col">79070050</td></tr>
+<tr>
+<th class="label-col">관할 법정동</th>
+<td class="data-col p-0">
+<details class="group w-full text-center" open="">
+<summary class="cursor-pointer text-xs font-bold py-1.5 bg-gray-50 border-b border-[#ccc] hover:bg-gray-100">[ 펼치기 · 접기 ]</summary>
+<div class="py-1.5 text-xs bg-white leading-relaxed">
+<a class="wiki-link" href="#s-4-1">북택동</a>, <a class="wiki-link" href="#s-4-2">하구동</a>
+</div>
+</details>
+</td>
+</tr>
+<tr><th class="label-col">면적</th><td class="data-col">3.60㎢</td></tr>
+<tr><th class="label-col">인구</th><td class="data-col">31,708명</td></tr>
+<tr><th class="label-col">인구밀도</th><td class="data-col">8,807.78명/㎢</td></tr>
+<!-- 정치 섹션 -->
+<tr>
+<th style="vertical-align: middle; text-align: center;">정치</th>
+<td style="padding: 0; border: none !important;">
+<details class="group text-center w-full" open="">
+<summary class="cursor-pointer text-xs font-bold py-1.5 bg-gray-50 border-b border-[#ccc] hover:bg-gray-100">[ 펼치기 · 접기 ]</summary>
+<table class="w-full m-0 border-none table-fixed bg-white">
+<tbody>
+<tr><th class="dist-header text-white font-bold py-1.5" colspan="2" style="background-color: #6a0000; border: none !important;">국회의원 | 안천구 갑</th></tr>
+<tr>
+<td class="w-5/12 border-r border-b border-[#ccc] p-1"><span class="party-badge badge-minju block w-full text-center m-0">더불어민주당</span></td>
+<td class="w-7/12 border-b border-[#ccc] p-1 text-center"><a class="wiki-link" href="고선규.html">고선규</a> <span class="text-xs text-gray-500">(초선)</span></td>
+</tr>
+<tr><th class="metro-dist-header text-white font-bold py-1.5" colspan="2" style="background-color: #003388; border: none !important;">효빈광역시의원 | 제1선거구</th></tr>
+<tr>
+<td class="border-r border-b border-[#ccc] p-1"><span class="party-badge badge-minju block w-full text-center m-0">더불어민주당</span></td>
+<td class="border-b border-[#ccc] p-1 text-center"><a class="wiki-link" href="#">고현민</a> <span class="text-xs text-gray-500">(3선)</span></td>
+</tr>
+<tr><th class="local-dist-header text-white font-bold py-1.5" colspan="2" style="background-color: var(--wiki-point); border: none !important;">안천구의원 | 가 선거구</th></tr>
+<tr>
+<td class="border-r border-b border-[#ccc] p-1"><span class="party-badge badge-minju block w-full text-center m-0">더불어민주당</span></td>
+<td class="border-b border-[#ccc] p-1 text-center"><a class="wiki-link" href="#">도아란</a> <span class="text-xs text-gray-500">(재선)</span></td>
+</tr>
+<tr>
+<td class="border-r border-b border-[#ccc] p-1"><span class="party-badge badge-minju block w-full text-center m-0">더불어민주당</span></td>
+<td class="border-b border-[#ccc] p-1 text-center"><a class="wiki-link" href="#">구지호</a> <span class="text-xs text-gray-500">(3선)</span></td>
+</tr>
+<tr>
+<td class="border-r border-[#ccc] p-1"><span class="party-badge badge-minju block w-full text-center m-0">더불어민주당</span></td>
+<td class="p-1 text-center"><a class="wiki-link" href="#">명지성</a> <span class="text-xs text-gray-500">(재선)</span></td>
+</tr>
+</tbody>
+</table>
+</details>
+</td>
+</tr>
+<tr>
+<th class="center-header" style="background-color: #0055A4; color: white;">행정복지센터</th>
+<td class="data-col text-[0.8rem] py-2 bg-white">
+                                효빈광역시 안천구 북택동 11<br/>
+<a class="wiki-link text-[#28a745] mt-1 inline-block" href="#"><i class="fa-solid fa-link"></i> 북택동 행정복지센터</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>
+                법정동 <strong>북택동</strong>과 <strong>하구동</strong>을 관할하는 행정동. 안천구에서 꽤나 활발하고 기가 센 동네로 통한다. 행정동 자체의 인구는 3.1만 명 수준이지만 상업 시설과 체육 시설이 몰려 있어 체감 인구는 훨씬 많다.
+            </p>
+<p class="mt-2">
+                특히나 동네 전체가 주황색으로 도배되어 있고 동네 곳곳에서 "스마일!"을 외치고 다니는 특유의 하이텐션 분위기 덕분에 처음 방문한 외지인들은 기가 빨려서 돌아가곤 한다.
+            </p>
+</div>
+<h2 class="anchor-offset" id="s-4">4. 관할 법정동 상세</h2>
+<div class="section-content">
+<h3 class="text-lg font-bold mt-4 mb-2 text-[#FF8800] anchor-offset" id="s-4-1">4.1. 북택동 (北澤洞)</h3>
+<div class="legal-dong-infobox">
+<div class="title-header">
+<div class="text-[0.75rem] text-gray-500 mb-1">효빈광역시 안천구의 법정동</div>
+<div class="font-bold text-lg">북택동</div>
+<div class="text-[0.75rem] text-gray-600">北澤洞 | Buktaek-dong</div>
+</div>
+<table>
+<tbody>
+<tr><th class="label-col">관할 행정동</th><td class="data-col"><a class="wiki-link" href="북택동.html">북택동</a></td></tr>
+<tr><th class="label-col">면적</th><td class="data-col">1.96㎢</td></tr>
+<tr><th class="label-col">인구</th><td class="data-col">18,171명</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>인구: 18,171명</strong>. 상업과 주거가 적절히 섞인 왁자지껄한 복합 동네.</p>
+<ul class="list-disc pl-5 space-y-3 mt-2">
+<li>
+<strong>북택시장</strong>: <strong>안천구 고로케의 절대적 성지.</strong>
+<ul class="list-[circle] ml-5 mt-1 text-sm text-gray-700">
+<li>하구미의 본가가 유명한 정육점(고로케 판매)이라는 설정 때문에, 이 시장 정육점들은 고기를 파는 본업보다 고로케 튀기는 부업에 더 혈안이 되어 있다. 심지어 정육점이 아닌 야채가게나 철물점 앞에서도 고로케를 팔려고 시도하다가 상인회에서 제지당한 적도 있다. 시장 입구부터 고소한 기름 냄새가 진동을 해서 '다이어터들의 무덤'으로 불린다.</li>
+</ul>
+</li>
+<li>
+<strong>안천구민체육센터</strong>: 수영, 헬스, 배드민턴, 에어로빅 등 온갖 운동을 섭렵할 수 있는 초대형 체육관. 
+                    <ul class="list-[circle] ml-5 mt-1 text-sm text-gray-700">
+<li>동네 주민들이 어찌나 체력이 넘치고 운동에 진심인지, 새벽 5시 수강신청 오픈과 동시에 서버가 터지고 10초 컷으로 마감된다. "하구미의 체력을 따라가지 못하면 이 동네에서 살아남을 수 없다"는 명언이 존재한다.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section-content">
+<h3 class="text-lg font-bold mt-4 mb-2 text-[#FF8800] anchor-offset" id="s-4-2">4.2. 하구동 (河口洞)</h3>
+<div class="legal-dong-infobox">
+<div class="title-header">
+<div class="text-[0.75rem] text-gray-500 mb-1">효빈광역시 안천구의 법정동</div>
+<div class="font-bold text-lg">하구동</div>
+<div class="text-[0.75rem] text-gray-600">河口洞 | Hagu-dong</div>
+</div>
+<table>
+<tbody>
+<tr><th class="label-col">관할 행정동</th><td class="data-col"><a class="wiki-link" href="북택동.html">북택동</a></td></tr>
+<tr><th class="label-col">면적</th><td class="data-col">1.62㎢</td></tr>
+<tr><th class="label-col">인구</th><td class="data-col">13,537명</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>인구: 13,537명</strong>. <strong>스포츠와 학교, 그리고 역명 논란의 동네.</strong></p>
+<ul class="list-disc pl-5 space-y-3 mt-2">
+<li>
+<strong>북택소프트볼경기장</strong>: 이름은 <strong>'북택'</strong>인데 실제 주소와 위치는 <strong>'하구동'</strong>이다(...). <del>이름부터 하구미 그 자체를 노린 안천구청의 고도의 큰 그림.</del>
+<ul class="list-[circle] ml-5 mt-1 text-sm text-gray-700">
+<li>주말마다 사회인 소프트볼 리그가 열리는데, 응원 소리와 함성이 얼마나 쩌렁쩌렁한지 옆 아파트 단지에서 층간 소음보다 더한 '구장 소음' 민원이 빗발칠 지경이다. 가끔 담장을 넘어간 홈런볼이 주차된 차 유리를 깨먹는 대참사가 발생하니 경기장 근처 주차는 금물이다.</li>
+</ul>
+</li>
+<li>
+<strong><a class="wiki-link" href="치구역.html">치구역</a> 미스터리</strong>: <a class="wiki-link" href="4호선.html">4호선</a> <strong>치구역</strong>이 하구동 한복판에 떡하니 자리 잡고 있다.
+                    <ul class="list-[circle] ml-5 mt-1 text-sm text-gray-700">
+<li>하구동 주민들: "아니 우리 동네 한가운데에 있는데 왜 이름이 옆 동네인 '치구'야? 우리도 <strong>'하구역'</strong>으로 이름 뺏어와야 한다!"</li>
+<li>교통공사 측: "역 부지가 옆 동네 <a class="wiki-link" href="치장동.html">치장동</a>이랑 하구동 경계선에 딱 걸쳐 있어서 그렇습니다..." (근데 사실상 면적의 90% 이상이 하구동 쪽으로 깊숙이 들어와 있다. 주민들의 억울함이 이해가 가는 대목.)</li>
+</ul>
+</li>
+</ul>
+<p class="text-sm text-gray-600 mt-2 clear-right">※ 관내 학교: <strong><a class="wiki-link" href="북택초등학교.html">북택초</a></strong>, <strong><a class="wiki-link" href="하구초등학교.html">하구초</a></strong>, <strong><a class="wiki-link" href="북택중학교.html">북택중</a></strong>, <strong><a class="wiki-link" href="하구중학교.html">하구중</a></strong>, <strong><a class="wiki-link text-blue-600" href="북택고등학교.html">북택고등학교</a></strong></p>
+</div>
+<h2 class="anchor-offset" id="s-5">5. 교통</h2>
+<ul class="list-disc pl-5 space-y-3">
+<li>
+<span class="subway-icon" style="background-color:var(--line-bh)">빈</span> <strong><a class="wiki-link" href="북택역.html">북택역</a></strong> (<a class="wiki-link" href="빈효선.html">빈효선</a> 광역전철): 북택동 730 소재.
+                <ul class="list-[circle] ml-5 mt-1 text-sm text-gray-700">
+<li>지상 3층짜리 크고 아름다운 위용을 자랑하는 역사다. 역 광장 한가운데에 뜬금없이 거대한 <strong>'주황색 곰 인형(미셸?)' 동상</strong>이 세워져 있는데, 동네 꼬마들과 커플들의 필수 만남의 장소로 애용된다. <strong>"야, 곰돌이 앞다리 쪽에서 보자."</strong>가 주민들의 단골 멘트.</li>
+</ul>
+</li>
+<li>
+<span class="subway-icon" style="background-color:var(--line-4)">4</span> <strong><a class="wiki-link" href="치구역.html">치구역</a></strong> (<a class="wiki-link" href="4호선.html">효빈 도시철도 4호선</a>): 하구동 644 소재.
+                <ul class="list-[circle] ml-5 mt-1 text-sm text-gray-700">
+<li>노선 색깔부터가 <strong>주황색(Orange)</strong>이라 하구미 테마와 미친 싱크로율을 자랑한다. <del>이쯤 되면 도시교통 기획자가 대놓고 헬로해피 오시인 게 분명하다.</del></li>
+<li>지하 3층 구조의 깊은 역이며, 바로 근처에 <a class="wiki-link" href="하구초등학교.html">하구초</a>와 <a class="wiki-link" href="하구중학교.html">하구중</a>이 있어 등하교 시간에는 그야말로 헬게이트가 열린다. 역내 편의점에서는 매일 고로케가 품절된다.</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor-offset" id="s-6">6. 정치</h2>
+<div class="flex items-center gap-2 mb-3">
+<span class="party-badge badge-minju text-sm px-2 py-1"><a href="더불어민주당.html" style="color:white; text-decoration:none;">더불어민주당</a></span>
+<span class="font-bold text-lg">활기찬 민심, 압도적 민주당 지지</span>
+</div>
+<p>
+            국회의원 선거구는 <strong>안천 갑</strong>에 속하며, 안천구 전체의 분위기처럼 <strong><a class="wiki-link" href="더불어민주당.html">더불어민주당</a></strong> 지지세가 매우 굳건하다.
+            동네 분위기 자체가 워낙 텐션이 높고 주민 자치나 체육 활동, 지역 커뮤니티(상인회, 학부모회 등) 결속력이 끈끈하다 보니, 권위적이거나 점잔 빼는 보수 정당 정치인들은 아예 명함도 못 내밀고 배척당하는 분위기다. 대신 시장에서 고로케를 씹어 먹으며 <strong>"으하하하!"</strong> 하고 호탕하게 웃는 친서민적이고 에너지 넘치는 정치인을 극도로 선호한다.
+        </p>
+<h2 class="anchor-offset" id="s-7">7. 여담: 지독한 오렌지 사랑</h2>
+<ul class="list-disc pl-5 space-y-3">
+<li>
+<strong>스마일! (Smile!)</strong>: 동네 주민들 사이의 비공식적인 인사말이 무려 <strong>"스마일!"</strong>이다. 길 가다가 눈이 마주치면 "안녕하세요" 대신 "스마일!"을 외치는 광경을 심심찮게 볼 수 있다. 낯선 외지인들은 처음에 사이비 종교 마을에 온 줄 알고 기겁하지만, 며칠 지내다 보면 본인도 모르게 <strong>"스마일!"</strong>을 외치고 있는 자신을 발견하게 된다고.
+            </li>
+<li>
+<strong>주황색 전염병</strong>: 동네의 상징색이 <strong>주황색(Orange)</strong>이다. 이것이 구청의 공식 지정인지 동네 주민들의 암묵적 합의인지는 불분명하지만, <strong>가로등, 보도블록, 공원 벤치, 쓰레기봉투, 심지어 동사무소 간판까지 모조리 주황색으로 칠해져 있다.</strong> <del>눈이 너무 아프다.</del> 구청 관계자는 "활기찬 도시 이미지를 제고하기 위함"이라고 애써 포장하지만, 서브컬처 팬들은 "그냥 하구미 이미지 컬러잖아"라며 다 꿰뚫어 보고 있다.
+            </li>
+<li>
+<strong>효빈시 고로케 소비량 1위</strong>: 북택시장 정육점들의 비정상적인(?) 고로케 튀기기 열풍과 주민들의 무한한 고로케 사랑이 맞물려, 효빈시 전체에서 고로케 소비량 압도적 1위를 기록하고 있다. 오죽하면 명절 차례상에도 고로케를 올리는 집이 있다는 괴담이 돌 정도.
+            </li>
+</ul>
+<h2 class="anchor-offset" id="s-8">8. 각주</h2>
+<div class="wiki-footnote-area">
+<ol>
+<li id="fn-1">인구는 적은 편이지만 면적은 꽤 넓고 체감 유동 인구는 훨씬 많다. <a href="#ref-1" title="본문으로 이동">↑</a></li>
+</ol>
+</div>
+<footer class="wiki-footer">
+<div class="mb-2 font-bold text-lg">HyobinWiki</div>
+<p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br/>
+            이 저작물은 <a class="text-blue-600 hover:underline" href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br/>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+<p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br/>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+</footer>
+</div>
+<script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+
+        function toggleNav(id, labelId) {
+            const content = document.getElementById(id);
+            const label = document.getElementById(labelId);
+            if (content.style.maxHeight === '0px') {
+                content.style.maxHeight = '2000px';
+                label.innerText = '[접기]';
+            } else {
+                content.style.maxHeight = '0px';
+                label.innerText = '[펼치기]';
+            }
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                document.getElementById('themeBtn').innerText = '라이트모드';
+            }
+            initFootnoteTooltips();
+        };
+        
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                const target = this.value.trim();
+                location.href = target + ".html";
+            }
+        });
+
+        function initFootnoteTooltips() {
+            const footnotes = document.querySelectorAll('.wiki-fn');
+            const tooltip = document.getElementById('wiki-tooltip');
+
+            footnotes.forEach(fn => {
+                fn.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('data-target');
+                    const contentEl = document.getElementById(targetId);
+                    
+                    if (contentEl) {
+                        let text = contentEl.innerHTML;
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = text;
+                        const backLink = tempDiv.querySelector('a:last-child'); 
+                        if(backLink && backLink.innerText.includes('↑')) backLink.remove();
+                        
+                        tooltip.innerHTML = tempDiv.innerHTML;
+                        tooltip.style.display = 'block';
+                        
+                        const rect = this.getBoundingClientRect();
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        
+                        tooltip.style.top = (rect.bottom + scrollTop + 5) + 'px';
+                        tooltip.style.left = rect.left + 'px';
+                    }
+                });
+
+                fn.addEventListener('mouseleave', function() {
+                    tooltip.style.display = 'none';
+                });
+                
+                fn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    const targetEl = document.getElementById(targetId);
+                    if(targetEl) {
+                        targetEl.scrollIntoView({behavior: 'smooth', block: 'center'});
+                        targetEl.style.backgroundColor = "rgba(255, 136, 0, 0.2)";
+                        setTimeout(() => targetEl.style.backgroundColor = "transparent", 1500);
+                    }
+                });
+            });
+        }
+    </script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+</body>
+</html>

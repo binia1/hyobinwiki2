@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈위키:최근 변경내역 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #7777AA;
+            --wiki-table-header-text: #ffffff;
+            --wiki-box-bg: #ffffff;
+            --wiki-badge-bg: #eeeeee;
+        }
+
+        /* 다크 모드 변수 재정의 */
+        body.dark-mode {
+            --wiki-main: #8888CC; 
+            --wiki-border: #444;
+            --wiki-bg: #1f2023;
+            --wiki-text: #ddd;
+            --wiki-gray-bg: #2a2d30;
+            --wiki-link: #6699ff;
+            --wiki-table-header: #444477;
+            --wiki-table-header-text: #eee;
+            --wiki-box-bg: #2a2d30;
+            --wiki-badge-bg: #3a3d40;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; transition: background-color 0.3s, color 0.3s; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 30px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .page-title { font-size: 2.2rem; font-weight: 900; color: var(--wiki-main); border-bottom: 2px solid var(--wiki-border); padding-bottom: 10px; margin-bottom: 20px; display: flex; align-items: baseline; gap: 10px; }
+        .namespace { font-size: 1.5rem; color: #888; font-weight: normal; }
+
+        /* 링크 및 버튼 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* 안내 박스 스타일 */
+        .info-box { border: 1px solid var(--wiki-border); border-radius: 4px; padding: 15px 20px; background-color: var(--wiki-gray-bg); margin-bottom: 30px; font-size: 0.95rem; display: flex; align-items: flex-start; gap: 10px; }
+        .info-box-icon { font-size: 1.5rem; }
+        
+        /* 최근 변경내역 테이블 스타일 */
+        .recent-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; margin-bottom: 30px; }
+        .recent-table th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); padding: 10px 15px; border: 1px solid var(--wiki-border); font-weight: bold; }
+        .recent-table td { padding: 10px 15px; border: 1px solid var(--wiki-border); background-color: var(--wiki-bg); vertical-align: middle; }
+        .recent-table tr:hover td { background-color: var(--wiki-gray-bg); }
+        
+        .time-col { width: 100px; color: #888; font-size: 0.85rem; text-align: center; }
+        .doc-col { width: 250px; font-weight: bold; }
+        .user-col { width: 120px; color: #888; font-size: 0.85rem; }
+        .diff-col { width: 80px; text-align: right; font-weight: bold; font-family: monospace; font-size: 0.95rem; }
+        .summary-col { color: #555; font-size: 0.85rem; }
+        body.dark-mode .summary-col { color: #aaa; }
+
+        .diff-plus { color: #16a34a; }
+        .diff-minus { color: #dc2626; }
+        .diff-zero { color: #9ca3af; }
+        
+        .edit-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-right: 5px; background-color: #e5e7eb; color: #4b5563; }
+        body.dark-mode .edit-badge { background-color: #374151; color: #d1d5db; }
+        
+        .badge-new { background-color: #dbeafe; color: #1d4ed8; }
+        body.dark-mode .badge-new { background-color: #1e3a8a; color: #bfdbfe; }
+
+        /* 취소선 */
+        del { color: #888; text-decoration: line-through; }
+
+        /* 페이지네이션 */
+        .pagination { display: flex; justify-content: center; gap: 5px; margin-top: 20px; flex-wrap: wrap; }
+        .page-btn { padding: 6px 12px; border: 1px solid var(--wiki-border); background: var(--wiki-box-bg); color: var(--wiki-text); border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.9rem; transition: background-color 0.2s; }
+        .page-btn:hover:not(:disabled) { background: var(--wiki-gray-bg); }
+        .page-btn.active { background: var(--wiki-main); color: white; font-weight: bold; border-color: var(--wiki-main); }
+        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* 로고 및 네비게이션 */
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9); color: white; padding: 12px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+
+        /* 모달 스타일 */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-window { background: var(--wiki-bg); color: var(--wiki-text); width: 90%; max-width: 400px; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid var(--wiki-border); }
+        .modal-header { font-weight: bold; font-size: 1.2rem; margin-bottom: 15px; border-bottom: 2px solid var(--wiki-main); padding-bottom: 5px; }
+        .modal-input { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid var(--wiki-border); border-radius: 4px; background: var(--wiki-gray-bg); color: var(--wiki-text); }
+        .modal-btn { width: 100%; padding: 10px; background: var(--wiki-main); color: white; font-weight: bold; border-radius: 4px; margin-top: 10px; border: none; cursor: pointer; }
+        .modal-btn:hover { opacity: 0.9; }
+        .close-btn { float: right; cursor: pointer; color: #888; }
+        .modal-link { color: var(--wiki-link); cursor: pointer; text-decoration: none; font-weight: bold; }
+        .modal-link:hover { text-decoration: underline; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body id="body">
+
+    <div id="wiki-msg-box"></div>
+
+    <!-- 네비게이션 바 -->
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <div class="nav-logo-box">H</div>
+            <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white">HyobinWiki</a>
+            <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+                <a href="index.html" class="hover:underline text-white no-underline">대문</a>
+                <a href="최근변경내역더보기.html" class="hover:underline font-bold text-white no-underline">최근 변경</a>
+                <a href="최근_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
+            </div>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2">
+                <div class="hidden lg:flex items-center gap-1 mr-2">
+                    <a href="편집요청.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">편집요청</a>
+                    <a href="최근_토론.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">토론</a>
+                    <a href="역사.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">역사</a>
+                    <a href="즐겨찾기.html" class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" title="즐겨찾기">★</a>
+                    <a href="더보기.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1">더보기 <span class="text-[9px]">▼</span></a>
+                </div>
+                
+                <input type="text" id="headerSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }">
+                <button onclick="handleSearch('headerSearchInput')" class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
+            </div>
+            <div class="flex gap-1" id="auth-buttons">
+                <button onclick="toggleModal('loginModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" id="btn-login">로그인</button>
+                <button onclick="toggleModal('settingsModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">설정</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 메인 컨테이너 -->
+    <div class="wiki-container shadow-lg">
+        
+        <h1 class="page-title">
+            <span class="namespace">특수기능:</span>최근 변경내역
+        </h1>
+
+        <div class="info-box shadow-sm">
+            <div class="info-box-icon">🔄</div>
+            <div>
+                <strong>실시간 문서 변경 현황</strong><br>
+                위키러들이 현재 실시간으로 기여하고 있는 문서들의 목록입니다. 악의적인 문서 훼손(반달리즘)이나 규정 위반 서술(특정 인물 나이 오기재, 마스코트 밈 과몰입 등)을 발견하시면 즉시 '역사' 탭에서 롤백(되돌리기)을 진행해 주시기 바랍니다.
+            </div>
+        </div>
+
+        <table class="recent-table">
+            <thead>
+                <tr>
+                    <th class="time-col">시간</th>
+                    <th class="doc-col">문서명</th>
+                    <th class="diff-col">증감</th>
+                    <th class="user-col">기여자</th>
+                    <th>편집 요약</th>
+                </tr>
+            </thead>
+            <tbody id="recent-tbody">
+                <!-- JavaScript를 통해 데이터가 렌더링됩니다. -->
+            </tbody>
+        </table>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination" id="pagination-container">
+            <!-- 자바스크립트로 렌더링됨 -->
+        </div>
+
+        <footer class="mt-20 border-t border-[var(--wiki-border)] pt-10 text-center text-gray-400 text-xs pb-10">
+            <p class="mb-2">모든 문서는 크리에이티브 커먼즈 저작자표시-동일조건변경허락 4.0에 따라 사용할 수 있습니다.</p>
+            본 문서의 저작권은 효빈위키에 있습니다.
+        </footer>
+    </div>
+
+    <!-- 모달 창들 -->
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-window">
+            <div class="modal-header">로그인 <span class="close-btn" onclick="toggleModal('loginModal')">&times;</span></div>
+            <input type="text" id="loginId" class="modal-input" placeholder="아이디">
+            <input type="password" id="loginPw" class="modal-input" placeholder="비밀번호" onkeypress="if(event.keyCode==13) doLogin()">
+            <button class="modal-btn" onclick="doLogin()">로그인</button>
+            <div class="text-xs text-center mt-3 text-gray-500">계정이 없으신가요? <span class="modal-link" onclick="toggleModal('loginModal'); toggleModal('signupModal');">회원가입</span></div>
+        </div>
+    </div>
+
+    <div id="signupModal" class="modal-overlay">
+        <div class="modal-window">
+            <div class="modal-header">회원가입 <span class="close-btn" onclick="toggleModal('signupModal')">&times;</span></div>
+            <input type="text" id="signupId" class="modal-input" placeholder="아이디">
+            <input type="password" id="signupPw" class="modal-input" placeholder="비밀번호">
+            <input type="password" id="signupPwConfirm" class="modal-input" placeholder="비밀번호 확인" onkeypress="if(event.keyCode==13) doSignup()">
+            <button class="modal-btn" onclick="doSignup()">가입하기</button>
+            <div class="text-xs text-center mt-3 text-gray-500">이미 계정이 있으신가요? <span class="modal-link" onclick="toggleModal('signupModal'); toggleModal('loginModal');">로그인</span></div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-window">
+            <div class="modal-header">효빈위키 설정 <span class="close-btn" onclick="toggleModal('settingsModal')">&times;</span></div>
+            <div class="flex items-center justify-between mb-4">
+                <span>🌙 다크 모드</span>
+                <input type="checkbox" id="darkModeCheck" onchange="toggleDarkMode()" class="w-5 h-5 accent-[#7777AA]">
+            </div>
+            <div class="mb-2">
+                <div class="flex justify-between mb-1">
+                    <span>🔠 글자 크기</span>
+                    <span id="fontSizeVal">100%</span>
+                </div>
+                <input type="range" id="fontSizeRange" min="80" max="130" value="100" step="5" class="w-full accent-[#7777AA]" oninput="changeFontSize(this.value)">
+            </div>
+            <button class="modal-btn mt-4" onclick="toggleModal('settingsModal')">닫기</button>
+        </div>
+    </div>
+
+    <script src="assets/wiki_index.js"></script>
+    <script>
+        // 기본 UI 토글 스크립트
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerHTML = text; // HTML 허용
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2500);
+        }
+
+        function toggleDarkMode() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('hb_dark_mode', body.classList.contains('dark-mode'));
+        }
+
+        function changeFontSize(val) {
+            document.body.style.fontSize = val + '%';
+            document.getElementById('fontSizeVal').innerText = val + '%';
+            localStorage.setItem('hb_font_size', val);
+        }
+
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.style.display = 'none';
+            }
+        });
+
+        // ==========================================
+        // 최근 변경 내역 더미 데이터 (30개)
+        // ==========================================
+        const recentChangesData = [
+            { time: "1분 전", doc: "박효빈", diff: -215, user: "관리자봇", summary: "(r2415 복구) 나이 오기재 및 창조주 드립 롤백. 현직 시장님은 1996년생 남성입니다.", isNew: false },
+            { time: "2분 전", doc: "두청운수", diff: +420, user: "디스크환자", summary: "2003년 도입된 2세대 갈색 버스의 75인승 과적 및 플라스틱 시트 관련 썰 보강. <del>이거 타면 허리 박살남</del>", isNew: false },
+            { time: "5분 전", doc: "비마리유적지구역", diff: +850, user: "유적탐험가", summary: "새 문서 생성. 1호선 탄성지선(파란색, #0077DD) 고나미 안내방송 기믹 및 인근 유적지 괴담 추가", isNew: true },
+            { time: "6분 전", doc: "박라미", diff: +120, user: "위키요정", summary: "3호선 마스코트. 야마부키 사아야랑 색깔(#FFCC11)만 겹칠 뿐 동일 인물 아님 주의 틀 부착", isNew: false },
+            { time: "8분 전", doc: "해운산업지구역", diff: +315, user: "항만노조", summary: "효빈 4호선(주황색). 다로나 안내방송 대사 추가 및 주변 물류센터 통근 관련 서술 갱신", isNew: false },
+            { time: "10분 전", doc: "효빈시내버스", diff: +280, user: "버스덕후", summary: "3세대 스타더스트 작전 광역버스(Royal Blue, #485EC6) 노선 개편안 및 아사카 카린 컬러 매칭 서술 추가", isNew: false },
+            { time: "14분 전", doc: "어간수산시장역", diff: +610, user: "어간지선러", summary: "2호선 어간지선 문서 분리 및 흑택 수산시장 상권 정보 업데이트", isNew: false },
+            { time: "18분 전", doc: "염곡읍", diff: +195, user: "기도주민", summary: "기도 관할. 효빈 3호선 연장 떡밥 및 하위 리(신산, 주양, 중천, 중만) 인구 통계 최신화", isNew: false },
+            { time: "22분 전", doc: "윤대환/비판 및 사건사고", diff: -80, user: "팩트체커", summary: "사건사고 문서이므로 효빈위키식 드립 삭제. 재판 판결문 기반으로 건조하게 팩트만 서술하도록 수정", isNew: false },
+            { time: "25분 전", doc: "효빈 5호선", diff: +45, user: "철도매니아", summary: "청덕공원역 ~ 포성산역 구간 소요시간 오타 수정. 미소하 안내방송 스크립트 다듬음", isNew: false },
+            
+            { time: "28분 전", doc: "라세나", diff: +95, user: "보안사서", summary: "6호선 마스코트. 미나토 유키나와는 별개의 캐릭터이므로 과도한 밈적 서술 축소", isNew: false },
+            { time: "33분 전", doc: "천가역", diff: +15, user: "교통봇", summary: "4호선 종점 띄어쓰기 교정", isNew: false },
+            { time: "38분 전", doc: "효빈 1호선", diff: +210, user: "탄성지선러", summary: "탄성지선(오석~승남해수욕장) 야진입구역, 탄성군청역 배차 간격 정보 갱신", isNew: false },
+            { time: "42분 전", doc: "선곡군 하간리", diff: +450, user: "지리학자", summary: "새 문서. 선곡 관할 하간리 기초 지리 정보 및 특산물 서술 추가", isNew: true },
+            { time: "45분 전", doc: "임세정·임세하", diff: +180, user: "아논맘", summary: "7호선(분홍색, #FF8899) 쌍둥이 마스코트. 치하야 아논과 헷갈리지 않게 고유 세부 설정(취미 등) 보충", isNew: false },
+            { time: "51분 전", doc: "효빈 3호선", diff: +110, user: "철덕", summary: "팔조역 ~ 효빈국제공항역 최신 동계 시간표 반영", isNew: false },
+            { time: "55분 전", doc: "건강보험공단역", diff: +350, user: "민원인", summary: "6호선(보라색). 건보공단역 약칭 사용 관련 지역 주민 민원 일화 추가", isNew: false },
+            { time: "1시간 전", doc: "효빈 6호선", diff: +80, user: "동네주민", summary: "장포역 주변 상권 정보 (다이소, 스타벅스 입점) 업데이트", isNew: false },
+            { time: "1시간 전", doc: "유리아", diff: +65, user: "도라에몽", summary: "8호선(연보라색, #9856FF). 무사도 기믹은 살리되 와카미야 이브와 동일인물이 아님을 재차 강조", isNew: false },
+            { time: "1시간 전", doc: "모제", diff: +120, user: "모제주민", summary: "모제 하위 행정구역(가운, 중, 금전, 산전) 및 리 생략 구역(약궁, 괴천 등) 관할 정리", isNew: false },
+
+            { time: "2시간 전", doc: "전천중앙역", diff: 0, user: "위키요정", summary: "5, 6호선 환승 템플릿 오탈자 교정", isNew: false },
+            { time: "2시간 전", doc: "효빈대학교", diff: +520, user: "재학생", summary: "천주캠퍼스 셔틀버스 운행 시간표 및 3호선 효빈복지대학교역 연계 정보 보충", isNew: false },
+            { time: "3시간 전", doc: "덕현 부척동", diff: +280, user: "상권분석가", summary: "덕현 관할. 상중도, 조전과 비교한 상권 형성 과정 서술 추가", isNew: false },
+            { time: "3시간 전", doc: "효빈 2호선", diff: -40, user: "철도매니아", summary: "월천역~내항역 구간 불필요한 사족 삭제", isNew: false },
+            { time: "4시간 전", doc: "낭원", diff: +210, user: "향토사학자", summary: "전포, 판주 등 낭원 소속 기초자치단체 역사 정보 갱신", isNew: false },
+            { time: "4시간 전", doc: "효빈광역시", diff: +15, user: "시장비서실", summary: "인구 통계 2026년 4월 기준으로 최신화", isNew: false },
+            { time: "5시간 전", doc: "고송나루역", diff: -150, user: "보안사서", summary: "출처 없는 루머 삭제", isNew: false },
+            { time: "5시간 전", doc: "토모리해수욕장", diff: +430, user: "여행객", summary: "흑택루비지구 상권 및 3호선 연계 버스 노선 정보 추가", isNew: false },
+            { time: "6시간 전", doc: "효빈 8호선", diff: +90, user: "교통봇", summary: "노선도 템플릿에 연보라색(#9856FF) 색상 코드 강제 적용", isNew: false },
+            { time: "8시간 전", doc: "전노아", diff: +135, user: "빈효선러", summary: "빈효선(연청색, #6677CC) 마스코트. 쿠라타 마시로 밈 관련 안내 틀 부착", isNew: false }
+        ];
+
+        let currentPage = 1;
+        const itemsPerPage = 10; 
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const isDark = localStorage.getItem('hb_dark_mode') === 'true';
+            if (isDark) { document.body.classList.add('dark-mode'); document.getElementById('darkModeCheck').checked = true; }
+            const fontSize = localStorage.getItem('hb_font_size');
+            if (fontSize) { changeFontSize(fontSize); document.getElementById('fontSizeRange').value = fontSize; }
+            
+            renderTable();
+            renderPagination();
+        });
+
+        function renderTable() {
+            const tbody = document.getElementById('recent-tbody');
+            tbody.innerHTML = '';
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedData = recentChangesData.slice(startIndex, endIndex);
+
+            paginatedData.forEach(item => {
+                const tr = document.createElement('tr');
+                
+                // 증감 클래스 계산
+                let diffClass = 'diff-zero';
+                let diffText = '0';
+                if (item.diff > 0) {
+                    diffClass = 'diff-plus';
+                    diffText = `+${item.diff}`;
+                } else if (item.diff < 0) {
+                    diffClass = 'diff-minus';
+                    diffText = `${item.diff}`;
+                }
+
+                // 새 문서 뱃지
+                const newBadge = item.isNew ? `<span class="edit-badge badge-new">새 문서</span>` : '';
+
+                tr.innerHTML = `
+                    <td class="time-col">${item.time}</td>
+                    <td class="doc-col">
+                        <a href="${item.doc.replace(/ /g, '_')}.html" class="wiki-link">${item.doc}</a>
+                    </td>
+                    <td class="diff-col ${diffClass}">${diffText}</td>
+                    <td class="user-col">${item.user}</td>
+                    <td class="summary-col">
+                        ${newBadge}
+                        ${item.summary}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(recentChangesData.length / itemsPerPage);
+            const container = document.getElementById('pagination-container');
+            container.innerHTML = '';
+
+            container.innerHTML += `<button class="page-btn" onclick="changePage(1)" ${currentPage === 1 ? 'disabled' : ''}>« 처음</button>`;
+            container.innerHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>‹ 이전</button>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                const activeClass = i === currentPage ? 'active' : '';
+                container.innerHTML += `<button class="page-btn ${activeClass}" onclick="changePage(${i})">${i}</button>`;
+            }
+
+            container.innerHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>다음 ›</button>`;
+            container.innerHTML += `<button class="page-btn" onclick="changePage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}>끝 »</button>`;
+        }
+
+        function changePage(page) {
+            const totalPages = Math.ceil(recentChangesData.length / itemsPerPage);
+            if (page < 1) page = 1;
+            if (page > totalPages) page = totalPages;
+            
+            currentPage = page;
+            renderTable();
+            renderPagination();
+            
+            document.querySelector('.recent-table').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleSearch(inputId) {
+            const q = document.getElementById(inputId).value.trim();
+            if(q) location.href = encodeURI("효빈위키 검색.html") + "?q=" + encodeURIComponent(q);
+            else showMsg('검색어를 입력해주세요.');
+        }
+
+        // 더보기 메뉴 로직
+        window.addEventListener('DOMContentLoaded', () => {
+            const moreBtn = Array.from(document.querySelectorAll('a')).find(el => el.textContent.includes('더보기'));
+            if (moreBtn) {
+                moreBtn.href = "javascript:void(0);";
+                moreBtn.addEventListener('click', (e) => {
+                    e.preventDefault(); e.stopPropagation(); toggleMoreDropdown(moreBtn);
+                });
+            }
+            document.addEventListener('click', (e) => {
+                const menu = document.getElementById('hb-more-dropdown');
+                if (menu && menu.style.display === 'block') {
+                    if (e.target !== moreBtn && !moreBtn.contains(e.target) && !menu.contains(e.target)) menu.style.display = 'none';
+                }
+            });
+        });
+
+        function toggleMoreDropdown(btn) {
+            let menu = document.getElementById('hb-more-dropdown');
+            if (!menu) {
+                menu = document.createElement('div');
+                menu.id = 'hb-more-dropdown';
+                menu.style.position = 'absolute'; menu.style.background = 'var(--wiki-box-bg)'; menu.style.border = '1px solid var(--wiki-border)';
+                menu.style.borderRadius = '6px'; menu.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)'; menu.style.padding = '5px 0';
+                menu.style.zIndex = '10001'; menu.style.minWidth = '130px'; menu.style.display = 'none'; menu.style.transition = 'background-color 0.3s, border-color 0.3s';
+
+                const menuItems = [
+                    { text: '🎲 임의의 문서', action: 'window.location.href="임의의_문서.html"' },
+                    { text: '📂 파일 올리기', href: '파일_올리기.html' },
+                    { text: '📝 필요한 문서', href: '필요한_문서.html' },
+                    { text: '📊 위키 통계', href: '통계.html' },
+                    { text: '❓ 도움말', href: '도움말.html' }
+                ];
+                menuItems.forEach(item => {
+                    const a = document.createElement('a');
+                    a.innerText = item.text; a.style.display = 'block'; a.style.padding = '10px 16px'; a.style.color = 'var(--wiki-text)';
+                    a.style.textDecoration = 'none'; a.style.fontSize = '13px'; a.style.fontWeight = 'bold'; a.style.cursor = 'pointer';
+                    if (item.href) a.href = item.href; else if (item.action) a.setAttribute('onclick', item.action);
+                    a.onmouseenter = () => a.style.background = 'var(--wiki-gray-bg)';
+                    a.onmouseleave = () => a.style.background = 'transparent';
+                    menu.appendChild(a);
+                });
+                document.body.appendChild(menu);
+            }
+            if (menu.style.display === 'block') { menu.style.display = 'none'; } 
+            else {
+                const rect = btn.getBoundingClientRect();
+                menu.style.top = (rect.bottom + window.scrollY + 8) + 'px';
+                if (rect.left + 130 > window.innerWidth) { menu.style.right = (window.innerWidth - rect.right - window.scrollX) + 'px'; menu.style.left = 'auto'; } 
+                else { menu.style.left = (rect.left + window.scrollX) + 'px'; menu.style.right = 'auto'; }
+                menu.style.display = 'block';
+            }
+        }
+    </script>
+    <script src="secret_search.js"></script>
+
+    <script src="assets/hb_wiki_core.js?v=2"></script>
+
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

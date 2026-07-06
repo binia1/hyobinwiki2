@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>코이즈미 하나요 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        :root { 
+            --wiki-nav: #7777aa; 
+            
+            /* 하나요 테마 컬러 (그린) */
+            --wiki-header: #00ab84;
+            --wiki-header-text: #ffffff; 
+            
+            --wiki-main: #00ab84; 
+            --wiki-point: #008a6a; 
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f0fdf7; /* 연한 민트/그린 틴트 그레이 */
+            --wiki-link: #0062cc; 
+            
+            /* 노선 색상 (효빈시 규격) */
+            --line-1: #0077DD;
+            --line-2: #00CCAA;
+            --line-3: #FFCC11;
+            --line-4: #FF5522;
+            --line-5: #EE0022; 
+            --line-6: #881188;
+            --line-7: #FF8899;
+            --line-8: #9856FF;
+            --line-binhyo: #6677CC;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-nav: #555588;
+            /* 다크모드용 톤다운 그린 */
+            --wiki-header: #008a6a; 
+            --wiki-header-text: #ffffff;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #1a2b25; 
+            --wiki-link: #88bbff; 
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; margin: 0; }
+        .wiki-container { max-width: 1152px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); display: flex; flex-direction: column; }
+
+        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: fixed !important; }
+        th { background-color: var(--wiki-header) !important; color: var(--wiki-header-text) !important; font-weight: bold; border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        td { border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        
+        /* item-label 클래스로 배경색과 텍스트 색상을 완벽히 묶어버림 (가독성 절대 보장) */
+        .item-label { background-color: var(--wiki-header) !important; color: var(--wiki-header-text) !important; font-weight: bold; width: 120px; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 2px solid var(--wiki-point); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-point); }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: var(--wiki-point); border-left: 4px solid var(--wiki-point); padding-left: 12px; }
+        h4 { font-size: 1.15rem !important; font-weight: bold !important; margin-top: 1.2rem; margin-bottom: 0.5rem; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-point); background-color: var(--wiki-gray-bg); width: 100%; max-width: 360px; font-size: 0.82rem; margin-bottom: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-top-label { background-color: var(--wiki-header); color: var(--wiki-header-text); padding: 5px; text-align: center; font-weight: bold; }
+        .infobox-title-row { display: flex; border-bottom: 1px solid var(--wiki-border); background: #fff; color: #000; align-items: center; }
+        [data-theme='dark'] .infobox-title-row { background: #2b2d31; color: #fff; }
+        .infobox-logo { width: 100%; border-bottom: 1px solid var(--wiki-border); display: flex; align-items: center; justify-content: center; padding: 0; background: #fff; overflow: hidden; max-height: 350px; }
+        .infobox-logo img { width: 100%; height: auto; object-fit: contain; }
+        .infobox-name { flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 10px; background-color: var(--wiki-gray-bg); }
+        
+        .infobox th { background-color: var(--wiki-header) !important; color: var(--wiki-header-text) !important; width: 100px; text-align: left; padding: 5px 8px; font-size: 0.75rem; }
+        .infobox td { padding: 5px 8px; text-align: left; }
+
+        nav { background-color: var(--wiki-nav) !important; }
+
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn.active { background-color: var(--wiki-header); color: var(--wiki-header-text) !important; font-weight: bold; }
+
+        /* 인용구 박스 */
+        .quote-box { border-left: 4px solid var(--wiki-point); background-color: var(--wiki-gray-bg); padding: 10px 15px; margin: 10px 0; color: #555; font-weight: bold; border-radius: 0 8px 8px 0; }
+        [data-theme='dark'] .quote-box { background-color: #2b2d31; color: #ccc; }
+
+        /* 하이라이트 박스 (하나요) */
+        .hanayo-box { border: 2px solid var(--wiki-point); background-color: var(--wiki-gray-bg); color: #333; padding: 15px; border-radius: 8px; margin-top: 10px; font-size: 0.95rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
+        .hanayo-box::before { content: "🍚"; position: absolute; top: -12px; left: 10px; font-size: 20px; background: #fff; padding: 0 5px; }
+        [data-theme='dark'] .hanayo-box { background-color: #1a2b25; color: #eee; }
+        [data-theme='dark'] .hanayo-box::before { background: #121212; }
+        
+        [data-theme='dark'] .wiki-btn-group { background: #2b2d31; }
+        [data-theme='dark'] .infobox-logo { background: #2b2d31; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        
+        .category-box, #toc-box { background-color: var(--wiki-gray-bg); border-color: var(--wiki-border); }
+        [data-theme='dark'] .category-box, [data-theme='dark'] #toc-box { background-color: #2b2d31 !important; border-color: #444 !important; color: #e5e7eb !important; }
+
+        /* [각주 툴팁 스타일] */
+        .wiki-fn { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; font-size: 0.8em; vertical-align: super; }
+        .wiki-tooltip { position: absolute; background: white; border: 1px solid var(--wiki-border); padding: 10px; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 9999; display: none; max-width: 320px; font-size: 0.85rem; line-height: 1.4; color: var(--wiki-text); word-break: keep-all; }
+        [data-theme='dark'] .wiki-tooltip { background: #2b2d31; border-color: #444; color: #eee; }
+        
+        del { color: #aaa; text-decoration: line-through; }
+        [data-theme='dark'] del { color: #777; }
+        
+        .hanayo-text { color: var(--wiki-point); font-weight: bold; }
+        .script-box { background-color: #f0f0f0; border-left: 4px solid var(--wiki-point); padding: 10px; margin: 10px 0; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap; }
+        [data-theme='dark'] .script-box { background-color: #2b2d31; border-color: #008a6a; color: #ddd; }
+
+        .wiki-table tbody tr:nth-child(even) { background-color: var(--wiki-gray-bg); }
+        .wiki-table tbody tr:nth-child(odd) { background-color: var(--wiki-bg); }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-tooltip-container" class="wiki-tooltip"></div>
+
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black dark:text-white dark:bg-gray-700 dark:placeholder-gray-400 text-sm w-40 focus:outline-none shadow-inner">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[rgba(0,0,0,0.2)] p-1 px-3 rounded text-xs shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="text-xs text-gray-500 dark:text-gray-400 text-right mb-2">최근 수정 시각: 2026-03-12 17:05:00</div>
+        
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">코이즈미 하나요</h1>
+            <div class="wiki-btn-group shadow-sm mb-4">
+                <a href="토론.html" class="wiki-tool-btn">토론</a>
+                <a href="수정.html" class="wiki-tool-btn">편집</a>
+                <a href="역사.html" class="wiki-tool-btn">역사</a>
+                <div class="px-3 py-1 text-[11px] cursor-pointer hover:bg-gray-100" onclick="showMsg('즐겨찾기에 추가됨')">★</div>
+            </div>
+        </div>
+
+        <!-- 분류 박스 -->
+        <div class="category-box border p-2 mb-4 text-xs rounded">
+            <span class="font-bold hanayo-text">분류:</span> 
+            <a href="코이즈미 하나요.html" class="wiki-link">코이즈미 하나요</a> |
+            <a href="러브 라이브! School idol project series.html" class="wiki-link">러브 라이브! School idol project series/등장인물</a> |
+            <a href="러브 라이브!.html" class="wiki-link">러브 라이브!/등장인물</a> |
+            <a href="구성연.html" class="wiki-link">구성연(효빈광역시 중구청장)</a> |
+            <a href="가상인물.html" class="wiki-link">효빈광역시 명예시민</a>
+        </div>
+
+        <!-- ==========================================
+             내비게이션 박스 삽입 위치 (뮤즈 멤버)
+        =========================================== -->
+       <div class="no-autolink" id="lovelive-muse-nav-zone">
+    <div id="lovelive-muse-nav-container"></div>
+    <script src="assets/lovelive_muse_nav.js"></script>
+    <script>
+        // 파일 로드 즉시 감시 시작하여 렌더링 함수 강제 실행!
+        (function() {
+            var checkExist = setInterval(function() {
+                // assets/lovelive_muse_nav.js 내부에 정의된 함수 이름을 확인해 주세요.
+                // 보통 'renderLoveliveMuseNav' 형식을 쓰셨을 테니 맞춰서 적어둡니다.
+                if (typeof renderLoveliveMuseNav === 'function') {
+                    renderLoveliveMuseNav('lovelive-muse-nav-container');
+                    clearInterval(checkExist);
+                }
+            }, 10);
+            // 3초 후 강제 종료
+            setTimeout(function() { clearInterval(checkExist); }, 3000);
+        })();
+    </script>
+</div>
+
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4 flex-grow">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 md:order-1 w-full md:w-auto border p-4 rounded">
+                <div class="text-center font-bold border-b border-gray-300 dark:border-gray-600 mb-2 pb-1">목차</div>
+                <ul class="text-sm list-none p-0 m-0 space-y-1">
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a>
+                        <ul class="pl-4">
+                            <li>1.1. <a href="#s-1-1" class="wiki-link">자기소개</a></li>
+                        </ul>
+                    </li>
+                    <li>2. <a href="#s-2" class="wiki-link">매체별 행적</a>
+                        <ul class="pl-4">
+                            <li>2.1. <a href="#s-2-1" class="wiki-link">드라마CD</a></li>
+                            <li>2.2. <a href="#s-2-2" class="wiki-link">코믹스</a></li>
+                            <li>2.3. <a href="#s-2-3" class="wiki-link">애니메이션</a></li>
+                            <li>2.4. <a href="#s-2-4" class="wiki-link">소설 (캐릭터 시리즈)</a></li>
+                            <li>2.5. <a href="#s-2-5" class="wiki-link">게임</a></li>
+                            <li>2.6. <a href="#s-2-6" class="wiki-link">센터 곡 목록</a></li>
+                            <li>2.7. <a href="#s-2-7" class="wiki-link">투표 결과</a></li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3" class="wiki-link">효빈광역시와의 관계 (구성연 중구청장 유니버스)</a>
+                        <ul class="pl-4">
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">물리학도 구청장의 인생을 바꾼 '최애'</a></li>
+                            <li>3.2. <a href="#s-3-2" class="wiki-link">중구형 쌀 복지: '누구보다 하얀 쌀밥 프로젝트'</a></li>
+                            <li>3.3. <a href="#s-3-3" class="wiki-link">밥심과 과학 기술의 융합</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">보컬 및 연기 스타일</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">피규어</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">2차 창작 및 동인 이미지</a>
+                        <ul class="pl-4">
+                            <li>6.1. <a href="#s-6-1" class="wiki-link">커플링</a></li>
+                        </ul>
+                    </li>
+                    <li>7. <a href="#s-7" class="wiki-link">기타</a></li>
+                    <li>8. <a href="#s-8" class="wiki-link">둘러보기</a></li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded order-1 md:order-2">
+                <div class="infobox-top-label">μ's / Printemps 소속</div>
+                <div class="infobox-logo">
+                    <img src="이미지/코이즈미 하나요.png" alt="코이즈미 하나요 이미지" onerror="this.parentNode.innerHTML='<div style=\'padding: 50px; text-align: center; color: #888;\'><br><span style=\'font-size: 10px;\' class=\'dark:text-gray-400\'>이미지/코이즈미 하나요.png</span></div>'">
+                </div>
+                <div class="infobox-name">
+                    <div class="text-xl font-bold">코이즈미 하나요</div>
+                    <div class="text-xs font-bold mt-1 text-gray-600 dark:text-gray-300">小泉(こいずみ) 花陽(はなよ) | Hanayo Koizumi</div>
+                </div>
+                <table class="wiki-table">
+                    <tr><th class="item-label">학년</th><td>1학년</td></tr>
+                    <tr><th class="item-label">나이</th><td>15세</td></tr>
+                    <tr><th class="item-label">생일</th><td>1월 17일<a href="#fn-1" id="rfn-1" class="wiki-fn" data-note="fn-1">[1]</a> (염소자리)</td></tr>
+                    <tr><th class="item-label">탄생석</th><td>가넷</td></tr>
+                    <tr><th class="item-label">혈액형</th><td>B형</td></tr>
+                    <tr><th class="item-label">가족</th><td class="text-xs">부모님<br>무남독녀 외동딸<br>오빠<a href="#fn-2" id="rfn-2" class="wiki-fn" data-note="fn-2">[2]</a></td></tr>
+                    <tr><th class="item-label">신장</th><td>156cm</td></tr>
+                    <tr><th class="item-label">쓰리사이즈</th><td>B82 · W60 · H83</td></tr>
+                    <tr><th class="item-label">취미</th><td>그림 그리기<a href="#fn-3" id="rfn-3" class="wiki-fn" data-note="fn-3">[3]</a><a href="#fn-4" id="rfn-4" class="wiki-fn" data-note="fn-4">[4]</a></td></tr>
+                    <tr><th class="item-label">특기</th><td>종이접기<a href="#fn-5" id="rfn-5" class="wiki-fn" data-note="fn-5">[5]</a></td></tr>
+                    <tr><th class="item-label">좋아하는 음식</th><td>흰밥</td></tr>
+                    <tr><th class="item-label">싫어하는 음식</th><td>없음</td></tr>
+                    <tr><th class="item-label">장점</th><td>포용력 있는 온화한 성격</td></tr>
+                    <tr><th class="item-label">매력 포인트</th><td>부드러워 보인다고 자주 볼을 잡혀요...</td></tr>
+                    <tr><th class="item-label">어릴 적 꿈</th><td>작가</td></tr>
+                    <tr><th class="item-label">잘하는 과목</th><td>국사, 가정</td></tr>
+                    <tr><th class="item-label">잘하는 요리</th><td>오뎅, 김밥</td></tr>
+                    <tr><th class="item-label">1인칭</th><td>와타시(私), 하나요</td></tr>
+                    <tr><th class="item-label">이미지 컬러</th><td><span style="color:#00ab84; font-weight:bold; text-shadow: 1px 1px 1px #000;">✦</span> 그린 (#00ab84)</td></tr>
+                    <tr><th class="item-label">성우</th><td><a href="쿠보 유리카.html" class="wiki-link">쿠보 유리카</a><br><a href="잰시 윈.html" class="wiki-link">잰시 윈</a></td></tr>
+                    <tr>
+                        <th class="item-label">직함 (효빈시)</th>
+                        <td class="text-xs">
+                            <span class="hanayo-text">효빈광역시 명예시민</span><br>
+                            <strong>중구 '하얀 쌀밥 프로젝트' 공식 앰버서더</strong>
+                        </td>
+                    </tr>
+                </table>
+            </aside>
+        </div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <div class="quote-box text-center text-lg">
+            <strong>누가 좀 도와줘!(ダレカタスケテー)</strong><br>
+            <span class="text-sm">(다레카 다스케테!)</span><a href="#fn-6" id="rfn-6" class="wiki-fn" data-note="fn-6">[6]</a><br><br>
+            <strong>큰일났어요!(大変です!)</strong><br>
+            <span class="text-sm">(다이헨데스!)</span>
+        </div>
+        
+        <table class="w-full text-center my-4 text-sm wiki-table max-w-lg mx-auto">
+            <thead>
+                <tr><th colspan="2" class="item-label">전격 G's magazine 2012년도 4월호에서 공개된 스테이터스</th></tr>
+            </thead>
+            <tbody>
+                <tr><td class="item-label font-bold w-1/2">학력</td><td>★★★★☆</td></tr>
+                <tr><td class="item-label font-bold">적극성</td><td>★☆☆☆☆</td></tr>
+                <tr><td class="item-label font-bold">밥</td><td>★★★★★</td></tr>
+            </tbody>
+        </table>
+
+        <p><a href="러브 라이브!.html" class="wiki-link">러브 라이브!</a>의 등장인물이자 스쿨 아이돌 그룹 <strong>μ's</strong>의 멤버. 성우는 <a href="쿠보 유리카.html" class="wiki-link">쿠보 유리카</a>.</p>
+        <p>갈색 내지 금빛의 숏 보브 컷. 눈동자 색은 분홍빛<a href="#fn-7" id="rfn-7" class="wiki-fn" data-note="fn-7">[7]</a>으로 속눈썹이 많고 쌍꺼풀이 짙은 데다 순한 눈이라 눈매가 굉장히 예쁘다. 남의 말을 들어주는 것은 능숙하지만 말을 거는 것은 서툰 심약한 소녀. 아이돌을 좋아하며, 주위에서는 본명보다는 이름의 한자를 음독으로 읽은 <strong>카요찡(かよちん)</strong>이라는 별명으로 불리고 있다.<a href="#fn-8" id="rfn-8" class="wiki-fn" data-note="fn-8">[8]</a> 초창기에는 '카요짱'(かよちゃん)으로도 불렸다. 히비키에서 제공하는 러브라이브 공식 라디오에서 '니코린파나', 그 외에도 린파나, 코토파나 등으로 자신의 이름이 뒤로 들어갈 경우엔 '하나' 대신 '파나'로 바뀐다. 생일 기준으로 따져서 뮤즈의 막내.<a href="#fn-9" id="rfn-9" class="wiki-fn" data-note="fn-9">[9]</a></p>
+        <p>호노카가 고기랑 빵에 사족을 못 쓴다면, 이쪽은 <strong>쌀밥</strong>에 사족을 못 쓴다. 본인은 칼로리를 생각하며 참으려 하지만 어느 순간 손을 대고 있는 자신을 보게 된다고, 설정상 공인 먹보로 유일하게 싫어하는 음식이 없다고 나오는 멤버다.<a href="#fn-10" id="rfn-10" class="wiki-fn" data-note="fn-10">[10]</a></p>
+        <p>막내답게 어려보이는 외모와 달리 의외로 B사이즈가 멤버중 3위로 큰 편이다. 하나요보다 큰 에리나 노조미의 경우 외모나 몸매로나 완벽한 선배/어른 비주얼이고 1학년인걸 감안하면 외모나 나이대에 비해 상당히 몸매가 좋다고 할 수 있다. 덕분에 베이비 페이스인 3학년 선배의 관심<a href="#fn-11" id="rfn-11" class="wiki-fn" data-note="fn-11">[11]</a>을 끌기도 하는 모습이 보여진다.</p>
+        <p>TVA판에서도 자세히 보면 다른 1~2학년 멤버들에 비해 조금씩 가슴이 강조되어 있다. 한편 초기에는 μ's 멤버 중 토죠 노조미와 함께 절대영역을 보유하고 있었다. 노조미는 흰색 니 삭스고, 하나요는 검은색이다. 애니메이션 이후 하나요는 절대영역이 사라지고 그냥 검은색 스타킹<a href="#fn-12" id="rfn-12" class="wiki-fn" data-note="fn-12">[12]</a>을 신고 있으며 노조미가 검은색 스타킹 절대영역을 가져갔다.</p>
+        <p>대신 눈에 띄지 않는 외관, 낯을 심하게 가리고 말을 더듬는 지극히 소심한 성격, 서툰 운동 실력 등 일반적인 아이돌을 하기에는 여러모로 불리한 단점들이 많다. 그래서 아이돌 팬을 자처하지만 정작 아이돌이 되는건 자신없어하는 모습을 보여주었던 것. 이런 캐릭터가 아이돌로서는 부족한 재능들을 극복하고 소심한 아이돌 덕후에서 동경하던 진짜 아이돌로 진화해가는걸 보여주는 모습은 하나요라는 캐릭터가 뮤즈에서도 특별한 성장형 주인공임을 보여준다고 할 수 있다.</p>
+        <p>성격이 내성적이라 '助けて~(도와줘~)'라는 대사는 하나요를 상징하는 말과도 같다. 드라마 CD에서나 애니메이션에서나 코믹스에서나 이 대사는 어떻게든 한 번은 나온다. 그리고 하나요 성우인 쿠보 유리카가 '誰が助けて~(누가 좀 도와줘~)'를 외치면 팬들은 'ちょっと待ってて~(잠깐 기다려~)'를 국어책 읽기로 외쳐주는 것이 기본이다. 또한 작중에서 유달리 눈물을 많이 보이는 캐릭터이기도 하다. 보호 본능을 불러 일으키는 성격이라 이쪽 취향 있는 이들이 좋아하는 편이다. 2016년 9월 11일 성우 쿠보 유리카의 내한 행사에서 쿠보 유리카가 무려 한국어로 이 대사(누가 좀 도와줘~~!!라고 했다!)를 읊어서 러브라이버들을 감동시키기도 하였다.</p>
+        <p>폭주했을 때 한정으로 존댓말 캐릭터가 된다. 기본적으로 친한 이들이나 동급생, 연하, 그리고 말을 놓기로 한 이후의 뮤즈 멤버들에게는 반말을, 연장자나 상급생 등에게 존댓말로 얘기하는 것은 같지만, 아이돌 관련 소식을 듣고 폭주하여 뮤즈 멤버들에게 말할 때는 존댓말을 쓴다.</p>
+        <p><a href="호시조라 린.html" class="wiki-link">호시조라 린</a>과는 소꿉친구이며, 초기 설정으로는 오빠가 있었으나 이후 SID에서는 외동인 것으로 변경되었다.</p>
+        <p>러브라이브 시리즈 전체를 통틀어 봐도 코토리와 함께 착하고 온화한 성격이 가장 눈에 띄는 캐릭터들 중 하나로, 특히나 SID 등의 매체를 보면 아무도 시키지 않아도 학교 화단에 물을 준다든지, 코토리와 함께 부실 정리 등 귀찮은 일을 나서서 한다든지 하는 설정이 보인다.</p>
+
+        <h3 id="s-1-1">1.1. 자기소개</h3>
+        <div class="script-box">
+저... 저기. 전 코이즈미 하나요, 15세예요. 멤버들에게는 카요찡이라고 불리고 있습니다. 에... 그리고, 어... 어쩌지? 긴장해 버렸어. 미... 미안해요. 후우... 하, 심호흡, 심호흡. 하나요는 다른 사람이 이야기하는 걸 듣는 건 매우 좋아하지만 하는 건 잘 못해서... 이런 하나요라도 괜찮다면, 당신을 위해 열심히 노래하고 싶습니다.
+        </div>
+
+        <h2 id="s-2">2. 매체별 행적</h2>
+        <p class="text-sm text-red-500 font-bold mb-4">※ 이 문서에 스포일러가 포함되어 있습니다.</p>
+
+        <h3 id="s-2-1">2.1. 드라마CD</h3>
+        <p>4번째 싱글 드라마 파트에서는 과자들을 살까 말까 고민하는 사이에 린이 엉뚱한 재료들을 사는 것을 말리지 못했다. 반면 초콜릿을 만드는 과정에서는 그 얌전하던 하나요가 초콜릿을 만드는데 정신을 못 차리고 있었다. 완전히 초콜릿의 노예가 되어서 멘탈이 망가진 쿠보 유리카의 일품연기가 돋보인다.</p>
+        <p>5번째 싱글 드라마 파트에서는 코토리의 메이드를 맡게 되는데 코토리가 디저트로 나오는 케이크를 먹지 않겠다는데도 굳이 디저트를 강요한다. 사실 그 이유는 하나요 본인이 케이크를 먹고 싶었기 때문. 다행히 코토리가 이를 눈치 챈 덕에 코토리와 함께 케이크를 나눠 먹을 수 있었다.</p>
+        <p>2nd 유닛 싱글 파트에서는 코토리와 함께 일행들에게 적절히 태클을 거는 정도로 활약했다.</p>
+        <p>6번째 싱글에서는 자신이 "ちょっと待ってて~(잠깐 기다려~)"를 외치는 위엄을 보여주기도 한다.<a href="#fn-13" id="rfn-13" class="wiki-fn" data-note="fn-13">[13]</a> 스키장에서는 리프트 타기가 무서워서 우미와 함께 이러지도 저러지도 못하다가, 마키가 도와줘서 에리와 같이 리프트를 타게 되어서야 올라갈 수 있었다.</p>
+        <p>4th 라이브의 미니드라마 파트에서는 호노카와 코토리와 함께 공중관람차를 타게 되었다. 여기서 불꽃놀이를 보면서 "불꽃놀이를 보고 있으면 끝나지 않고 계속 되었으면 한다."며 감상을 말했는데, 이게 호노카가 4th 라이브의 주제인 ENDLESS PARADE, 끝나지 않는 퍼레이드를 떠올리는데 큰 역할을 하게 되었다.</p>
+        <p>4th 라이브 티켓을 신청한 사람들에게 배포되었던 입학체험세트 드라마 CD 특전(일명 만약에 시리즈)에서는 호노카와 호흡을 맞춰 시뮬레이션을 연기하였다. 상경하려 기차를 타는 호노카를 좋아해서 자신도 끝까지 쫓아가겠다고 하는 떠나보내는 연인 역할이었다. 여기서 호노카가 느닷없이 하나요를 카욧페라고 불러대는데, 시뮬레이션이 끝나고서 "내가 왜 카욧페냐"고 경악하면서 일행들이 놀리자 정말로 싫어하는 반응을 보였다.</p>
+        <p>lily white 3집 드라마CD에선 코토리와 함께 남자(소년)가 연기를 한다. 도중 코토리가 '와일드'를 보여달라고 하는 바람에 낑낑거리며 무언가를 보여주려 하는데 정작 코토리는 어리둥절하는 반응. 알고보니 온몸을 쥐어짜 근육을 보여주려 한 거였고 빵 터진 코토리한테 전혀 근육이 없다는 놀림을 당한다.</p>
+
+        <h3 id="s-2-2">2.2. 코믹스</h3>
+        <p>코믹스에서 첫 등장은 아이돌 활동에 참여하게 된 린에게 질질 끌려오는 것이었다. 그 후에 린에게 끌려오다가 생긴 상처를 코토리가 치료해주자 상냥함에 감동해서 아이돌부에 합류하게 된다. 아쉽게도 같은 학년인 린과 마키보다도 비중이 없어보이지만, 나올 때마다 찰떡같은 귀여움을 자랑한다. 카요는 말랑말랑하다는 주변인물의 소감이 빠지지 않는 것도 특징이다.</p>
+        <p>뮤즈에 가입한 계기에서도 보이듯이 코믹스에서도 코토리와 친자매처럼 나오며, 3권에서는 코토리가 거의 친언니처럼 보일 정도.</p>
+
+        <h3 id="s-2-3">2.3. 애니메이션</h3>
+        <p>자세한 내용은 <a href="코이즈미 하나요_애니메이션.html" class="wiki-link">코이즈미 하나요/애니메이션</a> 문서를 참고하십시오.</p>
+
+        <h3 id="s-2-4">2.4. 소설 (캐릭터 시리즈)</h3>
+        <p>뮤즈 멤버 모두가 인정하는 천사표. 마키가 남들은 다 하는 자전거를 탈 줄 모르는 자신의 비밀을 하나요가 알게 되자, 걱정했던 것과는 달리 노력하는 모습이 보기 좋다면서 상냥하게 격려까지 해주면서 마지막까지 함께 연습하는 것을 도와주었고 이에 감격한 마키는 격려에 힘입어 맹연습을 할 수 있었다던가, 분위기가 비슷한 코토리와 관계가 좋아 둘이 같이 있으면 다들 자매 같다고 이야기한다던가. 애니판의 설정을 이어받아 때때로 역반무테 안경을 낀다.</p>
+        <p>3권 코토리 편에서는 그런 천사표 하나요가 한 번 망가지는데, 코토리가 지역 수영복 콘테스트에서 우승해서 최고급 전기밥솥을 받아오자 "이거 내가 가져갈래!"라며 눈을 부라려서. 작중 묘사대로면 10만엔=약 100만원이 넘는 밥솥이다. 쌀 한정으로 이성을 잃는 건 SID에서도 여전하여 밥솥은 부실에서 공용으로 쓰기로 하고 밥은 당연히 하나요가 짓는다. 멤버들에게 매일 주먹밥을 만들어주고 싶다고.</p>
+        <p>스쿨 아이돌 다이어리 5권은 하나요의 시점에서 서술된다. 하나요의 아이돌을 향한 동경은 어머니의 영향이 크다. 하나요의 어머니도 노래하는 것을 좋아하여 아이돌을 꿈꿨었고, 오디션에서는 떨어졌으나 연습생으로서 활동했다. 그러던 중 지금의 남편(하나요의 아버지)을 만나게 되었는데, 이 때의 나이가 16살 즈음. 이후 결혼하면서 아이돌의 꿈은 접었지만, 못내 아쉬웠는지 하나요가 어렸을 때 아기 모델활동을 시키기도 했다. 그래서인지 아이돌이라는 것이 그리 멀게 느껴지지 않았다고.<a href="#fn-14" id="rfn-14" class="wiki-fn" data-note="fn-14">[14]</a> 하나요 또한 이에 영향을 받아 어린 시절 아이돌 오디션에 참가하기도 했다. 하나요의 어머니가 하나요의 미래를 생각해 하나요를 UTX 학원에 진학시키려 했으나 하나요 본인의 선택으로 오토노키자카 학원으로 진학하게 되었다. 이 점에 있어서 마키와는 완전히 반대의 면모를 보여주었다.</p>
+        <p>그리고 5권에선 다른 멤버들에 비해 특출난 게 없는 자신이 뮤즈에 과연 어울리는지 자책하며 고민하는 내용이 자주 언급되는데, 자신의 단점을 솔직히 고백할 줄 아는 용기있는 모습은 아무나 할 수 있는게 아니라며 멤버들이 격려해주자 힘을 내기로 한다. 특히 린 덕분에 많은 힘을 얻었다고 하는데, 어릴적엔 왕자님처럼 지켜주며 겉돌지 않게 만들어준 활달한 성격의 린을 하나요가 꽤나 부러워 함과 동시에 자신을 위해 발벗고 나서는 린이 손해보고 있는건 아닌지 걱정을 했단다. 그러던 어느날, 집근처에 위치한 박물관서 밤늦게 숨바꼭질을 하는데 같이 놀던 린이 경비 아저씨에게 걸리는 일이 생기고 만다. 린은 일부러 큰소리를 내어 하나요가 도망칠 기회를 만들어주려고 하는데, 친구를 버리고 갈 수 없다며 하나요가 용기있게 나서서 린과 남매인척 연기를 하며 무사히 위기를 넘긴다. 린이 짧은 단발머리에 보이쉬한 분위기가 풍기는터라 경비 아저씨는 린이 남자아이인걸로 착각중인 덕분이었다. 나중에 린은 고마움을 표시하며 하나요의 용기있는 모습이 매력이라며 칭찬을 하는데, 이번권에선 전체적으로 약한 모습을 보기이도 하지만 용기있는 하나요의 성격을 강조하고 있다.</p>
+        <p>7권 니코 편에서는 신체검사 후 특정 부위에 절망한 니코에게 성장의 비밀이 뭐냐고 추궁당하며 스토킹(?) 당한 적이 있다. 가장 친한 친구인 린마저 니코의 꾐에 빠져서 졸졸 따라다니자 화장실로 피신, 지나가던 우미가 스토커들을 제지하자 그때서야 울먹였다.</p>
+        <p>TVA 2기 BD 5권 한정판의 특전으로 동봉된 코토리, 하나요, 노조미 편 중 자기 파트에서는 노조미와 엮인다. 학교에서 우연히 만난 노조미를 불렀다가 실수로 노조미가 운반하던 플라스틱 팩이 쏟아져 버렸지만, 별달리 책망하는 것도 없이 평소처럼 느긋하게 하나요를 달래며 학생회 일도 처리하는 노조미의 모습에, 뮤즈 활동으로 학교가 존속하고 후배가 생기면 자신도 후배들을 잘 챙겨주는 선배가 되고 싶다고 생각한다.</p>
+
+        <h3 id="s-2-5">2.5. 게임</h3>
+        <ul class="list-disc pl-5 mt-2 space-y-1 text-sm">
+            <li><strong>러브라이브! 스쿨 아이돌 페스티벌:</strong> 자세한 내용은 <a href="코이즈미 하나요/러브라이브! 스쿨 아이돌 페스티벌.html" class="wiki-link">코이즈미 하나요/러브라이브! 스쿨 아이돌 페스티벌</a> 문서를 참고하십시오.</li>
+            <li><strong>러브라이브! ALL STARS:</strong> 자세한 내용은 <a href="코이즈미 하나요/러브라이브! ALL STARS.html" class="wiki-link">코이즈미 하나요/러브라이브! ALL STARS</a> 문서를 참고하십시오. (UR 카드 《컬러풀 페스타》 존재)</li>
+            <li><strong>ぷちぐるラブライブ！:</strong> 자세한 내용은 <a href="ぷちぐるラブライブ！/푸치구루 목록.html" class="wiki-link">ぷちぐるラブライブ！/푸치구루 목록</a> 문서의 코이즈미 하나요 부분을 참고하십시오.</li>
+            <li><strong>러브라이브! 스쿨 아이돌 페스티벌 2 MIRACLE LIVE!:</strong> 자세한 내용은 <a href="코이즈미 하나요/러브라이브! 스쿨 아이돌 페스티벌 2 MIRACLE LIVE!.html" class="wiki-link">코이즈미 하나요/러브라이브! 스쿨 아이돌 페스티벌 2 MIRACLE LIVE!</a> 문서를 참고하십시오.</li>
+        </ul>
+
+        <h3 id="s-2-6">2.6. 센터 곡 목록</h3>
+        <table class="w-full text-center text-sm wiki-table max-w-lg mx-auto">
+            <thead>
+                <tr><th colspan="2" class="item-label">하나요의 센터곡</th></tr>
+            </thead>
+            <tbody>
+                <tr><td class="item-label font-bold w-1/4">정규 싱글</td><td class="text-left pl-4">Oh,Love＆Peace!</td></tr>
+                <tr><td class="item-label font-bold">유닛 싱글</td><td class="text-left pl-4">Love marginal<br>UNBALANCED LOVE<br>永遠フレンズ<br>NO EXIT ORION</td></tr>
+                <tr><td class="item-label font-bold">스쿠페스 싱글</td><td class="text-left pl-4">嵐のなかの恋だから<a href="#fn-15" id="rfn-15" class="wiki-fn" data-note="fn-15">[15]</a></td></tr>
+                <tr><td class="item-label font-bold">스쿠파라 싱글</td><td class="text-left pl-4">Shangri-La Shower</td></tr>
+            </tbody>
+        </table>
+        <p class="text-sm text-center">우미와 같이 모든 유닛 앨범에 센터곡이 있는 유이한 멤버이다.</p>
+
+        <h3 id="s-2-7">2.7. 투표 결과</h3>
+        <table class="w-full text-center text-sm wiki-table mb-4">
+            <thead>
+                <tr><th colspan="5" class="item-label">정규 싱글 투표</th></tr>
+                <tr>
+                    <th class="item-label">제 1 회 총선거</th>
+                    <th class="item-label">제 2 회 총선거</th>
+                    <th class="item-label">제 3 회 총선거</th>
+                    <th class="item-label">제 4 회 총선거</th>
+                    <th class="item-label">제 5 회 총선거</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>7위</td><td>7위</td><td>9위</td><td>4위</td><td>6위</td></tr>
+            </tbody>
+        </table>
+        
+        <table class="w-full text-center text-sm wiki-table">
+            <thead>
+                <tr><th colspan="2" class="item-label">그 외 투표</th></tr>
+            </thead>
+            <tbody>
+                <tr><td class="item-label font-bold w-1/2">전격 G 's 매거진 표지 결정전</td><td>7위</td></tr>
+                <tr><td class="item-label font-bold">큐어 메이드 카페 μ 's 초콜렛 걸 투표</td><td>?위</td></tr>
+                <tr><td class="item-label font-bold">어μ’s멘트 걸 결정전 제 3 회</td><td>?위</td></tr>
+                <tr><td class="item-label font-bold">암락스 도쿄 조수석 퀸 총선거</td><td>?위</td></tr>
+                <tr><td class="item-label font-bold">G 's 매거진 부록 니이텐고 피규어화 결정전</td><td>?위</td></tr>
+                <tr><td class="item-label font-bold">러브라이브! 스쿨 아이돌 페스티벌 크리스마스 카드 결정전</td><td>?위</td></tr>
+                <tr><td class="item-label font-bold">러브 라이브! 웨하스 티타임걸 투표</td><td>?위</td></tr>
+                <tr><td class="item-label font-bold">러브 라이브! 세가 스탭 이미지걸 결정전</td><td>?위</td></tr>
+                <tr><td class="item-label font-bold">스쿠페스 크리스마스 선물 대작전</td><td>?위</td></tr>
+                <tr><td class="item-label font-bold">당신과 가고싶어♪ 여행걸 결정전</td><td>종합 ?위 (영문판 ?위)</td></tr>
+                <tr><td class="item-label font-bold">5th 애니버서리 캠페인 걸 총선거</td><td>?위</td></tr>
+            </tbody>
+        </table>
+
+        <!-- 효빈광역시 유니버스 (구성연 편) -->
+        <h2 id="s-3">3. 효빈광역시와의 관계 (구성연 중구청장 유니버스)</h2>
+        <div class="hanayo-box mb-5">
+            <div class="font-bold text-lg mb-2 border-b border-[#008a6a] pb-1">
+                🍚 "데이터는 거짓말을 하지 않습니다. 하얀 쌀밥도 우리를 배신하지 않죠."
+            </div>
+            <p class="text-sm">"누군가를 응원하는 마음이 세상을 바꿀 수 있다는 에너지 보존 법칙을 깨달았습니다."<br><span class="text-xs text-gray-500 dark:text-gray-400">— <a href="구성연.html" class="wiki-link">구성연</a> 효빈광역시 중구청장 (이과 출신 밥심 행정가)</span></p>
+        </div>
+
+        <h3 id="s-3-1">3.1. 물리학도 구청장의 인생을 바꾼 '최애'</h3>
+        <p>효빈광역시 <a href="중구.html" class="wiki-link">중구</a>의 민선 8기 구청장인 <strong><a href="구성연.html" class="wiki-link">구성연</a></strong>은 덕북대학교 물리학과 출신의 엘리트 행정가이자, 코이즈미 하나요의 열광적인 팬(오시)으로 유명하다. 학원 강사 시절 인생의 암흑기를 겪던 그는 하나요의 성장 스토리를 접하며 "누군가를 응원하는 마음이 세상을 바꿀 수 있다"는 기적의 <strong>에너지 보존 법칙(?)</strong>을 깨닫고 정계에 입문했다고 한다.</p>
+
+        <h3 id="s-3-2">3.2. 중구형 쌀 복지: '누구보다 하얀 쌀밥 프로젝트'</h3>
+        <p>하나요를 향한 그의 '쌀 사랑' 정신은 중구의 행정 정책으로 완벽하게 승화되었다. 구청장 취임 직후, 중구 관내 경로당과 결식아동에게 공급되는 쌀의 질을 '특상'급으로 전면 교체하는 <strong>'누구보다 하얀 쌀밥 프로젝트'</strong>를 추진해 구민들의 열렬한 지지를 받았다. 구청장 집무실에는 하나요 피규어와 함께 전국 팔도의 최고급 쌀 샘플이 전시되어 있다는 후문이다.</p>
+
+        <h3 id="s-3-3">3.3. 밥심과 과학 기술의 융합</h3>
+        <p>구성연 청장은 본관이 능성 구씨(LG그룹 창업주 가문)임을 내세워 "우리 집안이 가전제품은 기가 막히게 잘 만든다"는 명분 하에, 중구청 내 모든 휴게실의 밥솥을 <strong>최신형 압력밥솥</strong>으로 교체하는 위엄을 보였다. 물론 이는 하나요가 좋아하는 완벽한 쌀밥을 짓기 위한 사심이 듬뿍 담긴 행정이다.</p>
+        <p>또한 관내 순찰 시 직접 드론을 띄워 사각지대를 확인하는 얼리어답터인데, 이 드론의 본체에 하나요 스티커가 덕지덕지 붙어 있어 길 가던 구민들을 당황하게 만든다고 한다. <a href="김지언.html" class="wiki-link">김지언</a> 북구청장이 서브컬처 기획을 가져오면 "전파 간섭을 고려해 주파수를 조정해야 한다"며 뼈 때리는 이과식 조언을 던지는 든든한 조력자이기도 하다.</p>
+
+
+        <h2 id="s-4">4. 보컬 및 연기 스타일</h2>
+        <p>보컬에 관해서는 러브 라이브 시리즈 역사상 가장 크게 보컬 스타일이 변한 캐릭터로 볼 수 있다. 러브라이브 애니메이션으로 입문했거나, 스쿠페스로 입문한 러브라이버가 Love marginal을 들어본다면 하나요의 목소리가 크게 다른 것을 볼 수 있다. 지금의 귀엽고 앳된 목소리와는 달리 청아하고 성숙한 목소리로 노래했기 때문이다. 후렴구에서는 알토 목소리도 내기도 했다.</p>
+        <p>이는 Love marginal이 러브라이브 극초창기에 만들어져서 지금의 설정 등이 제대로 설립되지 않은 시절에 만들어졌고, 지금의 하나요의 연기톤으로는 소화하기 힘들다 보니 사실상 Love Marginal은 호노카, 코토리, 그리고 쿠보 유리카가 부르는 곡이 되어버렸다.</p>
+        <p>이후 하나요의 캐릭터성이 제대로 정립되었고 보컬 스타일 역시 귀엽고 앳된 특징이 있는 목소리로 고정되면서 Love Marginal과 같은 발라드풍 솔로곡인 고독한 Heaven을 제외하면 하나요의 청아한 노래 스타일을 들을 수 있는 기회는 거의 없어졌다. 하지만 여름색 미소로 1, 2 Jump!나 WILD STARS와 같은 곡들의 솔로 버전에서는 청아하고 낮은 음색을 들을 수 있다. 대신 변경된 보컬톤으로 인한 '뮤즈의 막내'다운 어리고 귀여우면서 한편으로는 매력있는 개성적인 스타일이 강조되면서 단체곡에서 하나요의 목소리의 존재감이 확실히 늘게 되었다. 특히 변경된 보컬톤이 소속 유닛 Printemps의 곡과 찰떡같은 궁합을 자랑하기 때문에 유닛에서 주로 센터 파트를 맡는다. 귀여운 타이틀곡 뿐만 아니라 의외로 커플링곡인 슬픈 러브송에서도 소화력이 좋은 모습을 보인다. 다만 어쨌건 성우 본인의 음색과 많이 다른 음색으로 불러야 하는 만큼 솔로 앨범에 수록된 Wonderful Rush의 "Wonderful!!" 부분에서는 억지로 고음을 내는 발성 때문에 다른 멤버들과 달리 혹평을 받기도 했다.<a href="#fn-16" id="rfn-16" class="wiki-fn" data-note="fn-16">[16]</a></p>
+        <p>연기에 관해서는 초창기에는 이이다 리호 등과 더불어 신인 성우다 보니 연기가 그렇게 매끄럽지는 않았다. 5집 PV에서의 '집으로 돌아간거야?' 라는 대사의 예시만 보아도 어느 정도 짐작할 수 있다. 물론 지금은 쿠보 유리카가 좋은 연기력을 보이는 성우인 만큼 하나요 연기도 문제 없이 잘 소화하고 있다.</p>
+
+        <h2 id="s-5">5. 피규어</h2>
+        <p>경품 피규어는 제외하고 서술하였다.</p>
+        <ul class="list-disc pl-5 mt-2 space-y-1 text-sm">
+            <li>2013년 10월 Beach Queens 시리즈 하나요가 발매되었다.</li>
+            <li>2015년 5월에는 굿스마일에서 니코, 호노카, 코토리, 에리, 린에 이어 여섯 번째로 넨도로이드가 발매되었다.</li>
+            <li>2016년 2월에 연습복 버전이 발매되었다. 연습복 버전에는 밥솥과 주걱, 안경 파츠가 포함되어 있다.</li>
+            <li>2016년 12월에 알터에서 출시한 피규어. 스쿠페스의 SID 콜라보 이벤트 보상으로 지급되었던 SR 각성 일러의, 기류 신호를 보내는 해군 수병의 세일러복을 모티브로 한 의상이다.</li>
+            <li>2018년 5월에 알터에서 출시한 피규어. 일반적으로 벚꽃 각성이라 불리는 스쿠페스 3월편 UR의 의상이며, 스쿠페스 UR 페어 구성과 동일하게 린파나가 동시에 출시되었다. 왼손의 꽃 지팡이는 탈부착이 가능한데, 쉽게 끼워지지 않는 경우가 종종 있다.</li>
+        </ul>
+
+        <h2 id="s-6">6. 2차 창작 및 동인 이미지</h2>
+        
+        <h3 id="s-6-1">6.1. 커플링</h3>
+        <ul class="list-disc pl-5 mt-2 space-y-3 text-sm">
+            <li><strong><a href="코이즈미 하나요.html" class="wiki-link">코이즈미 하나요</a> x <a href="호시조라 린.html" class="wiki-link">호시조라 린</a> (린파나):</strong> 각별하게 엮이는 린과의 커플링이 메이저하다. 특히 G's 매거진에서는 린에게 하나요가 남친이 생기면 어떨지 질문했는데, 린은 상상하니 가슴이 아프다고도 했다. 진실한 단짝 친구이니만큼 달달하게 엮인다.
+                <br>애니메이션에서도 많이 엮이는데 하나요의 애피소드인 1기 4화에서는 하나요가 오래전부터 아이돌을 꿈꾸고 있었다는 것을 알고 있었고 하나요와 같이있는 마키를 보고 "왜 니시키노가 린이랑 카요찡의 일에 끼어드는건데?!"라며 견제하기도 했고, 망설이는 하나요를 뮤즈 멤버로 만드는 데 큰 도움을 주었다. 2기 5화에는 린이 트라우마를 극복하는데 하나요가 "내가 귀엽다고 생각하는걸. 꼭 끌어안고 싶을 정도로 귀엽다고 생각하는걸"이라고 말해서 린에게 용기와 도움을 주었다. 극장판에서도 달달하게 엮였으며 공항을 둘러보자는 린에게 끌려가는 장면도 나왔고, 호텔에서의 밤에는 달을 보며 서로 머리를 기대는 장면이 나오면서 린파나 지지자들이 환호했다.
+                <br>A song You! You? You!! 엘범 자켓과 mv에서도 니코마키, 노조에리, 호노코토우미가 나올 때 린파나도 세트로 나왔다.
+                <br>아쉽게도 듀엣곡은 없지만 커플링 곡으로는 Love wing bell이 있다. 거기에다가 2절에서는 린의 성우 이이다 리호와 하나요의 성우인 쿠보 유리카와 둘이서 언약식 퍼포먼스까지 보여주면서 한동안 시들해있던 린파나 지지파들의 몸에 생기를 불어넣었다. 센터를 제외한 멤버들이 입은 신랑 컨셉의 턱시도 의상이 의외로 하나요에게 잘 어울렸던 덕에 그 효과는 배가 되었다. 이에 5th 라이브를 관람한 대다수의 평들은 라이브를 보러 온 건지 린파나 결혼식을 보러 온 건지 모르겠다고 했다. 이 콘셉트의 린파나 피규어 세트도 2016년 4월에 발매됐다.</li>
+            
+            <li><strong><a href="코이즈미 하나요.html" class="wiki-link">코이즈미 하나요</a> x <a href="미나미 코토리.html" class="wiki-link">미나미 코토리</a> (코토파나):</strong> 한편 코토리와 엮이는 코토파나도 인기가 많다. 애니메이션 이후 둘의 접점은 크게 없으나, 커플링곡도 몇 있고 같은 유닛이다. 둘이 엮일 때는 주로 달달한 자매 이미지로 그려진다.</li>
+            
+            <li><strong><a href="코이즈미 하나요.html" class="wiki-link">코이즈미 하나요</a> x <a href="니시키노 마키.html" class="wiki-link">니시키노 마키</a> (마키파나):</strong> 같은 1학년이자 애니메이션에서 접점이 늘어난 마키와의 커플링도 마이너하게 있다.</li>
+            
+            <li><strong>후배 그룹들:</strong> 스쿠스타에서 엠마 베르데와 먹기 대결을 한 적이 있다.</li>
+        </ul>
+
+        <h2 id="s-7">7. 기타</h2>
+        <ul class="list-disc pl-5 mt-2 space-y-2 text-sm">
+            <li>5번째 싱글 Wonderful Rush의 쇼트 애니메이션에서 '집으로 돌아간 거야?'라는 짤막한 대사를 말하는데, 제대로 가래가 낀 듯한 걸걸한 목소리와 발음이 매우 괴악해서 간간히 네타로 쓰이고 있다. 니코니코 동화, 비슷하게 끝나는 문장을 하나요가 말한 걸 비공식 번역을 할 때 해당 문장 끝을 번역이 아니라 음역을 하는 경우가 대단히 많다. 사실 코토리만큼은 아니지만 이쪽도 목소리와 발음이 상당히 튄다. 특히 쿠보 유리카의 연기 솜씨가 아직 미숙한 편이던 초반기에 이를 접한 이들 중 일부는 이상한 발음에 불쾌함을 표시하기도 했다.</li>
+            <li>TVA OST에서 하나요의 이름을 딴 BGM인 하나요의 결의(花陽の決意 [LM25])가 있다. TVA 1기 4화에서 용기를 내어 뮤즈에 입부를 신청하는 하나요를 위해 처음으로 등장한 곡이고, 이후에도 2기 5화의 Love wing bell 직전에 린에게 용기를 주는 장면이나 뮤즈의 해산을 결의했던 장면 등 러브라이브 TVA 시리즈에서 감동적인 장면에서는 빠지지 않고 자주 등장하는 BGM이다.</li>
+            <li>2013년 11월호 전격 매거진에서 실린 노조미의 인터뷰에서는 <strong>멤버들 중 가장 가슴의 감촉이 부드럽다는 평</strong>을 받았다. 12월 하나요 이벤트에서는 랭킹 1위를 차지한 이가 하나요 팬인데 카요찡에게 밥 지어주고 싶어서 조리사 학원에 다니고 있다는 자기소개가 일품.</li>
+            <li>일러스트나 작화상으로는 날씬해 보이지만<a href="#fn-17" id="rfn-17" class="wiki-fn" data-note="fn-17">[17]</a> 작품 내에서는 살집이 있는 편으로 묘사된다. 스쿨 아이돌 다이어리 하나요 편에서 자신의 다리가 통통한 편이라고 하거나 살쪘다고 걱정하는 모습을 보이거나. 그래서인지 애니메이션 2기 12화에서 키라 센세의 옷을 입고 자신이 통통한가 살펴보는 장면이 있다. 드라마CD에서는 뱃살 드립이 튀어나오고 다른 멤버들한텐 '하나요는 통통한게 매력'이란 소리를 듣는 것을 보았을 때 다른 멤버들에 비해 오동통한건 맞는 듯. 사실 애니메이션 이후 작화에서는 다른 멤버들보다 약간 통통하게 그린다. 얼굴만 봐도 다른 멤버들이 갸름하게 그려지는 반면 하나요는 볼살이 있게 그려진다. 특히 2기 7화에서는 확실히 차이가 난다.</li>
+            <li>무지막지한 식욕과 위장을 보유하고 있다. SID 기준으로 아침에 밥 2그릇, 특대 계란말이 4개를 먹고는 1교시에 배가 꺼져버려 꼬르륵거리자 결국 쉬는 시간에 점심밥을 해치워 버렸다. 그리고 점심은 다른 멤버들에게 조금씩 얻어먹었지만 부족해 하나요를 위해 간식을 사오는 것으로 마무리. 애니에서도 초대형 주먹밥이나 합숙에서 홀로 카레 고봉밥으로 어마어마한 식사량을 보여주었다. 이만큼 먹고도 그 정도 몸매를 유지하는 게 대단하다.</li>
+            <li>하나요 표 <strong>프리미엄 쌀</strong>까지 출시되어 선행 예약 신청이 시작되었다. 목제 주걱과 엽서, 클리어파일등 특전이 포함되어 있다고 한다. 현재 전부 품절되어 옥션 등에서나 가끔 구할 수 있다.</li>
+            <li>하나요의 팬도 아닌 데다가 러브라이버도 아닌 한 럽폭도가 럽장판 상영 중 사고를 일으킨 적이 있다. 국민일보에 이 사건이 기사로 실렸다.</li>
+            <li>2016년 1월 17일(하나요의 생일)에 누군가가 영등포구의 한 어린이 복지재단에 코이즈미 하나요라는 이름으로 <strong>쌀 200㎏을 기부</strong>했다.</li>
+            <li>러브 라이브! 선샤인!! 애니메이션판 4화에 따르면, 쿠로사와 루비가 가장 좋아하는 뮤즈 멤버가 하나요이다.</li>
+            <li>후배 그룹의 리더 타카미 치카의 성우인 이나미 안쥬가 가장 좋아하는 뮤즈 멤버이다. 매일 카요찡의 주먹밥이 되고 싶다는 생각을 밝히기도 했다. 또한 후배의 후배 그룹의 리더 우에하라 아유무의 성우인 오오니시 아구리가 가장 좋아하는 뮤즈 멤버이다. 이 때문에 후배 리더들의 근본 픽 소리를 듣고 있다.<a href="#fn-18" id="rfn-18" class="wiki-fn" data-note="fn-18">[18]</a></li>
+            <li>성우 시마자키 노부나가가 제일 좋아하는 캐릭터라고 밝혔다.</li>
+            <li>2차 창작물에서 뮤즈 멤버들을 동물로 표현할 때 사슴으로 자주 표현된다. 아마 담당 성우인 쿠보 유리카의 별명이 사슴이랑 관련되어서인 듯.</li>
+            <li>공식 넘버는 8번이지만 애니에서 배정된 넘버는 6번.</li>
+            <li>유독 다른 멤버들에 비해 <strong>스타킹 속성</strong>이 부각된다. 기본적으로 교복 동복 기준으로 검은색 스타킹을 착용하며, 러브 라이브! School idol diary 하나요 편에서도 다리가 굵어 보일까봐 스타킹을 신고 다닌다고 언급했다. 럽장판에서 뉴욕에 갈 때의 복장도 핫팬츠+검은색 스타킹 조합이었고, A song for You! You? You!!의 무대 의상도 린을 제외한 다른 멤버들은 흰색 니 삭스, 린은 맨다리 차림인데 비해 하나요 혼자 흰색 팬티스타킹을 신고 있다.</li>
+            <li>아이돌 마스터 원포올의 펜네임 중에 카요찡이 있다. 같은 반다이 남코 작품이라서 끼워넣어진 듯 하다.</li>
+        </ul>
+
+        <h2 id="s-8">8. 둘러보기</h2>
+        <table class="w-full text-center text-sm wiki-table max-w-2xl mx-auto mb-4">
+            <thead>
+                <tr><th colspan="3" class="item-label">러브 라이브! 뮤즈(μ's) 멤버</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="코사카 호노카.html" class="wiki-link">호노카</a></td>
+                    <td><a href="아야세 에리.html" class="wiki-link">에리</a></td>
+                    <td><a href="미나미 코토리.html" class="wiki-link">코토리</a></td>
+                </tr>
+                <tr>
+                    <td><a href="소노다 우미.html" class="wiki-link">우미</a></td>
+                    <td><a href="호시조라 린.html" class="wiki-link">린</a></td>
+                    <td><a href="니시키노 마키.html" class="wiki-link">마키</a></td>
+                </tr>
+                <tr>
+                    <td><a href="토죠 노조미.html" class="wiki-link">노조미</a></td>
+                    <td><strong>하나요</strong></td>
+                    <td><a href="야자와 니코.html" class="wiki-link">니코</a></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 각주 데이터 (1~18번 모두 포함) -->
+        <div id="fn-1" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [1] 빠른 생일이라서 우미, 린, 마키보다 생년이 1년 늦고 μ’s의 막내이다.
+        </div>
+        <div id="fn-2" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [2] 초기 설정.
+        </div>
+        <div id="fn-3" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [3] 정작 담당 성우는 그림을 못 그린다. 그룹에서 그림을 잘 그리는 성우는 난죠 요시노, 토쿠이 소라.
+        </div>
+        <div id="fn-4" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [4] 재밌게도 후배 그룹에도 그림을 잘 그리는 멤버와 그림을 못 그리는 성우 조합이 있다.
+        </div>
+        <div id="fn-5" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [5] 특히 종이 1장으로 8마리의 학을 이어 접는 것에 자신이 있다고 한다.
+        </div>
+        <div id="fn-6" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [6] 쿠보 유리카가 하나요 역으로 자신을 소개할 때 말하는 멘트. 이 멘트가 나오면 "잠깐만 기다려!(ﾁｮｯﾄﾏｯﾃﾃｰ)"(조또마떼테!!)로 대답해주는 게 관례. 원래는 히라가나로 誰か助けてｰ(누가 좀 도와줘!), ちょっと待っててｰ(잠깐만 기다려)라고 써야 하지만, 발음을 강조하기 위해 가타카나 반각으로 쓴다. 이 멘트의 기원은 '러브라이브! μ's 홍보부 ~니코린파나∼' 라디오 5회 방송.
+        </div>
+        <div id="fn-7" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [7] 이후 스쿠페스와 니지가사키의 코노에 카나타가 상당히 비슷한 눈 색으로 나온다.
+        </div>
+        <div id="fn-8" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [8] 애니판 이후에는 린을 제외한 나머지 멤버 7명은 본명으로 부르고, 그 후에 나카스 카스미가 카요코, 하나코라고 부른다.
+        </div>
+        <div id="fn-9" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [9] 일본에도 빠른년생이 있다. 1월~3월생까지를 빠른년생으로 치기 때문에 3월생으로 빠른년생인 소노다 우미도 2학년 중 막내다. 3학년은 빠른년생이 없고, 날짜로만 따지면 10월생인 아야세 에리가 가장 생일이 느리다.
+        </div>
+        <div id="fn-10" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [10] 심지어 스쿠스타에서 유키 세츠나의 끔찍한 요리마저도 맛있게 먹는 먹성을 자랑한다. 외형 자체는 괴상해보여도 카나타와 아유무한테 지도받아서 그런지 맛은 그나마 정상이다.
+        </div>
+        <div id="fn-11" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [11] 특히 스쿨 아이돌 다이어리 니코편에서 니코가 하나요의 가슴을 산맥, 거봉, 그라비아 아이돌 가슴 같다고 평가하면서 패배감을 느끼는 모습이 잘 묘사되어 있다.
+        </div>
+        <div id="fn-12" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [12] 하복은 흰색 니삭스.
+        </div>
+        <div id="fn-13" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [13] 사실 마키가 노조미와 린이 보고 있는 상태에서 우미의 얼굴에 낙서를 했는데, 그 사실을 우미에게 말하지 않았다는 이유로 눈에 파묻힌 노조미와 린이 하나요의 명대사인 ダレカタスケテー(누가 좀 도와줘~)를 시전한 것이다. 하나요도 ちょっと待ってて~(잠깐 기다려~)를 외치고 바로 '잠깐, 그건 내 대사?!' 라고 했다.
+        </div>
+        <div id="fn-14" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [14] 그 부분을 조금 반영했는지 럽장판에서 나온 하나요의 엄마는 다른 엄마들에 비해 무척 동안으로 그려졌다.
+        </div>
+        <div id="fn-15" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [15] 호시조라 린과 공동 센터
+        </div>
+        <div id="fn-16" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [16] 정규 앨범에서 본래 이 부분은 뮤즈 내에서 가창력이 좋은 니시키노 마키 파트였다.
+        </div>
+        <div id="fn-17" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [17] 오히려 가장 살집이 있어 보이는 건 노조미이다.
+        </div>
+        <div id="fn-18" class="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-2">
+            [18] 다만 4대 후배 그룹의 리더 시부야 카논의 성우인 다테 사유리가 가장 좋아하는 뮤즈 멤버는 니코, 마키이며 막내 후배 그룹의 리더 히노시타 카호의 성우인 니레이 노조미가 가장 좋아하는 뮤즈 멤버는 노조미이다.
+        </div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-500 dark:text-gray-400 text-xs pb-10 leading-relaxed dark:border-gray-700">
+            <div class="font-bold text-lg mb-3">HyobinWiki</div>
+            <div class="mb-4">
+                <span class="font-bold">크리에이티브 커먼즈 라이선스</span><br>
+                이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다.<br>
+                기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.
+            </div>
+            <div>
+                효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+                효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </div>
+        </footer>
+    </div>
+
+    <!-- 네비게이션 및 위키 코어 JS 불러오기 -->
+    <script src="assets/lovelive_all_nav.js"></script>
+    <script src="assets/lovelive_muse_nav.js"></script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/jana.js"></script>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+        
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
+        };
+        
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                location.href = this.value.trim() + ".html";
+            }
+        });
+
+        // 각주 툴팁 기능 구현
+        document.querySelectorAll('.wiki-fn').forEach(el => {
+            el.addEventListener('mouseover', function(e) {
+                const noteId = this.getAttribute('data-note');
+                const noteEl = document.getElementById(noteId);
+                if (noteEl) {
+                    const tooltip = document.getElementById('wiki-tooltip-container');
+                    tooltip.innerHTML = noteEl.innerHTML;
+                    
+                    tooltip.style.display = 'block';
+                    
+                    const rect = this.getBoundingClientRect();
+                    let left = e.pageX + 10;
+                    let top = e.pageY + 10;
+
+                    if (left + 320 > window.innerWidth) {
+                        left = window.innerWidth - 330;
+                    }
+
+                    tooltip.style.left = left + 'px';
+                    tooltip.style.top = top + 'px';
+                }
+            });
+            el.addEventListener('mouseout', function() {
+                document.getElementById('wiki-tooltip-container').style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

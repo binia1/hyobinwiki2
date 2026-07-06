@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>고급 분석기법 (Part 2) - 효빈위키</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Mermaid.js (최신 안정화 버전) -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
+    <!-- MathJax for LaTeX Rendering -->
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      chtml: {
+        fontURL: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2'
+      }
+    };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #00CCAA; 
+            --wiki-line-color: #00CCAA; 
+            
+            --wiki-header-bg: var(--wiki-line-color);
+            --wiki-header-text: #ffffff;
+            --wiki-table-header-bg: #e6faf6;
+            --wiki-table-header-text: #000000;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f8f9fa; 
+            --wiki-link: #008877; 
+            --wiki-footer-bg: #f0f0f0;
+            --wiki-footer-text: #777;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #33eebb; 
+            --wiki-table-header-bg: #222;
+            --wiki-table-header-text: #ffffff;
+            --wiki-footer-bg: #1a1a1a;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.7; word-break: keep-all; margin: 0; transition: background-color 0.3s, color 0.3s; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 30px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1.5px; border-bottom: 3px solid var(--wiki-main); padding-bottom: 15px;} 
+        
+        h2 { font-size: 2rem; font-weight: 900; border-bottom: 2px solid var(--wiki-line-color); padding-bottom: 8px; margin-top: 3.5rem; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; color: var(--wiki-text); }
+        h2::before { content: ""; display: inline-block; width: 6px; height: 2rem; background: var(--wiki-line-color); }
+        h3 { font-size: 1.5rem; font-weight: 800; margin-top: 2.5rem; margin-bottom: 15px; border-left: 6px solid var(--wiki-line-color); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 10px; color: var(--wiki-text); }
+
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; border: 1px solid var(--wiki-border); font-size: 0.95rem; }
+        th, td { border: 1px solid var(--wiki-border); padding: 10px 12px; text-align: left; vertical-align: middle; color: var(--wiki-text); }
+        th { background-color: var(--wiki-table-header-bg); font-weight: 800; text-align: center; border-bottom: 2px solid var(--wiki-main);}
+
+        .infobox { float: right; margin-left: 25px; margin-bottom: 20px; width: 350px; clear: right; border: 2px solid var(--wiki-main); border-radius: 4px; background-color: var(--wiki-bg); }        
+        .infobox-top { background-color: var(--wiki-main); padding: 20px 10px; text-align: center; border-bottom: 1px solid var(--wiki-border); color: #fff; }
+        .infobox-top b { font-size: 1.8rem; line-height: 1.2; letter-spacing: -1px; font-weight: 900; }
+
+        .toc { display: inline-block; min-width: 300px; margin-bottom: 25px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 20px; border-radius: 4px; }        
+        .toc-title { text-align: center; font-weight: 900; border-bottom: 1px solid var(--wiki-border); margin-bottom: 15px; padding-bottom: 10px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding: 0; margin: 0; line-height: 1.6; font-weight: 600;}
+        .toc li { margin-bottom: 4px; }
+        .toc .pl-5 { padding-left: 20px; font-weight: 400;}
+
+        .wiki-link { color: var(--wiki-link); font-weight: 700; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        .quote-box { background: var(--wiki-gray-bg); padding: 15px 20px; font-weight: 600; border-left: 5px solid var(--wiki-line-color); margin-bottom: 20px; color: var(--wiki-text); border-radius: 4px;}
+        .exam-box { border: 2px solid #ff4444; background-color: #fffafa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        [data-theme='dark'] .exam-box { background-color: #2a1111; border-color: #cc3333; }
+        .exam-title { font-weight: 900; color: #ff4444; margin-bottom: 10px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;}
+        
+        .anime-box { border: 2px dashed; background-color: #fdf5fd; padding: 20px; border-radius: 8px; margin: 20px 0; color: #333; display: flex; gap: 15px; align-items: flex-start;}
+        [data-theme='dark'] .anime-box { background-color: #2a1a2a; color: #eee;}
+        .anime-box-title { font-weight: 900; font-size: 1.15rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;}
+        .anime-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid; flex-shrink: 0; background-color: #fff;}
+
+        .mermaid { background: var(--wiki-bg); padding: 15px; border-radius: 8px; margin: 15px 0; display: flex; justify-content: center; overflow-x: auto; border: 1px solid var(--wiki-border);}
+        
+        del { color: #999; text-decoration: line-through; }
+        
+        /* 완벽한 LaTeX 렌더링을 위한 수학 수식 박스 */
+        .math-formula { background: var(--wiki-gray-bg); padding: 15px 20px; border-radius: 8px; text-align: center; margin: 20px 0; border: 1px solid var(--wiki-border); overflow-x: auto; font-size: 1.1rem;}
+
+        /* 각주 및 툴팁 전용 CSS */
+        .fn-link { color: var(--wiki-link); font-size: 0.75em; vertical-align: super; margin: 0 1px; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .fn-link:hover { text-decoration: underline; }
+        
+        .wiki-footnotes { margin-top: 60px; padding-top: 20px; border-top: 2px solid var(--wiki-border); }
+        .wiki-footnotes h4 { font-size: 1.1rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 10px; }
+        .wiki-footnotes ul { list-style: none; padding: 0; margin: 0; }
+        .wiki-footnotes li { margin-bottom: 8px; font-size: 0.9rem; line-height: 1.6; padding: 4px 8px; border-radius: 4px; transition: background-color 0.3s; }
+        .wiki-footnotes li:target { background-color: rgba(0, 204, 170, 0.15); }
+
+        .wiki-tooltip {
+            position: absolute; background-color: var(--wiki-bg); color: var(--wiki-text); border: 1px solid var(--wiki-border);
+            border-radius: 6px; padding: 12px 16px; font-size: 0.85rem; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 0.2s ease-in-out, transform 0.2s ease;
+            transform: translateY(5px); z-index: 9999; word-break: keep-all; line-height: 1.6;
+        }
+        .wiki-tooltip.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+        [data-theme='dark'] .wiki-tooltip { box-shadow: 0 4px 15px rgba(0,0,0,0.6); background-color: #222; }
+    
+        /* 효빈위키 전용 하단 내비게이션 틀 CSS */
+        .wiki-nav-box { margin: 40px auto 10px; border: 1px solid var(--wiki-border); border-radius: 4px; background: var(--wiki-bg); overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .wiki-nav-header { display: flex; align-items: center; justify-content: center; padding: 12px; font-weight: 900; font-size: 1.1rem; color: #fff; background: linear-gradient(to right, #005BAC, #00CCAA); letter-spacing: 1px; }
+        .wiki-nav-toggle { text-align: center; padding: 6px; background: var(--wiki-gray-bg); border-bottom: 1px solid var(--wiki-border); border-top: 1px solid var(--wiki-border); cursor: pointer; font-size: 0.85rem; user-select: none; color: var(--wiki-text); font-weight: bold; }
+        .wiki-nav-toggle:hover { filter: brightness(0.95); }
+        .wiki-nav-content { display: none; }
+        .wiki-nav-content.active { display: block; }
+        .wiki-nav-table { width: 100%; border-collapse: collapse; text-align: center; margin: 0; font-size: 0.9rem; }
+        .wiki-nav-table th, .wiki-nav-table td { border: 1px solid var(--wiki-border); padding: 12px; }
+        .wiki-nav-table th { color: #fff; font-weight: bold; vertical-align: middle; }
+        .wiki-nav-table td { text-align: left; line-height: 1.8; word-break: keep-all; }
+        .bg-nav-red { background-color: #D81C2F; } /* 효빈 시내버스 급행 레드 */
+        .bg-nav-blue { background-color: #485EC6; } /* 효빈 시내버스 광역 블루 */
+        .wiki-nav-item { display: inline-block; margin-right: 12px; white-space: nowrap; }
+        .wiki-nav-item a { color: var(--wiki-link); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .wiki-nav-item a:hover { color: #FF4F91; text-decoration: underline; font-weight: bold; }
+
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <nav class="bg-[#00CCAA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50 border-b border-[#009988]">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl tracking-tight text-white">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1.5 px-4 rounded text-black text-sm w-64 focus:outline-none shadow-inner">
+            <button class="bg-[#008877] p-1.5 px-4 rounded text-sm hover:bg-[#006655] font-bold transition-colors text-white">검색</button>
+            <button onclick="document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')" class="bg-[#009988] p-1.5 px-3 rounded text-xs border border-[#006655] text-white shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="txt-lvl-1">고급 분석기법 (SECTION 02) - 2</div>
+
+        <div class="category-box bg-[#f9f9f9] border border-[#ccc] p-3 mb-5 rounded text-sm font-bold">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="빅데이터분석기사_필기.html" class="wiki-link">빅데이터분석기사 필기</a> | <a href="빅데이터분석기사.html" class="wiki-link">빅데이터분석기사</a> | <a href="데이터_전처리.html" class="wiki-link">데이터 전처리</a> | <a href="데이터_탐색.html" class="wiki-link">데이터 탐색</a> | <a href="회귀분석.html" class="wiki-link">회귀분석</a> | <a href="분류_알고리즘.html" class="wiki-link">분류 알고리즘</a> | <a href="군집분석.html" class="wiki-link">군집분석</a> | <a href="딥러닝.html" class="wiki-link">딥러닝</a> | <a href="데이터_마이닝.html" class="wiki-link">데이터 마이닝</a> | <a href="통계학.html" class="wiki-link">통계학</a> | <a href="확률론.html" class="wiki-link">확률론</a> | <a href="효빈광역시_시내버스.html" class="wiki-link">효빈광역시 시내버스</a> | <a href="걸즈_밴드_크라이.html" class="wiki-link">걸즈 밴드 크라이</a> | <a href="봇치_더_록!.html" class="wiki-link">봇치 더 록!</a>
+        </div>
+        
+
+        <aside class="infobox shadow-sm">
+            <div class="infobox-top">
+                <b>빅데이터분석기사 필기</b><br>
+                <span class="text-sm opacity-80">PART 03. 데이터 분석</span>
+            </div>
+            <table>
+                <tr><th>과목명</th><td>제3과목 빅데이터 모델링</td></tr>
+                <tr><th>섹션</th><td>SECTION 02. 고급 분석기법</td></tr>
+                <tr><th>출제빈도</th><td>상 (☑)</td></tr>
+                <tr><th>반복학습</th><td>[1] [2] [3] 회독</td></tr>
+                <tr><th>빈출태그</th><td>#베이즈기법 #나이브베이즈 #딥러닝 #CNN #RNN #비정형데이터</td></tr>
+            </table>
+        </aside>
+
+        <div class="toc shadow-sm">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li><a href="#s-4" class="wiki-link">04 베이즈 기법</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-4-1" class="wiki-link">1) 베이즈 추론 (조건부 확률, 사후 확률)</a></li>
+                        <li><a href="#s-4-2" class="wiki-link">2) 회귀분석모델에서 베이즈 기법의 적용</a></li>
+                        <li><a href="#s-4-3" class="wiki-link">3) 분류에서 베이즈 기법의 적용 (나이브 베이즈)</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-5" class="wiki-link">05 딥러닝 분석</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-5-1" class="wiki-link">1) 딥러닝 분석의 개념 (ANN, DNN)</a></li>
+                        <li><a href="#s-5-2" class="wiki-link">2) 딥러닝 분석 알고리즘 (DNN, CNN, RNN, DBN)</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-6" class="wiki-link">06 비정형 데이터 분석</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-6-1" class="wiki-link">1) 비정형 데이터의 특징 및 가치</a></li>
+                        <li><a href="#s-6-2" class="wiki-link">2) 비정형 데이터의 분석 (데이터, 텍스트, 오피니언 마이닝 등)</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+
+        <h2 id="s-4">04 베이즈 기법 (Bayesian Technique)</h2>
+
+        <h3 id="s-4-1">1) 베이즈 추론(베이지안 추론, Bayesian Inference)</h3>
+        <p>베이즈 추론은 통계적 추론의 한 방법으로, <b>추론 대상의 사전 확률과 추가적인 정보를 통해 해당 대상의 사후 확률을 추론하는 방법</b>이다. 추론하는 대상을 확률변수로 보아 그 변수의 확률분포를 끊임없이 갱신하여 추정하는 것을 의미한다.</p>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">① 확률론적 의미해석 (조건부 확률)</h4>
+        <p>추론의 대상인 사건을 "A"라고 할 때 사전 확률(Prior Probability) $P(A)$가 주어지고, "A"와 관계된 B가 있을 때 조건부 확률 $P(B|A)$가 주어진다면 조건부 확률식에 의해 아래와 같이 정의된다.</p>
+        <div class="math-formula">
+            $$ P(B|A) = \frac{P(A \cap B)}{P(A)}, \quad \text{단 } P(A) > 0 $$
+        </div>
+        <p class="mt-2">여기서 $P(B|A)P(A) = P(A \cap B)$이므로 <b>사후 확률(Posterior Probability)</b>은 다음과 같이 도출할 수 있다.</p>
+        <div class="math-formula font-bold text-red-600">
+            $$ P(A|B) = \frac{P(A \cap B)}{P(B)} = \frac{P(B|A)P(A)}{P(B)} $$
+        </div>
+        <p class="text-sm mt-2 text-center text-gray-700">이를 <b>베이즈 정리(Bayes' Theorem)</b>라고 한다.</p>
+
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-3 my-3 text-sm">
+            <b>[참고/날개] 베이즈 정리 핵심 용어</b><br>
+            * <b>사전 확률 $P(A)$:</b> 결과가 나타나기 전에 이미 결정되어 있는 원인 "A"의 기초 확률<br>
+            * <b>우도(가능도) 확률 $P(B|A)$:</b> 원인 "A"가 발생하였다고 했을 때, 관계된 B가 발생할 조건부 확률<br>
+            * <b>사후 확률 $P(A|B)$:</b> 새로운 데이터(B)가 관측되었을 때, 역으로 "A"가 원인이었을 갱신된 확률
+        </div>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">② 베이즈 기법의 개념</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li>베이즈 확률에는 두 가지 관점이 있다. <b>객관적 관점</b>은 이성적/보편적으로 증명 가능하다는 것이고, <b>주관주의 확률 이론 관점</b>은 지식의 상태를 '개인적인 믿음의 정도(Degree of Belief)'로 측정할 수 있다는 것이다.</li>
+            <li>어떤 가설의 확률을 평가하기 위해서 <b>사전 확률을 먼저 밝히고, 새로운 관련 데이터(증거)에 의해 새로운 확률값을 갱신(변경)</b>한다. 심리학, 사회학, 경제학 등 현대 머신러닝에 폭넓게 활용된다.</li>
+        </ul>
+
+        <h3 id="s-4-2">2) 회귀분석모델에서 베이즈 기법의 적용</h3>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">① 선형회귀분석모델 (Linear Regression)</h4>
+        <div class="math-formula text-sm">
+            $$ y = \theta_0 + \theta_1 x $$
+        </div>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li>머신러닝의 목표는 독립변수와 종속변수의 관계를 추론하는 것이다. 즉 <b>추정치와 실제의 차이(loss)를 최소화</b>하는 것이 목표다.</li>
+            <li>기존 선형회귀는 <b>경사하강법(Gradient Descent)</b>과 같은 알고리즘을 통해 점진적으로 학습하여 최적의 매개변수($\theta$)를 추정한다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">② 베이지안 확률론의 적용개념</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li>추정하고자 하는 파라미터 $\theta$ 들이 특정한 고정값이 아니라 <b>'분포'</b>를 갖는다고 생각하면, 매개변수를 찾는 과정을 베이즈 정리를 이용해 다음과 같이 표현할 수 있다.</li>
+        </ul>
+        <div class="math-formula">
+            $$ P(\text{model}|\text{Data}) = \frac{P(\text{Data}|\text{model})P(\text{model})}{P(\text{Data})} $$
+        </div>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>우리는 $P(\text{model})$라는 사전확률(prior)을 알고 있는데 <b>새로운 데이터가 관측이 되면 사후확률 $P(\text{model}|\text{Data})$를 얻고, 이를 다음 번 학습의 사전확률로 사용하면서 점진적으로 파라미터 분포를 찾아가는 과정</b>이 머신러닝(베이지안 업데이트)이다.</li>
+        </ul>
+
+        <div class="mermaid mt-4 mb-4">
+        graph LR
+            A["사전 확률 P(A)<br>(결과 전 원인의 확률 / 내 믿음)"] -->|"새로운 데이터 B 발생!"| B{"새로운 증거 수집"}
+            B --> C["우도 P(B|A)<br>(원인이 맞다면 데이터가 나올 확률)"]
+            C --> D["사후 확률 P(A|B)<br>(데이터 기반으로 확률을 업데이트!)"]
+            D -.->|"업데이트된 사후 확률을<br>다음 번의 사전 확률로 재사용 (무한루프)"| A
+
+            style A fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+            style B fill:#fff9c4,stroke:#fbc02d
+            style C fill:#fff3e0,stroke:#e65100
+            style D fill:#c8e6c9,stroke:#388e3c,stroke-width:2px
+        </div>
+
+        <div class="anime-box" style="border-color: #FF5522; background-color: #FFF2EE;">
+            <img src="이미지/다로나.png" alt="다로나" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF5522;">
+            <div>
+                <div class="anime-box-title" style="color: #DD4411;">💡 [효빈위키 기적의 팩폭] 4호선 다로나의 베이즈 추론 특강!</div>
+                <p class="text-sm text-gray-800">빅분기 필기 계산 문제 단골 손님이자 실기에서도 머신러닝의 뼈대를 이루는 <b>베이즈 정리(Bayes' Theorem)</b>예요! 수식이 어지러워 보이지만 직관적으로 이해하면 껌이랍니다.</p>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>사전 확률(Prior):</b> 데이터가 들어오기 전에 내가 원래 막연하게 믿고 있던 기초 확률. (예: 걸즈 밴드 크라이의 니나가 욱해서 화를 낼 확률 30%)</li>
+                    <li><b>우도/가능도(Likelihood):</b> 그 원인이 진짜 맞다면, 지금 같은 현상(데이터)이 나올 확률. (예: 진짜 화가 났을 때, 갑자기 기타를 집어 던질 확률)</li>
+                    <li><b>사후 확률(Posterior):</b> 새로운 데이터(증거)를 보고 난 후, 최종적으로 <b>업데이트된</b> 확률. (예: 어? 니나가 진짜로 기타를 던졌네? 그럼 욱해서 화가 났을 확률을 95%로 대폭 상향 조정!)</li>
+                </ul>
+                <p class="text-sm text-gray-800 mt-2">즉, 베이지안 머신러닝은 <b>"기존의 내 생각(Prior)에 새로운 데이터(Likelihood)를 들이부어서 끊임없이 내 편견(Posterior)을 스마트하게 고쳐나가는 과정"</b>이라고 보면 돼요. 시험에서는 조건부 확률 숫자를 던져주고 사후 확률을 계산하라고 하니까 덧셈 곱셈만 잘하면 됩니다!</p>
+            </div>
+        </div>
+
+
+        <h3 id="s-4-3">3) 분류에서 베이즈 기법의 적용</h3>
+
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-3 my-3 text-sm">
+            <b>[참고/날개] 나이브 베이즈 (Naive Bayes):</b> 베이즈 이론을 바탕으로 모든 특성이 서로 완벽하게 독립적이라는 나이브한(순진한) 전제를 함.<br>
+            분류기의 목표는 $C_k$에 대해서 확률식이 최대값을 가지는 최적의 클래스 $k$를 찾는 것이다.
+        </div>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">① 나이브 베이즈 분류 (Naive Bayes Classification)</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li>특성들 사이의 <b>완벽한 독립을 가정</b>하는 베이즈 정리를 적용한 확률 분류기이다.</li>
+            <li>단일 알고리즘이 아닌 일반적인 원칙에 근거한 여러 알고리즘들을 이용하여 훈련된다.</li>
+            <li><b>예시:</b> 특정 과일을 글(텍스트)로 인식하게 하는 특성을 생각해보면 '노란색', '둥글다', '표면이 울퉁불퉁', '지름 5cm'인 특성들이 있는데, <b>나이브 베이즈 분류기에서는 이 특성들이 서로 아무런 연관성이 없는 완벽한 독립사건이라고 극단적으로 가정</b>한다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">② 나이브 베이즈의 장점</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li>지도 학습(Supervised) 환경에서 파라미터 연산이 매우 간단하여 <b>훈련 속도가 미친 듯이 빠르고 효율적</b>이다.</li>
+            <li>분류 파라미터를 추정하기 위한 트레이닝 데이터(학습량)의 요구량이 매우 적다.</li>
+            <li>간단한 디자인과 너무 단순무식한 가정에도 불구하고, <b>문서 분류나 스팸 필터링 같은 실제 상황에서 기가 막히게 성능이 잘 나온다.</b></li>
+        </ul>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">③ 나이브 베이즈 분류기의 생성 (확률모델)</h4>
+        <p>인스턴스들은 $N$개의 특성을 나타내는 벡터 $X = (x_1, x_2, \cdots, x_n)$로 표현되며, 이 벡터를 이용하여 $k$개의 가능한 확률적 결과(클래스)를 할당한다.</p>
+        <div class="math-formula">
+            $$ P(C_k | x_1, \dots, x_n) = \underset{k \in \{1, \dots, K\}}{\text{argmax }} P(C_k) \prod_{i=1}^{n} P(x_i | C_k) $$
+        </div>
+        <p class="text-sm mt-1 mb-4 text-gray-700">※ 베이즈 정리와 조건부 확률(독립 사건 곱셈)을 이용하여, 모든 특성의 확률을 곱한 뒤 가장 값이 큰($\text{argmax}$) 클래스로 최종 할당한다.</p>
+
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 mt-4">
+            <h4 class="font-bold text-blue-800">💡 [참고/날개] 문서 이진분류 문제 실전 적용</h4>
+            <p class="text-sm text-blue-900 mt-1">새로운 문서 Doc가 주어졌을 때, 이 문서가 범주 $C_1$(정상 메일)인지 $C_2$(스팸 메일)인지 분류한다면?</p>
+            <div class="math-formula text-sm bg-white my-2">
+                $$ P(C_1 | \text{Doc}) = \frac{P(\text{Doc} | C_1)P(C_1)}{P(\text{Doc})} $$
+                <br>
+                $$ P(C_2 | \text{Doc}) = \frac{P(\text{Doc} | C_2)P(C_2)}{P(\text{Doc})} $$
+            </div>
+            <p class="text-sm text-blue-900 mt-1">나이브 베이즈 모델은 위 두 개의 확률을 계산해서, <b>값이 더 크게 나오는 쪽으로 문서의 범주(스팸 여부)를 최종 할당</b>한다는 심플한 개념이다!</p>
+        </div>
+
+        <h4 class="mt-6 text-[var(--wiki-main)] font-bold">④ 이벤트 모델 (나이브 베이즈의 세부 종류)</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li><b>사전확률 추정:</b> 클래스의 사전확률은 동일하다고 가정하거나, 트레이닝 셋의 클래스 샘플 빈도수(비율)를 기반으로 직접 계산하여 추정한다.</li>
+            <li>이벤트 모델은 사전확률과 특성의 분포에 대한 가정들을 기반으로 데이터를 설명하고 예측한다. 문서 분류나 스팸 필터링처럼 이산적 특성을 가진 경우, <b>다항 분포</b>나 <b>베르누이 분포</b>를 사용한다.</li>
+            <li><b>예시:</b> 다항 분포는 단어의 <b>'등장 횟수'</b>를, 베르누이 분포는 특정 단어의 <b>'존재 유/무(1/0)'</b>와 같은 데이터를 모델링할 때 사용한다.</li>
+        </ul>
+
+        <table class="text-sm w-full mt-4">
+            <tr>
+                <th class="bg-gray-100" style="width: 25%;">이벤트 모델</th>
+                <th class="bg-gray-100">적용사항 및 특징</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-center">가우시안 나이브 베이즈</td>
+                <td>키, 몸무게 등 <b>연속적인 실수 값</b>을 지닌 데이터를 처리할 때, 각 특성들이 가우시안(정규) 분포를 따른다고 가정하고 사용한다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-blue-600">다항분포 나이브 베이즈</td>
+                <td>문서 내에 특정 단어가 <b>'몇 번'</b> 등장했는지 빈도(횟수)를 카운트하여 생성된 이벤트일 경우 사용한다.</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-center text-red-600">베르누이 나이브 베이즈</td>
+                <td>문서 내에 특정 단어가 <b>'있다(1) / 없다(0)'</b> 처럼 독립적인 이진 변수로만 표현될 경우 사용한다.</td>
+            </tr>
+        </table>
+
+        <div class="mermaid mt-4 mb-4">
+        graph TD
+            A["나이브 베이즈 분류기<br>(Naive Bayes)"] --> B{"데이터의 형태가 어떠한가?"}
+            
+            B -- "연속형 변수 (수치 실수값)" --> C["가우시안 나이브 베이즈<br>(정규분포를 따른다고 가정)"]
+            B -- "이산형 변수 (텍스트 마이닝)" --> D{"텍스트를 어떻게 카운트했는가?"}
+            
+            D -- "단어의 [등장 횟수]를 셌다" --> E["다항분포 나이브 베이즈<br>(Multinomial)"]
+            D -- "단어의 [존재 여부 1 or 0]만 봤다" --> F["베르누이 나이브 베이즈<br>(Bernoulli)"]
+
+            style A fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+            style B fill:#fff3e0,stroke:#e65100
+            style C fill:#c8e6c9,stroke:#388e3c
+            style D fill:#fff3e0,stroke:#e65100
+            style E fill:#ffcdd2,stroke:#c62828,stroke-width:2px
+            style F fill:#ffcdd2,stroke:#c62828,stroke-width:2px
+        </div>
+
+        <div class="anime-box" style="border-color: #33AAFF; background-color: #E6F3FF;">
+            <img src="이미지/심세이.png" alt="심세이" class="anime-img" onerror="this.style.display='none'" style="border-color: #33AAFF;">
+            <div>
+                <div class="anime-box-title" style="color: #0077DD;">💻 [효빈위키 족집게 특강] 창전선 심세이의 나이브 베이즈!</div>
+                <p class="text-sm text-gray-800">통계 기반 머신러닝의 끝판왕이자 스팸 메일 필터링의 조상님, <b>나이브 베이즈(Naive Bayes)</b> 출격이다! 이름에 '나이브(Naive; 순진한)'가 붙은 이유는 <b>"모든 특성이 서로 완벽하게 남남(독립)"</b>이라는 말도 안 되게 순진한 가정을 하기 때문이야.</p>
+                <p class="text-sm text-gray-800 mt-2">예를 들어 봇치 더 록! 라이브 티켓 스팸 메일에 '공짜', '당첨', '클릭'이라는 세 단어가 있다고 쳐봐. 보통 사람 뇌라면 "공짜니까 당첨이고 클릭하라는 거군" 하고 연관을 짓겠지만, 이 나이브한 분류기는 세 단어가 아무 관계 없이 우연히 발생한 독립사건이라고 빡통처럼 계산해버려(...). 근데 신기하게도 이 무식한 덧셈곱셈 가정이 현실 스팸 필터링에서 오지게 잘 맞아떨어지는 미친 가성비를 자랑하지!</p>
+                <ul class="list-disc pl-5 text-sm space-y-1 mt-2 text-red-600 font-bold">
+                    <li>시험 치트키 (이벤트 모델 말장난 조심!):</li>
+                    <li>횟수를 셌다 = 다항분포 / 유무(1,0)만 봤다 = 베르누이</li>
+                    <li>이 두 개를 선지에서 맨날 반대로 뒤집어 놓으니까 뇌에 팍 새겨둬! 틀리면 네 점수도 베르누이마냥 0점이 될 수 있어!</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <h2 id="s-5" class="mt-8 border-t-2 border-gray-200 pt-4">05 딥러닝 분석 (Deep Learning)</h2>
+        
+        <h3 id="s-5-1">1) 딥러닝 분석의 개념</h3>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">① 인공신경망 (ANN; Artificial Neural Network)</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li>기계학습과 인지과학에서 <b>동물의 중추신경계(뇌) 뉴런 연결을 통해 영감을 얻은 통계학적 학습 알고리즘</b>이다.</li>
+            <li>시냅스의 결합으로 네트워크를 형성한 인공 뉴런(노드)이 학습을 통해 결합 세기(가중치)를 변화시켜 문제 해결 능력을 가진다.</li>
+            <li><b>초창기 인공신경망의 치명적 문제점:</b>
+                <ul class="list-circle pl-6 mt-1 text-sm">
+                    <li><b>계산속도의 저하:</b> 1980년대 컴퓨터의 똥컴 수준이 알고리즘을 감당하지 못했다.</li>
+                    <li><b>초기치의 의존성:</b> 처음 시작 가중치를 어떻게 꽂느냐에 따라 결과가 발산하거나 진동하는 운빨망겜 문제가 심각했다.</li>
+                    <li><b>과적합 문제:</b> 훈련 데이터만 냅다 외워버려서 실제 테스트 예측 결과와 심각한 괴리가 발생했다.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">② 딥러닝 (Deep Learning) 의 등장</h4>
+        <p>여러 비선형 변환기법의 조합을 통해 <b>높은 수준의 추상화(Abstractions)</b>를 시도하는 기계 학습 알고리즘의 집합으로 정의된다. 과거 ANN의 단점들이 극복되면서 재조명받고 폭발적으로 부각되었다.</p>
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-2 mb-4 text-sm text-gray-500">
+            ※ 추상화: 대량의 데이터나 복잡한 자료들 속에서 자잘한 노이즈는 버리고 <b>핵심적인 내용 또는 엑기스만 요약</b>하는 작업.
+        </div>
+
+        <p class="font-bold mt-4 text-gray-800">▶ 인공지능 관련 기술 분류도 (AI Tech Tree)</p>
+        <div class="mermaid mt-2 mb-4">
+        mindmap
+          root((AI 기술))
+            Machine Learning (기계학습)
+              Supervised (지도)
+              Unsupervised (비지도)
+              Deep Learning (딥러닝)
+            Natural Language Processing (NLP)
+              Text Generation
+              Question Answering
+              Machine Translation
+            Vision (컴퓨터 비전)
+              Image Recognition
+              Machine Vision
+            Speech (음성)
+              Speech to Text
+              Text to Speech
+            Planning & Robotics
+        </div>
+
+        <h4 class="mt-6 text-[var(--wiki-main)] font-bold">③ 딥러닝의 원리 (은닉층의 수직적 확장)</h4>
+        <p>기존 일반 신경망은 학습 수준을 높인답시고 <b>하나의 층 안에 노드를 100개씩 수평으로 무식하게 늘려놓기만</b> 했었다. 하지만 딥러닝은 <b>은닉층(Hidden Layer) 자체를 수직으로 여러 개(Deep) 겹겹이 쌓아</b> 데이터를 여러 단계를 거치도록 구성하였더니 정확도가 상상을 초월하게 향상되었다.</p>
+
+        <div class="mermaid mt-4 mb-4">
+        graph LR
+            subgraph ANN ["일반 신경망 (Shallow)"]
+                direction LR
+                I1((x1)) & I2((x2)) --> H1((h1)) & H2((h2))
+                H1 & H2 --> O1((y))
+            end
+            
+            subgraph DNN ["딥러닝 (Deep Neural Network)"]
+                direction LR
+                DI1((x1)) & DI2((x2)) --> DH1_1((h11)) & DH1_2((h12))
+                DH1_1 & DH1_2 --> DH2_1((h21)) & DH2_2((h22))
+                DH2_1 & DH2_2 --> DO1((y))
+            end
+            
+            style H1 fill:#e1bee7,stroke:#6a1b9a
+            style H2 fill:#e1bee7,stroke:#6a1b9a
+            style DH1_1 fill:#ce93d8,stroke:#6a1b9a
+            style DH1_2 fill:#ce93d8,stroke:#6a1b9a
+            style DH2_1 fill:#ab47bc,stroke:#4a148c
+            style DH2_2 fill:#ab47bc,stroke:#4a148c
+        </div>
+        <p class="text-sm text-center text-gray-500 mb-6">▲ 은닉층이 1개인 일반 신경망(왼쪽)과 은닉층이 여러 개 쌓인 딥러닝(오른쪽)의 직관적 차이</p>
+
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li><b>입력층:</b> 학습을 위한 원본 데이터 입력구.</li>
+            <li><b>은닉층:</b> 입력층과 출력층 사이에서 데이터를 전파하며 복잡한 특징을 추출해내는 딥러닝의 핵심 블랙박스.</li>
+            <li><b>출력층:</b> 최종 분류/예측 결과값 출력.</li>
+            <li><b>활성함수(Activation Function):</b> 임계값을 이용해 노드의 전기 신호 활성화 여부를 필터링하는 스위치. (시그모이드, tanh, <b>ReLU</b> 등)</li>
+        </ul>
+
+
+        <h3 id="s-5-2" class="mt-8 border-t-2 border-gray-200 pt-4">2) 딥러닝 분석 알고리즘의 4대장</h3>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">① 심층 신경망 (DNN; Deep Neural Network)</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li>입력층과 출력층 사이에 <b>여러 개의 은닉층(2개 이상)</b>들로 층층이 이뤄진 인공 신경망의 뼈대다.</li>
+            <li>모든 입력과 출력 노드가 1:1로 촘촘하게 연결된 <b>완전 연결 구조(Fully-Connected)</b>를 가진다.</li>
+            <li>복잡한 비선형 관계들을 훌륭하게 모델링할 수 있으며, 물체 식별 모델에서는 각 물체가 영상의 기본적 요소들의 <b>'계층적 구성'</b>으로 표현된다. (예: 점 $\rightarrow$ 선 $\rightarrow$ 눈/코/입 $\rightarrow$ 얼굴)</li>
+        </ul>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">② 합성곱 신경망 (CNN; Convolutional Neural Network) - 이미지 처리의 신</h4>
+        <p>인간의 시신경 구조를 모방한 모델. 이미지를 1차원으로 쫙 펴버려서 공간적 형상을 박살내버리던 과거 DNN의 단점을 완벽히 극복하고, <b>2차원 구조의 입력 데이터를 형상 유지한 채로 충분히 활용</b>할 수 있게 만든 기법이다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li>하나 또는 여러 개의 <b>합성곱 계층(Convolutional Layer)</b>과 특징을 압축하는 <b>통합 계층(Pooling Layer)</b>들을 반복하며 이미지의 특징을 돋보기처럼 뽑아낸다.</li>
+            <li>마지막 출력부에는 기존의 DNN 계층(Fully-Connected)을 붙여서 최종 분류를 수행한다. 영상, 음성 분야 모두에서 압도적인 성능을 낸다.</li>
+        </ul>
+
+        <div class="mermaid mt-4 mb-4">
+        graph LR
+            Input["INPUT<br>32x32 Image"] -->|"Convolutions"| C1["C1: feature maps<br>6@ 28x28"]
+            C1 -->|"Subsampling<br>(Pooling)"| S1["S1: feature maps<br>6@ 14x14"]
+            S1 -->|"Convolutions"| C2["C2: feature maps<br>16@ 10x10"]
+            C2 -->|"Subsampling"| S2["S4: feature maps<br>16@ 5x5"]
+            S2 -->|"Flatten"| FC1["C5: layer<br>120 nodes"]
+            FC1 -->|"Fully Connected"| FC2["F6: layer<br>84 nodes"]
+            FC2 -->|"Gaussian<br>Classification"| Output["OUTPUT<br>10 classes"]
+            
+            style Input fill:#e1f5fe,stroke:#0277bd
+            style Output fill:#ffcdd2,stroke:#c62828
+        </div>
+        <p class="text-sm text-center text-gray-500 mb-6">▲ CNN의 전설적인 시조새 모델 'LeNet-5'의 층별 구조</p>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">③ 순환 신경망 (RNN; Recurrent Neural Network)</h4>
+        <p>순서를 가진 <b>시퀀스(시계열) 데이터</b>를 입력하여, 노드 유닛 사이의 연결이 시간 축을 따라 <b>순환적 구조(뫼비우스의 띠)</b>를 갖는 신경망이다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li>일반적인 순방향 신경망(Feed-forward)과 달리, 임의의 긴 문장 입력을 처리하기 위해 <b>신경망 내부에 '기억(메모리)'을 간직하고 활용</b>한다.</li>
+            <li>새로운 단어가 들어올 때마다 네트워크는 과거까지의 요약된 기억을 조금씩 수정하며 문맥을 파악한다. (사람이 앞 단어를 기억하며 소설을 읽는 방식과 동일!)</li>
+            <li>필기체 인식, <b>자연어 번역, 음성 인식</b> 등 시간의 흐름이 생명인 분야에서 씹어먹는 성능을 자랑한다.</li>
+            <li><b>파생 알고리즘:</b> 장기의존성(앞 기억을 까먹는 치매 현상)을 해결한 <b>LSTM</b>, GRU, Bi-directional RNN 등이 있다.</li>
+        </ul>
+
+        <div class="mermaid mt-4 mb-4">
+        graph LR
+            subgraph Folded ["순환 신경망 (RNN) 셀 구조"]
+                direction BT
+                Input(("Input<br>Cell")) -->|"입력"| Recurrent(("Recurrent<br>Cell"))
+                Recurrent -->|"출력"| Output(("Output<br>Cell"))
+                Recurrent -->|"과거의 기억을<br>다시 루프!"| Recurrent
+                
+                style Input fill:#bbdefb,stroke:#0d47a1
+                style Recurrent fill:#e1bee7,stroke:#6a1b9a,stroke-width:2px
+                style Output fill:#ffcdd2,stroke:#b71c1c
+            end
+        </div>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">④ 심층 신뢰 신경망 (DBN; Deep Belief Network)</h4>
+        <p>잠재변수(Latent Variable)의 다중계층으로 이루어진 그래프 생성 모형이다. 계층 간에 상하 연결은 있지만, <b>같은 층(계층 내) 유닛 간에는 수평적 연결이 없는 제한적 구조(RBM)</b>를 차곡차곡 쌓아 올린 형태다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li>비지도학습 방식의 <b>선행학습(Pre-training)</b>을 통해 가중치 초기값을 훌륭하게 잡아놓은 후, 역전파를 통해 가중치를 정밀하게 깎는 <b>미조정(Fine-tuning)</b> 단계를 거친다.</li>
+            <li>이 특성 덕분에 <b>정답(라벨)이 달린 훈련용 데이터가 적을 때 구세주처럼 굉장히 유용</b>하다. 가중치 초기값이 개판으로 수렴하는 기존 딥러닝의 고질적 문제를 깔끔하게 해결해 속도와 성능을 대폭 끌어올린다.</li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #6677CC; background-color: #F0F2FA;">
+            <img src="이미지/전노아.png" alt="전노아" class="anime-img" onerror="this.style.display='none'" style="border-color: #6677CC;">
+            <div>
+                <div class="anime-box-title" style="color: #4455AA;">💡 [효빈위키 꿀팁] 빈효선 전노아가 알려주는 딥러닝 4대장!</div>
+                <p class="text-sm text-gray-800">이 4대장 녀석들은 빅분기 합격의 마지막 관문이야! 출제위원들의 말장난 낚시 그물을 찢어 발겨줄게!</p>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>DNN (심층 신경망):</b> 은닉층을 수직으로 깊게(Deep) 쌓은 완전 연결망(Fully-Connected). 가장 기초적인 뼈대지.</li>
+                    <li><b>CNN (이미지 특화):</b> 시험 문제에 <b>'이미지', '2차원 형상 유지', '합성곱(필터)', '풀링'</b> 나오면 생각할 것도 없이 CNN 찍어!</li>
+                    <li><b>RNN (텍스트/시계열 특화):</b> 시험 문제에 <b>'시퀀스', '음성 인식', '순서', '과거의 기억(Memory)'</b> 나오면 1초 만에 RNN이야! <b>LSTM</b>은 이 RNN이 긴 문장을 읽다가 앞부분 기억을 잊어버리는 치명적 단점을 보완한 진화형 모델이지!</li>
+                    <li><b>DBN (심층 신뢰):</b> 키워드는 <b>'사전 훈련(Pre-training)'</b>과 <b>'미조정(Fine-tuning)'</b>이야. 데이터가 턱없이 부족할 때 혼자 자율학습 시켜서 기초 체력을 키워놓는 미친 가성비 모델이지!</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <h2 id="s-6">06 비정형 데이터 분석</h2>
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-3 my-3 text-sm">
+            <b>[참고/날개]</b><br>
+            비정형 데이터는 숫자 데이터와 달리 그림이나 영상, 문서처럼 <b>형태와 구조가 완전히 깨져서 정형화 되지 않은 날것의 데이터</b>이다. 그 자체만으론 데이터베이스에 질의(SQL) 처리를 할 수 없으므로, NLP 기법 등을 통해 의미의 특징 벡터를 추출하여 정형으로 변환하는 지독한 전처리가 필수다.
+        </div>
+
+        <h3 id="s-6-1">1) 비정형 데이터의 특징 및 3형제 비교</h3>
+        <p>언어 분석이 가능한 카톡 텍스트나, 유튜브 영상, 인스타 이미지 같은 멀티미디어 파일이 대표적인 비정형 데이터이다. (※ 웹 페이지 HTML의 경우 태그가 있어서 반정형 데이터로 보기도 하지만, 텍스트 마이닝 대상이 되므로 비정형 챕터에 같이 묶여 등장한다.)</p>
+
+        <table class="text-sm w-full mt-4 text-center">
+            <tr>
+                <th class="bg-gray-100" style="width: 20%;">형태</th>
+                <th class="bg-gray-100">특징 및 수집 난이도</th>
+                <th class="bg-gray-100" style="width: 20%;">잠재적 가치</th>
+            </tr>
+            <tr>
+                <td class="font-bold text-[var(--wiki-main)]">정형 데이터<br>(Structured)</td>
+                <td class="text-left pl-4">내부 DB 시스템인 경우가 대부분이라 수집과 처리가 매우 <b>쉽다(하)</b>.</td>
+                <td class="font-bold text-gray-500">하<br>(이미 다 털어먹음)</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-blue-600">반정형 데이터<br>(Semi-structured)</td>
+                <td class="text-left pl-4">API나 HTML 형태로 제공되며, 데이터 메타구조를 해석하는 기술이 요구된다. <b>(중)</b></td>
+                <td class="font-bold text-blue-600">중</td>
+            </tr>
+            <tr>
+                <td class="font-bold text-red-600">비정형 데이터<br>(Unstructured)</td>
+                <td class="text-left pl-4">텍스트 마이닝, NLP 파싱 등 복잡한 전처리가 필요해 수집 및 처리가 <b>지옥급으로 어렵다(상)</b>.</td>
+                <td class="font-bold text-red-600">상<br>(황금 노다지!)</td>
+            </tr>
+        </table>
+
+        <div class="anime-box" style="border-color: #EE0022; background-color: #FFF0F2;">
+            <img src="이미지/미소하.png" alt="미소하" class="anime-img" onerror="this.style.display='none'" style="border-color: #EE0022;">
+            <div>
+                <div class="anime-box-title" style="color: #CC0011;">🎀 [효빈위키 꿀팁] 5호선 미소하의 정형/비정형 가치 밀당!</div>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li>수집하고 처리하기는 당연히 표 안에 얌전히 갇혀 있는 <b>정형 데이터가 압도적으로 편해요(수집 난이도 하)</b>. 하지만 정형 데이터는 이미 분석할 대로 다 해봐서 남은 단물이 별로 없죠 <b>(잠재적 가치 하)</b>.</li>
+                    <li>반면 이미지나 텍스트 같은 <b>비정형 데이터</b>는 파싱하고 전처리하기가 너무너무 화가 나지만 <b>(수집 난이도 상)</b>, 일단 분석 시스템을 뚫기만 하면 남들이 모르는 어마어마한 통찰을 얻을 수 있어서 <b>잠재적 가치가 압도적으로 높습니다(상)!</b> 시험 문제에서 <del>"비정형 데이터는 수집이 쉽고 잠재적 가치가 낮다"</del> 라고 오답 선지가 자주 나오니 1초 만에 걸러내세요!</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 id="s-6-2">2) 비정형 데이터의 분석 기법들</h3>
+        <p>빅데이터 환경에서 80% 이상의 방대한 찌꺼기(?)가 비정형 데이터이므로 이를 정련하여 가치를 뽑아내는 것은 현대 AI 산업의 핵심이다.</p>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">① 데이터 마이닝 (Data Mining = KDD)</h4>
+        <p>대규모로 저장된 데이터 안에서 <b>체계적이고 자동적으로 통계적 규칙이나 패턴을 분석하여 가치있는 정보를 추출(KDD)</b>하는 과정이다.</p>
+        <ul class="list-disc pl-6 space-y-2 mb-4 mt-2 text-sm text-gray-800">
+            <li><b>분류(Classification):</b> 이미 정답지(VIP/블랙)가 있고, 새 고객이 오면 어느 쪽인지 추론(지도학습).</li>
+            <li><b>군집화(Clustering):</b> 정답지 없이, 특성을 공유하는 놈들끼리 알아서 묶기(비지도학습).</li>
+            <li><b>연관성(Association):</b> <b>'동시에'</b> 장바구니에 담긴 사건 간의 짝꿍 관계 규명. (맥주+기저귀)</li>
+            <li><b>연속성(Sequencing):</b> <b>'특정 기간(시간의 선후)'</b>에 걸쳐 발생하는 연관 관계 규명. (폰 구매 $\rightarrow$ 1주 뒤 케이스 구매)</li>
+            <li><b>예측(Forecasting):</b> 대용량 패턴 기반으로 미래 떡상/떡락 예측.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">② 텍스트 마이닝 (Text Mining) & 자연어 처리 (NLP)</h4>
+        <p>전통적 마이닝의 한계를 벗어나, 인간의 언어(자연어) 텍스트를 <b>NLP</b> 방식으로 전처리하여 문서 분류, 요약, 군집화 등을 수행해 숨겨진 의미를 캐낸다.</p>
+        
+        <div class="mermaid mt-4 mb-4">
+        graph LR
+            Input["입력 (Input)<br>원시 텍스트 수집"] -->|"문제 범위에 맞는<br>데이터 확인"| Ready["준비"]
+            Ready -->|"조직화된 텍스트를<br>정형화 양식(벡터)으로 변환"| Preprocess["전처리 (Preprocessing)"]
+            Preprocess -->|"의미 있는 패턴,<br>경향, 지식 발견"| Extract["지식 추출<br>(분류/클러스터링)"]
+            Extract --> Output["최종 출력 (Output)"]
+            
+            style Input fill:#e3f2fd,stroke:#1565c0
+            style Ready fill:#fff9c4,stroke:#fbc02d
+            style Preprocess fill:#ffcdd2,stroke:#d32f2f,stroke-width:2px
+            style Extract fill:#c8e6c9,stroke:#388e3c
+            style Output fill:#e1bee7,stroke:#6a1b9a
+        </div>
+        <p class="text-sm text-center text-gray-500 mb-4">▲ 텍스트 마이닝의 4단계 파이프라인 (시험 순서 배열 문제 대비!)</p>
+
+        <p class="font-bold mt-4 text-gray-800">▶ Text to Vector 변환 기법 (자연어를 기계가 읽는 숫자로!)</p>
+        <ul class="list-disc pl-6 space-y-2 mb-4 mt-2 text-sm text-gray-800">
+            <li><b>Bag-of-Words (BoW):</b> 문맥 순서 싹 무시하고, 문장에 <b>단어가 몇 번 등장했는지 횟수(빈도)</b>만 카운트해서 가방에 때려 넣는 원초적 기법.</li>
+            <li><b>TF-IDF:</b> BoW의 단점 보완. "아, 음, 에" 처럼 모든 문서에 흔하게 나오는 쓰레기 단어에는 페널티(IDF)를 주고, <b>특정 문서에만 유독 자주 등장하는 희귀 핵심 단어에 가중치(TF)를 팍팍 주는 스마트한 기법.</b></li>
+            <li><b>Word Embeddings:</b> 단어 간의 <b>'의미적 유사성'</b>을 보존하기 위해 단어를 고차원 실수 벡터 공간에 좌표로 쏴버리는 기법. (예: 왕-남자+여자는 여왕이라는 연산이 가능해짐). Word2Vec, GloVe 등이 있다.</li>
+            <li><b>Sentence Embeddings:</b> 단어를 넘어 문장 전체의 문맥 의미를 벡터로 변환. BERT, GPT 등 초거대 AI가 쓴다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">③ 웹 마이닝 (Web Mining) & 오피니언 마이닝 & 리얼리티 마이닝</h4>
+        <ul class="list-disc pl-6 space-y-3 mb-4 mt-2 text-sm text-gray-800">
+            <li><b>웹 마이닝:</b> 인터넷 로그, 클릭 패턴 등을 캐내는 기술. 3가지 핵심 유형으로 나뉜다.
+                <br>1) <b>웹구조 마이닝</b>: 사이트 링크 연결망 구조 요약.
+                <br>2) <b>웹내용 마이닝</b>: 웹페이지 게시글 텍스트 자체를 추출.
+                <br>3) <b>웹사용 마이닝</b>: 고객이 남긴 접속 로그, 행동 패턴 탐색. (암기법: 구.내.사)
+            </li>
+            <li><b>오피니언 마이닝:</b> 단순 주제 파악을 넘어 <b>감정, 뉘앙스, 긍정/부정 태도</b>를 판별하는 기술. <b>'감정 분석(Sentiment Analysis)'</b>의 끝판왕으로 영화 별점이나 기업 SNS 평판 악플을 분석할 때 영혼까지 털어먹는다.</li>
+            <li><b>리얼리티 마이닝:</b> 스마트폰 GPS, WiFi, 만보기 모션센서 등에서 쏟아지는 <b>'현실 인간 행동' 데이터</b>를 모아 라이프 로그와 사회적 행위를 분석하는 기법. 광고, 도시 계획에 쓰인다.</li>
+        </ul>
+
+    
+        <!-- 나무위키식 하단 내비게이션 틀 시작 -->
+        <div class="wiki-nav-box" id="bigbunNav">
+            <div class="wiki-nav-header">
+                📊 빅데이터분석기사 필기 전체 문서 목록
+            </div>
+            <div class="wiki-nav-toggle" onclick="document.getElementById('bigbunNavContent').classList.toggle('active')">
+                [ 펼치기 · 접기 ]
+            </div>
+            <div class="wiki-nav-content" id="bigbunNavContent">
+                <table class="wiki-nav-table">
+                    <tbody>
+                        <tr>
+                            <th class="bg-nav-red" style="width: 18%;">제1과목<br>빅데이터 분석 기획</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기1-1.html">빅분기1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-1.html">빅분기1-2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-2.html">빅분기1-2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-3.html">빅분기1-2-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-1.html">빅분기1-3-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-2.html">빅분기1-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-3.html">빅분기1-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-4.html">빅분기1-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-1.html">빅분기1-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-2.html">빅분기1-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-1.html">빅분기1-5-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-2.html">빅분기1-5-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-6.html">빅분기1-6</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제2과목<br>빅데이터 탐색</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기2-1.html">빅분기2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-2.html">빅분기2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-3.html">빅분기2-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-red">제3과목<br>빅데이터 모델링</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-1.html">빅분기3-1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-2.html">빅분기3-1-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-3.html">빅분기3-1-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-2.html">빅분기3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-2.html">빅분기3-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-3.html">빅분기3-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-4.html">빅분기3-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-1.html">빅분기3-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-2.html">빅분기3-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-3.html">빅분기3-4-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제4과목<br>빅데이터 결과 해석</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기4-1.html">빅분기4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-2.html">빅분기4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-3.html">빅분기4-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-4.html">빅분기4-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-5.html">빅분기4-5</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-6.html">빅분기4-6</a></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 나무위키식 하단 내비게이션 틀 끝 -->
+
+    </div> <!-- wiki-container end -->
+
+    <footer class="wiki-footer p-6 text-center border-t border-[var(--wiki-border)] bg-[var(--wiki-footer-bg)] text-[var(--wiki-footer-text)]">
+        <div class="font-bold text-sm">
+            이 저작물은 <span class="text-[var(--wiki-text)]">효빈위키</span> 독점 규정에 따라 이용할 수 있습니다.<br>
+            ※ 본 문서는 빅데이터분석기사 필기 제3과목(고급 분석기법 - 베이즈, 딥러닝, 비정형 데이터 분석)의 1-423p ~ 완전판 내용입니다.
+        </div>
+    </footer>
+
+    <!-- 각주 툴팁 구동 JS 및 필수 외부 스크립트 복원 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'wiki-tooltip';
+            document.body.appendChild(tooltip);
+
+            const fnLinks = document.querySelectorAll('a.fn-link');
+            
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        const childNodes = Array.from(targetElement.childNodes);
+                        const tooltipContent = childNodes
+                            .filter(node => node.nodeName !== 'A')
+                            .map(node => node.nodeType === Node.TEXT_NODE ? node.textContent : node.outerHTML)
+                            .join('')
+                            .trim();
+                        
+                        tooltip.innerHTML = tooltipContent;
+                        tooltip.classList.add('visible');
+                        
+                        const rect = this.getBoundingClientRect();
+                        let topPos = rect.bottom + window.scrollY + 8;
+                        let leftPos = rect.left + window.scrollX;
+                        
+                        tooltip.style.display = 'block';
+                        if (leftPos + tooltip.offsetWidth > window.innerWidth) {
+                            leftPos = window.innerWidth - tooltip.offsetWidth - 20;
+                        }
+                        
+                        tooltip.style.left = leftPos + 'px';
+                        tooltip.style.top = topPos + 'px';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    tooltip.classList.remove('visible');
+                });
+            });
+        });
+    </script>
+    
+    <!-- 필수 외부 스크립트 4종 복원 완료 -->
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>북보로 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800&display=swap');
+        
+        :root { 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0022aa; 
+            --wiki-visited: #800080;
+            --wiki-table-header: #7777AA; 
+            --wiki-table-header-text: #ffffff;
+            --wiki-del: #999;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 텍스트 스타일 */
+        .txt-lvl-1 { font-size: 2.8rem !important; font-weight: 800; color: #000000; margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1px; } 
+        h2 { font-size: 1.6rem !important; font-weight: 700 !important; border-bottom: 2px solid var(--wiki-table-header); padding-bottom: 8px; margin-top: 3rem; margin-bottom: 1.2rem; color: var(--wiki-text); display: block; }
+        h3 { font-size: 1.3rem !important; font-weight: 700; margin-top: 2rem; margin-bottom: 10px; color: var(--wiki-text); border-left: 5px solid var(--wiki-table-header); padding-left: 10px; }
+        h4 { font-size: 1.1rem !important; font-weight: 600; margin-top: 1.5rem; margin-bottom: 8px; color: #555; }
+        
+        /* 링크 스타일 */
+        a.wiki-link { color: var(--wiki-link); text-decoration: none; cursor: pointer; }
+        a.wiki-link:hover { text-decoration: underline; }
+        a.wiki-link:visited { color: var(--wiki-visited); }
+
+        /* 표 스타일 */
+        table.wiki-table { border-collapse: collapse; width: 100%; margin: 15px 0; border: 1px solid #ccc; font-size: 0.95rem; }
+        table.wiki-table th, table.wiki-table td { border: 1px solid #ccc; padding: 10px 12px; vertical-align: middle; }
+        table.wiki-table th { background-color: var(--wiki-table-header); color: white; text-align: center; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        table.wiki-table td { background-color: #fff; }
+        table.wiki-table tr:nth-child(even) td { background-color: #fcfcfc; }
+
+        /* 인포박스 */
+        .infobox { 
+            border: 2px solid var(--wiki-table-header); 
+            background-color: #fff; 
+            width: 100%; 
+            max-width: 400px; 
+            font-size: 0.9rem; 
+            margin-bottom: 20px; 
+            float: right; 
+            margin-left: 20px; 
+            border-radius: 4px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .infobox-title { background-color: var(--wiki-table-header); color: white; padding: 12px; text-align: center; font-size: 1.2rem !important; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        .infobox-image { text-align: center; padding: 0; background: white; border-bottom: 1px solid #ddd; }
+        .infobox table { width: 100%; border-collapse: collapse; border: none; }
+        .infobox th { background-color: #f3f0ff; color: #333; width: 130px; text-align: center; padding: 8px; border: 1px solid #ddd; font-weight: bold; }
+        .infobox td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; }
+
+        /* 취소선 스타일 */
+        .del { text-decoration: line-through; color: var(--wiki-del); }
+        .del:hover { color: #555; }
+        
+        /* 분류 박스 */
+        .category-box { border: 1px solid #ccc; background-color: #f5f5f5; padding: 8px 15px; font-size: 0.9rem; margin-bottom: 20px; border-radius: 4px; }
+
+        /* 목차 */
+        .toc { display: inline-block; border: 1px solid #ccc; background-color: #f9f9f9; padding: 15px 25px; margin-bottom: 30px; min-width: 300px; border-radius: 5px; }
+        .toc-title { text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding-left: 0; margin: 0; font-size: 0.95rem; }
+        .toc li { margin-bottom: 4px; }
+        .toc a { text-decoration: none; color: #333; }
+        .toc a:hover { text-decoration: underline; color: var(--wiki-table-header); }
+
+        /* 위키 도구 버튼 */
+        .wiki-tool-group { display: flex; gap: 4px; margin-bottom: 15px; justify-content: flex-end; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 13px; border: 1px solid #ccc; background: linear-gradient(to bottom, #fff, #eee); cursor: pointer; border-radius: 2px; color: #333; text-decoration: none; }
+
+        /* 인용문 */
+        .quote { border-left: 5px solid var(--wiki-table-header); background-color: #f3f0ff; padding: 20px 30px; margin: 20px 0; font-style: italic; color: #555; font-size: 1.05rem; }
+        
+        /* 외부 링크 아이콘 */
+        .ext-link::after { content: " 🔗"; font-size: 0.7em; }
+
+        /* 지하철 노선 배지 */
+        .subway-badge { 
+            display: inline-block; 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            color: white; 
+            font-weight: bold; 
+            font-size: 0.85em; 
+            margin-right: 4px;
+            text-shadow: 0 0 2px rgba(0,0,0,0.5);
+            vertical-align: text-bottom;
+        }
+
+        /* 뱃지, 문서 제목, 인포박스 헤더 내부 하이퍼링크 색상 강제 고정 (글자 파란색 변동 방지) */
+        .subway-badge a, .subway-badge a.wiki-link, .subway-badge a:visited { color: white !important; }
+        .txt-lvl-1 a, .txt-lvl-1 a.wiki-link, .txt-lvl-1 a:visited { color: inherit !important; text-decoration: none !important; }
+        .infobox-title a, .infobox-title a.wiki-link, .infobox-title a:visited { color: inherit !important; text-decoration: none !important; }
+
+        /* 검색창 */
+        .search-bar { border: 1px solid #ccc; padding: 4px 8px; font-size: 14px; width: 250px; }
+        .search-btn { background-color: #555588; color: white; border: none; padding: 4px 10px; cursor: pointer; font-size: 14px; }
+        
+        /* 공식설정/관광과 해석 텍스트 컬러 */
+        .official-origin { color: #0022aa; font-weight: 500; }
+        .tourism-dept { color: #c90000; font-weight: 500; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <!-- 상단바 -->
+    <nav class="bg-[#7777AA] text-white p-2 px-4 flex justify-between items-center shadow-md sticky top-0 z-50 h-14">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl tracking-tight">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-1">
+            <input type="text" id="searchInput" placeholder="여기에서 검색" class="search-bar rounded-sm text-black" onkeypress="if(event.keyCode==13) handleSearch()">
+            <button onclick="handleSearch()" class="search-btn rounded-sm">🔍</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg pt-6">
+        
+        <!-- 문서 제목 -->
+        <div class="flex justify-between items-end border-b-2 border-gray-400 pb-2 mb-4">
+            <div class="txt-lvl-1">북보로</div>
+            <div class="wiki-tool-group">
+                <a href="#" class="wiki-tool-btn">편집</a>
+                <a href="#" class="wiki-tool-btn">토론</a>
+                <a href="#" class="wiki-tool-btn">역사</a>
+            </div>
+        </div>
+
+        <!-- 분류 박스 -->
+        <div class="category-box">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="효빈광역시_관광.html" class="wiki-link">효빈광역시/관광</a> | 
+            <a href="중구(효빈).html" class="wiki-link">중구(효빈)</a> | 
+            <a href="거리.html" class="wiki-link">거리/상권</a> | 
+            <a href="서점.html" class="wiki-link">도서/출판</a> | 
+            <a href="억지밈.html" class="wiki-link">억지 밈</a>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-8 relative">
+            
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit lg:sticky lg:top-20">
+                <div class="toc-title">목차 [접기]</div>
+                <ul class="space-y-1">
+                    <li>1. <a href="#s-1">개요</a></li>
+                    <li>2. <a href="#s-2">지명 유래와 아재 개그 브랜딩</a>
+                        <ul class="pl-4 text-sm text-gray-600">
+                            <li>2.1. <a href="#s-2-1">"북(Book) 보는 길이라서 북보로!"</a></li>
+                            <li>2.2. <a href="#s-2-2">순문학과 라이트 노벨의 기묘한 공존</a></li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3">관광과의 광기: 노선도 무시한 '시로카네 린코' 성지화</a></li>
+                    <li>4. <a href="#s-4">주요 명소 및 책방</a>
+                        <ul class="pl-4 text-sm text-gray-600">
+                            <li>4.1. <a href="#s-4-1">북보로 문학관 & 지하 코믹마켓</a></li>
+                            <li>4.2. <a href="#s-4-2">무음(無音) 카페 '백금(白金)'</a></li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5">교통</a></li>
+                    <li>6. <a href="#s-6">여담</a></li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden lg:order-last">
+                <div class="infobox-title">북보로 책방거리<br><span class="text-sm font-normal">Bukbo-ro Book Street</span></div>
+                <div class="infobox-image">
+                    <img src="이미지/북보로.png" 
+                         alt="북보로 책방거리 풍경" 
+                         class="w-full h-auto object-cover"
+                         onerror="this.src='https://placehold.co/400x300?text=Bukbo-ro+Book+Street';">
+                    <div class="mt-2 text-sm font-bold text-[#7777AA] p-2">"인문학의 향기와 라노벨의 광기가 공존하는 곳"</div>
+                </div>
+                <table>
+                    <tr><th>위치</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="중구(효빈).html" class="wiki-link">중구</a> 중보로 일대 (북보로 구간)</td></tr>
+                    <tr><th>구간 길이</th><td>약 1.5km</td></tr>
+                    <tr><th>관리 주체</th><td>효빈광역시 중구청</td></tr>
+                    <tr><th>핵심 테마</th><td>독립서점, 헌책방, <a href="라이트_노벨.html" class="wiki-link">라이트 노벨</a>, <span class="del"><a href="시로카네_린코.html" class="wiki-link">시로카네 린코</a></span></td></tr>
+                    <tr><th>인접 교통</th><td>
+                        <span class="subway-badge" style="background-color:#FF8899">7호선</span> 중보로역
+                    </td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <!-- 본문 내용 -->
+        <h2 id="s-1">1. 개요</h2>
+        <div class="quote">
+            <strong>"셰익스피어 전집 옆에 소드 아트 온라인이 꽂혀 있는 광경을 보고 싶다면."</strong>
+        </div>
+        <p>
+            <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="중구(효빈).html" class="wiki-link">중구</a>의 중심 도로인 '중보로(中保路)'의 북쪽 구간을 일컫는 거리. 
+        </p>
+        <p class="mt-2">
+            원래는 오래된 헌책방과 조용한 독립서점들이 모여 있던 소박한 골목이었으나, 효빈시 관광과의 기상천외한 언어유희 브랜딩과 서브컬처 성지화 작업이 더해지면서 <strong>순문학과 서브컬처 도서가 한데 뒤엉킨 거대한 '혼돈의 책방 거리'</strong>로 마개조되었다. 지금은 책을 좋아하는 일반 시민들과 오타쿠들이 나란히 커피를 마시며 독서하는 진풍경이 펼쳐지는 명소다.
+        </p>
+
+        <h2 id="s-2">2. 지명 유래와 아재 개그 브랜딩</h2>
+
+        <h3 id="s-2-1">2.1. "북(Book) 보는 길이라서 북보로!"</h3>
+        <p>
+            '북보로(北保路)'의 공식적인 지명 유래는 과거 중구 북쪽에 있던 군사 방어 시설인 '북쪽 보루(北堡)'로 향하던 길이라는 뜻에서 파생되었다. 
+            하지만 효빈시 관광과는 이 한자어를 과감히 무시하고 <strong>"북(Book) 보(보는) 로(길)! 책방거리네요!"</strong>라는 희대의 아재 개그를 공식 캐치프레이즈로 밀어붙였다. <span class="del">부장님 맙소사</span>
+        </p>
+        <p class="mt-2">
+            이 끔찍한 말장난은 놀랍게도 대성공을 거두었다. 시청에서 '도서 관련 업종 입점 시 임대료 및 세금 파격 감면'이라는 정책을 내걸자 전국 각지의 독립서점, 북카페, 헌책방 사장님들이 이곳으로 몰려들었기 때문이다.
+        </p>
+
+        <h3 id="s-2-2">2.2. 순문학과 라이트 노벨의 기묘한 공존</h3>
+        <p>
+            관광과가 주는 혜택을 받기 위해서는 조건이 하나 있었다. 이른바 <strong>'서브컬처 도서 20% 의무 비치 할당제'</strong>. 
+            거리의 테마를 유지하면서도 주 소비층인 오타쿠들을 끌어들이기 위해, 아무리 진지한 인문학 서점이라도 매장의 한편에는 반드시 만화책이나 <a href="라이트_노벨.html" class="wiki-link">라이트 노벨</a>을 꽂아두어야만 지원금을 받을 수 있었다. 
+            그 결과, 헤르만 헤세와 무라카미 하루키 옆에 미소녀 일러스트가 그려진 라노벨이 당당하게 진열되는 환장의 디스플레이가 북보로의 표준 규격이 되어버렸다.
+        </p>
+
+        <h2 id="s-3">3. 관광과의 광기: 노선도 무시한 '시로카네 린코' 성지화</h2>
+        <p>
+            북보로를 관통하는 유일한 지하철 노선은 <strong><span class="subway-badge" style="background-color:#FF8899">7호선</span></strong>이다. 
+            7호선의 테마 컬러는 분홍색, 마스코트는 <a href="임세정.html" class="wiki-link">임세정</a>/<a href="임세하.html" class="wiki-link">임세하</a>, 엮이는 캐릭터는 <strong><a href="치하야_아논.html" class="wiki-link">치하야 아논</a></strong>이다. 원래대로라면 이곳은 아논의 구역이 되어야 맞다.
+        </p>
+        <div class="quote">
+            "하지만 책방 거리잖아요? 그럼 노선이 무슨 상관입니까! 여긴 당연히 6호선(유키나 라인)의 독서광, <strong><a href="시로카네_린코.html" class="wiki-link">시로카네 린코</a></strong>의 성지입니다!"
+        </div>
+        <p>
+            효빈시 관광과는 지하철 노선도마저 무시하는 기적의 논리적 도약을 선보이며, 6호선(<span style="color:#881188">보라색</span>)이 지나가지도 않는 이곳을 대놓고 '린코의 성지'로 선포하는 만행을 저질렀다. 
+        </p>
+        <p class="mt-2">
+            거리 곳곳의 보도블록은 고풍스러운 흑백 건반 패턴으로 깔려 있으며, 가로등에는 검은색 드레스를 입은 캐릭터 실루엣이 그려져 있다. <strong>"아논(7호선)이 학생회장인 린코 선배(6호선)에게 공부를 배우러 북보로에 온 거다!"</strong>라는 관광과 직원의 뻔뻔한 세계관 융합 변명은 덤이다. 심지어 카페에서 타건음이 조용한 '저소음 적축' 키보드로 타이핑을 하거나 조용히 책을 읽는 손님에게는 추가 할인을 해주는 <strong>'린코 할인'</strong> 제도가 존재한다.
+        </p>
+
+        <h2 id="s-4">4. 주요 명소 및 책방</h2>
+
+        <h3 id="s-4-1">4.1. 북보로 문학관 & 지하 코믹마켓</h3>
+        <p>
+            북보로 한가운데 위치한 3층짜리 서양식 근대 건축물. 지상 1층과 2층은 효빈시의 문학사와 희귀 고서를 전시하는 진지한 문학관이다. 
+            그러나 지하 1층으로 내려가면 분위기가 180도 바뀐다. 효빈시 동인 작가들의 회지가 위탁 판매되고 있으며, 주말마다 소규모 '코믹 마켓'이 열리는 <strong>오타쿠들의 언더그라운드 벙커</strong>가 펼쳐진다.
+        </p>
+
+        <h3 id="s-4-2">4.2. 무음(無音) 카페 '백금(白金)'</h3>
+        <p>
+            시로카네 린코의 성씨인 백금(白金, Shirokane)에서 이름을 딴 극단적인 북카페. 
+            매장 내부에서는 <strong>절대 정숙</strong>이 원칙이다. 주문조차 테이블에 놓인 메모장에 글씨를 적어서 점원에게 건네주어야 한다. 만약 소리를 내서 떠들면, 메이드복을 입은 사장님이 다가와 "쉿" 하고 입술에 손가락을 갖다 대는 <span class="del">포상</span> 경고를 받게 된다.
+        </p>
+
+        <h2 id="s-5">5. 교통</h2>
+        <table class="wiki-table">
+            <thead>
+                <tr>
+                    <th>노선</th>
+                    <th>가까운 역</th>
+                    <th>비고</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-center font-bold">
+                        <span class="subway-badge" style="background-color:#FF8899">7호선</span>
+                    </td>
+                    <td><a href="중보로역.html" class="wiki-link">중보로역</a></td>
+                    <td>
+                        북보로의 시작점. 7호선(아논 테마) 단일 역이지만, 역사 내부 벽면은 거대한 책장 모양의 트릭아트로 꾸며져 있다. 6호선이 없는데도 린코 굿즈를 파는 뻔뻔한 가판대가 출구 쪽에 자리 잡고 있다.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="s-6">6. 여담</h2>
+        <ul class="list-disc pl-6 space-y-2">
+            <li>초기에는 순문학 애호가들과 라이트 노벨 독자들이 묘한 신경전을 벌였으나, 시간이 지나면서 오타쿠들이 매너 있게 음료를 시키고 구석에서 조용히 책만 읽다 가는 완벽한 손님이라는 사실이 밝혀지며 지금은 매우 평화롭게 공존하고 있다.</li>
+            <li>북보로 골목골목에는 유독 길고양이가 많다. 서점 주인들이 책을 갉아먹는 쥐를 잡기 위해 고양이를 우대하다 보니 자연스럽게 '고양이 친화 거리'가 되었다. 고양이가 라노벨 코너 위에서 식빵을 굽고 있는 모습은 흔한 일상이다.</li>
+            <li>1호선(<a href="고나미.html" class="wiki-link">고나미</a>/<a href="하나조노_타에.html" class="wiki-link">하나조노 타에</a>)의 <a href="북문로역.html" class="wiki-link">북문로</a>와 이름이 비슷해서 헷갈리는 관광객이 종종 있다. 둘 다 중구에 있지만, 북문로는 일렉 기타 앰프 소리가 울려 퍼지는 시끄러운 곳이고, 북보로는 책 넘어가는 소리만 들리는 조용한 곳이니 주의하자.</li>
+        </ul>
+
+        <!-- 푸터 -->
+        <footer class="wiki-footer mt-10 pt-4 border-t border-gray-300">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>
+    </div>
+
+    <!-- 검색 및 자동 링크 스크립트 -->
+    <script>
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+            const target = query + '.html';
+            window.location.href = target;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // 자동 링크 생성 키워드 (가장 긴 단어부터 매칭되도록 정렬 필요)
+            const keywords = [
+                "효빈광역시", "중구(효빈)", "북보로", "중보로역", "북문로", "북문로역", "관광과", "억지밈", 
+                "라이트 노벨", "시로카네 린코", "미나토 유키나", "라세나", "치하야 아논",
+                "고나미", "하나조노 타에", "1호선", "6호선", "7호선", "임세정", "임세하"
+            ];
+
+            keywords.sort(function(a, b) {
+                return b.length - a.length;
+            });
+
+            const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regexPattern = keywords.map(escapeRegExp).join('|');
+            const regex = new RegExp(`(${regexPattern})`, 'g');
+
+            function linkify(node) {
+                if (node.nodeType === 3) { 
+                    const match = node.nodeValue.search(regex);
+                    if (match !== -1) {
+                        const span = document.createElement('span');
+                        span.innerHTML = node.nodeValue.replace(regex, '<a href="$1.html" class="wiki-link">$1</a>');
+                        node.parentNode.replaceChild(span, node);
+                    }
+                } 
+                else if (node.nodeType === 1 && node.nodeName !== 'A' && node.nodeName !== 'SCRIPT' && node.nodeName !== 'STYLE') {
+                    Array.from(node.childNodes).forEach(linkify);
+                }
+            }
+            
+            linkify(document.body);
+        });
+    </script>
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+
+</html>

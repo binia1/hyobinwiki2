@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>분석 절차 수립 및 환경 구축 - 효빈위키</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Mermaid.js (최신 안정화 버전, 구문오류 원천차단) -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
+    <!-- MathJax for LaTeX Rendering -->
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      chtml: {
+        fontURL: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2'
+      }
+    };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #00CCAA; 
+            --wiki-line-color: #00CCAA; 
+            
+            --wiki-header-bg: var(--wiki-line-color);
+            --wiki-header-text: #ffffff;
+            --wiki-table-header-bg: #e6faf6;
+            --wiki-table-header-text: #000000;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f8f9fa; 
+            --wiki-link: #008877; 
+            --wiki-footer-bg: #f0f0f0;
+            --wiki-footer-text: #777;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #33eebb; 
+            --wiki-table-header-bg: #222;
+            --wiki-table-header-text: #ffffff;
+            --wiki-footer-bg: #1a1a1a;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.7; word-break: keep-all; margin: 0; transition: background-color 0.3s, color 0.3s; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 30px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1.5px; border-bottom: 3px solid var(--wiki-main); padding-bottom: 15px;} 
+        
+        h2 { font-size: 2rem; font-weight: 900; border-bottom: 2px solid var(--wiki-line-color); padding-bottom: 8px; margin-top: 3.5rem; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; color: var(--wiki-text); }
+        h2::before { content: ""; display: inline-block; width: 6px; height: 2rem; background: var(--wiki-line-color); }
+        h3 { font-size: 1.5rem; font-weight: 800; margin-top: 2.5rem; margin-bottom: 15px; border-left: 6px solid var(--wiki-line-color); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 10px; color: var(--wiki-text); }
+
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; border: 1px solid var(--wiki-border); font-size: 0.95rem; }
+        th, td { border: 1px solid var(--wiki-border); padding: 10px 12px; text-align: left; vertical-align: middle; color: var(--wiki-text); }
+        th { background-color: var(--wiki-table-header-bg); font-weight: 800; text-align: center; border-bottom: 2px solid var(--wiki-main);}
+
+        .infobox { float: right; margin-left: 25px; margin-bottom: 20px; width: 350px; clear: right; border: 2px solid var(--wiki-main); border-radius: 4px; background-color: var(--wiki-bg); }        
+        .infobox-top { background-color: var(--wiki-main); padding: 20px 10px; text-align: center; border-bottom: 1px solid var(--wiki-border); color: #fff; }
+        .infobox-top b { font-size: 1.8rem; line-height: 1.2; letter-spacing: -1px; font-weight: 900; }
+
+        .toc { display: inline-block; min-width: 300px; margin-bottom: 25px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 20px; border-radius: 4px; }        
+        .toc-title { text-align: center; font-weight: 900; border-bottom: 1px solid var(--wiki-border); margin-bottom: 15px; padding-bottom: 10px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding: 0; margin: 0; line-height: 1.6; font-weight: 600;}
+        .toc li { margin-bottom: 4px; }
+        .toc .pl-5 { padding-left: 20px; font-weight: 400;}
+
+        .wiki-link { color: var(--wiki-link); font-weight: 700; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        .quote-box { background: var(--wiki-gray-bg); padding: 15px 20px; font-weight: 600; border-left: 5px solid var(--wiki-line-color); margin-bottom: 20px; color: var(--wiki-text); border-radius: 4px;}
+        .exam-box { border: 2px solid #ff4444; background-color: #fffafa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        [data-theme='dark'] .exam-box { background-color: #2a1111; border-color: #cc3333; }
+        .exam-title { font-weight: 900; color: #ff4444; margin-bottom: 10px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;}
+        
+        .anime-box { border: 2px dashed; background-color: #fdf5fd; padding: 20px; border-radius: 8px; margin: 20px 0; color: #333; display: flex; gap: 15px; align-items: flex-start;}
+        [data-theme='dark'] .anime-box { background-color: #2a1a2a; color: #eee;}
+        .anime-box-title { font-weight: 900; font-size: 1.15rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;}
+        .anime-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid; flex-shrink: 0; background-color: #fff;}
+
+        .mermaid { background: var(--wiki-bg); padding: 15px; border-radius: 8px; margin: 15px 0; display: flex; justify-content: center; overflow-x: auto; border: 1px solid var(--wiki-border);}
+        
+        del { color: #999; text-decoration: line-through; }
+        
+        /* 완벽한 LaTeX 렌더링을 위한 수학 수식 박스 */
+        .math-formula { background: var(--wiki-gray-bg); padding: 15px 20px; border-radius: 8px; text-align: center; margin: 20px 0; border: 1px solid var(--wiki-border); overflow-x: auto; font-size: 1.1rem; line-height: 1.8;}
+
+        /* 각주 및 툴팁 전용 CSS */
+        .fn-link { color: var(--wiki-link); font-size: 0.75em; vertical-align: super; margin: 0 1px; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .fn-link:hover { text-decoration: underline; }
+        
+        .wiki-footnotes { margin-top: 60px; padding-top: 20px; border-top: 2px solid var(--wiki-border); }
+        .wiki-footnotes h4 { font-size: 1.1rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 10px; }
+        .wiki-footnotes ul { list-style: none; padding: 0; margin: 0; }
+        .wiki-footnotes li { margin-bottom: 8px; font-size: 0.9rem; line-height: 1.6; padding: 4px 8px; border-radius: 4px; transition: background-color 0.3s; }
+        .wiki-footnotes li:target { background-color: rgba(0, 204, 170, 0.15); }
+    
+        /* 효빈위키 전용 하단 내비게이션 틀 CSS */
+        .wiki-nav-box { margin: 40px auto 10px; border: 1px solid var(--wiki-border); border-radius: 4px; background: var(--wiki-bg); overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .wiki-nav-header { display: flex; align-items: center; justify-content: center; padding: 12px; font-weight: 900; font-size: 1.1rem; color: #fff; background: linear-gradient(to right, #005BAC, #00CCAA); letter-spacing: 1px; }
+        .wiki-nav-toggle { text-align: center; padding: 6px; background: var(--wiki-gray-bg); border-bottom: 1px solid var(--wiki-border); border-top: 1px solid var(--wiki-border); cursor: pointer; font-size: 0.85rem; user-select: none; color: var(--wiki-text); font-weight: bold; }
+        .wiki-nav-toggle:hover { filter: brightness(0.95); }
+        .wiki-nav-content { display: none; }
+        .wiki-nav-content.active { display: block; }
+        .wiki-nav-table { width: 100%; border-collapse: collapse; text-align: center; margin: 0; font-size: 0.9rem; }
+        .wiki-nav-table th, .wiki-nav-table td { border: 1px solid var(--wiki-border); padding: 12px; }
+        .wiki-nav-table th { color: #fff; font-weight: bold; vertical-align: middle; }
+        .wiki-nav-table td { text-align: left; line-height: 1.8; word-break: keep-all; }
+        .bg-nav-red { background-color: #D81C2F; } /* 효빈 시내버스 급행 레드 */
+        .bg-nav-blue { background-color: #485EC6; } /* 효빈 시내버스 광역 블루 */
+        .wiki-nav-item { display: inline-block; margin-right: 12px; white-space: nowrap; }
+        .wiki-nav-item a { color: var(--wiki-link); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .wiki-nav-item a:hover { color: #FF4F91; text-decoration: underline; font-weight: bold; }
+
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <nav class="bg-[#00CCAA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50 border-b border-[#009988]">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl tracking-tight text-white">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1.5 px-4 rounded text-black text-sm w-64 focus:outline-none shadow-inner">
+            <button class="bg-[#008877] p-1.5 px-4 rounded text-sm hover:bg-[#006655] font-bold transition-colors text-white">검색</button>
+            <button onclick="document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')" class="bg-[#009988] p-1.5 px-3 rounded text-xs border border-[#006655] text-white shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="txt-lvl-1">분석 절차 수립 및 환경 구축</div>
+
+        <div class="category-box bg-[#f9f9f9] border border-[#ccc] p-3 mb-5 rounded text-sm font-bold">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="빅데이터분석기사_필기.html" class="wiki-link">빅데이터분석기사 필기</a> | <a href="빅데이터분석기사.html" class="wiki-link">빅데이터분석기사</a> | <a href="데이터_전처리.html" class="wiki-link">데이터 전처리</a> | <a href="데이터_탐색.html" class="wiki-link">데이터 탐색</a> | <a href="데이터_시각화.html" class="wiki-link">데이터 시각화</a> | <a href="회귀분석.html" class="wiki-link">회귀분석</a> | <a href="분류_알고리즘.html" class="wiki-link">분류 알고리즘</a> | <a href="군집분석.html" class="wiki-link">군집분석</a> | <a href="통계학.html" class="wiki-link">통계학</a> | <a href="확률론.html" class="wiki-link">확률론</a> | <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> | <a href="효빈광역시_시내버스.html" class="wiki-link">효빈광역시 시내버스</a> | <a href="BanG_Dream!.html" class="wiki-link">BanG Dream!</a> | <a href="Roselia.html" class="wiki-link">Roselia</a> | <a href="걸즈_밴드_크라이.html" class="wiki-link">걸즈 밴드 크라이</a> | <a href="봇치_더_록!.html" class="wiki-link">봇치 더 록!</a> | <a href="결속밴드.html" class="wiki-link">결속밴드</a>
+        </div>
+        
+
+        <aside class="infobox shadow-sm">
+            <div class="infobox-top">
+                <b>빅데이터분석기사 필기</b><br>
+                <span class="text-sm opacity-80">PART 03. 데이터 모델링</span>
+            </div>
+            <table>
+                <tr><th>과목명</th><td>제3과목 빅데이터 모델링</td></tr>
+                <tr><th>챕터</th><td>CHAPTER 01. 분석 모형 설계</td></tr>
+                <tr><th>섹션</th><td>SEC 01. 절차 수립 / SEC 02. 환경 구축</td></tr>
+                <tr><th>출제빈도</th><td>하 (★)</td></tr>
+                <tr><th>반복학습</th><td>[1] [2] [3] 회독</td></tr>
+                <tr><th>빈출태그</th><td>#분석모형 #통계적가설 #모델링설계 #R #파이썬</td></tr>
+            </table>
+        </aside>
+
+        <div class="toc shadow-sm">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li><a href="#s-1" class="wiki-link">SECTION 01. 분석 절차 수립</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-1-1" class="wiki-link">1. 분석 모형 선정</a></li>
+                        <li><a href="#s-1-2" class="wiki-link">2. 분석 모형 정의 (상향식/하향식)</a></li>
+                        <li><a href="#s-1-3" class="wiki-link">3. 분석 모형 구축 절차 (가설 검정)</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-2" class="wiki-link">SECTION 02. 분석 환경 구축</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-2-1" class="wiki-link">1. 분석 도구 선정 (R vs Python)</a></li>
+                        <li><a href="#s-2-2" class="wiki-link">2. 데이터 분할 (Train/Validation/Test)</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+
+        <h2 id="s-1">SECTION 01. 분석 절차 수립</h2>
+        
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-3 my-3 text-sm">
+            <b>[참고/날개 📌] 정보처리 관점에서 의사결정</b>
+            <div class="mermaid mt-2">
+            graph LR
+                A["정보"] --> D["의사 결정"]
+                B["정보"] --> D
+                C["정보"] --> D
+                D --> E["결과"]
+            </div>
+        </div>
+
+        <h3 id="s-1-1">01 분석 모형 선정</h3>
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">1) 분석 모형 선정 필요성</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>분석 기법 또는 분석 알고리즘을 적용하기 전에 분석 모형에 대한 선정이 우선 필요하다.</li>
+            <li>분석이 필요한 데이터 속성을 세부적으로 파악, 처리한 뒤에 적합한 분석 기법을 선택하게 된다.</li>
+            <li>데이터가 준비되어 있지 않다면 사전 분석 목적을 정확하게 파악해야 문제 인식과 데이터 준비에 따른 모형 선정을 수월하게 진행할 수 있다.</li>
+        </ul>
+
+        <p class="font-bold text-lg mt-4">▶ 분석 목적 설정</p>
+        <p>빅데이터 분석은 통계에서 분석했던 방식과 함께 기존 통계 방식으로 분석할 수 없던 것들도 분석한다.</p>
+        
+        <div class="mermaid mt-4 mb-4">
+        graph TD
+            A(("분석 목적")) --> B("요약")
+            A --> C("인과관계 파악")
+            A --> D("예측")
+            A --> E("의사결정")
+            A --> F("불확실성 해소")
+            
+            style A fill:#4a86e8,stroke:#333,stroke-width:2px,color:#fff
+        </div>
+
+        <ul class="list-disc pl-6 space-y-2 mb-4 text-sm">
+            <li><b>1. 의사 결정:</b> 여러 대안 중에서 하나의 행동을 고르는 일을 해내는 정신적 지각 활동. 최종적으로 하나의 선택과 결과가 도출된다.</li>
+            <li><b>2. 불확실성 해소:</b> 의사결정의 가장 큰 문제는 불확실성이며, 분석을 통해 이를 제어한다면 시장 대응에 큰 도움이 된다.</li>
+            <li><b>3. 요약:</b> 데이터 요약을 통해 현 상황을 쉽고 빠르게 파악 가능하며 다음 대응 방안을 생각할 수 있다.</li>
+            <li><b>4. 인과관계 파악:</b> 단순 요약을 넘어 데이터 간 연관관계 분석으로 원인과 결과를 파악하여 세부적 판단을 내린다.</li>
+            <li><b>5. 예측:</b> 원인과 결과의 패턴을 파악하면 향후 미래에 생길 결과에 대한 대비(예측)가 가능해진다.</li>
+        </ul>
+
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-3 my-3 text-sm">
+            <b>[참고/날개 📌] 빅데이터 분석 근본 목적</b><br>
+            과거 데이터를 토대로 원인에 대해 분석하고 결과로 미래를 예측하는 것. 검색키워드라는 '후행성 데이터'로 '왜 사람들이 그것을 알고 싶어할까?' 분석을 통해 미래를 예측하는 '선행성' 성격도 가진다.<br><br>
+            <b>[참고/날개 📌] 가트너 그룹(2015) 빅데이터 분석 목적 6가지</b><br>
+            고객 인사이트, 제품/절차 효율성, 디지털 제품/서비스, 운영의 탁월성, 디지털 마케팅, 위기 관리시스템.
+        </div>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">2) 분석 모형 선정 프로세스</h4>
+        <p>분석 모형 선정은 다음 순서의 사전 단계들을 수행하며 진행한다.</p>
+        <ol class="list-decimal pl-6 space-y-1 mb-4 font-semibold">
+            <li>문제요건 정의 또는 비즈니스 이해에 따른 대상 데이터 선정과 분석 목표/조건 정의</li>
+            <li>데이터 수집, 정리 및 도식화</li>
+            <li>데이터 전처리 (정제, 종속/독립변수 선정, 변환, 통합, 축소 등)</li>
+            <li>최적의 분석 모형 선정</li>
+        </ol>
+
+        <div class="anime-box" style="border-color: #FF5522; background-color: #FFF2EE;">
+            <img src="이미지/다로나.png" alt="다로나" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF5522;">
+            <div>
+                <div class="anime-box-title" style="color: #DD4411;">💡 [효빈위키 맞춤 해설] 4호선 다로나의 분석 목적 뽀개기!</div>
+                <p class="text-sm text-gray-800">교재 내용이 너무 딱딱하다고요? <b>봇치 더 록!</b>의 결속밴드가 어떻게 팬을 모을지 고민하는 상황을 대입해 봅시다!</p>
+                <ul class="list-disc pl-5 text-sm space-y-1 mt-2 text-gray-800">
+                    <li><b>요약:</b> "현재 결속밴드 유튜브 구독자와 라이브 하우스 일평균 관객 데이터는 이렇습니다." (현 상황 정리)</li>
+                    <li><b>인과관계 파악:</b> "왜 유독 금요일 라이브 티켓만 매진이 안 될까? 아, 주변 학교 보충수업 시간이랑 겹치는구나!" (원인-결과 파악)</li>
+                    <li><b>예측:</b> "봇치가 또 유튜브에 기행 영상을 올렸으니 이 추세라면 다음 달 라이브 관객은 2배 증가하겠군." (미래 대비)</li>
+                    <li><b>의사결정:</b> "결론! 다음 라이브는 주말 저녁으로 시간표를 옮기는 것으로 결정 탕탕탕!" (최종 행동 선택)</li>
+                </ul>
+                <p class="text-sm text-gray-800 mt-2">이처럼 분석의 본질은 과거의 흔적을 긁어모아 다가올 미래의 <b>불확실성을 해소</b>하고 최선의 결정을 내리기 위한 것이랍니다!</p>
+            </div>
+        </div>
+
+        <div class="exam-box">
+            <div class="exam-title">✔️ 개념 체크 01</div>
+            <p class="font-semibold text-sm">1. 주요 데이터 분석 목적으로 적합하지 않은 항목을 선택한다면?</p>
+            <p class="text-sm space-y-1 pl-4 mt-2">
+                ① 사업 추진에서 여러 대안들 중에 하나를 선택해야 한다.<br>
+                ② 논문을 쓰기 위해 실험을 했는데 정리해야 한다.<br>
+                ③ 미세먼지를 예측하기 위해 센서를 설치하였다.<br>
+                <b>④ 과거에 따랐던 지침이 유효하다는 판단에 따라 행동한다.</b>
+            </p>
+            <p class="text-xs text-gray-600 mt-2"><b>[정답: ④] 해설:</b> 4번 선지처럼 과거의 낡은 지침을 무지성으로 맹목적으로 따르는 것은 통계적 분석(Analysis)이라기보다는 꼰대(...)들의 관습적 수용입니다. 데이터 분석은 과거 데이터를 <b>비판적으로 가공하여 새로운 인사이트를 도출</b>하기 위함입니다.</p>
+            <hr class="my-4 border-red-200">
+            <p class="font-semibold text-sm">2. 빅데이터 분석의 중요 활용 목적으로 잘못된 것은?</p>
+            <p class="text-sm space-y-1 pl-4 mt-2">
+                ① 비즈니스 인사이트 발굴<br>
+                ② 제조 공정 프로세스의 효율화<br>
+                <b>③ 고대 희귀 예술품 보유가치 판정</b><br>
+                ④ 공공민원 서비스 개선
+            </p>
+            <p class="text-xs text-gray-600 mt-2"><b>[정답: ③] 해설:</b> 고대 희귀 예술품 보유가치는 알고리즘으로 측정하기 어려우며 인간(전문가 집단)의 미적, 역사적 주관이 강하게 개입됩니다. <del>파이썬 pandas로 모나리자 그림의 가치를 회귀 분석하라고 하면 AI도 뇌정지가 옵니다.</del></p>
+        </div>
+
+
+        <h3 id="s-1-2">02 분석 모형 정의</h3>
+
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-2 my-2 text-sm">
+            <b>[참고/날개 📌] 분석 모형:</b> 예측 분석 모형, 현황 진단 모형, 최적화 분석 모형
+        </div>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">1) 분석 모형 정의와 종류</h4>
+        <ul class="list-disc pl-6 space-y-2 mb-4 text-sm">
+            <li><b>① 예측 분석 모형: "어떤 일들이 발생할 것인가?"</b><br>적조, 날씨, 주가, 쇼핑아이템 추천 등 가설을 기반으로 미래 현상을 사전에 분류하고 예측한다.</li>
+            <li><b>② 현황 진단 모형: "과거에 어떠한 상황이 왜 어떻게 일어났는가? 현재 상태는?"</b><br>과거 데이터를 통해 현재 상황을 객관적으로 진단하고 이해하는 데 활용한다.</li>
+            <li><b>③ 최적화 분석 모형: "어떻게 하면 원하는 결과가 일어날 수 있을까?"</b><br>제한된 자원, 환경 내에서 최대의 효용성과 이익을 생성하기 위해 모델을 최적화한다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">2) 분석 모형 정의를 위한 사전 고려사항</h4>
+        <p>분석 모형을 정의하기 전, 분석이 실제 추진될 수 있을지 가능성을 타진하는 <b>평가 기준표</b> 작성이 필요하다. 추진 시급성과 구현 가능성만으로도 사전 판별 기준으로 활용 가능하다.</p>
+        
+        <table class="text-sm w-full mt-2 mb-4">
+            <tr><th class="bg-gray-100" style="width: 25%;">기준</th><th class="bg-gray-100">판단 근거</th></tr>
+            <tr><td class="font-bold text-center">필요성</td><td>개인이나 기관 관점에서 분석 과제가 필요한지 판단</td></tr>
+            <tr><td class="font-bold text-center">파급효과</td><td>정성적, 정량적 기대효과의 정도 판단</td></tr>
+            <tr><td class="font-bold text-center">추진 시급성</td><td>당장 해소되어야 할 현안 여부, 장기과제 성격 분리</td></tr>
+            <tr><td class="font-bold text-center">구현 가능성</td><td>과제를 구현함에 있어서 어려움이 없는지 현실성 판단</td></tr>
+            <tr><td class="font-bold text-center">데이터 수집 가능성</td><td>데이터 확보, 구매 등 제약사항 판단</td></tr>
+            <tr><td class="font-bold text-center">모델 확장성</td><td>전체 데이터 모델로 확장 가능한지 판단</td></tr>
+        </table>
+
+        <p class="font-bold text-lg mt-4">▶ 상향식 vs 하향식 접근법 (★단골 출제)</p>
+        <ul class="list-disc pl-6 space-y-2 mb-4 text-sm">
+            <li><b>① 상향식(Bottom-up) 접근:</b> <b>문제 정의가 어려울 경우</b> 많은 양의 데이터 분석을 통해 숨겨진 인사이트를 도출한다. 의사결정 지점으로 진행하는 과정에서 과제를 발굴한다.</li>
+            <li><b>② 하향식(Top-down) 접근:</b> <b>문제 정의가 명확하게 가능할 시</b> 사용한다. 어떻게 수익을 낼 것인가 하는 <b>비즈니스 모델</b>, 벤치마킹을 통한 <b>외부 참조 모델</b>, 상세 설명이 포함된 <b>분석 유스케이스</b> 기반으로 과제를 하향식으로 도출해 낸다.</li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #33AAFF; background-color: #E6F3FF;">
+            <img src="이미지/심세이.png" alt="심세이" class="anime-img" onerror="this.style.display='none'" style="border-color: #33AAFF;">
+            <div>
+                <div class="anime-box-title" style="color: #0077DD;">💻 [효빈위키 족집게 특강] 창전선 심세이의 상향식 vs 하향식 접근!</div>
+                <p class="text-sm text-gray-800">ADsP 1과목을 공부했다면 뼈에 새겨져 있을 파트입니다! 개념이 헷갈린다면 애니메이션 기획 상황에 대입해 보죠.</p>
+                <div class="mermaid mt-2 mb-2">
+                    graph TD
+                        subgraph 하향식 접근 [하향식 접근 Top-down]
+                        A["문제(목표)가 명확함!"] --> B["비즈니스 모델 탐색"]
+                        A --> C["외부 참조 모델 (벤치마킹)"]
+                        A --> D["분석 유스케이스"]
+                        end
+                        
+                        subgraph 상향식 접근 [상향식 접근 Bottom-up]
+                        E["문제가 뭔지 잘 모름(...)"] --> F["일단 다량의 데이터 딥러닝 분석"]
+                        F --> G["숨겨진 인사이트 도출!"]
+                        end
+                        
+                        style A fill:#e1f5fe,stroke:#0288d1
+                        style E fill:#fff9c4,stroke:#fbc02d
+                </div>
+                <ul class="list-disc pl-5 text-sm space-y-1 mt-2 text-gray-800">
+                    <li><b>하향식(Top-down):</b> 걸즈 밴드 크라이의 프로듀서가 <b>"다이아몬드 더스트를 음원 1위로 만들어!"</b>라고 확고한 목표(문제 정의)를 내렸습니다. 그러면 다른 1위 밴드들은 어떻게 했는지(외부 참조 모델 벤치마킹), 수익은 어떻게 낼지(비즈니스 모델) <b>위에서 아래로 기획을 내리찍는 방식</b>입니다. <del>대부분의 까라면 까는 직장 업무가 이 방식이죠.</del></li>
+                    <li><b>상향식(Bottom-up):</b> 도대체 문제가 뭔지 모를 때 씁니다. 일단 유튜브 조회수 로그 데이터 10만 건을 파이썬으로 긁어모아 분석해 봤더니, "어? 유독 니나가 화를 내는 장면에서만 리텐션(시청 지속시간)이 폭증하네?" 하고 <b>숨겨진 패턴(인사이트)을 바닥에서부터 건져 올리는 방식</b>입니다. 데이터의 바다에서 보물을 찾는 거죠!</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="exam-box">
+            <div class="exam-title">✔️ 개념 체크 02</div>
+            <p class="font-semibold text-sm">1. 분석 모형 종류에서 가장 적합한 결과가 예상되는 분석 모델이 무엇인지 찾는 분석 모형은?</p>
+            <p class="text-sm space-y-1 pl-4 mt-2">
+                ① 현황 진단 모형<br>
+                <b>② 최적화 분석 모형</b><br>
+                ③ 예측 분석 모형<br>
+                ④ 유스케이스 분석 모형
+            </p>
+            <p class="text-xs text-gray-600 mt-2"><b>[정답: ②] 해설:</b> 제한된 자원 내에서 가장 바람직하고 최대의 효용성(결과)이 예상되는 최적의 모델 세팅을 찾아내는 것이 '최적화 분석 모형'입니다.</p>
+            <hr class="my-4 border-red-200">
+            <p class="font-semibold text-sm">2. 현황 분석을 통해 인식된 문제를 해결하기 위해 과거 유사한 분석 테마 후보에서 분석 과제를 도출하는 접근법은?</p>
+            <p class="text-sm space-y-1 pl-4 mt-2">
+                ① 상향식 접근<br>
+                ② 비즈니스 모델 기반 접근<br>
+                <b>③ 외부 참조 모델 기반 접근</b><br>
+                ④ 분석 유스케이스 기반 접근
+            </p>
+            <p class="text-xs text-gray-600 mt-2"><b>[정답: ③] 해설:</b> 하향식 접근 중에서 "과거 유사한 분석 테마"나 남이 먼저 해놓은 훌륭한 사례를 싹 가져와서 참고(벤치마킹)하는 핵심 키워드가 바로 <b>외부 참조 모델 기반 접근</b>입니다.</p>
+        </div>
+
+
+        <h3 id="s-1-3">03 분석 모형 구축 절차</h3>
+        <p>데이터 분석에 대한 절차와 방법을 체계적으로 구성하는 것이 중요하다.</p>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">1) 분석 시나리오 작성</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4 text-sm">
+            <li>분석 과정과 결과가 어떻게 활용되는지 명확히 이해하기 위해 작성.</li>
+            <li>분석 대상, 범위, 해결할 문제와 목표, 필요한 데이터, 절차, 분석 기법 등 세부사항을 꼼꼼하게 정의한다. 기존 유사 시나리오를 참고할 수 있다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">2) 분석 모형 설계</h4>
+        <p>분석 목적을 구현하기 위한 방법론을 설계하는 단계이다. 데이터 표준화 방법, 수집 항목, 검증 통계 기법 등을 사전에 확인한다.</p>
+
+        <p class="font-bold text-lg mt-4">▶ 분석 모델링에 적합한 알고리즘 설계</p>
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-2 my-2 text-sm">
+            <b>[참고/날개 📌]</b> 비지도학습: 입력값에 대한 목표치(정답)가 주어지지 않음. / 강화학습: 선택 가능한 것 중 보상(Reward)을 최대화하는 행동을 스스로 선택.
+        </div>
+        <div class="mermaid mt-4 mb-4">
+        mindmap
+          root((기계학습 알고리즘))
+            지도학습
+              의사결정트리
+              랜덤 포레스트
+              서포트벡터머신
+              회귀분석
+            비지도학습
+              군집분석
+              연관성분석
+              오토인코더
+            준지도학습
+              셀프 트레이닝
+              적대적 생성 모델
+            강화학습
+              Q-Learning
+              정책경사 PG
+        </div>
+
+        <p class="font-bold text-lg mt-4">▶ 분석 모형 개발 및 테스트 (★모든 모형은 검증 필수)</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4 text-sm">
+            <li>모듈 기능 정의 $\rightarrow$ 설계 $\rightarrow$ 결과물 일치 확인 $\rightarrow$ 정상 동작 여부 검증</li>
+            <li><b>데이터 분리:</b> 분석용 데이터를 훈련용(Train)과 테스트용(Test)으로 분리하여 과대적합을 막고 자체 검증한다.</li>
+            <li>테스트 데이터 비율은 전체 데이터의 <b>30% (7:3)</b>가 일반적이나, 데이터가 충분히 많으면 <b>6:4 또는 5:5</b>로 분리하여 선정할 수도 있다.</li>
+        </ul>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">3) 분석 모델링 설계와 검정 (가설검정 방법)</h4>
+        
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-2 my-2 text-sm">
+            <b>[참고/날개 📌] 통계적 가설:</b> 모집단의 모수를 이용해 나타낸 주장 (예: "여자의 평균 신장은 180이다")<br>
+            <b>[참고/날개 📌] 귀무가설(영가설, $H_0$):</b> 대립가설에 상반되는 가설로서, 기각되는 것이 예상되어 세워진 밋밋한 가설.
+        </div>
+
+        <p>가설검정은 다음 5단계의 절차를 거친다.</p>
+        <ul class="list-disc pl-6 space-y-2 mb-4 text-sm">
+            <li><b>① 유의수준 결정, 귀무가설/대립가설 설정:</b> 가설검정은 기본적으로 "귀무가설이 옳다"는 가정하에 시작한다. 대립가설은 연구자가 진짜로 입증하고 싶은 가설이다. 유의수준($\alpha$)은 기각역들의 합이며 오류의 허용 한계다.</li>
+            <li><b>② 검정통계량 설정:</b> 귀무가설이 참이라는 가정 아래 얻은 통계량 식으로, 기각 여부를 결정하는 기준이다. 계산식: $\frac{\text{(표본평균)} - \text{(모평균)}}{\text{표본 표준오차}}$</li>
+            <li><b>③ 기각역(Rejection Region) 설정:</b> 확률분포에서 귀무가설을 기각하는 치명적인 영역. 여기에 통계량이 꽂히면 귀무가설은 아웃이다.</li>
+            <li><b>④ 검정통계량 계산 및 ⑤ 의사결정:</b> 계산한 통계량을 기각역(임계치)과 비교한다.</li>
+        </ul>
+
+        <div class="mermaid mt-4 mb-4">
+        graph TD
+            subgraph "양측검정 (대립가설: ~가 아니다 / ≠)"
+                A["좌측 기각역 (α/2)"] --- B(("채택역 (1-α)"))
+                B --- C["우측 기각역 (α/2)"]
+            end
+            
+            subgraph "단측검정 (대립가설: ~보다 크다/작다 / > , <)"
+                D(("채택역")) --- E["한쪽 기각역 몰빵 (α)"]
+            end
+            
+            style A fill:#ffcdd2,stroke:#e53935
+            style B fill:#e8f5e9,stroke:#43a047
+            style C fill:#ffcdd2,stroke:#e53935
+            style D fill:#e8f5e9,stroke:#43a047
+            style E fill:#ffcdd2,stroke:#e53935
+        </div>
+
+        <div class="anime-box" style="border-color: #00CCAA; background-color: #E6FAF6;">
+            <img src="이미지/고나미.png" alt="고나미" class="anime-img" onerror="this.style.display='none'" style="border-color: #00CCAA;">
+            <div>
+                <div class="anime-box-title" style="color: #008877;">🚉 [효빈위키 맞춤 해설] 1호선 고나미의 가설검정 실전 예시!</div>
+                <p class="text-sm text-gray-800">통계학 파트에서 가장 짜증 나는 <b>'귀무가설($H_0$)'</b>과 <b>'대립가설($H_1$)'</b>의 개념은 이 한 줄만 기억하세요. <b>귀무가설은 '노잼(차이 없음, 원래 그런 거)', 대립가설은 '내가 증명하고 싶은 꿀잼(차이 있음, 새로운 주장)'입니다.</b></p>
+                <p class="text-sm text-gray-800 mt-1">효빈광역시의 신규 대중교통망 노선을 설계하면서, 기존 버스 배차 간격 데이터를 뜯어본다고 가정해 보죠.</p>
+                <ul class="list-disc pl-5 text-sm space-y-1 mt-1 text-gray-800">
+                    <li><b>귀무가설($H_0$):</b> "정류장의 배차 간격을 5분 단축해도 일일 탑승객 수에는 <b>유의미한 차이가 없을 것이다.</b>" (노잼, 예산 지원 못 받음)</li>
+                    <li><b>대립가설($H_1$):</b> "배차 간격을 단축하면 일일 탑승객 수가 <b>유의미하게 폭발적으로 증가할 것이다!</b>" (우리가 진짜로 검증해서 결재 서류에 당당하게 적고 싶은 내용)</li>
+                </ul>
+                <p class="text-sm text-gray-800 mt-1">수집한 데이터로 $Z$-값을 굴려서 이 값이 '기각역'에 뚝 떨어지면, "거 봐! 내 말이 맞잖아!" 하면서 귀무가설을 쓰레기통에 버리고 대립가설을 채택하는 짜릿한 과정을 거치게 된답니다! <b>물론 "다르다"고만 했으면 양쪽을 다 보는 양측검정, "더 많다!"고 찍었으면 우측검정(단측검정)을 써야겠죠?</b></p>
+            </div>
+        </div>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">4) 분석 모델링 설계와 검정 (기술 검토)</h4>
+        <ul class="list-disc pl-6 space-y-1 mb-4 text-sm">
+            <li>데이터 전처리 과정을 마치면 <b>종속 변수의 유무</b>에 따라 사용할 알고리즘이 극명하게 갈린다.</li>
+            <li>종속 변수(정답지)가 있으면 회귀/분류 같은 지도학습을 쓰지만, <b>종속 변수가 없으면 사용할 수 있는 알고리즘이 군집, 연관 법칙(비지도학습) 등으로 강하게 제한</b>된다.</li>
+        </ul>
+
+        <div class="exam-box">
+            <div class="exam-title">✔️ 개념 체크 03</div>
+            <p class="font-semibold text-sm">1. 가설 종류에 따라 기각역을 설정하는 방법이 달라지는데, 귀무가설이 기각될 확률을 뜻하면서 통계적검정에서 대립가설을 기준으로 설정하는 이것은?</p>
+            <p class="text-sm space-y-1 pl-4 mt-2">
+                ① 베타값<br>
+                ② 람다값<br>
+                <b>③ 알파값</b><br>
+                ④ 감마값
+            </p>
+            <p class="text-xs text-gray-600 mt-2"><b>[정답: ③] 해설:</b> 100번 실험을 했을 때 억울하게 귀무가설이 기각되는 1종 오류의 최대 허용한계를 정하는 것이 바로 <b>유의수준 알파($\alpha$)값</b>입니다. (주로 0.05 사용)</p>
+            <hr class="my-4 border-red-200">
+            <p class="font-semibold text-sm">2. 분석 모형 선정 시 ( &nbsp; &nbsp; &nbsp; )가 없는 경우 지도학습 알고리즘을 적용하기 어렵기 때문에 비지도학습으로만 분석을 수행할 수 있다. 괄호 안에 알맞은 말은?</p>
+            <p class="text-sm space-y-1 pl-4 mt-2">
+                ① 연관 변수<br>
+                ② 독립 변수<br>
+                <b>③ 종속 변수</b><br>
+                ④ 군집 변수
+            </p>
+            <p class="text-xs text-gray-600 mt-2"><b>[정답: ③] 해설:</b> <b>종속변수($y$)</b>는 원인들에 의해 도출된 '결과(정답지)'를 뜻하는 변수입니다. 정답지가 없으면 컴퓨터는 지도학습을 할 수 없고, 끼리끼리 묶는 비지도학습(군집분석 등)으로만 알고리즘을 국한해서 활용해야 합니다.</p>
+        </div>
+
+
+        <h2 id="s-2">SECTION 02. 분석 환경 구축</h2>
+
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-2 my-2 text-sm">
+            <b>[참고/날개 📌] R 언어:</b> 통계 및 그래프 작업을 위한 인터프리터 프로그래밍 언어.<br>
+            <b>[참고/날개 📌] 인터프리터:</b> 컴파일러(기계어 번역)와 달리, 소스 코드를 한 줄씩 바로바로 실행하는 환경.
+        </div>
+
+        <h3 id="s-2-1">01 분석 도구 선정</h3>
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">1) R 언어</h4>
+        <p>뉴질랜드 오클랜드 대학교 통계학과에서 개발한 통계분석/시각화 특화 오픈소스 언어이다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-2 text-sm">
+            <li><b>객체지향 언어:</b> 모든 데이터가 객체 형태로 메모리에 로딩되어 고속 처리된다.</li>
+            <li>다양한 자료 구조(벡터, 데이터프레임 등)를 지원하며, CRAN 사이트를 통해 최신 통계 패키지를 제공한다. 시각화(그래픽) 도구에 특화되어 있다.</li>
+        </ul>
+        <table class="text-sm w-full mt-2 mb-4">
+            <tr><th class="bg-gray-100" style="width: 15%;">구분</th><th class="bg-gray-100">내용</th></tr>
+            <tr><td class="font-bold text-center text-blue-600">장점</td><td>• 지속적으로 업데이트되는 다양한 패키지<br>• 그래프 및 도표, <b>시각화 기능에 압도적 특화</b></td></tr>
+            <tr><td class="font-bold text-center text-red-500">단점</td><td>• <b>대용량 메모리 처리(Big Data)가 상대적으로 어려우며</b> 보안 기능이 취약함<br>• 별도 연동 없이는 웹 브라우저에서 사용 불가</td></tr>
+        </table>
+
+        <h4 class="mt-4 text-[var(--wiki-main)] font-bold">2) 파이썬 (Python)</h4>
+        <p>1991년 귀도 반 로섬이 발표한 플랫폼 독립적, 인터프리터식, 객체지향적 범용 언어이다.</p>
+        <ul class="list-disc pl-6 space-y-1 mb-2 text-sm">
+            <li>간결한 문법의 대화형 <b>인터프리터 언어</b>. <b>동적 데이터타입</b> 지원으로 코딩이 쉽다.</li>
+            <li>리스트, 사전, 튜플 등 유연한 내장 객체를 지원하며, <b>가비지 컬렉션(메모리 자동 청소)</b> 기능을 제공한다.</li>
+        </ul>
+        <table class="text-sm w-full mt-2 mb-4">
+            <tr><th class="bg-gray-100" style="width: 15%;">구분</th><th class="bg-gray-100">내용</th></tr>
+            <tr><td class="font-bold text-center text-blue-600">장점</td><td>• 영어 문장 형식의 <b>빠른 개발 속도</b> (생산성 甲)<br>• C언어 등 <b>다른 언어 프로그램들과 연동성/확장성이 매우 높음</b></td></tr>
+            <tr><td class="font-bold text-center text-red-500">단점</td><td>• 인터프리터가 한 줄씩 읽는 방식이라 C/C++에 비해 <b>실행 속도가 느림</b><br> <span class="text-xs text-gray-500">- (단, JIT 컴파일러나 C바인딩 라이브러리로 보완 가능)</span></td></tr>
+        </table>
+        <p class="text-sm">※ 파이썬 <b>아나콘다(Anaconda)</b> 플랫폼은 가상환경과 패키지를 묶어서 관리해 주어 데이터 분석 환경 세팅을 극도로 편하게 만들어 준다.</p>
+
+
+        <h3 id="s-2-2">02 데이터 분할</h3>
+        <p>모형을 구축하고 성능을 검증하기 위해, 수집한 애지중지한 전체 데이터를 <b>학습(Train), 평가(Validation), 테스트(Test)</b> 3분할로 쪼개어 사용한다.</p>
+
+        <div class="mermaid mt-4 mb-4">
+        graph LR
+            A["전체 수집 데이터 (100%)"] --> B["학습 (Training) 데이터<br>약 60~80%"]
+            A --> C["평가 (Validation) 데이터<br>약 10~20%"]
+            A --> D["테스트 (Test) 데이터<br>약 10~20%"]
+            
+            B -.-> E(("모형 학습용<br>(문제집)"))
+            C -.-> F(("모형 튜닝 및<br>과대적합 방지<br>(모의고사)"))
+            D -.-> G(("최종 성능 검증<br>(수능 실전)"))
+
+            style A fill:#f3e5f5,stroke:#9c27b0
+            style B fill:#e3f2fd,stroke:#1e88e5
+            style C fill:#fff3e0,stroke:#fb8c00
+            style D fill:#e8f5e9,stroke:#43a047
+        </div>
+
+        <ul class="list-disc pl-6 space-y-2 mb-4 text-sm">
+            <li><b>① 학습(Training) 데이터:</b> 데이터를 학습하여 분석 모형을 만드는 데 <b>직접 사용되는 문제집</b> 데이터이다. 모델 성능에 직결되므로 양과 다양성이 보장되어야 한다.</li>
+            <li><b>② 평가(Validation) 데이터:</b> 추정한 분석 모델이 <b>과대적합(Overfitting)이나 과소적합인지 중간 평가(모의고사)</b>를 하기 위한 데이터이다. 하이퍼파라미터 튜닝에 쓰인다.</li>
+            <li><b>③ 테스트(Test) 데이터:</b> 모델이 단 한 번도 보지 못한 신규 데이터로, <b>최종적인 모델 성능(수능 점수)을 검증</b>하는 데 쓰인다.</li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #881188; background-color: #FDF5FD;">
+            <img src="이미지/라세나.png" alt="라세나" class="anime-img" onerror="this.style.display='none'" style="border-color: #881188;">
+            <div>
+                <div class="anime-box-title" style="color: #660066;">🚇 [효빈위키 팩폭 해설] 6호선 라세나의 데이터 분할과 과대적합!</div>
+                <p class="text-sm text-gray-800">수집한 피 같은 데이터를 100% 전부 학습(Training)에만 쏟아부으면 어떻게 될까?</p>
+                <p class="text-sm text-gray-800 mt-1">AI 모형이 훈련 데이터의 '정답'만 통째로 달달 외워버려서, <b>처음 보는 실전 데이터가 들어오면 뇌정지가 오는 '과대적합(Overfitting)'</b> 대참사가 발생해. 마치 운전면허 필기시험 기출문제집의 답 번호만 외워서 모의고사 100점을 받았지만, 실제 도로에 나가면 신호등도 못 보고 차를 박아버리는 꼴이랑 똑같지!(...)</p>
+                <p class="text-sm text-gray-800 mt-1">그래서 뱅드림! 의 로젤리아(Roselia)가 완벽한 라이브를 위해 실전처럼 리허설을 하듯이, 전체 데이터의 일부를 떼어내어 <b>'평가(Validation)'</b>용 모의고사로 활용하며 모형이 제대로 원리를 이해하고 있는지 중간 점검을 빡세게 해줘야 해!</p>
+            </div>
+        </div>
+
+    
+        <!-- 나무위키식 하단 내비게이션 틀 시작 -->
+        <div class="wiki-nav-box" id="bigbunNav">
+            <div class="wiki-nav-header">
+                📊 빅데이터분석기사 필기 전체 문서 목록
+            </div>
+            <div class="wiki-nav-toggle" onclick="document.getElementById('bigbunNavContent').classList.toggle('active')">
+                [ 펼치기 · 접기 ]
+            </div>
+            <div class="wiki-nav-content" id="bigbunNavContent">
+                <table class="wiki-nav-table">
+                    <tbody>
+                        <tr>
+                            <th class="bg-nav-red" style="width: 18%;">제1과목<br>빅데이터 분석 기획</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기1-1.html">빅분기1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-1.html">빅분기1-2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-2.html">빅분기1-2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-3.html">빅분기1-2-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-1.html">빅분기1-3-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-2.html">빅분기1-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-3.html">빅분기1-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-4.html">빅분기1-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-1.html">빅분기1-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-2.html">빅분기1-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-1.html">빅분기1-5-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-2.html">빅분기1-5-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-6.html">빅분기1-6</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제2과목<br>빅데이터 탐색</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기2-1.html">빅분기2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-2.html">빅분기2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-3.html">빅분기2-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-red">제3과목<br>빅데이터 모델링</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-1.html">빅분기3-1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-2.html">빅분기3-1-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-3.html">빅분기3-1-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-2.html">빅분기3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-2.html">빅분기3-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-3.html">빅분기3-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-4.html">빅분기3-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-1.html">빅분기3-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-2.html">빅분기3-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-3.html">빅분기3-4-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제4과목<br>빅데이터 결과 해석</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기4-1.html">빅분기4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-2.html">빅분기4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-3.html">빅분기4-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-4.html">빅분기4-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-5.html">빅분기4-5</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-6.html">빅분기4-6</a></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 나무위키식 하단 내비게이션 틀 끝 -->
+
+    </div> <!-- wiki-container end -->
+
+    <footer class="wiki-footer p-6 text-center border-t border-[var(--wiki-border)] bg-[var(--wiki-footer-bg)] text-[var(--wiki-footer-text)]">
+        <div class="font-bold text-sm">
+            이 저작물은 <span class="text-[var(--wiki-text)]">효빈위키</span> 규정에 따라 이용할 수 있습니다.<br>
+            ※ 본 문서는 빅데이터분석기사 필기 제3과목(분석 절차 수립 및 환경 구축)의 완전판입니다.
+        </div>
+    </footer>
+
+    <!-- 각주 툴팁 구동 JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'wiki-tooltip';
+            document.body.appendChild(tooltip);
+
+            const fnLinks = document.querySelectorAll('a.fn-link');
+            
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        const childNodes = Array.from(targetElement.childNodes);
+                        const tooltipContent = childNodes
+                            .filter(node => node.nodeName !== 'A')
+                            .map(node => node.nodeType === Node.TEXT_NODE ? node.textContent : node.outerHTML)
+                            .join('')
+                            .trim();
+                        
+                        tooltip.innerHTML = tooltipContent;
+                        tooltip.classList.add('visible');
+                        
+                        const rect = this.getBoundingClientRect();
+                        let topPos = rect.bottom + window.scrollY + 8;
+                        let leftPos = rect.left + window.scrollX;
+                        
+                        tooltip.style.display = 'block';
+                        if (leftPos + tooltip.offsetWidth > window.innerWidth) {
+                            leftPos = window.innerWidth - tooltip.offsetWidth - 20;
+                        }
+                        
+                        tooltip.style.left = leftPos + 'px';
+                        tooltip.style.top = topPos + 'px';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    tooltip.classList.remove('visible');
+                });
+            });
+        });
+    </script>
+    
+    <!-- 필수 외부 스크립트 4종 완벽 영구 보존 -->
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

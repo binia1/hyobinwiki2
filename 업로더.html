@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <title>효빈위키 대량 업로더</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+<script src="ad_logic.js"></script>
+</head>
+<body class="p-10 bg-gray-200">
+    <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg border border-gray-300">
+        <h1 class="text-3xl font-black mb-2 text-[#7777AA]"><i class="fa-solid fa-truck-fast"></i> 1,400개 문서 한방에 이사하기</h1>
+        <p class="mb-6 text-gray-600 font-bold">기존 로컬 HTML 파일들을 통째로 선택해서 Firebase 서버로 일괄 전송합니다.</p>
+        
+        <div class="bg-blue-50 p-6 rounded border border-blue-200 mb-6">
+            <input type="file" id="fileInput" multiple accept=".html" class="block w-full border p-2 bg-white rounded cursor-pointer">
+            <p class="mt-2 text-sm text-blue-600 font-bold">※ 파일 선택 창에서 Ctrl+A를 눌러 폴더 안의 모든 HTML 문서를 한 번에 선택하세요.</p>
+        </div>
+        
+        <button id="uploadBtn" class="bg-[#37B484] hover:bg-[#2e9e73] text-white px-6 py-4 rounded-md font-black w-full text-lg transition shadow-md">
+            🚀 전체 파일 클라우드 업로드 시작
+        </button>
+        
+        <div id="log" class="mt-6 h-80 overflow-y-auto bg-gray-900 text-green-400 p-4 font-mono text-sm rounded-md shadow-inner">
+            [대기 중] 위에서 파일들을 선택하고 업로드 시작 버튼을 눌러주세요...
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCXlxuSvvSOEEMegjfoY_UzZQs4m0NeIJo",
+            authDomain: "hyobinwiki.firebaseapp.com",
+            projectId: "hyobinwiki"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const logEl = document.getElementById('log');
+        function log(msg) { 
+            logEl.innerHTML += `<div>${msg}</div>`; 
+            logEl.scrollTop = logEl.scrollHeight; 
+        }
+
+        document.getElementById('uploadBtn').addEventListener('click', async () => {
+            const files = document.getElementById('fileInput').files;
+            if(files.length === 0) return alert('업로드할 파일을 먼저 선택하세요!');
+            
+            document.getElementById('uploadBtn').disabled = true;
+            document.getElementById('uploadBtn').innerText = "업로드 진행 중... (창을 닫지 마세요)";
+            log(`총 ${files.length}개 파일 업로드를 시작합니다. 잠시만 기다려주세요...<br><br>`);
+
+            for(let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const title = file.name.replace(/\.html$/i, "");
+                
+                try {
+                    // 파일 텍스트 읽어오기
+                    const text = await file.text();
+                    const docParsed = new DOMParser().parseFromString(text, "text/html");
+                    
+                    // 본문 추출 (네비게이션 껍데기 제거)
+                    let targetArea = docParsed.querySelector('.wiki-container') || docParsed.body;
+                    const nav = targetArea.querySelector('nav');
+                    if(nav) nav.remove();
+                    
+                    const rawHTML = targetArea.innerHTML;
+
+                    // Firebase에 데이터 꽂아넣기
+                    await setDoc(doc(db, "wiki_docs", title), {
+                        raw_html: rawHTML,
+                        mainColor: "#7777AA", // 기본값 (나중에 에디터에서 수정 가능)
+                        pointColor: "#555588",
+                        updatedAt: serverTimestamp()
+                    });
+                    
+                    log(`[${i+1} / ${files.length}] ✅ <span class="text-white">${title}</span> 문서 서버 이사 완료`);
+                } catch(e) {
+                    log(`[${i+1} / ${files.length}] ❌ <span class="text-red-400">${title}</span> 실패: ${e.message}`);
+                }
+            }
+            
+            log("<br>🎉 <b>모든 업로드 작업이 끝났습니다! 이제 완벽한 클라우드 위키가 되었습니다.</b>");
+            document.getElementById('uploadBtn').innerText = "업로드 완료!";
+        });
+    </script>
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

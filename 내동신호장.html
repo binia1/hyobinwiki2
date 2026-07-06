@@ -1,0 +1,329 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내동신호장 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        :root { 
+            --wiki-main: #005BAC; /* 본문 강조색: 코레일 블루 */
+            --wiki-nav: #7777AA; /* 상단 네비게이션: 효빈위키 기본색 */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-link: #0055AA; 
+            
+            /* 코레일 색상 */
+            --korail-blue: #005BAC;
+            
+            /* 노선 색상 */
+            --binhyo-subway: #6677CC;
+        }
+
+        body { font-family: 'Pretendard', 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: break-all; margin: 0; font-size: 15px; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900; color: #000; margin-bottom: 0.5rem; border-bottom: 2px solid #ccc; padding-bottom: 10px; }
+        
+        h2 { font-size: 2.5rem !important; font-weight: 800; border-bottom: 3px solid var(--wiki-main); padding-bottom: 10px; margin-top: 3rem; margin-bottom: 20px; color: #000; }
+        h3 { font-size: 1.8rem !important; font-weight: 700; margin-top: 2rem; margin-bottom: 15px; padding-left: 10px; border-left: 5px solid var(--wiki-main); color: #000; }
+        h4 { font-size: 1.3rem !important; font-weight: 700; margin-top: 1.5rem; margin-bottom: 10px; color: #333; }
+
+        /* 테이블 공통 */
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; border: 1px solid #ccc; font-size: 14px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: center; vertical-align: middle; }
+        th { background-color: #f2f2f2; font-weight: 700; }
+
+        /* 인포박스 스타일 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 400px; font-size: 13px; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .infobox-top { background-color: var(--korail-blue); padding: 10px; text-align: center; color: white; }
+        .infobox-title { font-size: 2rem !important; font-weight: 900; }
+        
+        /* 인포박스 내부 테이블 */
+        .infobox-table { width: 100%; border: none; margin: 0; }
+        .infobox-table th { background: #f9f9f9; width: 35%; text-align: center; border: 1px solid #ddd; }
+        .infobox-table td { text-align: left; padding: 8px; border: 1px solid #ddd; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: 700; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        /* 철도거리표 스타일 */
+        .distance-table-container {
+            width: 100%;
+            background-color: #fff;
+            border-top: 2px solid #ccc;
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+        }
+        .main-header {
+            background-color: #f0f0f0;
+            color: #333;
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+            border-bottom: 1px solid #ccc;
+        }
+        .station-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding: 8px 0;
+            text-align: center;
+        }
+        .col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .col.side { flex-basis: 30%; font-size: 0.9em; }
+        .col.center { flex-basis: 40%; background-color: #fafafa; border-left: 1px solid #eee; border-right: 1px solid #eee; padding: 5px 0; }
+        
+        .station-link-dist { font-weight: bold; color: var(--wiki-link); text-decoration: none; font-size: 1.1em; }
+        .line-badge { font-size: 0.8em; color: #555; font-weight: bold; margin-bottom: 2px; }
+        .dist-val { font-size: 0.8em; color: #666; margin-top: 2px; }
+
+        .image-box { text-align: center; background: #eee; border-bottom: 1px solid #ccc; }
+        .image-box img { max-width: 100%; height: auto; display: block; }
+
+        /* 승강장 배선도 테이블 스타일 (3행 구조) */
+        .platform-track-table { border: 2px solid #aaa !important; margin: 15px 0 !important; background: #fff !important; width: 100% !important; table-layout: fixed; }
+        .track-normal { color: #000 !important; font-family: 'Courier New', monospace; font-size: 1.1rem !important; font-weight: bold; }
+        .platform-badge-box { color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.9rem !important; font-weight: 900; display: inline-block; min-width: 35px; }
+
+        /* 효빈위키식 스타일 */
+        .wiki-strike { text-decoration: line-through; color: #999; }
+        .wiki-footnote { font-size: 0.8em; vertical-align: super; color: var(--wiki-link); cursor: pointer; text-decoration: none; }
+        .quote-box { border-left: 4px solid #ccc; padding: 15px 20px; margin: 15px 0; background-color: #f9f9f9; color: #444; font-style: italic; border-radius: 4px; }
+
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <!-- 상단바 색상 #7777AA -->
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="font-bold text-xl cursor-pointer flex items-center gap-2" onclick="location.href='index.html'">
+            HyobinWiki <span class="text-xs font-normal opacity-70"></span>
+        </div>
+        <div class="flex items-center gap-2">
+             <div class="flex items-center gap-2 text-left mr-2">
+                <input type="text" id="searchInput" placeholder="문서 내 검색" class="p-1.5 px-3 rounded text-black text-sm w-48 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) { handleSearch(); }">
+                <button onclick="handleSearch()" class="bg-[#555588] p-1.5 px-3 rounded text-sm hover:bg-[#444477] font-bold transition-colors">검색</button>
+            </div>
+            <button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded" onclick="location.href='index.html'">메인으로</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="txt-lvl-1">내동신호장</div>
+        <div class="text-right text-sm text-gray-500 mb-2 font-bold">최근 수정 시각: 2026-03-02 20:00:00</div>
+
+        <div class="p-3 border border-gray-300 rounded mb-5 bg-white text-sm">
+            <span class="font-bold text-[#005BAC]">분류:</span> 
+            <a href="낭원군의_철도역.html" class="wiki-link">낭원군의 철도역</a> | 
+            <a href="신호장.html" class="wiki-link">신호장</a> | 
+            <a href="경빈선.html" class="wiki-link">경빈선</a> |
+            <a href="빈효고속선.html" class="wiki-link">빈효고속선</a>
+        </div>
+
+        <!-- 인포박스 시작 -->
+        <aside class="infobox">
+            <!-- 인포박스 헤더 코레일 블루 -->
+            <div class="infobox-top">
+                <div class="infobox-title">내 동</div>
+                <div class="text-sm">Naedong / 內洞</div>
+            </div>
+            
+            <div class="image-box">
+                <img src="이미지/내동신호장.png" alt="내동신호장 전경" onerror="this.src='https://placehold.co/400x250?text=Naedong+Signal+Station';">
+                <div class="p-2 text-xs text-gray-600 bg-gray-100 border-t border-gray-300">내동신호장 구내의 적막한 풍경. 저 멀리 KTX가 무서운 속도로 통과 중이다.</div>
+            </div>
+
+            <table class="infobox-table">
+                <tr><th>운영 기관</th><td><a href="한국철도공사.html" class="wiki-link">한국철도공사</a></td></tr>
+                <tr><th>개업일</th><td>2003년 4월 5일</td></tr>
+                <tr><th>주소</th><td><a href="덕빈북도.html" class="wiki-link">덕빈북도</a> <a href="낭원군.html" class="wiki-link">낭원군</a> <a href="내덕면.html" class="wiki-link">내덕면</a> <span style="font-weight:bold; color:red;">시발리 18</span><br><span class="text-xs text-gray-500">(시방로 28)</span></td></tr>
+                <tr><th>노선</th><td><a href="경빈선.html" class="wiki-link">경빈선</a><br><a href="빈효고속선.html" class="wiki-link">빈효고속선</a>(접속)</td></tr>
+                <tr><th>등급</th><td>신호장</td></tr>
+                <tr><th>승강장</th><td>없음 (교행 및 합류선 보유)</td></tr>
+                <tr><th>운행열차</th><td>없음 (전 열차 통과)</td></tr>
+            </table>
+
+            <!-- 철도거리표 -->
+            <div class="distance-table-container">
+                <div class="main-header">철도거리표</div>
+                
+                <div class="station-row">
+                    <div class="col side">
+                        <span class="direction">서울 방면</span>
+                        <a href="흑성신호장.html" class="station-link-dist" style="font-size:0.9em;">흑성신호장</a>
+                        <span class="dist-val">← 5.89 km</span>
+                    </div>
+                    <div class="col center">
+                        <div class="line-badge text-[#005BAC]">경빈선</div>
+                        <span class="font-black text-lg">내 동</span>
+                    </div>
+                    <div class="col side">
+                        <span class="direction">효빈 방면</span>
+                        <a href="천주역.html" class="station-link-dist">천 주</a>
+                        <span class="dist-val">직결 →</span>
+                        <div class="text-xs text-gray-500">(빈효고속선)</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- 인포박스 끝 -->
+
+        <div class="inline-block min-w-[300px] border border-gray-300 bg-gray-50 p-4 mb-6">
+            <div class="text-center font-black mb-2 text-lg">목차</div>
+            <ul class="list-decimal list-inside text-sm font-bold text-[#0055AA] space-y-1">
+                <li><a href="#s-1">개요</a></li>
+                <li><a href="#s-2">역사</a></li>
+                <li><a href="#s-3">역 정보</a>
+                    <ul class="list-none ml-5 space-y-1">
+                        <li><a href="#s-3-1">3.1. 승강장 (배선도)</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-4">역 주변 정보 및 내덕면의 떡상</a></li>
+                <li><a href="#s-5">여담</a>
+                    <ul class="list-none ml-5 space-y-1">
+                        <li><a href="#s-5-1">5.1. 이름과 주소의 저주 (전설의 시발리 18)</a></li>
+                        <li><a href="#s-5-2">5.2. 철도 동호인들의 숨겨진 성지</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 본문이 무조건 인포박스와 목차 아래로 내려가도록 float 해제 -->
+        <div class="clear-both"></div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <div class="quote-box">
+            "경빈선 최후의 관문이자, 빈효고속선이 시작되는 절대적 요충지."
+        </div>
+        <p>
+            <a href="경빈선.html" class="wiki-link">경빈선</a>과 <a href="빈효고속선.html" class="wiki-link">빈효고속선</a>이 만나는 분기점 역할을 하는 뼈대 굵은 신호장. 행정구역상 <a href="덕빈북도.html" class="wiki-link">덕빈북도</a> <a href="낭원군.html" class="wiki-link">낭원군</a> <a href="내덕면.html" class="wiki-link">내덕면</a> <b>시발리</b> 한복판에 덩그러니 놓여 있다.
+        </p>
+        <p>
+            일반철도인 경빈선이 고속철도인 빈효고속선으로 합류하는 지점으로, 운전 취급상 피가 마르는 매우 중요한 역할을 담당한다. 덕빈남도를 거쳐 느긋하게 올라온 <a href="KTX.html" class="wiki-link">KTX</a> 열차가 이곳을 기점으로 굉음을 내며 고속선으로 진입하여 <a href="천주역.html" class="wiki-link">천주역</a> 및 <a href="효빈역.html" class="wiki-link">효빈역</a>으로 쏘아지듯 향하게 된다. 반대로 고속선에서 내려온 열차가 일반선으로 합류하며 속도를 줄이는 병목 구간이기도 하다. 관제사들 입장에서는 하루 종일 모니터를 뚫어져라 쳐다봐야 하는 요주의 구역.
+        </p>
+        <p>
+            현재 여객 취급은 일절 하지 않는 100% 순수 운전용 시설이나, 최근 낭원군 내덕면 전체가 상전벽해 수준의 떡상을 겪으면서 <b>"내동역 여객 취급 기원"</b>이라는 현수막이 동네 입구에 걸리기 시작하는 등 묘한 떡밥이 계속해서 돌고 있다.
+        </p>
+
+        <h2 id="s-2">2. 역사</h2>
+        <ul class="list-disc ml-6 space-y-1 mb-4">
+            <li><b>2003년 4월 5일:</b> 경빈선 개통과 함께 신호장으로 영업 개시. 당시에는 그저 평범한 교행용 신호장이었다.</li>
+            <li><b>2014년:</b> 빈효고속선 1단계 구간 개통. 이때부터 고속선 접속 설비가 가동되며 역의 위상이 수직 상승했다. 공사 당시 조용하던 시발리 일대 소들이 공사 소음에 스트레스를 받아 우유 생산량이 줄었다며 마을 이장님이 코레일에 항의 방문을 하기도 했다(...).</li>
+            <li><b>2025년 5월:</b> 인근에 <a href="고남역.html" class="wiki-link">고남역</a>이 개통하고 내덕면 일대가 개발되면서 신호장을 일반역으로 승격시켜달라는 민원이 폭주하기 시작했다.</li>
+        </ul>
+
+        <h2 id="s-3">3. 역 정보</h2>
+        <p>
+            여객용 역사는 아예 존재하지 않으며, 삭막한 콘크리트 재질의 신호 제어소 건물과 거대한 변전 시설만이 철조망 너머에 자리 잡고 있다. 고속선과 일반선의 합류 지점이므로 선로 구조가 상당히 복잡하게 꼬여 있으며, KTX, 일반열차, 화물열차가 쉴 새 없이 오가기 때문에 열차 운행 밀도도 토가 나올 정도로 높다. 
+        </p>
+        <p>
+            재미있는 점은 이 최첨단 고속철도 제어 시설이 낭원군의 평화로운 논밭 한가운데에 Ufo라도 불시착한 것마냥 덩그러니 놓여 있다는 것이다. 모내기 철이 되면 300km/h로 질주하는 KTX 옆에서 트랙터가 느릿느릿 밭을 가는 사이버펑크(?)스러운 풍경이 연출된다. <span class="wiki-strike">물론 주소는 평범하지 않다 못해 레전드다.</span>
+        </p>
+        
+        <h3 id="s-3-1">3.1. 승강장 (배선도)</h3>
+        <p>승객 승하차용 승강장은 눈을 씻고 찾아봐도 없으며, 고속선 합류를 위한 입체 교차 시설과 대피선이 주를 이룬다.</p>
+
+        <!-- 승강장 배선도 (3행 구조) -->
+        <div class="my-4 overflow-x-auto">
+            <table class="platform-track-table" style="font-family:monospace; min-width:600px; text-align:center;">
+                <colgroup>
+                    <col style="width:10%">
+                    <col style="width:80%">
+                    <col style="width:10%">
+                </colgroup>
+                <tr><td colspan="3" class="bg-gray-100 font-bold">↑ <a href="흑성신호장.html" class="wiki-link">흑성</a> (경빈선)</td></tr>
+                <tr class="h-16">
+                    <td style="background:#f0f0f0; border-right:2px solid #555;">본선</td>
+                    <td class="track-normal">／　　　　　　　　　　　　　　　　　　＼</td>
+                    <td style="background:#f0f0f0; border-left:2px solid #555;">합류</td>
+                </tr>
+                <tr><td colspan="3" class="bg-gray-100 font-bold">↓ <a href="천주역.html" class="wiki-link">천주</a> (빈효고속선 직결)</td></tr>
+            </table>
+        </div>
+
+        <h2 id="s-4">4. 역 주변 정보 및 내덕면의 떡상</h2>
+        <p>
+            내동신호장이 위치한 <a href="내덕면.html" class="wiki-link">내덕면(內德面)</a>은 인구 <strong>5,062명</strong>을 돌파하며(낭원군 6위) 현재 낭원군에서 가장 핫하게 <strong>떡상 중인 지역</strong>이다. 관할 법정리는 내덕리, 석체리, 중야리, 시발리, 청롱리, 칠뢰리, 고남리로 이루어져 있으며, 교육 시설로는 내덕초등학교와 내덕중학교가 있다.
+        </p>
+        <p>
+            원래 이곳은 기차 매연이나 쐬고 지나가던 그저 그런 농촌 지역이었으나, <strong>2025년 5월 <span style="color:var(--binhyo-subway); font-weight:bold;">연청색(#6677CC)</span> <a href="빈효선.html" class="wiki-link">빈효선 광역전철</a> <a href="고남역.html" class="wiki-link">고남역</a> 개통 및 대규모 차량기지 유치</strong>로 그야말로 천지개벽 수준의 발전을 이루었다. <span class="wiki-strike">전노아(빈효선 마스코트)와 마시로의 가호가 시골 마을을 뒤덮었다 카더라.</span>
+        </p>
+        <ul class="list-disc ml-8 space-y-2 mt-2">
+            <li>
+                <strong>교통의 요충지화:</strong> 빈효선 종착역 효과로 인해 효빈시와 낭원읍내로 출퇴근하려는 외지 인구가 급증하면서 인구 5천 명 선을 가볍게 돌파했다. 이에 맞춰 고남역 - 낭원 - 전포를 잇는 농어촌버스 노선이 굉장히 촘촘하게 개설되어 교통 편의성이 극대화되었다. 낭원군이 시로 승격되면 시내버스로 신분 상승할 녀석들이다.
+            </li>
+            <li>
+                이러한 폭발적인 인구 증가와 인프라 확충 때문에, 현재는 여객을 취급하지 않는 내동신호장 주변 시발리 일대 주민들 역시 눈이 높아져 <strong>"우리 동네에도 KTX 서는 역 하나 세워달라"</strong>며 무언의 압박을 넣고 있다. 코레일 측은 "신호장 구조상 승강장 설치가 매우 곤란하다"며 난색을 표하고 있지만 정치권의 떡밥은 식지 않고 있다.
+            </li>
+        </ul>
+
+        <h2 id="s-5">5. 여담</h2>
+        
+        <h3 id="s-5-1">5.1. 이름과 주소의 저주 (전설의 시발리 18)</h3>
+        <p>
+            내동신호장은 <strong>'주소 세탁의 대실패'</strong> 및 <strong>'역명 제정의 고충'</strong>을 단적으로 보여주는 레전드 사례로 철도 동호인과 네티즌들 사이에서 두고두고 회자되는 밈(Meme) 덩어리다.
+        </p>
+        
+        <ul class="list-disc ml-8 space-y-3 mt-4">
+            <li>
+                <strong>내동신호장의 비밀 (구 시발신호장):</strong> 이 역이 위치한 곳은 내덕면 <strong>시발리(始發里)</strong>이다. 한자 뜻만 보면 '새로운 시작', '처음 출발함'이라는 열차와 어울리는 매우 멋진 뜻을 품고 있지만... <span class="wiki-strike">대한민국 국민이라면 누구나 입에 달고 사는 그 국민 욕설과 발음이 완벽히 일치하는 바람에</span> 표지판을 본 외지인들은 흠칫 놀라곤 하는 마성의 동네다. 당연히 원칙대로라면 역 이름은 지명을 딴 <strong>'시발신호장'</strong>이 되었어야 했으나, 코레일 측에서 <strong>"방송 사고 방지"</strong>라는 극히 상식적이고 처절한 이유로 기각했다. 
+                <div class="quote-box">
+                    "이번 역은 시발, 시발역입니다. 내리실 문은..."<br>
+                    <span class="text-sm text-gray-500">─ 만약 실제로 역명이 제정되었다면 매일같이 들렸을 안내방송. <span class="wiki-strike">기장이 승객한테 화난 게 아니다.</span></span>
+                </div>
+            </li>
+            <li>
+                <strong>하필 이름이 겹침:</strong> "그럼 그냥 면 이름을 따서 무난하게 <strong>내덕신호장</strong>으로 짓자!"라고 관계자들이 안도의 한숨을 쉬며 합의를 봤으나, 하필이면 <a href="덕빈남도.html" class="wiki-link">덕빈남도</a> <a href="하정시.html" class="wiki-link">하정시</a>에 <a href="내덕역.html" class="wiki-link">(구)내덕역</a>(2020년 폐선됨)이 버젓이 존재했었다. 전산망 중복을 피하고자 내덕면의 '내' 자와 동네 동(洞)을 대충 섞어 결국 <strong>내동신호장</strong>이라는 근본 없는 타협안이 탄생했다.
+            </li>
+            <li>
+                <strong>지번 주소의 압박:</strong> 이렇게 기를 쓰고 역 이름을 세탁했으나 주소까지 세탁할 순 없었다. 역 부지의 지번 주소는 무려 <span style="font-weight:bold; color:red; font-size:1.1em;">시발리 18번지</span>다. 만약 훗날 여객역으로 개통하여 네비게이션을 찍고 온다면 <strong>"안내를 시작합니다. 목적지는 시발리 18번지입니다."</strong>라는, 기계가 나에게 쌍욕을 박는 듯한 신선한 경험을 할 수 있다.
+            </li>
+            <li>
+                <strong>도로명 주소의 배신:</strong> 관계 당국은 "그래도 도로명 주소 시대가 오면 좀 낫겠지. 도로명 주소는 욕 같지 않을 거야."라고 일말의 희망을 품었다. 그러나 해당 역 앞을 지나는 도로는 하필이면 <strong>시발리</strong>와 인접한 <strong>방산시</strong>를 잇는 도로였다. 행정안전부의 원칙에 따라 두 지명의 앞 글자('시'발 + '방'산)를 따서 도로명이 지어졌는데, 그게 하필 <strong>'시방로'</strong>가 되었다. 심지어 역 건물이 부여받은 번호는 하필 28번지. 결국 도로명 주소조차 <span style="font-weight:bold; color:red; font-size:1.1em;">"시방로 28"</span>(......)이 되어버렸다. 
+                <div class="quote-box">
+                    <span class="wiki-strike">"시발리 18이나 시방로 이팔(28)이나 그게 그거잖아. 어차피 욕먹을 운명이었다."</span><br>
+                    "택시 기사님한테 '시방로 이팔 가주세요' 했다가 기사님이 백미러로 째려보더라."
+                </div>
+            </li>
+            <li>
+                결국 네티즌들은 <strong>"내동역은 운명이다", "어떻게든 욕쟁이 할머니 국밥집 같은 구수한 주소를 가질 팔자", "여객 취급 시작하는 순간 역무원은 매일 승객한테 쌍욕 먹는 기분일 듯"</strong> 이라며 즐거워하고 있다.
+            </li>
+        </ul>
+
+        <h3 id="s-5-2">5.2. 철도 동호인들의 숨겨진 성지</h3>
+        <p>
+            역 구조상 고속선과 일반선이 갈라지는 장관을 연출하기 때문에 <b>철싸대(철도 사이버 대원)를 비롯한 철도 동호인들의 주요 출사 포인트</b>로 알음알음 알려져 있다.
+        </p>
+        <ul class="list-disc ml-8 space-y-2 mt-2">
+            <li>
+                특히 고속선 입체교차로 아래쪽 시골길(시방로) 부근에서 망원 렌즈를 들이대면 일반선에서 고속선으로 뱀처럼 스르륵 진입하는 KTX의 곡선 주행을 매우 예쁘게 담을 수 있다. 
+            </li>
+            <li>
+                문제는 이 촬영 명당 포인트가 하필이면 <b>'시발리 마을회관'</b> 바로 앞이라는 점. 외지인들이 커다란 대포 카메라를 들고 마을회관 앞을 서성거리니 이장님과 동네 어르신들이 "저놈들 시방 뭐하는 놈들이여?"라며 매우 수상쩍게 쳐다보는 일이 잦다고 한다. <span class="wiki-strike">졸지에 시발리에서 수상한 짓 하는 사람들이 되었다.</span> 출사를 갈 계획이라면 주민들에게 오해를 사지 않도록 정중히 인사하고 조용히 사진만 찍고 가자.
+            </li>
+        </ul>
+
+    </div>
+    
+    <footer class="p-10 bg-gray-100 mt-20 text-sm text-center text-gray-500 font-bold">
+        이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. <br>
+        효빈위키는 백과사전이 아니며 검증되지 않았거나 잘못된 서술이 있을 수 있습니다.
+    </footer>
+
+    </script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js?v=1"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+
+</body>
+</html>

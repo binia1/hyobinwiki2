@@ -1,0 +1,1296 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈위키 틀 제작기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 스타일링용 CSS 연결 -->
+    <link rel="stylesheet" href="css/colorcss.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #e5e7eb; color: #333; }
+        
+        /* 미리보기 영역 */
+        .wiki-preview {
+            background-color: #ffffff;
+            color: #373a3c;
+            line-height: 1.6;
+            font-size: 15px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            min-height: 300px;
+        }
+
+        .wiki-link { color: #0055AA; font-weight: bold; text-decoration: none; cursor: pointer; }
+        .wiki-link:hover { text-decoration: underline; }
+        /* 외부 링크도 내부 링크와 동일한 색상으로 변경 */
+        .wiki-link.external { color: #0055AA; } 
+        del { color: #999; text-decoration: line-through; }
+
+        /* 인포박스 스타일 */
+        .infobox { 
+            border: 2px solid #7777AA; 
+            background-color: #fff; 
+            width: 100%; 
+            max-width: 400px;
+            font-size: 0.9rem; 
+            margin: 0 auto;
+            border-radius: 4px; 
+            overflow: hidden; 
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+        .infobox-title { background-color: #7777AA; color: white; padding: 10px; text-align: center; font-size: 1.2rem !important; font-weight: 900; }
+        .infobox-image { text-align: center; padding: 10px; border-bottom: 1px solid #ccc; background: white; }
+        .infobox-image img { max-width: 100%; border-radius: 4px; }
+        .infobox table { width: 100%; border-collapse: collapse; border: none; margin: 0; }
+        .infobox th { background-color: #f5f5f5; color: #333; width: 35%; padding: 6px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; vertical-align: middle; }
+        .infobox td { padding: 6px 8px; border: 1px solid #ddd; vertical-align: middle; text-align: left; }
+
+        /* 효빈위키식 접기 테이블 */
+        .namu-nav-container { border: 2px solid #7777AA; margin: 10px 0; font-size: 0.9rem; background: white; width: 100%; }
+        .namu-nav-header { 
+            background-color: #7777AA; 
+            color: white; 
+            padding: 6px 12px; 
+            font-weight: bold; 
+            display: flex; 
+            justify-content: center; /* 가운데 정렬로 변경 */
+            align-items: center;
+            position: relative; /* 버튼 배치를 위해 relative 추가 */
+        }
+        .namu-nav-content { display: block; padding: 0; }
+        .namu-nav-table { width: 100%; border-collapse: collapse; }
+        .namu-nav-row th { background-color: #7777AA; color: white; width: 120px; text-align: center; font-weight: bold; border-bottom: 1px solid white; border-right: 1px solid white; padding: 8px; }
+        .namu-nav-row td { background-color: #fff; padding: 8px; text-align: left; border-bottom: 1px solid #ccc; }
+
+        /* 일반 표 스타일 (N행 N열) */
+        .wiki-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.95em; }
+        .wiki-table th { background-color: #f0f0f0; border: 1px solid #ccc; padding: 8px; font-weight: bold; text-align: center; }
+        .wiki-table td { border: 1px solid #ccc; padding: 8px; }
+
+        /* 뱃지 스타일 */
+        .wiki-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8em;
+            margin-right: 2px;
+            background-color: #7777AA; /* 기본값 */
+        }
+
+        /* 로고 스타일 (미리보기용) */
+        .logo-ring { width: 50px; height: 50px; border-radius: 50%; border: 3px solid #7777AA; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; color: #7777AA; background: white; }
+        .logo-box-fill { padding: 5px 10px; background-color: #7777AA; color: white; font-weight: bold; border-radius: 4px; display: inline-block; }
+        .logo-box-outline { padding: 5px 10px; border: 2px solid #7777AA; color: #7777AA; font-weight: bold; border-radius: 4px; display: inline-block; background: white; }
+
+        /* UI 컨트롤 */
+        .control-group { margin-bottom: 15px; }
+        .control-label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; color: #555; }
+        .input-field { width: 100%; padding: 8px; border: 1px solid #ccc; rounded: 4px; font-size: 0.9rem; }
+        .row-item { display: flex; gap: 5px; margin-bottom: 5px; }
+        .remove-btn { color: red; cursor: pointer; padding: 5px; }
+        
+        /* 도구 버튼 스타일 */
+        .tool-btn { 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            font-size: 0.8rem; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: 0.2s;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .tool-btn:hover { background-color: #f3f4f6; }
+        .tool-btn:active { transform: translateY(1px); }
+
+        /* 아코디언 스타일 */
+        .accordion-item { border: 1px solid #e5e7eb; border-radius: 4px; margin-bottom: 5px; background: white; overflow: hidden; }
+        .accordion-header { 
+            padding: 10px; 
+            background-color: #f9fafb; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 0.9rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        }
+        .accordion-header:hover { background-color: #f3f4f6; }
+        .accordion-content { padding: 10px; display: none; border-top: 1px solid #e5e7eb; }
+        .accordion-content.active { display: block; }
+        .accordion-icon { transition: transform 0.2s; }
+        .accordion-header.active .accordion-icon { transform: rotate(180deg); }
+
+        /* 팝업 스타일 (아이콘 등) */
+        .tool-popup {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            margin-bottom: 5px;
+            width: 280px;
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            padding: 10px;
+            z-index: 50;
+            display: none;
+        }
+        .tool-wrapper:hover .tool-popup { display: block; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6">
+        <!-- 왼쪽: 설정 패널 -->
+        <div class="w-full lg:w-1/3 bg-white p-6 rounded-lg shadow-md h-fit max-h-[90vh] overflow-y-auto">
+            <h1 class="text-2xl font-black text-[#7777AA] mb-4 border-b-2 border-[#7777AA] pb-2">
+                <i class="fa-solid fa-screwdriver-wrench"></i> 효빈위키 틀 제작기
+            </h1>
+
+            <!-- 1. 템플릿 선택 -->
+            <div class="control-group">
+                <label class="control-label">제작할 틀 종류</label>
+                <select id="templateType" class="input-field border rounded p-2" onchange="changeTemplateType()">
+                    <option value="infobox">기본 인포박스 (프로필)</option>
+                    <option value="admin_box">행정구역 정보표 (지역)</option>
+                    <option value="navbox">둘러보기 틀 (기본)</option>
+                    <option value="collapsible_navbox">둘러보기 틀 (시작 시 접힘)</option>
+                    <option value="grid_table">N행 N열 데이터 표 (선거/통계)</option>
+                    <option value="alert">알림 상자 (경고/정보)</option>
+                </select>
+            </div>
+
+            <!-- 2. 색상 선택 (메인 테마용) -->
+            <div class="control-group">
+                <label class="control-label">테마 색상 선택 (틀 전체)</label>
+                <div class="flex gap-2 mb-2">
+                    <input type="color" id="customColor" class="w-12 h-10 cursor-pointer border rounded" value="#7777AA" onchange="updatePreview()">
+                    <select id="colorPreset" class="input-field border rounded p-2 text-sm flex-grow" onchange="applyPreset()">
+                        <option value="">-- 테마 색상 프리셋 --</option>
+                        <!-- JS로 자동 생성됨 -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- 3. 공통 입력 -->
+            <div class="control-group">
+                <label class="control-label">제목 / 헤더 텍스트</label>
+                <input type="text" id="inputTitle" class="input-field border rounded p-2" placeholder="제목을 입력하세요" oninput="updatePreview()" onfocus="setFocus(this)">
+            </div>
+
+            <div class="control-group" id="imageGroup">
+                <label class="control-label">이미지 파일명 (자동으로 경로 변환)</label>
+                <input type="text" id="inputImage" class="input-field border rounded p-2" placeholder="예: 전동차_측면" oninput="updatePreview()" onfocus="setFocus(this)">
+                <div class="text-xs text-gray-500 mt-1">* '한국어이름.png' 형식으로 자동 변환됩니다.</div>
+            </div>
+
+            <!-- 4. 표 설정 (N행 N열 전용) -->
+            <div class="control-group hidden" id="gridConfig">
+                <label class="control-label">표 크기 및 설정</label>
+                <div class="flex gap-2 mb-2">
+                    <input type="number" id="gridRows" class="input-field w-1/3" placeholder="행(줄)" value="3" min="1">
+                    <input type="number" id="gridCols" class="input-field w-1/3" placeholder="열(칸)" value="3" min="1">
+                    <button onclick="createGridInputs()" class="bg-[#7777AA] text-white px-3 py-1 rounded text-xs w-1/3 font-bold">그리드 생성</button>
+                </div>
+                <div class="flex items-center gap-2 text-sm mb-2">
+                    <input type="checkbox" id="gridHeader" checked onchange="updatePreview()"> 첫 행을 헤더(제목)로 사용
+                </div>
+            </div>
+
+            <!-- 5. 동적 데이터 입력 -->
+            <div class="control-group" id="dynamicRows">
+                <label class="control-label flex justify-between items-center" id="rowsLabel">
+                    데이터 항목
+                    <div>
+                        <button onclick="addRow()" class="text-xs bg-gray-200 px-2 py-1 rounded hover:bg-gray-300"><i class="fa-solid fa-plus"></i> 행 추가</button>
+                    </div>
+                </label>
+                <div id="rowsContainer" class="space-y-2 max-h-60 overflow-y-auto p-1"></div>
+            </div>
+
+            <!-- 6. 서술 도우미 (아코디언 방식) -->
+            <div class="control-group border-t pt-4 mt-4 bg-gray-50 p-3 rounded">
+                <label class="control-label mb-2 flex justify-between">
+                    서술 도우미
+                    <span class="text-xs font-normal text-blue-600 self-center">※ 입력창 클릭 후 사용</span>
+                </label>
+                
+                <!-- 아코디언 메뉴 시작 -->
+                <div class="accordion">
+                    <!-- 1. 텍스트 서식/정렬/크기 -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span><i class="fa-solid fa-font"></i> 텍스트 서식/정렬/크기</span>
+                            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content active">
+                            <!-- 1열: 기본 서식 & 색상 -->
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <button onclick="insertTag('<b>', '</b>')" class="tool-btn font-bold" title="굵게">B</button>
+                                <button onclick="insertTag('<del>', '</del>')" class="tool-btn line-through text-gray-500" title="취소선">S</button>
+                                <button onclick="insertTag('<span class=\'wiki-gray\'>', '</span>')" class="tool-btn text-gray-400" title="작게/회색">회색</button>
+                                <button onclick="insertTag('<br>', '')" class="tool-btn" title="줄바꿈">줄바꿈</button>
+                                <div class="flex items-center border rounded px-1 bg-white">
+                                    <input type="color" id="textColorPicker" class="w-5 h-5 cursor-pointer border-none p-0" value="#ff0000">
+                                    <button onclick="insertColor()" class="ml-1 text-xs font-bold text-gray-600 px-1 hover:bg-gray-100 rounded">색상</button>
+                                </div>
+                            </div>
+                            
+                            <hr class="my-2 border-gray-100">
+
+                            <!-- 2열: 정렬 & 크기 -->
+                            <div class="flex flex-wrap gap-3 items-center">
+                                <!-- 정렬 -->
+                                <div class="flex border rounded overflow-hidden bg-white" title="문단 정렬">
+                                    <button onclick="insertTag('<div style=\'text-align:left\'>', '</div>')" class="px-2 py-1 hover:bg-gray-100 border-r text-gray-700" title="왼쪽 정렬"><i class="fa-solid fa-align-left"></i></button>
+                                    <button onclick="insertTag('<div style=\'text-align:center\'>', '</div>')" class="px-2 py-1 hover:bg-gray-100 border-r text-gray-700" title="가운데 정렬"><i class="fa-solid fa-align-center"></i></button>
+                                    <button onclick="insertTag('<div style=\'text-align:right\'>', '</div>')" class="px-2 py-1 hover:bg-gray-100 text-gray-700" title="오른쪽 정렬"><i class="fa-solid fa-align-right"></i></button>
+                                </div>
+
+                                <!-- 크기 (Point) -->
+                                <div class="flex items-center border rounded bg-white px-1" title="글자 크기 (pt)">
+                                    <input type="number" id="textSizeInput" class="w-12 text-xs p-1 border-none focus:ring-0 text-right outline-none" placeholder="pt" value="12" min="1">
+                                    <span class="text-xs text-gray-500 mr-1 font-bold">pt</span>
+                                    <button onclick="insertTextSize()" class="tool-btn text-xs bg-gray-50 border-l rounded-none border-t-0 border-b-0 border-r-0 h-full">적용</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. 링크 도구 -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span><i class="fa-solid fa-link"></i> 링크 삽입</span>
+                            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="space-y-2">
+                                <div class="flex gap-1 items-center">
+                                    <span class="text-xs font-bold w-12">내부:</span>
+                                    <input type="text" id="toolLinkInternal" class="border text-xs p-1 flex-grow rounded" placeholder="문서명 (예: 효빈광역시)">
+                                    <button onclick="generateLink('internal')" class="bg-blue-500 text-white text-xs px-2 py-1 rounded">삽입</button>
+                                </div>
+                                <div class="flex gap-1 items-center">
+                                    <span class="text-xs font-bold w-12">외부:</span>
+                                    <input type="text" id="toolLinkExText" class="border text-xs p-1 w-1/3 rounded" placeholder="표시 텍스트">
+                                    <input type="text" id="toolLinkExUrl" class="border text-xs p-1 flex-grow rounded" placeholder="https://...">
+                                    <button onclick="generateLink('external')" class="bg-green-500 text-white text-xs px-2 py-1 rounded">삽입</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. 꾸미기 (뱃지/로고) -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span><i class="fa-solid fa-medal"></i> 꾸미기 (뱃지/로고)</span>
+                            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <!-- 꾸미기용 색상 선택기 추가 -->
+                            <div class="mb-2 text-xs bg-gray-100 p-2 rounded">
+                                <label class="font-bold text-gray-600 mb-1 block">장식 전용 색상 선택:</label>
+                                <div class="flex gap-1">
+                                    <input type="color" id="decoColor" class="w-8 h-8 cursor-pointer border rounded" value="#7777AA">
+                                    <select id="decoColorPreset" class="border rounded p-1 text-xs flex-grow" onchange="applyDecoPreset()">
+                                        <option value="">-- 색상 프리셋 선택 --</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <button onclick="insertBadge()" class="tool-btn bg-purple-100 text-purple-700 font-bold border-purple-200"><i class="fa-solid fa-tag"></i> 뱃지 생성</button>
+                            </div>
+                            <hr class="my-2 border-gray-100">
+                            <div class="text-xs font-bold mb-1 text-gray-500">로고 삽입 (위에서 선택한 색상 적용)</div>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="insertLogo('ring')" class="tool-btn"><i class="fa-regular fa-circle"></i> 링형</button>
+                                <button onclick="insertLogo('box-fill')" class="tool-btn"><i class="fa-solid fa-square"></i> 사각(채움)</button>
+                                <button onclick="insertLogo('box-outline')" class="tool-btn"><i class="fa-regular fa-square"></i> 사각(선)</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. 표/이미지 도구 -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span><i class="fa-solid fa-table"></i> 표/이미지 도구</span>
+                            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <button onclick="insertTableCell('colspan')" class="tool-btn text-xs">가로병합(Colspan)</button>
+                                <button onclick="insertTableCell('rowspan')" class="tool-btn text-xs">세로병합(Rowspan)</button>
+                            </div>
+                            <hr class="my-2 border-gray-100">
+                            <div class="flex gap-1 items-center">
+                                <span class="text-xs font-bold w-12">이미지:</span>
+                                <input type="text" id="toolImgName" class="border text-xs p-1 w-1/3 rounded" placeholder="파일명">
+                                <input type="text" id="toolImgWidth" class="border text-xs p-1 w-1/4 rounded" value="100%">
+                                <button onclick="generateImageTag()" class="bg-blue-500 text-white text-xs px-2 py-1 rounded">삽입</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. 아이콘/기능 -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span><i class="fa-solid fa-icons"></i> 아이콘/기타</span>
+                            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <button onclick="generateCollapsible()" class="tool-btn bg-green-50 text-green-700 border-green-200"><i class="fa-solid fa-chevron-down"></i> 접기틀 삽입</button>
+                            </div>
+                            <hr class="my-2 border-gray-100">
+                            <!-- 아이콘 색상 선택기 추가 -->
+                            <div class="mb-2 text-xs bg-gray-100 p-2 rounded flex items-center gap-2">
+                                <label class="font-bold text-gray-600">아이콘 색상:</label>
+                                <input type="color" id="iconColorPicker" class="w-5 h-5 cursor-pointer border-none p-0" value="#000000">
+                                <span class="text-xs text-gray-400">(선택 시 적용)</span>
+                            </div>
+                            <div class="grid grid-cols-8 gap-1" id="iconGrid">
+                                <!-- JS로 아이콘 자동 생성됨 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 아코디언 끝 -->
+            </div>
+        </div>
+
+        <!-- 오른쪽: 미리보기 및 코드 출력 -->
+        <div class="w-full lg:w-2/3 flex flex-col gap-4">
+            <div class="bg-white p-6 rounded-lg shadow-md flex-grow">
+                <h2 class="text-lg font-bold text-gray-700 mb-2 border-b pb-2 flex justify-between">
+                    <span><i class="fa-solid fa-eye"></i> 실시간 미리보기</span>
+                    <span class="text-xs font-normal text-gray-500 self-end">실제 적용 시 스타일이 더 깔끔하게 나옵니다.</span>
+                </h2>
+                <div id="previewArea" class="wiki-preview bg-gray-50 flex items-start justify-center p-8 overflow-auto"></div>
+            </div>
+
+            <div class="bg-[#2d2d2d] p-4 rounded-lg shadow-md text-white">
+                <h2 class="text-sm font-bold text-gray-300 mb-2 flex justify-between items-center">
+                    <span><i class="fa-solid fa-code"></i> 생성된 HTML 코드</span>
+                    <div class="flex gap-2">
+                        <button onclick="downloadCode('txt')" class="bg-[#555588] hover:bg-[#444477] text-white px-3 py-1 rounded text-xs font-bold transition">
+                            <i class="fa-solid fa-file-lines"></i> TXT
+                        </button>
+                        <button onclick="downloadCode('html')" class="bg-[#555588] hover:bg-[#444477] text-white px-3 py-1 rounded text-xs font-bold transition">
+                            <i class="fa-brands fa-html5"></i> HTML
+                        </button>
+                        <button onclick="copyResult()" class="bg-[#7777AA] hover:bg-[#555588] text-white px-3 py-1 rounded text-xs font-bold transition">
+                            <i class="fa-regular fa-copy"></i> 코드 복사하기
+                        </button>
+                    </div>
+                </h2>
+                <textarea id="resultCode" class="w-full h-40 bg-[#1e1e1e] text-green-400 font-mono text-xs p-3 rounded border border-gray-600 focus:outline-none resize-none" readonly></textarea>
+                <div class="text-[10px] text-gray-400 mt-1 text-right">※ 이 코드를 복사해서 효빈위키 에디터의 원하는 위치에 붙여넣으세요.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFocusedInput = null;
+
+        function setFocus(element) {
+            currentFocusedInput = element;
+        }
+        
+        // --- 기존 데이터 ---
+        const COLOR_DB = {
+            "도시철도/광역전철": [
+                { name: "1호선", hex: "#0077DD" }, { name: "2호선", hex: "#00CCAA" },
+                { name: "3호선", hex: "#FFCC11" }, { name: "4호선", hex: "#FF5522" },
+                { name: "5호선", hex: "#EE0022" }, { name: "6호선", hex: "#881188" },
+                { name: "7호선", hex: "#FF8899" }, { name: "8호선", hex: "#9856FF" },
+                { name: "빈효선", hex: "#6677CC" }, { name: "창전선", hex: "#33aaff" },
+                { name: "청엽선", hex: "#D6D5CA" }, { name: "안천선", hex: "#B2FFDD" },
+                { name: "강빈선", hex: "#0054A6" }, { name: "빈주1호선", hex: "#CFBA0F" },
+                { name: "빈주2호선", hex: "#C455F6" }, { name: "빈주권 광역", hex: "#00008B" },
+                { name: "덕주1호선", hex: "#FF4F91" }, { name: "일반열차", hex: "#0066B3" }
+            ],
+            "버스 도색": [
+                { name: "간선버스", hex: "#01B7ED" }, { name: "순환버스", hex: "#E7D600" },
+                { name: "지선버스", hex: "#37B484" }, { name: "광역버스", hex: "#485EC6" },
+                { name: "좌석버스", hex: "#FF5800" }, { name: "마을버스", hex: "#A664A0" },
+                { name: "공항버스", hex: "#84C36E" }, { name: "시티투어", hex: "#7777AA" },
+                { name: "급행버스", hex: "#D81C2F" }
+            ],
+            "행정구역 (효빈)": [
+                { name: "효빈광역시", hex: "#7777aa" }, { name: "중구", hex: "#BB9955" },
+                { name: "동구", hex: "#FF9922" }, { name: "서구", hex: "#00AABB" },
+                { name: "남구", hex: "#DDBBFF" }, { name: "북구", hex: "#7799CC" },
+                { name: "청엽구", hex: "#006699" }, { name: "창전구", hex: "#33AAFF" },
+                { name: "안천구", hex: "#AA66DD" }, { name: "탄성군", hex: "#BBFF64" }
+            ],
+            "행정구역 (덕빈북)": [
+                { name: "덕빈북도", hex: "#4AD898" }, { name: "강주시", hex: "#ffc94a" },
+                { name: "계성시", hex: "#ED7D95" }, { name: "군천시", hex: "#E7D600" },
+                { name: "기도군", hex: "#01B7ED" }, { name: "낭원군", hex: "#485EC6" },
+                { name: "덕현군", hex: "#FF5800" }, { name: "모제군", hex: "#A664A0" },
+                { name: "반양군", hex: "#D81C2F" }, { name: "상안군", hex: "#84C36E" },
+                { name: "서진시", hex: "#9CA5B9" }, { name: "서해시", hex: "#37B484" },
+                { name: "선곡군", hex: "#D6D5CA" }, { name: "약산시", hex: "#F8C8C4" },
+                { name: "저천군", hex: "#1D1D1D" }, { name: "전산시", hex: "#FF7F27" },
+                { name: "치원군", hex: "#aa7799" }, { name: "천주시", hex: "#8B4993" },
+                { name: "빈주시", hex: "#ffeeaa" }
+            ],
+            "행정구역 (덕빈남)": [
+                { name: "덕빈남도", hex: "#335566" }, { name: "매산군", hex: "#A0FFF9" },
+                { name: "매성시", hex: "#FF6E90" }, { name: "비천시", hex: "#74F466" },
+                { name: "석창군", hex: "#0000A0" }, { name: "방산시", hex: "#FFF442" },
+                { name: "분주군", hex: "#FF3535" }, { name: "고포군", hex: "#B2FFDD" },
+                { name: "곡천군", hex: "#FF51C4" }, { name: "인곡군", hex: "#4cd2e2" },
+                { name: "관수군", hex: "#e49dfd" }, { name: "운진군", hex: "#bbff64" },
+                { name: "두원군", hex: "#e3ba3a" }, { name: "마진시", hex: "#ff99be" },
+                { name: "조전구", hex: "#3fb8ff" }, { name: "덕산구", hex: "#ff9ea9" },
+                { name: "하정시", hex: "#ff3b72" }, { name: "원안군", hex: "#00aabb" },
+                { name: "낙주시", hex: "#bb0033" }
+            ],
+            "정당 (제22대)": [
+                { name: "자유와혁신", hex: "#051C4C" }, { name: "국민연합", hex: "#E4017F" },
+                { name: "민주평화당2020", hex: "#00A85F" }, { name: "민주노동당2012", hex: "#FFED00" }
+            ],
+            "정당 (제21대)": [
+                { name: "새미래민주당", hex: "#51BDC5" }, { name: "기후민생당", hex: "#369173" },
+                { name: "히시태그", hex: "#f16335" }, { name: "노인복지당", hex: "#EA5404" },
+                { name: "공화당2020", hex: "#012154" }, { name: "대한국민당", hex: "#51A776" },
+                { name: "가가국민", hex: "#F8C400" }, { name: "가락특권", hex: "#FF8C00" },
+                { name: "대중민주당", hex: "#FFEF10" }, { name: "금융개혁당", hex: "#9900CC" },
+                { name: "대한상공인", hex: "#7030A0" }, { name: "소나무당", hex: "#1A246B" },
+                { name: "K정치혁신", hex: "#3E63AA" }, { name: "국민의미래", hex: "#E4002B" },
+                { name: "더불어민주연합", hex: "#003B96" }, { name: "조국혁신당", hex: "#0073CF" },
+                { name: "사회민주당", hex: "#F58400" }, { name: "새진보연합", hex: "#00D2C3" },
+                { name: "새로운미래", hex: "#45BABD" }, { name: "녹색정의당", hex: "#007C36" },
+                { name: "개혁신당", hex: "#FF7210" }, { name: "한반도미래", hex: "#E33334" },
+                { name: "내일로미래로", hex: "#AD469F" }, { name: "자유당2020", hex: "#30318B" },
+                { name: "새로운선택", hex: "#1AD199" }, { name: "한국농어민", hex: "#0056B8" },
+                { name: "국민주권당", hex: "#00A0EA" }, { name: "한국의희망", hex: "#004B83" },
+                { name: "열린민주당", hex: "#003e98" }, { name: "새로운물결", hex: "#02BB71" },
+                { name: "국민의힘", hex: "#E61E2B" }, { name: "국민대통합", hex: "#002B58" },
+                { name: "독도한국당", hex: "#00984A" }, { name: "자유한국21", hex: "#172A88" },
+                { name: "거지당", hex: "#038ED3" }, { name: "한류연합당", hex: "#733A87" },
+                { name: "자유민주당", hex: "#033692" }, { name: "자유통일당", hex: "#0958A7" },
+                { name: "혁명21", hex: "#044EA3" }, { name: "통일한국당", hex: "#003793" },
+                { name: "국민혁명당", hex: "#013792" }, { name: "신한반도평화", hex: "#292C93" },
+                { name: "신자유민주", hex: "#AD469F" }
+            ],
+            "정당 (제20대)": [
+                { name: "통합민주당", hex: "#9ACD32" }, { name: "친반국민", hex: "#40B02A" },
+                { name: "친반통일", hex: "#8A036A" }, { name: "바른미래당", hex: "#00B4B4" },
+                { name: "민주평화당", hex: "#43B02A" }, { name: "민중당", hex: "#F26522" },
+                { name: "진보당", hex: "#D6001C" }, { name: "환수복지당", hex: "#8e2650" },
+                { name: "새민중정당", hex: "#FF0D00" }, { name: "대한애국당", hex: "#0D2680" },
+                { name: "우리공화당", hex: "#14A83B" }, { name: "민중민주당", hex: "#8D2650" },
+                { name: "사회변혁", hex: "#D70C19" }, { name: "신한반도당", hex: "#008dd7" },
+                { name: "국민대통합", hex: "#F26F21" }, { name: "경제애국당", hex: "#781482" },
+                { name: "홍익당", hex: "#871E60" }, { name: "새누리당", hex: "#D91E48" },
+                { name: "민중연합당", hex: "#EE5927" }, { name: "바른정당", hex: "#00B1EB" },
+                { name: "늘푸른한국", hex: "#085C81" }, { name: "고용복지", hex: "#EA5C30" },
+                { name: "자유한국당", hex: "#C9151E" }, { name: "미래당", hex: "#2E3192" },
+                { name: "우리미래", hex: "#E50065" }, { name: "사회민주당", hex: "#950F16" },
+                { name: "복지국가당", hex: "#FA6500" }, { name: "자유새벽당", hex: "#101922" },
+                { name: "국가혁명", hex: "#E7141A" }, { name: "국민새정당", hex: "#1F6DDC" },
+                { name: "대안신당", hex: "#236736" }, { name: "새보수당", hex: "#00A7E5" },
+                { name: "전진당", hex: "#D42427" }, { name: "기본소득당", hex: "#00D2C3" },
+                { name: "자유통일", hex: "#DF0913" }, { name: "직능자영업", hex: "#752B88" },
+                { name: "미래한국당", hex: "#EF426F" }, { name: "국민의당", hex: "#EA5504" },
+                { name: "민생당", hex: "#0BA95F" }, { name: "친박신당", hex: "#E20010" },
+                { name: "가자환경당", hex: "#2A91C0" }, { name: "충청미래당", hex: "#AD469F" },
+                { name: "시대전환", hex: "#5A147E" }, { name: "열린민주당", hex: "#003E9B" },
+                { name: "여성의당", hex: "#6400AA" }, { name: "중소자영업", hex: "#144A88" },
+                { name: "미래민주당", hex: "#00A7E6" }, { name: "더불어시민", hex: "#004EA2" },
+                { name: "우리공화", hex: "#009944" }, { name: "남북통일당", hex: "#AC0300" },
+                { name: "깨어있는", hex: "#000056" }, { name: "우리당", hex: "#1A2F5C" },
+                { name: "미래자영업", hex: "#AA0B2D" }
+            ],
+            "정당 (제19대)": [
+                { name: "한나라당", hex: "#e32b34" }, { name: "국민의당", hex: "#006241" },
+                { name: "새누리당", hex: "#C9252B" }, { name: "더불어민주", hex: "#003B96" },
+                { name: "기독자유당", hex: "#0095DA" }, { name: "새정치연합", hex: "#00CCFF" },
+                { name: "공화당", hex: "#D2232A" }, { name: "새정치민주", hex: "#0082CD" },
+                { name: "정의당", hex: "#FFED00" }, { name: "진보정의당", hex: "#FF007F" },
+                { name: "통합진보당", hex: "#782B90" }, { name: "민주당2014", hex: "#FBD02B" },
+                { name: "민주당2011", hex: "#015DA9" }, { name: "민주통합당", hex: "#FFD400" },
+                { name: "국민의힘", hex: "#808080" }, { name: "국민행복", hex: "#FE4D00" },
+                { name: "문화예술당", hex: "#FEF200" }, { name: "기독당", hex: "#755191" },
+                { name: "기독민주당", hex: "#0167B7" }, { name: "기독자유민주", hex: "#0059A9" },
+                { name: "가나코리아", hex: "#4F1D12" }, { name: "평화인권당", hex: "#7B9D2E" },
+                { name: "대한당", hex: "#4b3293" }, { name: "가가호호", hex: "#4b286f" },
+                { name: "통일민주", hex: "#00AF97" }, { name: "국민참여", hex: "#F8C400" },
+                { name: "통일한국", hex: "#F47433" }, { name: "불교연합", hex: "#F1592A" },
+                { name: "한국경제당", hex: "#F58229" }, { name: "그린불교", hex: "#609060" },
+                { name: "녹색당", hex: "#5CB32E" }, { name: "노동당", hex: "#FF0000" },
+                { name: "대한민국당", hex: "#DE9B26" }, { name: "인권정당", hex: "#0085C6" },
+                { name: "친박연대", hex: "#0C449B" }, { name: "개혁국민", hex: "#3565B3" },
+                { name: "한국국민당", hex: "#013588" }, { name: "한국복지당", hex: "#EA5404" },
+                { name: "한나라당13", hex: "#D61921" }, { name: "한반도미래", hex: "#E33334" }
+            ],
+            "정당 (제18대)": [
+                { name: "대국민중심", hex: "#1A2C8E" }, { name: "건국당", hex: "#1F5937" },
+                { name: "구국참사람", hex: "#3432FF" }, { name: "국민생각", hex: "#F5821f" },
+                { name: "국민참여당", hex: "#FCCA00" }, { name: "청년당", hex: "#F47920" },
+                { name: "정통민주당", hex: "#FEDD02" }, { name: "대한국당", hex: "#005FB1" },
+                { name: "미래연합", hex: "#264280" }, { name: "미래한국당", hex: "#049CC4" },
+                { name: "민주당2008", hex: "#04972D" }, { name: "시민통합당", hex: "#F7B618" },
+                { name: "자유선진당", hex: "#00529C" }, { name: "직능연합당", hex: "#20B838" },
+                { name: "진보신당", hex: "#DC143C" }, { name: "참주인연합", hex: "#264088" },
+                { name: "창조한국당", hex: "#B30000" }, { name: "미래희망", hex: "#0C449B" },
+                { name: "평화민주당", hex: "#00A850" }
+            ],
+            "정당 (제17대)": [
+                { name: "시민당", hex: "#08B048" }, { name: "중도개혁", hex: "#B04880" },
+                { name: "중도통합", hex: "#F7C517" }, { name: "국민중심당", hex: "#E85298" },
+                { name: "국민통합21", hex: "#4F689A" }, { name: "대통합민주", hex: "#FF7F00" },
+                { name: "민주당", hex: "#00736D" }, { name: "민주노동당", hex: "#EE7700" },
+                { name: "열린우리당", hex: "#FFD700" }, { name: "가자희망", hex: "#0868B0" },
+                { name: "경제공화당", hex: "#ec000c" }, { name: "국태민안", hex: "#440B3E" },
+                { name: "국제녹색당", hex: "#8EC21F" }, { name: "새시대참사람", hex: "#3432ff" },
+                { name: "한국기독당", hex: "#0966AF" }, { name: "화합과도약", hex: "#800080" },
+                { name: "평화통일", hex: "#2EA443" }, { name: "신미래당", hex: "#E02828" },
+                { name: "국민실향", hex: "#00AF82" }, { name: "기독사랑", hex: "#000269" }
+            ],
+            "정당 (제16대)": [
+                { name: "민주국민당", hex: "#353F9C" }, { name: "한국신당", hex: "#283C7B" },
+                { name: "한미준", hex: "#F2687C" }, { name: "민주공화당", hex: "#0D90D6" },
+                { name: "청년진보당", hex: "#DB5369" }, { name: "하나로국민", hex: "#215AA6" },
+                { name: "개혁국민", hex: "#4CBB17" }, { name: "노년권익", hex: "#002080" },
+                { name: "한국미래", hex: "#FB4B00" }, { name: "녹색평화당", hex: "#4EB233" },
+                { name: "한국사회", hex: "#0080FF" }, { name: "한국기독당", hex: "#0966AF" },
+                { name: "녹색사민당", hex: "#51B749" }, { name: "민주화합당", hex: "#B00000" },
+                { name: "구국총연합", hex: "#386030" }
+            ],
+            "정당 (제15대)": [
+                { name: "새천년민주", hex: "#00AA7B" }, { name: "한나라당", hex: "#0095DA" },
+                { name: "신한국당", hex: "#003990" }, { name: "국민신당", hex: "#336C77" },
+                { name: "새정치국민", hex: "#009A44" }, { name: "자유민주", hex: "#1B5B40" },
+                { name: "대한민주당", hex: "#E0E0E0" }, { name: "민주당1995", hex: "#009D68" },
+                { name: "건설국민", hex: "#FF3D00" }, { name: "바른나라", hex: "#1e90ff" }
+            ],
+            "정당 (제14대)": [
+                { name: "공명민주당", hex: "#CD5C5C" }, { name: "민주당1991", hex: "#009D68" },
+                { name: "민주자유당", hex: "#003990" }, { name: "민중당1990", hex: "#FFA500" },
+                { name: "통일국민당", hex: "#22B14C" }, { name: "신정치개혁", hex: "#101299" },
+                { name: "대한정의당", hex: "#388860" }, { name: "새한국당", hex: "#080088" },
+                { name: "신민당1994", hex: "#3D9069" }, { name: "신민당1995", hex: "#B83E99" },
+                { name: "무정파", hex: "#FF6699" }, { name: "무당파", hex: "#5290DB" },
+                { name: "통일한국당", hex: "#003793" }
+            ],
+            "정당 (제13대)": [
+                { name: "사회민주당", hex: "#C81830" }, { name: "우리정의당", hex: "#5870C0" },
+                { name: "제3세대당", hex: "#C84030" }, { name: "한주의통일", hex: "#1840a0" }
+            ],
+            "정당 (제12대)": [
+                { name: "신정사회당", hex: "#FF4500" }, { name: "신민주당", hex: "#189868" },
+                { name: "근로농민당", hex: "#A52A2A" }
+            ],
+            "정당 (제11대)": [
+                { name: "민주정의당", hex: "#0A84E9" }, { name: "민주한국당", hex: "#ED2939" },
+                { name: "한국국민당", hex: "#498C00" }, { name: "신한민주당", hex: "#E6573B" },
+                { name: "신민주공화", hex: "#59955E" }, { name: "일체민주당", hex: "#3F3F3F" },
+                { name: "통일민주당", hex: "#E60026" }, { name: "통일민족당", hex: "#A4C400" },
+                { name: "신민주연합", hex: "#70BA86" }, { name: "평화민주당", hex: "#FADA5E" },
+                { name: "한겨레민주", hex: "#FF7F50" }, { name: "민주사회당", hex: "#ff8201" },
+                { name: "민권당", hex: "#4CA459" }, { name: "신정당", hex: "#4697b2" },
+                { name: "안민당", hex: "#a2a2a2" }, { name: "민주농민당", hex: "#A52A2A" },
+                { name: "사회당1981", hex: "#FF6347" }
+            ],
+            "정당 (제6-9대)": [
+                { name: "신민회", hex: "#3366ff" }, { name: "자유민주당", hex: "#005848" },
+                { name: "민주당1963", hex: "#332B43" }, { name: "민정당", hex: "#FFD700" },
+                { name: "정민회", hex: "#4B0080" }, { name: "추풍회", hex: "#C78665" },
+                { name: "신흥당", hex: "#005099" }, { name: "국민의당", hex: "#C2C247" },
+                { name: "민주공화당", hex: "#835B38" }, { name: "유신정우회", hex: "#DAA520" },
+                { name: "통한당", hex: "#312f2a" }, { name: "반제민족", hex: "#007FFF" },
+                { name: "민중당1965", hex: "#228B22" }, { name: "민중당1967", hex: "#ffd2ad" },
+                { name: "대중당", hex: "#3069A5" }, { name: "신민당", hex: "#DC352A" },
+                { name: "통일사회당", hex: "#104d8e" }, { name: "민주당1967", hex: "#9acd32" },
+                { name: "국민당1971", hex: "#00AF89" }, { name: "자민당", hex: "#88C8C8" },
+                { name: "민주통일당", hex: "#FAC813" }
+            ],
+            "정당 (제5대)": [
+                { name: "민주당1955", hex: "#000080" }, { name: "한국사회당", hex: "#FF0080" },
+                { name: "사회대중당", hex: "#DC143C" }, { name: "헌정동지회", hex: "#0990b3" },
+                { name: "혁신동지", hex: "#e0e0e0" }
+            ],
+            "정당 (제4대)": [
+                { name: "노농당", hex: "#fdff00" }, { name: "대한국민당", hex: "#0087bd" },
+                { name: "독립노농당", hex: "#353839" }, { name: "민주혁신당", hex: "#FF0000" },
+                { name: "진보당1956", hex: "#D6001C" }
+            ],
+            "정당 (제3대)": [
+                { name: "조선민주당", hex: "#CE0000" }, { name: "대한노동총", hex: "#00a495" },
+                { name: "제헌동지회", hex: "#a2a2a2" }
+            ],
+            "정당 (제2대)": [
+                { name: "노농청년", hex: "#353839" }, { name: "사회당1948", hex: "#e63e62" },
+                { name: "민족자주", hex: "#FF00FF" }, { name: "대한부인회", hex: "#0761BA" },
+                { name: "민주국민당", hex: "#ADFF2F" }
+            ],
+            "정당 (제1-5대)": [
+                { name: "교육협회", hex: "#7fffd4" }, { name: "단민당", hex: "#dda0dd" },
+                { name: "대성회", hex: "#050099" }, { name: "독립노동", hex: "#00a495" },
+                { name: "독립농민", hex: "#545aa7" }, { name: "독립부인", hex: "#5056a3" },
+                { name: "대동청년단", hex: "#27176f" }, { name: "독립국민회", hex: "#1271B5" },
+                { name: "여자국민당", hex: "#CF8854" }, { name: "대한청년단", hex: "#DA251D" },
+                { name: "유도회", hex: "#282D7B" }, { name: "일민구락부", hex: "#c0c0ff" },
+                { name: "자유당", hex: "#254170" }, { name: "전도회", hex: "#6a5acd" },
+                { name: "불교위원회", hex: "#800000" }, { name: "통일당", hex: "#008080" },
+                { name: "한국민주당", hex: "#008000" }, { name: "한국독립당", hex: "#113DA6" }
+            ],
+            "정당 (제헌/미분류)": [
+                { name: "조선인민당", hex: "#FF8000" }, { name: "부산15구락부", hex: "#ffdead" },
+                { name: "조선공화당", hex: "#FFB400" }, { name: "애국부인", hex: "#c3bcc4" },
+                { name: "청년당1948", hex: "#c82100" }, { name: "독립정부", hex: "#00b4ff" },
+                { name: "대한노동당", hex: "#1700b9" }, { name: "대한인국민", hex: "#ba55d3" },
+                { name: "공화당1997", hex: "#05517e" }, { name: "민주당1990", hex: "#DA2C43" },
+                { name: "민중의당", hex: "#F48800" }, { name: "민주통일", hex: "#FDC300" },
+                { name: "보수당", hex: "#00A7E5" }, { name: "사회당1998", hex: "#EF4122" },
+                { name: "새정치당", hex: "#0A51A1" }, { name: "선진통일당", hex: "#025bad" },
+                { name: "신민당1960", hex: "#047013" }, { name: "신정회", hex: "#1b00d9" },
+                { name: "신정동지회", hex: "#ba55d3" }, { name: "정의당1967", hex: "#350887" },
+                { name: "조선민족", hex: "#4F7FD4" }, { name: "불교교무원", hex: "#F39C01" }
+            ]
+        };
+
+        // 색상 자동 로드 함수
+        function loadColorsFromJS(targetId) {
+            const select = document.getElementById(targetId);
+            if (!select) return;
+            select.innerHTML = '<option value="">-- 색상 프리셋 선택 --</option>';
+
+            for (const category in COLOR_DB) {
+                const group = document.createElement('optgroup');
+                group.label = category;
+                
+                COLOR_DB[category].forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.hex;
+                    option.innerText = item.name;
+                    group.appendChild(option);
+                });
+                
+                select.appendChild(group);
+            }
+        }
+
+        // 아코디언 토글 함수
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.accordion-icon');
+            
+            content.classList.toggle('active');
+            header.classList.toggle('active');
+        }
+
+        // 아이콘 그리드 생성 함수
+        function initIconGrid() {
+            const grid = document.getElementById('iconGrid');
+            const icons = [
+                "fa-triangle-exclamation", "fa-circle-exclamation", "fa-circle-info", "fa-circle-question", // 경고/정보
+                "fa-check", "fa-xmark", "fa-ban", "fa-thumbs-up", // 상태
+                "fa-star", "fa-heart", "fa-user", "fa-lock", // 기타
+                "fa-train", "fa-bus", "fa-plane", "fa-ship", // 교통
+                "fa-quote-left", "fa-comment" // 인용
+            ];
+            
+            icons.forEach(cls => {
+                const fullClass = `fa-solid ${cls}`;
+                const btn = document.createElement('button');
+                btn.className = "w-6 h-6 flex items-center justify-center border rounded hover:bg-gray-100 text-gray-700 text-[10px]";
+                btn.innerHTML = `<i class="${fullClass}"></i>`;
+                btn.title = cls;
+                btn.onclick = () => {
+                    const color = document.getElementById('iconColorPicker').value;
+                    const style = color !== '#000000' ? ` style='color:${color}'` : '';
+                    const tag = `<i class='${fullClass}'${style}></i>`;
+                    if (currentFocusedInput) {
+                        insertTag(tag, '');
+                    } else {
+                        copyToClipboard(tag, '아이콘 태그');
+                    }
+                };
+                grid.appendChild(btn);
+            });
+        }
+
+        // 공통 파싱 함수 (제목, 내용 모두 적용)
+        function parseWikiText(text) {
+            if (!text) return '';
+            let parsed = text;
+            
+            // 기본 서식
+            parsed = parsed.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '<a href="$1.html" class="wiki-link">$2</a>');
+            parsed = parsed.replace(/\[\[([^\]]+)\]\]/g, '<a href="$1.html" class="wiki-link">$1</a>');
+            parsed = parsed.replace(/~~(.+?)~~/g, '<del>$1</del>');
+            parsed = parsed.replace(/<b>(.+?)<\/b>/g, '<strong>$1</strong>');
+            
+            // 뱃지 미리보기 (간단 스타일 적용)
+            parsed = parsed.replace(/<span class=['"]wiki-badge['"](.*?)>(.*?)<\/span>/g, '<span class="wiki-badge" $1>$2</span>');
+            
+            // 로고 미리보기
+            parsed = parsed.replace(/<div class=['"]logo-ring['"](.*?)>(.*?)<\/div>/g, '<div class="logo-ring" $1>$2</div>');
+            parsed = parsed.replace(/<span class=['"]logo-box-fill['"](.*?)>(.*?)<\/span>/g, '<span class="logo-box-fill" $1>$2</span>');
+            parsed = parsed.replace(/<span class=['"]logo-box-outline['"](.*?)>(.*?)<\/span>/g, '<span class="logo-box-outline" $1>$2</span>');
+
+            return parsed;
+        }
+
+        // 태그 자동 삽입
+        function insertTag(startTag, endTag) {
+            if (!currentFocusedInput) {
+                alert("입력창을 먼저 클릭해주세요.");
+                return;
+            }
+            const input = currentFocusedInput;
+            const startPos = input.selectionStart;
+            const endPos = input.selectionEnd;
+            const text = input.value;
+            const selectedText = text.substring(startPos, endPos);
+            const replacement = startTag + selectedText + endTag;
+            input.value = text.substring(0, startPos) + replacement + text.substring(endPos);
+            updatePreview();
+            input.focus();
+        }
+
+        function insertColor() {
+            const color = document.getElementById('textColorPicker').value;
+            insertTag(`<span style='color:${color}'>`, `</span>`);
+        }
+
+        // 텍스트 크기 삽입
+        function insertTextSize() {
+            const size = document.getElementById('textSizeInput').value;
+            if (size) {
+                insertTag(`<span style='font-size:${size}pt'>`, `</span>`);
+            } else {
+                alert("크기를 입력해주세요.");
+            }
+        }
+
+        // 뱃지 삽입
+        function insertBadge() {
+            const color = document.getElementById('decoColor').value;
+            // 뱃지 태그: 실제 사용 시 CSS 클래스와 인라인 스타일 조합
+            const tag = `<span class='wiki-badge' style='background-color:${color}'>`;
+            insertTag(tag, `</span>`);
+        }
+
+        // 로고 삽입
+        function insertLogo(type) {
+            const color = document.getElementById('decoColor').value;
+            let tag = '';
+            
+            if (type === 'ring') {
+                tag = `<div class='logo-ring' style='border-color:${color}; color:${color}'>`;
+                insertTag(tag, `</div>`);
+            } else if (type === 'box-fill') {
+                tag = `<span class='logo-box-fill' style='background-color:${color}'>`;
+                insertTag(tag, `</span>`);
+            } else if (type === 'box-outline') {
+                tag = `<span class='logo-box-outline' style='border-color:${color}; color:${color}'>`;
+                insertTag(tag, `</span>`);
+            }
+        }
+
+        // 셀 병합 속성 삽입
+        function insertTableCell(type) {
+            if (!currentFocusedInput) return;
+            // 단순히 태그 속성 텍스트를 커서 위치에 넣음
+            const val = type === 'colspan' ? ' colspan="2"' : ' rowspan="2"';
+            const input = currentFocusedInput;
+            const pos = input.selectionStart;
+            input.value = input.value.substring(0, pos) + val + input.value.substring(pos);
+            updatePreview();
+        }
+
+        // 링크 생성기
+        function generateLink(type) {
+            if (type === 'internal') {
+                const text = document.getElementById('toolLinkInternal').value.trim();
+                if(currentFocusedInput && text) {
+                    const tag = `[[${text}]]`;
+                    const input = currentFocusedInput;
+                    const start = input.selectionStart;
+                    const end = input.selectionEnd;
+                    input.value = input.value.substring(0, start) + tag + input.value.substring(end);
+                    updatePreview();
+                } else if (!currentFocusedInput) {
+                    insertTag('[[', ']]'); 
+                }
+            } else {
+                const text = document.getElementById('toolLinkExText').value.trim();
+                const url = document.getElementById('toolLinkExUrl').value.trim();
+                if (text && url && currentFocusedInput) {
+                    const tag = `<a href="${url}" class="wiki-link external" target="_blank">${text} </a>`;
+                    const input = currentFocusedInput;
+                    const start = input.selectionStart;
+                    const end = input.selectionEnd;
+                    input.value = input.value.substring(0, start) + tag + input.value.substring(end);
+                    updatePreview();
+                }
+            }
+        }
+
+        function generateImageTag() {
+            const name = document.getElementById('toolImgName').value.trim();
+            const width = document.getElementById('toolImgWidth').value.trim();
+            if (name && currentFocusedInput) {
+                const tag = `<div style="text-align: center; margin: 10px 0;"><img src="이미지/${name}.png" alt="${name}" style="width: ${width}; max-width: 100%; border-radius: 4px;"></div>`;
+                const input = currentFocusedInput;
+                const start = input.selectionStart;
+                const end = input.selectionEnd;
+                input.value = input.value.substring(0, start) + tag + input.value.substring(end);
+                updatePreview();
+            }
+        }
+
+        // 접기/펼치기 틀 생성 및 삽입
+        function generateCollapsible() {
+            const id = 'collapse-' + Math.random().toString(36).substr(2, 9);
+            const color = document.getElementById('customColor').value;
+            const html = `
+<div class="namu-nav-container" style="border-color: ${color};">
+    <div class="namu-nav-header" style="background-color: ${color};">
+        <span>제목 입력</span>
+        <span class="text-xs bg-white/20 px-2 py-0.5 rounded cursor-pointer" style="position: absolute; right: 10px;" onclick="const c=document.getElementById('${id}'); c.style.display = c.style.display==='none'?'block':'none'; this.innerText = c.style.display==='none'?'[펼치기]':'[접기]';">[접기]</span>
+    </div>
+    <div id="${id}" class="namu-nav-content" style="padding: 15px; background: white;">
+        내용을 입력하세요.
+    </div>
+</div>`;
+            
+            if (currentFocusedInput) {
+                insertTag(html, '');
+            } else {
+                copyToClipboard(html, '접기/펼치기 틀');
+            }
+        }
+
+        function copyToClipboard(text, label = '텍스트') {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if(successful) {
+                    alert(`${label}이(가) 클립보드에 복사되었습니다.\n(입력창을 선택하지 않아 복사만 수행됨)`);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function downloadCode(ext) {
+            const code = document.getElementById('resultCode').value;
+            if (!code.trim()) {
+                alert("다운로드할 코드가 없습니다.");
+                return;
+            }
+            const blob = new Blob([code], { type: "text/plain;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `hyobinwiki_template.${ext}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function changeTemplateType() {
+            const type = document.getElementById('templateType').value;
+            const rowsContainer = document.getElementById('rowsContainer');
+            const imageGroup = document.getElementById('imageGroup');
+            const gridConfig = document.getElementById('gridConfig');
+            const rowsLabel = document.getElementById('rowsLabel');
+            
+            rowsContainer.innerHTML = '';
+            rowCount = 0;
+
+            // 공통 리셋
+            imageGroup.style.display = 'none';
+            gridConfig.classList.add('hidden');
+            rowsLabel.style.display = 'flex'; // 일반 모드에서는 보임
+
+            if (type === 'infobox') {
+                imageGroup.style.display = 'block';
+                addRow('제작사', '효빈중공업');
+                addRow('소유 기관', '효빈교통공사');
+                addRow('도입 시기', '2026년');
+            } else if (type === 'admin_box') {
+                imageGroup.style.display = 'block'; // 지도나 문장 이미지
+                document.getElementById('inputImage').placeholder = '예: 북구_지도';
+                addRow('행정구역', '[[효빈광역시]] 북구');
+                addRow('면적', '35.44 km²');
+                addRow('인구', '284,102명');
+                addRow('인구밀도', '8,016.42명/km²');
+                addRow('하위 행정구역', '18행정동 27법정동');
+                addRow('구청 소재지', '[[북구청(효빈)|침산남로 123]]');
+                addRow('상징', '구화: 장미, 구목: 소나무');
+            } else if (type === 'navbox') {
+                addRow('헤더 1', '[[문서1]] · [[문서2]]');
+                addRow('헤더 2', '[[문서3]] · [[문서4]]');
+            } else if (type === 'collapsible_navbox') {
+                // 시작부터 접힌 상태의 Navbox
+                addRow('헤더 1', '내용을 입력하세요');
+            } else if (type === 'custom_table') {
+                // 기존 단순 테이블
+                addRow('열 제목 1', '데이터 1');
+                addRow('열 제목 2', '데이터 2');
+            } else if (type === 'grid_table') {
+                // N행 N열 그리드 테이블
+                gridConfig.classList.remove('hidden');
+                rowsLabel.style.display = 'none'; // 행 추가 버튼 숨김 (그리드 생성기로 대체)
+            } else if (type === 'alert') {
+                addRow('아이콘', 'fa-triangle-exclamation');
+                addRow('내용', '이 문서는 <b>현재 진행 중인 사건</b>을 다루고 있습니다.');
+            }
+            updatePreview();
+        }
+
+        // 그리드 입력창 생성 함수 (N행 N열)
+        function createGridInputs() {
+            const rows = parseInt(document.getElementById('gridRows').value) || 2;
+            const cols = parseInt(document.getElementById('gridCols').value) || 2;
+            const container = document.getElementById('rowsContainer');
+            
+            container.innerHTML = ''; // 초기화
+            container.style.display = 'grid';
+            container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            container.style.gap = '4px';
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'input-field grid-cell text-xs';
+                    input.dataset.row = r;
+                    input.dataset.col = c;
+                    
+                    // 플레이스홀더 설정
+                    if (r === 0 && document.getElementById('gridHeader').checked) {
+                        input.placeholder = `제목 ${c+1}`;
+                        input.classList.add('bg-gray-100', 'font-bold'); // 헤더 시각적 구분
+                    } else {
+                        input.placeholder = `데이터 (${r+1},${c+1})`;
+                    }
+                    
+                    input.oninput = updatePreview;
+                    input.onfocus = function() { setFocus(this); };
+                    container.appendChild(input);
+                }
+            }
+            updatePreview();
+        }
+
+        function addRow(key = '', val = '') {
+            rowCount++;
+            const container = document.getElementById('rowsContainer');
+            // 그리드 모드 해제 (flex 복구)
+            container.style.display = 'block';
+            
+            const div = document.createElement('div');
+            div.className = 'row-item';
+            div.id = `row-${rowCount}`;
+            
+            const phKey = document.getElementById('templateType').value === 'alert' ? '속성' : '항목명 (왼쪽)';
+            const phVal = document.getElementById('templateType').value === 'alert' ? '값' : '내용 (오른쪽)';
+
+            div.innerHTML = `
+                <input type="text" class="input-field w-1/3 key-input" placeholder="${phKey}" value="${key}" oninput="updatePreview()" onfocus="setFocus(this)">
+                <input type="text" class="input-field w-2/3 val-input" placeholder="${phVal}" value="${val}" oninput="updatePreview()" onfocus="setFocus(this)">
+                <div class="remove-btn" onclick="removeRow(${rowCount})"><i class="fa-solid fa-minus"></i></div>
+            `;
+            container.appendChild(div);
+            updatePreview();
+        }
+
+        function removeRow(id) {
+            document.getElementById(`row-${id}`).remove();
+            updatePreview();
+        }
+
+        function applyPreset() {
+            const presetVal = document.getElementById('colorPreset').value;
+            if(presetVal) {
+                document.getElementById('customColor').value = presetVal;
+                updatePreview();
+            }
+        }
+
+        function applyDecoPreset() {
+            const val = document.getElementById('decoColorPreset').value;
+            if(val) document.getElementById('decoColor').value = val;
+        }
+
+        function updatePreview() {
+            const type = document.getElementById('templateType').value;
+            const titleInput = document.getElementById('inputTitle').value || '제목';
+            const title = parseWikiText(titleInput); // 제목에도 링크/볼드 등 적용
+            const color = document.getElementById('customColor').value;
+            const imgName = document.getElementById('inputImage').value;
+            
+            // 일반 모드용 데이터
+            const keys = document.querySelectorAll('.key-input');
+            const vals = document.querySelectorAll('.val-input');
+            let rowsHtml = '';
+
+            // 1. 인포박스 & 행정구역 정보표 (구조 유사)
+            if (type === 'infobox' || type === 'admin_box') {
+                let imgHtml = '';
+                if (imgName) {
+                    const safeImg = imgName.trim() + '.png';
+                    imgHtml = `
+    <div class="infobox-image">
+        <img src="이미지/${safeImg}" alt="${titleInput}" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+    </div>`;
+                }
+
+                for (let i = 0; i < keys.length; i++) {
+                    if(keys[i].value) {
+                        let content = parseWikiText(vals[i].value);
+                        
+                        rowsHtml += `
+        <tr>
+            <th>${keys[i].value}</th>
+            <td>${content}</td>
+        </tr>`;
+                    }
+                }
+
+                const html = `
+<aside class="infobox" style="border-color: ${color};">
+    <div class="infobox-title" style="background-color: ${color};">${title}</div>${imgHtml}
+    <table>${rowsHtml}
+    </table>
+</aside>`;
+                render(html);
+            } 
+            // 2. 둘러보기 틀 (Navbox) - 일반 및 접힘형
+            else if (type === 'navbox' || type === 'collapsible_navbox') {
+                for (let i = 0; i < keys.length; i++) {
+                    if(keys[i].value) {
+                        let content = parseWikiText(vals[i].value);
+
+                        rowsHtml += `
+        <tr class="namu-nav-row">
+            <th style="background-color: ${color};">${keys[i].value}</th>
+            <td>${content}</td>
+        </tr>`;
+                    }
+                }
+
+                const rndId = 'nav-' + Math.random().toString(36).substr(2, 9);
+                // 접힘형일 경우 초기 display: none 설정
+                const isCollapsed = (type === 'collapsible_navbox');
+                const displayStyle = isCollapsed ? 'style="display: none;"' : '';
+                const btnText = isCollapsed ? '[펼치기]' : '[접기]';
+
+                const html = `
+<div class="namu-nav-container" style="border-color: ${color};">
+    <div class="namu-nav-header" style="background-color: ${color};">
+        <span>${title}</span>
+        <span class="text-xs bg-white/20 px-2 py-0.5 rounded cursor-pointer" style="position: absolute; right: 10px;" onclick="const c=document.getElementById('${rndId}'); c.style.display = c.style.display==='none'?'block':'none'; this.innerText = c.style.display==='none'?'[펼치기]':'[접기]';">${btnText}</span>
+    </div>
+    <div id="${rndId}" class="namu-nav-content" ${displayStyle}>
+        <table class="namu-nav-table">${rowsHtml}
+        </table>
+    </div>
+</div>`;
+                render(html);
+            }
+            // 3. 일반 데이터 표 (Custom Table - 2열 고정)
+            else if (type === 'custom_table') {
+                let headerHtml = '';
+                let bodyHtml = '';
+                
+                if (keys.length > 0) {
+                    headerHtml = `<tr>`;
+                    headerHtml += `<th style="background-color:${color}; color:white;">${keys[0].value || '항목'}</th>`;
+                    headerHtml += `<th style="background-color:${color}; color:white;">${parseWikiText(vals[0].value) || '내용'}</th>`;
+                    headerHtml += `</tr>`;
+                }
+
+                for (let i = 1; i < keys.length; i++) {
+                    if(keys[i].value || vals[i].value) {
+                         bodyHtml += `
+        <tr>
+            <td>${parseWikiText(keys[i].value)}</td>
+            <td>${parseWikiText(vals[i].value)}</td>
+        </tr>`;
+                    }
+                }
+
+                const html = `
+<table class="wiki-table" style="border-top: 2px solid ${color};">
+    <caption style="font-weight:bold; padding: 5px; color: ${color}; text-align: left;">${title}</caption>
+    <thead>${headerHtml}</thead>
+    <tbody>${bodyHtml}
+    </tbody>
+</table>`;
+                render(html);
+            }
+            // 4. N행 N열 데이터 표 (Grid Table - 동적 생성)
+            else if (type === 'grid_table') {
+                const rows = parseInt(document.getElementById('gridRows').value) || 2;
+                const cols = parseInt(document.getElementById('gridCols').value) || 2;
+                const useHeader = document.getElementById('gridHeader').checked;
+                const cells = document.querySelectorAll('.grid-cell');
+                
+                let tableHtml = `<table class="wiki-table" style="border-top: 2px solid ${color}; width: 100%;">\n`;
+                if(title) tableHtml += `    <caption style="font-weight:bold; padding: 5px; color: ${color}; text-align: center;">${title}</caption>\n`;
+                
+                // 그리드 데이터 수집 (1차원 NodeList -> 2차원 매핑)
+                // cells[r * cols + c]
+                
+                for (let r = 0; r < rows; r++) {
+                    // 첫 행이고 헤더 옵션 켜짐 -> thead 생성
+                    if (r === 0 && useHeader) {
+                        tableHtml += `    <thead>\n        <tr>\n`;
+                        for (let c = 0; c < cols; c++) {
+                            const val = parseWikiText(cells[r * cols + c]?.value || '');
+                            // 헤더 배경색 적용
+                            tableHtml += `            <th style="background-color:${color}; color:white;">${val}</th>\n`;
+                        }
+                        tableHtml += `        </tr>\n    </thead>\n    <tbody>\n`;
+                    } 
+                    // 나머지 행 -> tbody (혹은 thead 없는 경우)
+                    else {
+                        if (r === 0 && !useHeader) tableHtml += `    <tbody>\n`; // tbody 시작점 보정
+                        tableHtml += `        <tr>\n`;
+                        for (let c = 0; c < cols; c++) {
+                            const val = parseWikiText(cells[r * cols + c]?.value || '');
+                            tableHtml += `            <td>${val}</td>\n`;
+                        }
+                        tableHtml += `        </tr>\n`;
+                    }
+                }
+                tableHtml += `    </tbody>\n</table>`;
+                render(tableHtml);
+            }
+            // 5. 알림 상자 (Alert)
+            else if (type === 'alert') {
+                let icon = 'fa-circle-info';
+                let content = '내용을 입력하세요.';
+                
+                for(let i=0; i<keys.length; i++) {
+                    if(keys[i].value === '아이콘') icon = vals[i].value;
+                    if(keys[i].value === '내용') content = vals[i].value;
+                }
+
+                // 아이콘에도 파싱 적용 (필요하다면)
+                const parsedContent = parseWikiText(content);
+
+                const html = `
+<div style="border: 2px solid ${color}; background-color: #fff; padding: 15px; border-radius: 6px; display: flex; align-items: center; gap: 15px; margin: 15px 0;">
+    <div style="font-size: 2rem; color: ${color}; min-width: 50px; text-align: center;">
+        <i class="fa-solid ${icon}"></i>
+    </div>
+    <div style="flex-grow: 1; line-height: 1.5;">
+        ${parsedContent}
+    </div>
+</div>`;
+                render(html);
+            }
+        }
+
+        function render(html) {
+            document.getElementById('previewArea').innerHTML = html;
+            document.getElementById('resultCode').value = html.trim();
+        }
+
+        function copyResult() {
+            const copyText = document.getElementById("resultCode");
+            copyText.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if(successful) {
+                    alert("코드가 복사되었습니다!");
+                } else {
+                    alert("복사에 실패했습니다.");
+                }
+            } catch (err) {
+                alert("복사 기능이 지원되지 않는 브라우저입니다.");
+            }
+        }
+
+        function copyTag(start, end) {
+            copyToClipboard(start + "내용" + end, `'${start}...${end}'`);
+        }
+
+        function copyToClipboard(text, label = '텍스트') {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if(successful) {
+                    const msg = document.getElementById('copyMsg');
+                    msg.innerText = `${label} 복사됨!`;
+                    msg.style.opacity = 1;
+                    setTimeout(() => { msg.style.opacity = 0; }, 1500);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function downloadCode(ext) {
+            const code = document.getElementById('resultCode').value;
+            if (!code.trim()) {
+                alert("다운로드할 코드가 없습니다.");
+                return;
+            }
+            const blob = new Blob([code], { type: "text/plain;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `hyobinwiki_template.${ext}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        window.onload = function() {
+            loadColorsFromJS('colorPreset');
+            loadColorsFromJS('decoColorPreset');
+            changeTemplateType();
+            initIconGrid(); // 아이콘 그리드 초기화
+        }
+    </script>
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>
+

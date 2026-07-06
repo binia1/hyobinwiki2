@@ -1,0 +1,855 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대문 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #7777AA;
+            --wiki-table-header-text: #ffffff;
+            --wiki-box-bg: #ffffff;
+        }
+
+        /* 다크 모드 변수 재정의 */
+        body.dark-mode {
+            --wiki-main: #8888CC; /* 다크모드에서 조금 더 밝게 */
+            --wiki-border: #444;
+            --wiki-bg: #1f2023;
+            --wiki-text: #ddd;
+            --wiki-gray-bg: #2a2d30;
+            --wiki-link: #6699ff;
+            --wiki-table-header: #444477;
+            --wiki-table-header-text: #eee;
+            --wiki-box-bg: #2a2d30;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; transition: background-color 0.3s, color 0.3s; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 (대문용 수정) */
+        .txt-lvl-1 { font-size: 2.5rem !important; font-weight: 900 !important; color: var(--wiki-main); line-height: 1.1; letter-spacing: -1px; margin-bottom: 0; text-align: center; } 
+        
+        /* 위키 버튼 스타일 */
+        .wiki-btn { 
+            border: 1px solid var(--wiki-border); background: var(--wiki-box-bg); padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: var(--wiki-text); 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; line-height: 1.2; 
+        }
+        .wiki-btn:hover { background: var(--wiki-gray-bg); filter: brightness(0.9); }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        /* 대문 전용 박스 스타일 */
+        .main-box { border: 1px solid var(--wiki-border); border-radius: 4px; margin-bottom: 20px; overflow: hidden; background-color: var(--wiki-box-bg); }
+        .main-box-header { 
+            background: linear-gradient(to right, var(--wiki-main), #8888bb); 
+            color: white; 
+            padding: 10px 15px; 
+            font-weight: bold; 
+            font-size: 1.1rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .main-box-content { padding: 15px; background: var(--wiki-box-bg); font-size: 0.9rem; }
+        
+        /* 테이블 스타일 (최근 변경 내역 등) */
+        table.recent-changes { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        table.recent-changes td { border-bottom: 1px solid var(--wiki-border); padding: 6px 0; }
+        table.recent-changes tr:last-child td { border-bottom: none; }
+        .time-badge { color: #888; font-size: 0.8rem; margin-right: 5px; }
+
+        /* 하단 네비박스 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: var(--wiki-box-bg); line-height: 2; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        
+        .welcome-search-box {
+            text-align: center; padding: 40px 20px; background-color: var(--wiki-gray-bg); 
+            border: 1px solid var(--wiki-border); border-radius: 8px; margin-bottom: 30px;
+        }
+
+        /* 로고 박스 스타일 추가 */
+        .nav-logo-box {
+            width: 30px; height: 30px; background: white; color: var(--wiki-main);
+            border-radius: 4px; font-weight: 900; display: flex; align-items: center;
+            justify-content: center; font-size: 1.2rem;
+        }
+
+        /* 모달 스타일 */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal-window {
+            background: var(--wiki-bg); color: var(--wiki-text); width: 90%; max-width: 400px;
+            padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid var(--wiki-border);
+        }
+        .modal-header { font-weight: bold; font-size: 1.2rem; margin-bottom: 15px; border-bottom: 2px solid var(--wiki-main); padding-bottom: 5px; }
+        .modal-input {
+            width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; rounded; background: var(--wiki-gray-bg); color: var(--wiki-text);
+        }
+        .modal-btn {
+            width: 100%; padding: 10px; background: var(--wiki-main); color: white; font-weight: bold; border-radius: 4px; margin-top: 10px;
+        }
+        .modal-btn:hover { opacity: 0.9; }
+        .close-btn { float: right; cursor: pointer; color: #888; }
+        .modal-link { color: var(--wiki-link); cursor: pointer; text-decoration: none; font-weight: bold; }
+        .modal-link:hover { text-decoration: underline; }
+
+        /* 공지 리스트 스타일 */
+        .notice-list li { cursor: pointer; padding: 2px 0; }
+        .notice-list li:hover { text-decoration: underline; color: var(--wiki-link); }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body id="body">
+
+    <div id="wiki-msg-box"></div>
+
+    <!-- 상단 내비게이션 -->
+    <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <div class="nav-logo-box">H</div>
+            <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white">HyobinWiki</a>
+            <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+                <a href="index.html" class="hover:underline font-bold text-white no-underline">대문</a>
+                <a href="recent_changes.html" class="hover:underline text-white no-underline">최근 변경</a>
+                <a href="recent_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
+            </div>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2">
+                <input type="text" id="headerSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }">
+                <button onclick="handleSearch('headerSearchInput')" class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
+            </div>
+            <div class="flex gap-1" id="auth-buttons">
+                <!-- 로그인 전 -->
+                <button onclick="toggleModal('loginModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" id="btn-login">로그인</button>
+                <!-- 로그인 후 -->
+                <button onclick="toggleModal('settingsModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">설정</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        
+        <!-- 대문 환영 영역 & 중앙 검색 -->
+        <div class="welcome-search-box">
+            <div class="txt-lvl-1 mb-4">HyobinWiki</div>
+            <p class="mb-6 text-[var(--wiki-text)] opacity-80">여러분이 가꾸어 나가는 지식의 나무, <strong>효빈위키</strong>에 오신 것을 환영합니다.<br>누구나 자유롭게 문서를 생성하고 편집할 수 있습니다.</p>
+            
+            
+<div class="flex justify-center items-center gap-2 max-w-lg mx-auto" id="hb-main-search-wrap" style="position:relative;">
+  <input type="text" id="mainSearchInput" placeholder="문서 제목을 입력하세요" class="flex-grow p-3 border-2 border-[#7777AA] rounded-l-lg focus:outline-none shadow-sm" autocomplete="off">
+  <button type="button" onclick="handleSearch('mainSearchInput')" class="bg-[#7777AA] text-white p-3.5 px-6 rounded-r-lg font-bold hover:bg-[#666699] transition-colors">이동</button>
+</div>
+
+            <div class="mt-4 text-sm text-gray-500">
+                인기 검색어: <a href="효빈광역시.html" class="wiki-link">효빈광역시</a>, <a href="박효빈.html" class="wiki-link">박효빈</a>, <a href="윤대환.html" class="wiki-link">윤대환</a>, <a href="효빈도시철도.html" class="wiki-link">효빈도시철도</a>
+            </div>
+        </div>
+
+        <!-- 2단 그리드 레이아웃 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- 왼쪽 컬럼 -->
+            <div class="flex flex-col gap-4">
+                <!-- 위키 공지 -->
+                <div class="main-box shadow-sm">
+                    <div class="main-box-header">
+                        <span>📢 위키 공지사항</span>
+                        <a href="#" class="text-xs text-white opacity-80 hover:opacity-100 hover:underline">더보기</a>
+                    </div>
+                    <div class="main-box-content">
+                        <ul class="list-disc pl-5 space-y-1 text-sm notice-list">
+                            <li onclick="openNotice(1)"><span class="font-bold text-[#7777AA]">[필독]</span> 효빈위키 편집 규정 개정 안내 (2025.01.04)</li>
+                            <li onclick="openNotice(2)">효빈광역시 관련 문서 작성 가이드라인</li>
+                            <li onclick="openNotice(3)" class="text-red-500 font-bold">윤대환 전 시장 관련 문서 훼손 주의 요망</li>
+                            <li onclick="openNotice(4)">관리자 모집 공고 (상시 모집)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 오늘의 추천 문서 -->
+                <div class="main-box shadow-sm">
+                    <div class="main-box-header">
+                        <span>⭐ 오늘의 추천 문서</span>
+                        <button class="text-xs bg-white text-[#7777AA] px-2 py-0.5 rounded font-bold hover:bg-gray-100">새로고침</button>
+                    </div>
+                    <div class="main-box-content flex gap-4">
+                        <div class="shrink-0">
+                            <!-- 플레이스홀더 이미지를 사용, 실제 운영 시 관련 이미지로 교체 -->
+                            <img src="이미지/hyobin1.png" class="rounded border border-gray-200">
+                        </div>
+                        <div>
+                            <a href="효빈광역시.html" class="wiki-link text-lg block mb-1">효빈광역시</a>
+                            <p class="text-sm text-[var(--wiki-text)] opacity-80 line-clamp-3">
+                                효빈광역시(孝彬廣域市)는 대한민국 중부권에 위치한 거점 광역시이다. 박효빈 시장이 시정을 이끌고 있으며, 8개의 도시철도 노선과 효빈고속버스터미널을 중심으로 교통이 발달해 있다. 북구, 남구, 동구 등으로 행정구역이 나뉘어 있다...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 오른쪽 컬럼 -->
+            <div class="flex flex-col gap-4">
+                <!-- 최근 변경 내역 -->
+                <div class="main-box shadow-sm">
+                    <div class="main-box-header">
+                        <span>🕒 최근 변경 내역</span>
+                        <a href="#" class="text-xs text-white opacity-80 hover:opacity-100 hover:underline">더보기</a>
+                    </div>
+                    <div class="main-box-content">
+                        <table class="recent-changes">
+                            <tr>
+                                <td><a href="효빈역(일반열차).html" class="wiki-link">효빈역(일반철도)</a></td>
+                                <td class="text-right"><span class="time-badge">12초 전</span> <span class="text-green-600 text-xs text-xs">(+243)</span></td>
+                            </tr>
+                            <tr>
+                                <td><a href="윤대환.html" class="wiki-link">윤대환</a></td>
+                                <td class="text-right"><span class="time-badge">45초 전</span> <span class="text-red-500 text-xs">(-512)</span></td>
+                            </tr>
+                            <tr>
+                                <td><a href="1호선.html" class="wiki-link">효빈도시철도 1호선</a></td>
+                                <td class="text-right"><span class="time-badge">1분 전</span> <span class="text-green-600 text-xs">(+52)</span></td>
+                            </tr>
+                            <tr>
+                                <td><a href="효빈대학교.html" class="wiki-link">효빈대학교</a></td>
+                                <td class="text-right"><span class="time-badge">3분 전</span> <span class="text-green-600 text-xs">(+88)</span></td>
+                            </tr>
+                            <tr>
+                                <td><a href="고송교차로역.html" class="wiki-link">고송교차로역</a></td>
+                                <td class="text-right"><span class="time-badge">5분 전</span> <span class="text-gray-500 text-xs">(0)</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 실시간 검색어 -->
+                <div class="main-box shadow-sm">
+                    <div class="main-box-header">
+                        <span>🔥 실시간 인기 검색어</span>
+                    </div>
+                    <div class="main-box-content p-0">
+                        <ol class="list-decimal pl-10 py-2 space-y-1 text-sm font-bold text-[#555]">
+                            <li><a href="박효빈.html" class="wiki-link text-[var(--wiki-text)]">박효빈</a></li>
+                            <li><a href="효빈고속버스터미널.html" class="wiki-link text-[var(--wiki-text)]">효빈고속버스터미널</a></li>
+                            <li><a href="8호선.html" class="wiki-link text-[var(--wiki-text)]">효빈도시철도 8호선</a></li>
+                            <li><a href="고송동.html" class="wiki-link text-[var(--wiki-text)]">고송동</a></li>
+                            <li><a href="도변역.html" class="wiki-link text-[var(--wiki-text)]">도변역</a></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 박스 (분류) -->
+        <div class="nav-box shadow-sm mt-6">
+            <div class="nav-box-header">효빈위키 분류</div>
+            <div class="nav-box-content leading-loose text-sm grid grid-cols-2 md:grid-cols-4 gap-2 text-center">
+                <a href="효빈광역시.html" class="wiki-link">효빈광역시</a>
+                <a href="박효빈.html" class="wiki-link">인물</a>
+                <a href="효빈도시철도.html" class="wiki-link">교통</a>
+                <a href="효빈대학교.html" class="wiki-link">교육</a>
+                <a href="북구.html" class="wiki-link">행정구역(북구)</a>
+                <a href="남구.html" class="wiki-link">행정구역(남구)</a>
+                <a href="동구.html" class="wiki-link">행정구역(동구)</a>
+                <a href="윤대환.html" class="wiki-link">사건사고</a>
+            </div>
+        </div>
+
+        <footer class="mt-20 border-t pt-10 text-center text-gray-400 text-xs pb-10">
+            <p class="mb-2">모든 문서는 크리에이티브 커먼즈 저작자표시-동일조건변경허락 4.0에 따라 사용할 수 있습니다.</p>
+            본 문서의 저작권은 효빈위키에 있습니다.
+        </footer>
+    </div>
+
+    <!-- 로그인 모달 -->
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-window">
+            <div class="modal-header">
+                로그인 <span class="close-btn" onclick="toggleModal('loginModal')">&times;</span>
+            </div>
+            <input type="text" id="loginId" class="modal-input" placeholder="아이디">
+            <input type="password" id="loginPw" class="modal-input" placeholder="비밀번호" onkeypress="if(event.keyCode==13) doLogin()">
+            <button class="modal-btn" onclick="doLogin()">로그인</button>
+            <div class="text-xs text-center mt-3 text-gray-500">
+                계정이 없으신가요? 
+                <span class="modal-link" onclick="toggleModal('loginModal'); toggleModal('signupModal');">회원가입</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 회원가입 모달 -->
+    <div id="signupModal" class="modal-overlay">
+        <div class="modal-window">
+            <div class="modal-header">
+                회원가입 <span class="close-btn" onclick="toggleModal('signupModal')">&times;</span>
+            </div>
+            <input type="text" id="signupId" class="modal-input" placeholder="아이디">
+            <input type="password" id="signupPw" class="modal-input" placeholder="비밀번호">
+            <input type="password" id="signupPwConfirm" class="modal-input" placeholder="비밀번호 확인" onkeypress="if(event.keyCode==13) doSignup()">
+            <button class="modal-btn" onclick="doSignup()">가입하기</button>
+            <div class="text-xs text-center mt-3 text-gray-500">
+                이미 계정이 있으신가요? 
+                <span class="modal-link" onclick="toggleModal('signupModal'); toggleModal('loginModal');">로그인</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 설정 모달 -->
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-window">
+            <div class="modal-header">
+                효빈위키 설정 <span class="close-btn" onclick="toggleModal('settingsModal')">&times;</span>
+            </div>
+            
+            <div class="flex items-center justify-between mb-4">
+                <span>🌙 다크 모드</span>
+                <input type="checkbox" id="darkModeCheck" onchange="toggleDarkMode()" class="w-5 h-5 accent-[#7777AA]">
+            </div>
+            
+            <div class="mb-2">
+                <div class="flex justify-between mb-1">
+                    <span>🔠 글자 크기</span>
+                    <span id="fontSizeVal">100%</span>
+                </div>
+                <input type="range" id="fontSizeRange" min="80" max="130" value="100" step="5" class="w-full accent-[#7777AA]" oninput="changeFontSize(this.value)">
+            </div>
+
+            <button class="modal-btn mt-4" onclick="toggleModal('settingsModal')">닫기</button>
+        </div>
+    </div>
+
+    <!-- 공지사항 상세 모달 -->
+    <div id="noticeModal" class="modal-overlay">
+        <div class="modal-window" style="max-width: 500px;">
+            <div class="modal-header">
+                <span id="noticeTitle">공지사항</span> 
+                <span class="close-btn" onclick="toggleModal('noticeModal')">&times;</span>
+            </div>
+            <div id="noticeContent" class="text-sm leading-relaxed whitespace-pre-line text-gray-700 dark:text-gray-300">
+                내용이 로드되지 않았습니다.
+            </div>
+            <button class="modal-btn mt-4 bg-gray-500 hover:bg-gray-600" onclick="toggleModal('noticeModal')">닫기</button>
+        </div>
+    </div>
+
+    <script>
+        // 초기 로드 시 저장된 설정 적용
+        window.onload = function() {
+            // 로그인 상태 확인
+            const user = localStorage.getItem('hb_user');
+            if (user) {
+                setLoginState(user);
+            }
+
+            // 다크모드 확인
+            const isDark = localStorage.getItem('hb_dark_mode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                document.getElementById('darkModeCheck').checked = true;
+            }
+
+            // 폰트 크기 확인
+            const fontSize = localStorage.getItem('hb_font_size');
+            if (fontSize) {
+                document.body.style.fontSize = fontSize + '%';
+                document.getElementById('fontSizeRange').value = fontSize;
+                document.getElementById('fontSizeVal').innerText = fontSize + '%';
+            }
+        }
+
+        // 공지사항 데이터
+        const noticeData = {
+            1: {
+                title: "[필독] 효빈위키 편집 규정 개정 안내",
+                content: "2025년 1월 4일부로 효빈위키의 기본 편집 규정이 개정되었습니다.\n\n주요 변경 사항:\n1. 출처 불분명한 카더라 통신 서술 금지 강화\n2. 문서 사유화 시도 시 즉각 차단 조치\n3. 토론 합의 없는 대규모 삭제 금지\n\n모든 이용자분들은 개정된 규정을 반드시 숙지해주시기 바랍니다."
+            },
+            2: {
+                title: "효빈광역시 관련 문서 작성 가이드라인",
+                content: "효빈광역시 세계관 문서를 작성할 때는 현실성을 유지해주십시오.\n\n- 실존하지 않는 지명이나 기관을 창작할 때는 기존 효빈광역시 설정과 충돌하지 않도록 주의 바랍니다.\n- 지나치게 먼치킨스러운 설정이나 개연성 없는 서술은 관리자에 의해 반려될 수 있습니다."
+            },
+            3: {
+                title: "윤대환 전 시장 관련 문서 훼손 주의 요망",
+                content: "최근 '윤대환' 전 시장 문서 및 관련 문서에서 일부 옹호자들이 과도한 미화 및 찬양 서술을 시도하다가, 다수의 이용자들로부터 거센 비난(쌍욕 등)을 듣고 차단되는 사례가 빈번하게 발생하고 있습니다.\n\n특히 정치적 편향성이 짙은 맹목적인 옹호 서술은 위키의 중립성을 훼손할 뿐만 아니라, 커뮤니티 내 불필요한 분쟁과 인신공격을 유발합니다.\n\n이러한 행위는 효빈위키 운영 원칙에 위배되며, 경고 없이 편집권이 제한될 수 있음을 알려드립니다. 모든 서술은 객관적 사실에 기반하여 중립적으로 작성해주시기 바랍니다."
+            },
+            4: {
+                title: "관리자 모집 공고 (상시 모집)",
+                content: "효빈위키를 깨끗하고 유익한 공간으로 만들어갈 관리자를 모십니다.\n\n자격 요건:\n- 가입 후 30일 경과, 편집 횟수 50회 이상\n- 최근 3개월 내 차단 이력이 없는 이용자\n- 중립적인 시각으로 분쟁을 조정할 수 있는 분\n\n관심 있으신 분들은 '위키 운영' 게시판을 통해 지원해주세요."
+            }
+        };
+
+        // 공지사항 열기 함수
+        function openNotice(id) {
+            const data = noticeData[id];
+            if (data) {
+                document.getElementById('noticeTitle').innerText = data.title;
+                document.getElementById('noticeContent').innerText = data.content;
+                toggleModal('noticeModal');
+            }
+        }
+
+        // 검색 기능 (숫자 입력 시 버스 문서로 이동)
+        function handleSearch(inputId) {
+            const id = inputId || 'headerSearchInput';
+            const inputElement = document.getElementById(id);
+            if (!inputElement) return;
+            const query = inputElement.value.trim();
+            
+            if (query) {
+                // 숫자인지 확인 (정규식 사용)
+                const isNumber = /^\d+$/.test(query);
+                
+                if (isNumber) {
+                    // 숫자만 입력된 경우 버스 번호 페이지로 이동 (예: 500 -> bus_500.html)
+                    window.location.href = "bus_" + query + ".html";
+                } else {
+                    // 그 외의 경우 일반 문서 페이지로 이동 (예: 박효빈 -> 박효빈.html)
+                    window.location.href = query + ".html";
+                }
+            } else {
+                showMsg('문서 제목을 입력해주세요.');
+            }
+        }
+
+        // 메시지 박스
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        // 모달 토글
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal.style.display === 'flex') {
+                modal.style.display = 'none';
+            } else {
+                modal.style.display = 'flex';
+                // 포커스 설정
+                if(modalId === 'loginModal') {
+                    setTimeout(() => document.getElementById('loginId').focus(), 100);
+                } else if(modalId === 'signupModal') {
+                    setTimeout(() => document.getElementById('signupId').focus(), 100);
+                }
+            }
+        }
+
+        // --- 회원가입 및 로그인 로직 ---
+        
+        // 회원가입 실행
+        function doSignup() {
+            const id = document.getElementById('signupId').value.trim();
+            const pw = document.getElementById('signupPw').value;
+            const pwConfirm = document.getElementById('signupPwConfirm').value;
+
+            if (!id || !pw) {
+                showMsg('아이디와 비밀번호를 모두 입력해주세요.');
+                return;
+            }
+            if (pw !== pwConfirm) {
+                showMsg('비밀번호가 일치하지 않습니다.');
+                return;
+            }
+
+            // 로컬 스토리지에서 유저 DB 가져오기
+            const users = JSON.parse(localStorage.getItem('hb_db_users') || '{}');
+
+            if (users[id]) {
+                showMsg('이미 존재하는 아이디입니다.');
+                return;
+            }
+
+            // 회원 저장
+            users[id] = pw;
+            localStorage.setItem('hb_db_users', JSON.stringify(users));
+
+            showMsg('회원가입 완료! 로그인해주세요.');
+            
+            // 회원가입 창 닫고 로그인 창 열기
+            toggleModal('signupModal');
+            toggleModal('loginModal');
+            
+            // 로그인 창에 아이디 미리 채워주기
+            document.getElementById('loginId').value = id;
+            document.getElementById('loginPw').focus();
+        }
+
+        // 로그인 실행
+        function doLogin() {
+            const id = document.getElementById('loginId').value.trim();
+            const pw = document.getElementById('loginPw').value;
+
+            if (!id || !pw) {
+                showMsg('아이디와 비밀번호를 입력하세요.');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('hb_db_users') || '{}');
+
+            // DB에 해당 아이디가 존재하는지 확인
+            if (users.hasOwnProperty(id)) {
+                // 아이디 존재 시 비밀번호 확인
+                if (users[id] === pw) {
+                    localStorage.setItem('hb_user', id);
+                    setLoginState(id);
+                    toggleModal('loginModal');
+                    showMsg(id + '님 환영합니다!');
+                } else {
+                    showMsg('비밀번호가 틀렸습니다.');
+                }
+            } else {
+                // 아이디가 없는 경우
+                showMsg('존재하지 않는 아이디입니다. 회원가입을 해주세요.');
+            }
+        }
+
+        // 로그아웃 로직
+        function doLogout() {
+            localStorage.removeItem('hb_user');
+            location.reload();
+        }
+
+        // 로그인 상태 UI 변경
+        function setLoginState(username) {
+            const container = document.getElementById('auth-buttons');
+            container.innerHTML = `
+                <button class="bg-[#555] text-white text-xs px-2 py-0.5 rounded cursor-default">👤 ${username}</button>
+                <button onclick="doLogout()" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">로그아웃</button>
+                <button onclick="toggleModal('settingsModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">설정</button>
+            `;
+        }
+
+        // 다크모드 토글
+        function toggleDarkMode() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+            const isDark = body.classList.contains('dark-mode');
+            localStorage.setItem('hb_dark_mode', isDark);
+        }
+
+        // 폰트 크기 변경
+        function changeFontSize(val) {
+            document.body.style.fontSize = val + '%';
+            document.getElementById('fontSizeVal').innerText = val + '%';
+            localStorage.setItem('hb_font_size', val);
+        }
+
+        // 배경 클릭 시 모달 닫기
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+
+<script>
+(function(){
+  // ===== HyobinWiki Search Enhancer (index) =====
+  const MAX_RECENT = 8;
+  const RECENT_KEY = "hb_recent_searches";
+
+  function norm(s){ return (s||"").toString().trim(); }
+  function normKey(s){ return norm(s).toLowerCase(); }
+
+  function loadRecent(){
+    try{ return JSON.parse(localStorage.getItem(RECENT_KEY)||"[]") || []; }catch(e){ return []; }
+  }
+  function saveRecent(list){
+    try{ localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0,MAX_RECENT))); }catch(e){}
+  }
+  function pushRecent(q){
+    q = norm(q);
+    if(!q) return;
+    const list = loadRecent().filter(x=>normKey(x)!==normKey(q));
+    list.unshift(q);
+    saveRecent(list);
+  }
+
+  function ensureDropdown(input){
+    const wrap = document.getElementById("hb-main-search-wrap") || input.parentElement;
+    if(wrap && getComputedStyle(wrap).position === "static") wrap.style.position = "relative";
+
+    let dd = wrap.querySelector(".hb-autocomplete");
+    if(!dd){
+      dd = document.createElement("div");
+      dd.className = "hb-autocomplete";
+      dd.style.position = "absolute";
+      dd.style.left = "0";
+      dd.style.right = "0";
+      dd.style.top = "100%";
+      dd.style.marginTop = "8px";
+      dd.style.background = "white";
+      dd.style.border = "1px solid rgba(0,0,0,0.12)";
+      dd.style.borderRadius = "12px";
+      dd.style.boxShadow = "0 10px 25px rgba(0,0,0,0.15)";
+      dd.style.overflow = "hidden";
+      dd.style.zIndex = "9999";
+      dd.style.maxHeight = "280px";
+      dd.style.overflowY = "auto";
+      dd.style.display = "none";
+      wrap.appendChild(dd);
+    }
+    return dd;
+  }
+
+  function hideDropdown(dd){ if(dd) dd.style.display = "none"; }
+  function showDropdown(dd){ if(dd) dd.style.display = "block"; }
+
+  function collectWikiLinks(){
+    // gather links in the page that look like internal wiki pages
+    const a = Array.from(document.querySelectorAll('a[href]'));
+    const seen = new Set();
+    const list = [];
+    a.forEach(el=>{
+      const href = el.getAttribute("href") || "";
+      // ignore external
+      if(/^https?:\/\//i.test(href)) return;
+      if(href.startsWith("#")) return;
+      // keep html pages only
+      if(!/\.html(\?|#|$)/i.test(href)) return;
+      const title = norm(el.textContent) || href.replace(/\.html.*$/i,"");
+      const key = normKey(title)+"|"+href;
+      if(seen.has(key)) return;
+      seen.add(key);
+      list.push({title, href});
+    });
+    return list;
+  }
+
+  const WIKI_LIST = collectWikiLinks();
+
+  function score(item, q){
+    const t = normKey(item.title);
+    const k = normKey(q);
+    if(!k) return 0;
+    if(t === k) return 100;
+    if(t.startsWith(k)) return 60;
+    if(t.includes(k)) return 30;
+    return 0;
+  }
+
+  function renderDropdown(dd, input, q){
+    dd.innerHTML = "";
+    const query = norm(q);
+    const recent = loadRecent();
+
+    const mkRow = (label, cb, muted=false) => {
+      const row = document.createElement("button");
+      row.type="button";
+      row.style.display="flex";
+      row.style.width="100%";
+      row.style.alignItems="center";
+      row.style.justifyContent="space-between";
+      row.style.gap="12px";
+      row.style.padding="10px 12px";
+      row.style.fontSize="13px";
+      row.style.background="white";
+      row.style.border="0";
+      row.style.textAlign="left";
+      row.style.cursor= muted ? "default" : "pointer";
+      row.onmouseenter=()=>{ if(!muted) row.style.background="rgba(0,0,0,0.04)"; };
+      row.onmouseleave=()=>{ row.style.background="white"; };
+      row.innerHTML = `<span style="color:${muted?'#888':'#111'}">${label}</span>`;
+      if(!muted) row.addEventListener("click", cb);
+      dd.appendChild(row);
+      return row;
+    };
+
+    // Recent section when query empty
+    if(!query){
+      mkRow("최근 검색어", ()=>{}, true).style.fontWeight="800";
+      if(recent.length===0){
+        mkRow("검색어를 입력하세요", ()=>{}, true);
+      } else {
+        recent.forEach(r=>{
+          mkRow(r, ()=>{ input.value=r; window.handleSearch(input.id); });
+        });
+        const clear = mkRow("최근 검색어 지우기", ()=>{
+          saveRecent([]);
+          renderDropdown(dd,input,"");
+        });
+        clear.style.color="#b91c1c";
+      }
+      showDropdown(dd);
+      return;
+    }
+
+    const matches = WIKI_LIST
+      .map(it=>({it, s: score(it, query)}))
+      .filter(x=>x.s>0)
+      .sort((a,b)=>b.s-a.s || a.it.title.localeCompare(b.it.title))
+      .slice(0,8)
+      .map(x=>x.it);
+
+    if(matches.length===0){
+      mkRow("일치하는 문서가 없습니다", ()=>{}, true);
+    } else {
+      matches.forEach(it=>{
+        mkRow(it.title, ()=>{
+          pushRecent(query);
+          location.href = it.href;
+        });
+      });
+    }
+    showDropdown(dd);
+  }
+
+  function showModalResults(query, items){
+    let modal = document.getElementById("hb-search-modal");
+    if(!modal){
+      modal = document.createElement("div");
+      modal.id = "hb-search-modal";
+      modal.style.position="fixed";
+      modal.style.inset="0";
+      modal.style.background="rgba(0,0,0,0.4)";
+      modal.style.zIndex="10000";
+      modal.style.display="none";
+      modal.innerHTML = `
+        <div data-close="1" style="position:absolute; inset:0;"></div>
+        <div style="position:relative; margin:80px auto 0; width:min(820px,94vw); background:white; border-radius:18px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.35);">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid rgba(0,0,0,0.08);">
+            <div style="font-weight:900; font-size:14px;">검색 결과</div>
+            <button type="button" data-close="1" style="padding:6px 10px; border-radius:10px; border:0; background:rgba(0,0,0,0.04); cursor:pointer;">닫기</button>
+          </div>
+          <div style="padding:12px 14px;">
+            <div id="hb-search-meta" style="font-size:12px; color:#666; margin-bottom:10px;"></div>
+            <div id="hb-search-list" style="border-top:1px solid rgba(0,0,0,0.06);"></div>
+          </div>
+        </div>
+      `;
+      modal.addEventListener("click", (e)=>{
+        const t = e.target;
+        if(t && t.getAttribute && t.getAttribute("data-close")==="1") close();
+      });
+      document.body.appendChild(modal);
+    }
+    const meta = modal.querySelector("#hb-search-meta");
+    const list = modal.querySelector("#hb-search-list");
+    meta.textContent = `“${query}” 결과 ${items.length}건`;
+    list.innerHTML = "";
+
+    if(items.length===0){
+      const empty = document.createElement("div");
+      empty.style.padding="12px 0";
+      empty.style.color="#666";
+      empty.style.fontSize="13px";
+      empty.textContent = "일치하는 문서가 없습니다.";
+      list.appendChild(empty);
+    } else {
+      items.slice(0,30).forEach(it=>{
+        const row = document.createElement("a");
+        row.href = it.href;
+        row.style.display="block";
+        row.style.padding="12px 6px";
+        row.style.textDecoration="none";
+        row.style.color="#111";
+        row.style.borderBottom="1px solid rgba(0,0,0,0.06)";
+        row.innerHTML = `<div style="font-weight:800; margin-bottom:3px;">${it.title}</div>
+                         <div style="font-size:12px; color:#666;">${it.href}</div>`;
+        list.appendChild(row);
+      });
+    }
+
+    function open(){ modal.style.display="block"; document.body.style.overflow="hidden"; }
+    function close(){ modal.style.display="none"; document.body.style.overflow=""; }
+    modal._hbClose = close;
+    open();
+  }
+
+  // Override/upgrade handleSearch
+  window.handleSearch = function(inputId){
+    const input = document.getElementById(inputId);
+    if(!input) return;
+    const q = norm(input.value);
+    if(!q) return;
+
+    // 숫자만 입력 => 버스 페이지 규칙 유지
+    if(/^\d+$/.test(q)){
+      pushRecent(q);
+      location.href = `bus_${q}.html`;
+      return;
+    }
+
+    // exact match first
+    const k = normKey(q);
+    const exact = WIKI_LIST.find(it=>normKey(it.title)===k);
+    if(exact){
+      pushRecent(q);
+      location.href = exact.href;
+      return;
+    }
+
+    // show modal list (contains/starts)
+    const matches = WIKI_LIST
+      .map(it=>({it, s: score(it, q)}))
+      .filter(x=>x.s>0)
+      .sort((a,b)=>b.s-a.s || a.it.title.localeCompare(b.it.title))
+      .map(x=>x.it);
+
+    pushRecent(q);
+
+    if(matches.length===0){
+      // no result => create-like navigation fallback
+      location.href = `${encodeURIComponent(q)}.html`;
+      return;
+    }
+    showModalResults(q, matches);
+  };
+
+  // Bind input events
+  const input = document.getElementById("mainSearchInput");
+  if(!input) return;
+  const dd = ensureDropdown(input);
+
+  input.addEventListener("keydown", (e)=>{
+    if(e.key==="Enter"){
+      e.preventDefault();
+      hideDropdown(dd);
+      window.handleSearch(input.id);
+    } else if(e.key==="Escape"){
+      hideDropdown(dd);
+      input.blur();
+    }
+  });
+
+  input.addEventListener("input", ()=>{
+    renderDropdown(dd, input, input.value);
+  });
+  input.addEventListener("focus", ()=>{
+    renderDropdown(dd, input, input.value);
+  });
+
+  document.addEventListener("click", (e)=>{
+    if(!e.target) return;
+    const wrap = document.getElementById("hb-main-search-wrap") || input.parentElement;
+    if(wrap && wrap.contains(e.target)) return;
+    hideDropdown(dd);
+  });
+})();
+</script>
+
+
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

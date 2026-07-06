@@ -1,0 +1,336 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문서 수정 - 효빈위키 (Cloud Source Editor)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css"> 
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f4f4f9; color: #333; }
+        .toolbar-btn { border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 6px; background-color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; color: #4a5568; display: flex; align-items: center; gap: 6px; transition: all 0.15s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .toolbar-btn:hover { background-color: #f7fafc; border-color: #cbd5e0; transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .color-dot { width: 26px; height: 26px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s; position: relative; }
+        .color-dot:hover { transform: scale(1.2); z-index: 10; border-color: #333; }
+        .tab-btn { padding: 12px 24px; font-weight: bold; cursor: pointer; color: #a0aec0; transition: 0.2s; background: transparent; border-bottom: 3px solid transparent; }
+        .tab-btn.active { border-bottom: 3px solid #7777AA; color: #7777AA; }
+        #docContent { background-color: #1e1e1e; color: #d4d4d4; font-family: 'Consolas', 'Courier New', monospace; line-height: 1.5; font-size: 14px; white-space: pre; overflow-wrap: normal; overflow-x: scroll; }
+        .preview-area { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 40px; min-height: 600px; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+    <nav class="bg-[#7777AA] text-white p-3 shadow-md sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto flex items-center justify-between">
+            <a href="index.html" class="font-bold text-xl flex items-center gap-2 hover:opacity-90 transition">
+                <i class="fa-solid fa-book-open"></i> HyobinWiki <span class="text-xs font-bold bg-white/20 px-2 py-1 rounded-full tracking-wider text-green-100">CLOUD EDITOR</span>
+            </a>
+            <div class="flex gap-2">
+                <button onclick="goToHistory()" class="bg-[#555588] hover:bg-[#444477] px-4 py-1.5 rounded text-sm font-bold transition flex items-center gap-2 shadow-inner">
+                    <i class="fa-solid fa-history"></i> 역사
+                </button>
+                <button onclick="goToDiscussion()" class="bg-[#555588] hover:bg-[#444477] px-4 py-1.5 rounded text-sm font-bold transition flex items-center gap-2 shadow-inner">
+                    <i class="fa-solid fa-comments"></i> 토론
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-[1400px] mx-auto p-4 md:p-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 bg-white p-5 rounded-lg border border-gray-200 shadow-sm gap-4">
+            <h1 class="text-2xl font-black flex items-center gap-3 text-gray-800">
+                <span class="text-[#7777AA]"><i class="fa-solid fa-code"></i> 원본 코드 편집기</span>
+            </h1>
+            <div class="flex flex-col gap-2 bg-blue-50/50 p-3 rounded-lg border border-blue-100" id="fileLoadBox">
+                <div id="loadStatus" class="text-sm font-bold text-[#7777AA]"><i class="fa-solid fa-cloud-arrow-down"></i> 대기 중...</div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-gray-500 font-bold">수동 로드(PC):</span>
+                    <input type="file" id="fileInput" accept=".html" onchange="loadLocalFile(this)" class="text-xs file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:font-bold file:bg-[#7777AA] file:text-white hover:file:bg-[#555588] cursor-pointer">
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white border border-gray-200 p-6 rounded-lg mb-6 shadow-sm flex items-center justify-between">
+            <div class="w-1/2">
+                <label class="block text-sm font-bold text-gray-600 mb-2"><i class="fa-solid fa-file-signature text-gray-400"></i> 문서 제목</label>
+                <input type="text" id="docTitle" class="w-full border border-gray-300 p-3 rounded-md focus:outline-none text-base font-bold bg-gray-50" readonly placeholder="파일을 불러오세요.">
+            </div>
+            <div class="text-xs text-gray-500 font-bold text-right">
+                <i class="fa-solid fa-palette"></i> 테마 색상은 원본 HTML의 &lt;style&gt; 설정을 따릅니다.<br>(에디터에서는 본문 내용만 안전하게 수정합니다)
+            </div>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+            <div class="flex border-b border-gray-200 bg-gray-50">
+                <div class="tab-btn active" id="tab-edit" onclick="switchTab('edit')"><i class="fa-solid fa-file-code"></i> HTML 소스 편집</div>
+                <div class="tab-btn" id="tab-preview" onclick="switchTab('preview')"><i class="fa-solid fa-eye"></i> 렌더링 미리보기</div>
+            </div>
+
+            <div id="editArea">
+                <div class="bg-white border-b border-gray-200 p-3 flex gap-2 flex-wrap items-center">
+                    <button class="toolbar-btn" onclick="tag('<b>', '</b>')"><i class="fa-solid fa-bold"></i></button>
+                    <button class="toolbar-btn" onclick="tag('<i>', '</i>')"><i class="fa-solid fa-italic"></i></button>
+                    <button class="toolbar-btn text-gray-500" onclick="tag('<del>', '</del>')"><del>취소선</del></button>
+                    <div class="w-px h-5 bg-gray-300 mx-1"></div>
+                    <button class="toolbar-btn text-blue-600" onclick="tag('<a href=\"#.html\" class=\"wiki-link\">', '</a>')"><i class="fa-solid fa-link"></i> 내부링크</button>
+                    <button class="toolbar-btn text-[#7777AA]" onclick="tag('<h2 id=\"s-\"><b>', '</b></h2>')">H2</button>
+                    <button class="toolbar-btn" onclick="tag('<p>', '</p>')">P 태그</button>
+                    <div class="w-px h-5 bg-gray-300 mx-1"></div>
+                    
+                    <input type="file" id="mediaUploadInput" class="hidden" accept="image/*,video/*,audio/*" onchange="window.handleMediaUpload(event)">
+                    <button id="mediaUploadBtn" class="toolbar-btn text-orange-600 border-orange-200 bg-orange-50 hover:bg-orange-100" onclick="document.getElementById('mediaUploadInput').click()">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> 미디어 클라우드 업로드
+                    </button>
+                </div>
+                <textarea id="docContent" class="w-full h-[700px] p-6 focus:outline-none resize-y" spellcheck="false" placeholder="서버에서 문서를 불러오는 중입니다..."></textarea>
+            </div>
+
+            <div id="previewArea" class="preview-area hidden wiki-container"></div>
+        </div>
+
+        <div class="mt-6 flex justify-between items-center p-5 bg-white border border-gray-200 rounded-lg shadow-sm">
+            <p class="text-sm text-gray-500"><i class="fa-solid fa-history text-[#37B484]"></i> 배포 시 <b>편집 역사</b>가 자동으로 보관됩니다.</p>
+            <button id="saveBtn" class="px-10 py-3 bg-[#37B484] text-white font-black rounded-md shadow-md hover:bg-[#2e9e73] transition hover:scale-105 flex items-center gap-2">
+                <i class="fa-solid fa-cloud-arrow-up"></i> 클라우드 서버 배포
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCXlxuSvvSOEEMegjfoY_UzZQs4m0NeIJo",
+            authDomain: "hyobinwiki.firebaseapp.com",
+            projectId: "hyobinwiki",
+            storageBucket: "hyobinwiki.firebasestorage.app"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // 미디어 업로드 로직
+        window.handleMediaUpload = async function(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+
+            const uploadBtn = document.getElementById("mediaUploadBtn");
+            const originalHTML = uploadBtn.innerHTML;
+            uploadBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 업로드 중...`;
+            uploadBtn.disabled = true;
+
+            try {
+                const fileRef = ref(storage, `media/${Date.now()}_${file.name}`);
+                await uploadBytesResumable(fileRef, file);
+                const downloadURL = await getDownloadURL(fileRef);
+                
+                let mediaTag = "";
+                if(file.type.startsWith("image/")) {
+                    mediaTag = `\n<div class="img-box" style="text-align:center; margin:15px 0;">\n    <img src="이미지/${downloadURL}" alt="${file.name}" style="max-width:100%; border-radius:8px;">\n    <div class="img-note">${file.name}</div>\n</div>\n`;
+                } else if(file.type.startsWith("video/")) {
+                    mediaTag = `\n<div style="text-align:center; margin:15px 0;">\n    <video src="${downloadURL}" controls style="max-width:100%; border-radius:8px;"></video>\n</div>\n`;
+                } else if(file.type.startsWith("audio/")) {
+                    mediaTag = `\n<div style="text-align:center; margin:15px 0;">\n    <audio src="${downloadURL}" controls></audio>\n</div>\n`;
+                } else {
+                    mediaTag = `\n<a href="${downloadURL}" target="_blank" class="wiki-link">📁 ${file.name} 다운로드</a>\n`;
+                }
+
+                const el = document.getElementById("docContent"); 
+                const start = el.selectionStart; 
+                const end = el.selectionEnd; 
+                const val = el.value;
+                el.value = val.substring(0, start) + mediaTag + val.substring(end);
+                el.focus(); 
+                el.selectionStart = start + mediaTag.length; 
+                el.selectionEnd = start + mediaTag.length;
+                
+                window.updatePreview();
+                alert("🎉 미디어가 클라우드에 성공적으로 업로드되었습니다!");
+            } catch(e) {
+                console.error(e);
+                alert("업로드 실패: " + e.message);
+            } finally {
+                uploadBtn.innerHTML = originalHTML;
+                uploadBtn.disabled = false;
+                event.target.value = ''; 
+            }
+        };
+
+        // 서버에서 문서 불러오기 로직 (띄어쓰기 -> 언더바)
+        const params = new URLSearchParams(location.search);
+        const rawDocName = params.get("doc");
+        const standardDocName = rawDocName ? rawDocName.trim().replace(/\s+/g, '_') : "";
+        const displayDocName = rawDocName ? rawDocName.trim().replace(/_/g, ' ') : "";
+
+        const statusEl = document.getElementById("loadStatus");
+        const loadBox = document.getElementById("fileLoadBox");
+
+        if (standardDocName) {
+            document.getElementById("docTitle").value = displayDocName;
+            statusEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 서버에서 '${displayDocName}' 자동 로드 중...`;
+            
+            getDoc(doc(db, "wiki_docs", standardDocName)).then(docSnap => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById("docContent").value = data.raw_html || "";
+
+                    statusEl.innerHTML = `<i class="fa-solid fa-check text-green-600"></i> 서버 자동 동기화 완료!`;
+                    statusEl.classList.replace("text-[#7777AA]", "text-green-600");
+                    loadBox.classList.replace("bg-blue-50/50", "bg-green-50");
+                    loadBox.classList.replace("border-blue-100", "border-green-200");
+                    
+                    window.updatePreview();
+                } else {
+                    statusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-yellow-600"></i> 서버에 없는 문서입니다. 내용 작성 후 배포해주세요.`;
+                    statusEl.classList.replace("text-[#7777AA]", "text-yellow-600");
+                    loadBox.classList.replace("bg-blue-50/50", "bg-yellow-50");
+                    loadBox.classList.replace("border-blue-100", "border-yellow-200");
+                }
+            }).catch(e => {
+                console.error(e);
+                statusEl.innerHTML = `<i class="fa-solid fa-xmark text-red-600"></i> 자동 로드 실패`;
+            });
+        }
+
+        // 서버로 문서 저장 로직 (띄어쓰기 -> 언더바)
+        document.getElementById('saveBtn').addEventListener('click', async () => {
+            const rawTitle = document.getElementById("docTitle").value.trim();
+            const rawHTML = document.getElementById("docContent").value; 
+
+            if(!rawTitle || !rawHTML) return alert("내용을 입력하세요.");
+
+            const standardTitle = rawTitle.replace(/\s+/g, '_');
+            const revNote = prompt("수정 내용을 간단히 요약해주세요 (생략 가능):") || "내용 수정";
+
+            const btn = document.getElementById("saveBtn");
+            btn.disabled = true; btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 배포 및 백업 중...`;
+
+            try {
+                const updateData = {
+                    raw_html: rawHTML,
+                    updatedAt: serverTimestamp()
+                };
+
+                await setDoc(doc(db, "wiki_docs", standardTitle), updateData, { merge: true });
+
+                await addDoc(collection(db, "wiki_docs", standardTitle, "revisions"), {
+                    ...updateData,
+                    rev_note: revNote
+                });
+
+                alert(`🔥 [${rawTitle}] 문서 배포 및 편집 역사 보관이 완료되었습니다!`);
+            } catch(e) {
+                console.error(e);
+                alert("서버 저장 실패: " + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> 클라우드 서버 배포`;
+            }
+        });
+    </script>
+
+    <script>
+        function goToDiscussion() {
+            const rawTitle = document.getElementById("docTitle").value.trim();
+            const standardTitle = rawTitle.replace(/\s+/g, '_');
+            if (standardTitle) window.open(`토론.html?doc=${encodeURIComponent(standardTitle)}`, '_self');
+            else alert("문서 제목을 확인할 수 없습니다.");
+        }
+
+        function goToHistory() {
+            const rawTitle = document.getElementById("docTitle").value.trim();
+            const standardTitle = rawTitle.replace(/\s+/g, '_');
+            if (standardTitle) window.open(`역사.html?doc=${encodeURIComponent(standardTitle)}`, '_self');
+            else alert("문서 제목을 확인할 수 없습니다.");
+        }
+
+        window.loadLocalFile = function(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) { 
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(e.target.result, "text/html");
+                let targetArea = doc.querySelector('.wiki-container') || doc.body;
+                
+                const nav = targetArea.querySelector('nav');
+                if(nav) nav.remove();
+                
+                document.getElementById("docContent").value = targetArea.innerHTML;
+
+                const statusEl = document.getElementById("loadStatus");
+                statusEl.innerHTML = `<i class="fa-solid fa-computer"></i> 내 컴퓨터(PC) 원본 로드 완료! (서버에 배포하세요)`;
+                statusEl.className = "text-sm font-bold text-blue-600";
+                window.updatePreview();
+            };
+            reader.readAsText(file);
+        }
+
+        window.switchTab = function(tab) {
+            const edit = document.getElementById('editArea');
+            const prev = document.getElementById('previewArea');
+            const tabEdit = document.getElementById('tab-edit');
+            const tabPrev = document.getElementById('tab-preview');
+            
+            if(tab === 'edit') { 
+                edit.style.display='block'; prev.style.display='none'; 
+                tabEdit.classList.add('active'); tabPrev.classList.remove('active'); 
+            } else { 
+                edit.style.display='none'; prev.style.display='block'; 
+                tabEdit.classList.remove('active'); tabPrev.classList.add('active'); 
+                window.updatePreview(); 
+            }
+        }
+
+        window.tag = function(s, e) {
+            const el = document.getElementById("docContent"); 
+            const start = el.selectionStart; const end = el.selectionEnd; const val = el.value;
+            el.value = val.substring(0, start) + s + val.substring(start, end) + e + val.substring(end);
+            el.focus(); el.selectionStart = start + s.length; el.selectionEnd = start + s.length + (end-start);
+        }
+
+        window.updatePreview = function() {
+            const rawHTML = document.getElementById("docContent").value;
+            const previewBox = document.getElementById("previewArea");
+            previewBox.innerHTML = rawHTML;
+            
+            const originalWrite = document.write;
+            const originalWriteln = document.writeln;
+            
+            const scripts = previewBox.querySelectorAll('script');
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                
+                // 🚨 에디터 미리보기에서도 외부 파일(src) 보호 적용!
+                if (oldScript.src) {
+                    newScript.async = false;
+                } else {
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                }
+                
+                document.write = function(str) {
+                    newScript.insertAdjacentHTML('beforebegin', str);
+                };
+                
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
+            
+            setTimeout(() => { 
+                document.write = originalWrite; 
+                document.writeln = originalWriteln;
+            }, 100);
+        }
+    </script>
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

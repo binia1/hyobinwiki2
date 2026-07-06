@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>효빈위키 - 이미지 텍스트 추출기</title>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #f8f9fa; }
+        .container { background: white; padding: 20px; border: 1px solid #ddd; }
+        #resultText { width: 100%; height: 200px; margin-top: 10px; }
+        .loading { color: #0077DD; font-weight: bold; } /* 1호선 색상 활용 */
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h2>📸 효빈위키 공식 텍스트 추출기</h2>
+    <p>문제집이나 문서 이미지를 올리면 텍스트를 쫙 뽑아줍니다. <br>
+    <del>글씨를 너무 날려 쓰면 AI도 못 알아보니 주의할 것(...)</del></p>
+    
+    <input type="file" id="imageInput" accept="image/png, image/jpeg">
+    <button onclick="extractText()">추출 시작!</button>
+    
+    <p id="status" class="loading"></p>
+    
+    <textarea id="resultText" placeholder="여기에 추출된 텍스트가 표시됩니다."></textarea>
+</div>
+
+<script>
+    function extractText() {
+        const fileInput = document.getElementById('imageInput');
+        const statusText = document.getElementById('status');
+        const resultArea = document.getElementById('resultText');
+
+        if (fileInput.files.length === 0) {
+            alert('이미지를 먼저 선택해 주세요!');
+            return;
+        }
+
+        const imageFile = fileInput.files[0];
+        statusText.innerText = "열심히 글자를 읽는 중입니다. 잠시만 기다려주세요... (브라우저가 살짝 멈출 수 있습니다)";
+        resultArea.value = "";
+
+        // 한국어('kor')와 영어('eng') 동시 인식
+        Tesseract.recognize(
+            imageFile,
+            'kor+eng',
+            { logger: m => console.log(m) } 
+        ).then(({ data: { text } }) => {
+            statusText.innerText = "추출 완료!";
+            resultArea.value = text;
+        }).catch(err => {
+            statusText.innerText = "오류가 발생했습니다.";
+            console.error(err);
+        });
+    }
+</script>
+
+</body>
+</html>

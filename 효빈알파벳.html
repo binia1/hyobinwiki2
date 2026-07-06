@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈왕국 고대 문자 실시간 렌더러</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 효빈알파벳 특유의 유려한 정렬을 위한 추가 스타일링 */
+        .alphabet-img {
+            image-rendering: -webkit-optimize-contrast;
+            object-fit: contain;
+        }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-center p-6">
+
+    <div class="w-full max-w-2xl bg-slate-800 rounded-xl shadow-2xl p-6 border border-slate-700">
+        <div class="mb-6 border-b border-slate-700 pb-4">
+            <h1 class="text-2xl font-bold text-sky-400 flex items-center gap-2">
+                👑 효빈알파벳(Hyobin Alphabet) 실시간 렌더러 v2.0
+            </h1>
+            <p class="text-xs text-slate-400 mt-1">
+                초등-고등 시절의 정수가 담긴 효빈왕국 고유 문자를 웹상에 실시간으로 시각화합니다. (취소선은 생략한다)
+            </p>
+        </div>
+
+        <div class="mb-6">
+            <label for="username-input" class="block text-sm font-medium text-slate-300 mb-2">
+                한글 문장 입력 (예: 박효빈 또는 효빈역)
+            </label>
+            <input type="text" id="username-input" 
+                   class="w-full bg-slate-950 border border-slate-600 rounded-lg px-4 py-3 text-lg font-sans focus:outline-none focus:border-sky-500 transition-colors"
+                   placeholder="여기에 한글을 입력하면 실시간으로 변환됩니다..." />
+        </div>
+
+        <div class="bg-slate-950 rounded-lg p-6 min-h-[120px] border border-slate-800 flex flex-wrap items-center gap-x-2 gap-y-4" id="alphabet-preview">
+            <span class="text-slate-500 text-sm">변환된 고대 문자가 여기에 표시됩니다...</span>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a href="index.html" class="text-sm text-slate-500 hover:text-sky-400 transition-colors">
+            ◀ 효빈위키 메인화면.html 돌아가기
+        </a>
+    </div>
+
+<script>
+        // 1. 한국어 자모별 이미지 경로 매칭 테이블
+        const 효빈알파벳_매핑 = {
+            // ==========================================
+            // 자음 및 특수 발음 패키지 (실물 에셋 반영)
+            // ==========================================
+            "ㄱ": "이미지/ㄱ.png",
+            "ㄴ": "이미지/ㄴ.png",
+            "ㄷ": "이미지/ㄷ.png",
+            "ㄹ": "이미지/ㄹ.png",
+            "ㅁ": "이미지/ㅁ.png",
+            "ㅂ": "이미지/ㅂ.png",
+            "ㅅ": "이미지/ㅅ.png",
+            "ㅇ": "이미지/ㅇ.png", 
+            "ㅈ": "이미지/ㅈ.png",
+            "ㅊ": "이미지/ㅊ.png",
+
+            // [격음 라인]
+            "ㅋ": "이미지/ㅋ.png",
+            "ㅌ": "이미지/ㅌ.png",
+            "ㅍ": "이미지/ㅍ.png",
+            "ㅎ": "이미지/ㅎ.png",
+
+            // [된소리 라인]
+            "ㄲ": "이미지/ㄲ.png",
+            "ㄸ": "이미지/ㄸ.png", 
+            "ㅃ": "이미지/ㅃ.png",
+            "ㅆ": "이미지/ㅆ.png",
+            "ㅉ": "이미지/ㅉ.png",
+
+            // [★ 원작자 공인 특수 발음 및 변이음 라인업]
+            "th": "이미지/ㅌㅎ.png",  // θ (번데기)
+            "sh": "이미지/ㅅㅎ.png",  // ʃ (쉬)
+            "f": "이미지/ㅍㅎ.png",   // ɸ (양순 마찰음)
+            "ph": "이미지/ㅍㅎ.png",  
+            "rd": "이미지/ㄹㄷ.png",  
+            "nn": "이미지/ㄴㄴ.png",  // ★ Shift + ㄴ 입력 시 매칭될 실제 이미지!
+            "ㅇㅇ": "이미지/ㅇㅇ.png", // ★ Shift + ㅇ 혹은 받침 이응 시 매칭될 실제 이미지!
+
+            // ==========================================
+            // 모음 패키지 (실물 에셋 반영)
+            // ==========================================
+            "ㅏ": "이미지/ㅏ.png",
+            "ㅓ": "이미지/ㅓ.png", 
+            "ㅗ": "이미지/ㅗ.png",
+            "ㅜ": "이미지/ㅜ.png",
+            "ㅡ": "이미지/ㅡ.png", 
+            "ㅣ": "이미지/ㅣ.png",
+            "ㅔ": "이미지/ㅔ.png",
+            "YA": "이미지/ㅑ.png", 
+            "ㅑ": "이미지/ㅑ.png", 
+            "ㅕ": "이미지/ㅕ.png", 
+            "ㅛ": "이미지/ㅛ.png", 
+            "ㅠ": "이미지/ㅠ.png", 
+            "ㅚ": "이미지/ㅚ.png", 
+            "ㅟ": "이미지/ㅟ.png", 
+
+            // [잔여 복합 모음 플레이스홀더]
+            "ㅐ": "이미지/ㅐ.png",
+            "ㅒ": "이미지/ㅒ.png",
+            "ㅖ": "이미지/ㅖ.png",
+            "ㅘ": "이미지/ㅘ.png",
+            "ㅙ": "이미지/ㅙ.png",
+            "ㅝ": "이미지/ㅝ.png",
+            "ㅞ": "이미지/ㅞ.png",
+            "ㅢ": "이미지/ㅢ.png"
+        };
+
+        // 2. 한글 유니코드 분석 알고리즘 (★ㄴㄴ, ㅇㅇ 병합 기능 고도화 버전)
+        function 한글_자모_분해(문자열) {
+            const 결과 = [];
+            const 초성_리스트 = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+            const 중성_리스트 = ["ㅏ","ㅐ","ㅑ","ㅒ","ㅓ","ㅔ","ㅕ","ㅖ","ㅗ","ㅘ","ㅙ","ㅚ","ㅛ","ㅜ","ㅝ","ㅞ","ㅟ","ㅠ","ㅡ","ㅢ","ㅣ"];
+            const 종성_리스트 = ["","ㄱ","ㄲ","ㄳ","ㄴ","ㄵ","ㄶ","ㄷ","ㄹ","ㄺ","ㄻ","ㄼ","ㄽ","ㄾ","ㄿ","ㅀ","ㅁ","ㅂ","ㅄ","ㅅ","ㅆ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+
+            for (let i = 0; i < 문자열.length; i++) {
+                const 가기코드 = 문자열.charCodeAt(i);
+                
+                // 완성형 한글 음절 범위인 경우 (가 ~ 힣)
+                if (가기코드 >= 0xAC00 && 가기코드 <= 0xD7A3) {
+                    const 유니코드_오프셋 = 가기코드 - 0xAC00;
+                    const 초성_인덱스 = Math.floor(유니코드_오프셋 / 588);
+                    const 중성_인덱스 = Math.floor((유니코드_오프셋 % 588) / 28);
+                    const 종성_인덱스 = 유니코드_오프셋 % 28;
+
+                    결과.push(초성_리스트[초성_인덱스]);
+                    결과.push(중성_리스트[중성_인덱스]);
+                    
+                    if (종성_인덱스 > 0) {
+                        const 종성자모 = 종성_리스트[종성_인덱스];
+                        // 받침 자리에 오는 'ㅇ'은 자동으로 연구개 비음인 'ㅇㅇ' 이미지로 강제 매칭
+                        if (종성자모 === "ㅇ") {
+                            결과.push("ㅇㅇ");
+                        } else {
+                            결과.push(종성자모);
+                        }
+                    }
+                } else {
+                    // 미완성 단독 자모 연속 입력 처리 구역 (Shift 입력 인터셉트 대응)
+                    const 현재문자 = 문자열[i];
+                    const 다음문자 = 문자열[i + 1];
+                    const 영문_남은텍스트 = 문자열.slice(i);
+
+                    // 연속된 ㄴㄴ와 ㅇㅇ를 하나의 특수 토큰으로 강력하게 결합합니다.
+                    if (현재문자 === "ㄴ" && 다음문자 === "ㄴ") {
+                        결과.push("nn"); // 매핑 테이블의 nn(이미지/ㄴㄴ.png)과 연동
+                        i++; 
+                    } else if (현재문자 === "ㅇ" && 다음문자 === "ㅇ") {
+                        결과.push("ㅇㅇ"); // 매핑 테이블의 ㅇㅇ(이미지/ㅇㅇ.png)과 연동
+                        i++;
+                    } 
+                    // 영문 특수 발음 대응
+                    else if (영문_남은텍스트.toLowerCase().startsWith("th")) {
+                        결과.push("th"); i++;
+                    } else if (영문_남은텍스트.toLowerCase().startsWith("sh")) {
+                        결과.push("sh"); i++;
+                    } else if (영문_남은텍스트.toLowerCase().startsWith("rd")) {
+                        결과.push("rd"); i++;
+                    } else if (현재문자.toLowerCase() === "f") {
+                        결과.push("f");
+                    } else if (현재문자 === " ") {
+                        결과.push("공백");
+                    } else {
+                        결과.push(현재문자);
+                    }
+                }
+            }
+            return 결과;
+        }
+
+        // 3. UI 렌더링 이벤트 바인딩 (인터셉터 프리징 보완 완결판)
+        const 입력창 = document.getElementById("username-input");
+        const 미리보기창 = document.getElementById("alphabet-preview");
+
+        // 물리 키 코드 판정 레이어 (KeyS = ㄴ, KeyD = ㅇ)
+        입력창.addEventListener("keydown", (e) => {
+            if (e.shiftKey && (e.code === 'KeyS' || e.code === 'KeyD')) {
+                if (e.key === 'Process' || e.keyCode === 229 || e.key === 'ㄴ' || e.key === 'ㅇ') {
+                    e.preventDefault(); 
+
+                    // 브라우저가 쓸데없는 글자를 추가 주입하지 못하도록 인풋창 잠금
+                    입력창.readOnly = true;
+
+                    const 주입할_텍스트 = (e.code === 'KeyS') ? 'ㄴㄴ' : 'ㅇㅇ';
+                    const 커서_시작 = 입력창.selectionStart;
+                    const 커서_끝 = 입력창.selectionEnd;
+                    const 현재_본문 = 입력창.value;
+
+                    입력창.value = 현재_본문.substring(0, 커서_시작) + 주입할_텍스트 + 현재_본문.substring(커서_끝);
+                    입력창.selectionStart = 입력창.selectionEnd = 커서_시작 + 주입할_텍스트.length;
+
+                    // 강제 렌더링 동기화
+                    입력창.dispatchEvent(new Event("input"));
+
+                    // 프리징 즉시 해제
+                    setTimeout(() => {
+                        입력창.readOnly = false;
+                    }, 0);
+                }
+            }
+        });
+
+        // 이미지 실시간 출력 루틴
+        입력창.addEventListener("input", (e) => {
+            const 입력값 = e.target.value;
+            if (입력값.trim() === "") {
+                미리보기창.innerHTML = `<span class="text-slate-500 text-sm">변환된 고대 문자가 여기에 표시됩니다...</span>`;
+                return;
+            }
+
+            const 분리된_자모들 = 한글_자모_분해(입력값);
+            미리보기창.innerHTML = ""; 
+
+            분리된_자모들.forEach(자모 => {
+                if (자모 === "공백") {
+                    const 띄어쓰기_공간 = document.createElement("div");
+                    띄어쓰기_공간.className = "w-6 h-12";
+                    미리보기창.appendChild(띄어쓰기_공간);
+                } else if (효빈알파벳_매핑[자모]) {
+                    const 이미지_태그 = document.createElement("img");
+                    이미지_태그.src = 효빈알파벳_매핑[자모];
+                    이미지_태그.alt = 자모; 
+                    이미지_태그.className = "h-12 alphabet-img hover:scale-110 transition-transform duration-150 cursor-pointer";
+                    이미지_태그.title = 자모; 
+                    미리보기창.appendChild(이미지_태그);
+                } else {
+                    const 일반_텍스트 = document.createElement("span");
+                    일반_텍스트.textContent = 자모;
+                    일반_텍스트.className = "text-xl font-bold text-slate-400 mx-1";
+                    미리보기창.appendChild(일반_텍스트);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>검색 결과 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="assets/wiki_index.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        :root { 
+            --wiki-nav: #7777AA; 
+            --wiki-header: #BBFF64;
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            --wiki-infobox-header: #7777AA; 
+            --wiki-highlight-bg: #fffbe6;
+            --wiki-highlight-text: #d32f2f;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-nav: #444477;
+            --wiki-header: #88AA33;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+            --wiki-highlight-bg: #4a3f12;
+            --wiki-highlight-text: #ff8a80;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; margin: 0; transition: background-color 0.3s, color 0.3s; }
+        .wiki-container { max-width: 1280px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); display: flex; flex-direction: column; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        /* 취소선 스타일 */
+        del { color: #aaa; text-decoration: line-through; }
+        [data-theme='dark'] del { color: #777; }
+
+        /* 헤딩 스타일 */
+        h1 { font-size: 2.3rem !important; font-weight: 700 !important; margin-bottom: 1rem; border-bottom: 2px solid var(--wiki-header); padding-bottom: 10px; }
+        h2 { font-size: 1.5rem !important; font-weight: 700 !important; margin-top: 1.5rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        h2::before { content: ""; display: inline-block; width: 6px; height: 1.2rem; background: var(--wiki-header); }
+
+        /* 검색어 하이라이트 (시장님 원본) */
+        .search-highlight { background-color: var(--wiki-highlight-bg); color: var(--wiki-highlight-text); font-weight: bold; border-radius: 2px; padding: 0 2px; }
+
+        /* 검색 박스 */
+        .search-page-box { background-color: var(--wiki-gray-bg); border: 1px solid var(--wiki-border); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-nav);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="topSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) window.doSearch('topSearchInput');">
+            <button class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner hover:bg-[#444477]" onclick="window.doSearch('topSearchInput')"><i class="fas fa-search"></i></button>
+            <button class="bg-[#555588] p-1 px-3 rounded text-xs shadow-inner" onclick="document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        
+        <h1 class="m-0 border-none p-0 flex items-center gap-3">
+            <i class="fas fa-search text-[var(--wiki-nav)]"></i> 
+            검색 결과: <span id="search-query-display" class="text-[var(--wiki-nav)] ml-2"></span>
+        </h1>
+
+        <div class="search-page-box flex justify-center items-center gap-2">
+            <input type="text" id="mainSearchInput" class="w-full max-w-xl p-3 border-2 border-[#7777AA] rounded focus:outline-none shadow-sm text-black" placeholder="다시 검색할 내용을 입력하세요" onkeypress="if(event.keyCode==13) window.doSearch('mainSearchInput');">
+            <button class="bg-[#7777AA] hover:bg-[#555588] text-white p-3 px-6 rounded font-bold transition-colors" onclick="window.doSearch('mainSearchInput')">검색</button>
+        </div>
+
+        <h2 id="s-1">문서 검색 결과 <span id="search-count" class="text-sm font-normal text-gray-500 ml-2">(총 0건)</span></h2>
+        
+        <div id="search-results-container" class="mt-4 min-h-[300px]">
+        </div>
+
+        <footer class="wiki-footer border-t border-[var(--wiki-border)] mt-10 pt-4">
+            <div class="mb-2 font-bold text-lg text-[var(--wiki-nav)]">HyobinWiki</div>
+            <p class="mb-2 text-sm text-[var(--wiki-text)]"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="wiki-link" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다.<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+        </footer>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const app = initializeApp({
+            apiKey: "AIzaSyCXlxuSvvSOEEMegjfoY_UzZQs4m0NeIJo",
+            authDomain: "hyobinwiki.firebaseapp.com",
+            projectId: "hyobinwiki"
+        });
+        const db = getFirestore(app);
+
+        // 검색 실행 (jana의 똑똑한 라우터가 있으면 쓰고, 없으면 기본 이동)
+window.doSearch = function(inputId) {
+    const input = document.getElementById(inputId);
+    if (input && input.value.trim() !== '') {
+        // 검색 결과 페이지에서는 자동 이동 대신 결과를 새로고침하는 것이 좋습니다.
+        const newQuery = input.value.trim();
+        location.href = "효빈위키 검색.html?q=" + encodeURIComponent(newQuery);
+    }
+}
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
+        }
+
+        async function renderSearchResults() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('q');
+            
+            const queryDisplay = document.getElementById('search-query-display');
+            const countDisplay = document.getElementById('search-count');
+            const resultsContainer = document.getElementById('search-results-container');
+            const mainInput = document.getElementById('mainSearchInput');
+
+            if (!query || query.trim() === '') {
+                queryDisplay.textContent = "검색어 없음";
+                document.title = "검색 - 효빈위키";
+                resultsContainer.innerHTML = `<div class="p-8 text-center text-[var(--wiki-text)] opacity-70">검색창에 검색어를 입력해 주세요.</div>`;
+                return;
+            }
+
+            const safeQuery = query.trim();
+            queryDisplay.textContent = `'${safeQuery}'`;
+            document.title = `${safeQuery} - 효빈위키 검색`;
+            mainInput.value = safeQuery;
+
+            const lowerQuery = safeQuery.toLowerCase().replace(/\s+/g, "");
+            let matches = [];
+
+            // 🌟 1. 시장님의 초고속 로컬 검색 (HB_WIKI_PAGES) 복구!
+            var rawPages = window.HB_WIKI_PAGES || [];
+            rawPages.forEach(function(p) {
+                let docTitle = typeof p === "string" ? p : p.title;
+                let docHref = typeof p === "string" ? p + ".html" : (p.href || p.title + ".html");
+                let lowerTitle = docTitle.toLowerCase().replace(/\s+/g, "");
+                if (lowerTitle.includes(lowerQuery) || docHref.toLowerCase().includes(lowerQuery)) {
+                    matches.push({ title: docTitle, href: docHref });
+                }
+            });
+
+            // 🌟 2. 시장님의 별칭(ALIAS) 검색 기능 완벽 복구!
+            var aliases = window.HB_WIKI_ALIASES || {};
+            for (var aliasName in aliases) {
+                let lowerAlias = aliasName.toLowerCase().replace(/\s+/g, "");
+                if (lowerAlias.includes(lowerQuery)) {
+                    matches.push({ 
+                        title: aliasName + ' <span class="text-sm font-normal text-gray-400 ml-2">➔ (별칭으로 검색됨)</span>', 
+                        href: aliases[aliasName] 
+                    });
+                }
+            }
+
+            // 일단 로컬 결과부터 0.1초 만에 화면에 띄웁니다 (답답함 해소!)
+            updateScreen(matches, safeQuery, countDisplay, resultsContainer);
+
+            // 🌟 3. 클라우드 검색 (화면 뒤에서 조용히 찾아서 추가함)
+            try {
+                const querySnapshot = await getDocs(collection(db, "wiki_docs"));
+                let isCloudAdded = false;
+                
+                querySnapshot.forEach((doc) => {
+                    const docTitle = doc.id.replace(/_/g, ' '); 
+                    if (docTitle.toLowerCase().replace(/\s+/g, "").includes(lowerQuery)) {
+                        matches.push({ title: docTitle, href: docTitle + '.html' });
+                        isCloudAdded = true;
+                    }
+                });
+
+                // 클라우드에서 새로운 문서를 찾았으면 화면을 업데이트!
+                if (isCloudAdded) {
+                    updateScreen(matches, safeQuery, countDisplay, resultsContainer);
+                }
+            } catch(e) {
+                console.error("클라우드 검색 중 오류 발생", e);
+            }
+        }
+
+        // 화면에 리스트를 그려주는 함수 (새 문서 작성 경로는 에디터로 고정!)
+        function updateScreen(matches, safeQuery, countDisplay, resultsContainer) {
+            // 중복 결과 제거
+            const uniqueMatches = [];
+            const seen = new Set();
+            matches.forEach(m => {
+                const key = m.title + "|" + m.href;
+                if(!seen.has(key)) {
+                    seen.add(key);
+                    uniqueMatches.push(m);
+                }
+            });
+
+            countDisplay.textContent = `(총 ${uniqueMatches.length}건)`;
+
+            // 검색 결과 0건일 때 (효빈위키식 드립 + 에디터 이동버튼 복구)
+            if (uniqueMatches.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="p-10 text-center border border-[var(--wiki-border)] rounded mt-4" style="background-color: var(--wiki-gray-bg);">
+                        <div class="text-5xl mb-4 opacity-50"><i class="fas fa-search-minus"></i></div>
+                        <div class="text-xl font-bold mb-2">일치하는 문서가 없습니다.</div>
+                        <div class="text-sm opacity-80 mb-6">
+                            단어의 철자가 정확한지 확인하시거나, 비슷한 다른 검색어를 사용해 보세요.<br>
+                            <del>아니면 님이 직접 문서를 파시던가요.</del> (...)
+                        </div>
+                        <a href="수정.html?doc=${encodeURIComponent(safeQuery)}" class="bg-[#7777AA] hover:bg-[#555588] text-white px-5 py-2.5 rounded font-bold transition-colors inline-block no-underline">
+                            "${safeQuery}" 새 문서 작성하기
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            // 결과 리스트 생성 (시장님의 하이라이트 기능 복구)
+            const regex = new RegExp(`(${escapeRegExp(safeQuery)})`, 'gi');
+            let html = '<ul class="list-none p-0 m-0 border-t border-[var(--wiki-border)]">';
+            
+            uniqueMatches.forEach(m => {
+                const highlightedTitle = m.title.replace(regex, '<span class="search-highlight">$1</span>');
+                html += `
+                    <li class="border-b border-[var(--wiki-border)] py-4 px-2 hover:bg-[var(--wiki-gray-bg)] transition-colors">
+                        <a href="${m.href}" class="block no-underline">
+                            <div class="text-lg font-bold text-[var(--wiki-link)] hover:underline mb-1">${highlightedTitle}</div>
+                            <div class="text-xs opacity-60">문서 연결: ${m.href}</div>
+                        </a>
+                    </li>
+                `;
+            });
+            html += '</ul>';
+            
+            resultsContainer.innerHTML = html;
+        }
+
+
+// 페이지가 이미 로드되었다면 즉시 실행, 아니면 이벤트 대기
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    renderSearchResults();
+} else {
+    document.addEventListener('DOMContentLoaded', renderSearchResults);
+}    </script>
+    
+    <script src="assets/hb_wiki_core.js?v=1"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

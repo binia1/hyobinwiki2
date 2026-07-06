@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>분석모형 평가 (SECTION 01) - 효빈위키</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Mermaid.js (최신 안정화 버전) -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
+    <!-- MathJax for LaTeX Rendering -->
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      chtml: {
+        fontURL: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2'
+      }
+    };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #00CCAA; 
+            --wiki-line-color: #00CCAA; 
+            
+            --wiki-header-bg: var(--wiki-line-color);
+            --wiki-header-text: #ffffff;
+            --wiki-table-header-bg: #e6faf6;
+            --wiki-table-header-text: #000000;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f8f9fa; 
+            --wiki-link: #008877; 
+            --wiki-footer-bg: #f0f0f0;
+            --wiki-footer-text: #777;
+        }
+
+        [data-theme='dark'] { 
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #33eebb; 
+            --wiki-table-header-bg: #222;
+            --wiki-table-header-text: #ffffff;
+            --wiki-footer-bg: #1a1a1a;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.7; word-break: keep-all; margin: 0; transition: background-color 0.3s, color 0.3s; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 30px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1.5px; border-bottom: 3px solid var(--wiki-main); padding-bottom: 15px;} 
+        
+        h2 { font-size: 2rem; font-weight: 900; border-bottom: 2px solid var(--wiki-line-color); padding-bottom: 8px; margin-top: 3.5rem; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; color: var(--wiki-text); }
+        h2::before { content: ""; display: inline-block; width: 6px; height: 2rem; background: var(--wiki-line-color); }
+        h3 { font-size: 1.5rem; font-weight: 800; margin-top: 2.5rem; margin-bottom: 15px; border-left: 6px solid var(--wiki-line-color); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 10px; color: var(--wiki-text); }
+
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; border: 1px solid var(--wiki-border); font-size: 0.95rem; }
+        th, td { border: 1px solid var(--wiki-border); padding: 10px 12px; text-align: left; vertical-align: middle; color: var(--wiki-text); }
+        th { background-color: var(--wiki-table-header-bg); font-weight: 800; text-align: center; border-bottom: 2px solid var(--wiki-main);}
+
+        .infobox { float: right; margin-left: 25px; margin-bottom: 20px; width: 350px; clear: right; border: 2px solid var(--wiki-main); border-radius: 4px; background-color: var(--wiki-bg); }        
+        .infobox-top { background-color: var(--wiki-main); padding: 20px 10px; text-align: center; border-bottom: 1px solid var(--wiki-border); color: #fff; }
+        .infobox-top b { font-size: 1.8rem; line-height: 1.2; letter-spacing: -1px; font-weight: 900; }
+
+        .toc { display: inline-block; min-width: 300px; margin-bottom: 25px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 20px; border-radius: 4px; }        
+        .toc-title { text-align: center; font-weight: 900; border-bottom: 1px solid var(--wiki-border); margin-bottom: 15px; padding-bottom: 10px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding: 0; margin: 0; line-height: 1.6; font-weight: 600;}
+        .toc li { margin-bottom: 4px; }
+        .toc .pl-5 { padding-left: 20px; font-weight: 400;}
+
+        .wiki-link { color: var(--wiki-link); font-weight: 700; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        .quote-box { background: var(--wiki-gray-bg); padding: 15px 20px; font-weight: 600; border-left: 5px solid var(--wiki-line-color); margin-bottom: 20px; color: var(--wiki-text); border-radius: 4px;}
+        .exam-box { border: 2px solid #ff4444; background-color: #fffafa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        [data-theme='dark'] .exam-box { background-color: #2a1111; border-color: #cc3333; }
+        .exam-title { font-weight: 900; color: #ff4444; margin-bottom: 10px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;}
+        
+        .anime-box { border: 2px dashed; background-color: #fdf5fd; padding: 20px; border-radius: 8px; margin: 20px 0; color: #333; display: flex; gap: 15px; align-items: flex-start;}
+        [data-theme='dark'] .anime-box { background-color: #2a1a2a; color: #eee;}
+        .anime-box-title { font-weight: 900; font-size: 1.15rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;}
+        .anime-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid; flex-shrink: 0; background-color: #fff;}
+
+        .mermaid { background: var(--wiki-bg); padding: 15px; border-radius: 8px; margin: 15px 0; display: flex; justify-content: center; overflow-x: auto; border: 1px solid var(--wiki-border);}
+        
+        del { color: #999; text-decoration: line-through; }
+        
+        /* 완벽한 LaTeX 렌더링을 위한 수학 수식 박스 */
+        .math-formula { background: var(--wiki-gray-bg); padding: 15px 20px; border-radius: 8px; text-align: center; margin: 20px 0; border: 1px solid var(--wiki-border); overflow-x: auto; font-size: 1.1rem;}
+
+        /* 각주 및 툴팁 전용 CSS */
+        .fn-link { color: var(--wiki-link); font-size: 0.75em; vertical-align: super; margin: 0 1px; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .fn-link:hover { text-decoration: underline; }
+        
+        .wiki-footnotes { margin-top: 60px; padding-top: 20px; border-top: 2px solid var(--wiki-border); }
+        .wiki-footnotes h4 { font-size: 1.1rem; font-weight: 900; color: var(--wiki-text); margin-bottom: 10px; }
+        .wiki-footnotes ul { list-style: none; padding: 0; margin: 0; }
+        .wiki-footnotes li { margin-bottom: 8px; font-size: 0.9rem; line-height: 1.6; padding: 4px 8px; border-radius: 4px; transition: background-color 0.3s; }
+        .wiki-footnotes li:target { background-color: rgba(0, 204, 170, 0.15); }
+
+        .wiki-tooltip {
+            position: absolute; background-color: var(--wiki-bg); color: var(--wiki-text); border: 1px solid var(--wiki-border);
+            border-radius: 6px; padding: 12px 16px; font-size: 0.85rem; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 0.2s ease-in-out, transform 0.2s ease;
+            transform: translateY(5px); z-index: 9999; word-break: keep-all; line-height: 1.6;
+        }
+        .wiki-tooltip.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+        [data-theme='dark'] .wiki-tooltip { box-shadow: 0 4px 15px rgba(0,0,0,0.6); background-color: #222; }
+    
+        /* 효빈위키 전용 하단 내비게이션 틀 CSS */
+        .wiki-nav-box { margin: 40px auto 10px; border: 1px solid var(--wiki-border); border-radius: 4px; background: var(--wiki-bg); overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .wiki-nav-header { display: flex; align-items: center; justify-content: center; padding: 12px; font-weight: 900; font-size: 1.1rem; color: #fff; background: linear-gradient(to right, #005BAC, #00CCAA); letter-spacing: 1px; }
+        .wiki-nav-toggle { text-align: center; padding: 6px; background: var(--wiki-gray-bg); border-bottom: 1px solid var(--wiki-border); border-top: 1px solid var(--wiki-border); cursor: pointer; font-size: 0.85rem; user-select: none; color: var(--wiki-text); font-weight: bold; }
+        .wiki-nav-toggle:hover { filter: brightness(0.95); }
+        .wiki-nav-content { display: none; }
+        .wiki-nav-content.active { display: block; }
+        .wiki-nav-table { width: 100%; border-collapse: collapse; text-align: center; margin: 0; font-size: 0.9rem; }
+        .wiki-nav-table th, .wiki-nav-table td { border: 1px solid var(--wiki-border); padding: 12px; }
+        .wiki-nav-table th { color: #fff; font-weight: bold; vertical-align: middle; }
+        .wiki-nav-table td { text-align: left; line-height: 1.8; word-break: keep-all; }
+        .bg-nav-red { background-color: #D81C2F; } /* 효빈 시내버스 급행 레드 */
+        .bg-nav-blue { background-color: #485EC6; } /* 효빈 시내버스 광역 블루 */
+        .wiki-nav-item { display: inline-block; margin-right: 12px; white-space: nowrap; }
+        .wiki-nav-item a { color: var(--wiki-link); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .wiki-nav-item a:hover { color: #FF4F91; text-decoration: underline; font-weight: bold; }
+
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <nav class="bg-[#00CCAA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50 border-b border-[#009988]">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl tracking-tight text-white">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색" class="p-1.5 px-4 rounded text-black text-sm w-64 focus:outline-none shadow-inner">
+            <button class="bg-[#008877] p-1.5 px-4 rounded text-sm hover:bg-[#006655] font-bold transition-colors text-white">검색</button>
+            <button onclick="document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')" class="bg-[#009988] p-1.5 px-3 rounded text-xs border border-[#006655] text-white shadow-inner">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="txt-lvl-1">분석모형 평가 (SECTION 01)</div>
+
+        <div class="category-box bg-[#f9f9f9] border border-[#ccc] p-3 mb-5 rounded text-sm font-bold">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="빅데이터분석기사_필기.html" class="wiki-link">빅데이터분석기사 필기</a> | <a href="빅데이터분석기사.html" class="wiki-link">빅데이터분석기사</a> | <a href="데이터_전처리.html" class="wiki-link">데이터 전처리</a> | <a href="데이터_탐색.html" class="wiki-link">데이터 탐색</a> | <a href="회귀분석.html" class="wiki-link">회귀분석</a> | <a href="분류_알고리즘.html" class="wiki-link">분류 알고리즘</a> | <a href="군집분석.html" class="wiki-link">군집분석</a> | <a href="통계학.html" class="wiki-link">통계학</a> | <a href="확률론.html" class="wiki-link">확률론</a> | <a href="분석모형_평가.html" class="wiki-link">분석모형 평가</a> | <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> | <a href="효빈광역시_시내버스.html" class="wiki-link">효빈광역시 시내버스</a> | <a href="러브라이브!_시리즈.html" class="wiki-link">러브라이브! 시리즈</a> | <a href="니지가사키_스쿨_아이돌_동호회.html" class="wiki-link">니지가사키 스쿨 아이돌 동호회</a> | <a href="BanG_Dream!.html" class="wiki-link">BanG Dream!</a> | <a href="MyGO!!!!!.html" class="wiki-link">MyGO!!!!!</a> | <a href="걸즈_밴드_크라이.html" class="wiki-link">걸즈 밴드 크라이</a>
+        </div>
+        
+
+        <aside class="infobox shadow-sm">
+            <div class="infobox-top">
+                <b>빅데이터분석기사 필기</b><br>
+                <span class="text-sm opacity-80">PART 04. 분석모형 평가 및 개선</span>
+            </div>
+            <table>
+                <tr><th>과목명</th><td>제4과목 빅데이터 결과 해석</td></tr>
+                <tr><th>섹션</th><td>SECTION 01. 분석모형 평가</td></tr>
+                <tr><th>출제빈도</th><td>상 (☑)</td></tr>
+                <tr><th>반복학습</th><td>[1] [2] [3] 회독</td></tr>
+                <tr><th>빈출태그</th><td>#오차행렬 #평가지표 #정확도 #재현율 #F1-score #ROC #K-fold #카이제곱</td></tr>
+            </table>
+        </aside>
+
+        <div class="toc shadow-sm">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li><a href="#s-1" class="wiki-link">1. 평가 지표</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-1-1" class="wiki-link">1) 지도학습-분류모델 평가 지표 (오차행렬, ROC 등)</a></li>
+                        <li><a href="#s-1-2" class="wiki-link">2) 지도학습-회귀모델 평가 지표 (SSE, MSE, MAE, R², AIC 등)</a></li>
+                        <li><a href="#s-1-3" class="wiki-link">3) 비지도학습-군집분석 평가 지표 (실루엣, Dunn)</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-2" class="wiki-link">2. 분석모형 진단</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-2-1" class="wiki-link">1) 정규성 가정 (중심극한정리, 샤피로, K-S, Q-Q)</a></li>
+                        <li><a href="#s-2-2" class="wiki-link">2) 잔차 진단 (정규성, 등분산성, 독립성)</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-3" class="wiki-link">3. k-폴드 교차검증 (k-fold Cross Validation)</a></li>
+                <li><a href="#s-4" class="wiki-link">4. 적합도 검정 (Goodness of fit Test)</a>
+                    <ul class="pl-5">
+                        <li><a href="#s-4-1" class="wiki-link">1) 카이제곱 검정</a></li>
+                        <li><a href="#s-4-2" class="wiki-link">2) 콜모고로프 스미르노프 검정(K-S Test)</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="quote-box" style="border-color: #EE0022;">
+            💬 <b>[효빈위키 팩트폭력 코멘트]</b><br>
+            <del>기적은 무슨, 여기서 점수 못 따면 합격에 기적이 필요해진다는 소리다.</del><br>
+            분석모형 평가 파트는 빅데이터 분석기사 필기와 실기를 가리지 않고 <b>무조건</b> 출제되는 단골 손님이니, 수식과 용어를 자다가도 튀어나올 정도로 뼈에 새겨두자!(...)
+        </div>
+
+        <h2 id="s-1">01 평가 지표</h2>
+
+        <h3 id="s-1-1">1) 지도학습-분류모델 평가 지표</h3>
+        <p>분석모형의 답과 실제 답과의 관계 오차행렬을 통해 모델을 평가한다.</p>
+
+        <h4 class="mt-4 font-bold text-gray-800">▶ 오차행렬(혼동행렬, Confusion Matrix)</h4>
+        <table class="text-sm w-full mt-2 text-center">
+            <tr>
+                <th colspan="2" rowspan="2" class="bg-gray-100 border-none"></th>
+                <th colspan="2" class="bg-blue-100">실제 답 (Actual)</th>
+            </tr>
+            <tr>
+                <th class="bg-blue-50">Positive (참)</th>
+                <th class="bg-blue-50">Negative (거짓)</th>
+            </tr>
+            <tr>
+                <th rowspan="2" class="bg-gray-100 align-middle">예측 결과<br>(Predicted)</th>
+                <th class="bg-gray-50">Positive (긍정 예측)</th>
+                <td class="font-bold text-green-700">True Positive (TP)<br><span class="text-xs font-normal">실제 참, 예측 참 (정답)</span></td>
+                <td class="font-bold text-red-500">False Positive (FP)<br><span class="text-xs font-normal">실제 거짓, 예측 참 (오답, 1종 오류)</span></td>
+            </tr>
+            <tr>
+                <th class="bg-gray-50">Negative (부정 예측)</th>
+                <td class="font-bold text-red-500">False Negative (FN)<br><span class="text-xs font-normal">실제 참, 예측 거짓 (오답, 2종 오류)</span></td>
+                <td class="font-bold text-green-700">True Negative (TN)<br><span class="text-xs font-normal">실제 거짓, 예측 거짓 (정답)</span></td>
+            </tr>
+        </table>
+
+        <div class="anime-box" style="border-color: #FF5522; background-color: #FFF2EE;">
+            <img src="이미지/다로나.png" alt="다로나" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF5522;">
+            <div>
+                <div class="anime-box-title" style="color: #DD4411;">💡 [효빈위키 개념 해설] 4호선 다로나의 오차행렬 1초 컷!</div>
+                <p class="text-sm text-gray-800">처음 보면 T, F, P, N이 섞여서 뇌정지가 오기 딱 좋죠.(...)</p>
+                <p class="text-sm text-gray-800 mt-1">핵심은 <b>뒤의 알파벳(P/N)</b>이 'AI 모델이 찍은 답'이고, <b>앞의 알파벳(T/F)</b>이 '그 찍은 답이 맞았는지(정답) 틀렸는지(오답)'를 나타낸다는 거예요!</p>
+                <ul class="list-disc pl-5 text-sm space-y-1 mt-1 text-gray-800">
+                    <li>러브라이브! 니지가사키 스쿨 아이돌 동호회 오디션을 본다고 쳐봐요. 합격이 Positive, 불합격이 Negative예요.</li>
+                    <li><b>TP (True Positive):</b> 합격할 애(P)라고 예측했는데, 진짜 합격(T)한 대박 상황!</li>
+                    <li><b>FP (False Positive):</b> 합격할 애(P)라고 찍었는데, 그게 구라(F)였네? 앗, 불합격.(...) (이게 제1종 오류예요!)</li>
+                    <li><b>FN (False Negative):</b> 떨어질 애(N)라고 찍었는데, 알고 보니 붙을 애였네(F)? 아까운 인재를 놓쳤어요. (제2종 오류)</li>
+                    <li><b>TN (True Negative):</b> 떨어질 애(N)라고 찍었고, 진짜로 떨어진(T) 정확한 예측이죠!</li>
+                </ul>
+            </div>
+        </div>
+
+        <ul class="list-disc pl-6 space-y-4 mb-4 mt-4">
+            <li><b>① 오차행렬(Confusion Matrix):</b> 훈련을 통한 예측 성능을 측정하기 위해 예측 값과 실제 값을 비교하기 위한 표이다.</li>
+            <li><b>② 정확도(Accuracy):</b> 실제 데이터와 예측 데이터가 정확히 같은지(정답을 맞췄는지) 판단한다. 모델의 전체적인 분류 성능을 나타내지만, <b>클래스 불균형이 있는 데이터셋에서는 잘못된 평가 결과(정확도의 역설)를 줄 수 있다.</b>
+                <div class="math-formula text-sm my-1">
+                    $$Accuracy = \frac{TP + TN}{TP + FP + TN + FN}$$
+                </div>
+                <span class="text-sm text-gray-600">※ 양성 90%, 음성 10% 데이터에서 무조건 "양성!"이라고 찍어도 정확도는 90%가 나온다. 즉, 정확도만 믿고 깝치다간 통수 맞기 딱 좋다는 뜻이다.</span>
+            </li>
+            <li><b>③ 정밀도(Precision):</b> <b>Positive로 예측한 대상(TP+FP) 중</b>에 실제로 Positive인 값(TP)의 비율이다. 내가 "이건 진짜야!"라고 찍은 것들 중 진짜의 비율을 본다.
+                <div class="math-formula text-sm my-1">
+                    $$Precision = \frac{TP}{TP + FP}$$
+                </div>
+            </li>
+            <li><b>④ 재현율(Recall, 민감도, TPR):</b> <b>실제 Positive인 대상(TP+FN) 중</b>에 Positive로 정확하게 예측한 값(TP)의 비율이다. 실제 양성 데이터를 놓치지 않고 얼마나 잘 찾아냈는지 의미한다. (암 환자 진단처럼 진짜 양성을 놓치면 안 될 때 매우 중요)
+                <div class="math-formula text-sm my-1">
+                    $$Recall = \frac{TP}{TP + FN}$$
+                </div>
+            </li>
+            <li><b>⑤ F1-score:</b> 정밀도와 재현율이 트레이드오프 관계(하나가 오르면 하나가 내려감)에 있으므로, 이 둘을 결합한 <b>조화평균</b> 지표이다. 값이 클수록 모형이 정확하다고 판단한다.
+                <div class="math-formula text-sm my-1">
+                    $$F1 = \frac{2}{\frac{1}{Recall} + \frac{1}{Precision}} = 2 \times \frac{Precision \cdot Recall}{Precision + Recall}$$
+                </div>
+            </li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #FF8899; background-color: #FFF0F5;">
+            <img src="이미지/임세정.png" alt="임세정" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF8899;">
+            <div>
+                <div class="anime-box-title" style="color: #CC4466;">🎀 [효빈위키 특강] 7호선 임세정 언니의 안티팬 색출 대작전!</div>
+                <p class="text-sm text-gray-800">정밀도와 재현율? 걸즈 밴드 크라이 안티팬 색출 모델로 비유해 볼게!</p>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>정밀도(Precision):</b> AI가 "얘네들 10명은 안티팬(Positive) 확실해!" 라고 멱살을 잡았는데, 그중에 진짜 안티팬이 8명이고 2명은 억울한 찐팬이었다면 정밀도는 80%야. <b>내가 쏜 총알이 얼마나 정확하게 과녁에 꽂혔나</b>를 보는 거지!</li>
+                    <li><b>재현율(Recall):</b> 콘서트장에 실제 안티팬이 100명 숨어있어. 근데 우리 AI가 그 중에서 60명밖에 못 잡아냈어(나머지 40명은 정상인인 줄 알고 놓침). 그럼 재현율은 60%가 돼. <b>실제 쓰레기들 중에 내가 얼만큼 싹쓸이해서 찾아냈나</b>를 보는 거야! 암 환자 진단할 때 재현율이 낮으면 진짜 암 환자를 정상으로 오진하고 돌려보내는 거니까 사람 목숨이 왔다 갔다 하겠지?</li>
+                </ul>
+            </div>
+        </div>
+
+        <ul class="list-disc pl-6 space-y-4 mb-4 mt-4">
+            <li><b>⑥ ROC(Receiver Operating Characteristic) 곡선:</b> X축에 FPR(False Positive Rate), Y축에 TPR(True Positive Rate, 재현율)을 두고 임계값을 조정하며 그리는 곡선이다. 곡선이 <b>왼쪽 상단 모서리에 가까울수록(45도 직선에서 멀어질수록) 성능이 우수</b>한 모델이다.
+                <div class="math-formula text-sm my-1">
+                    $$FPR = 1 - \text{특이도} = \frac{FP}{FP + TN} \quad , \quad TPR = \text{민감도(재현율)} = \frac{TP}{TP + FN}$$
+                </div>
+            </li>
+            <li><b>⑦ AUC(Area Under Curve):</b> 평가모델의 ROC 곡선의 하단 <b>면적</b>이다. 0에서 1 사이의 값을 가지며, <b>1에 가까울수록 성능이 우수하다.</b></li>
+        </ul>
+
+        <div class="mermaid mt-4 mb-4">
+        xychart-beta
+            title "ROC 곡선 (A, B, C 성능 비교)"
+            x-axis "1 - Specificity (FPR)" 0 --> 1
+            y-axis "Sensitivity (TPR)" 0 --> 1
+            line [0, 0.85, 0.98, 1] 
+            line [0, 0.65, 0.85, 1] 
+            line [0, 0.5, 1]
+        </div>
+        <p class="text-sm text-center text-gray-500 mb-6">▲ 맨 위 곡선이 A (AUC=1에 가까움, 최고 성능), 중간이 B (AUC=0.85), 45도 점선이 C (AUC=0.5, 동전 던지기 수준의 똥망 모델)를 나타낸다.</p>
+
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-4 mb-4 mt-4">
+            <h4 class="font-bold text-gray-800">[예제 풀이] 이진분류 모델 성능 계산</h4>
+            <p class="text-sm mt-1">TP = 50, FP = 10, FN = 25, TN = 90</p>
+            <ul class="list-disc pl-5 text-sm space-y-1 mt-1">
+                <li><b>정밀도(Precision):</b> $50 / (50 + 10) = 0.8333$</li>
+                <li><b>재현율(Recall):</b> $50 / (50 + 25) = 0.6667$</li>
+                <li><b>F1 Score:</b> $2 \times (0.8333 \times 0.6667) / (0.8333 + 0.6667) = 0.7407$</li>
+            </ul>
+        </div>
+
+
+        <h3 id="s-1-2">2) 지도학습-회귀모델 평가 지표</h3>
+        <p>회귀의 평가를 위한 지표는 <b>실제값($y_i$)과 회귀 예측값($\hat{y}_i$)의 차이(오차)</b>를 기반으로 성능지표들을 수립, 활용한다.</p>
+
+        <div class="anime-box" style="border-color: #0077DD; background-color: #EBF5FF;">
+            <img src="이미지/고나미.png" alt="고나미" class="anime-img" onerror="this.style.display='none'" style="border-color: #0077DD;">
+            <div>
+                <div class="anime-box-title" style="color: #0055AA;">💡 [효빈위키 개념 해설] 1호선 고나미의 회귀 평가지표 한방 요약!</div>
+                <p class="text-sm text-gray-800">갑자기 M, R, E가 들어간 수많은 알파벳이 폭격처럼 쏟아져서 당황스럽죠? (...)</p>
+                <p class="text-sm text-gray-800 mt-1">하지만 쫄지 마세요. 어차피 핵심은 <b>"진짜 정답(실제값)이랑 모델이 찍은 답(예측값)이 얼마나 차이나냐(오차)"</b>를 구하는 것뿐이랍니다.</p>
+                <p class="text-sm text-gray-800 mt-1">예를 들어, 효빈광역시 1호선 급행열차의 일일 이용객 수를 예측하는 모델을 만들었다고 쳐요. 실제 1만 명이 탔는데 모델이 9천 명이라고 예측했다면, 이 1천 명의 차이(오차)를 통계적으로 어떻게 요리해서 보여줄 것인지에 따라 이름(SSE, MSE, MAE 등)이 달라지는 것뿐입니다. <del>결국은 다 오차 파티 파생상품이에요.</del></p>
+            </div>
+        </div>
+
+        <ul class="list-disc pl-6 space-y-4 mb-4 mt-4">
+            <li><b>① SSE (Sum Squared Error, 오차제곱합):</b> 실제값과 예측값 차이를 제곱하여 다 더한 값.
+                <div class="math-formula text-sm my-1">$$SSE = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$</div>
+            </li>
+            <li><b>② MSE (Mean Squared Error, 평균제곱오차):</b> SSE를 전체 개수 $n$으로 나눈 평균.
+                <div class="math-formula text-sm my-1">$$MSE = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$</div>
+            </li>
+            <li><b>③ RMSE (Root Mean Squared Error):</b> MSE에 루트($\sqrt{}$)를 씌워 수치를 현실적인 단위로 깎아내린 값.
+                <div class="math-formula text-sm my-1">$$RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}$$</div>
+            </li>
+            <li><b>④ MAE (Mean Absolute Error, 평균절대오차):</b> 차이에 제곱 대신 <b>절댓값</b>을 씌워 평균 낸 값.
+                <div class="math-formula text-sm my-1">$$MAE = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|$$</div>
+            </li>
+            <li><b>⑤ MPE & ⑨ MAPE:</b> 실제값 대비 오차를 <b>백분율(%)</b>로 표현한 것. MAPE는 절댓값(Absolute)을 씌운 버전이다.
+                <div class="math-formula text-sm my-1">$$MAPE = \frac{100\%}{n} \sum_{i=1}^{n} \left|\frac{y_i - \hat{y}_i}{y_i}\right|$$</div>
+            </li>
+            <li><b>⑥ 결정계수 ($R^2$):</b> 회귀모형이 실제값에 대해 <b>얼마나 잘 적합(설명)하는지에 대한 비율</b>. 1에 가까울수록 좋다.
+                <div class="math-formula text-sm my-1">$$R^2 = 1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2} = 1 - \frac{SSE}{SST}$$</div>
+            </li>
+            <li><b>⑦ Adjusted $R^2$ (수정된 결정계수):</b> 다변량 회귀에서 쓸데없는 독립변수가 늘어날 때 결정계수가 억지로 높아지는 착시를 막기 위해, <b>변수 개수($p$)를 분모에 넣어 페널티를 주는 지표</b>이다.</li>
+            <li><b>⑩ RMSLE (Root Mean Squared Logarithmic Error):</b> RMSE 공식 안에 <b>로그($\log$)</b>를 취한 값으로, 큰 오차에 덜 민감해 <b>이상치(Outlier) 방어력</b>이 뛰어나다.</li>
+            <li><b>⑪ AIC & ⑫ BIC:</b> 모형의 적합도(우도, Likelihood)를 보면서도, <b>모형이 복잡해질수록(변수 $K$가 많을수록) 페널티를 부여하는 손실 지표</b>이다. <b>작을수록</b> 적합도가 좋은 모델이다!</li>
+        </ul>
+
+        <div class="mermaid mt-4 mb-4">
+        graph TD
+            subgraph Regression_Metrics ["회귀 평가지표 가계도"]
+                A["오차 (Error) = y - y_hat"] -->|"제곱해서 합산"| B["SSE (오차제곱합)"]
+                A -->|"절댓값 씌워서 합산"| C["절댓값 합"]
+                A -->|"실제값 대비 백분율(%)"| D["백분율 오차"]
+                B -->|"n으로 나누어 평균"| E["MSE (평균제곱오차)"]
+                C -->|"n으로 나누어 평균"| F["MAE (평균절대오차)"]
+                D -->|"n으로 나누어 평균"| G["MPE"]
+                E -->|"루트(√) 씌우기"| H["RMSE"]
+                G -->|"절댓값 씌우기"| I["MAPE"]
+            end
+            
+            style A fill:#ffcdd2,stroke:#d32f2f
+            style B fill:#fff9c4,stroke:#fbc02d
+            style E fill:#c8e6c9,stroke:#388e3c
+            style H fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+            style F fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+            style I fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+        </div>
+
+
+        <h3 id="s-1-3">3) 비지도학습-군집분석 평가 지표</h3>
+        <p>비지도학습은 지도학습과 달리 실측자료에 정답(라벨링)이 없으므로 모델에 대한 성능평가가 어렵다. 군집이 얼마나 옹기종기 잘 뭉쳐있는지 판단하기 위해 다음 지표를 쓴다.</p>
+
+        <ul class="list-disc pl-6 space-y-4 mb-4 mt-2">
+            <li><b>① 실루엣 계수 (Silhouette Coefficient):</b> 군집 내 요소들이 얼마나 밀집해 있는지($a(i)$), 다른 군집과는 얼마나 멀리 떨어져 있는지($b(i)$)를 측정한 지표.
+                <div class="math-formula text-sm my-1">
+                    $$s(i) = \frac{b(i) - a(i)}{\max \{a(i), b(i)\}}$$
+                </div>
+                <span class="text-sm text-gray-600">※ 1에 가까울수록 완벽하게 분리된 것이고, 0.5보다 크면 적절한 군집 모델로 본다. 마이너스(-) 값이면 다른 군집에 잘못 할당된 것이다.</span>
+            </li>
+            <li><b>② Dunn Index:</b> <b>(군집 간 거리의 최솟값) / (군집 내 요소 간 거리의 최댓값)</b>. 군집 간 거리는 멀수록, 군집 내 분산은 작을수록 좋으므로 <b>Dunn Index 값은 클수록 좋다!</b></li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #FFCC11; background-color: #FFFDEE;">
+            <img src="이미지/박라미.png" alt="박라미" class="anime-img" onerror="this.style.display='none'" style="border-color: #FFCC11;">
+            <div>
+                <div class="anime-box-title" style="color: #DD9900;">🏕️ [효빈위키 개념 해설] 3호선 박라미의 군집분석 평가지표!</div>
+                <p class="text-sm text-gray-800">지도학습이 '답지 보고 채점하는 느낌'이라면, 비지도학습(군집분석)은 답지가 없어서 막막한 상태야.</p>
+                <p class="text-sm text-gray-800 mt-1">예를 들어, 뱅드림! MyGO!!!!! 의 라이브 콘서트장에 모인 관객들을 팬 성향에 따라 적절하게 그룹(군집)으로 묶고 싶은데 명확한 정답이 없잖아? 이때 우리가 묶어놓은 그룹이 <b>"우리끼리는 똘똘 뭉치고(군집 내 거리 최소), 딴 밴드 팬들이랑은 멀찍이 떨어져 있는지(군집 간 거리 최대)"</b> 평가할 자체적인 기준이 필요한데, 그게 바로 <b>실루엣 계수</b>와 <b>Dunn Index</b> 되시겠다! 둘 다 무조건 <b>값이 클수록 좋은 군집</b>이라고 외우면 편해!</p>
+            </div>
+        </div>
+
+        <div class="exam-box">
+            <div class="exam-title">✔️ 개념 체크 및 기출 예상 풀이</div>
+            <p class="font-bold">Q1. 회귀모델 평가지표에 해당되지 않는 지표를 고르시오.</p>
+            <p class="pl-4 text-sm mt-1">
+                ① RMSE<br>
+                <b>② AUC</b><br>
+                ③ Adjusted $R^2$<br>
+                ④ MAPE
+            </p>
+            <p class="text-xs text-gray-500 mt-1 pl-4"><b>[해설]</b> AUC는 ROC 곡선 밑 면적을 의미하며 <b>분류모델</b> 평가지표에 해당한다.</p>
+            
+            <hr class="border-red-200 my-4">
+
+            <p class="font-bold">Q2. 다음 분석모형 진단평가에 대한 설명 중 옳지 않은 것은?</p>
+            <p class="pl-4 text-sm mt-1">
+                ① 실제 Positive인 대상 중에 실제와 예측 값이 일치하는 비율은 재현율(Recall)을 사용한다.<br>
+                ② 정확도(Accuracy) 식은 (TP+TN)/(TP+FP+TN+FN)식으로 표현한다.<br>
+                <b>③ F1 Score는 정밀도와 재현율을 결합한 산술평균 지표값을 뜻한다.</b><br>
+                ④ AUC는 ROC 곡선의 하단 면적을 뜻하며 곡선이 좌상단으로 갈수록 성능이 뛰어나다.
+            </p>
+            <p class="text-xs text-gray-500 mt-1 pl-4"><b>[해설]</b> F1 Score는 정밀도와 재현율을 결합한 <b>조화평균(Harmonic Mean)</b> 지표값이다. 산술평균에 낚이면 안 된다!</p>
+
+            <hr class="border-red-200 my-4">
+
+            <p class="font-bold">Q3. 회귀모델 평가지표에 대한 설명으로 잘못된 것은?</p>
+            <p class="pl-4 text-sm mt-1">
+                ① 회귀 평가지표는 실제 값과 예측값과의 차이(오차)를 기반으로 한다.<br>
+                <b>② MSE와 $R^2$ 값이 작을수록 회귀모델 성능이 좋다고 할 수 있다.</b><br>
+                ③ RMSLE는 RMSE보다 이상치에 덜 민감하다.<br>
+                ④ MAE는 실제 값에서 예측 값을 뺀 값의 절댓값에 대한 평균이다.
+            </p>
+            <p class="text-xs text-gray-500 mt-1 pl-4"><b>[해설]</b> 오차를 나타내는 MSE는 작을수록 좋지만, 설명력을 나타내는 <b>$R^2$(결정계수) 값은 클수록(1에 가까울수록)</b> 성능이 좋다고 할 수 있다.</p>
+        </div>
+
+
+        <h2 id="s-2">02 분석모형 진단</h2>
+        
+        <h3 id="s-2-1">1) 정규성 가정</h3>
+        <p>통계적 검정이나 회귀분석을 진행하기 전에 <b>데이터가 예쁜 정규분포(종 모양)를 따르는지</b>를 검정하여 데이터 자체의 정규성을 확인하는 과정이다.</p>
+
+        <ul class="list-disc pl-6 space-y-2 mb-4 mt-2">
+            <li><b>① 중심극한정리 (Central Limit Theorem):</b> 동일한 확률분포를 가진 독립 확률 변수 $n$개의 평균 분포는, <b>표본 크기 $n$이 적당히 크다면(보통 30 이상) 결국 무조건 정규분포에 가까워진다</b>는 통계학의 근본 이론이다. (이때 표본분포의 평균은 모평균과 같고, 표준편차는 모표준편차를 $\sqrt{n}$으로 나눈 것과 같다.)</li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #EE0022; background-color: #FFF0F2;">
+            <img src="이미지/미소하.png" alt="미소하" class="anime-img" onerror="this.style.display='none'" style="border-color: #EE0022;">
+            <div>
+                <div class="anime-box-title" style="color: #CC0011;">🎀 [효빈위키 개념 해설] 5호선 미소하의 중심극한정리 치트키!</div>
+                <p class="text-sm text-gray-800">아무리 엉망진창이고 삐뚤빼뚤한 데이터 분포(이항분포든 균일분포든 상관없이)라도, 그 안에서 <b>표본(샘플, n)을 30개 이상 무식하게 많이 뽑아서 평균을 내는 짓을 반복하면? 결국 그 평균들의 분포는 기적처럼 예쁜 정규분포(종 모양) 곡선을 그리게 된다</b>는 통계학의 사기급 스킬이자 치트키예요. <del>이것 덕분에 데이터가 더러워도 회귀분석을 돌릴 수 있어서 수많은 통계학도들이 목숨을 건졌다 카더라.</del></p>
+            </div>
+        </div>
+
+        <p class="font-bold ml-4 text-gray-800">▶ ② 정규성 검정 종류</p>
+        <ul class="list-disc pl-6 space-y-1 mb-4 mt-2">
+            <li><b>샤피로-윌크 검정(Shapiro-Wilk Test):</b> 표본수($n$)가 <b>2000개 미만</b>인 소규모 데이터 셋에 적합하다.</li>
+            <li><b>콜모고로프-스미르노프 검정(K-S Test):</b> 표본수($n$)가 <b>2000개 초과</b>인 대규모 데이터 셋에 적합하다.</li>
+            <li><b>Q-Q 플롯(Quantile-Quantile Plot):</b> 데이터 셋이 정규분포를 따르는지 눈으로 대각선을 그어보는 <b>시각적 분석 방법</b>이다.</li>
+            <li>데이터가 정규분포를 따른다는 귀무가설($H_0$) 하에, $p$-value가 0.05보다 작으면($p < 0.05$) 대립가설이 채택되어 <b>"해당 데이터는 정규분포를 따르지 않는다"</b>고 증명된다. (※ 주의: 정규성 검정에서는 귀무가설이 채택되어야($p > 0.05$) 정규성이 입증되어 좋은 것이다!)</li>
+        </ul>
+
+        <h3 id="s-2-2">2) 잔차 진단</h3>
+        <p>회귀분석에서 나온 잔차(실측치와 예측치의 차이)의 합은 0이어야 하며, 잔차는 아무런 추세나 특정 패턴을 가져서는 안 된다(그냥 쓰레기 노이즈여야 정상).</p>
+
+        <ul class="list-disc pl-6 space-y-2 mb-4 mt-2">
+            <li><b>① 잔차의 정규성 진단:</b> Q-Q Plot 등을 통해 잔차가 정규분포를 이루는지 확인한다.</li>
+            <li><b>② 잔차의 등분산성 진단:</b> 잔차의 분산(퍼진 정도)이 특정 패턴(깔때기 모양 등) 없이 일정해야 한다.</li>
+            <li><b>③ 잔차의 독립성 진단:</b> 잔차들끼리 서로 영향을 주는 자기상관(Autocorrelation)이 없어야 한다. <b>더빈-왓슨 검정(Durbin-Watson Test)</b> 수치가 2에 가까우면 독립성을 충족한다. 만약 독립성이 위배되면 시계열 분석(Time Series)을 해야 한다.</li>
+        </ul>
+
+        <div class="anime-box" style="border-color: #881188; background-color: #FDF5FD;">
+            <img src="이미지/라세나.png" alt="라세나" class="anime-img" onerror="this.style.display='none'" style="border-color: #881188;">
+            <div>
+                <div class="anime-box-title" style="color: #660066;">🚇 [효빈위키 족집게 특강] 6호선 라세나의 잔차 진단법!</div>
+                <p class="text-sm text-gray-800">잔차(Residual)는 모델이 설명하고 남은 '찌꺼기'야. 쓰레기는 쓰레기다워야 정상이지, 쓰레기 더미 안에서 뭔가 일정한 패턴이나 규칙이 발견되면 모델이 덜 학습했다는 증거니까 큰일 난 거야!</p>
+                <ul class="list-disc pl-5 text-sm space-y-1 mt-2 text-gray-800">
+                    <li><b>등분산성:</b> 잔차들이 위아래로 퍼진 정도가 널뛰지 않고 일정해야 해! 만약 나팔관 모양으로 점점 커지면 <b>이분산성</b>이라서 회귀 모델이 아작나.</li>
+                    <li><b>독립성 (더빈-왓슨 검정):</b> 이름부터 간지나는 '더빈-왓슨'. 값이 2 근처면 잔차끼리 연관 없이 깨끗한 상태(독립)고, 0이나 4에 가까우면 지들끼리 짬짜미(자기상관)를 하고 있다는 뜻이니 <b>시계열 분석</b>으로 갈아타야 해!</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <h2 id="s-3">03 k-폴드 교차검증 (k-fold Cross Validation)</h2>
+        <p>고정된 훈련 데이터와 테스트 데이터로만 계속 튜닝하면, 모델이 그 테스트 데이터에만 달달 외워버리는 <b>과적합(Overfitting)</b>이 발생한다. 이를 방지하고자 데이터셋을 요리조리 쪼개서 돌려가며 평가하는 기법이다.</p>
+
+        <ul class="list-disc pl-6 space-y-2 mb-4 mt-2">
+            <li><b>k-폴드(k-fold) 기법:</b> 전체 데이터셋을 $k$개의 서브셋으로 분리하여, 그중에 $k-1$개는 훈련용(Train)으로 쓰고 <b>딱 1개만 검증용(Test)</b>으로 쓴다. 이 짓을 조각을 바꿔가며 <b>$k$번 중복 없이 병행 진행한 후, $k$개의 정확도 결과들을 평균 내어 최종 모델 성능을 평가</b>한다.</li>
+            <li>모든 데이터셋을 빠짐없이 평가에 활용하므로 과적합 방지에 탁월하지만, 모델을 $k$번이나 학습시켜야 하므로 <b>훈련/평가 시간이 매우 오래 걸린다(비용 증가)</b>는 단점이 있다.</li>
+        </ul>
+
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 mt-4">
+            <h4 class="font-bold text-blue-800">▶ k-폴드 교차검증 진행 예시 (k=5 일 때)</h4>
+            <table class="text-sm w-full mt-2 text-center border-collapse">
+                <tr><th class="bg-gray-100">구분</th><th class="bg-gray-100">서브셋 1</th><th class="bg-gray-100">서브셋 2</th><th class="bg-gray-100">서브셋 3</th><th class="bg-gray-100">서브셋 4</th><th class="bg-gray-100">서브셋 5</th><th class="bg-gray-100">결과</th></tr>
+                <tr><td class="font-bold bg-gray-50">1회차</td><td class="bg-blue-200">🟦 Test</td><td>⬜ Train</td><td>⬜ Train</td><td>⬜ Train</td><td>⬜ Train</td><td>$\rightarrow Acc_1$</td></tr>
+                <tr><td class="font-bold bg-gray-50">2회차</td><td>⬜ Train</td><td class="bg-blue-200">🟦 Test</td><td>⬜ Train</td><td>⬜ Train</td><td>⬜ Train</td><td>$\rightarrow Acc_2$</td></tr>
+                <tr><td class="font-bold bg-gray-50">3회차</td><td>⬜ Train</td><td>⬜ Train</td><td class="bg-blue-200">🟦 Test</td><td>⬜ Train</td><td>⬜ Train</td><td>$\rightarrow Acc_3$</td></tr>
+                <tr><td class="font-bold bg-gray-50">4회차</td><td>⬜ Train</td><td>⬜ Train</td><td>⬜ Train</td><td class="bg-blue-200">🟦 Test</td><td>⬜ Train</td><td>$\rightarrow Acc_4$</td></tr>
+                <tr><td class="font-bold bg-gray-50">5회차</td><td>⬜ Train</td><td>⬜ Train</td><td>⬜ Train</td><td>⬜ Train</td><td class="bg-blue-200">🟦 Test</td><td>$\rightarrow Acc_5$</td></tr>
+            </table>
+            <p class="text-sm text-blue-900 mt-2 text-center"><b>최종 성능 평가:</b> $(Acc_1 + Acc_2 + Acc_3 + Acc_4 + Acc_5) / 5$ 의 평균값 도출!</p>
+        </div>
+
+        <p class="font-bold mt-6 text-gray-800">▶ 홀드아웃 기법 (Holdout Method)</p>
+        <p>전체 데이터를 훈련용(Train), 검증용(Validation), 테스트용(Test)으로 단순히 <b>일정 비율(예: 6:2:2)로 한 번만 딱 쪼개서</b> 사용하는 가장 원초적인 방법이다. 데이터셋 크기가 작을수록 데이터를 나누는 쪼개기 운빨에 따라 모델 성능 추정이 널뛰기를 한다는 단점이 있다.</p>
+
+        <div class="mermaid mt-4 mb-4">
+        flowchart LR
+            subgraph "과적합 방지를 위한 3분할 홀드아웃"
+                direction LR
+                A["훈련 세트<br>(Training set)"] --- B["검증 세트<br>(Validation set)"] --- C["테스트 세트<br>(Test set)"]
+            end
+            style A fill:#c8e6c9,stroke:#388e3c
+            style B fill:#fff9c4,stroke:#fbc02d
+            style C fill:#ffcdd2,stroke:#d32f2f
+        </div>
+
+        <div class="anime-box" style="border-color: #FF4F91; background-color: #FFF0F5;">
+            <img src="이미지/이덕희.png" alt="이덕희" class="anime-img" onerror="this.style.display='none'" style="border-color: #FF4F91;">
+            <div>
+                <div class="anime-box-title" style="color: #CC1166;">⚙️ [효빈위키 개념 해설] 덕주1호선 이덕희의 교차검증 비유!</div>
+                <p class="text-sm text-gray-800">이건 AI한테 <b>모의고사를 어떻게 풀릴 것인가</b>에 대한 전략 문제야!</p>
+                <ul class="list-disc pl-5 text-sm space-y-2 mt-2 text-gray-800">
+                    <li><b>홀드아웃(Holdout):</b> 수능 전에 모의고사 딱 한 번 보고 채점 끝내는 상남자식 방법. 빠르긴 한데 만약 그날 모의고사 범위 운빨이 안 좋으면 내 실력 평가가 엉망이 되겠지?</li>
+                    <li><b>k-폴드(k-fold):</b> 모의고사 문제집을 $k$등분 해서 "이번엔 1단원만 빼고 공부한 다음 1단원 시험, 다음엔 2단원만 빼고 2단원 시험..." 이런 식으로 지독하게 돌려보는 방법이야. 데이터가 부족할 때 한 톨의 데이터라도 쥐어짜서 평가하기 좋지만, <b>모델을 $k$번이나 재학습시켜야 하니 <del>내 똥컴에서는</del> 훈련 시간이 배로 걸린다</b>는 치명적인 단점이 있어! 빅분기 문제에서 "시간이 오래 걸린다" 나오면 무조건 이거야.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="exam-box">
+            <div class="exam-title">✔️ 개념 체크</div>
+            <p class="font-bold">Q. k-fold 교차검증의 단점으로 맞는 설명은?</p>
+            <p class="pl-4 text-sm mt-1">
+                ① 정확도가 상대적으로 떨어진다.<br>
+                ② 모든 데이터 셋을 평가에 활용하므로 과적합이 발생한다.<br>
+                <b>③ 반복(Iteration) 횟수가 많아지므로 훈련/평가시간이 오래 걸린다.</b><br>
+                ④ 평가 결과에 따라 일반화된 모델을 만들기는 어렵다.
+            </p>
+            <p class="text-xs text-gray-500 mt-1 pl-4"><b>[해설]</b> k-fold는 모델 평가를 $k$번이나 수행해야 하므로 <b>계산 비용과 훈련 시간이 대폭 증가</b>한다는 확실한 페널티가 존재한다.</p>
+        </div>
+
+
+        <h2 id="s-4">04 적합도 검정 (Goodness of fit Test)</h2>
+        <p>실제 관측된 데이터가 우리가 가정했던 특정 확률 분포(예: 정규분포, 이항분포 등)와 얼마나 찰떡같이 맞아떨어지는지(적합한지)를 검정하는 방법이다.</p>
+
+        <h3 id="s-4-1">1) 카이제곱 검정 ($\chi^2$ Test)</h3>
+        <p>기댓값(우리가 예상한 횟수)과 관측값(실제 나온 횟수)의 차이를 이용한 방법으로, <b>범주형 데이터</b>의 적합도를 검정할 때 주로 쓰인다.</p>
+        <div class="math-formula">
+            $$ \chi^2 = \sum_{k=1}^{K} \frac{(x_k - m_k)^2}{m_k} $$
+        </div>
+        <p class="text-sm text-center text-gray-600 mb-4">($x_k$: 실제 관측 횟수, $m_k$: 기댓값 횟수)</p>
+        
+        <ul class="list-disc pl-6 space-y-1 mb-4">
+            <li>계산된 검정통계량과 자유도를 사용하여 p-value를 도출한다. <b>p-값이 유의수준(0.05)보다 작으면 "가정한 분포를 따르지 않는다"며 귀무가설을 기각</b>한다.</li>
+        </ul>
+
+        <div class="bg-gray-800 text-gray-100 p-4 rounded font-mono text-sm mb-4 overflow-x-auto">
+            <span class="text-gray-400"># 왼손/오른손잡이 비율이 30:70인지 확인하는 R 분석 예시</span><br>
+            > table(survey$W.Hnd)<br>
+            Left Right<br>
+            &nbsp; 18 &nbsp; 218 <br>
+            > chisq.test(table(survey$W.Hnd), p=c(.3, .7))<br><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chi-squared test for given probabilities<br><br>
+            data:  table(survey$W.Hnd)<br>
+            X-squared = 56.252, df = 1, <span class="text-red-400 font-bold">p-value = 6.376e-14</span>
+        </div>
+        <p class="text-sm text-gray-700">※ 위 R 코드 결과에서 <code>p-value</code>가 0.05보다 한참 작으므로(거의 0), 왼손/오른손 비율이 30:70이라는 귀무가설은 가차 없이 기각된다.</p>
+
+        <h3 id="s-4-2">2) 콜모고로프 스미르노프 검정 (K-S Test: Kolmogorov-Smirnov Test)</h3>
+        <p>관측된 표본분포와 가정된 분포 사이의 적합도를 검사하는 <b>누적분포함수의 차이(거리)</b>를 이용한 검정법으로, 카이제곱과 달리 <b>연속형 수치 데이터</b>에도 강력하게 적용할 수 있다.</p>
+
+        <div class="mermaid mt-4 mb-4">
+        xychart-beta
+            title "K-S 검정 이해도 (누적확률 그래프 비교)"
+            x-axis "x 값" 0 --> 10
+            y-axis "누적 확률" 0 --> 1
+            line [0, 0.2, 0.5, 0.75, 0.9, 0.98, 1]
+            line [0, 0.1, 0.3, 0.55, 0.8, 0.95, 1]
+        </div>
+        <p class="text-sm text-center text-gray-500 mb-6">▲ 두 누적 곡선(실제 데이터 vs 이상적 분포) 사이의 <b>세로 격차가 가장 크게 벌어지는 지점(최대 거리, D값)</b>을 찾아내어 그 격차가 유의미한지 검증한다.</p>
+
+        <div class="anime-box" style="border-color: #6677CC; background-color: #F0F2FA;">
+            <img src="이미지/전노아.png" alt="전노아" class="anime-img" onerror="this.style.display='none'" style="border-color: #6677CC;">
+            <div>
+                <div class="anime-box-title" style="color: #4455AA;">💡 [효빈위키 꿀팁] 빈효선 전노아의 K-S 검정 파헤치기!</div>
+                <p class="text-sm text-gray-800">이름부터 엄청 웅장한 콜모고로프-스미르노프(...) 러시아 수학자 형님들 이름이 나오면 일단 쫄고 보게 되지만, 쫄 필요 없어요!</p>
+                <p class="text-sm text-gray-800 mt-1">핵심은 <b>'두 데이터 분포가 얼마나 비슷한가?'</b>를 보는 거예요. 위의 그래프처럼 두 집단의 누적확률 선을 겹쳐서 그려놓고, 두 선이 가장 심하게 벌어지는 틈(최대 거리, D값)을 찾아서 차이를 검증하는 매우 직관적인 방식이랍니다. <del>이름 들었을 때 신발에 박힌 K-S 마크가 떠오른다면 당신은 아재입니다.(...)</del></p>
+            </div>
+        </div>
+
+        <div class="bg-gray-800 text-gray-100 p-4 rounded font-mono text-sm mt-4 overflow-x-auto">
+            <span class="text-gray-400"># R언어 정규분포 적합성 K-S Test 예시</span><br>
+            > ks.test(rnorm(100), rnorm(100))<br><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Two-sample Kolmogorov-Smirnov test<br><br>
+            data:  rnorm(100) and rnorm(100)<br>
+            D = 0.1, <span class="text-green-400 font-bold">p-value = 0.6994</span><br>
+            alternative hypothesis: two-sided
+        </div>
+        <p class="text-sm text-gray-700 mt-2">※ <code>rnorm(100)</code>은 평균 0, 표준편차 1인 정규분포 난수 100개를 뽑는 함수다. 두 난수 데이터의 <code>p-value</code>가 0.6994로 0.05보다 훨씬 크기 때문에, "두 데이터의 분포는 같다"는 귀무가설을 기각할 수 없다(즉, 같은 정규분포 출신임이 확인됨).</p>
+
+    
+        <!-- 나무위키식 하단 내비게이션 틀 시작 -->
+        <div class="wiki-nav-box" id="bigbunNav">
+            <div class="wiki-nav-header">
+                📊 빅데이터분석기사 필기 전체 문서 목록
+            </div>
+            <div class="wiki-nav-toggle" onclick="document.getElementById('bigbunNavContent').classList.toggle('active')">
+                [ 펼치기 · 접기 ]
+            </div>
+            <div class="wiki-nav-content" id="bigbunNavContent">
+                <table class="wiki-nav-table">
+                    <tbody>
+                        <tr>
+                            <th class="bg-nav-red" style="width: 18%;">제1과목<br>빅데이터 분석 기획</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기1-1.html">빅분기1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-1.html">빅분기1-2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-2.html">빅분기1-2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-2-3.html">빅분기1-2-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-1.html">빅분기1-3-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-2.html">빅분기1-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-3.html">빅분기1-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-3-4.html">빅분기1-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-1.html">빅분기1-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-4-2.html">빅분기1-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-1.html">빅분기1-5-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-5-2.html">빅분기1-5-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기1-6.html">빅분기1-6</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제2과목<br>빅데이터 탐색</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기2-1.html">빅분기2-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-2.html">빅분기2-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기2-3.html">빅분기2-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-red">제3과목<br>빅데이터 모델링</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-1.html">빅분기3-1-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-2.html">빅분기3-1-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-1-3.html">빅분기3-1-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-2.html">빅분기3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-2.html">빅분기3-3-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-3.html">빅분기3-3-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-3-4.html">빅분기3-3-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-1.html">빅분기3-4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-2.html">빅분기3-4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기3-4-3.html">빅분기3-4-3</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-nav-blue">제4과목<br>빅데이터 결과 해석</th>
+                            <td>
+                                <span class="wiki-nav-item"><a href="빅분기4-1.html">빅분기4-1</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-2.html">빅분기4-2</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-3.html">빅분기4-3</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-4.html">빅분기4-4</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-5.html">빅분기4-5</a></span>
+                                <span class="wiki-nav-item"><a href="빅분기4-6.html">빅분기4-6</a></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 나무위키식 하단 내비게이션 틀 끝 -->
+
+    </div> <!-- wiki-container end -->
+
+    <footer class="wiki-footer p-6 text-center border-t border-[var(--wiki-border)] bg-[var(--wiki-footer-bg)] text-[var(--wiki-footer-text)]">
+        <div class="font-bold text-sm">
+            이 저작물은 <span class="text-[var(--wiki-text)]">효빈위키</span> 규정에 따라 이용할 수 있습니다.<br>
+            ※ 본 문서는 빅데이터분석기사 필기 제4과목(분석모형 평가 및 개선 - 평가지표, 진단, 적합도 검정)의 완전판입니다.
+        </div>
+    </footer>
+
+    <!-- 각주 툴팁 구동 JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'wiki-tooltip';
+            document.body.appendChild(tooltip);
+
+            const fnLinks = document.querySelectorAll('a.fn-link');
+            
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        const childNodes = Array.from(targetElement.childNodes);
+                        const tooltipContent = childNodes
+                            .filter(node => node.nodeName !== 'A')
+                            .map(node => node.nodeType === Node.TEXT_NODE ? node.textContent : node.outerHTML)
+                            .join('')
+                            .trim();
+                        
+                        tooltip.innerHTML = tooltipContent;
+                        tooltip.classList.add('visible');
+                        
+                        const rect = this.getBoundingClientRect();
+                        let topPos = rect.bottom + window.scrollY + 8;
+                        let leftPos = rect.left + window.scrollX;
+                        
+                        tooltip.style.display = 'block';
+                        if (leftPos + tooltip.offsetWidth > window.innerWidth) {
+                            leftPos = window.innerWidth - tooltip.offsetWidth - 20;
+                        }
+                        
+                        tooltip.style.left = leftPos + 'px';
+                        tooltip.style.top = topPos + 'px';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    tooltip.classList.remove('visible');
+                });
+            });
+        });
+    </script>
+    
+    <!-- 필수 외부 스크립트 (사용자 지시사항 완벽 유지) -->
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

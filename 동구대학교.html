@@ -1,0 +1,918 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>동구대학교 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* 문서 테마 컬러: 동구 틸 (Tomari Teal) */
+            --wiki-main: #50C0C0; 
+            --wiki-sub: #3da0a0;
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-table-header: #50C0C0;
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: 3.5rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.15rem !important; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        /* 위키 버튼 */
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        /* 링크 스타일 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        /* 인포박스 스타일 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 450px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-header { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.4rem !important; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: #f0f4f8; color: var(--wiki-main); width: 100px; padding: 6px 10px; border: 1px solid var(--wiki-border); text-align: center; font-weight: bold; vertical-align: middle; }
+        .infobox td { padding: 6px 10px; border: 1px solid var(--wiki-border); vertical-align: middle; }
+        
+        /* 테이블 스타일 */
+        .wiki-table { border-collapse: collapse; width: 100%; margin: 10px 0; border: 1px solid #ccc; }
+        .wiki-table th { background-color: var(--wiki-main); color: white; padding: 8px; border: 1px solid #ccc; text-align: center; font-weight: bold; }
+        .wiki-table td { padding: 8px; border: 1px solid #ccc; background: white; }
+        .wiki-table-center { text-align: center; }
+        .wiki-table-sub { background-color: #f0f4f8; font-weight: bold; text-align: center; color: var(--wiki-main); }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        /* 기타 요소 */
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+        del { color: #ccc; text-decoration: line-through; }
+        .wiki-gray { color: #888; font-size: 0.9em; }
+        
+        /* 폴딩(접기/펼치기) 구현 */
+        details { border: 1px solid #aaa; border-radius: 4px; padding: 0; margin-bottom: 10px; background: white; }
+        summary { font-weight: bold; padding: 0.5em; cursor: pointer; background-color: #eee; list-style: none; display: flex; justify-content: center; align-items: center; }
+        summary:after { content: " [ 펼치기 · 접기 ]"; font-size: 0.8em; margin-left: 5px; color: #555; }
+        details[open] { padding: 0; }
+        details[open] summary { border-bottom: 1px solid #aaa; }
+
+        /* 하단 네비게이션 */
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+        
+        /* 푸터 */
+        .wiki-footer { margin-top: 40px; border-top: 1px solid #ccc; padding: 20px; text-align: left; font-size: 0.8rem; color: #555; background-color: #f9f9f9; line-height: 1.5; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+        
+        /* 상단 그라데이션 박스 */
+        .gradient-box {
+            background-image: linear-gradient(to right, #50C0C0, #3da0a0, #3da0a0, #50C0C0);
+            color: white; padding: 20px; text-align: center; border-radius: 5px; margin-bottom: 0px;
+        }
+
+        /* 지하철 노선 아이콘 스타일 */
+        .subway-line-5 {
+            display: inline-flex; justify-content: center; align-items: center;
+            width: 20px; height: 20px; border-radius: 50%;
+            background-color: #EE0022; color: white; font-weight: bold; font-size: 0.75rem;
+            margin-right: 4px;
+        }
+
+        /* 각주 스타일 */
+        .wiki-fn { font-size: 0.8em; vertical-align: super; color: var(--wiki-link); text-decoration: none; font-weight: bold; cursor: help; margin-left: 1px; }
+        .wiki-fn:hover { text-decoration: underline; }
+        .wiki-fn-content-box { border-top: 1px solid #ccc; margin-top: 40px; padding-top: 10px; font-size: 0.9rem; }
+        .wiki-fn-item { margin-bottom: 6px; }
+        .wiki-fn-back { color: var(--wiki-link); text-decoration: none; margin-right: 5px; font-weight: bold; }
+        
+        /* 각주 툴팁 (호버보드) */
+        #wiki-fn-tooltip {
+            position: fixed;
+            display: none;
+            background: #fff;
+            border: 1px solid var(--wiki-main);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            max-width: 350px;
+            z-index: 100000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: 6px;
+            pointer-events: none;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        /* 둘러보기 틀 스타일 */
+        .nav-template { width: 100%; border: 2px solid var(--wiki-main); border-radius: 4px; overflow: hidden; margin-bottom: 20px; clear: both; font-size: 0.9rem; }
+        .nav-template-header { background-color: var(--wiki-main); color: white; padding: 8px 12px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .nav-template-content { background-color: #fff; }
+        .nav-template-table { width: 100%; border-collapse: collapse; }
+        .nav-template-table th { background-color: #e6f2ee; color: #333; border: 1px solid #ddd; padding: 6px 10px; text-align: center; font-weight: bold; width: 100px; }
+        .nav-template-table td { border: 1px solid #ddd; padding: 6px 10px; }
+        .nav-template-sub-th { background-color: #f5f9fa; font-weight: bold; text-align: center; width: 40px; color: #555; }
+        .nav-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .nav-item { color: #333; text-decoration: none; }
+        .nav-item:hover { text-decoration: underline; color: var(--wiki-link); }
+        .nav-current { font-weight: 900; color: white; background-color: var(--wiki-main); padding: 2px 6px; border-radius: 4px; }
+        .nav-current:hover { color: white; text-decoration: none; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body>
+
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-fn-tooltip"></div>
+
+    <!-- 상단 네비게이션 (검색창 바) - 색상 #7777AA 고정 -->
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: #7777AA;">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="goToLink('index.html')">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2 text-left">
+                <input type="text" id="searchInput" placeholder="위키 검색" class="p-1.5 px-4 rounded text-black text-sm w-72 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleSearch();">
+                <button class="bg-black/20 p-1.5 px-5 rounded text-sm hover:bg-black/40 font-bold transition-colors" onclick="handleSearch()">검색</button>
+            </div>
+            <div class="flex gap-1">
+                <a onclick="goToLink('토론.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">토론</a>
+                <a onclick="goToLink('수정.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">편집</a>
+                <a onclick="goToLink('역사.html')" class="bg-black/20 hover:bg-black/40 text-white text-xs px-2 py-0.5 rounded transition-colors cursor-pointer">역사</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area">
+            <div class="txt-lvl-1">동구대학교</div>
+            <div class="flex gap-2 mb-1">
+                <a onclick="goToLink('동구대학교.html')" class="wiki-btn">문서</a>
+                <a onclick="goToLink('토론.html')" class="wiki-btn">토론</a>
+                <a onclick="goToLink('수정.html')" class="wiki-btn">편집</a>
+                <a onclick="goToLink('역사.html')" class="wiki-btn">역사</a>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold" style="color: var(--wiki-main);">분류:</span> 
+            <a onclick="goToLink('효빈시의_대학교.html')" class="wiki-link">효빈광역시의 대학교</a> | 
+            <a onclick="goToLink('사립대학.html')" class="wiki-link">사립대학</a> |
+            <a onclick="goToLink('1978년_개교.html')" class="wiki-link">1978년 개교</a> |
+            <a onclick="goToLink('동구대학교.html')" class="wiki-link">동구대학교</a>
+        </div>
+
+        <!-- 상단 관련 학교/협의회 템플릿 (효빈광역시 대학교 현황) -->
+        <div class="mb-5">
+            <div class="nav-template">
+                <div class="nav-template-header">
+                    <span style="flex:1;"></span>
+                    <span style="flex:2; text-align: center;"><a onclick="goToLink('효빈시의_대학교.html')" style="color: white; text-decoration: none; cursor: pointer;">효빈광역시 대학교 현황</a></span>
+                    <span style="flex:1; text-align: right; font-size: 0.8em; font-weight: normal;"><a style="color: #ddd; cursor: pointer; text-decoration: none;">[편집]</a></span>
+                </div>
+                <div class="nav-template-content">
+                    <table class="nav-template-table">
+                        <tr>
+                            <th rowspan="1">국립</th>
+                            <td class="nav-template-sub-th">ㅎ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('효빈대학교.html')" class="nav-item">효빈대학교</a>
+                                    <a onclick="goToLink('효빈과학기술원.html')" class="nav-item">효빈과학기술원(HIST)</a>
+                                    <a onclick="goToLink('효빈교육대학교.html')" class="nav-item">효빈교육대학교</a>
+                                    <a onclick="goToLink('효빈해양대학교.html')" class="nav-item">효빈해양대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th rowspan="8">사립</th>
+                            <td class="nav-template-sub-th">ㄱ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('광연대학교.html')" class="nav-item">광연대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㄷ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('동구대학교.html')" class="nav-item nav-current">동구대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td class="nav-template-sub-th">ㅂ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('중촌대학교.html')" class="nav-item">중촌대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅅ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('삼선대학교.html')" class="nav-item">삼선대학교</a>
+                                    <a onclick="goToLink('성택대학교.html')" class="nav-item">성택대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅇ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('엽월대학교.html')" class="nav-item">엽월대학교</a>
+                                    <a onclick="goToLink('옥선대학교.html')" class="nav-item">옥선대학교</a>
+                                    <a onclick="goToLink('안월대학교.html')" class="nav-item">안월대학교</a>
+
+                                </div>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td class="nav-template-sub-th">ㅊ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('청엽국제학교_대학부.html')" class="nav-item">청엽국제학교 대학부</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅍ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('평안명대학교.html')" class="nav-item">평안명대학교</a>
+                                    <a onclick="goToLink('평천대학교.html')" class="nav-item">평천대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="nav-template-sub-th">ㅎ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('해천대학교.html')" class="nav-item">해천대학교</a>
+                                    <a onclick="goToLink('효빈복지대학교.html')" class="nav-item">효빈복지대학교</a>
+                                    <a onclick="goToLink('효빈외국어대학교.html')" class="nav-item">효빈외국어대학교</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>원격대학</th>
+                            <td class="nav-template-sub-th">ㅇ</td>
+                            <td>
+                                <div class="nav-group">
+                                    <a onclick="goToLink('한국방송통신대학교.html')" class="nav-item">한국방송통신대학교 효빈·덕북지역대학</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="gradient-box">
+                <!-- 학교 로고/심볼 이미지 -->
+                <img src="이미지/동구대학교_UI.png" alt="동구대학교 로고" style="width: 200px; display: inline-block;" onerror="this.src='https://via.placeholder.com/200x80?text=DONGGU+Logo';">
+            </div>
+            
+            <details>
+                <summary></summary>
+                <div class="p-2 border border-t-0 bg-white">
+                    <table class="wiki-table" style="margin: 0; width: 100%;">
+                        <tr>
+                            <td colspan="4" class="text-center font-bold text-white" style="background-color: #50C0C0;">대학 정보</td>
+                        </tr>
+                        <tr>
+                            <td class="wiki-table-center"><a onclick="goToLink('동구대학교_역사.html')" class="wiki-link text-[#50C0C0]">역사</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('동구대학교_상징.html')" class="wiki-link text-[#50C0C0]">상징</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('동구대학교_학부.html')" class="wiki-link text-[#50C0C0]">학부</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('동구대학교_대학원.html')" class="wiki-link text-[#50C0C0]">대학원</a></td>
+                        </tr>
+                        <tr>
+                            <td class="wiki-table-center"><a onclick="goToLink('동구대학교_캠퍼스.html')" class="wiki-link text-[#50C0C0]">캠퍼스</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('동구대학교_총학생회.html')" class="wiki-link text-[#50C0C0]">총학생회</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('동구대학교_언론.html')" class="wiki-link text-[#50C0C0]">학내 언론</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('동구대학교_교류대학.html')" class="wiki-link text-[#50C0C0]">교류 대학</a></td>
+                        </tr>
+                         <tr>
+                            <td colspan="4" class="text-center font-bold text-white" style="background-color: #50C0C0;">기타 정보</td>
+                        </tr>
+                        <tr>
+                            <td class="wiki-table-center"><a onclick="goToLink('동구대학교_출신인물.html')" class="wiki-link text-[#50C0C0]">출신 인물</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('동구대학교_주변상권.html')" class="wiki-link text-[#50C0C0]">주변 상권</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('동구대학교_입시.html')" class="wiki-link text-[#50C0C0]">입시</a></td>
+                            <td class="wiki-table-center"><a onclick="goToLink('동구대학교_사건사고.html')" class="wiki-link text-[#50C0C0]">사건 사고</a></td>
+                        </tr>
+                    </table>
+                </div>
+            </details>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+            
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
+                <div class="infobox-header">
+                    동구대학교<br>
+                    <span class="text-sm font-normal">Donggu University</span>
+                </div>
+                <div class="p-4 bg-white text-center border-b">
+                    <!-- 엠블럼 이미지 -->
+                    <div class="w-full flex justify-center py-4">
+                        <img src="이미지/동구대학교_UI.png" alt="동구대학교 UI" class="w-48" onerror="this.src='https://via.placeholder.com/150?text=DONGGU';">
+                    </div>
+                </div>
+                <table>
+                    <tr><th>교훈</th><td>성실, 효율(效率), 실천</td></tr>
+                    <tr><th>슬로건</th><td>Time is Life, 대학은 종이 울리지 않는다</td></tr>
+                    <tr><th>교색</th><td>
+                         <span style="display:inline-block; width:15px; height:15px; background:#50C0C0; border:1px solid #ccc; vertical-align:middle;"></span> 동구 틸 (#50C0C0)
+                    </td></tr>
+                    <tr><th>국가</th><td><a onclick="goToLink('대한민국.html')" class="wiki-link">대한민국</a></td></tr>
+                    <tr><th>분류</th><td><a onclick="goToLink('사립대학.html')" class="wiki-link">사립대학</a> (종합대학)</td></tr>
+                    <tr><th>법인</th><td>학교법인 동구학원</td></tr>
+                    <tr><th>설립자</th><td>김동구</td></tr>
+                    <tr><th>개교</th><td>1978년 3월 2일</td></tr>
+                    <tr><th>총장</th><td>제8대 <a onclick="goToLink('김성송.html')" class="wiki-link">김성송</a></td></tr>
+                    <tr><th>주소</th><td><a onclick="goToLink('효빈광역시.html')" class="wiki-link">효빈광역시</a> <a onclick="goToLink('창전구.html')" class="wiki-link">창전구</a> 진백로 283 (<a onclick="goToLink('진백동.html')" class="wiki-link">진백동</a>)<a href="#fn-1" id="rfn-1" class="wiki-fn">[1]</a></td></tr>
+                    <tr><th>재적생</th><td>
+                        <strong>학부:</strong> 5,800명<br>
+                        <strong>대학원:</strong> 400명 <span class="text-xs text-gray-500">(2025년)</span>
+                    </td></tr>
+                    <tr><th>웹사이트</th><td><a href="https://www.donggu.ac.kr" target="_blank" class="wiki-link">공식 홈페이지</a></td></tr>
+                </table>
+                <div class="w-full bg-[#f9f9f9] border-t border-b">
+                    <div class="infobox-map" style="width: 100%; height: 250px; overflow: hidden; position: relative; display: block !important;">
+                        <iframe src="https://binia1.github.io/mymap/?name=동구대학교" 
+                                style="width: 160%; height: 160%; border: none; 
+                                       position: absolute; top: 0; left: 0;
+                                       transform: scale(0.625); transform-origin: 0 0;">
+                        </iframe>
+                    </div>
+                    <div style="padding: 5px; text-align: center; background: #eee; font-size: 0.8rem; color: #666;">
+                        동구대학교 캠퍼스 맵 (인터랙티브)
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 목차 업데이트 (15문단 구조 반영) -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1 w-full lg:w-auto">
+                <div class="toc-title">목차</div>
+                <ul>
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">"대학은 종이 울리지 않아"</a></li>
+                    <li>3. <a href="#s-3" class="wiki-link">캠퍼스 특징</a>
+                        <ul>
+                            <li>3.1. <a href="#s-3-1" class="wiki-link">건물 풍</a></li>
+                            <li>3.2. <a href="#s-3-2" class="wiki-link">주요 시설</a></li>
+                            <li>3.3. <a href="#s-3-3" class="wiki-link">기숙사 (생활관) 밈</a></li>
+                        </ul>
+                    </li>
+                    <li>4. <a href="#s-4" class="wiki-link">주요 학과</a></li>
+                    <li>5. <a href="#s-5" class="wiki-link">학부 (단과대학 구성)</a>
+                        <ul>
+                            <li>5.1. <a href="#s-5-1" class="wiki-link">사범대학</a></li>
+                            <li>5.2. <a href="#s-5-2" class="wiki-link">경찰·공공인재대학</a></li>
+                            <li>5.3. <a href="#s-5-3" class="wiki-link">보건과학대학</a></li>
+                        </ul>
+                    </li>
+                    <li>6. <a href="#s-6" class="wiki-link">대학원</a></li>
+                    <li>7. <a href="#s-7" class="wiki-link">캠퍼스</a></li>
+                    <li>8. <a href="#s-8" class="wiki-link">부속 시설</a></li>
+                    <li>9. <a href="#s-9" class="wiki-link">학내 문화</a></li>
+                    <li>10. <a href="#s-10" class="wiki-link">사건 및 사고</a></li>
+                    <li>11. <a href="#s-11" class="wiki-link">대학평가</a></li>
+                    <li>12. <a href="#s-12" class="wiki-link">출신 인물</a>
+                        <ul>
+                            <li>12.1. <a href="#s-12-1" class="wiki-link">출신 정·관계 인사 일람</a></li>
+                            <li>12.2. <a href="#s-12-2" class="wiki-link">주요 인물 상세 묘사</a></li>
+                        </ul>
+                    </li>
+                    <li>13. <a href="#s-13" class="wiki-link">여담</a></li>
+                    <li>14. <a href="#s-14" class="wiki-link">관련 문서</a></li>
+                    <li>15. <a href="#s-15" class="wiki-link">각주</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 1. 개요 -->
+        <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+        <blockquote>
+            <strong>"대학은 종이 울리지 않아. 네 시간은 네가 챙겨."</strong><br>
+            <span class="text-sm">-- 2025학년도 신입생 오리엔테이션, 제8대 김성송 총장 환영사 中</span>
+        </blockquote>
+
+        <p><a onclick="goToLink('효빈광역시.html')" class="wiki-link">효빈광역시</a> <a onclick="goToLink('창전구.html')" class="wiki-link">창전구</a> <a onclick="goToLink('진백동.html')" class="wiki-link">진백동</a> 283에 위치한 4년제 사립 종합대학교.</p>
+        <p>1978년 개교 이래 <strong>경찰행정, 사범, 보건</strong> 계열 등 취업과 직결되는 실용 학문에 역량을 집중해온 실속형 극한 가성비 강소 대학이다.</p>
+        <p>교명인 <strong>동구(冬毬)</strong>는 '겨울 솔방울'이라는 시적이고 낭만적인 뜻이나, 서브컬처 팬들 사이에서는 <a onclick="goToLink('러브_라이브!_슈퍼스타!!.html')" class="wiki-link">러브 라이브! 슈퍼스타!!</a>의 <strong><a onclick="goToLink('오니츠카_토마리.html')" class="wiki-link">오니츠카 토마리</a></strong>와 엮이며 <strong>"토마리 대학"</strong> 혹은 <strong>"오니츠카 대학"</strong>으로 불린다. 특히 <strong>"시간은 생명(Time is Life)"</strong>이라는 학교의 모토와 좁은 캠퍼스의 극한 효율성이 캐릭터의 성격과 판박이라는 평이다.</p>
+        
+        <!-- 2. "대학은 종이 울리지 않아" -->
+        <h2 id="s-2" class="anchor-offset">2. "대학은 종이 울리지 않아"</h2>
+        <p>동구대학교에는 강의 시작과 종료를 알리는 <strong>타종(벨) 시스템이 개교 이래 단 한 번도 존재한 적이 없다.</strong></p>
+        <ul class="list-disc pl-5">
+            <li><strong>유래:</strong> 설립자가 "성인은 스스로 시간을 관리해야 한다"며 종을 없앴다는 설이 있다.</li>
+            <li><strong>학풍:</strong> 학생들은 이를 두고 <strong>"오니츠카식 시간 관리"</strong>라 부른다. 1분이라도 늦으면 가차 없이 결석 처리되는 엄격한 출결 관리로 유명하며, 대신 캠퍼스가 좁아 건물 간 이동 시간이 3분도 안 걸리기 때문에 지각하는 건 전적으로 본인 책임이라는 인식이 강하다. 덕분에 강의실 문 앞은 항상 스마트워치를 보며 0.1초 단위로 대기하는 학생들로 진풍경을 이룬다.</li>
+            <li><strong>시계:</strong> 교내 모든 시계는 전파 시계로, 0.1초의 오차도 허용하지 않는다.</li>
+        </ul>
+
+        <!-- 3. 캠퍼스 특징 -->
+        <h2 id="s-3" class="anchor-offset">3. 캠퍼스 특징</h2>
+        <ul class="list-disc pl-5 mb-4">
+            <li><strong>초역세권:</strong> <span class="subway-line-5">5</span> <a onclick="goToLink('남우택역.html')" class="wiki-link">남우택역</a> 3번 출구로 나오면 <strong>거짓말 안 보태고 3초 만에</strong> 학교 정문이다. 비 오는 날 우산 없이 등교가 가능하다는 전설이 있다.</li>
+            <li><strong>콤팩트(Compact):</strong> 효빈시 4년제 대학 중 면적이 가장 작다. 오죽하면 "축구공을 세게 차면 캠퍼스 밖으로 나간다"는 과장이 있을 정도다. 하지만 동선 낭비가 전혀 없어 공강 시간에 도서관이나 식당을 오가기 매우 편하다. 이를 두고 학생들은 "우리는 낭비를 싫어한다"며 정신승리(?)를 시전한다.</li>
+            <li><strong>틸(Teal) 컬러:</strong> 학교 리모델링 후 모든 건물의 포인트 컬러와 교내 안내판 폰트가 쨍한 청록색(Teal)으로 바뀌었다. 차갑고 이지적인 느낌을 준다.</li>
+        </ul>
+        
+        <h3 id="s-3-1">3.1. 건물 풍</h3>
+        <p>건물 간 이동 시간이 도보로 3분이 채 걸리지 않는다. 학생들이 지각하면 "캠퍼스도 좁은데 대체 왜 늦었냐"며 교수들에게 영혼까지 털리기 십상이다. 콤팩트한 구조 덕에 점심시간 식당 회전율도 타 대학을 압도한다.</p>
+
+        <h3 id="s-3-2">3.2. 주요 시설</h3>
+        <ul class="list-disc pl-5 mb-4">
+            <li><strong>경찰공공인재관:</strong> 동구대의 알파이자 오메가인 경찰행정/공공행정학과가 서식하는 곳. 지하에는 상시 유도복과 검도복 땀내로 가득한 초대형 무도 실습실이 숨겨져 있다.</li>
+            <li><strong>사범관:</strong> 동구대의 전통적 간판인 사범대학이 입주한 건물. 복도에서 떠들면 예비 교사들의 서늘한 눈빛 폭행을 당하는 고시원 수준의 숨 막히는 면학 분위기를 자랑한다.</li>
+        </ul>
+
+        <h3 id="s-3-3">3.3. 기숙사 (생활관) 밈</h3>
+        <p><strong>효율관 (토마리 하우스):</strong> 동구대 기숙사의 공식 명칭. 방마다 전력 소비량과 수동 제어 타이머가 밀리초 단위로 기록되는 스마트 그리드 시스템이 구축되어 있다. 통금 시간이 밤 11시 정각인데, 11시 00분 01초에 지문 카드를 찍으면 가차 없이 출입문이 잠기고 벌점 경고장이 날아오는 <strong>'오니츠카식 시간 통제'</strong>의 정수를 맛볼 수 있다.</p>
+
+        <!-- 4. 주요 학과 -->
+        <h2 id="s-4" class="anchor-offset">4. 주요 학과</h2>
+        <ul class="list-disc pl-5 mb-5">
+            <li><strong>경찰행정학과:</strong> <strong>동구대의 절대 존엄 자존심.</strong> 경찰 간부 및 순경 배출률이 전국구급이다. 선후배 간 기강이 군대 뺨칠 정도로 빡세며, 캠퍼스 안에서 각 잡고 걸어 다니는 무리가 있다면 십중팔구 이쪽이다.</li>
+            <li><strong>공공행정학과:</strong> 지선진 의원이라는 행시 패스 레전드를 배출한 이후 입결이 수직 상승했다. 공무원 시험 및 고시 맞춤형 커리큘럼이 칼같이 짜여 있다.</li>
+            <li><strong>국어교육과:</strong> 임용고시 합격률 상위권을 마크하는 사범대의 대들보. 동문 중 스타 인강 강사를 꽤 배출했다.</li>
+            <li><strong>간호학과 & 물리치료학과:</strong> 국가고시 합격률 99%를 수렴하며, 졸업 즉시 취업이 보장되는 보건계열의 가성비 끝판왕 알짜배기 학과들.</li>
+        </ul>
+
+        <!-- 5. 학과 구성 (Table) -->
+        <h2 id="s-5" class="anchor-offset">5. 학부 (단과대학 구성)</h2>
+        <p>돈 안 되고 취업 안 되는 비실용적인 순수학문은 진작에 칼같이 통폐합해버린 피도 눈물도 없는 실용주의 정예 구조다.</p>
+        
+        <!-- 원본 테이블 완벽 보존 -->
+        <table class="wiki-table" style="margin-bottom: 20px;">
+             <tr>
+                <td colspan="3" class="wiki-table-center" style="background-color: #50C0C0; color: white; font-size: 1.2rem;"><strong>동구대학교 대학 구성</strong></td>
+            </tr>
+            <tr style="background-color: #f0f0f0;">
+                <td width="20%" class="wiki-table-center font-bold">단과대학</td>
+                <td width="25%" class="wiki-table-center font-bold">학과/학부</td>
+                <td width="55%" class="wiki-table-center font-bold">세부전공 및 비고</td>
+            </tr>
+            <tr id="s-5-1">
+                <td rowspan="10" class="wiki-table-center"><strong>사범대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('국어교육과.html')" class="wiki-link">국어교육과</a></td>
+                <td><strong>[명문]</strong> 임용 합격률 상위권.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('영어교육과.html')" class="wiki-link">영어교육과</a></td>
+                <td>원어민 회화 집중 과정. 토마리처럼 영어를 섞어 쓰는 학생은 없다(...)</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('수학교육과.html')" class="wiki-link">수학교육과</a></td>
+                <td>수학 교사 및 교육 전문가 양성.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('역사교육과.html')" class="wiki-link">역사교육과</a></td>
+                <td>역사 교사 및 박물관 교육사 트랙.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('지리교육과.html')" class="wiki-link">지리교육과</a></td>
+                <td>지리 교사 및 GIS 전문가.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('유아교육과.html')" class="wiki-link">유아교육과</a></td>
+                <td>공립 유치원 교사 목표. 교구 제작 과제량이 많다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('교육학과.html')" class="wiki-link">교육학과</a></td>
+                <td>교육행정직 공무원 준비생이 많다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('가정교육과.html')" class="wiki-link">가정교육과</a></td>
+                <td>기술·가정 교사. 생활 밀착형 실습이 특징.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('윤리교육과.html')" class="wiki-link">윤리교육과</a></td>
+                <td>도덕/윤리 교사 양성.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('과학교육과.html')" class="wiki-link">과학교육과</a></td>
+                <td>물리/화학/생물 통합 과학 교사 양성.</td>
+            </tr>
+
+            <tr id="s-5-2">
+                <td rowspan="7" class="wiki-table-center"><strong>경찰·공공인재대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('경찰행정학과.html')" class="wiki-link">경찰행정학과</a></td>
+                <td><strong>[Top]</strong> 동구대의 자존심. 경찰 공무원 배출 수가 전국구급이다. 유도, 검도 등 무도 수업이 필수다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('소방안전관리학과.html')" class="wiki-link">소방안전관리학과</a></td>
+                <td>소방 공무원 및 소방 기술사 자격증.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('법무행정학과.html')" class="wiki-link">법무행정학과</a></td>
+                <td>법원/검찰직 공무원 및 로펌 사무원 양성.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('공공행정학과.html')" class="wiki-link">공공행정학과</a></td>
+                <td><strong><a onclick="goToLink('지선진.html')" class="wiki-link">지선진</a> 의원의 모교.</strong> 일반행정직 공무원 합격률이 높다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('군사안보학과.html')" class="wiki-link">군사안보학과</a></td>
+                <td>육군/해병대 장교 협약. 군사 전문가 육성.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('경호보안비서학과.html')" class="wiki-link">경호보안비서학과</a></td>
+                <td>청와대 경호처 출신 교수진의 실전 경호 교육.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('국토안보방재학과.html')" class="wiki-link">국토안보방재학과</a></td>
+                <td>국가 위기 관리 및 재난 안전 전문가.</td>
+            </tr>
+
+            <tr id="s-5-3">
+                <td rowspan="3" class="wiki-table-center"><strong>보건과학대학</strong></td>
+                <td class="wiki-table-center"><a onclick="goToLink('간호학과.html')" class="wiki-link">간호학과</a></td>
+                <td><strong>[인기]</strong> 교직 이수가 가능해 보건교사로도 많이 진출한다.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('물리치료학과.html')" class="wiki-link">물리치료학과</a></td>
+                <td>국가고시 합격률 최상위 유지.</td>
+            </tr>
+            <tr>
+                <td class="wiki-table-center"><a onclick="goToLink('작업치료학과.html')" class="wiki-link">작업치료학과</a></td>
+                <td>재활 치료 및 감각 통합 치료.</td>
+            </tr>
+        </table>
+
+        <!-- 6. 대학원 -->
+        <h2 id="s-6" class="anchor-offset">6. 대학원</h2>
+        <ul class="list-disc pl-5 mb-5">
+            <li><strong>일반대학원</strong></li>
+            <li><strong>교육대학원:</strong> 현직 초·중등 교사들의 승진 및 자격증 업그레이드 셔틀 코스.</li>
+            <li><strong>행정대학원:</strong> 지역 정관계 인사들과 관료들이 야간에 인맥을 다지고 학위를 따기 위해 몰려드는 숨겨진 권력의 온상.</li>
+        </ul>
+
+        <!-- 7. 캠퍼스 -->
+        <h2 id="s-7" class="anchor-offset">7. 캠퍼스</h2>
+        <p><strong>창전동 본캠퍼스:</strong> 창전구 진백동 소재 단일 캠퍼스. 캠퍼스 전역이 완전한 평지이며, 핫한 상권인 진백 카페거리와 맞닿아 있어 생활 인프라는 극상이다.</p>
+
+        <!-- 8. 부속 시설 -->
+        <h2 id="s-8" class="anchor-offset">8. 부속 시설</h2>
+        <ul class="list-disc pl-5 mb-5">
+            <li><strong>김동구 기념 중앙도서관:</strong> 설립자의 이름을 딴 중앙도서관. 좌석 예약 시스템이 지독한데, 짐만 올려두고 화장실이나 밥을 먹으러 30분 이상 자리를 비우면 센서가 귀신같이 감지해서 <strong>자동으로 좌석을 반납 처리</strong>해 버리는 극강의 회전율 시스템을 도입했다.</li>
+            <li><strong>현정재 (고시반):</strong> 5급 공채, 7급, 경찰 간부, 임용고시를 준비하는 엘리트 너드들의 수용소. </li>
+        </ul>
+
+        <!-- 9. 학내 문화 -->
+        <h2 id="s-9" class="anchor-offset">9. 학내 문화</h2>
+        <ul class="list-disc pl-5 mb-5">
+            <li><strong>스마트 통학:</strong> 남우택역 3번 출구 에스컬레이터 속도와 내 걸음 속도를 계산해 최적의 환승 동선을 짜는 것이 동구대생들의 기본 소양이다.</li>
+            <li><strong>환승 타이머 배틀:</strong> 에브리타임에서 자주 열리는 챌린지. 남우택역 지하철 문이 열리는 순간부터 정문 게이트를 통과해 강의실 의자에 앉기까지의 시간을 소수점 단위로 인증하는 광기의 대회다.</li>
+        </ul>
+
+        <!-- 10. 사건 및 사고 -->
+        <h2 id="s-10" class="anchor-offset">10. 사건 및 사고</h2>
+        <p><strong>2024년 창전구 불법 주정차 차단 행정대집행 사태:</strong> 빌런 윤재훈 휘하의 두청운수 잔당들과 악성 불법 주차 차량들이 남우택역 상권과 정문 진입로를 막아 대규모 지각 사태가 터지자 학생들이 폭발한 사건. 분노한 <strong>공공행정학과</strong> 학생들이 도로교통법 및 불법 적치물 조례안을 뽑아 들고 구청에 폭탄 민원을 넣는 동시에, <strong>경찰행정학과</strong> 유도 유단자들이 튀어나와 불법 주차 차량 주변을 군대식으로 에워싸고 1시간 만에 견인차를 강제 호출해 길을 뚫어버린 전설의 실전(實戰) 행정구제 사태다.</p>
+
+        <!-- 11. 대학평가 -->
+        <h2 id="s-11" class="anchor-offset">11. 대학평가</h2>
+        <p><strong>작지만 단단한 아웃풋:</strong> 부지가 좁고 대형 연구소가 없어 종합 랭킹에서는 메이저 지표에 들지 못하지만, <strong>'투입 비용 대비 학생 1인당 고시/임용 합격률'</strong>과 <strong>'취업률'</strong> 지표만큼은 인근 대형 대학인 효빈대학교나 삼선대학교의 뺨을 왕복으로 후려칠 만큼 압도적이다. 중앙일보 대학평가에서도 "가장 효율적으로 운영되는 대학" 부문에서 독보적인 순위를 유지 중이다.</p>
+
+        <!-- 12. 출신 인물 -->
+        <h2 id="s-12" class="anchor-offset">12. 출신 인물</h2>
+        <p><strong>동구대학교 출신들은 낭만에 취하지 않는다. 이들은 극한의 가성비와 행정력으로 지역 사회의 근간을 꽉 쥐고 흔드는 '실무형 터줏대감'들이다.</strong> 원칙과 효율을 중시하는 학풍 덕분에, 역대급 엘리트 국회의원부터 한 지역을 수십 년간 통치한 고인물 단체장, 심지어 광견(?) 비서실장까지 버라이어티하면서도 실속 있는 정관계 아웃풋을 쏟아냈다.</p>
+
+        <h3 id="s-12-1">12.1. 출신 정·관계 인사 일람</h3>
+        <div style="overflow-x: auto; margin-top: 15px; margin-bottom: 20px;">
+            <table class="wiki-table text-sm">
+                <tr>
+                    <th>광역단체</th>
+                    <th>선거구/직함</th>
+                    <th>정당(변천사)</th>
+                    <th>이름</th>
+                    <th>선수/대수</th>
+                    <th>생년월일</th>
+                    <th>출신지 (시대/법정리 고증)</th>
+                    <th>출신고교</th>
+                    <th>출신학과</th>
+                    <th>비고</th>
+                    <th>오시(?)</th>
+                    <th>현재 재임상태</th>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">효빈광역시</td>
+                    <td class="wiki-table-center">서구</td>
+                    <td class="wiki-table-center">더불어민주당</td>
+                    <td class="wiki-table-center font-bold text-[#50C0C0]"><a onclick="goToLink('지선진.html')" class="wiki-link text-[#50C0C0]">지선진</a></td>
+                    <td class="wiki-table-center">초선<br>(22대)</td>
+                    <td class="wiki-table-center">1996-07-20</td>
+                    <td>효빈 서구 내성동2가</td>
+                    <td class="wiki-table-center">효빈서여고</td>
+                    <td class="wiki-table-center font-bold">공공행정학과</td>
+                    <td>행정고시(60회) 출신, 도심 자치구 최연소</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center font-bold text-[#50C0C0]">O (현직)</td>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">효빈광역시</td>
+                    <td class="wiki-table-center">청엽 을</td>
+                    <td class="wiki-table-center">더불어민주당</td>
+                    <td class="wiki-table-center font-bold">도상현</td>
+                    <td class="wiki-table-center">초선<br>(21대)</td>
+                    <td class="wiki-table-center">1965-08-12</td>
+                    <td>덕북 효빈시 우전동<br>(현 청엽구 우전동)</td>
+                    <td class="wiki-table-center">청엽고</td>
+                    <td class="wiki-table-center font-bold">행정학</td>
+                    <td>예산 날려 먹고 22대 컷오프.</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center text-gray-500">X (퇴임)</td>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">효빈광역시</td>
+                    <td class="wiki-table-center">안천 을</td>
+                    <td class="wiki-table-center">새정치국민회의 ➔ 새천년민주 ➔ 열린우리 ➔ 통합민주 ➔ 민주통합</td>
+                    <td class="wiki-table-center font-bold">진성현</td>
+                    <td class="wiki-table-center">5선<br>(15~19대)</td>
+                    <td class="wiki-table-center">1954-11-05</td>
+                    <td>덕북 빈성군 천조면 증림리<br>(현 빈주시 가원구 천조읍 증림리)</td>
+                    <td class="wiki-table-center">빈주제일고</td>
+                    <td class="wiki-table-center font-bold">행정학</td>
+                    <td>[타지역] 안천구의 터줏대감.</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center text-gray-500">X (퇴임)</td>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">효빈광역시</td>
+                    <td class="wiki-table-center">서구</td>
+                    <td class="wiki-table-center">평화민주당 ➔ 민주당</td>
+                    <td class="wiki-table-center font-bold">구임준</td>
+                    <td class="wiki-table-center">재선<br>(13, 14대)</td>
+                    <td class="wiki-table-center">1941-09-09</td>
+                    <td>덕북 탄성군 사능면 당선리<br>(현 서구 당선동)</td>
+                    <td class="wiki-table-center">효빈고</td>
+                    <td class="wiki-table-center font-bold">행정학</td>
+                    <td>초기 민주당 서구 터줏대감</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center text-gray-500">X (퇴임)</td>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">덕빈남도</td>
+                    <td class="wiki-table-center">매산군</td>
+                    <td class="wiki-table-center">더불어민주당</td>
+                    <td class="wiki-table-center font-bold">한성진</td>
+                    <td class="wiki-table-center">4선<br>(4,6,7,8기)</td>
+                    <td class="wiki-table-center">1949-08-08</td>
+                    <td>덕남 매성군 매성읍 근암리<br>(현 매성시 근암동)</td>
+                    <td class="wiki-table-center">개서고</td>
+                    <td class="wiki-table-center font-bold">농업경제학과</td>
+                    <td>농촌 바닥의 절대적인 지배자 군수</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center text-gray-500">X (퇴임)</td>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">효빈광역시</td>
+                    <td class="wiki-table-center">시장 비서실</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center font-bold text-[#50C0C0]">천 비서실장</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center">1991-09-18</td>
+                    <td>덕빈북도 탄성군 탄성읍 명무리<br>(현 효빈광역시 탄성군 탄성읍 명무리)</td>
+                    <td class="wiki-table-center">탄성고</td>
+                    <td class="wiki-table-center font-bold">정치외교학과</td>
+                    <td>진짜 광견, 치카리코 수호신, 효빈 시민 안전 공로 대상</td>
+                    <td class="wiki-table-center">타카미 치카, 사쿠라우치 리코</td>
+                    <td class="wiki-table-center font-bold text-[#50C0C0]">O (재임 중)</td>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center">덕빈남도</td>
+                    <td class="wiki-table-center">매산군</td>
+                    <td class="wiki-table-center">새정치국민회의 ➔ 새천년민주당 ➔ 민주당</td>
+                    <td class="wiki-table-center font-bold">조응현</td>
+                    <td class="wiki-table-center">3선<br>(2, 3, 5기)</td>
+                    <td class="wiki-table-center">1945-08-15</td>
+                    <td>덕남 매성군 조건면 이천리<br>(현 매산군 조건면 이천리)</td>
+                    <td class="wiki-table-center">대현고</td>
+                    <td class="wiki-table-center font-bold">사회학과</td>
+                    <td>매산군의 인프라 뼈대를 다진 백전노장</td>
+                    <td class="wiki-table-center">-</td>
+                    <td class="wiki-table-center text-gray-500">X (퇴임)</td>
+                </tr>
+            </table>
+        </div>
+
+        <h3 id="s-12-2">12.2. 주요 인물 상세 묘사</h3>
+        <ul class="list-disc pl-5 mb-5">
+            <li><strong><a onclick="goToLink('지선진.html')" class="wiki-link">지선진</a></strong> (공공행정학과 15학번)
+                <ul class="list-disc pl-5">
+                    <li><strong>동구대학교의 현시점 최고존엄 간판스타.</strong> 제22대 국회의원(효빈 <a onclick="goToLink('서구_효빈광역시.html')" class="wiki-link">서구</a>, 더불어민주당).</li>
+                    <li>재학 도중 무려 제60회 행정고시(5급 공채)를 단번에 패스해 버리며 학교 전체에 현수막을 도배하게 만든 기염을 토했다. 공직에 입문해 박효빈 시장 체제에서 정책팀장을 역임하다, 제22대 총선에서 고향인 효빈 서구에 전략공천되어 무려 <strong>81.55%</strong>라는 공포스러운 득표율로 도심 자치구 최연소(96년생) 금배지를 달았다. 본인은 인터뷰에서 "동구대 특유의 1초도 낭비하지 않는 오니츠카식 통제 시스템 덕분에 고시에 붙었다"라고 썰을 푼 적이 있다.</li>
+                </ul>
+            </li>
+            <li><strong>천 비서실장</strong> (정치외교학과 10학번)
+                <ul class="list-disc pl-5">
+                    <li><strong>박효빈 시장을 보좌하는 철혈의 수호신이자 일명 '진짜 광견'.</strong> 시장실 앞에서 한정판 굿즈나 복지·교통 예산을 건드리려는 정적들을 빳빳한 정외과 논리로 물어뜯어 분쇄한다.</li>
+                    <li>러브라이브 선샤인의 <strong>타카미 치카, 사쿠라우치 리코(일명 치카리코)</strong> 오시라는 어마어마한 설정이 박혀 있다. 서브컬처 성지인 효빈시를 망치려 들었던 윤재훈 일당이 시청 인근에서 깽판을 치려 하자, 특유의 무자비한 논리와 동구대식 행동력으로 그들의 숨통을 끊어버리며 물리적으로 차단했다. 덕분에 '효빈 시민 안전 공로 대상'을 수상한 기인(奇人)이다.</li>
+                </ul>
+            </li>
+            <li><strong>진성현</strong> (행정학과): 빈성군 천조면 출신으로, 15대부터 19대 국회까지 무려 <strong>5선</strong>을 내리 해 먹은 안천구 지역구의 살아있는 화석이다. 험난한 당적 변천사 속에서도 단 한 번도 금배지를 놓치지 않은 지독한 생명력의 소유자다.</li>
+            <li><strong>구임준</strong> (행정학과): 1941년생 원로 정치인. 13대, 14대 총선에서 평화민주당과 민주당 소속으로 서구를 꽉 쥐고 흔들었던 오리지널 터줏대감이다. 까마득한 후배인 지선진 의원이 서구를 물려받은 셈.</li>
+            <li><strong>도상현</strong> (행정학과): 제21대 총선에서 청엽 을 지역구에 당선되었으나, 임기 내내 지역구 예산을 엉뚱한 곳에 날려 먹고 행정 처리를 개판으로 하는 바람에 22대 총선에서 처참하게 컷오프당했다. 에브리타임에서는 "행정학과 나와서 예산을 저렇게 날려 먹냐"라며 두고두고 까이는 중.</li>
+            <li><strong>한성진</strong> (농업경제학과): 매성군(현 매산군) 근암리 출신으로, 고향에서 무려 <strong>4선 군수</strong>(민선 4, 6, 7, 8기)를 역임한 촌장님 끝판왕이다.</li>
+            <li><strong>박진수</strong> (경찰행정학과): 현 효빈북부경찰서장. 동구대 경찰행정학과의 전설.</li>
+            <li><strong>이민지</strong> (국어교육과): 스타 인강 강사. 빈틈없는 강의 스타일로 유명하다.</li>
+        </ul>
+
+        <!-- 13. 여담 -->
+        <h2 id="s-13" class="anchor-offset">13. 여담</h2>
+        <ul class="list-disc pl-5">
+            <li><strong>"동구대는 동구에 없다":</strong> 교명이 '동구(冬毬)'임에도 불구하고 한글 발음이 <strong><a onclick="goToLink('동구_효빈광역시.html')" class="wiki-link">동구</a>(East District)</strong>와 같아서, 택시 기사님에게 "동구대로 가주세요" 하면 진짜 동구로 가버리는 참사가 종종 발생한다.
+                <ul class="list-disc pl-5">
+                    <li>학교 측에서도 이를 의식해서 입시철마다 <strong>"동구대는 <a onclick="goToLink('창전구.html')" class="wiki-link">창전구</a>에 있습니다! 동구로 가지 마세요!"</strong>라는 현수막을 건다.</li>
+                    <li>학생들은 이를 두고 "우리는 동쪽에 있는 게 아니라 겨울에 있는 거다(?)"라며 자조한다.</li>
+                </ul>
+            </li>
+            <li><strong>동구(冬毬) = 오니츠카?:</strong> 교명인 '동구'의 한자가 '겨울 동(冬)'에 '공 구(毬)'인데, 이게 <a onclick="goToLink('오니츠카_토마리.html')" class="wiki-link">오니츠카 토마리</a>의 언니(<a onclick="goToLink('오니츠카_나츠미.html')" class="wiki-link">오니츠카 나츠미</a>, 여름)와 대비되는 '겨울'이라는 점, 그리고 토마리의 이미지 컬러인 <strong>틸(Teal)</strong> 색상을 학교가 적극 쓴다는 점에서 엮였다.</li>
+            <li><strong>효율성 끝판왕:</strong> 캠퍼스가 워낙 좁아(아담해) 강의실 이동에 시간이 전혀 들지 않는다. 이를 두고 학생들은 <strong>"시간은 금이다(Time is Money)를 실천하는 토마리식 캠퍼스"</strong>라고 찬양(?)한다.</li>
+            <li><strong>오니츠카 정식:</strong> 학식 메뉴 중에 '가성비'를 극한으로 끌어올린 세트 메뉴가 있는데, 학생들이 이를 '오니츠카 정식'이라고 부른다. 맛보다는 영양과 가격 효율이 중시된 메뉴다.</li>
+            <li><strong>엄격한 시간 관리:</strong> 학교 시계가 1초의 오차도 없이 정확하기로 유명하다. 수업 시작되면 교수님들이 칼같이 출석을 부른다. 1분이라도 늦으면 가차 없다.</li>
+        </ul>
+
+        <!-- 14. 관련 문서 -->
+        <h2 id="s-14" class="anchor-offset">14. 관련 문서</h2>
+        <ul class="list-disc pl-5 mb-5">
+            <li><a onclick="goToLink('동구대학교.html')" class="wiki-link">동구대학교</a></li>
+            <li><a onclick="goToLink('진백동.html')" class="wiki-link">진백동</a></li>
+            <li><a onclick="goToLink('남우택역.html')" class="wiki-link">남우택역</a></li>
+            <li><a onclick="goToLink('창전구.html')" class="wiki-link">창전구</a></li>
+            <li><a onclick="goToLink('지선진.html')" class="wiki-link">지선진</a></li>
+            <li><a onclick="goToLink('오니츠카_토마리.html')" class="wiki-link">오니츠카 토마리</a></li>
+            <li><a onclick="goToLink('효빈대학교.html')" class="wiki-link">효빈대학교</a></li>
+        </ul>
+
+        <!-- 15. 각주 -->
+        <h2 id="s-15" class="anchor-offset">15. 각주</h2>
+        <div class="wiki-fn-content-box">
+            <div class="wiki-fn-item" id="fn-1">
+                <a href="#rfn-1" class="wiki-fn-back">[1]</a> <a onclick="goToLink('5호선.html')" class="wiki-link">효빈 도시철도 5호선</a> <a onclick="goToLink('남우택역.html')" class="wiki-link">남우택역</a> 3번 출구와 맞닿아 있다.
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <div class="nav-box shadow-sm mt-10">
+            <div class="nav-box-header">동구대학교 관련 문서</div>
+            <div class="nav-box-content leading-loose text-sm">
+                <a onclick="goToLink('동구대학교.html')" class="wiki-link">동구대학교</a> · 
+                <a onclick="goToLink('동구대학교_대학원.html')" class="wiki-link">대학원</a> · 
+                <a onclick="goToLink('동구대학교_총학생회.html')" class="wiki-link">총학생회</a> · 
+                <a onclick="goToLink('학교법인_동구학원.html')" class="wiki-link">동구학원</a>
+            </div>
+        </div>
+
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
+            <p class="mb-2">
+                이 문서는 <strong>효빈위키</strong>의 문서입니다. <br>
+                기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.
+            </p>
+            <p class="mt-4 text-xs text-gray-500">
+                이 문서의 내용은 사실과 다를 수 있으며, 법적 효력을 갖지 않습니다.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 검색 기능 핸들러
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(query)}`, '_blank');
+            } else {
+                showMsg('검색어를 입력해주세요.');
+            }
+        }
+
+        // 메시지 박스 표시 함수
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; 
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+
+        // 링크 이동 핸들러
+        async function goToLink(filename) {
+            if (filename.startsWith('#')) return;
+
+            const namuKeywords = ['대한민국', '국립대학', '사립대학'];
+            const pureName = filename.replace('.html', '').replace(/_/g, ' ');
+            
+            if (namuKeywords.includes(pureName) || filename.includes('namu.wiki')) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(pureName)}`, '_blank');
+                return;
+            }
+
+            try {
+                location.href = filename;
+            } catch (e) {
+                showMsg('문서를 찾을 수 없습니다.');
+            }
+        }
+        
+        // 목차 및 내부 링크 스무스 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (!targetId || targetId === '#') return;
+
+                e.preventDefault();
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, 
+                        behavior: 'smooth'
+                    });
+                    
+                    targetElement.style.transition = 'background 0.5s';
+                    targetElement.style.backgroundColor = '#fff3cd';
+                    setTimeout(() => { targetElement.style.backgroundColor = 'transparent'; }, 1500);
+                }
+            });
+        });
+
+        // --- 각주 툴팁 호버보드 로직 ---
+        const tooltip = document.getElementById('wiki-fn-tooltip');
+        const footnotes = document.querySelectorAll('.wiki-fn');
+
+        footnotes.forEach(fn => {
+            fn.addEventListener('mouseenter', (e) => {
+                const targetId = fn.getAttribute('href').substring(1); 
+                const contentEl = document.getElementById(targetId);
+                
+                if (contentEl) {
+                    tooltip.innerHTML = contentEl.innerHTML;
+                    const backLink = tooltip.querySelector('.wiki-fn-back');
+                    if(backLink) {
+                        backLink.style.display = 'none'; 
+                    }
+                    tooltip.style.display = 'block';
+                }
+            });
+
+            fn.addEventListener('mousemove', (e) => {
+                const x = e.clientX + 15;
+                const y = e.clientY + 15;
+                
+                const tooltipRect = tooltip.getBoundingClientRect();
+                let finalX = x;
+                let finalY = y;
+
+                if (x + tooltipRect.width > window.innerWidth) {
+                    finalX = e.clientX - tooltipRect.width - 10;
+                }
+                if (y + tooltipRect.height > window.innerHeight) {
+                    finalY = e.clientY - tooltipRect.height - 10;
+                }
+
+                tooltip.style.left = finalX + 'px';
+                tooltip.style.top = finalY + 'px';
+            });
+
+            fn.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+
+        <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

@@ -1,0 +1,440 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>편집 역사 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f4f4f9; color: #333; margin: 0; }
+        
+        .wiki-container { max-width: 1200px; margin: 30px auto; background: white; padding: 40px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); min-height: 80vh; }
+        
+        .history-table { border-collapse: collapse; width: 100%; border: 1px solid #e2e8f0; font-size: 14px; }
+        .history-table th { background: #7777AA; color: white; padding: 12px; border: 1px solid #e2e8f0; }
+        .history-table td { padding: 12px; border: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+        .history-table tr:nth-child(even) { background-color: #f8fafc; }
+        .history-table tr:hover { background-color: #f1f5f9; }
+        
+        #versionViewArea { display: none; }
+        .version-info-bar { background: #fee2e2; border: 2px solid #ef4444; color: #b91c1c; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; }
+        
+        .author-link { color: #0055AA; font-weight: bold; text-decoration: none; }
+        .author-link:hover { text-decoration: underline; }
+        .byte-plus { color: #155724; font-weight: bold; } 
+        .byte-minus { color: #721c24; font-weight: bold; }
+
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: #7777AA; border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+    <!-- STREAMING_CHUNK: 상단 내비게이션 바 -->
+    <nav class="bg-[#7777AA] text-white p-3 shadow-md sticky top-0 z-50">
+        <div class="max-w-[1300px] mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="nav-logo-box">H</div>
+                <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white hover:opacity-90 transition flex items-center gap-2">
+                    HyobinWiki <span class="text-xs font-bold bg-white/20 px-2 py-1 rounded-full tracking-wider">HISTORY</span>
+                </a>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="goToDoc()" class="bg-[#555588] hover:bg-[#444477] text-white px-4 py-1.5 rounded text-sm font-bold transition flex items-center gap-2 shadow-inner border-none cursor-pointer">
+                    <i class="fa-solid fa-file-lines"></i> 문서로 돌아가기
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- STREAMING_CHUNK: 메인 컨테이너 및 목록 뷰 -->
+    <div class="wiki-container relative">
+        <div id="listViewArea">
+            <div class="border-b-2 border-[#7777AA] pb-3 mb-6 flex justify-between items-end">
+                <h1 class="text-3xl font-black text-gray-800"><span id="docTitleMain" class="text-[#7777AA]">...</span> <span class="text-xl text-gray-500 font-bold ml-2">(편집 역사)</span></h1>
+                <span class="text-sm font-bold text-gray-500"><i class="fa-solid fa-clock-rotate-left"></i> 보관된 리비전 목록</span>
+            </div>
+
+            <table class="history-table shadow-sm">
+                <thead>
+                    <tr>
+                        <th width="8%">리비전</th>
+                        <th width="20%">수정 일자</th>
+                        <th width="8%">증감</th>
+                        <th width="34%">편집 요약</th>
+                        <th width="20%">작성자 (IP)</th>
+                        <th width="10%">도구</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody" class="font-medium text-center text-gray-700">
+                    <tr><td colspan="6" class="py-10 text-gray-400"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><br>역사를 구성하는 중입니다...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- STREAMING_CHUNK: 과거 버전 열람 뷰 -->
+        <div id="versionViewArea">
+            <div class="version-info-bar flex justify-between items-center">
+                <div>
+                    <i class="fa-solid fa-triangle-exclamation"></i> 주의: <span id="verTimeSpan" class="font-black underline ml-1">...</span> 에 저장된 <b>과거 판본</b>입니다. 현재 문서와 다를 수 있습니다.
+                </div>
+                <button onclick="closeVersionView()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded text-sm font-bold cursor-pointer border-none shadow">
+                    <i class="fa-solid fa-arrow-left"></i> 목록으로
+                </button>
+            </div>
+            <div id="htmlRenderArea" class="pt-2"></div>
+        </div>
+    </div>
+
+    <!-- 외부 스크립트 연결 -->
+    <script src="assets/wiki_index.js"></script>
+    <script src="secret_search.js"></script>
+    <script src="assets/hb_wiki_core.js?v=2"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+
+    <!-- STREAMING_CHUNK: 앵커 추적 및 마스터 데이터베이스 설정 -->
+    <script>
+        // 1. 마법의 앵커(문서명) 추적 시스템
+        const urlParams = new URLSearchParams(window.location.search);
+        let docName = urlParams.get("doc"); 
+        
+        if (!docName && window.location.hash) {
+            docName = window.location.hash.substring(1); 
+        }
+        
+        if (!docName && document.referrer) {
+            try {
+                let refUrl = new URL(document.referrer);
+                let pathName = refUrl.pathname.split('/').pop(); 
+                if (pathName && pathName.endsWith('.html') && !pathName.includes('역사') && !pathName.includes('토론') && !pathName.includes('역링크') && !pathName.includes('index')) {
+                    docName = pathName.replace('.html', ''); 
+                }
+            } catch (e) {}
+        }
+        
+        if (docName) {
+            docName = decodeURIComponent(docName);
+        } else {
+            docName = "효빈광역시"; 
+        }
+        
+        document.title = `${docName} (역사) - 효빈위키`;
+        document.getElementById("docTitleMain").innerText = docName;
+
+        window.goToDoc = function() {
+            location.href = `${docName.replace(/ /g, "_")}.html`;
+        };
+
+        // 2. 효빈위키 마스터 데이터베이스 (작성자 100+명 전체)
+        const rawMasterDB = {
+            "CityHall_PR": ["🏢", "결재 서류 작성", "시청 홍보담당관", "한바다", "시청 공무원 | 한바다맘", "효빈시청 공식 마스코트 '한바다'의 프롬프트를 사수합니다."],
+            "Kasumi_Oshi": ["⭐", "콧페빵 배급", "서브컬처 에디터", "나카스 카스미", "카스미 팬클럽", "시장님의 최애 나카스 카스미 관련 밈을 모두 수집합니다."],
+            "Harubin_Conductor": ["🥖", "빵집 탐방", "일반 사용자", "하루빈", "하루빈 팬클럽 | 빵순이", "하루빈의 블랙 유니폼 주머니 속 빵의 존재를 증명합니다."],
+            "NicoNicoNi": ["💖", "니코니코니", "덕주 1호선 맘", "이덕희", "니코 팬 | 덕주시민", "이덕희의 핫핑크 94 배지 진정한 의미를 탐구합니다."],
+            "Morfonica_Fan": ["🦋", "나비 관찰", "창전선 명예 역장", "심세이", "모르포니카 팬", "창전선과 모르포니카의 33AAFF 테마 컬러를 수호합니다."],
+            "MyGO_Official": ["🧭", "길 잃음", "일반 사용자", "미나토 유키나", "마이고 팬클럽", "마이고 타카마츠 토모리의 기운을 고송 복지관에 전파합니다."],
+            "Aqours_Festa": ["🌊", "팬미팅 대기", "일반 사용자", "아이다 리카코", "아쿠아 팬클럽", "성우 내한 팬미팅 참전기를 효빈위키 역사에 남깁니다."],
+            "Yohane_Magic": ["👿", "마법진", "일반 사용자", "팔망성 복지관", "중2병 | 요하네 권속", "팔망성 복지관 지하실에서 악마가 나온다는 괴담을 퍼뜨리다 차단당합니다."],
+            "HTT_Forever": ["🎸", "다과회", "일반 사용자", "히라사와 유이", "케이온 팬 | 화석", "케이온 라이브 씬과 악기 작화 디테일을 분석하는 고인물입니다."],
+            "기타히어로": ["🎸", "벽장", "일반 사용자", "고토 히토리", "봇치더락 팬 | 아싸", "결속밴드 고토 히토리의 사회불안장애를 효빈대 아싸들의 교본으로 삼습니다."],
+            "TogeToge_Fan": ["🖕", "뻐큐", "일반 사용자", "이세리 니나", "걸밴크 팬 | 록 스피릿", "교통공사 파업 결의대회 현수막에 뻐큐 짤을 합성합니다."],
+            "BusManiac": ["🚌", "척추 통증", "버스 전문 에디터", "2세대 시내버스", "두청운수 피해자", "두청운수 똥색 버스 75인승 과적과 플라스틱 시트 트라우마 생존자입니다."],
+            "두청운수_피해자모임": ["💩", "심리 치료", "일반 사용자", "선곡군_농어촌버스", "두청운수 안티", "두청운수 카르텔에 저항하며 1세대 파스텔톤 버호를 그리워합니다."],
+            "익명의효빈시민": ["👤", "눈팅", "일반 위키러", "맞춤법", "맞춤법 빌런", "오타나 띄어쓰기 맘에 안 들면 고치고 사라지는 무소속 유저입니다."],
+            "NHIS_준비생": ["🏢", "NCS 풀이", "일반 사용자", "건강보험공단 효빈지사", "취준생 | 공기업 목표", "북구 고송동 건보 공단 입사를 꿈꾸며 채용 TO 정보를 캐냅니다."],
+            "Admin_01": ["🛡️", "모니터링", "사무관 (관리자)", "효빈광역시", "관리자 | 사무관", "효빈위키 최고 관리자. 윤대환 찬양러와 노선색 반달러를 영구 차단합니다."],
+            "교통공사_알바": ["💳", "굿즈 포장", "일반 사용자", "효빈교통공사", "공사 알바", "마스코트 팝업스토어에서 일하며 400억 흑자의 내막을 지켜봅니다."],
+            "TransitNerd": ["🚊", "헥스코드 대조", "교통 전문 에디터", "빈효선", "교통 에디터 | 철덕", "지하철 노선별 공식 헥스코드를 목숨 걸고 지키는 진성 철덕입니다."],
+            "VVVF_마니아": ["🔊", "구동음 녹음", "일반 사용자", "효빈항차량주박기지", "철덕 | 구동음 녹음", "미쓰비시 GTO와 다원시스 IGBT 소리를 분간하는 구동음 덕후입니다."],
+            "Gonami_1st": ["🎤", "안내방송 듣기", "일반 사용자", "1호선", "1호선 팬", "1호선 고나미의 마이크 밈과 급행 정차역을 꼼꼼하게 챙깁니다."],
+            "Welfare_worker": ["🏥", "복지관 순례", "사회복지 에디터", "비마 종합사회복지관", "사회복지사 | 기행 추적자", "효빈시 36개 복지관의 엽기적인 프로그램과 관장님들을 박제합니다."],
+            "피방수면협회": ["💤", "수면", "일반 사용자", "비마 종합사회복지관", "꿀잠러", "카나타의 은총을 받은 청엽구 비마 복지관 온열 수면실의 단골입니다."],
+            "동조희타로마스터": ["🃏", "점괘", "일반 사용자", "엽월대학교병원", "타로 마스터 | 와시와시", "남구 평당 복지관 동조희 재단에서 타로 상담을 진행합니다."],
+            "HyobinUniv_22": ["🎓", "과제 폭탄", "효빈대 재학생", "효빈복지대학교", "효빈대 학생 | 실습 노예", "사회복지/경영 복수전공 헬파티에 갇혀 에타에 잔혹사를 올립니다."],
+            "효빈대_화석": ["🦕", "취준", "일반 사용자", "대동제", "효빈대 화석 | 취준생", "효빈대 17학번 고인물. 대동제 도토리묵의 역사적 변천사를 서술합니다."],
+            "복지대_노예": ["♿", "배달", "일반 사용자", "천주폴리텍대학", "복지학과 | 콧페빵 배달부", "사회복지 현장에서 콧페빵이나 배달하며 자조적인 글을 씁니다."],
+            "급식충": ["🍱", "야자 쨈", "일반 사용자", "효빈종합고", "중고딩 | 매점 단골", "학교 매점 인기 메뉴와 하교 시간 지선버스 만원 사태를 기록합니다."],
+            "시장님바라기": ["👔", "시정 뉴스", "일반 사용자", "박효빈", "박효빈 지지자 | 정치 에디터", "1996년생 박효빈 시장을 찬양하고 윤대환 전 시장을 철저히 비판합니다."],
+            "효빈시민연대": ["🤝", "시위", "일반 사용자", "강수성", "시민단체", "의회 막말 논란과 정치인들의 부패를 고발합니다."],
+            "사건사고기록반": ["🚨", "기록 정리", "기록 보존 에디터", "광역철도 중단사건", "사건사고 에디터", "효빈시에서 일어나는 모든 기행과 대참사를 세밀하게 타임라인화합니다."],
+            "마트오픈런": ["🛒", "전단지 확인", "일반 사용자", "홈플러스_고송점", "마트 오픈런 | 동네 주민", "대형마트 주차장 헬게이트와 빵집 오픈런 상황을 중계합니다."],
+            "효빈시_주부": ["🍳", "장보기", "일반 사용자", "효빈전통시장", "주부 | 생활 정보", "지역 상권 물가와 동네 휴업일 정보를 칼같이 업데이트합니다."],
+            "효빈산악회": ["⛰️", "등산", "일반 사용자", "조천산역", "산악회 | 등산매니아", "효빈시 인근 등산로 통제 상황과 박라미 입간판 포토존을 관리합니다."],
+            "Park_Rami_3rd": ["🎒", "산악회", "3호선 홍보대사", "박라미", "박라미 팬클럽", "3호선 박라미와 사아야의 건강미 밈을 미는 진성 산악인입니다."],
+            "물놀이안전요원": ["🛟", "순찰", "일반 사용자", "토모리해수욕장", "안전요원", "토모리해수욕장 피서철 마비 사태와 안전수칙을 작성합니다."],
+            "법조계_인사": ["⚖️", "판결문", "일반 사용자", "부장판사", "법조계 정보통", "재판부의 사이다 판결문과 무소불위의 권력을 서술합니다."],
+            "창전구_주민": ["🏘️", "재개발 대기", "일반 사용자", "구상민", "창전구 토박이", "창전구 이면도로 젠트리피케이션과 힙플레이스 변화상을 기록합니다."],
+            "로드뷰매니아": ["🛣️", "로드뷰 탐색", "일반 사용자", "효빈빈주고속도로", "내비게이션 덕후", "상습 정체 구역과 과속단속 카메라 신설 위치를 미친 듯이 업데이트합니다."],
+            "효빈택시연합": ["🚕", "손님 대기", "일반 사용자", "나두길", "택시기사 | 도로 정보통", "택시 짬바를 살려 포트홀 보수 내역과 BRT 개통 상황을 제일 먼저 적습니다."],
+            "동사무소_노예": ["🪚", "가위질", "일반 사용자", "불법현수막", "사회복무요원 | 공익", "뙤약볕 아래 장대와 가위를 들고 불법 현수막을 뜯는 고충을 씁니다."],
+            "팩트체커": ["✔", "검증", "일반 사용자", "효빈일보", "팩트체커 | 기자", "가짜 뉴스를 혐오하며 뉴스 기사 레퍼런스 달기에 집착합니다."],
+            "데이터분석가": ["💻", "코딩 중", "일반 사용자", "SQLD", "IT 개발자", "SQLD 68점 기적의 턱걸이 합격 노하우를 에타에 전수합니다."],
+            "근육맨": ["💪", "리버스 컬", "일반 사용자", "웨이트 트레이닝", "헬창", "복지대 마동석. 관장님의 하드코어 전완근 루틴을 전파합니다."],
+
+            // [마스코트 및 캐릭터 전원 포함]
+            "고나미": ["🎤", "방송 연습", "1호선 마스코트", "하나조노 타에", "마스코트", ""], 
+            "하루빈": ["🥖", "유니폼 정비", "2호선 마스코트", "아오바 모카", "마스코트", ""], 
+            "박라미": ["🎒", "등산", "3호선 마스코트", "야마부키 사아야", "마스코트", ""], 
+            "다로나": ["⭐", "스티커", "4호선 마스코트", "토야마 카스미", "마스코트", ""], 
+            "미소하": ["🎀", "리본", "5호선 마스코트", "미타케 란", "마스코트", ""], 
+            "라세나": ["❄️", "방송", "6호선 마스코트", "미나토 유키나", "마스코트", ""], 
+            "임세하_임세정": ["👯", "아논상", "7호선 마스코트", "치하야 아논", "마스코트", ""], 
+            "유리아": ["🌸", "무사도!", "8호선 마스코트", "와카미야 이브", "마스코트", ""], 
+            "전노아": ["📱", "바보털", "빈효선 마스코트", "쿠라타 마시로", "마스코트", ""], 
+            "박빛나": ["✨", "시인성", "빈주1호선 마스코트", "쿠니키다 하나마루", "마스코트", ""], 
+            "김소빈": ["🔮", "와시와시", "빈주2호선 마스코트", "토죠 노조미", "마스코트", ""], 
+            "이덕희": ["🤟", "94 배지", "덕주1호선 마스코트", "야자와 니코", "마스코트", ""], 
+            "심세이": ["🎻", "바이올린", "창전선 마스코트", "모르포니카", "마스코트", ""], 
+            "한바다": ["🏢", "홍보", "시청 마스코트", "박효빈", "마스코트", ""],
+            "토야마_카스미": ["🌟", "별 배포", "일반 사용자", "다로나", "포핀파티", ""], 
+            "하나조노_타에": ["🎸", "토끼", "일반 사용자", "고나미", "포핀파티", ""], 
+            "야마부키_사아야": ["🍞", "빵", "일반 사용자", "박라미", "포핀파티", ""], 
+            "우시고메_리미": ["🍫", "초코소라빵", "일반 사용자", "효빈대", "포핀파티", ""], 
+            "이치가야_아리사": ["🌱", "분재", "일반 사용자", "외곽 화원", "포핀파티", ""],
+            "아오바_모카": ["🥖", "빵 포인트", "일반 사용자", "하루빈", "애프터글로우", ""], 
+            "미타케_란": ["🎤", "여전히 이러고 있어", "일반 사용자", "미소하", "애프터글로우", ""], 
+            "우다가와_토모에": ["🥁", "북", "일반 사용자", "청엽구 축제", "애프터글로우", ""], 
+            "우에하라_히마리": ["🥺", "리더", "일반 사용자", "효빈일보", "애프터글로우", ""], 
+            "하자와_츠구미": ["☕", "츠구루!", "일반 사용자", "우택 복지관", "애프터글로우", ""],
+            "마루야마_아야": ["🌸", "대본 까먹음", "일반 사용자", "안내방송", "파스파레", ""], 
+            "시라사기_치사토": ["🐶", "산책", "일반 사용자", "팔망성", "파스파레", ""], 
+            "와카미야_이브": ["⚔️", "무사도", "일반 사용자", "유리아", "파스파레", ""], 
+            "야마토_마야": ["👓", "기재", "일반 사용자", "HIST", "파스파레", ""], 
+            "히카와_히나": ["✨", "룬오게", "일반 사용자", "역명판", "파스파레", ""],
+            "미나토_유키나": ["🌹", "정점", "일반 사용자", "라세나", "로젤리아", ""], 
+            "히카와_사요": ["🍟", "포테토", "일반 사용자", "홈플러스_고송점", "로젤리아", ""], 
+            "이마이_리사": ["💅", "네일", "일반 사용자", "창전구", "로젤리아", ""], 
+            "우다가와_아코": ["🦇", "어둠", "일반 사용자", "PC방", "로젤리아", ""], 
+            "시로카네_린코": ["🎹", "숨는 중", "일반 사용자", "도서관", "로젤리아", ""],
+            "츠루마키_코코로": ["🎪", "세계를 웃게", "일반 사용자", "효빈시", "하로하피", ""], 
+            "오쿠사와_미사키": ["🐻", "미셸", "일반 사용자", "교통공사", "하로하피", ""], 
+            "마츠바라_카논": ["🐧", "길 잃음", "일반 사용자", "환승통로", "하로하피", ""], 
+            "세타_카오루": ["🎭", "연기", "일반 사용자", "예술회관", "하로하피", ""], 
+            "키타자와_하구미": ["🍘", "고로케", "일반 사용자", "전통시장", "하로하피", ""],
+            "쿠라타_마시로": ["🦋", "나비 추적", "일반 사용자", "창전 복지관", "모르포니카", ""], 
+            "야시오_루이": ["🎻", "논리", "일반 사용자", "창전선", "모르포니카", ""], 
+            "후타바_츠쿠시": ["🎀", "허당", "일반 사용자", "버스 노선", "모르포니카", ""], 
+            "키리가야_토우코": ["👗", "인스타", "일반 사용자", "박라미", "모르포니카", ""], 
+            "히로마치_나나미": ["😐", "평범", "일반 사용자", "효빈시", "모르포니카", ""],
+            "타카마츠_토모리": ["🩹", "반창고", "일반 사용자", "토모리 복지관", "마이고", ""], 
+            "치하야_아논": ["✌️", "대승리", "일반 사용자", "임세하_임세정", "마이고", ""], 
+            "시이나_타키": ["🐼", "투어 운전", "일반 사용자", "투어버스", "마이고", ""], 
+            "카나메_라나": ["🍵", "길고양이", "일반 사용자", "웰테크", "마이고", ""], 
+            "나가사키_소요": ["☕", "쿠소오야지", "일반 사용자", "옛날 도색", "마이고", ""],
+            "토가와_사키코": ["🎭", "망각", "일반 사용자", "에타", "아베무지카", ""], 
+            "와카바_무츠미": ["🥒", "오이 재배", "일반 사용자", "주말농장", "아베무지카", ""], 
+            "유텐지_냐무": ["💄", "유튜버", "일반 사용자", "굿즈", "아베무지카", ""], 
+            "야하타_우미리": ["🎸", "알바", "일반 사용자", "PC방", "아베무지카", ""], 
+            "미스미_우이카": ["🌟", "스카우트", "일반 사용자", "마스코트", "아베무지카", ""],
+            "아야세_에리": ["🩰", "하라쇼", "일반 사용자", "맞춤법", "뮤즈", ""], 
+            "야자와_니코": ["🤟", "니코니코니", "일반 사용자", "이덕희", "뮤즈", ""], 
+            "토죠_노조미": ["🃏", "와시와시", "일반 사용자", "김소빈", "뮤즈", ""], 
+            "니시키노_마키": ["🍅", "붸에에", "일반 사용자", "의료원", "뮤즈", ""], 
+            "호시조라_린": ["🍜", "냐~", "일반 사용자", "라면", "뮤즈", ""], 
+            "코이즈미_하나요": ["🍚", "다레카타스케테", "일반 사용자", "구내식당", "뮤즈", ""], 
+            "소노다_우미": ["🏹", "파렴치해요", "일반 사용자", "수위", "뮤즈", ""], 
+            "미나미_코토리": ["🐤", "메이드", "일반 사용자", "하루빈", "뮤즈", ""], 
+            "코사카_호노카": ["🍞", "파이토다요", "일반 사용자", "고판수", "뮤즈", ""],
+            "타카미_치카": ["🍊", "칸칸미칸", "일반 사용자", "스쿠버", "아쿠아", ""], 
+            "와타나베_요우": ["⚓", "요소로!", "일반 사용자", "항만", "아쿠아", ""], 
+            "사쿠라우치_리코": ["🎹", "도망", "일반 사용자", "강아지", "아쿠아", ""], 
+            "마츠우라_카난": ["🐬", "허그시요", "일반 사용자", "뜀걸음", "아쿠아", ""], 
+            "오하라_마리": ["✨", "샤이니", "일반 사용자", "헬기장", "아쿠아", ""], 
+            "쿠로사와_다이아": ["💎", "학생회장", "일반 사용자", "헥스코드", "아쿠아", ""], 
+            "쿠로사와_루비": ["🍭", "삐기잇", "일반 사용자", "지선버스", "아쿠아", ""], 
+            "쿠니키다_하나마루": ["💮", "미라이즈라", "일반 사용자", "박빛나", "아쿠아", ""], 
+            "츠시마_요시코": ["👿", "타천사", "일반 사용자", "지하실", "아쿠아", ""],
+            "나카스_카스미": ["👑", "카스밍", "일반 사용자", "순환버스", "니지동", ""], 
+            "오사카_시즈쿠": ["💧", "연극부", "일반 사용자", "간선버스", "니지동", ""], 
+            "유키_세츠나": ["🔥", "다이스키", "일반 사용자", "급행버스", "니지동", ""], 
+            "미후네_시오리코": ["🔖", "적성 검사", "일반 사용자", "지선버스", "니지동", ""], 
+            "엠마_베르데": ["🍞", "포근함", "일반 사용자", "공항버스", "니지동", ""], 
+            "미야시타_아이": ["🙌", "다쟈레", "일반 사용자", "좌석버스", "니지동", ""], 
+            "아사카_카린": ["👠", "길치", "일반 사용자", "광역버스", "니지동", ""], 
+            "코노에_카나타": ["💤", "수면", "일반 사용자", "마을버스", "니지동", ""], 
+            "쇼우_란쥬": ["🍖", "무적", "일반 사용자", "민영화", "니지동", ""], 
+            "미아_테일러": ["⚾", "쉣", "일반 사용자", "영어마을", "니지동", ""], 
+            "타카사키_유우": ["🎹", "두근거림", "일반 사용자", "마스코트", "니지동", ""], 
+            "텐노지_리나": ["🪧", "리나쨩 보드", "일반 사용자", "스크린도어", "니지동", ""], 
+            "우에하라_아유무": ["🎀", "무거움", "일반 사용자", "유우", "니지동", ""],
+            "시부야_카논": ["🎧", "사과", "일반 사용자", "횡단보도", "리엘라", ""], 
+            "헤안나_스미레": ["🌌", "구소쿠무시", "일반 사용자", "축제", "리엘라", ""], 
+            "탕_쿠쿠": ["🐼", "만세", "일반 사용자", "팝업스토어", "리엘라", ""], 
+            "하즈키_렌": ["☕", "전통", "일반 사용자", "1세대 버스", "리엘라", ""], 
+            "아라시_치사토": ["⭕", "우이쓰", "일반 사용자", "로터리", "리엘라", ""], 
+            "사쿠라코지_키나코": ["🦊", "홋카이도", "일반 사용자", "겨울", "리엘라", ""], 
+            "빈_마르가레테": ["🎵", "빈", "일반 사용자", "빈주시", "리엘라", ""], 
+            "오니츠카_토마리": ["💼", "사업 기획", "일반 사용자", "흑자", "리엘라", ""], 
+            "오니츠카_나츠미": ["🥜", "오니넛", "일반 사용자", "핫플", "리엘라", ""], 
+            "와카나_시키": ["🐛", "발명", "일반 사용자", "랩실", "리엘라", ""], 
+            "요네메_메이": ["😳", "츤데레", "일반 사용자", "한바다", "리엘라", ""],
+            "후지시마_메구미": ["🎀", "크리에이터", "일반 사용자", "위키방", "하스노소라", ""], 
+            "카츠라기_이즈미": ["⚾", "유원지", "일반 사용자", "폐교", "하스노소라", ""], 
+            "안요지_히메": ["👑", "공주", "일반 사용자", "VVIP", "하스노소라", ""], 
+            "고토_아키라": ["🎤", "이키즈", "일반 사용자", "라이브", "이키즈", ""],
+            "코토부키_츠무기": ["🍰", "케이크", "일반 사용자", "다과회", "HTT", ""], 
+            "히라사와_유이": ["🎸", "운탄", "일반 사용자", "대동제", "HTT", ""], 
+            "히라사와_우이": ["👧", "보살", "일반 사용자", "자취", "HTT", ""], 
+            "나카노_아즈사": ["🐱", "아즈냥", "일반 사용자", "한바다", "HTT", ""], 
+            "아키야마_미오": ["🎸", "부끄러움", "일반 사용자", "무대", "HTT", ""], 
+            "타이나카_릿츠": ["🥁", "부장", "일반 사용자", "과속방지턱", "HTT", ""],
+            "고토_히토리": ["🗑️", "쓰레기통", "일반 사용자", "아싸", "결속밴드", ""], 
+            "키타_이쿠요": ["✨", "키타앙", "일반 사용자", "창전구", "결속밴드", ""], 
+            "이지치_니지카": ["🥁", "천사", "일반 사용자", "라이브하우스", "결속밴드", ""], 
+            "야마다_료": ["🌿", "잔고 부족", "일반 사용자", "화단", "결속밴드", ""],
+            "이세리_니나": ["🖕", "록 스피릿", "일반 사용자", "현수막", "걸밴크", ""], 
+            "카와라기_모모카": ["🎸", "탈퇴", "일반 사용자", "길거리", "걸밴크", ""], 
+            "루파": ["🎸", "미소", "일반 사용자", "취객", "걸밴크", ""], 
+            "에비즈카_토모": ["🎹", "독설", "일반 사용자", "토론방", "걸밴크", ""], 
+            "아와_스바루": ["🥁", "배려", "일반 사용자", "사과", "걸밴크", ""]
+        };
+
+        // STREAMING_CHUNK: 편집 이력 및 버전 생성 엔진
+        const genericSummaries = [
+            "오타 수정", "띄어쓰기 교정", "내용 추가", "문단 분리", "분류 추가", 
+            "취소선 뇌절 삭제", "틀 추가", "출처 보강", "가독성 개선", "반달리즘 롤백",
+            "문서 훼손 복구", "링크 수정", "서술 다듬기", "최신 데이터 반영", "중립적 시각 유지"
+        ];
+
+        let fakeHistoryData = [];
+        
+        function generateHistory() {
+            const users = Object.keys(rawMasterDB);
+            const numRevisions = Math.floor(Math.random() * 20) + 20; // 20~40개 리비전
+            
+            let currentTime = new Date(); // 현재 시간 기준
+            let revNum = numRevisions;
+
+            for (let i = 0; i < numRevisions; i++) {
+                // 시간 역순으로 무작위 과거로 보냄
+                const randomMinutes = Math.floor(Math.random() * 1440) + 1; // 1분 ~ 24시간
+                currentTime = new Date(currentTime.getTime() - randomMinutes * 60000);
+
+                const dateStr = currentTime.getFullYear() + '-' + 
+                                String(currentTime.getMonth() + 1).padStart(2, '0') + '-' + 
+                                String(currentTime.getDate()).padStart(2, '0') + ' ' + 
+                                String(currentTime.getHours()).padStart(2, '0') + ':' + 
+                                String(currentTime.getMinutes()).padStart(2, '0') + ':' + 
+                                String(currentTime.getSeconds()).padStart(2, '0');
+
+                // IP 혹은 특정 유저
+                let isAnonymous = Math.random() > 0.7;
+                let author = "";
+                let icon = "";
+                let diff = 0;
+                let summary = "";
+
+                if (isAnonymous) {
+                    author = `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.xx.xx`;
+                    icon = "🌐";
+                    diff = (Math.random() > 0.5 ? "+" : "-") + (Math.floor(Math.random() * 50) + 5);
+                    summary = genericSummaries[Math.floor(Math.random() * genericSummaries.length)];
+                } else {
+                    author = users[Math.floor(Math.random() * users.length)];
+                    icon = rawMasterDB[author][0];
+                    const isAdd = Math.random() > 0.4;
+                    diff = (isAdd ? "+" : "-") + (Math.floor(Math.random() * 800) + 10);
+                    
+                    // 50% 확률로 캐릭 고유 멘트, 아니면 범용
+                    if (Math.random() > 0.5) {
+                        summary = rawMasterDB[author][5] || genericSummaries[Math.floor(Math.random() * genericSummaries.length)];
+                    } else {
+                        summary = genericSummaries[Math.floor(Math.random() * genericSummaries.length)];
+                    }
+                }
+
+                fakeHistoryData.push({
+                    rev: revNum--,
+                    dateStr: dateStr,
+                    diff: diff,
+                    summary: summary,
+                    author: author,
+                    icon: icon,
+                    isIP: isAnonymous
+                });
+            }
+        }
+
+        // STREAMING_CHUNK: 편집 이력 렌더링 및 UI 조작
+        function renderHistory() {
+            generateHistory();
+            const tbody = document.getElementById("historyBody");
+            let rows = "";
+
+            fakeHistoryData.forEach((h, index) => {
+                const diffNum = parseInt(h.diff);
+                let diffHtml = `<span class="byte-zero">0</span>`;
+                if (diffNum > 0) diffHtml = `<span class="byte-plus">${h.diff}</span>`;
+                else if (diffNum < 0) diffHtml = `<span class="byte-minus">${h.diff}</span>`;
+
+                const authorLink = h.isIP 
+                    ? `<span class="text-gray-600">${h.author}</span>` 
+                    : `<span class="mr-1">${h.icon}</span><a href="작성자문서.html#${encodeURIComponent(h.author)}" class="author-link">${h.author.replace(/_/g, ' ')}</a>`;
+
+                rows += `
+                    <tr>
+                        <td class="font-bold text-gray-500">r${h.rev}</td>
+                        <td class="font-mono text-gray-600 text-xs">${h.dateStr}</td>
+                        <td class="text-center">${diffHtml}</td>
+                        <td class="text-left text-gray-800 text-sm italic">"${h.summary}"</td>
+                        <td class="text-center">${authorLink}</td>
+                        <td>
+                            <button onclick="viewPastVersion(${h.rev}, '${h.dateStr}', '${h.author}', '${h.summary}')" class="bg-[#f0f9ff] hover:bg-blue-100 text-[#3182ce] px-3 py-1 rounded text-xs font-bold border border-blue-200 shadow-sm cursor-pointer transition">
+                                <i class="fa-solid fa-eye"></i> 열람
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = rows;
+        }
+
+        window.viewPastVersion = function(revNum, dateStr, author, summary) {
+            document.getElementById("listViewArea").style.display = 'none';
+            document.getElementById("versionViewArea").style.display = 'block';
+            document.getElementById("verTimeSpan").innerText = dateStr;
+            
+            const renderArea = document.getElementById("htmlRenderArea");
+            
+            // 실제 데이터가 없으므로 효빈위키 고증을 살린 더미 과거 판본 시뮬레이션
+            renderArea.innerHTML = `
+                <div class="bg-gray-50 border border-gray-200 p-8 rounded-lg mb-6 shadow-inner">
+                    <h2 class="text-3xl font-black text-gray-800 mb-3 border-b border-gray-300 pb-2">${docName} <span class="text-lg text-gray-500 font-normal">(r${revNum} 판본)</span></h2>
+                    
+                    <div class="text-sm text-gray-600 mb-6 bg-white p-3 border border-dashed border-gray-300 rounded">
+                        <ul class="list-disc pl-5">
+                            <li><strong>편집자:</strong> ${author.replace(/_/g, ' ')}</li>
+                            <li><strong>편집 일시:</strong> ${dateStr}</li>
+                            <li><strong>편집 요약:</strong> ${summary}</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="text-gray-700 leading-relaxed bg-white p-6 border border-gray-200 rounded shadow-sm min-h-[300px]">
+                        <p class="font-bold text-lg mb-4 text-[#7777AA]"><i class="fa-solid fa-server"></i> 과거 데이터 시뮬레이션</p>
+                        <p>이 화면은 <strong>${dateStr}</strong> 당시의 문서 상태를 보여주는 열람 모드입니다.</p>
+                        <p class="mt-2 text-sm text-gray-500">※ 현재 프론트엔드 환경에서는 실제 HTML 스냅샷을 저장하지 않으므로, 더미 레이아웃으로 대체되어 표시됩니다.</p>
+                        
+                        <div class="mt-8 border-l-4 border-[#7777AA] pl-4">
+                            <h3 class="font-bold text-xl mb-2">1. 개요</h3>
+                            <p>${docName}에 대한 ${dateStr} 시점의 과거 서술 내용이 이곳에 렌더링됩니다.</p>
+                            <p class="mt-2"><span class="line-through text-gray-400">당시에는 이런 취소선 드립이나 낡은 서술이 남아있었을 수 있습니다.</span></p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            window.scrollTo(0, 0);
+        }
+
+        window.closeVersionView = function() {
+            document.getElementById("listViewArea").style.display = 'block';
+            document.getElementById("versionViewArea").style.display = 'none';
+            document.getElementById("htmlRenderArea").innerHTML = "";
+        }
+
+        window.addEventListener('DOMContentLoaded', renderHistory);
+    </script>
+</body>
+</html>

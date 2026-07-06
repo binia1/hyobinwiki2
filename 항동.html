@@ -1,0 +1,732 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>항동 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        /* [핵심 설정] 위키 테마 변수 */
+        :root { 
+            --wiki-fixed: #7777AA; 
+            --wiki-main: #DDBBFF; /* 남구 상징색 (보라색) */
+            --wiki-point: #D6001C; /* 진보당 포인트 */
+            
+            --wiki-border: #cccccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #222222; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0062cc; 
+            --wiki-title-text: #111111; 
+        }
+
+        [data-theme='dark'] { 
+            --wiki-fixed: #9999CC;
+            --wiki-border: #444444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #2d2f34; 
+            --wiki-link: #aaaadd; 
+            --wiki-main: #9977CC;
+            --wiki-title-text: #ffffff; 
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            margin: 0; 
+        }
+
+        .wiki-container { 
+            max-width: 1152px; 
+            margin: 0 auto; 
+            padding: 30px 40px; 
+            border-left: 1px solid var(--wiki-border); 
+            border-right: 1px solid var(--wiki-border); 
+            min-height: 100vh; 
+            background-color: var(--wiki-bg);
+            box-sizing: border-box;
+        }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 2px solid var(--wiki-border); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: var(--wiki-text); border-left: 4px solid var(--wiki-main); padding-left: 12px; clear: both; }
+
+        /* [수정] 분류(카테고리) 박스 스타일 복구 */
+        .category-box {
+            background-color: var(--wiki-gray-bg);
+            border: 1px solid var(--wiki-border);
+            padding: 10px 15px;
+            font-size: 0.85rem;
+            margin: 15px 0 25px 0;
+            border-radius: 4px;
+            clear: both;
+        }
+
+        /* =========================================
+           [완벽 수정] 효빈위키 표준 인포박스
+           ========================================= */
+        .namu-infobox {
+            float: right;
+            clear: right;
+            width: 320px;
+            margin: 0 0 20px 20px;
+            border: 2px solid var(--wiki-main);
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            background-color: var(--wiki-bg);
+        }
+        .namu-infobox th, .namu-infobox td {
+            border: 1px solid var(--wiki-border);
+            padding: 8px 10px;
+            vertical-align: middle;
+        }
+        .namu-infobox th {
+            background-color: var(--wiki-main);
+            color: var(--wiki-title-text);
+            font-weight: 700;
+            text-align: center;
+            width: 100px;
+            line-height: 1.3;
+        }
+        .namu-infobox td {
+            text-align: center;
+            color: var(--wiki-text);
+        }
+        
+        .namu-infobox .title-row {
+            background-color: var(--wiki-main) !important;
+            color: var(--wiki-title-text) !important;
+            padding: 15px 10px;
+            text-align: center;
+            border-bottom: 1px solid var(--wiki-border);
+        }
+        .title-row-sub { font-size: 0.8rem; font-weight: 900; margin-bottom: 4px; }
+        .title-row-main { font-size: 1.8rem; font-weight: 900; line-height: 1.1; }
+        .title-row-eng { font-size: 0.75rem; margin-top: 4px; font-weight: bold; opacity: 0.8; }
+        
+        .pol-th-main { background-color: #009944 !important; color: white !important; }
+        .pol-table { width: 100%; border-collapse: collapse; margin: 0; }
+        .pol-table th { padding: 5px !important; font-size: 0.75rem; border: none !important; border-bottom: 1px solid var(--wiki-border) !important; color: white !important; }
+        .pol-table td { padding: 5px 8px !important; border: none !important; border-bottom: 1px solid var(--wiki-border) !important; }
+        .pol-table tr:last-child th, .pol-table tr:last-child td { border-bottom: none !important; }
+        .pol-nat { background-color: #800000 !important; }
+        .pol-metro { background-color: #0033a0 !important; }
+        .pol-local { background-color: #e65d00 !important; }
+        .center-th { background-color: #0055a5 !important; color: white !important; }
+        .bj-th { background-color: #f0f0f0 !important; color: #333 !important; }
+        [data-theme='dark'] .bj-th { background-color: #383b40 !important; color: #eee !important; }
+
+        .party-badge { display: inline-block; padding: 2px 5px; border-radius: 3px; color: white !important; font-weight: bold; font-size: 0.7rem; text-decoration: none !important; margin-right: 4px; }
+        .badge-minju { background-color: #004EA2; border: 1px solid #003b7a; }
+        .badge-jinbo { background-color: #D6001C; border: 1px solid #a30015; }
+
+        /* 상단 내비게이션 테이블 */
+        .nav-box { border: 1px solid var(--wiki-border); margin-bottom: 20px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; clear: both; }
+        .nav-box-header { background-color: var(--wiki-gray-bg); color: var(--wiki-text); padding: 8px 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; border-bottom: 1px solid var(--wiki-border); }
+        .nav-toggle-btn { position: absolute; right: 12px; font-size: 11px; font-weight: normal; color: var(--wiki-link); }
+        .nav-table { width: 100%; border-collapse: collapse; text-align: center; }
+        .nav-table th { background-color: var(--wiki-main) !important; color: var(--wiki-title-text) !important; font-weight: bold; border: 1px solid white !important; padding: 6px; }
+        [data-theme='dark'] .nav-table th { border-color: #444 !important; }
+        .nav-table td { background-color: var(--wiki-bg); border: 1px solid var(--wiki-border); padding: 6px; }
+        
+        /* 기타 UI */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; clear: left; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul ul { padding-left: 20px; margin-top: 4px; }
+
+        .wiki-quote { border-left: 4px solid var(--wiki-point); background-color: var(--wiki-gray-bg); padding: 10px 15px; margin: 15px 0; font-style: italic; color: #555; }
+        [data-theme='dark'] .wiki-quote { color: #aaa; }
+        
+        sup.wiki-fn { font-size: 0.75rem; vertical-align: super; font-weight: normal; cursor: pointer; color: var(--wiki-link); }
+        sup.wiki-fn:hover { text-decoration: underline; }
+        .wiki-footnote-area { margin-top: 40px; border-top: 1px solid var(--wiki-border); padding-top: 10px; font-size: 0.85rem; color: var(--wiki-text); clear: both; }
+        .wiki-footnote-area ol { padding-left: 25px; }
+        .wiki-footnote-area li:target { background-color: rgba(255, 255, 0, 0.2); transition: background-color 0.5s; }
+
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        [data-theme='dark'] .wiki-btn-group { background: #2d2f34; border-color: #444; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        
+        #wiki-tooltip { position: absolute; display: none; background-color: var(--wiki-tooltip-bg); border: 1px solid var(--wiki-tooltip-border); color: var(--wiki-tooltip-text); padding: 10px 12px; font-size: 0.85rem; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 9999; max-width: 320px; line-height: 1.4; }
+        .wiki-footer { margin-top: 40px; border-top: 1px solid var(--wiki-border); padding: 20px; text-align: left; font-size: 0.8rem; color: #888; background-color: var(--wiki-gray-bg); clear: both; }
+        del { text-decoration: line-through; color: #999; }
+    </style>
+<script src="ad_logic.js"></script>
+</head>
+<body data-theme="light">
+    <div id="wiki-tooltip"></div>
+
+    <nav class="text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50" style="background-color: var(--wiki-fixed);">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+            <span class="font-bold text-xl">HyobinWiki</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="searchInput" placeholder="문서 검색 (Enter)" class="p-1 px-3 rounded text-black text-sm w-40 focus:outline-none">
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#555588] p-1 px-3 rounded text-xs hover:bg-[#444477] transition">다크모드</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0 text-4xl">항동</h1>
+            <div class="wiki-btn-group shadow-sm mb-4">
+                <a href="토론.html" class="wiki-tool-btn">토론</a>
+                <a href="수정.html" class="wiki-tool-btn">편집</a>
+                <a href="역사.html" class="wiki-tool-btn">역사</a>
+                <div class="wiki-tool-btn">★</div>
+            </div>
+        </div>
+
+        <!-- 분류 박스 (테두리 및 스타일 복구) -->
+        <div class="category-box">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="남구.html" class="wiki-link">남구(효빈광역시)</a> | 
+            <a href="남구(효빈광역시)의_행정동.html" class="wiki-link">남구(효빈광역시)의 행정동</a> |
+            <a href="남구(효빈광역시)의_법정동.html" class="wiki-link">남구(효빈광역시)의 법정동</a>
+        </div>
+
+        <!-- 상단 내비게이션 -->
+        <div class="nav-box shadow-sm">
+            <div class="nav-box-header" onclick="toggleNav('dongNav', 'dongLabel')">
+                <span class="flex items-center text-[1rem]">
+                    <span class="mr-2 text-yellow-500">📁</span>
+                    <span>효빈광역시 남구의 행정구역</span>
+                </span>
+                <span id="dongLabel" class="nav-toggle-btn">[접기]</span>
+            </div>
+            <div id="dongNav" style="display: block;">
+                <table class="nav-table">
+                    <colgroup>
+                        <col style="width: 20%;">
+                        <col style="width: 20%;">
+                        <col style="width: 20%;">
+                        <col style="width: 20%;">
+                        <col style="width: 20%;">
+                    </colgroup>
+                    <tr>
+                        <th>행정동</th>
+                        <th colspan="4">법정동</th>
+                    </tr>
+                    <tr>
+                        <td class="font-bold"><a href="항동.html" class="wiki-link">항1동</a></td>
+                        <td colspan="4"><a href="항동.html" class="wiki-link">항동1가</a><span class="text-xs text-gray-500">(일부)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold"><a href="항동.html" class="wiki-link">항2동</a></td>
+                        <td colspan="2"><a href="항동.html" class="wiki-link">항동1가</a><span class="text-xs text-gray-500">(서부)</span></td>
+                        <td colspan="2"><a href="항동.html" class="wiki-link">항동2가</a><span class="text-xs text-gray-500">(서부)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold"><a href="항동.html" class="wiki-link">항3동</a></td>
+                        <td><a href="항동.html" class="wiki-link">항동1가</a><span class="text-xs text-gray-500">(중서부)</span></td>
+                        <td><a href="항동.html" class="wiki-link">항동2가</a><span class="text-xs text-gray-500">(동부)</span></td>
+                        <td colspan="2"><a href="항동.html" class="wiki-link">항동3가</a><span class="text-xs text-gray-500">(서부)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold"><a href="항동.html" class="wiki-link">항4동</a></td>
+                        <td colspan="2"><a href="항동.html" class="wiki-link">항동1가</a><span class="text-xs text-gray-500">(중동부)</span></td>
+                        <td colspan="2"><a href="항동.html" class="wiki-link">항동3가</a><span class="text-xs text-gray-500">(동부)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold"><a href="곽산동.html" class="wiki-link">곽산1~2동</a></td>
+                        <td colspan="4"><a href="곽산동.html" class="wiki-link">곽산동</a></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold"><a href="어간동.html" class="wiki-link">어간1~3동</a></td>
+                        <td colspan="2"><a href="어간동.html" class="wiki-link">어간동</a></td>
+                        <td colspan="2"><a href="운양동.html" class="wiki-link">운양동</a><span class="text-xs text-gray-500">(어간3동)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold"><a href="평당동.html" class="wiki-link">평당1~7동</a></td>
+                        <td colspan="4"><a href="평당동.html" class="wiki-link">평당동</a></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold"><a href="고당동.html" class="wiki-link">고당동</a></td>
+                        <td colspan="2"><a href="고간동.html" class="wiki-link">고간동</a></td>
+                        <td colspan="2"><a href="평당동.html" class="wiki-link">평당동</a><span class="text-xs text-gray-500">(일부)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold"><a href="월천동.html" class="wiki-link">월천동</a></td>
+                        <td><a href="월천동.html" class="wiki-link">월천동</a></td>
+                        <td><a href="신흥동.html" class="wiki-link">신흥동</a></td>
+                        <td><a href="박산동.html" class="wiki-link">박산동</a></td>
+                        <td><a href="포장동.html" class="wiki-link">포장동</a></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- =========================================
+             [우측 플로팅] 메인 인포박스
+             ========================================= -->
+        <table class="namu-infobox">
+            <tr>
+                <td colspan="2" class="title-row">
+                    <div class="title-row-sub">효빈광역시 남구의 행정/법정동</div>
+                    <div class="title-row-main">항동</div>
+                    <div class="title-row-eng">港洞 | Hang-dong</div>
+                </td>
+            </tr>
+            <tr>
+                <th>광역자치단체</th>
+                <td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></td>
+            </tr>
+            <tr>
+                <th>기초자치단체</th>
+                <td><a href="남구.html" class="wiki-link">남구</a></td>
+            </tr>
+            <tr>
+                <th>구 행정구역</th>
+                <td>어간면(1914)</td>
+            </tr>
+            <tr>
+                <th>관할 행정동</th>
+                <td>
+                    <div class="text-[0.7rem] text-gray-500 mb-1">[ 펼치기 · 접기 ]</div>
+                    항1동, 항2동, 항3동, 항4동
+                </td>
+            </tr>
+            <tr>
+                <th>관할 법정동</th>
+                <td>
+                    <div class="text-[0.7rem] text-gray-500 mb-1">[ 펼치기 · 접기 ]</div>
+                    항동1가, 항동2가, 항동3가
+                </td>
+            </tr>
+            <tr>
+                <th class="pol-th-main">정치</th>
+                <td style="padding: 0;">
+                    <div class="text-[0.7rem] text-gray-500 py-1 border-b border-[var(--wiki-border)]">[ 펼치기 · 접기 ]</div>
+                    <table class="pol-table">
+                        <tr><th colspan="2" class="pol-nat">국회의원 | 남구 을</th></tr>
+                        <tr>
+                            <td style="width: 45%; text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td>
+                            <td style="text-align: left;"><a href="신원임.html" class="wiki-link">신원임</a> (초선)</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th class="center-th" rowspan="2">주요 시설</th>
+                <td class="text-left text-[0.8rem]">
+                    <span class="font-bold">여객터미널</span>: <a href="효빈항.html" class="wiki-link">효빈항</a>국제여객터미널
+                </td>
+            </tr>
+            <tr>
+                <td class="text-left text-[0.8rem]">
+                    <span class="font-bold">관공서</span>: <a href="서남지방해양경찰청.html" class="wiki-link">서남지방해양경찰청</a>
+                </td>
+            </tr>
+        </table>
+
+        <!-- 좌측 본문 영역 (목차) -->
+        <div id="toc-box" class="toc">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                <li>2. <a href="#s-2" class="wiki-link">역사 및 행정구역의 미스터리</a></li>
+                <li>3. <a href="#s-3" class="wiki-link">관할 행정동 및 상세</a>
+                    <ul>
+                        <li>3.1. <a href="#s-3-1" class="wiki-link">항1동</a></li>
+                        <li>3.2. <a href="#s-3-2" class="wiki-link">항2동</a></li>
+                        <li>3.3. <a href="#s-3-3" class="wiki-link">항3동</a></li>
+                        <li>3.4. <a href="#s-3-4" class="wiki-link">항4동</a></li>
+                    </ul>
+                </li>
+                <li>4. <a href="#s-4" class="wiki-link">관할 법정동 및 상세</a>
+                    <ul>
+                        <li>4.1. <a href="#s-4-1" class="wiki-link">항동1가</a></li>
+                        <li>4.2. <a href="#s-4-2" class="wiki-link">항동2가</a></li>
+                        <li>4.3. <a href="#s-4-3" class="wiki-link">항동3가</a></li>
+                    </ul>
+                </li>
+                <li>5. <a href="#s-5" class="wiki-link">정치</a></li>
+                <li>6. <a href="#s-6" class="wiki-link">여담</a></li>
+            </ul>
+        </div>
+
+        <h2 id="s-1">1. 개요</h2>
+        <div class="wiki-quote">
+            <strong>"1998년 대통폐합이 낳은 행정구역의 혼종이자 남구 진보 정치의 심장."</strong>
+        </div>
+        <p>
+            <a href="효빈광역시.html" class="wiki-link">효빈광역시</a> <a href="남구.html" class="wiki-link">남구</a>에 위치한 지역. 행정동으로는 <strong>항1동, 항2동, 항3동, 항4동</strong>이 존재하며, 법정동으로는 <strong>항동1가, 항동2가, 항동3가</strong>가 존재한다.
+        </p>
+        <p>
+            1914년 이전에는 <strong>어간면(漁間面)</strong>에 속했던 갯마을이었으나, 일제강점기 항만 축조와 현대의 대규모 간척 사업을 거치며 현재의 거대한 <a href="효빈항.html" class="wiki-link">효빈항</a> 및 배후 부지로 거듭난 남구의 원도심이다. 
+        </p>
+
+        <h2 id="s-2">2. 역사 및 행정구역의 미스터리</h2>
+        <ul class="list-disc pl-5 mb-4 text-sm">
+            <li><strong>1914년</strong>: 부군면 통폐합 당시 <strong>효빈군 어간면 항리(項里)</strong>로 편입되었다.</li>
+            <li><strong>1963년</strong>: 효빈시 승격 및 구제 실시로 <strong>남구 항동</strong>이 되었다. 당시 항만 개발 구역을 1가, 2가 등으로 나누면서 현재의 지명이 굳어졌다.</li>
+            <li><strong>1998년 1월 15일</strong>: IMF 외환위기 당시 <strong>대규모 행정동 통폐합</strong>이 단행되었다. 기존의 항1가1·2동, 항2가동, 항3가1·2동 등 5개 행정동이 <strong>항1동~항4동</strong>으로 통합되었다.</li>
+        </ul>
+        <p>
+            <strong>"왜 법정동과 행정동이 테트리스 블록처럼 찢어졌는가?"</strong><br>
+            보통은 하나의 행정동 밑에 여러 개의 법정동이 묶이는 것이 일반적이다. 그러나 항동은 1998년 통합 당시, 길게 늘어진 항동1가(법정동)를 세로로 잘라 인구수에 맞춰 항1~4동에 분배하고, 항2가, 항3가 지역마저 섞어서 편제하는 만행(...)을 저질렀다. 
+        </p>
+        <p>
+            그 결과 <strong>항1동(동쪽 끝) → 항4동(중동부) → 항3동(중서부) → 항2동(서쪽 끝)</strong>이라는 위치 순서도 맞지 않는 극악의 난이도를 자랑하게 되었다. 전입신고를 하러 갈 때 본인 주소지의 행정동을 제대로 확인하지 않으면 헛걸음하기 십상이다.
+        </p>
+
+        <h2 id="s-3">3. 관할 행정동 및 상세</h2>
+        <h3 id="s-3-1">3.1. 항1동</h3>
+        <table class="namu-infobox">
+            <tr>
+                <td colspan="2" class="title-row">
+                    <div class="title-row-sub">효빈광역시 남구의 행정동</div>
+                    <div class="title-row-main">항1동</div>
+                    <div class="title-row-eng">港一洞 | Hang 1-dong</div>
+                </td>
+            </tr>
+            <tr><th>행정표준코드</th><td>79020150</td></tr>
+            <tr><th>관할 법정동</th><td><a href="#s-4-1" class="wiki-link">항동1가</a> 일부</td></tr>
+            <tr><th>면적</th><td>3.64㎢</td></tr>
+            <tr><th>인구</th><td>4,222명 <span class="text-xs text-red-500 font-bold">(남구 최하위)</span></td></tr>
+            <tr><th>인구밀도</th><td>1,159.89명/㎢</td></tr>
+            <tr>
+                <th class="pol-th-main">정치</th>
+                <td style="padding: 0;">
+                    <table class="pol-table">
+                        <tr><th colspan="2" class="pol-nat">국회의원 | 남구 을</th></tr>
+                        <tr>
+                            <td style="width: 45%; text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td>
+                            <td style="text-align: left;"><a href="신원임.html" class="wiki-link">신원임</a> (초선)</td>
+                        </tr>
+                        <tr><th colspan="2" class="pol-metro">효빈광역시의원 | 제3선거구</th></tr>
+                        <tr>
+                            <td style="text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td>
+                            <td style="text-align: left;"><a href="지소현.html" class="wiki-link">지소현</a> (재선)</td>
+                        </tr>
+                        <tr><th colspan="2" class="pol-local">남구의원 | 라 선거구</th></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-minju">더불어민주당</span></td><td style="text-align: left;"><a href="권혁진.html" class="wiki-link">권혁진</a> (재선)</td></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-minju">더불어민주당</span></td><td style="text-align: left;"><a href="장예서.html" class="wiki-link">장예서</a> (재선)</td></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td><td style="text-align: left;"><a href="임찬양.html" class="wiki-link">임찬양</a> (재선)</td></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td><td style="text-align: left;"><a href="한유민.html" class="wiki-link">한유민</a> (재선)</td></tr>
+                    </table>
+                </td>
+            </tr>
+            <tr><th class="center-th">행정복지센터</th><td class="text-xs">남구 항동1가 42</td></tr>
+        </table>
+        <p>
+            항동의 동쪽 끝자락. 거대한 부두와 화물 야적장이 대부분이라 거주 인구는 남구에서 꼴찌다. 관내에 중천초등학교, 선산중학교가 있다. 교통편으로는 <span style="color:#FF8899; font-weight:bold;">효빈 도시철도 7호선</span> <a href="효빈항역.html" class="wiki-link">효빈항역</a>이 존재한다.
+        </p>
+
+        <h3 id="s-3-2">3.2. 항2동</h3>
+        <table class="namu-infobox">
+            <tr>
+                <td colspan="2" class="title-row">
+                    <div class="title-row-sub">효빈광역시 남구의 행정동</div>
+                    <div class="title-row-main">항2동</div>
+                    <div class="title-row-eng">港ニ洞 | Hang 2-dong</div>
+                </td>
+            </tr>
+            <tr><th>행정표준코드</th><td>79020160</td></tr>
+            <tr><th>관할 법정동</th><td><a href="#s-4-1" class="wiki-link">항동1가</a>, <a href="#s-4-2" class="wiki-link">항동2가</a> 일부</td></tr>
+            <tr><th>면적</th><td>10.22㎢</td></tr>
+            <tr><th>인구</th><td>30,022명</td></tr>
+            <tr><th>인구밀도</th><td>2,937.57명/㎢</td></tr>
+            <tr>
+                <th class="pol-th-main">정치</th>
+                <td style="padding: 0;">
+                    <table class="pol-table">
+                        <tr><th colspan="2" class="pol-nat">국회의원 | 남구 을</th></tr>
+                        <tr><td style="width: 45%; text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td><td style="text-align: left;"><a href="신원임.html" class="wiki-link">신원임</a> (초선)</td></tr>
+                        <tr><th colspan="2" class="pol-metro">효빈광역시의원 | 제3선거구</th></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td><td style="text-align: left;"><a href="지소현.html" class="wiki-link">지소현</a> (재선)</td></tr>
+                        <tr><th colspan="2" class="pol-local">남구의원 | 라 선거구</th></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-minju">더불어민주당</span></td><td style="text-align: left;"><a href="권혁진.html" class="wiki-link">권혁진</a> (재선)</td></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-minju">더불어민주당</span></td><td style="text-align: left;"><a href="장예서.html" class="wiki-link">장예서</a> (재선)</td></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td><td style="text-align: left;"><a href="임찬양.html" class="wiki-link">임찬양</a> (재선)</td></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td><td style="text-align: left;"><a href="한유민.html" class="wiki-link">한유민</a> (재선)</td></tr>
+                    </table>
+                </td>
+            </tr>
+            <tr><th class="center-th">행정복지센터</th><td class="text-xs">남구 항동1가 89-2</td></tr>
+        </table>
+        <p>
+            항동의 얼굴마담이자 인구가 가장 많은 동네. 항동초, 항구초, 종람초, 항동중, <strong>항동고등학교</strong>, <strong>효빈해양산업고등학교</strong> 등 학교가 밀집해 있다. 서부 해안가를 끼고 있어 사실상 효빈항의 중심지다.
+        </p>
+
+        <h3 id="s-3-3">3.3. 항3동</h3>
+        <table class="namu-infobox">
+            <tr>
+                <td colspan="2" class="title-row">
+                    <div class="title-row-sub">효빈광역시 남구의 행정동</div>
+                    <div class="title-row-main">항3동</div>
+                    <div class="title-row-eng">港三洞 | Hang 3-dong</div>
+                </td>
+            </tr>
+            <tr><th>행정표준코드</th><td>79020170</td></tr>
+            <tr><th>관할 법정동</th><td><a href="#s-4-1" class="wiki-link">항동1가</a>, <a href="#s-4-2" class="wiki-link">항동2가</a>, <a href="#s-4-3" class="wiki-link">항동3가</a> 일부</td></tr>
+            <tr><th>면적</th><td>3.20㎢</td></tr>
+            <tr><th>인구</th><td>23,122명</td></tr>
+            <tr><th>인구밀도</th><td>7,225.62명/㎢</td></tr>
+            <tr>
+                <th class="pol-th-main">정치</th>
+                <td style="padding: 0;">
+                    <table class="pol-table">
+                        <tr><th colspan="2" class="pol-nat">국회의원 | 남구 을</th></tr>
+                        <tr><td style="width: 45%; text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td><td style="text-align: left;"><a href="신원임.html" class="wiki-link">신원임</a> (초선)</td></tr>
+                        <tr><th colspan="2" class="pol-metro">효빈광역시의원 | 제3선거구</th></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td><td style="text-align: left;"><a href="지소현.html" class="wiki-link">지소현</a> (재선)</td></tr>
+                        <tr><th colspan="2" class="pol-local">남구의원 | 라 선거구</th></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-minju">더불어민주당</span></td><td style="text-align: left;"><a href="권혁진.html" class="wiki-link">권혁진</a> (재선)</td></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-minju">더불어민주당</span></td><td style="text-align: left;"><a href="장예서.html" class="wiki-link">장예서</a> (재선)</td></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td><td style="text-align: left;"><a href="임찬양.html" class="wiki-link">임찬양</a> (재선)</td></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td><td style="text-align: left;"><a href="한유민.html" class="wiki-link">한유민</a> (재선)</td></tr>
+                    </table>
+                </td>
+            </tr>
+            <tr><th class="center-th">행정복지센터</th><td class="text-xs">남구 항동2가 17</td></tr>
+        </table>
+        <p>
+            면적은 작지만 인구밀도가 가장 높다. 외항선원과 항만 노동자들을 위한 유흥 및 상업 지구가 있어 이국적인 분위기를 풍긴다.
+        </p>
+
+        <h3 id="s-3-4">3.4. 항4동</h3>
+        <table class="namu-infobox">
+            <tr>
+                <td colspan="2" class="title-row">
+                    <div class="title-row-sub">효빈광역시 남구의 행정동</div>
+                    <div class="title-row-main">항4동</div>
+                    <div class="title-row-eng">港四洞 | Hang 4-dong</div>
+                </td>
+            </tr>
+            <tr><th>행정표준코드</th><td>79020180</td></tr>
+            <tr><th>관할 법정동</th><td><a href="#s-4-1" class="wiki-link">항동1가</a>, <a href="#s-4-3" class="wiki-link">항동3가</a> 일부</td></tr>
+            <tr><th>면적</th><td>4.43㎢</td></tr>
+            <tr><th>인구</th><td>12,832명</td></tr>
+            <tr><th>인구밀도</th><td>2,896.61명/㎢</td></tr>
+            <tr>
+                <th class="pol-th-main">정치</th>
+                <td style="padding: 0;">
+                    <table class="pol-table">
+                        <tr><th colspan="2" class="pol-nat">국회의원 | 남구 을</th></tr>
+                        <tr><td style="width: 45%; text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td><td style="text-align: left;"><a href="신원임.html" class="wiki-link">신원임</a> (초선)</td></tr>
+                        <tr><th colspan="2" class="pol-metro">효빈광역시의원 | 제3선거구</th></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td><td style="text-align: left;"><a href="지소현.html" class="wiki-link">지소현</a> (재선)</td></tr>
+                        <tr><th colspan="2" class="pol-local">남구의원 | 라 선거구</th></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-minju">더불어민주당</span></td><td style="text-align: left;"><a href="권혁진.html" class="wiki-link">권혁진</a> (재선)</td></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-minju">더불어민주당</span></td><td style="text-align: left;"><a href="장예서.html" class="wiki-link">장예서</a> (재선)</td></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td><td style="text-align: left;"><a href="임찬양.html" class="wiki-link">임찬양</a> (재선)</td></tr>
+                        <tr><td style="text-align: right;"><span class="party-badge badge-jinbo">진보당</span></td><td style="text-align: left;"><a href="한유민.html" class="wiki-link">한유민</a> (재선)</td></tr>
+                    </table>
+                </td>
+            </tr>
+            <tr><th class="center-th">행정복지센터</th><td class="text-xs">남구 항동3가 204-1</td></tr>
+        </table>
+        <p>
+            배후 물류단지와 항만 노동자들이 주로 거주하는 대규모 노후 주택단지가 맞물려 있다. 관내에 월흥초, 운양초, 평안초, 효빈남중, 효빈남여자중학교가 위치한다.
+        </p>
+
+        <h2 id="s-4">4. 관할 법정동 및 상세</h2>
+        <h3 id="s-4-1">4.1. 항동1가</h3>
+        <table class="namu-infobox">
+            <tr>
+                <td colspan="2" class="title-row">
+                    <div class="title-row-sub">효빈광역시 남구의 법정동</div>
+                    <div class="title-row-main">항동1가</div>
+                    <div class="title-row-eng">港洞一街 | Hangdong 1(il)-ga</div>
+                </td>
+            </tr>
+            <tr><th class="bj-th">광역자치단체</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></td></tr>
+            <tr><th class="bj-th">기초자치단체</th><td><a href="남구.html" class="wiki-link">남구</a></td></tr>
+            <tr><th class="bj-th">행정표준코드</th><td>7912011000</td></tr>
+            <tr><th class="bj-th">관할 행정동</th><td>항1동, 항2동, 항3동, 항4동 <sup id="ref-1" class="wiki-fn" data-target="fn-1">[1]</sup></td></tr>
+            <tr><th class="bj-th">면적</th><td>11.274㎢</td></tr>
+            <tr><th class="bj-th">인구</th><td>44,091명 <sup id="ref-2" class="wiki-fn" data-target="fn-2">[2]</sup></td></tr>
+        </table>
+        <p>
+            항동의 가장 근본이 되는 구역이자 최대 면적, 최대 인구를 자랑한다. 이 거대한 법정동을 행정동 4개(항1동, 항2동, 항3동, 항4동)가 테트리스 하듯 쪼개서 관할하고 있다. <strong><a href="효빈항.html" class="wiki-link">효빈항 국제여객터미널</a></strong>과 <strong><a href="서남지방해양경찰청.html" class="wiki-link">서남지방해양경찰청</a></strong> 등 남구를 대표하는 굵직한 시설들이 모두 여기에 몰려있다.
+        </p>
+
+        <h3 id="s-4-2">4.2. 항동2가</h3>
+        <table class="namu-infobox">
+            <tr>
+                <td colspan="2" class="title-row">
+                    <div class="title-row-sub">효빈광역시 남구의 법정동</div>
+                    <div class="title-row-main">항동2가</div>
+                    <div class="title-row-eng">港洞ニ街 | Hangdong 2(i)-ga</div>
+                </td>
+            </tr>
+            <tr><th class="bj-th">광역자치단체</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></td></tr>
+            <tr><th class="bj-th">기초자치단체</th><td><a href="남구.html" class="wiki-link">남구</a></td></tr>
+            <tr><th class="bj-th">행정표준코드</th><td>7912011100</td></tr>
+            <tr><th class="bj-th">관할 행정동</th><td>항2동, 항3동</td></tr>
+            <tr><th class="bj-th">면적</th><td>7.352㎢</td></tr>
+            <tr><th class="bj-th">인구</th><td>21,311명 <span class="text-[0.7rem] text-gray-500">(남구 30위)</span></td></tr>
+        </table>
+        <p>
+            주로 항2동과 항3동이 절반씩 나눠 관할하고 있다. 항만 부두 배후의 산업 시설과 노후 주거지가 혼재되어 있다.
+        </p>
+
+        <h3 id="s-4-3">4.3. 항동3가</h3>
+        <table class="namu-infobox">
+            <tr>
+                <td colspan="2" class="title-row">
+                    <div class="title-row-sub">효빈광역시 남구의 법정동</div>
+                    <div class="title-row-main">항동3가</div>
+                    <div class="title-row-eng">港洞三街 | Hangdong 3(sam)-ga</div>
+                </td>
+            </tr>
+            <tr><th class="bj-th">광역자치단체</th><td><a href="효빈광역시.html" class="wiki-link">효빈광역시</a></td></tr>
+            <tr><th class="bj-th">기초자치단체</th><td><a href="남구.html" class="wiki-link">남구</a></td></tr>
+            <tr><th class="bj-th">행정표준코드</th><td>7912011200</td></tr>
+            <tr><th class="bj-th">관할 행정동</th><td>항3동, 항4동</td></tr>
+            <tr><th class="bj-th">면적</th><td>2.883㎢</td></tr>
+            <tr><th class="bj-th">인구</th><td>4,796명 <span class="text-[0.7rem] text-gray-500">(남구 84위)</span></td></tr>
+        </table>
+        <p>
+            면적이 가장 작고 인구도 적다. 항3동과 항4동이 관할한다.
+        </p>
+
+        <h2 id="s-5">5. 정치</h2>
+        <div class="bg-gray-50 dark:bg-[#2d2f34] border-l-4 border-[#D6001C] p-4 mb-4">
+            <h4 class="font-bold text-lg mb-2 flex items-center gap-2 text-[#D6001C]">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Progressive_Party_%28South_Korea%2C_2020%29_logo.svg/300px-Progressive_Party_%28South_Korea%2C_2020%29_logo.svg.png" alt="진보당" style="height: 1.2em;"> 
+                남구 진보 정치의 심장
+            </h4>
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+                효빈항을 끼고 있는 특성상 항운노조, 화물연대 등 <strong>노동조합의 세력이 효빈시 내에서 가장 강력한 곳</strong>이다. 이 때문에 남구 내에서도 평당신도시(더불어민주당 강세)와 달리 <strong><a href="진보당.html" class="wiki-link text-[#D6001C]">진보당</a></strong>의 지지율이 압도적으로 높게 나온다. 
+                현재 남구 을 국회의원인 진보당 <strong><a href="신원임.html" class="wiki-link text-[#D6001C]">신원임</a></strong> 의원이 바로 항운노조 위원장 출신이며, 선거 유세 첫날 무조건 방문하는 곳이 항동 교차로일 정도다. <del>이 동네에서 보수 정당 명함 돌리다가는 등짝 맞기 십상이다.</del> 기초의원 4자리 중 무려 2자리를 진보당이 차지할 정도니 말 다 했다.
+            </p>
+        </div>
+
+        <h2 id="s-6">6. 여담</h2>
+        <ul class="list-disc pl-5 space-y-2 text-sm text-gray-800 dark:text-gray-800">
+            <li>
+                <strong>갈매기 공화국</strong>: 항만 근처라 길거리에 비둘기보다 갈매기가 훨씬 많다. 편의점 파라솔에서 새우깡을 까먹다가는 덩치 큰 갈매기 특공대에게 소매치기를 당하기 십상이다. <del>비둘기랑 싸우면 십중팔구 갈매기가 이긴다.</del>
+            </li>
+            <li>
+                <strong>국제적인 골목길</strong>: 항3동 관할의 외국인 거리에서는 한국어, 러시아어, 영어, 타갈로그어가 동시에 들리는 진풍경을 겪을 수 있다. 간판들도 키릴 문자로 적힌 곳이 많다.
+            </li>
+            <li>
+                <strong>택시기사들의 한숨</strong>: "항동1가로 가주세요"라고 하면 택시기사들이 백이면 백 <strong>"1동이요? 2동이요? 아니면 터미널이요?"</strong>라고 되묻는다. 행정동이 4개로 갈갈이 찢어져 있어 목적지를 정확히 모르면 도로 위를 빙빙 돌게 된다.
+            </li>
+        </ul>
+
+        <h2 id="s-7">7. 각주</h2>
+        <div class="wiki-footnote-area">
+            <ol>
+                <li id="fn-1">하나의 법정동이 4개의 행정동에 분할 소속된 전국에서도 보기 드문 기형적 사례다. <a href="#ref-1" title="본문으로 이동">↑</a></li>
+                <li id="fn-2">항1~4동에 쪼개져 소속된 항동1가 거주 인구의 총합 (2025년 기준 추산). 남구 18위. <a href="#ref-2" title="본문으로 이동">↑</a></li>
+            </ol>
+        </div>
+
+        <footer class="wiki-footer">
+            <div class="mb-2 font-bold text-lg text-gray-700 dark:text-gray-300">HyobinWiki</div>
+            <p class="mb-2"><strong>크리에이티브 커먼즈 라이선스</strong><br>
+            이 저작물은 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" class="text-blue-600 hover:underline" target="_blank">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>
+            기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+            
+            <p class="mt-4 text-xs text-gray-500">
+            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.<br>
+            효빈위키는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.
+            </p>
+        </footer>    
+    </div>
+
+    <script>
+        window.toggleTheme = function() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            const btn = document.getElementById('themeBtn');
+            if (btn) btn.innerText = isDark ? '다크모드' : '라이트모드';
+        };
+
+        window.toggleNav = function(id, labelId) {
+            const content = document.getElementById(id);
+            const label = document.getElementById(labelId);
+            if (!content || !label) return;
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                label.innerText = '[접기]';
+            } else {
+                content.style.display = 'none';
+                label.innerText = '[펼치기]';
+            }
+        };
+
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                const btn = document.getElementById('themeBtn');
+                if (btn) btn.innerText = '라이트모드';
+            }
+            initFootnoteTooltips();
+        };
+
+        function initFootnoteTooltips() {
+            const footnotes = document.querySelectorAll('.wiki-fn');
+            const tooltip = document.getElementById('wiki-tooltip');
+
+            footnotes.forEach(fn => {
+                fn.addEventListener('mouseenter', function(e) {
+                    const targetId = this.getAttribute('data-target'); 
+                    const contentEl = document.getElementById(targetId);
+                    
+                    if (contentEl && tooltip) {
+                        let text = contentEl.innerHTML;
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = text;
+                        const backLink = tempDiv.querySelector('a:last-child'); 
+                        if(backLink && backLink.innerText.includes('↑')) backLink.remove();
+                        
+                        tooltip.innerHTML = tempDiv.innerHTML;
+                        tooltip.style.display = 'block';
+                        
+                        const rect = this.getBoundingClientRect();
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        
+                        tooltip.style.top = (rect.bottom + scrollTop + 5) + 'px';
+                        tooltip.style.left = rect.left + 'px';
+                    }
+                });
+
+                fn.addEventListener('mouseleave', function() {
+                    if (tooltip) tooltip.style.display = 'none';
+                });
+                
+                fn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    const targetEl = document.getElementById(targetId);
+                    if(targetEl) {
+                        targetEl.scrollIntoView({behavior: 'smooth', block: 'center'});
+                        targetEl.style.backgroundColor = "rgba(255, 255, 0, 0.3)";
+                        setTimeout(() => targetEl.style.backgroundColor = "transparent", 1500);
+                    }
+                });
+            });
+        }
+        
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                const target = this.value.trim();
+                location.href = target + ".html";
+            }
+        });
+    </script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>
