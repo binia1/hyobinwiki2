@@ -2575,7 +2575,7 @@ const imageFiles = [
     "홈플러스 탄성점.webp",
     "홈플러스 효빈역점.webp",
     "홈플러스_로고.webp",
-    "홈플러스_창전점.webp",
+    "이마트_창전점.webp",
     "홍콩네온.webp",
     "홍콩야경.webp",
     "홍하역_승강장.webp",
