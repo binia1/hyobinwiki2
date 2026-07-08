@@ -11,7 +11,11 @@ window.HB_WIKI_PAGES = [
     {
     "title": "읍",
     "href": "읍.html"
-  },    {
+  },        {
+    "title": "하진수",
+    "href": "하진수.html"
+  },    
+  {
     "title": "과대읍",
     "href": "과대읍.html"
   },  {
