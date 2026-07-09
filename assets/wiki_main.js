@@ -69,7 +69,7 @@ window.addEventListener("load", function() {
         { title: "제17회 HAF (효빈 애니메이션 페스티벌) 얼리버드", url: "haf.hyobin.go.kr", desc: "올여름을 달굴 아시아 최대 서브컬처 축제! 터미널 특별 안내방송 및 굿즈 패키지 한정 판매.", img: "이미지/HAF.webp", wiki_url: "효빈 애니메이션 페스티벌.html" },
         { title: "사능동 야마부키 베이커리 본점", url: "yamabukibakery.co.kr", desc: "효빈 3호선 사능역 앞 명물 소금빵! 한정판 박라미 띠부씰 증정 이벤트 진행 중.", img: "이미지/야마부키베이커리.webp", wiki_url: "야마부키 베이커리.html" },
         { title: "고송신도시 써밋 팰리스 특별분양", url: "gosong-summit.com", desc: "북구 고송동의 새로운 랜드마크. 효빈시청 도보 5분, 완벽한 학군과 상권.", img: "이미지/써밋팰리스.webp", wiki_url: "고송신도시.html" },
-        { title: "회주공업 2026년 하반기 공개채용", url: "recruit.hoeju.co.kr", desc: "효빈의 자존심, 궤도교통의 명가 회주공업에서 세상을 바꿀 인재를 모십니다.", img: "이미지/회주공업.webp", wiki_url: "회주공업.html" },
+        { title: "회주공업 2026년 하반기 공개채용", url: "recruit.hoeju.co.kr", desc: "효빈의 자존심, 궤도교통의 명가 회주공업에서 세상을 바꿀 인재를 모십니다.", img: "이미지/회주제1공장.webp", wiki_url: "회주공업.html" },
         { title: "효빈 시티투어 버스 예약센터", url: "citytour.hyobin.go.kr", desc: "T01~T09 노선 절찬 운행 중! 마치 하교하는 기분을 느낄 수 있는 성지순례 핵심 코스.", img: "이미지/효빈시티투어.webp", wiki_url: "효빈 시티투어 버스.html" },
         { title: "평당 롯데 백화점 썸머 페스티벌", url: "pyeongdang-grand.com", desc: "남구 최대 쇼핑 메카! 명품부터 트렌드 팝업스토어까지. 1호선 평당역 연결.", img: "이미지/롯데백화점_평당점.webp", wiki_url: "평당동.html" },
         { title: "효빈대학교 2027학년도 수시모집", url: "admission.hyobin.ac.kr", desc: "세계를 이끌어갈 글로벌 리더의 요람. 효빈대 A선 트램 개통으로 더욱 편리한 캠퍼스 라이프.", img: "이미지/효빈대학교.webp", wiki_url: "효빈대학교.html" },
