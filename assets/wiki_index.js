@@ -67,6 +67,10 @@ window.HB_WIKI_PAGES = [
     "href": "광역시.html"
   },
   {
+    "title": "세라스 야나기다 릴리엔펠트",
+    "href": "세라스 야나기다 릴리엔펠트.html"
+  },
+  {
     "title": "아이파크",
     "href": "아이파크.html"
   },
@@ -2102,7 +2106,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "덕빈보건대학",
-    "href": "덕빈보건대학.html"
+    "href": "덕빈보건대학교.html"
   },
   {
     "title": "덕빈보건대학교",
@@ -2557,7 +2561,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "마진해양대학",
-    "href": "마진해양대학.html"
+    "href": "마진해양대학교.html"
   },
   {
     "title": "마진해양대학교",
@@ -5149,7 +5153,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "인곡과학대학",
-    "href": "인곡과학대학.html"
+    "href": "인곡과학대학교.html"
   },
   {
     "title": "인곡과학대학교",
@@ -7187,7 +7191,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "한국국방기술대학교",
-    "href": "한국국방기술대학교.html"
+    "href": "한국국방과학기술대학교.html"
   },
   {
     "title": "한국철도공사 781000호대 전동차",

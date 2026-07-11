@@ -65,14 +65,14 @@ document.addEventListener('DOMContentLoaded', function() {
 /* --- [추가] 푸터 자동 생성 기능 (효빈광역시 40선 광고 및 통합 라이선스 적용) --- */
 window.addEventListener("load", function() {
     const ads = [
-        { title: "효빈교통공사 공식 굿즈샵", url: "shop.hyobintransit.co.kr", desc: "임세하부터 각 호선 역장 굿즈까지! 120억 매출 신화, 지금 바로 확인하세요.", img: "이미지/효빈교통공사_본사.webp", wiki_url: "효빈교통공사.html" },
+        { title: "효빈교통공사 공식 굿즈샵", url: "shop.hyobintransit.co.kr", desc: "임세하부터 각 호선 역장 굿즈까지! 120억 매출 신화, 지금 바로 확인하세요.", img: "이미지/효빈교통공사_본사_굿즈샵_0.webp", wiki_url: "효빈교통공사.html" },
         { title: "제17회 HAF (효빈 애니메이션 페스티벌) 얼리버드", url: "haf.hyobin.go.kr", desc: "올여름을 달굴 아시아 최대 서브컬처 축제! 터미널 특별 안내방송 및 굿즈 패키지 한정 판매.", img: "이미지/HAF.webp", wiki_url: "효빈 애니메이션 페스티벌.html" },
         { title: "사능동 야마부키 베이커리 본점", url: "yamabukibakery.co.kr", desc: "효빈 3호선 사능역 앞 명물 소금빵! 한정판 박라미 띠부씰 증정 이벤트 진행 중.", img: "이미지/야마부키베이커리.webp", wiki_url: "야마부키 베이커리.html" },
-        { title: "고송신도시 써밋 팰리스 특별분양", url: "gosong-summit.com", desc: "북구 고송동의 새로운 랜드마크. 효빈시청 도보 5분, 완벽한 학군과 상권.", img: "이미지/써밋팰리스.webp", wiki_url: "고송신도시.html" },
+        { title: "고송신도시 우미린 팰리스 특별분양", url: "gosong-summit.com", desc: "북구 고송동의 새로운 랜드마크. 효빈시청 도보 5분, 완벽한 학군과 상권.", img: "이미지/우미린팰리스.webp", wiki_url: "고송신도시.html" },
         { title: "회주공업 2026년 하반기 공개채용", url: "recruit.hoeju.co.kr", desc: "효빈의 자존심, 궤도교통의 명가 회주공업에서 세상을 바꿀 인재를 모십니다.", img: "이미지/회주제1공장.webp", wiki_url: "회주공업.html" },
-        { title: "효빈 시티투어 버스 예약센터", url: "citytour.hyobin.go.kr", desc: "T01~T09 노선 절찬 운행 중! 마치 하교하는 기분을 느낄 수 있는 성지순례 핵심 코스.", img: "이미지/효빈시티투어.webp", wiki_url: "효빈 시티투어 버스.html" },
+        { title: "효빈 시티투어 버스 예약센터", url: "citytour.hyobin.go.kr", desc: "T01~T09 노선 절찬 운행 중! 마치 하교하는 기분을 느낄 수 있는 성지순례 핵심 코스.", img: "이미지/시티투어버스.webp", wiki_url: "효빈 시티투어 버스.html" },
         { title: "평당 롯데 백화점 썸머 페스티벌", url: "pyeongdang-grand.com", desc: "남구 최대 쇼핑 메카! 명품부터 트렌드 팝업스토어까지. 1호선 평당역 연결.", img: "이미지/롯데백화점_평당점.webp", wiki_url: "평당동.html" },
-        { title: "효빈대학교 2027학년도 수시모집", url: "admission.hyobin.ac.kr", desc: "세계를 이끌어갈 글로벌 리더의 요람. 효빈대 A선 트램 개통으로 더욱 편리한 캠퍼스 라이프.", img: "이미지/효빈대학교.webp", wiki_url: "효빈대학교.html" },
+        { title: "효빈대학교 2027학년도 수시모집", url: "admission.hyobin.ac.kr", desc: "세계를 이끌어갈 글로벌 리더의 요람. 효빈대 A선 트램 개통으로 더욱 편리한 캠퍼스 라이프.", img: "이미지/효빈대_로고.webp", wiki_url: "효빈대학교.html" },
         { title: "어간수산시장 당일 조업 활어 배송", url: "eogan-market.kr", desc: "남구 어간항에서 갓 잡은 싱싱한 수산물! 효빈 전 지역 로켓 배송 서비스.", img: "이미지/어간수산시장.webp", wiki_url: "어간수산시장.html" },
         { title: "법무법인(유한) 청엽 - 교통/행정 전문", url: "law-cheongyeop.co.kr", desc: "부당해고 및 교통사고 소송 승소율 1위! 청엽구청 앞 위치. 무료 방문 상담.", img: "이미지/법무법인청엽.webp", wiki_url: "청엽구청.html" },
         { title: "효빈 AFG 홈경기 예매 (효빈아레나)", url: "hyobin-afg.com", desc: "K리그1의 자존심 효빈 AFG! 이번 주말 홈경기 예매 오픈. 뜨거운 응원석의 열기!", img: "이미지/효빈아레나.webp", wiki_url: "효빈 AFG 애프터 글로우.html" },
@@ -142,7 +142,7 @@ window.addEventListener("load", function() {
                 
                 <div class="font-bold mb-1 text-gray-700 dark:text-gray-300">크리에이티브 커먼즈 라이선스</div>
                 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank" rel="noopener" class="inline-block mb-3">
-                    <img src="https://licensebuttons.net/l/by-nc-sa/3.0/88x31.webp" alt="CC BY-NC-SA" class="w-[88px] h-[31px]">
+                    <img src="https://licensebuttons.net/l/by-nc-sa/3.0/88x31.png" alt="CC BY-NC-SA" class="w-[88px] h-[31px]">
                 </a>
                 
                 <div class="leading-relaxed">
