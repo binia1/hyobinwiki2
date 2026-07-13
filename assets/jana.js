@@ -1832,6 +1832,7 @@
 "고사인": "고사인.html",
 "유증민": "10대_시의원.html#유증민",
 "성선민": "성선민.html",
+"강휴석": "강휴석.html",
 "옥산민": "효빈광역시의회_동적뷰.html#옥산민",
 "유신민": "10대_시의원.html#유신민",
 "오상원": "10대_시의원.html#오상원",
@@ -1841,6 +1842,7 @@
 "소상리": "효빈광역시의회_동적뷰.html#소상리",
 "고상면": "10대_시의원.html#고상면",
 "문언성": "문언성.html",
+"박철군": "박철군.html",
 "주옥현": "10대_시의원.html#주옥현",
 "원기덕": "10대_시의원.html#원기덕",
 "이수라남": "10대_시의원.html#이수라남",
@@ -3707,7 +3709,7 @@ const forbiddenSelectors = [
         '.infobox', '.nav-line-name', 'th', '.infobox-top-label', '.nav-box-body td',
         'span[style*="color"]', 'span[style*="background"]', 
         '.opacity-80', '.text-sm', '.leading-none', 
-        '.subway-badge', '.wiki-badge', '.line-badge', 
+        '.subway-badge', '.wiki-badge', '.line-badge', 'span[style*="font-size"]','div[style*="font-size"]',
         '.l1', '.l2', '.l3', '.l4', '.l5', '.l6', '.l7', '.l8', '.lbinhyo', 
 '.wiki-fn', '.namu-head', '.namu-title', '.city', '.kind', '.badge', '.rounded', '.route-tab', '.text-white', 'summary' ,'details','table ','.bus-badge'   ].join(', ');
 

@@ -20,70 +20,99 @@
     if (navContainer) {
         // 내비게이션 HTML 구조
         var navHTML = `
-        <div class="nav-box rounded overflow-hidden shadow-sm" style="border-color: var(--wiki-fixed);">
-            <div class="nav-box-header" style="background-color: var(--wiki-fixed);" onclick="toggleNav('guNav', 'guLabel')">
-                <span class="flex items-center">
-                    <img src="이미지/효빈광역시_흰색로고.webp" alt="🏙️" style="height: 3.2em; width: auto; margin-right: 5px;" onerror="this.outerHTML='🏙️'">
-                    <span>효빈광역시의 행정구역</span>
-                </span>
-                <span id="guLabel" class="text-[10px] bg-white/20 px-2 py-0.5 rounded nav-toggle-btn">[접기]</span>
-            </div>
-            <div id="guNav" class="nav-box-body" style="transition: max-height 0.3s ease-out; overflow: hidden; max-height: 2000px;">
-                <table class="nav-table text-xs">
-                    <tr>
-                        <th style="background-color: var(--wiki-fixed) !important; color:white!important;">자치구</th>
-                        <td>
-                            <div class="flex flex-wrap justify-center gap-2">
-                                <a href="중구.html" class="admin-item">
-                                    <img src="이미지/중구.webp" class="admin-logo-space" alt="중구">
-                                    중구
+            <div style="border: 1px solid #7777AA; width: 100%; box-sizing: border-box; font-family: sans-serif; background: white; margin-bottom: 20px;">
+                <div style="background: #7777AA; color: white; display: flex; align-items: center; justify-content: center; padding: 12px 20px; border-bottom: 1px solid #7777AA; position: relative;">
+                    <div style="display: flex; align-items: center; gap: 15px; border: 1px solid white; padding: 5px 15px;">
+                        <div style="display: flex; align-items: center; justify-content: center;">
+                            <img src="이미지/효빈광역시_흰색로고.webp" style="height: 35px; filter: brightness(0) invert(1);" alt="효빈 로고" onerror="this.src='이미지/hyobin1.webp'">
+                        </div>
+                        <div style="display: flex; flex-direction: column; line-height: 1.1; text-align: left;">
+                            <span style="font-size: 12px; font-weight: normal; letter-spacing: 1px;">효빈광역시</span>
+                            <span style="font-size: 20px; font-weight: bold;">기초자치단체</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; font-size: 11px; padding: 5px; border-bottom: 1px solid #e5e7eb; background: #666699; color: white; cursor: pointer;">[ 펼치기 · 접기 ]</div>
+                
+                <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 12px;">
+                    <tbody>
+                        <tr>
+                            <th colspan="4" style="background-color: #7777AA; color: white; padding: 6px; border-bottom: 1px solid white;">자치구</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px 10px; border: 1px solid #e5e7eb; width: 25%; background: white;">
+                                <a href="중구.html" style="text-decoration: none; color: black; display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                                    <img src="이미지/중구.webp" style="height: 25px; object-fit: contain;" alt="중구" onerror="this.style.display='none'">
+                                    <span style="font-weight: bold;">중구</span>
                                 </a>
-                                <a href="동구.html" class="admin-item">
-                                    <img src="이미지/동구.webp" class="admin-logo-space" alt="동구">
-                                    동구
+                            </td>
+                            <td style="padding: 12px 10px; border: 1px solid #e5e7eb; width: 25%; background: white;">
+                                <a href="동구.html" style="text-decoration: none; color: black; display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                                    <img src="이미지/동구.webp" style="height: 25px; object-fit: contain;" alt="동구" onerror="this.style.display='none'">
+                                    <span style="font-weight: bold;">동구</span>
                                 </a>
-                                <a href="서구.html" class="admin-item">
-                                    <img src="이미지/서구.webp" class="admin-logo-space" alt="서구">
-                                    서구
+                            </td>
+                            <td style="padding: 12px 10px; border: 1px solid #e5e7eb; width: 25%; background: white;">
+                                <a href="서구.html" style="text-decoration: none; color: black; display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                                    <img src="이미지/서구.webp" style="height: 25px; object-fit: contain;" alt="서구" onerror="this.style.display='none'">
+                                    <span style="font-weight: bold;">서구</span>
                                 </a>
-                                <a href="남구.html" class="admin-item">
-                                    <img src="이미지/남구.webp" class="admin-logo-space" alt="남구">
-                                    남구
+                            </td>
+                            <td style="padding: 12px 10px; border: 1px solid #e5e7eb; width: 25%; background: white;">
+                                <a href="남구.html" style="text-decoration: none; color: black; display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                                    <img src="이미지/남구.webp" style="height: 25px; object-fit: contain;" alt="남구" onerror="this.style.display='none'">
+                                    <span style="font-weight: bold;">남구</span>
                                 </a>
-                                <a href="북구.html" class="admin-item">
-                                    <img src="이미지/북구.webp" class="admin-logo-space" alt="북구">
-                                    북구
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px 10px; border: 1px solid #e5e7eb; width: 25%; background: white;">
+                                <a href="북구.html" style="text-decoration: none; color: black; display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                                    <img src="이미지/북구.webp" style="height: 25px; object-fit: contain;" alt="북구" onerror="this.style.display='none'">
+                                    <div><span style="background: #7777AA; color: white; padding: 1px 4px; border-radius: 2px; font-size: 10px; margin-right: 3px;">시청</span><span style="font-weight: bold;">북구</span></div>
                                 </a>
-                                <a href="청엽구.html" class="admin-item">
-                                    <img src="이미지/청엽구.webp" class="admin-logo-space" alt="청엽">
-                                    청엽구
+                            </td>
+                            <td style="padding: 12px 10px; border: 1px solid #e5e7eb; width: 25%; background: white;">
+                                <a href="청엽구.html" style="text-decoration: none; color: black; display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                                    <img src="이미지/청엽구.webp" style="height: 25px; object-fit: contain;" alt="청엽구" onerror="this.style.display='none'">
+                                    <span style="font-weight: bold;">청엽구</span>
                                 </a>
-                                <a href="안천구.html" class="admin-item">
-                                    <img src="이미지/안천구.webp" class="admin-logo-space" alt="안천">
-                                    안천구
+                            </td>
+                            <td style="padding: 12px 10px; border: 1px solid #e5e7eb; width: 25%; background: white;">
+                                <a href="안천구.html" style="text-decoration: none; color: black; display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                                    <img src="이미지/안천구.webp" style="height: 25px; object-fit: contain;" alt="안천구" onerror="this.style.display='none'">
+                                    <span style="font-weight: bold;">안천구</span>
                                 </a>
-                                <a href="창전구.html" class="admin-item">
-                                    <img src="이미지/창전구.webp" class="admin-logo-space" alt="창전">
-                                    창전구
+                            </td>
+                            <td style="padding: 12px 10px; border: 1px solid #e5e7eb; width: 25%; background: white;">
+                                <a href="창전구.html" style="text-decoration: none; color: black; display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                                    <img src="이미지/창전구.webp" style="height: 25px; object-fit: contain;" alt="창전구" onerror="this.style.display='none'">
+                                    <span style="font-weight: bold;">창전구</span>
                                 </a>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th style="background-color: var(--wiki-fixed) !important; color:white!important;">자치군</th>
-                        <td>
-                            <div class="flex justify-center">
-                                <a href="탄성군.html" class="admin-item">
-                                    <img src="이미지/탄성군.webp" class="admin-logo-space" alt="탄성">
-                                    탄성군
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th colspan="4" style="background-color: #7777AA; color: white; padding: 6px; border-bottom: 1px solid white;">자치군</th>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="padding: 12px 10px; border: 1px solid #e5e7eb; background: white;">
+                                <div style="display: flex; justify-content: center;">
+                                    <a href="탄성군.html" style="text-decoration: none; color: black; display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                                        <img src="이미지/탄성군.webp" style="height: 25px; object-fit: contain;" alt="탄성군" onerror="this.style.display='none'">
+                                        <span style="font-weight: bold;">탄성군</span>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
-            </div>
-        </div>
-        `;
+                <div style="background-color: #7777AA; color: white; padding: 8px; font-size: 11px; text-align: center; line-height: 1.5;">
+                    서울 · 광주 · 부산 · 대구 · 효빈 · 인천 · 대전 · 울산 · 세종<br>
+                    경기 · 충북 · 충남 · 경북 · 경남 · 덕남 · 덕북 · 강원 · 전북 · 제주<br>
+                </div>
+            </div>`;
+
+
         
         navContainer.innerHTML = navHTML;
     }

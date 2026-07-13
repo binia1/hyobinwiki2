@@ -65,6 +65,12 @@ window.HB_WIKI_PAGES = [
   },{
     "title": "광역시",
     "href": "광역시.html"
+  },{
+    "title": "강휴석",
+    "href": "강휴석.html"
+  },{
+    "title": "박철군",
+    "href": "박철군.html"
   },
   {
     "title": "세라스 야나기다 릴리엔펠트",
@@ -6970,7 +6976,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "기타등장인물",
-    "href": "기타등장인물.html"
+    "href": "기타 등장인물.html"
   },
   {
     "title": "팔호동",
