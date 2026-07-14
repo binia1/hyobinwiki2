@@ -2109,6 +2109,16 @@ window.HB_WIKI_PAGES = [
   {
     "title": "덕빈방언",
     "href": "덕빈방언.html"
+  },  {
+    "title": "우시랑",
+    "href": "우시랑.html"
+  },{
+    "title": "오성현",
+    "href": "오성현.html"
+  },
+  {
+    "title": "대한상공회의소",
+    "href": "대한상공회의소.html"
   },
   {
     "title": "덕빈보건대학",
