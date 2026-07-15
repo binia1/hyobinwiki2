@@ -118,14 +118,14 @@ function renderHyobinElectionSection(containerId) {
         </tr>
     `;
     const presBody = `
-        <tr class="font-bold bg-gray-50"><td>전체 합계</td><td class="win-minju">1,659,989 (78.67%)</td><td>268,476 (12.72%)</td><td>133,526 (6.33%)</td><td>+764,745</td><td>84.90%</td></tr>
+        <tr class="font-bold bg-gray-50"><td>전체 합계</td><td class="win-minju">1,659,989 (78.67%)</td><td>268,476 (12.72%)</td><td>133,526 (9.33%)</td><td>+764,745</td><td>84.90%</td></tr>
         <tr><td><a href="남구.html" style="color:inherit;">남구</a></td><td class="win-minju">181,674 (67.91%)</td><td>59,309 (22.17%)</td><td>21,562 (8.06%)</td><td>122,365 (45.74%p)</td><td>86.35%</td></tr>
         <tr><td><a href="북구.html" style="color:inherit;">북구</a></td><td class="win-minju">304,903 (83.12%)</td><td>32,793 (8.94%)</td><td>21,789 (5.94%)</td><td>272,110 (74.18%p)</td><td>84.23%</td></tr>
         <tr><td><a href="동구.html" style="color:inherit;">동구</a></td><td class="win-minju">94,248 (70.79%)</td><td>27,839 (20.91%)</td><td>6,803 (5.11%)</td><td>66,409 (49.88%p)</td><td>83.43%</td></tr>
         <tr><td><a href="서구.html" style="color:inherit;">서구</a></td><td class="win-minju">152,648 (74.02%)</td><td>33,037 (16.02%)</td><td>16,518 (8.01%)</td><td>119,611 (58.00%p)</td><td>87.21%</td></tr>
         <tr><td><a href="중구.html" style="color:inherit;">중구</a></td><td class="win-minju">49,272 (78.16%)</td><td>9,910 (15.72%)</td><td>2,609 (4.14%)</td><td>39,362 (62.44%p)</td><td>88.42%</td></tr>
         <tr><td><a href="안천구.html" style="color:inherit;">안천구</a></td><td class="win-minju">246,424 (81.56%)</td><td>30,757 (10.18%)</td><td>16,436 (5.44%)</td><td>215,667 (71.38%p)</td><td>82.23%</td></tr>
-        <tr><td><a href="청엽구.html" style="color:inherit;">청엽구</a></td><td class="win-minju">278,994 (82.28%)</td><td>31,805 (9.38%)</td><td>18,784 (5.54%)</td><td>247,189 (72.90%p)</td><td>86.33%</td></tr>
+        <tr><td><a href="청엽구.html" style="color:inherit;">청엽구</a></td><td class="win-minju">278,994 (82.28%)</td><td>31,805 (9.38%)</td><td>18,784 (5.54%)</td><td>247,189 (72.90%p)</td><td>89.33%</td></tr>
         <tr><td><a href="창전구.html" style="color:inherit;">창전구</a></td><td class="win-minju">207,038 (81.16%)</td><td>25,713 (10.08%)</td><td>17,448 (6.84%)</td><td>181,325 (71.08%p)</td><td>84.21%</td></tr>
         <tr><td><a href="탄성군.html" style="color:inherit;">탄성군</a></td><td class="win-minju">144,788 (81.79%)</td><td>17,313 (9.78%)</td><td>11,577 (6.54%)</td><td>127,475 (72.01%p)</td><td>84.44%</td></tr>
     `;
