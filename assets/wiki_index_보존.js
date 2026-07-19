@@ -9092,59 +9092,59 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "인서고등학교",
-    "href": "북구_고등학교_템플릿.html?id=inseo"
+    "href": "북구_고등학교_템플릿.html?school=inseo"
   },
   {
     "title": "소창고등학교",
-    "href": "북구_고등학교_템플릿.html?id=sochang"
+    "href": "북구_고등학교_템플릿.html?school=sochang"
   },
   {
     "title": "효빈북여자고등학교",
-    "href": "북구_고등학교_템플릿.html?id=hbgirls"
+    "href": "북구_고등학교_템플릿.html?school=hbgirls"
   },
   {
     "title": "효빈북부공업고등학교",
-    "href": "북구_고등학교_템플릿.html?id=hbtech"
+    "href": "북구_고등학교_템플릿.html?school=hbtech"
   },
   {
     "title": "오내고등학교",
-    "href": "북구_고등학교_템플릿.html?id=onae"
+    "href": "북구_고등학교_템플릿.html?school=onae"
   },
   {
     "title": "남전고등학교",
-    "href": "북구_고등학교_템플릿.html?id=namjeon"
+    "href": "북구_고등학교_템플릿.html?school=namjeon"
   },
   {
     "title": "진희고등학교",
-    "href": "북구_고등학교_템플릿.html?id=jinhee"
+    "href": "북구_고등학교_템플릿.html?school=jinhee"
   },
   {
     "title": "이남고등학교",
-    "href": "북구_고등학교_템플릿.html?id=inam"
+    "href": "북구_고등학교_템플릿.html?school=inam"
   },
   {
     "title": "산남고등학교",
-    "href": "북구_고등학교_템플릿.html?id=sannam"
+    "href": "북구_고등학교_템플릿.html?school=sannam"
   },
   {
     "title": "청남고등학교",
-    "href": "북구_고등학교_템플릿.html?id=cheongnam"
+    "href": "북구_고등학교_템플릿.html?school=cheongnam"
   },
   {
     "title": "사능고등학교",
-    "href": "북구_고등학교_템플릿.html?id=saneung"
+    "href": "북구_고등학교_템플릿.html?school=saneung"
   },
   {
     "title": "평전고등학교",
-    "href": "북구_고등학교_템플릿.html?id=pyeongjeon"
+    "href": "북구_고등학교_템플릿.html?school=pyeongjeon"
   },
   {
     "title": "천왕사고등학교",
-    "href": "북구_고등학교_템플릿.html?id=cheonwangsa"
+    "href": "북구_고등학교_템플릿.html?school=cheonwangsa"
   },
   {
     "title": "효빈제일고등학교",
-    "href": "북구_고등학교_템플릿.html?id=hbjeil"
+    "href": "북구_고등학교_템플릿.html?school=hbjeil"
   },
   {
     "title": "엽월대역",
@@ -12365,20 +12365,20 @@ window.HB_WIKI_PAGES = [
   "효빈예고": "효빈예술고등학교.html",
   "효빈종합고": "효빈종합고등학교.html",
   "효종고": "효빈종합고등학교.html",
-  "인서고": "북구_고등학교_템플릿.html?id=inseo",
-  "소창고": "북구_고등학교_템플릿.html?id=sochang",
-  "효빈북여고": "북구_고등학교_템플릿.html?id=hbgirls",
-  "효빈북부공고": "북구_고등학교_템플릿.html?id=hbtech",
-  "오내고": "북구_고등학교_템플릿.html?id=onae",
-  "남전고": "북구_고등학교_템플릿.html?id=namjeon",
-  "진희고": "북구_고등학교_템플릿.html?id=jinhee",
-  "이남고": "북구_고등학교_템플릿.html?id=inam",
-  "산남고": "북구_고등학교_템플릿.html?id=sannam",
-  "청남고": "북구_고등학교_템플릿.html?id=cheongnam",
-  "사능고": "북구_고등학교_템플릿.html?id=saneung",
-  "평전고": "북구_고등학교_템플릿.html?id=pyeongjeon",
-  "천왕사고": "북구_고등학교_템플릿.html?id=cheonwangsa",
-  "효빈제일고": "북구_고등학교_템플릿.html?id=hbjeil",
+  "인서고": "북구_고등학교_템플릿.html?school=inseo",
+  "소창고": "북구_고등학교_템플릿.html?school=sochang",
+  "효빈북여고": "북구_고등학교_템플릿.html?school=hbgirls",
+  "효빈북부공고": "북구_고등학교_템플릿.html?school=hbtech",
+  "오내고": "북구_고등학교_템플릿.html?school=onae",
+  "남전고": "북구_고등학교_템플릿.html?school=namjeon",
+  "진희고": "북구_고등학교_템플릿.html?school=jinhee",
+  "이남고": "북구_고등학교_템플릿.html?school=inam",
+  "산남고": "북구_고등학교_템플릿.html?school=sannam",
+  "청남고": "북구_고등학교_템플릿.html?school=cheongnam",
+  "사능고": "북구_고등학교_템플릿.html?school=saneung",
+  "평전고": "북구_고등학교_템플릿.html?school=pyeongjeon",
+  "천왕사고": "북구_고등학교_템플릿.html?school=cheonwangsa",
+  "효빈제일고": "북구_고등학교_템플릿.html?school=hbjeil",
   "CGV효빈역": "CGV_효빈역.html",
   "CGV 효빈역": "CGV_효빈역.html",
   "CGV효빈대": "CGV_효빈대.html",
@@ -13038,14 +13038,14 @@ window.HB_WIKI_PAGES = [
   "조영식": "두청운수_피해_사례집.html?victim=조영식",
   "한상구": "두청운수_피해_사례집.html?victim=한상구",
   "강대호": "두청운수_피해_사례집.html?victim=강대호",
-  "강갑수": "두청운수_빌런_기사_목록.html?villain=강갑수",
-  "김칠성": "두청운수_빌런_기사_목록.html?villain=김칠성",
-  "최말구": "두청운수_빌런_기사_목록.html?villain=최말구",
-  "이독사": "두청운수_빌런_기사_목록.html?villain=이독사",
-  "조만석": "두청운수_빌런_기사_목록.html?villain=조만석",
-  "배칠두": "두청운수_빌런_기사_목록.html?villain=배칠두",
-  "허세풍": "두청운수_빌런_기사_목록.html?villain=허세풍",
-  "엄치돈": "두청운수_빌런_기사_목록.html?villain=엄치돈",
+  "강갑수": "두청운수_빌런_기사_목록.html?name=강갑수",
+  "김칠성": "두청운수_빌런_기사_목록.html?name=김칠성",
+  "최말구": "두청운수_빌런_기사_목록.html?name=최말구",
+  "이독사": "두청운수_빌런_기사_목록.html?name=이독사",
+  "조만석": "두청운수_빌런_기사_목록.html?name=조만석",
+  "배칠두": "두청운수_빌런_기사_목록.html?name=배칠두",
+  "허세풍": "두청운수_빌런_기사_목록.html?name=허세풍",
+  "엄치돈": "두청운수_빌런_기사_목록.html?name=엄치돈",
   "효빈_도시철도_1호선": "1호선.html",
   "효빈_도시철도_2호선": "2호선.html",
   "효빈_도시철도_3호선": "3호선.html",
@@ -14812,20 +14812,20 @@ window.HB_WIKI_PAGES = [
   "효빈종합고": "효빈종합고등학교.html",
   "효종고": "효빈종합고등학교.html",
 
-  "인서고": "북구_고등학교_템플릿.html?id=inseo",
-  "소창고": "북구_고등학교_템플릿.html?id=sochang",
-  "효빈북여고": "북구_고등학교_템플릿.html?id=hbgirls",
-  "효빈북부공고": "북구_고등학교_템플릿.html?id=hbtech",
-  "오내고": "북구_고등학교_템플릿.html?id=onae",
-  "남전고": "북구_고등학교_템플릿.html?id=namjeon",
-  "진희고": "북구_고등학교_템플릿.html?id=jinhee",
-  "이남고": "북구_고등학교_템플릿.html?id=inam",
-  "산남고": "북구_고등학교_템플릿.html?id=sannam",
-  "청남고": "북구_고등학교_템플릿.html?id=cheongnam",
-  "사능고": "북구_고등학교_템플릿.html?id=saneung",
-  "평전고": "북구_고등학교_템플릿.html?id=pyeongjeon",
-  "천왕사고": "북구_고등학교_템플릿.html?id=cheonwangsa",
-  "효빈제일고": "북구_고등학교_템플릿.html?id=hbjeil",
+  "인서고": "북구_고등학교_템플릿.html?school=inseo",
+  "소창고": "북구_고등학교_템플릿.html?school=sochang",
+  "효빈북여고": "북구_고등학교_템플릿.html?school=hbgirls",
+  "효빈북부공고": "북구_고등학교_템플릿.html?school=hbtech",
+  "오내고": "북구_고등학교_템플릿.html?school=onae",
+  "남전고": "북구_고등학교_템플릿.html?school=namjeon",
+  "진희고": "북구_고등학교_템플릿.html?school=jinhee",
+  "이남고": "북구_고등학교_템플릿.html?school=inam",
+  "산남고": "북구_고등학교_템플릿.html?school=sannam",
+  "청남고": "북구_고등학교_템플릿.html?school=cheongnam",
+  "사능고": "북구_고등학교_템플릿.html?school=saneung",
+  "평전고": "북구_고등학교_템플릿.html?school=pyeongjeon",
+  "천왕사고": "북구_고등학교_템플릿.html?school=cheonwangsa",
+  "효빈제일고": "북구_고등학교_템플릿.html?school=hbjeil",
   
   "CGV효빈역": "CGV_효빈역.html",
   "CGV 효빈역": "CGV_효빈역.html",
@@ -15534,14 +15534,14 @@ window.HB_WIKI_PAGES = [
                 "조영식": "두청운수_피해_사례집.html?victim=조영식",
                 "한상구": "두청운수_피해_사례집.html?victim=한상구",
                 "강대호": "두청운수_피해_사례집.html?victim=강대호",
-                "강갑수": "두청운수_빌런_기사_목록.html?villain=강갑수",
-                "김칠성": "두청운수_빌런_기사_목록.html?villain=김칠성",
-                "최말구": "두청운수_빌런_기사_목록.html?villain=최말구",
-                "이독사": "두청운수_빌런_기사_목록.html?villain=이독사",
-                "조만석": "두청운수_빌런_기사_목록.html?villain=조만석",
-                "배칠두": "두청운수_빌런_기사_목록.html?villain=배칠두",
-                "허세풍": "두청운수_빌런_기사_목록.html?villain=허세풍",
-                "엄치돈": "두청운수_빌런_기사_목록.html?villain=엄치돈",
+                "강갑수": "두청운수_빌런_기사_목록.html?name=강갑수",
+                "김칠성": "두청운수_빌런_기사_목록.html?name=김칠성",
+                "최말구": "두청운수_빌런_기사_목록.html?name=최말구",
+                "이독사": "두청운수_빌런_기사_목록.html?name=이독사",
+                "조만석": "두청운수_빌런_기사_목록.html?name=조만석",
+                "배칠두": "두청운수_빌런_기사_목록.html?name=배칠두",
+                "허세풍": "두청운수_빌런_기사_목록.html?name=허세풍",
+                "엄치돈": "두청운수_빌런_기사_목록.html?name=엄치돈",
                 "효빈_도시철도_1호선": "1호선.html",
                 "효빈_도시철도_2호선": "2호선.html",
                 "효빈_도시철도_3호선": "3호선.html",

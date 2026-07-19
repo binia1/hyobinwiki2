@@ -6665,6 +6665,9 @@ window.HB_WIKI_PAGES = [
   {
     "title": "틀_미개통노선도",
     "href": "틀_미개통노선도.html"
+  },  {
+    "title": "가족돌봄청년",
+    "href": "가족돌봄청년.html"
   },
   {
     "title": "틀_역대_덕빈남도_기초자치단체장",
@@ -9382,6 +9385,7 @@ window.HB_WIKI_PAGES = [
     "title": "다테_사유리",
     "href": "다테_사유리.html"
   },
+  
   {
     "title": "마에다_카오리",
     "href": "마에다_카오리.html"
@@ -9664,59 +9668,59 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "인서고등학교",
-    "href": "북구_고등학교_템플릿.html?id=inseo"
+    "href": "북구_고등학교_템플릿.html?school=inseo"
   },
   {
     "title": "소창고등학교",
-    "href": "북구_고등학교_템플릿.html?id=sochang"
+    "href": "북구_고등학교_템플릿.html?school=sochang"
   },
   {
     "title": "효빈북여자고등학교",
-    "href": "북구_고등학교_템플릿.html?id=hbgirls"
+    "href": "북구_고등학교_템플릿.html?school=hbgirls"
   },
   {
     "title": "효빈북부공업고등학교",
-    "href": "북구_고등학교_템플릿.html?id=hbtech"
+    "href": "북구_고등학교_템플릿.html?school=hbtech"
   },
   {
     "title": "오내고등학교",
-    "href": "북구_고등학교_템플릿.html?id=onae"
+    "href": "북구_고등학교_템플릿.html?school=onae"
   },
   {
     "title": "남전고등학교",
-    "href": "북구_고등학교_템플릿.html?id=namjeon"
+    "href": "북구_고등학교_템플릿.html?school=namjeon"
   },
   {
     "title": "진희고등학교",
-    "href": "북구_고등학교_템플릿.html?id=jinhee"
+    "href": "북구_고등학교_템플릿.html?school=jinhee"
   },
   {
     "title": "이남고등학교",
-    "href": "북구_고등학교_템플릿.html?id=inam"
+    "href": "북구_고등학교_템플릿.html?school=inam"
   },
   {
     "title": "산남고등학교",
-    "href": "북구_고등학교_템플릿.html?id=sannam"
+    "href": "북구_고등학교_템플릿.html?school=sannam"
   },
   {
     "title": "청남고등학교",
-    "href": "북구_고등학교_템플릿.html?id=cheongnam"
+    "href": "북구_고등학교_템플릿.html?school=cheongnam"
   },
   {
     "title": "사능고등학교",
-    "href": "북구_고등학교_템플릿.html?id=saneung"
+    "href": "북구_고등학교_템플릿.html?school=saneung"
   },
   {
     "title": "평전고등학교",
-    "href": "북구_고등학교_템플릿.html?id=pyeongjeon"
+    "href": "북구_고등학교_템플릿.html?school=pyeongjeon"
   },
   {
     "title": "천왕사고등학교",
-    "href": "북구_고등학교_템플릿.html?id=cheonwangsa"
+    "href": "북구_고등학교_템플릿.html?school=cheonwangsa"
   },
   {
     "title": "효빈제일고등학교",
-    "href": "북구_고등학교_템플릿.html?id=hbjeil"
+    "href": "북구_고등학교_템플릿.html?school=hbjeil"
   },
   {
     "title": "엽월대역",
@@ -12937,20 +12941,20 @@ window.HB_WIKI_PAGES = [
   "효빈예고": "효빈예술고등학교.html",
   "효빈종합고": "효빈종합고등학교.html",
   "효종고": "효빈종합고등학교.html",
-  "인서고": "북구_고등학교_템플릿.html?id=inseo",
-  "소창고": "북구_고등학교_템플릿.html?id=sochang",
-  "효빈북여고": "북구_고등학교_템플릿.html?id=hbgirls",
-  "효빈북부공고": "북구_고등학교_템플릿.html?id=hbtech",
-  "오내고": "북구_고등학교_템플릿.html?id=onae",
-  "남전고": "북구_고등학교_템플릿.html?id=namjeon",
-  "진희고": "북구_고등학교_템플릿.html?id=jinhee",
-  "이남고": "북구_고등학교_템플릿.html?id=inam",
-  "산남고": "북구_고등학교_템플릿.html?id=sannam",
-  "청남고": "북구_고등학교_템플릿.html?id=cheongnam",
-  "사능고": "북구_고등학교_템플릿.html?id=saneung",
-  "평전고": "북구_고등학교_템플릿.html?id=pyeongjeon",
-  "천왕사고": "북구_고등학교_템플릿.html?id=cheonwangsa",
-  "효빈제일고": "북구_고등학교_템플릿.html?id=hbjeil",
+  "인서고": "북구_고등학교_템플릿.html?school=inseo",
+  "소창고": "북구_고등학교_템플릿.html?school=sochang",
+  "효빈북여고": "북구_고등학교_템플릿.html?school=hbgirls",
+  "효빈북부공고": "북구_고등학교_템플릿.html?school=hbtech",
+  "오내고": "북구_고등학교_템플릿.html?school=onae",
+  "남전고": "북구_고등학교_템플릿.html?school=namjeon",
+  "진희고": "북구_고등학교_템플릿.html?school=jinhee",
+  "이남고": "북구_고등학교_템플릿.html?school=inam",
+  "산남고": "북구_고등학교_템플릿.html?school=sannam",
+  "청남고": "북구_고등학교_템플릿.html?school=cheongnam",
+  "사능고": "북구_고등학교_템플릿.html?school=saneung",
+  "평전고": "북구_고등학교_템플릿.html?school=pyeongjeon",
+  "천왕사고": "북구_고등학교_템플릿.html?school=cheonwangsa",
+  "효빈제일고": "북구_고등학교_템플릿.html?school=hbjeil",
   "CGV효빈역": "CGV_효빈역.html",
   "CGV 효빈역": "CGV_효빈역.html",
   "CGV효빈대": "CGV_효빈대.html",
@@ -13610,14 +13614,14 @@ window.HB_WIKI_PAGES = [
   "조영식": "두청운수_피해_사례집.html?victim=조영식",
   "한상구": "두청운수_피해_사례집.html?victim=한상구",
   "강대호": "두청운수_피해_사례집.html?victim=강대호",
-  "강갑수": "두청운수_빌런_기사_목록.html?villain=강갑수",
-  "김칠성": "두청운수_빌런_기사_목록.html?villain=김칠성",
-  "최말구": "두청운수_빌런_기사_목록.html?villain=최말구",
-  "이독사": "두청운수_빌런_기사_목록.html?villain=이독사",
-  "조만석": "두청운수_빌런_기사_목록.html?villain=조만석",
-  "배칠두": "두청운수_빌런_기사_목록.html?villain=배칠두",
-  "허세풍": "두청운수_빌런_기사_목록.html?villain=허세풍",
-  "엄치돈": "두청운수_빌런_기사_목록.html?villain=엄치돈",
+  "강갑수": "두청운수_빌런_기사_목록.html?name=강갑수",
+  "김칠성": "두청운수_빌런_기사_목록.html?name=김칠성",
+  "최말구": "두청운수_빌런_기사_목록.html?name=최말구",
+  "이독사": "두청운수_빌런_기사_목록.html?name=이독사",
+  "조만석": "두청운수_빌런_기사_목록.html?name=조만석",
+  "배칠두": "두청운수_빌런_기사_목록.html?name=배칠두",
+  "허세풍": "두청운수_빌런_기사_목록.html?name=허세풍",
+  "엄치돈": "두청운수_빌런_기사_목록.html?name=엄치돈",
   "효빈_도시철도_1호선": "1호선.html",
   "효빈_도시철도_2호선": "2호선.html",
   "효빈_도시철도_3호선": "3호선.html",
@@ -14750,6 +14754,13 @@ window.HB_WIKI_PAGES = [
   "탄성여객":"탄성여객.html",
   "탄성역":"탄성역.html",
   "탄성읍":"탄성읍.html",
+  "전북고속":"전북고속.html",
+  "전주고속":"전주고속.html",
+  "좆북고속":"전북고속.html",
+  "좆주고속":"전주고속.html",
+  "ㅈ북고속":"전북고속.html",
+  "ㅈ주고속":"전주고속.html",
+  "탄성읍":"탄성읍.html",
   "탄자동":"탄자동.html",
   "탄자역":"탄자역.html",
   "탕쿠쿠 대첩":"탕쿠쿠 대첩.html",
@@ -15384,20 +15395,20 @@ window.HB_WIKI_PAGES = [
   "효빈종합고": "효빈종합고등학교.html",
   "효종고": "효빈종합고등학교.html",
 
-  "인서고": "북구_고등학교_템플릿.html?id=inseo",
-  "소창고": "북구_고등학교_템플릿.html?id=sochang",
-  "효빈북여고": "북구_고등학교_템플릿.html?id=hbgirls",
-  "효빈북부공고": "북구_고등학교_템플릿.html?id=hbtech",
-  "오내고": "북구_고등학교_템플릿.html?id=onae",
-  "남전고": "북구_고등학교_템플릿.html?id=namjeon",
-  "진희고": "북구_고등학교_템플릿.html?id=jinhee",
-  "이남고": "북구_고등학교_템플릿.html?id=inam",
-  "산남고": "북구_고등학교_템플릿.html?id=sannam",
-  "청남고": "북구_고등학교_템플릿.html?id=cheongnam",
-  "사능고": "북구_고등학교_템플릿.html?id=saneung",
-  "평전고": "북구_고등학교_템플릿.html?id=pyeongjeon",
-  "천왕사고": "북구_고등학교_템플릿.html?id=cheonwangsa",
-  "효빈제일고": "북구_고등학교_템플릿.html?id=hbjeil",
+  "인서고": "북구_고등학교_템플릿.html?school=inseo",
+  "소창고": "북구_고등학교_템플릿.html?school=sochang",
+  "효빈북여고": "북구_고등학교_템플릿.html?school=hbgirls",
+  "효빈북부공고": "북구_고등학교_템플릿.html?school=hbtech",
+  "오내고": "북구_고등학교_템플릿.html?school=onae",
+  "남전고": "북구_고등학교_템플릿.html?school=namjeon",
+  "진희고": "북구_고등학교_템플릿.html?school=jinhee",
+  "이남고": "북구_고등학교_템플릿.html?school=inam",
+  "산남고": "북구_고등학교_템플릿.html?school=sannam",
+  "청남고": "북구_고등학교_템플릿.html?school=cheongnam",
+  "사능고": "북구_고등학교_템플릿.html?school=saneung",
+  "평전고": "북구_고등학교_템플릿.html?school=pyeongjeon",
+  "천왕사고": "북구_고등학교_템플릿.html?school=cheonwangsa",
+  "효빈제일고": "북구_고등학교_템플릿.html?school=hbjeil",
   
   "CGV효빈역": "CGV_효빈역.html",
   "CGV 효빈역": "CGV_효빈역.html",
@@ -16106,14 +16117,14 @@ window.HB_WIKI_PAGES = [
                 "조영식": "두청운수_피해_사례집.html?victim=조영식",
                 "한상구": "두청운수_피해_사례집.html?victim=한상구",
                 "강대호": "두청운수_피해_사례집.html?victim=강대호",
-                "강갑수": "두청운수_빌런_기사_목록.html?villain=강갑수",
-                "김칠성": "두청운수_빌런_기사_목록.html?villain=김칠성",
-                "최말구": "두청운수_빌런_기사_목록.html?villain=최말구",
-                "이독사": "두청운수_빌런_기사_목록.html?villain=이독사",
-                "조만석": "두청운수_빌런_기사_목록.html?villain=조만석",
-                "배칠두": "두청운수_빌런_기사_목록.html?villain=배칠두",
-                "허세풍": "두청운수_빌런_기사_목록.html?villain=허세풍",
-                "엄치돈": "두청운수_빌런_기사_목록.html?villain=엄치돈",
+                "강갑수": "두청운수_빌런_기사_목록.html?name=강갑수",
+                "김칠성": "두청운수_빌런_기사_목록.html?name=김칠성",
+                "최말구": "두청운수_빌런_기사_목록.html?name=최말구",
+                "이독사": "두청운수_빌런_기사_목록.html?name=이독사",
+                "조만석": "두청운수_빌런_기사_목록.html?name=조만석",
+                "배칠두": "두청운수_빌런_기사_목록.html?name=배칠두",
+                "허세풍": "두청운수_빌런_기사_목록.html?name=허세풍",
+                "엄치돈": "두청운수_빌런_기사_목록.html?name=엄치돈",
                 "효빈_도시철도_1호선": "1호선.html",
                 "효빈_도시철도_2호선": "2호선.html",
                 "효빈_도시철도_3호선": "3호선.html",
@@ -16645,20 +16656,31 @@ window.HB_WIKI_PAGES = [
   "사이토_슈카": "사이토_슈카.html",
   "신도_아마네": "신도_아마네.html",
   "페이튼_나오미": "페이튼_나오미.html",
+  "스즈키 아이나": "스즈키_아이나.html",
+  "사이토 슈카": "사이토_슈카.html",
+  "신도 아마네": "신도_아마네.html",
+  "페이튼 나오미": "페이튼_나오미.html",
   "키토_아카리_출연작": "키토_아카리_출연작.html",
   "키토_아카리": "키토_아카리.html",
   "다테_사유리": "다테_사유리.html",
   "마에다_카오리": "마에다_카오리.html",
+  "키토 아카리": "키토_아카리.html",
+  "다테 사유리": "다테_사유리.html",
+  "마에다 카오리": "마에다_카오리.html",
   "마에다_카오리_출연작": "마에다_카오리_출연작.html",
   "우치다_마아야": "우치다_마아야.html",
+  "우치다 마아야": "우치다_마아야.html",
   "우치다_마아야_출연작": "우치다_마아야_출연작.html",
   "쿠노_미사키": "쿠노_미사키.html",
+  "쿠노 미사키": "쿠노_미사키.html",
   "기타햄버거_효빈광역시": "기타햄버거_효빈광역시.html",
   "서브웨이_효빈광역시": "서브웨이_효빈광역시.html",
   "쿠노_미사키_출연작": "쿠노_미사키_출연작.html",
+  "세토 아사미": "세토_아사미.html",
   "세토_아사미": "세토_아사미.html",
   "세토_아사미_출연작": "세토_아사미_출연작.html",
   "틀_효빈광역시_전통시장": "틀_효빈광역시_전통시장.html",
+  "이시카와 유이": "이시카와_유이.html",
   "이시카와_유이": "이시카와_유이.html",
   "이시카와_유이_출연작": "이시카와_유이_출연작.html",
   "청능도매종합시장": "청능도매종합시장.html",
@@ -16712,6 +16734,9 @@ window.HB_WIKI_PAGES = [
   "삼선대학교병원": "삼선대학교병원.html",
   "효빈광역시청 블로그": "효빈광역시청 블로그.html",
   "효빈블라인드": "효빈블라인드.html",
+  "영케어러": "가족돌봄청년.html",
+  "영 케어러": "가족돌봄청년.html",
+  "효빈위키": "효빈위키.html",
   "반덕수": "반덕수.html",
   "남기태": "남기태.html",
   "이주노": "이주노.html",

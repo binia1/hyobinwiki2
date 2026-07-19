@@ -1746,7 +1746,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "남전고등학교",
-    "href": "북구_고등학교_템플릿.html?id=namjeon"
+    "href": "북구_고등학교_템플릿.html?school=namjeon"
   },
   {
     "title": "남전동",
@@ -3322,7 +3322,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "사능고등학교",
-    "href": "북구_고등학교_템플릿.html?id=saneung"
+    "href": "북구_고등학교_템플릿.html?school=saneung"
   },
   {
     "title": "사능동",
@@ -3398,7 +3398,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "산남고등학교",
-    "href": "북구_고등학교_템플릿.html?id=sannam"
+    "href": "북구_고등학교_템플릿.html?school=sannam"
   },
   {
     "title": "산취역",
@@ -3814,7 +3814,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "소창고등학교",
-    "href": "북구_고등학교_템플릿.html?id=sochang"
+    "href": "북구_고등학교_템플릿.html?school=sochang"
   },
   {
     "title": "소판권",
@@ -4562,7 +4562,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "오내고등학교",
-    "href": "북구_고등학교_템플릿.html?id=onae"
+    "href": "북구_고등학교_템플릿.html?school=onae"
   },
   {
     "title": "오내동",
@@ -5122,7 +5122,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "이남고등학교",
-    "href": "북구_고등학교_템플릿.html?id=inam"
+    "href": "북구_고등학교_템플릿.html?school=inam"
   },
   {
     "title": "이남현",
@@ -5306,7 +5306,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "인서고등학교",
-    "href": "북구_고등학교_템플릿.html?id=inseo"
+    "href": "북구_고등학교_템플릿.html?school=inseo"
   },
   {
     "title": "인스타그램 계정전환",
@@ -6226,7 +6226,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "진희고등학교",
-    "href": "북구_고등학교_템플릿.html?id=jinhee"
+    "href": "북구_고등학교_템플릿.html?school=jinhee"
   },
   {
     "title": "진희동",
@@ -6366,7 +6366,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "천왕사고등학교",
-    "href": "북구_고등학교_템플릿.html?id=cheonwangsa"
+    "href": "북구_고등학교_템플릿.html?school=cheonwangsa"
   },
   {
     "title": "천왕사동",
@@ -6442,7 +6442,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "청남고등학교",
-    "href": "북구_고등학교_템플릿.html?id=cheongnam"
+    "href": "북구_고등학교_템플릿.html?school=cheongnam"
   },
   {
     "title": "청능동",
@@ -7070,7 +7070,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "평전고등학교",
-    "href": "북구_고등학교_템플릿.html?id=pyeongjeon"
+    "href": "북구_고등학교_템플릿.html?school=pyeongjeon"
   },
   {
     "title": "평전공단",
@@ -8106,11 +8106,11 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "효빈북부공업고등학교",
-    "href": "북구_고등학교_템플릿.html?id=hbtech"
+    "href": "북구_고등학교_템플릿.html?school=hbtech"
   },
   {
     "title": "효빈북여자고등학교",
-    "href": "북구_고등학교_템플릿.html?id=hbgirls"
+    "href": "북구_고등학교_템플릿.html?school=hbgirls"
   },
   {
     "title": "효빈블라인드",
@@ -8322,7 +8322,7 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "효빈제일고등학교",
-    "href": "북구_고등학교_템플릿.html?id=hbjeil"
+    "href": "북구_고등학교_템플릿.html?school=hbjeil"
   },
   {
     "title": "효빈종합고등학교",
@@ -9486,7 +9486,7 @@ window.HB_WIKI_PAGES = [
   "간호대한의관역": "효빈대_A선_역_템플릿.html?id=A03",
   "간호학과 교수": "간호학과 교수.html",
   "갑문역": "갑문역.html",
-  "강갑수": "두청운수_빌런_기사_목록.html?villain=강갑수",
+  "강갑수": "두청운수_빌런_기사_목록.html?name=강갑수",
   "강대호": "두청운수_피해_사례집.html?victim=강대호",
   "강덕수": "강덕수.html",
   "강동혁": "강동혁.html",
@@ -9723,7 +9723,7 @@ window.HB_WIKI_PAGES = [
   "김지언": "김지언.html",
   "김철수": "김철수.html",
   "김철호": "김철호.html",
-  "김칠성": "두청운수_빌런_기사_목록.html?villain=김칠성",
+  "김칠성": "두청운수_빌런_기사_목록.html?name=김칠성",
   "김태수": "김태수.html",
   "김판석": "김판석.html",
   "나가사키 소요": "나가사키 소요.html",
@@ -9764,7 +9764,7 @@ window.HB_WIKI_PAGES = [
   "남소역": "남소역.html",
   "남소현": "남소현.html",
   "남우택역": "남우택역.html",
-  "남전고": "북구_고등학교_템플릿.html?id=namjeon",
+  "남전고": "북구_고등학교_템플릿.html?school=namjeon",
   "남전동": "남전동.html",
   "남전역": "남전역.html",
   "남주여객": "남주여객.html",
@@ -10169,7 +10169,7 @@ window.HB_WIKI_PAGES = [
   "방산역": "방산역.html",
   "방천군": "방천군.html",
   "배고역": "배고역.html",
-  "배칠두": "두청운수_빌런_기사_목록.html?villain=배칠두",
+  "배칠두": "두청운수_빌런_기사_목록.html?name=배칠두",
   "백로면": "백로면.html",
   "백민우": "백민우.html",
   "백생면": "치원군.html#s-14.3",
@@ -10327,7 +10327,7 @@ window.HB_WIKI_PAGES = [
   "사가당역": "사가당역.html",
   "사노동": "사노동.html",
   "사노역": "사노역.html",
-  "사능고": "북구_고등학교_템플릿.html?id=saneung",
+  "사능고": "북구_고등학교_템플릿.html?school=saneung",
   "사능동": "사능동.html",
   "사능동1가역": "사능동1가역.html",
   "사능동3가역": "사능동3가역.html",
@@ -10351,7 +10351,7 @@ window.HB_WIKI_PAGES = [
   "산고동": "산고동.html",
   "산곡": "산곡건설.html",
   "산곡건설": "산곡건설.html",
-  "산남고": "북구_고등학교_템플릿.html?id=sannam",
+  "산남고": "북구_고등학교_템플릿.html?school=sannam",
   "산백읍": "저천군.html#s-14.3",
   "산전면": "치원군.html#s-14.6",
   "산취역": "산취역.html",
@@ -10480,7 +10480,7 @@ window.HB_WIKI_PAGES = [
   "소조역": "소조역.html",
   "소진로": "소진로.html",
   "소진여객": "소진여객.html",
-  "소창고": "북구_고등학교_템플릿.html?id=sochang",
+  "소창고": "북구_고등학교_템플릿.html?school=sochang",
   "소춘리": "서목읍.html",
   "소판권": "소판권.html",
   "소피": "소피.html",
@@ -10703,7 +10703,7 @@ window.HB_WIKI_PAGES = [
   "어간항역": "어간항역.html",
   "어간해수욕장": "어간해수욕장.html",
   "어장고등학교": "어장고등학교.html",
-  "엄치돈": "두청운수_빌런_기사_목록.html?villain=엄치돈",
+  "엄치돈": "두청운수_빌런_기사_목록.html?name=엄치돈",
   "업로더": "업로더.html",
   "에이치스코로": "에이치스코로.html",
   "엘프로젝트": "L-Project.html",
@@ -10740,7 +10740,7 @@ window.HB_WIKI_PAGES = [
   "오갈매": "오갈매.html",
   "오내1동": "오내동.html",
   "오내2동": "오내동.html",
-  "오내고": "북구_고등학교_템플릿.html?id=onae",
+  "오내고": "북구_고등학교_템플릿.html?school=onae",
   "오내동": "오내동.html",
   "오내사거리역": "오내사거리역.html",
   "오내역": "오내역.html",
@@ -10908,10 +10908,10 @@ window.HB_WIKI_PAGES = [
   "이_모_주무관": "이_모_주무관.html",
   "이갑수": "두청운수_피해_사례집.html?victim=이갑수",
   "이규희": "이규희.html",
-  "이남고": "북구_고등학교_템플릿.html?id=inam",
+  "이남고": "북구_고등학교_템플릿.html?school=inam",
   "이남현": "이남현.html",
   "이덕희": "이덕희.html",
-  "이독사": "두청운수_빌런_기사_목록.html?villain=이독사",
+  "이독사": "두청운수_빌런_기사_목록.html?name=이독사",
   "이마이 리사": "이마이 리사.html",
   "이마트 마잡점": "이마트_마잡점.html",
   "이마트 사복점": "이마트_사복점.html",
@@ -10980,7 +10980,7 @@ window.HB_WIKI_PAGES = [
   "인곡과학대학": "인곡과학대학교.html",
   "인곡과학대학교": "인곡과학대학교.html",
   "인곡군": "인곡군.html",
-  "인서고": "북구_고등학교_템플릿.html?id=inseo",
+  "인서고": "북구_고등학교_템플릿.html?school=inseo",
   "인스타그램 계정전환": "인스타그램 계정전환.html",
   "인스타그램 내활동": "인스타그램 내활동.html",
   "인스타그램 로그인": "인스타그램 로그인.html",
@@ -11216,7 +11216,7 @@ window.HB_WIKI_PAGES = [
   "제택동": "악부동.html",
   "조경원": "조경원.html",
   "조낙지": "조낙지.html",
-  "조만석": "두청운수_빌런_기사_목록.html?villain=조만석",
+  "조만석": "두청운수_빌런_기사_목록.html?name=조만석",
   "조민규": "조민규.html",
   "조민수": "조민수.html",
   "조민수_블로그": "조민수_블로그.html",
@@ -11326,7 +11326,7 @@ window.HB_WIKI_PAGES = [
   "진백중앙": "창전선_역사_템플릿.html?station=진백중앙",
   "진월천역": "진월천역.html",
   "진적역": "진적역.html",
-  "진희고": "북구_고등학교_템플릿.html?id=jinhee",
+  "진희고": "북구_고등학교_템플릿.html?school=jinhee",
   "진희동": "진희동.html",
   "진희역": "진희역.html",
   "창건동": "창건동.html",
@@ -11387,7 +11387,7 @@ window.HB_WIKI_PAGES = [
   "천성구": "천성구.html",
   "천성군": "천성군.html",
   "천성동": "천성동.html",
-  "천왕사고": "북구_고등학교_템플릿.html?id=cheonwangsa",
+  "천왕사고": "북구_고등학교_템플릿.html?school=cheonwangsa",
   "천왕사동": "천왕사동.html",
   "천왕사로": "천왕사로.html",
   "천왕사역": "천왕사역.html",
@@ -11412,7 +11412,7 @@ window.HB_WIKI_PAGES = [
   "철도부!": "철도부!.html",
   "철도부! ~매일매일 출발 진행~": "철도부! ~매일매일 출발 진행~.html",
   "철도부! 팬미팅_종점 없는 티켓": "철도부! 팬미팅_종점 없는 티켓.html",
-  "청남고": "북구_고등학교_템플릿.html?id=cheongnam",
+  "청남고": "북구_고등학교_템플릿.html?school=cheongnam",
   "청능동": "청능동.html",
   "청능역": "청능역.html",
   "청덕 다이버시티 아파트": "청덕 다이버시티 아파트.html",
@@ -11477,7 +11477,7 @@ window.HB_WIKI_PAGES = [
   "최대현": "최대현.html",
   "최동혁": "최동혁.html",
   "최두식": "두청운수_피해_사례집.html?victim=최두식",
-  "최말구": "두청운수_빌런_기사_목록.html?villain=최말구",
+  "최말구": "두청운수_빌런_기사_목록.html?name=최말구",
   "최민규": "최민규.html",
   "최성길": "최성길.html",
   "최정아": "최정아.html",
@@ -11642,7 +11642,7 @@ window.HB_WIKI_PAGES = [
   "평안명대학교": "평안명대학교.html",
   "평안명로": "평안명로.html",
   "평운역": "평운역.html",
-  "평전고": "북구_고등학교_템플릿.html?id=pyeongjeon",
+  "평전고": "북구_고등학교_템플릿.html?school=pyeongjeon",
   "평전공단": "평전공단.html",
   "평전동": "채산동.html",
   "평전역": "평전역.html",
@@ -11724,7 +11724,7 @@ window.HB_WIKI_PAGES = [
   "해총대학교": "해총대학교.html",
   "행정구역별_맞춤형_둘러보기틀": "행정구역별_맞춤형_둘러보기틀.html",
   "향리면": "도향면.html",
-  "허세풍": "두청운수_빌런_기사_목록.html?villain=허세풍",
+  "허세풍": "두청운수_빌런_기사_목록.html?name=허세풍",
   "헌이송동": "헌이송동.html",
   "헌이송역": "헌이송역.html",
   "헤안나 스미레": "헤안나 스미레.html",
@@ -12557,8 +12557,8 @@ window.HB_WIKI_PAGES = [
   "효빈복지방송": "효빈복지방송.html",
   "효빈부동산원": "효빈부동산원.html",
   "효빈북부경찰서": "효빈북부경찰서.html",
-  "효빈북부공고": "북구_고등학교_템플릿.html?id=hbtech",
-  "효빈북여고": "북구_고등학교_템플릿.html?id=hbgirls",
+  "효빈북부공고": "북구_고등학교_템플릿.html?school=hbtech",
+  "효빈북여고": "북구_고등학교_템플릿.html?school=hbgirls",
   "효빈블라인드1": "효빈블라인드1.html",
   "효빈블라인드2": "효빈블라인드2.html",
   "효빈블라인드3": "효빈블라인드3.html",
@@ -12643,7 +12643,7 @@ window.HB_WIKI_PAGES = [
   "효빈점영업중지": "신세계백화점_효빈점_영업_중지_선포_사건.html",
   "효빈정보고등학교": "효빈정보고등학교.html",
   "효빈정보산업진흥원": "효빈정보산업진흥원.html",
-  "효빈제일고": "북구_고등학교_템플릿.html?id=hbjeil",
+  "효빈제일고": "북구_고등학교_템플릿.html?school=hbjeil",
   "효빈종합고": "효빈종합고등학교.html",
   "효빈종합고등학교": "효빈종합고등학교.html",
   "효빈종합고역": "효빈종합고역.html",
