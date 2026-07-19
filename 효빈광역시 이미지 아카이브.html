@@ -9,34 +9,24 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         body { font-family: 'Noto Sans KR', sans-serif; background-color: #f3f4f6; }
-        
-        /* 스크롤바 커스텀 */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #e5e7eb; }
         ::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
-
-        /* 이미지 카드 호버 효과 */
         .img-card { transition: transform 0.2s ease-in-out, box-shadow 0.2s; }
         .img-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
-        
-        /* 텍스트 줄바꿈 방지 */
         .truncate-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        
-        /* 모달 애니메이션 */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .modal-animate { animation: fadeIn 0.3s ease-out forwards; }
-        
-        /* 카테고리 탭 애니메이션 */
         .category-tab { transition: all 0.2s ease; }
     </style>
-<script src="ad_logic.js"></script>
+    <!-- 외부 스크립트 원상복구 (defer 제거) -->
+    <script src="ad_logic.js"></script>
 </head>
 <body class="text-gray-800 antialiased h-screen flex flex-col overflow-hidden">
 
-    <!-- 상단 내비게이션 -->
     <nav class="bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50 flex-shrink-0">
-        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='index.html'">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="location.href='대문.html'">
             <span class="font-bold text-xl">HyobinWiki</span>
         </div>
         <div class="flex items-center gap-2 hidden sm:flex">
@@ -46,7 +36,6 @@
         </div>
     </nav>
 
-    <!-- 상단 헤더, 검색바 및 카테고리 -->
     <header class="bg-[#555588] text-white shadow-md z-10 flex-shrink-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
@@ -62,34 +51,22 @@
                     <input type="text" id="searchInput" class="block w-full pl-10 pr-3 py-2 border border-transparent rounded-md leading-5 bg-[#444477] text-white placeholder-gray-300 focus:outline-none focus:bg-white focus:text-gray-900 focus:placeholder-gray-400 sm:text-sm transition duration-150 ease-in-out" placeholder="이미지 파일명 검색...">
                 </div>
             </div>
-            
-            <!-- 카테고리 탭 영역 -->
-            <div id="categoryContainer" class="flex flex-wrap gap-2 mt-2">
-                <!-- 자바스크립트를 통해 동적으로 생성됩니다 -->
-            </div>
+            <div id="categoryContainer" class="flex flex-wrap gap-2 mt-2"></div>
         </div>
     </header>
 
-    <!-- 메인 갤러리 영역 -->
     <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8" id="scrollContainer">
         <div class="max-w-7xl mx-auto">
-            <!-- 갤러리 그리드 -->
-            <div id="galleryGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
-                <!-- 자바스크립트를 통해 이미지 카드가 동적으로 삽입됩니다. -->
-            </div>
-            
-            <!-- 페이지네이션 영역 (새로 추가됨) -->
+            <div id="galleryGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6"></div>
             <div id="pagination" class="flex justify-center items-center gap-2 mt-8 pb-8 hidden"></div>
-            
-            <!-- 검색 결과 없음 -->
             <div id="noResult" class="hidden flex flex-col items-center justify-center py-20 text-gray-500">
                 <i class="fa-regular fa-folder-open text-6xl mb-4 text-gray-300"></i>
                 <p class="text-lg">해당 카테고리/검색어에 맞는 결과가 없습니다.</p>
             </div>
         </div>
+        <div id="footer-container"></div>
     </main>
 
-    <!-- 이미지 확대 보기 모달 (Lightbox) -->
     <div id="imageModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-90 items-center justify-center p-4">
         <button id="closeModal" class="absolute top-4 right-4 sm:top-8 sm:right-8 text-white hover:text-gray-300 focus:outline-none transition z-50">
             <i class="fa-solid fa-xmark text-4xl"></i>
@@ -100,278 +77,266 @@
         </div>
     </div>
 
-    <!-- 1. Node.js로 자동 생성한 이미지 데이터 파일 불러오기 -->
     <script src="assets/image_data.js"></script>
 
-    <!-- 2. 메인 로직 -->
+    <!-- 스크립트 충돌 방지를 위한 IIFE(즉시 실행 함수) 패턴 적용 -->
     <script>
-        // 카테고리 정의
-        const categories = [
-            { id: 'all', name: '전체보기', icon: 'fa-border-all' },
-            { id: 'station', name: '역/승강장', icon: 'fa-train-subway' },
-            { id: 'map', name: '지도/노선도', icon: 'fa-map-location-dot' },
-            { id: 'vehicle', name: '교통수단', icon: 'fa-bus' },
-            { id: 'character', name: '캐릭터', icon: 'fa-user-group' },
-            { id: 'place', name: '명소/건물', icon: 'fa-building' },
-            { id: 'logo', name: '로고/기타', icon: 'fa-shapes' }
-        ];
+        (() => {
+            const categories = [
+                { id: 'all', name: '전체보기', icon: 'fa-border-all' },
+                { id: 'station', name: '역/승강장', icon: 'fa-train-subway' },
+                { id: 'map', name: '지도/노선도', icon: 'fa-map-location-dot' },
+                { id: 'vehicle', name: '교통수단', icon: 'fa-bus' },
+                { id: 'character', name: '캐릭터', icon: 'fa-user-group' },
+                { id: 'place', name: '명소/건물', icon: 'fa-building' },
+                { id: 'logo', name: '로고/기타', icon: 'fa-shapes' }
+            ];
 
-        // 상태 관리 변수
-        let currentCategory = 'all';
-        let searchQuery = '';
-        
-        // 페이지네이션 설정
-        const ITEMS_PER_PAGE = 30; // 한 페이지에 30개씩 표시
-        let currentPage = 1;
+            let currentCategory = 'all';
+            let searchQuery = '';
+            const ITEMS_PER_PAGE = 30; 
+            let currentPage = 1;
+            const basePath = "이미지/";
 
-        // 기본 이미지 경로 설정
-        const basePath = "이미지/";
-
-        // DOM 요소
-        const galleryGrid = document.getElementById('galleryGrid');
-        const searchInput = document.getElementById('searchInput');
-        const noResult = document.getElementById('noResult');
-        const totalCount = document.getElementById('totalCount');
-        const categoryContainer = document.getElementById('categoryContainer');
-        const paginationContainer = document.getElementById('pagination');
-        const scrollContainer = document.getElementById('scrollContainer');
-        
-        // 모달 관련 요소
-        const imageModal = document.getElementById('imageModal');
-        const modalImg = document.getElementById('modalImg');
-        const modalCaption = document.getElementById('modalCaption');
-        const closeModal = document.getElementById('closeModal');
-
-        // 파일명 기반 카테고리 분류 함수
-        function getCategoryForFile(file) {
-            const lowerFile = file.toLowerCase();
-            if (lowerFile.includes('노선도') || lowerFile.includes('지도') || lowerFile.includes('행정동')) return 'map';
-            if (lowerFile.includes('역_') || lowerFile.includes('승강장') || lowerFile.includes('플랫폼') || lowerFile.includes('신호장') || lowerFile.includes('출장소') || lowerFile.includes('역사.webp') || lowerFile.includes('플랫')) return 'station';
-            if (lowerFile.includes('전동차') || lowerFile.includes('호대') || lowerFile.includes('버스') || lowerFile.includes('여객') || lowerFile.includes('운수') || lowerFile.includes('교통') || lowerFile.includes('고속') || lowerFile.includes('열차') || lowerFile.includes('래핑')) {
-                if (!lowerFile.includes('본사') && !lowerFile.includes('로고') && !lowerFile.includes('광고')) return 'vehicle';
-            }
-            const charKeywords = ['sd', 'basic', '고나미', '하루빈', '박라미', '다로나', '미소하', '라세나', '임세정', '임세하', '유리아', '전노아', '박효빈', '윤대환', 'char_', '사복', '단체', '나인스타즈', '카스미', '카난', '다이아', '마리', '하나마루', '루비', '요시코', '리코', '요우', '치카', '니코', '우미', '노조미', '에리', '린', '코토리', '마키', '호노카', '조상현', '김성민', '최형석', '시장', '인물', '과잠'];
-            if (charKeywords.some(kw => lowerFile.includes(kw))) {
-                if (!lowerFile.includes('로고') && !lowerFile.includes('버스') && !lowerFile.includes('열차') && !lowerFile.includes('역_')) return 'character';
-            }
-            if (lowerFile.includes('백화점') || lowerFile.includes('마트') || lowerFile.includes('홈플러스') || lowerFile.includes('터미널') || lowerFile.includes('공항') || lowerFile.includes('시청') || lowerFile.includes('대학교') || lowerFile.includes('해수욕장') || lowerFile.includes('공단') || lowerFile.includes('본사') || lowerFile.includes('아쿠아') || lowerFile.includes('호텔') || lowerFile.includes('전경') || lowerFile.includes('센터') || lowerFile.includes('회관') || lowerFile.includes('공원') || lowerFile.includes('홀') || lowerFile.includes('기지') || lowerFile.includes('사업소')) return 'place';
-            if (lowerFile.includes('로고') || lowerFile.includes('ui') || lowerFile.includes('휘장') || lowerFile.includes('마크') || lowerFile.includes('광고') || lowerFile.includes('슬로건') || lowerFile.includes('logo')) return 'logo';
-            return 'logo'; 
-        }
-
-        function init() {
-            // imageFiles 배열이 정상적으로 로드되었는지 확인 (방어 코드)
-            if (typeof imageFiles === 'undefined') {
-                console.error('image_data.js 파일이 로드되지 않았습니다.');
-                galleryGrid.innerHTML = '<div class="col-span-full text-center py-10 text-red-500">이미지 데이터를 불러올 수 없습니다. assets/image_data.js 파일을 확인해주세요.</div>';
-                return;
-            }
-            renderCategoryTabs();
-            filterAndRender();
-        }
-
-        function renderCategoryTabs() {
-            categoryContainer.innerHTML = '';
-            categories.forEach(cat => {
-                const btn = document.createElement('button');
-                const isActive = currentCategory === cat.id;
-                btn.className = `category-tab px-4 py-1.5 rounded-full text-sm font-medium border flex items-center gap-2
-                    ${isActive ? 'bg-white text-[#555588] border-white shadow-sm' : 'bg-[#444477] text-gray-200 border-transparent hover:bg-[#666699] hover:text-white'}`;
-                btn.innerHTML = `<i class="fa-solid ${cat.icon}"></i> ${cat.name}`;
-                btn.onclick = () => {
-                    currentCategory = cat.id;
-                    currentPage = 1; // 💡 카테고리 변경 시 무조건 1페이지로 리셋
-                    renderCategoryTabs();
-                    filterAndRender();
-                };
-                categoryContainer.appendChild(btn);
-            });
-        }
-
-        // 핵심: 필터링 및 페이지네이션 연산
-        function filterAndRender() {
-            // 1. 검색어와 카테고리에 맞는 이미지 걸러내기
-            const filtered = imageFiles.filter(file => {
-                const matchesSearch = file.toLowerCase().includes(searchQuery);
-                const fileCat = getCategoryForFile(file);
-                const matchesCategory = currentCategory === 'all' || fileCat === currentCategory;
-                return matchesSearch && matchesCategory;
-            });
+            const galleryGrid = document.getElementById('galleryGrid');
+            const searchInput = document.getElementById('searchInput');
+            const noResult = document.getElementById('noResult');
+            const totalCount = document.getElementById('totalCount');
+            const categoryContainer = document.getElementById('categoryContainer');
+            const paginationContainer = document.getElementById('pagination');
+            const scrollContainer = document.getElementById('scrollContainer');
             
-            totalCount.textContent = `${filtered.length}개`;
-            
-            if (filtered.length === 0) {
-                noResult.classList.remove('hidden');
-                galleryGrid.classList.add('hidden');
-                paginationContainer.classList.add('hidden');
-                return;
-            }
+            const imageModal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            const modalCaption = document.getElementById('modalCaption');
+            const closeModalBtn = document.getElementById('closeModal');
 
-            noResult.classList.add('hidden');
-            galleryGrid.classList.remove('hidden');
-            paginationContainer.classList.remove('hidden');
-
-            // 2. 전체 페이지 수 계산
-            const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-            
-            // 현재 페이지가 전체 페이지보다 크면 1페이지로 강제 이동
-            if (currentPage > totalPages) currentPage = 1;
-
-            // 3. 현재 페이지에 해당하는 이미지만 잘라내기 (slice)
-            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-            const endIndex = startIndex + ITEMS_PER_PAGE;
-            const paginatedFiles = filtered.slice(startIndex, endIndex);
-
-            // 4. 화면에 그리기
-            renderGallery(paginatedFiles);
-            renderPagination(totalPages);
-        }
-
-        // 검색 이벤트
-        searchInput.addEventListener('input', (e) => {
-            searchQuery = e.target.value.toLowerCase();
-            currentPage = 1; // 💡 검색어 입력 시 무조건 1페이지로 리셋
-            filterAndRender();
-        });
-
-        // 갤러리 카드 렌더링
-        function renderGallery(files) {
-            galleryGrid.innerHTML = '';
-            files.forEach(file => {
-                const card = document.createElement('div');
-                card.className = 'img-card bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden cursor-pointer flex flex-col h-48 relative';
-                const fileCat = getCategoryForFile(file);
-                const catObj = categories.find(c => c.id === fileCat) || categories[categories.length - 1];
-
-                card.innerHTML = `
-                    <div class="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-xs px-1.5 py-0.5 rounded shadow z-10 backdrop-blur-sm">
-                        <i class="fa-solid ${catObj.icon}"></i>
-                    </div>
-                    <div class="h-36 w-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                        <img src="${basePath}${file}" alt="${file}" loading="lazy" 
-                             onerror="this.onerror=null; this.src='https://placehold.co/400x300/eeeeee/999999?text=Image+Not+Found';" 
-                             class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-2 border-t border-gray-100 bg-gray-50 flex-1 flex items-center justify-center">
-                        <p class="text-xs text-gray-700 font-medium text-center w-full truncate-text px-1" title="${file}">
-                            ${file}
-                        </p>
-                    </div>
-                `;
-                card.addEventListener('click', () => openModal(file));
-                galleryGrid.appendChild(card);
-            });
-        }
-
-        // 페이지네이션 UI 렌더링
-        function renderPagination(totalPages) {
-            paginationContainer.innerHTML = '';
-            if (totalPages <= 1) return; // 1페이지밖에 없으면 버튼 숨김
-
-            // 이전 버튼
-            const prevBtn = document.createElement('button');
-            prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
-            prevBtn.className = `w-8 h-8 flex items-center justify-center rounded-md border ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : 'bg-white text-gray-700 hover:bg-gray-50 border-gray-300 transition'}`;
-            prevBtn.disabled = currentPage === 1;
-            prevBtn.onclick = () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    filterAndRender();
-                    scrollToTop();
+            function getCategoryForFile(file) {
+                const lowerFile = file.toLowerCase();
+                if (lowerFile.includes('노선도') || lowerFile.includes('지도') || lowerFile.includes('행정동')) return 'map';
+                if (lowerFile.includes('역_') || lowerFile.includes('승강장') || lowerFile.includes('플랫폼') || lowerFile.includes('신호장') || lowerFile.includes('출장소') || lowerFile.includes('역사.webp') || lowerFile.includes('플랫')) return 'station';
+                if (lowerFile.includes('전동차') || lowerFile.includes('호대') || lowerFile.includes('버스') || lowerFile.includes('여객') || lowerFile.includes('운수') || lowerFile.includes('교통') || lowerFile.includes('고속') || lowerFile.includes('열차') || lowerFile.includes('래핑')) {
+                    if (!lowerFile.includes('본사') && !lowerFile.includes('로고') && !lowerFile.includes('광고')) return 'vehicle';
                 }
-            };
-            paginationContainer.appendChild(prevBtn);
-
-            // 페이지 번호 생성 로직
-            let startPage = Math.max(1, currentPage - 2);
-            let endPage = Math.min(totalPages, currentPage + 2);
-
-            if (startPage > 1) {
-                paginationContainer.appendChild(createPageBtn(1));
-                if (startPage > 2) paginationContainer.appendChild(createEllipsis());
-            }
-
-            for (let i = startPage; i <= endPage; i++) {
-                paginationContainer.appendChild(createPageBtn(i));
-            }
-
-            if (endPage < totalPages) {
-                if (endPage < totalPages - 1) paginationContainer.appendChild(createEllipsis());
-                paginationContainer.appendChild(createPageBtn(totalPages));
-            }
-
-            // 다음 버튼
-            const nextBtn = document.createElement('button');
-            nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
-            nextBtn.className = `w-8 h-8 flex items-center justify-center rounded-md border ${currentPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : 'bg-white text-gray-700 hover:bg-gray-50 border-gray-300 transition'}`;
-            nextBtn.disabled = currentPage === totalPages;
-            nextBtn.onclick = () => {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    filterAndRender();
-                    scrollToTop();
+                const charKeywords = ['sd', 'basic', '고나미', '하루빈', '박라미', '다로나', '미소하', '라세나', '임세정', '임세하', '유리아', '전노아', '박효빈', '윤대환', 'char_', '사복', '단체', '나인스타즈', '카스미', '카난', '다이아', '마리', '하나마루', '루비', '요시코', '리코', '요우', '치카', '니코', '우미', '노조미', '에리', '린', '코토리', '마키', '호노카', '조상현', '김성민', '최형석', '시장', '인물', '과잠'];
+                if (charKeywords.some(kw => lowerFile.includes(kw))) {
+                    if (!lowerFile.includes('로고') && !lowerFile.includes('버스') && !lowerFile.includes('열차') && !lowerFile.includes('역_')) return 'character';
                 }
-            };
-            paginationContainer.appendChild(nextBtn);
-        }
+                if (lowerFile.includes('백화점') || lowerFile.includes('마트') || lowerFile.includes('홈플러스') || lowerFile.includes('터미널') || lowerFile.includes('공항') || lowerFile.includes('시청') || lowerFile.includes('대학교') || lowerFile.includes('해수욕장') || lowerFile.includes('공단') || lowerFile.includes('본사') || lowerFile.includes('아쿠아') || lowerFile.includes('호텔') || lowerFile.includes('전경') || lowerFile.includes('센터') || lowerFile.includes('회관') || lowerFile.includes('공원') || lowerFile.includes('홀') || lowerFile.includes('기지') || lowerFile.includes('사업소')) return 'place';
+                if (lowerFile.includes('로고') || lowerFile.includes('ui') || lowerFile.includes('휘장') || lowerFile.includes('마크') || lowerFile.includes('광고') || lowerFile.includes('슬로건') || lowerFile.includes('logo')) return 'logo';
+                return 'logo'; 
+            }
 
-        function createPageBtn(page) {
-            const btn = document.createElement('button');
-            btn.textContent = page;
-            btn.className = `w-8 h-8 flex items-center justify-center rounded-md text-sm font-medium transition ${currentPage === page ? 'bg-[#555588] text-white border border-[#555588]' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'}`;
-            btn.onclick = () => {
-                currentPage = page;
+            function initArchive() {
+                if (typeof imageFiles === 'undefined') {
+                    console.error('image_data.js 파일이 로드되지 않았습니다.');
+                    if(galleryGrid) galleryGrid.innerHTML = '<div class="col-span-full text-center py-10 text-red-500">이미지 데이터를 불러올 수 없습니다.</div>';
+                    return;
+                }
+                renderCategoryTabs();
                 filterAndRender();
-                scrollToTop();
-            };
-            return btn;
-        }
-
-        function createEllipsis() {
-            const span = document.createElement('span');
-            span.textContent = '...';
-            span.className = 'px-1 text-gray-500';
-            return span;
-        }
-
-        function scrollToTop() {
-            if(scrollContainer) {
-                scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
             }
-        }
 
-        // 모달 로직
-        function openModal(file) {
-            modalImg.src = `${basePath}${file}`;
-            modalImg.onerror = function() {
-                this.src = 'https://placehold.co/800x600/eeeeee/999999?text=Image+Not+Found';
-            };
-            modalCaption.textContent = file;
-            imageModal.classList.remove('hidden');
-            imageModal.classList.add('flex');
-        }
+            function renderCategoryTabs() {
+                if(!categoryContainer) return;
+                categoryContainer.innerHTML = '';
+                categories.forEach(cat => {
+                    const btn = document.createElement('button');
+                    const isActive = currentCategory === cat.id;
+                    btn.className = `category-tab px-4 py-1.5 rounded-full text-sm font-medium border flex items-center gap-2
+                        ${isActive ? 'bg-white text-[#555588] border-white shadow-sm' : 'bg-[#444477] text-gray-200 border-transparent hover:bg-[#666699] hover:text-white'}`;
+                    btn.innerHTML = `<i class="fa-solid ${cat.icon}"></i> ${cat.name}`;
+                    btn.onclick = () => {
+                        currentCategory = cat.id;
+                        currentPage = 1; 
+                        renderCategoryTabs();
+                        filterAndRender();
+                    };
+                    categoryContainer.appendChild(btn);
+                });
+            }
 
-        function closeModalFunc() {
-            imageModal.classList.add('hidden');
-            imageModal.classList.remove('flex');
-        }
+            function filterAndRender() {
+                if(typeof imageFiles === 'undefined') return;
+                
+                const filtered = imageFiles.filter(file => {
+                    const matchesSearch = file.toLowerCase().includes(searchQuery);
+                    const fileCat = getCategoryForFile(file);
+                    const matchesCategory = currentCategory === 'all' || fileCat === currentCategory;
+                    return matchesSearch && matchesCategory;
+                });
+                
+                if(totalCount) totalCount.textContent = `${filtered.length}개`;
+                
+                if (filtered.length === 0) {
+                    if(noResult) noResult.classList.remove('hidden');
+                    if(galleryGrid) galleryGrid.classList.add('hidden');
+                    if(paginationContainer) paginationContainer.classList.add('hidden');
+                    return;
+                }
 
-        closeModal.addEventListener('click', closeModalFunc);
-        imageModal.addEventListener('click', (e) => {
-            if (e.target === imageModal) closeModalFunc();
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !imageModal.classList.contains('hidden')) closeModalFunc();
-        });
+                if(noResult) noResult.classList.add('hidden');
+                if(galleryGrid) galleryGrid.classList.remove('hidden');
 
-        // 초기 실행
-        window.addEventListener('DOMContentLoaded', init);
+                const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+                if (currentPage > totalPages) currentPage = 1;
+
+                const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+                const endIndex = startIndex + ITEMS_PER_PAGE;
+                const paginatedFiles = filtered.slice(startIndex, endIndex);
+
+                renderGallery(paginatedFiles);
+                renderPagination(totalPages);
+            }
+
+            if(searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    searchQuery = e.target.value.toLowerCase();
+                    currentPage = 1; 
+                    filterAndRender();
+                });
+            }
+
+            function renderGallery(files) {
+                if(!galleryGrid) return;
+                galleryGrid.innerHTML = '';
+                files.forEach(file => {
+                    const card = document.createElement('div');
+                    card.className = 'img-card bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden cursor-pointer flex flex-col h-48 relative';
+                    const fileCat = getCategoryForFile(file);
+                    const catObj = categories.find(c => c.id === fileCat) || categories[categories.length - 1];
+
+                    // 사용자 지침에 따라 placeholder 완전히 배제, 순수 경로만 적용
+                    card.innerHTML = `
+                        <div class="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-xs px-1.5 py-0.5 rounded shadow z-10 backdrop-blur-sm">
+                            <i class="fa-solid ${catObj.icon}"></i>
+                        </div>
+                        <div class="h-36 w-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                            <img src="${basePath}${file}" alt="${file}" loading="lazy" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-2 border-t border-gray-100 bg-gray-50 flex-1 flex items-center justify-center">
+                            <p class="text-xs text-gray-700 font-medium text-center w-full truncate-text px-1" title="${file}">
+                                ${file}
+                            </p>
+                        </div>
+                    `;
+                    card.addEventListener('click', () => openModal(file));
+                    galleryGrid.appendChild(card);
+                });
+            }
+
+            function renderPagination(totalPages) {
+                if(!paginationContainer) return;
+                paginationContainer.innerHTML = '';
+                
+                if (totalPages <= 1) {
+                    paginationContainer.classList.add('hidden');
+                    return;
+                }
+                paginationContainer.classList.remove('hidden');
+
+                const prevBtn = document.createElement('button');
+                prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+                prevBtn.className = `w-8 h-8 flex items-center justify-center rounded-md border ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : 'bg-white text-gray-700 hover:bg-gray-50 border-gray-300 transition'}`;
+                prevBtn.disabled = currentPage === 1;
+                prevBtn.onclick = () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        filterAndRender();
+                        scrollToTop();
+                    }
+                };
+                paginationContainer.appendChild(prevBtn);
+
+                let startPage = Math.max(1, currentPage - 2);
+                let endPage = Math.min(totalPages, currentPage + 2);
+
+                if (startPage > 1) {
+                    paginationContainer.appendChild(createPageBtn(1));
+                    if (startPage > 2) paginationContainer.appendChild(createEllipsis());
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    paginationContainer.appendChild(createPageBtn(i));
+                }
+
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) paginationContainer.appendChild(createEllipsis());
+                    paginationContainer.appendChild(createPageBtn(totalPages));
+                }
+
+                const nextBtn = document.createElement('button');
+                nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+                nextBtn.className = `w-8 h-8 flex items-center justify-center rounded-md border ${currentPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : 'bg-white text-gray-700 hover:bg-gray-50 border-gray-300 transition'}`;
+                nextBtn.disabled = currentPage === totalPages;
+                nextBtn.onclick = () => {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        filterAndRender();
+                        scrollToTop();
+                    }
+                };
+                paginationContainer.appendChild(nextBtn);
+            }
+
+            function createPageBtn(page) {
+                const btn = document.createElement('button');
+                btn.textContent = page;
+                btn.className = `w-8 h-8 flex items-center justify-center rounded-md text-sm font-medium transition ${currentPage === page ? 'bg-[#555588] text-white border border-[#555588]' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'}`;
+                btn.onclick = () => {
+                    currentPage = page;
+                    filterAndRender();
+                    scrollToTop();
+                };
+                return btn;
+            }
+
+            function createEllipsis() {
+                const span = document.createElement('span');
+                span.textContent = '...';
+                span.className = 'px-1 text-gray-500';
+                return span;
+            }
+
+            function scrollToTop() {
+                if(scrollContainer) scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function openModal(file) {
+                if(modalImg) modalImg.src = `${basePath}${file}`;
+                if(modalCaption) modalCaption.textContent = file;
+                if(imageModal) {
+                    imageModal.classList.remove('hidden');
+                    imageModal.classList.add('flex');
+                }
+            }
+
+            function closeImageModal() {
+                if(imageModal) {
+                    imageModal.classList.add('hidden');
+                    imageModal.classList.remove('flex');
+                }
+            }
+
+            if(closeModalBtn) closeModalBtn.addEventListener('click', closeImageModal);
+            if(imageModal) {
+                imageModal.addEventListener('click', (e) => {
+                    if (e.target === imageModal) closeImageModal();
+                });
+            }
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && imageModal && !imageModal.classList.contains('hidden')) closeImageModal();
+            });
+
+            window.addEventListener('DOMContentLoaded', initArchive);
+        })();
     </script>
 
-    <!-- 외부 스크립트 모음 -->
+    <!-- 하단 위키 필수 코어 스크립트 그대로 유지 (건드리지 않음) -->
     <script src="assets/wiki_index.js"></script>
     <script src="assets/hb_wiki_core.js"></script>
     <script src="assets/hb_index_scripts.js"></script>
     <script src="assets/jana.js"></script>
+    <script src="assets/load-footer.js"></script>
 </body>
 </html>
