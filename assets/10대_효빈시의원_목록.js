@@ -2,7 +2,7 @@
 const db = {
     // [남구]
     "강상현": {
-        name: "강상현", hanja: "姜尙賢", birth: "1992년 3월 8일 (34세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "남구 제1선거구",
+        name: "강상현", hanja: "姜尙賢", birth: "1992년 3월 8일 (만 <span class="calc-age" data-birthdate="1992-3-8">34</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "남구 제1선거구",
         terms: "제9·10대 (재선)", current: "제10대 효빈광역시의회 후반기 예산결산특별위원장", 
         history: "연세대학교 경영학과 졸업<br>제50회 공인회계사 시험 합격<br>세무법인 효빈 수석회계사<br>더불어민주당 남구지역위 청년위원장<br>제9, 10대 효빈광역시의회 의원 (재선)",
         overview: "연세대 출신의 젊은 공인회계사로, 10대 의회 후반기 예산결산특별위원장을 맡고 있는 더불어민주당의 <strong>핵심 브레인 겸 예산 저승사자</strong>다.",
@@ -19,7 +19,7 @@ const db = {
         ]
     },
     "원상민": {
-        name: "원상민", hanja: "元相民", birth: "1985년 11월 12일 (40세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "남구 제2선거구",
+        name: "원상민", hanja: "元相民", birth: "1985년 11월 12일 (만 <span class="calc-age" data-birthdate="1985-11-12">40</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "남구 제2선거구",
         terms: "제8·9·10대 (3선)", current: "제10대 효빈광역시의회 의원", 
         history: "삼선대학교 행정학과 졸업<br>효빈시 곽산1동 자율방범대장<br>남구 청년연합회장<br>제8, 9, 10대 효빈광역시의회 의원 (3선)",
         overview: "낙선의 아픔을 겪었으나 <strong>상대 후보의 '똥색 버스 낭만' 자폭 망언</strong> 덕분에 기적처럼 생환한 뒤 무난하게 3선 고지에 오른 남구의 맹장.",
@@ -38,7 +38,7 @@ const db = {
         ]
     },
 "지소현": {
-        name: "지소현", hanja: "池昭賢", birth: "1996년 8월 22일 (29세)", party: "진보당", partyClass: "bg-jinbo", txtClass: "txt-jinbo", district: "남구 제3선거구",
+        name: "지소현", hanja: "池昭賢", birth: "1996년 8월 22일 (만 <span class="calc-age" data-birthdate="1996-8-22">29</span>세)", party: "진보당", partyClass: "bg-jinbo", txtClass: "txt-jinbo", district: "남구 제3선거구",
         terms: "제9·10대 (재선)", current: "제10대 효빈광역시의회 전반기 운영위원장", 
         history: "효빈대학교 사회학과 졸업<br>효빈청년유니온 대표<br>진보당 효빈시당 청년위원장<br>제9, 10대 효빈광역시의회 의원 (재선)",
         overview: "민주당 텃밭 남구에서 돌풍을 이어가고 있는 진보당 소속 청년 정치인이자, 의회 내 <strong>강성 씹덕(방도리) 마니아</strong>.",
@@ -55,7 +55,7 @@ const db = {
         ]
     },
     "주방선": {
-        name: "주방선", hanja: "朱方善", birth: "1978년 5월 4일 (48세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "남구 제4선거구",
+        name: "주방선", hanja: "朱方善", birth: "1978년 5월 4일 (만 <span class="calc-age" data-birthdate="1978-5-4">48</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "남구 제4선거구",
         terms: "제9·10대 (재선)", current: "제10대 효빈광역시의회 후반기 교육문화위원장", 
         history: "엽월대학교 유아교육과 졸업<br>남구 지역 맘카페 '남구맘스' 초대 매니저<br>효빈월천초등학교 학부모회장<br>남구 학부모연합회장<br>제9, 10대 효빈광역시의회 의원 (재선)",
         overview: "대한민국의 정치인. 지역 최대 규모 맘카페의 묻지마 화력을 업고 시의회에 입성한 실전형 교육 전문가이자 <strong>효빈시 교육청 소속 공무원들의 절대적인 공포 대상(최종 보스)</strong>.",
@@ -73,7 +73,7 @@ const db = {
     },
     // [북구]
     "황보람": {
-        name: "황보람", hanja: "黃보람", birth: "2004년 6월 2일 (22세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "북구 제1선거구",
+        name: "황보람", hanja: "黃보람", birth: "2004년 6월 2일 (만 <span class="calc-age" data-birthdate="2004-6-2">22</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "북구 제1선거구",
         terms: "제10대 (초선) / 기초의원 1선", current: "제10대 효빈광역시의회 의원", 
         history: "효빈대학교 정치외교학과 재학<br>제9대 북구의회 의원<br>제10대 효빈광역시의회 의원",
         overview: "북구의 대모 오서영(5선)이 국회의원 출마를 위해 불출마한 자리를 꿰찬 <strong>Z세대 돌풍의 핵</strong>이자 법적 하한선 최연소 당선자.",
@@ -89,7 +89,7 @@ const db = {
         ]
     },
     "유시온": {
-        name: "유시온", hanja: "柳時溫", birth: "1996년 12월 24일 (29세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "북구 제2선거구",
+        name: "유시온", hanja: "柳時溫", birth: "1996년 12월 24일 (만 <span class="calc-age" data-birthdate="1996-12-24">29</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "북구 제2선거구",
         terms: "제10대 (초선) / 기초의원 1선", current: "제10대 효빈광역시의회 의원", 
         history: "효빈대학교 행정학과 졸업<br>제9대 북구의회 의원<br>제10대 효빈광역시의회 의원",
         overview: "본업이 조기축구회장이던 우지남(4선) 의원이 컷오프 당한 지역구를 물려받아 당선된 젊은 피.",
@@ -105,7 +105,7 @@ const db = {
         ]
     },
     "구정원": {
-        name: "구정원", hanja: "具政源", birth: "2002년 5월 15일 (24세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "북구 제3선거구",
+        name: "구정원", hanja: "具政源", birth: "2002년 5월 15일 (만 <span class="calc-age" data-birthdate="2002-5-15">24</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "북구 제3선거구",
         terms: "제9·10대 (재선)", current: "제10대 효빈광역시의회 후반기 윤리위원장", 
         history: "효빈대학교 사회복지학과 재학<br>제9, 10대 효빈광역시의회 의원",
         overview: "대학교 2학년 때 당선된 신화적 인물이자, Z세대임에도 의회의 기강을 잡는 <strong>후반기 윤리위원장</strong>.",
@@ -121,7 +121,7 @@ const db = {
         ]
     },
 "원수현": {
-        name: "원수현", hanja: "元秀賢", birth: "1982년 10월 9일 (43세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "북구 제4선거구",
+        name: "원수현", hanja: "元秀賢", birth: "1982년 10월 9일 (만 <span class="calc-age" data-birthdate="1982-10-9">43</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "북구 제4선거구",
         terms: "제8·9·10대 (3선)", current: "제10대 효빈광역시의회 전반기 행정자치위원장", 
         history: "서울대학교 법학과 졸업<br>제45회 공인노무사 합격<br>제51회 사법시험 합격<br>노무법인 효빈 대표노무사<br>민주사회를 위한 변호사모임(민변) 효빈지부 회원<br>제8, 9, 10대 효빈광역시의회 의원 (3선)",
         overview: "대한민국의 정치인. 서울대 출신의 엘리트 노동 인권 변호사이자 노무사 출신으로, 효빈시의회 내 손꼽히는 정책 브레인이자 <strong>부패 기업인들의 담당 일진</strong>이다.",
@@ -139,7 +139,7 @@ const db = {
         ]
     },
 "박성임": {
-        name: "박성임", hanja: "朴星任", birth: "1994년 10월 14일 (31세)", party: "진보당", partyClass: "bg-jinbo", txtClass: "txt-jinbo", district: "북구 제6선거구",
+        name: "박성임", hanja: "朴星任", birth: "1994년 10월 14일 (만 <span class="calc-age" data-birthdate="1994-10-14">31</span>세)", party: "진보당", partyClass: "bg-jinbo", txtClass: "txt-jinbo", district: "북구 제6선거구",
         terms: "제9·10대 (재선)", current: "제10대 효빈광역시의회 후반기 행정자치위원장", 
         history: "전남대학교 사회학과 졸업<br>전국금속노동조합 효빈지부 교섭국장<br>효빈시 비정규직노동센터 상담실장<br>민주노총 효빈지부 정책국장<br>진보당 효빈시당 부위원장<br>제9, 10대 효빈광역시의회 의원 (재선)",
         overview: "대한민국의 정치인. 9대 의회 내 진보당 2인방(지소현, 박성임) 중 한 명으로, 전투력 측정 불가 수준의 투쟁 아이콘이다. 10대 의회에서 진보당 소속 의원 최초로 후반기 행정자치위원장 자리를 거머쥐었다.",
@@ -156,7 +156,7 @@ const db = {
         ]
     },
     "진유성": {
-        name: "진유성", hanja: "陳裕星", birth: "2005년 7월 9일 (20세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "북구 제7선거구",
+        name: "진유성", hanja: "陳裕星", birth: "2005년 7월 9일 (만 <span class="calc-age" data-birthdate="2005-7-9">20</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "북구 제7선거구",
         terms: "제10대 (초선)", current: "제10대 효빈광역시의회 의원", 
         history: "효빈대학교 행정학과 재학<br>제10대 효빈광역시의회 의원",
         overview: "10대 지선에서 북구에 신설된 선거구를 차지한 05년생 진짜 최연소 초신성 Z세대 의원.",
@@ -173,7 +173,7 @@ const db = {
 
     // [서구]
     "남궁휘": {
-        name: "남궁휘", hanja: "南宮徽", birth: "1965년 3월 3일 (61세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "서구 제1선거구",
+        name: "남궁휘", hanja: "南宮徽", birth: "1965년 3월 3일 (만 <span class="calc-age" data-birthdate="1965-3-3">61</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "서구 제1선거구",
         terms: "제10대 (초선) / 기초의원 5선", current: "제10대 효빈광역시의회 의원", 
         history: "평안명대학교 경영학과 졸업<br>서구의회 5선 의원<br>제10대 효빈광역시의회 의원",
         overview: "국민의힘으로 당선되었다가 개혁신당으로 탈주한 유원민을 심판하고 서구를 완전히 탈환한 새로운 터줏대감.",
@@ -195,7 +195,7 @@ const db = {
         ]
     },
     "주하석": {
-        name: "주하석", hanja: "朱夏錫", birth: "1982년 4월 11일 (44세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "서구 제2선거구",
+        name: "주하석", hanja: "朱夏錫", birth: "1982년 4월 11일 (만 <span class="calc-age" data-birthdate="1982-4-11">44</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "서구 제2선거구",
         terms: "제10대 (초선)", current: "제10대 효빈광역시의회 의원", 
         history: "전북대학교 무역학과 졸업<br>서구 전통시장 청년상인회장<br>제10대 효빈광역시의회 의원",
         overview: "3선 중진 오지대 의원의 '오지대 국밥' 수제자이자 서구 상권의 후계자.",
@@ -209,7 +209,7 @@ const db = {
         ]
     },
     "상유하": {
-        name: "상유하", hanja: "尙唯河", birth: "1968년 10월 10일 (57세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "서구 제3선거구",
+        name: "상유하", hanja: "尙唯河", birth: "1968년 10월 10일 (만 <span class="calc-age" data-birthdate="1968-10-10">57</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "서구 제3선거구",
         terms: "제10대 (초선) / 기초의원 4선", current: "제10대 효빈광역시의회 의원", 
         history: "덕북대학교 행정학과 졸업<br>서구의회 4선 의원<br>제10대 효빈광역시의회 의원",
         overview: "정계 은퇴를 선언한 여성계 대모 윤월선(7선)의 뒤를 이어 서구 보수화 방어선을 든든하게 지키는 중진급 초선.",
@@ -231,7 +231,7 @@ const db = {
 
 
 "이수라남": {
-        name: "이수라남", hanja: "李秀羅南", birth: "1993년 1월 15일 (33세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "안천구 제2선거구",
+        name: "이수라남", hanja: "李秀羅南", birth: "1993년 1월 15일 (만 <span class="calc-age" data-birthdate="1993-1-15">33</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "안천구 제2선거구",
         terms: "제9·10대 (재선)", current: "제10대 효빈광역시의회 의원", 
         history: "효빈대학교 아랍어과 졸업<br>효빈시 외국인노동자지원센터 상담팀장<br>다문화가족지원센터 이사<br>더불어민주당 효빈시당 다문화위원장<br>제9대 효빈광역시의회 의원 (비례대표)<br>제10대 효빈광역시의회 의원 (재선)",
         overview: "대한민국의 정치인. 한국인 아버지와 아랍에미리트(UAE) 출신 어머니 사이에서 태어난 한국-아랍 혼혈 정치인으로, 청년·다문화 몫으로 비례대표에 발탁된 후 10대 지선에서 지역구(안천 2)로 생환한 다문화 정치의 상징이자 <strong>넷플릭스 드라마 최대 피해자(?)</strong>.",
@@ -247,7 +247,7 @@ const db = {
             {period: "2020 ~ 현재", party: "더불어민주당", partyClass: "bg-minju", note: "정계 입문"}
         ]
     },    "강민서": {
-        name: "강민서", hanja: "姜旼瑞", birth: "1992년 11월 30일 (33세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "안천구 제3선거구",
+        name: "강민서", hanja: "姜旼瑞", birth: "1992년 11월 30일 (만 <span class="calc-age" data-birthdate="1992-11-30">33</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "안천구 제3선거구",
         terms: "제10대 (초선) / 기초의원 1선", current: "제10대 효빈광역시의회 의원", 
         history: "삼선대학교 정치외교학과 졸업<br>제9대 안천구의회 의원<br>제10대 효빈광역시의회 의원",
         overview: "민주당 점퍼를 찢고 탈당했던 복수귀 용서민(무소속)이 불출마를 선언하며 떠난 자리를 탈환한 민주당의 구원투수.",
@@ -262,7 +262,7 @@ const db = {
         ]
     },
 "성지언": {
-        name: "성지언", hanja: "成智言", birth: "1980년 6월 15일 (45세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "안천구 제4선거구",
+        name: "성지언", hanja: "成智言", birth: "1980년 6월 15일 (만 <span class="calc-age" data-birthdate="1980-6-15">45</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "안천구 제4선거구",
         terms: "제8·9·10대 (3선)", current: "제10대 효빈광역시의회 전반기 산업건설위원장", 
         history: "덕북대학교 도시계획과 졸업<br>교통전문매체 객원기자<br>시민교통안전협회 효빈지부장<br>안천구 교통발전위원회 위원장<br>효빈광역시 버스노선개편 시민위원<br>제8, 9, 10대 효빈광역시의회 의원 (3선)",
         overview: "대한민국의 정치인. 효빈시 대중교통 정책을 수호하는 산업건설위원회의 핵심 인물이자, 의회 내 숨은 <strong>'러브라이브 씹덕(시즈쿠 파벌)'</strong>의 거두. 10대 의회에서 산업건설위원장이라는 막강한 자리를 거머쥐었다.",
@@ -280,7 +280,7 @@ const db = {
         ]
     },
     "구상민": {
-        name: "구상민", hanja: "具相民", birth: "1988년 9월 1일 (37세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "안천구 제5선거구",
+        name: "구상민", hanja: "具相民", birth: "1988년 9월 1일 (만 <span class="calc-age" data-birthdate="1988-9-1">37</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "안천구 제5선거구",
         terms: "제9·10대 (재선)", current: "제10대 효빈광역시의회 후반기 환경복지위원장", 
         history: "평안명대학교 사회복지학과 졸업<br>안천구 종합사회복지관 선임사회복지사<br>효빈시 청년사회복지사연대 대표<br>더불어민주당 안천구 복지특별위원장<br>제9, 10대 효빈광역시의회 의원 (재선)",
         overview: "대한민국의 정치인. 현장 복지 전문가 출신의 젊은 시의원이자, 성지언 의원에 맞서는 <strong>지선버스(시오리코) 파벌의 수장.</strong> 10대 지선 재선 성공 후 환경복지위원장을 맡았다.",
@@ -298,7 +298,7 @@ const db = {
     },
     // [중구]
     "도현정": {
-        name: "도현정", hanja: "都賢政", birth: "1984년 6월 15일 (41세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "중구 선거구",
+        name: "도현정", hanja: "都賢政", birth: "1984년 6월 15일 (만 <span class="calc-age" data-birthdate="1984-6-15">41</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "중구 선거구",
         terms: "제10대 (초선) / 기초의원 2선", current: "제10대 효빈광역시의회 의원", 
         history: "효빈대학교 경제학과 졸업<br>제8, 9대 중구의회 의원<br>제10대 효빈광역시의회 의원",
         overview: "조청남 전 의장의 꼰대 철권통치를 심판하고 중구를 탈환한 엘리트 여성 정치인.",
@@ -318,7 +318,7 @@ const db = {
 
     // [동구]
 "지은민": {
-        name: "지은민", hanja: "池恩旻", birth: "1983년 7월 7일 (42세)", party: "조국혁신당", partyClass: "bg-joguk", txtClass: "txt-joguk", district: "동구 제1선거구",
+        name: "지은민", hanja: "池恩旻", birth: "1983년 7월 7일 (만 <span class="calc-age" data-birthdate="1983-7-7">42</span>세)", party: "조국혁신당", partyClass: "bg-joguk", txtClass: "txt-joguk", district: "동구 제1선거구",
         terms: "제8·9·10대 (3선)", current: "제10대 효빈광역시의회 의원", 
         history: "삼선대학교 경제학과 졸업<br>더불어민주당 효빈시당 부대변인<br>제8대 효빈광역시의회 의원 (비례대표)<br>무소속 동구지역 발전위원장<br>조국혁신당 효빈시당 창당준비위원장<br>제8, 9, 10대 효빈광역시의회 의원 (3선)",
         overview: "민주당 비례대표로 시작해 공천 학살에 반발해 탈당, 무소속 생환을 거쳐 조국혁신당에 1호로 합류한, 정치권에서 살아남기 위해선 무엇이든 하는 <strong>생존력 만렙 VIP 1등석 철새</strong>.",
@@ -339,7 +339,7 @@ const db = {
 
     // [창전구]
 "유증민": {
-        name: "유증민", hanja: "柳增旻", birth: "1986년 2월 18일 (40세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "창전구 제1선거구",
+        name: "유증민", hanja: "柳增旻", birth: "1986년 2월 18일 (만 <span class="calc-age" data-birthdate="1986-2-18">40</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "창전구 제1선거구",
         terms: "제9·10대 (재선)", current: "제10대 효빈광역시의회 후반기 윤리특별위원장", 
         history: "엽월대학교 행정학과 졸업<br>창전구 자율방범대 연합회장<br>창전구 청년회장<br>더불어민주당 효빈시당 청년위원회 부위원장<br>제9대 효빈광역시의회 전반기 윤리특별위원회 간사<br>제9, 10대 효빈광역시의회 의원 (재선)",
         overview: "대한민국의 정치인. 효빈시 창전구를 기반으로 활동하는 30대~40대 청년 정치인이자, 윗세대와 Z세대 사이에 끼어 고통받던 <strong>비운의 낀세대에서, 마침내 10대 의회에서 염원하던 윤리위원장 완장을 탈환한 생존왕.</strong>",
@@ -355,7 +355,7 @@ const db = {
             {period: "2018 ~ 현재", party: "더불어민주당", partyClass: "bg-minju", note: "정계 입문"}
         ]
     },    "정진서": {
-        name: "정진서", hanja: "鄭鎭書", birth: "1988년 11월 2일 (37세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "창전구 제3선거구",
+        name: "정진서", hanja: "鄭鎭書", birth: "1988년 11월 2일 (만 <span class="calc-age" data-birthdate="1988-11-2">37</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "창전구 제3선거구",
         terms: "제10대 (초선) / 기초의원 1선", current: "제10대 효빈광역시의회 의원", 
         history: "삼선대학교 경영학과 졸업<br>제9대 창전구의회 의원<br>제10대 효빈광역시의회 의원",
         overview: "불출마를 선언한 옥산민(때밀이 의원)의 이태리 때수건 정치를 그대로 물려받은 젊은 청년 일꾼.",
@@ -371,7 +371,7 @@ const db = {
     },
 
     "유신민": {
-        name: "유신민", hanja: "柳信民", birth: "2003년 4월 5일 (23세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "창전구 제4선거구",
+        name: "유신민", hanja: "柳信民", birth: "2003년 4월 5일 (만 <span class="calc-age" data-birthdate="2003-4-5">23</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "창전구 제4선거구",
         terms: "제9·10대 (재선)", current: "제10대 효빈광역시의회 전반기 윤리특별위원장", 
         history: "창전고등학교 총학생회장<br>효빈광역시 청소년참여위원회 위원장<br>더불어민주당 전국고등학생위원회 대변인<br>평안명대학교 정치외교학과 재학<br>제9, 10대 효빈광역시의회 의원 (재선)",
         overview: "대한민국의 정치인. 2003년생으로 고등학교 졸업 직후 제9대 효빈시의회에 입성한 Z세대 돌풍의 주역이자, <strong>효빈시의회를 서브컬처판으로 만든 광기의 씹덕(방도리) 파벌 핵심.</strong> 10대 의회에서 드디어 염원하던 윤리위원장 완장을 찼다.",
@@ -388,7 +388,7 @@ const db = {
         ]
     },
     "오상원": {
-        name: "오상원", hanja: "吳相元", birth: "1981년 8월 24일 (44세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "청엽구 제1선거구",
+        name: "오상원", hanja: "吳相元", birth: "1981년 8월 24일 (만 <span class="calc-age" data-birthdate="1981-8-24">44</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "청엽구 제1선거구",
         terms: "제8·9·10대 (3선)", current: "제10대 효빈광역시의회 의원", 
         history: "덕남대학교 지역개발학과 졸업<br>청엽구 주민자치위원장<br>청엽구 마을만들기협의회 대표<br>효빈시 주민참여예산위원회 위원<br>제8, 9, 10대 효빈광역시의회 의원 (3선)",
         overview: "대한민국의 정치인. 조용한 3선 의원이자, 선거철만 되면 온 청엽구를 <strong>베토벤의 환희의 송가</strong>로 세뇌시키는 광기의 사나이.",
@@ -404,7 +404,7 @@ const db = {
             {period: "2017 ~ 현재", party: "더불어민주당", partyClass: "bg-minju", note: "정계 입문"}
         ]
     },  "조성일": {
-        name: "조성일", hanja: "趙成一", birth: "1989년 11월 11일 (40세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "청엽구 제2선거구",
+        name: "조성일", hanja: "趙成一", birth: "1989년 11월 11일 (만 <span class="calc-age" data-birthdate="1989-11-11">40</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "청엽구 제2선거구",
         terms: "제9·10대 (재선)", current: "제10대 효빈광역시의회 의원", 
         history: "효빈대학교 경제학과 졸업<br>효빈대학교 벤처창업동아리 회장<br>스타트업 '효빈에듀' 대표이사<br>효빈청년네트워크 이사<br>더불어민주당 효빈시당 혁신성장위원장<br>제9, 10대 효빈광역시의회 의원 (재선)",
         overview: "대한민국의 정치인. 30대 초반의 젊은 나이로 청엽구에 입성한 엘리트 벤처 사업가 출신 정치인. 10대 재선까지 탄탄대로를 걷고 있는 청년 벤처 인재.",
@@ -420,7 +420,7 @@ const db = {
         ]
     },
     "남예서": {
-        name: "남예서", hanja: "南藝書", birth: "2003년 9월 9일 (22세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "청엽구 제3선거구",
+        name: "남예서", hanja: "南藝書", birth: "2003년 9월 9일 (만 <span class="calc-age" data-birthdate="2003-9-9">22</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "청엽구 제3선거구",
         terms: "제10대 (초선) / 기초의원 1선", current: "제10대 효빈광역시의회 의원", 
         history: "엽월대학교 디자인학과 재학<br>제9대 청엽구의회 의원<br>제10대 효빈광역시의회 의원",
         overview: "원지현 의원이 불출마를 선언하며 떠난 자리를 메운 새로운 Z세대 방도리 파벌의 다크호스.",
@@ -435,7 +435,7 @@ const db = {
         ]
     },
     "강예선": {
-        name: "강예선", hanja: "姜藝善", birth: "1991년 8월 25일 (34세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "청엽구 제4선거구",
+        name: "강예선", hanja: "姜藝善", birth: "1991년 8월 25일 (만 <span class="calc-age" data-birthdate="1991-8-25">34</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "청엽구 제4선거구",
         terms: "제10대 (초선)", current: "제10대 효빈광역시의회 의원", 
         history: "전남대학교 법학과 졸업<br>효빈시 마을변호사<br>제10대 효빈광역시의회 의원",
         overview: "의사봉을 박살 내던 인간 병기 신단성이 컷오프로 물러난 자리를 꿰찬 민주당의 청년 변호사.",
@@ -449,7 +449,7 @@ const db = {
         ]
     },
 "원기덕": {
-        name: "원기덕", hanja: "元基德", birth: "1987년 5월 20일 (39세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "청엽구 제5선거구",
+        name: "원기덕", hanja: "元基德", birth: "1987년 5월 20일 (만 <span class="calc-age" data-birthdate="1987-5-20">39</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "청엽구 제5선거구",
         terms: "제9·10대 (재선) / 기초의원 1선", current: "제10대 효빈광역시의회 전반기 새로운노동특별위원장", 
         history: "경기대학교 법학과 졸업<br>한국노총 효빈지역지부 조직국장<br>한국노총 효빈지부 사무처장<br>제8대 동구의회 의원<br>효빈시 노사민정협의회 실무위원<br>제9대 효빈광역시의회 전반기 노동특별위원장<br>제10대 효빈광역시의회 전반기 새로운노동특별위원장<br>제9, 10대 효빈광역시의회 의원 (재선)",
         overview: "대한민국의 정치인. 30대 무투파(武鬪派) 노동 강경파 의원이자, 비례대표 1번에서 지역구(청엽 5)로 성공적으로 생환한 정책 브레인. 진보당 박성임 의원과 함께 의회 내 노동계 투톱으로 꼽힌다.",
@@ -467,7 +467,7 @@ const db = {
         ]
     },
 "구상원": {
-        name: "구상원", hanja: "具相願", birth: "1977년 4월 5일 (49세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "청엽구 제6선거구",
+        name: "구상원", hanja: "具相願", birth: "1977년 4월 5일 (만 <span class="calc-age" data-birthdate="1977-4-5">49</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "청엽구 제6선거구",
         terms: "제8·9·10대 (3선) / 기초의원 1선", current: "제10대 효빈광역시의회 전반기 기후특별위원장", 
         history: "효빈대학교 환경공학과 졸업<br>녹색연합 효빈지부 간사<br>미세먼지해결시민본부 운영위원<br>효빈환경운동연합 사무국장<br>더불어민주당 환경특별위원장<br>제6대 중구의회 의원<br>제8, 9, 10대 효빈광역시의회 의원 (3선)",
         overview: "대한민국의 정치인. 효빈시의 환경 정책을 주도하는 행동파 <strong>에코(Eco) 파이터</strong> 의원. 8회 지선 당시 <strong>중구의 엑소더스</strong>를 주도하며 청엽구에 성공적으로 안착했고, 10대 지선에서도 압승하며 3선 고지에 올랐다.",
@@ -491,7 +491,7 @@ const db = {
 
     // [탄성군]
 "고상면": {
-        name: "고상면", hanja: "高相勉", birth: "1972년 7월 17일 (54세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "탄성군 제1선거구",
+        name: "고상면", hanja: "高相勉", birth: "1972년 7월 17일 (만 <span class="calc-age" data-birthdate="1972-7-17">54</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "탄성군 제1선거구",
         terms: "제8·9·10대 (3선) / 기초의원 1선", current: "제10대 효빈광역시의회 의원", 
         history: "엽월대학교 경영학과 졸업<br>탄성군 요식업중앙회 지부장<br>제6대 탄성군의회 의원<br>탄성군 맛집골목상인회장<br>탄성군 자영업자협의회장<br>제8, 9, 10대 효빈광역시의회 의원 (3선)",
         overview: "대한민국의 정치인. <strong>'탄성군의 백종원'</strong>이라 불리는 지역 자영업자들의 영원한 대부이자, 구의원부터 차근차근 밟고 올라온 먹자골목의 맹주. 8회 지선 당시 <strong>중구의 엑소더스</strong>를 주도하며 청엽구에 성공적으로 안착했고, 10대 지선에서도 압승하며 3선에 성공했다.",
@@ -511,7 +511,7 @@ const db = {
         ]
     },
     "주옥현": {
-        name: "주옥현", hanja: "朱玉賢", birth: "2001년 9월 9일 (25세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "탄성군 제3선거구",
+        name: "주옥현", hanja: "朱玉賢", birth: "2001년 9월 9일 (만 <span class="calc-age" data-birthdate="2001-9-9">25</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "탄성군 제3선거구",
         terms: "제9·10대 (재선)", current: "제10대 효빈광역시의회 의원", 
         history: "삼선대학교 사회복지학과 재학<br>효빈시 청소년수련관 운영위원<br>효빈 청년기후행동 활동가<br>더불어민주당 탄성군 대학생위원장<br>제9, 10대 효빈광역시의회 의원 (재선)",
         overview: "대한민국의 정치인. Z세대 돌풍의 일원으로 당선된 01년생 민주당 젊은 피이자, 방도리 씹덕들을 사람 취급 안 하지만 <strong>정작 본인도 '버추얼 아이돌'에 단단히 미쳐있는 내로남불 오타쿠 의원.</strong>",
@@ -530,7 +530,7 @@ const db = {
     },
     // [비례대표]
 "양지현": {
-        name: "양지현", hanja: "梁智賢", birth: "1995년 3월 14일 (31세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "비례대표 1번",
+        name: "양지현", hanja: "梁智賢", birth: "1995년 3월 14일 (만 <span class="calc-age" data-birthdate="1995-3-14">31</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "비례대표 1번",
         terms: "제10대 (초선)", current: "제10대 효빈광역시의회 의원", 
         history: "효빈대학교 사회학과 졸업<br>더불어민주당 효빈시당 청년부대변인<br>더불어민주당 효빈광역시당 미디어홍보국장<br>제10대 효빈광역시의회 의원 (비례대표 1번)",
         overview: "대한민국의 정치인. 2026년 지방선거 당시, '유튜브 조회수 괴물'이었던 원개현 의원이 본업 복귀를 선언하며 비워둔 '비례 1번' 황금 티켓을 거머쥔 당내 청년 스피커. 원개현의 화려하지만 무책임했던 유산을 정리하는 '청소부' 역할도 겸임하고 있다.",
@@ -545,7 +545,7 @@ const db = {
         ]
     },
     "원지연": {
-        name: "원지연", hanja: "元智連", birth: "1987년 11월 2일 (38세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "비례대표 2번",
+        name: "원지연", hanja: "元智連", birth: "1987년 11월 2일 (만 <span class="calc-age" data-birthdate="1987-11-2">38</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "비례대표 2번",
         terms: "제10대 (초선)", current: "제10대 효빈광역시의회 의원", 
         history: "평안명대학교 행정학과 졸업<br>효빈시 여성권익센터 소장<br>효빈시 다문화가족지원센터 상담실장<br>제10대 효빈광역시의회 의원 (비례대표 2번)",
         overview: "대한민국의 정치인. 이수라남 의원이 지역구(안천 3)로 이적하며 비어버린 비례 2번 자리에 발탁된 <strong>현장 중심의 여성 리더</strong>.",
@@ -560,7 +560,7 @@ const db = {
         ]
     },
     "송한유": {
-        name: "송한유", hanja: "宋漢有", birth: "2001년 9월 30일 (24세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "비례대표 3번",
+        name: "송한유", hanja: "宋漢有", birth: "2001년 9월 30일 (만 <span class="calc-age" data-birthdate="2001-9-30">24</span>세)", party: "더불어민주당", partyClass: "bg-minju", txtClass: "txt-minju", district: "비례대표 3번",
         terms: "제10대 (초선)", current: "제10대 효빈광역시의회 의원", 
         history: "덕남대학교 정보통신공학과 재학<br>효빈시 대학생 IT봉사단장<br>더불어민주당 효빈시당 디지털소통위원<br>제10대 효빈광역시의회 의원 (비례대표 3번)",
         overview: "대한민국의 정치인. 유튜버 원개현이 떠난 빈자리에 합류한 공대생 출신 의원이자, 효빈시의회 내에서 독보적인 위치를 차지하고 있는 <strong>'빈효선 광역전철(코레일 블루) 씹덕'</strong>.",
@@ -575,7 +575,7 @@ const db = {
         ]
     },
 "송연우": {
-        name: "송연우", hanja: "宋姸雨", birth: "1993년 7월 19일 (32세)", party: "진보당", partyClass: "bg-jinbo", txtClass: "txt-jinbo", district: "비례대표 1번",
+        name: "송연우", hanja: "宋姸雨", birth: "1993년 7월 19일 (만 <span class="calc-age" data-birthdate="1993-7-19">32</span>세)", party: "진보당", partyClass: "bg-jinbo", txtClass: "txt-jinbo", district: "비례대표 1번",
         terms: "제10대 (초선)", current: "제10대 효빈광역시의회 의원", 
         history: "전북대학교 간호학과 졸업<br>전국보건의료노조 효빈지부 정책부장<br>효빈시 보건의료인권센터 자문위원<br>제10대 효빈광역시의회 의원 (비례대표 1번)",
         overview: "보건의료계 노동자들을 대변하는 진보당의 간판이자, 2026년 지방선거에서 진보당이 국민의힘의 득표율을 넘어서며 획득한 비례대표 1번 의석을 거머쥔 <strong>진보당의 아이콘</strong>.",
@@ -590,7 +590,7 @@ const db = {
         ]
     },
 "양소현": {
-        name: "양소현", hanja: "梁昭賢", birth: "1989년 12월 12일 (36세)", party: "국민의힘", partyClass: "bg-ppp", txtClass: "txt-ppp", district: "비례대표 1번",
+        name: "양소현", hanja: "梁昭賢", birth: "1989년 12월 12일 (만 <span class="calc-age" data-birthdate="1989-12-12">36</span>세)", party: "국민의힘", partyClass: "bg-ppp", txtClass: "txt-ppp", district: "비례대표 1번",
         terms: "제10대 (초선)", current: "제10대 효빈광역시의회 의원", 
         history: "서울대학교 정치외교학과 졸업<br>국민의힘 효빈시당 수석대변인<br>제10대 효빈광역시의회 의원 (비례대표 1번)",
         overview: "효빈시의 민주당 싹쓸이 대재앙 속에서, <strong>비례의석 증석이라는 극적인 변수로 기사회생한 국민의힘 최후의 보루(유일한 1석 생존자).</strong> 분명 30대인데 하는 짓은 영락없는 <strong>보수 진영의 '젊은 꼰대 할매'</strong>다.",

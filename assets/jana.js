@@ -3113,7 +3113,28 @@
   "두원군_농어촌버스": "두원군_농어촌버스.html",
   "관수군_농어촌버스": "관수군_농어촌버스.html",
   "석창군_농어촌버스": "석창군_농어촌버스.html",
-
+  "스즈키_아이나": "스즈키_아이나.html",
+  "사이토_슈카": "사이토_슈카.html",
+  "신도_아마네": "신도_아마네.html",
+  "페이튼_나오미": "페이튼_나오미.html",
+  "키토_아카리_출연작": "키토_아카리_출연작.html",
+  "키토_아카리": "키토_아카리.html",
+  "다테_사유리": "다테_사유리.html",
+  "마에다_카오리": "마에다_카오리.html",
+  "마에다_카오리_출연작": "마에다_카오리_출연작.html",
+  "우치다_마아야": "우치다_마아야.html",
+  "우치다_마아야_출연작": "우치다_마아야_출연작.html",
+  "쿠노_미사키": "쿠노_미사키.html",
+  "기타햄버거_효빈광역시": "기타햄버거_효빈광역시.html",
+  "서브웨이_효빈광역시": "서브웨이_효빈광역시.html",
+  "쿠노_미사키_출연작": "쿠노_미사키_출연작.html",
+  "세토_아사미": "세토_아사미.html",
+  "세토_아사미_출연작": "세토_아사미_출연작.html",
+  "틀_효빈광역시_전통시장": "틀_효빈광역시_전통시장.html",
+  "이시카와_유이": "이시카와_유이.html",
+  "이시카와_유이_출연작": "이시카와_유이_출연작.html",
+  "청능도매종합시장": "청능도매종합시장.html",
+  "청능도매시장": "청능도매종합시장.html",
 
   "파이낸스투데이": "파이낸스투데이.html",  "수의대동물병원": "효빈대_A선_역_템플릿.html?id=A01",
   "수의대동물병원역": "효빈대_A선_역_템플릿.html?id=A01",
@@ -4920,4 +4941,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const ageElements = document.querySelectorAll(".calc-age");
+    const today = new Date(); // 현재 접속한 시각 (오늘 날짜)
+
+    ageElements.forEach(function(el) {
+        const birthDateStr = el.getAttribute("data-birthdate");
+        const birthYearStr = el.getAttribute("data-birthyear");
+
+        let age = 0;
+
+        // 1) 생년월일(YYYY-MM-DD)이 모두 있는 경우 -> 정확한 만 나이 계산
+        if (birthDateStr) {
+            const birthDate = new Date(birthDateStr);
+            age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            // 오늘 날짜 기준으로 생일이 지나지 않았으면 1살 빼기
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+        } 
+        // 2) 연도(YYYY)만 있는 경우 -> 연도 기준 계산 (생일 미설정 캐릭터 등)
+        else if (birthYearStr) {
+            age = today.getFullYear() - parseInt(birthYearStr, 10);
+        } else {
+            return; // 속성이 둘 다 없으면 계산하지 않음
+        }
+
+        // 계산된 만 나이 숫자로 HTML 텍스트 교체
+        el.textContent = age;
+    });
 });
