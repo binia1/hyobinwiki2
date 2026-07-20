@@ -15,11 +15,11 @@ function renderAllHyobinMayorsNav(containerId) {
         style.id = styleId;
         style.textContent = `
             .hb-nav-wrapper { width: 100%; margin: 20px 0; }
-            .hb-nav-table { border-collapse: collapse; width: 100%; border: 2px solid #7777aa; background-color: #fff; font-size: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+            .hb-nav-table { border-collapse: collapse; width: 100%; border: 2px solid #7777AA; background-color: #fff; font-size: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
             .hb-nav-table td { border: 1px solid #ddd; padding: 5px 8px; text-align: center; vertical-align: middle; }
             
             /* 헤더 스타일 */
-            .hb-nav-header { background-color: #7777aa; color: #fff; font-weight: bold; border: 1px solid #7777aa; padding: 8px 10px; }
+            .hb-nav-header { background-color: #7777AA; color: #fff; font-weight: bold; border: 1px solid #7777AA; padding: 8px 10px; }
             .hb-nav-header-flex { display: flex; justify-content: center; align-items: center; position: relative; width: 100%; }
             .hb-nav-header a { color: #fff; text-decoration: none; font-size: 1.1em; display: inline-flex; align-items: center; }
             
@@ -35,7 +35,7 @@ function renderAllHyobinMayorsNav(containerId) {
             .hb-inner-table td { border: 1px solid #ddd; padding: 5px; }
             
             /* 인물 정보 스타일 */
-            .hb-sub-header { font-size: 0.85em; color: #7777aa; font-weight: bold; display: block; margin-bottom: 2px; }
+            .hb-sub-header { font-size: 0.85em; color: #7777AA; font-weight: bold; display: block; margin-bottom: 2px; }
             .hb-col-20 { width: 20%; }
             .hb-link { color: #0275d8; text-decoration: none; }
             .hb-link:hover { text-decoration: underline; }

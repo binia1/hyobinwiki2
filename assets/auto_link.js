@@ -3221,10 +3221,10 @@ document.addEventListener('DOMContentLoaded', () => {
             color: #373a3c;
         }
 
-        /* 가짜 네비게이션 바 - 무조건 #7777aa 고정 */
+        /* 가짜 네비게이션 바 - 무조건 #7777AA 고정 */
         #file-page-navbar {
             position: sticky; top: 0; 
-            background-color: #7777aa !important; /* 강제 고정 */
+            background-color: #7777AA !important; /* 강제 고정 */
             color: white;
             padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
             z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -3664,7 +3664,7 @@ if (!window.__HB_WIKI_CORE_LOADED__) {
                 animation: slideUp 0.3s ease-out; font-family: 'Noto Sans KR', sans-serif; color: #373a3c;
             }
             #file-page-navbar {
-                position: sticky; top: 0; background-color: #7777aa !important; color: white;
+                position: sticky; top: 0; background-color: #7777AA !important; color: white;
                 padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
                 z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             }

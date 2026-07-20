@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
 
             <div class="max-w-screen-xl mx-auto px-4 flex flex-col items-end text-right text-[0.85rem] text-gray-600 dark:text-gray-400">
-                <div class="font-bold text-lg mb-4" style="color: #7777aa;">HyobinWiki</div>
+                <div class="font-bold text-lg mb-4" style="color: #7777AA;">HyobinWiki</div>
                 
                 <div class="font-bold mb-1 text-gray-700 dark:text-gray-300">크리에이티브 커먼즈 라이선스</div>
                 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank" rel="noopener" class="inline-block mb-3">

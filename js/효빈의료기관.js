@@ -31,7 +31,7 @@ function renderHyobinMedicalTable(containerId) {
             .hb-med-tbody th, .hb-med-tbody td { border: 1px solid #e5e7eb; padding: 8px; vertical-align: middle; }
             
             /* 셀 스타일 유틸리티 */
-            .hb-th-dist { background-color: #7777aa; text-align: center; font-weight: bold; width: 6rem; white-space: nowrap; }
+            .hb-th-dist { background-color: #7777AA; text-align: center; font-weight: bold; width: 6rem; white-space: nowrap; }
             .hb-td-content { text-align: left; }
 
             /* 링크 스타일 */

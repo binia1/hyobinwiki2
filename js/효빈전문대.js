@@ -31,7 +31,7 @@ function renderHyobinCollegeTable(containerId) {
             .hb-col-tbody th, .hb-col-tbody td { border: 1px solid #e5e7eb; padding: 6px 8px; vertical-align: middle; }
             
             /* 셀 스타일 유틸리티 */
-            .hb-th-type { text-align: center; font-weight: bold; width: 5rem; background-color: #7777aa; }
+            .hb-th-type { text-align: center; font-weight: bold; width: 5rem; background-color: #7777AA; }
             .hb-td-initial { text-align: center; font-weight: bold; width: 2rem; background-color: #fff; }
             .hb-td-content { text-align: left; }
 

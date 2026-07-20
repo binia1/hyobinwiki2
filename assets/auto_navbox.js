@@ -59,8 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==========================================
     const navboxData = {
         "효빈광역시 대로": `
-        <div class="wiki-navbox" style="border-color: #7777aa;">
-            <div class="wiki-navbox-header" style="background-color: #7777aa;">
+        <div class="wiki-navbox" style="border-color: #7777AA;">
+            <div class="wiki-navbox-header" style="background-color: #7777AA;">
                 <div class="header-content">
                     <img src="이미지/효빈광역시_흰색로고.webp" alt="로고" onerror="this.style.display='none'">
                     <div>
@@ -72,9 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
             <details open>
                 <summary>[ 펼치기 · 접기 ]</summary>
                 <table class="wiki-navbox-table">
-                    <tr><th style="background-color:#7777aa;">ㄱ</th><td><a href="고송대로.html" class="red-link">고송대로</a> · <a href="관서대로.html" class="red-link">관서대로</a></td></tr><tr><th style="background-color:#7777aa;">ㄷ</th><td><a href="덕북고속도로.html" class="blue-link">덕북고속도로</a> · <a href="덕청대로.html" class="red-link">덕청대로</a> · <a href="도변대로.html" class="red-link">도변대로</a></td></tr><tr><th style="background-color:#7777aa;">ㅅ</th><td><a href="산업대로.html" class="blue-link">산업대로</a></td></tr><tr><th style="background-color:#7777aa;">ㅇ</th><td><a href="엽월대로.html" class="red-link">엽월대로</a></td></tr><tr><th style="background-color:#7777aa;">ㅍ</th><td><a href="평당대로.html" class="red-link">평당대로</a></td></tr><tr><th style="background-color:#7777aa;">ㅎ</th><td><a href="효빈빈주고속도로.html" class="blue-link">효빈빈주고속도로</a> · <a href="효빈서해고속도로.html" class="red-link">효빈서해고속도로</a> · <a href="효빈외곽순환고속도로.html" class="red-link">효빈외곽순환고속도로</a> · <a href="효빈외곽순환선.html" class="blue-link">효빈외곽순환선</a></td></tr>
+                    <tr><th style="background-color:#7777AA;">ㄱ</th><td><a href="고송대로.html" class="red-link">고송대로</a> · <a href="관서대로.html" class="red-link">관서대로</a></td></tr><tr><th style="background-color:#7777AA;">ㄷ</th><td><a href="덕북고속도로.html" class="blue-link">덕북고속도로</a> · <a href="덕청대로.html" class="red-link">덕청대로</a> · <a href="도변대로.html" class="red-link">도변대로</a></td></tr><tr><th style="background-color:#7777AA;">ㅅ</th><td><a href="산업대로.html" class="blue-link">산업대로</a></td></tr><tr><th style="background-color:#7777AA;">ㅇ</th><td><a href="엽월대로.html" class="red-link">엽월대로</a></td></tr><tr><th style="background-color:#7777AA;">ㅍ</th><td><a href="평당대로.html" class="red-link">평당대로</a></td></tr><tr><th style="background-color:#7777AA;">ㅎ</th><td><a href="효빈빈주고속도로.html" class="blue-link">효빈빈주고속도로</a> · <a href="효빈서해고속도로.html" class="red-link">효빈서해고속도로</a> · <a href="효빈외곽순환고속도로.html" class="red-link">효빈외곽순환고속도로</a> · <a href="효빈외곽순환선.html" class="blue-link">효빈외곽순환선</a></td></tr>
                 </table>
-                <div class="wiki-navbox-footer" style="background-color: #7777aa;">효빈광역시의 도로 틀 둘러보기</div>
+                <div class="wiki-navbox-footer" style="background-color: #7777AA;">효빈광역시의 도로 틀 둘러보기</div>
             </details>
         </div>`,
         

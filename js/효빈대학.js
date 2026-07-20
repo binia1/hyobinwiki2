@@ -31,7 +31,7 @@ function renderHyobinUnivTable(containerId) {
             .hb-univ-tbody th, .hb-univ-tbody td { border: 1px solid #e5e7eb; padding: 6px 8px; vertical-align: middle; }
             
             /* 셀 스타일 유틸리티 */
-            .hb-th-type { background-color: #7777aa; text-align: center; font-weight: bold; width: 5rem; }
+            .hb-th-type { background-color: #7777AA; text-align: center; font-weight: bold; width: 5rem; }
             .hb-td-initial { text-align: center; font-weight: bold; width: 2rem; background-color: #fff; }
             .hb-td-content { text-align: left; }
             .hb-note-row { background-color: #f9fafb; padding: 8px; font-size: 11px; border: 1px solid #ccc; line-height: 1.4; color: #555; }

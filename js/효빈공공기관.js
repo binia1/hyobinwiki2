@@ -16,7 +16,7 @@ function renderHyobinPublicOrg(containerId) {
         style.textContent = `
             /* 전체 틀 스타일 */
             .hb-org-frame {
-                border: 2px solid #7777aa;
+                border: 2px solid #7777AA;
                 margin-bottom: 2rem;
                 font-family: 'Noto Sans KR', sans-serif;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -24,7 +24,7 @@ function renderHyobinPublicOrg(containerId) {
 
             /* 헤더 스타일 */
             .hb-org-header {
-                background-color: #7777aa;
+                background-color: #7777AA;
                 color: white;
                 padding: 5px;
                 text-align: center;
@@ -67,7 +67,7 @@ function renderHyobinPublicOrg(containerId) {
             /* 타이틀 텍스트 (지방공기업 등) */
             .hb-org-title {
                 font-weight: bold;
-                color: #7777aa;
+                color: #7777AA;
                 display: inline-block;
                 margin-bottom: 2px;
             }

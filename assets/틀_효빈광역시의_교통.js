@@ -2,7 +2,7 @@ document.write(`
 <style>
     .transport-template {
         width: 100%;
-        border: 2px solid #7777aa; /* 효빈위키 네비게이션 컬러 */
+        border: 2px solid #7777AA; /* 효빈위키 네비게이션 컬러 */
         border-collapse: collapse;
         margin-bottom: 20px;
         font-size: 0.9rem;
@@ -14,7 +14,7 @@ document.write(`
         word-break: break-all; /* 내용이 길어지면 줄바꿈 강제 */
     }
     .transport-header {
-        background-color: #7777aa;
+        background-color: #7777AA;
         color: #fff;
         text-align: center;
         padding: 5px;
@@ -87,7 +87,7 @@ document.write(`
         text-decoration: none !important;
     }
     .bottom-nav {
-        background-color: #7777aa;
+        background-color: #7777AA;
         padding: 8px;
         text-align: center;
         font-size: 0.85em;

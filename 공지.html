@@ -1,0 +1,483 @@
+<!-- STREAMING_CHUNK:Setting up document structure and CSS... -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.webp">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항 - 효빈위키 게시판</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        :root { 
+            /* 효빈위키 시그니처 색상 적용 */
+            --wiki-main: #7777AA; 
+            --wiki-main-light: #9999CC;
+            --wiki-border: #e5e7eb; 
+            --wiki-bg: #f3f4f6; /* 게시판 엔진 특유의 옅은 회색 배경 */
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0055AA;
+            --wiki-box-bg: #ffffff;
+            --wiki-header-text: #ffffff;
+        }
+
+        body.dark-mode {
+            --wiki-main: #555588; 
+            --wiki-main-light: #666699;
+            --wiki-border: #374151;
+            --wiki-bg: #111827;
+            --wiki-text: #d1d5db;
+            --wiki-gray-bg: #1f2937;
+            --wiki-link: #60a5fa;
+            --wiki-box-bg: #1f2937;
+        }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.5; 
+            margin: 0; 
+            transition: background-color 0.3s, color 0.3s; 
+        }
+
+        /* 게시판 전용 헤더 (아카라이브 기반 스타일) */
+        .board-nav {
+            background-color: var(--wiki-main);
+            color: var(--wiki-header-text);
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 54px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .board-nav-left { display: flex; align-items: center; height: 100%; }
+        .board-nav-right { display: flex; align-items: center; height: 100%; gap: 15px; }
+
+        .board-logo { font-size: 1.25rem; font-weight: 900; display: flex; align-items: center; gap: 8px; text-decoration: none; color: white; margin-right: 30px; }
+        .board-logo-icon { fill: white; width: 24px; height: 24px; }
+
+        .board-menu-link { 
+            color: rgba(255,255,255,0.8); 
+            text-decoration: none; 
+            font-weight: 500; 
+            font-size: 1rem; 
+            padding: 0 12px; 
+            height: 100%; 
+            display: flex; 
+            align-items: center; 
+            transition: color 0.2s; 
+        }
+        .board-menu-link:hover { color: white; }
+        .board-menu-link.active { color: white; font-weight: 700; }
+        
+        .board-menu-dropdown { position: relative; display: flex; align-items: center; height: 100%; cursor: pointer; color: rgba(255,255,255,0.8); padding: 0 12px; }
+        .board-menu-dropdown:hover { color: white; }
+        .board-menu-dropdown::after { content: '▾'; font-size: 0.8rem; margin-left: 4px; }
+
+        .nav-icon-btn { color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: 500; opacity: 0.9; transition: opacity 0.2s; }
+        .nav-icon-btn:hover { opacity: 1; }
+        .nav-icon-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+        /* 메인 레이아웃 */
+        .board-container { max-width: 1200px; margin: 20px auto; display: flex; gap: 20px; padding: 0 15px; align-items: flex-start; }
+        .board-main { flex: 1; background: var(--wiki-box-bg); border: 1px solid var(--wiki-border); min-height: 500px; }
+        .board-sidebar { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }
+
+        /* 모바일 반응형 */
+        @media (max-width: 850px) {
+            .board-container { flex-direction: column; }
+            .board-sidebar { width: 100%; }
+        }
+
+        /* 게시판 헤더 및 탭 */
+        .board-title-area { padding: 20px 20px 10px 20px; border-bottom: 1px solid var(--wiki-border); }
+        .board-title { font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
+        .board-title svg { width: 24px; height: 24px; fill: var(--wiki-text); }
+        
+        .board-tabs { display: flex; gap: 20px; }
+        .board-tab { padding-bottom: 10px; font-size: 0.95rem; font-weight: 500; color: #888; cursor: pointer; position: relative; }
+        .board-tab.active { color: var(--wiki-text); font-weight: bold; }
+        .board-tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background-color: var(--wiki-main); }
+
+        /* 게시글 목록 테이블 */
+        .board-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .board-table th { padding: 12px 10px; background-color: var(--wiki-gray-bg); border-bottom: 1px solid var(--wiki-border); color: var(--wiki-text); font-weight: bold; text-align: center; }
+        .board-table td { padding: 12px 10px; border-bottom: 1px solid var(--wiki-border); color: var(--wiki-text); }
+        .board-table tr:hover td { background-color: var(--wiki-gray-bg); }
+        
+        .col-id { width: 60px; text-align: center; color: #888; }
+        .col-title { text-align: left; cursor: pointer; }
+        .col-title:hover { text-decoration: underline; color: var(--wiki-link); }
+        .col-author { width: 120px; text-align: center; color: #888; font-size: 0.85rem; }
+        .col-date { width: 100px; text-align: center; color: #888; font-size: 0.85rem; }
+        
+        .notice-badge { font-weight: bold; color: var(--wiki-text); }
+
+        /* ================= SPA 상세 뷰 스타일 ================= */
+        .post-header { padding: 20px; border-bottom: 1px solid var(--wiki-border); }
+        .post-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; }
+        .post-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #888; }
+        .post-meta-left { display: flex; align-items: center; gap: 10px; }
+        .post-author { display: flex; align-items: center; gap: 4px; font-weight: bold; color: var(--wiki-text); }
+        .post-author svg { width: 14px; height: 14px; fill: var(--wiki-main); }
+        
+        .post-body { padding: 20px; font-size: 0.95rem; line-height: 1.7; min-height: 200px; }
+        
+        .comments-section { border-top: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); }
+        .comments-header { padding: 15px 20px; font-size: 1.1rem; font-weight: bold; border-bottom: 1px solid var(--wiki-border); background: var(--wiki-box-bg); }
+        .comment-item { padding: 15px 20px; border-bottom: 1px solid var(--wiki-border); display: flex; flex-direction: column; gap: 8px; background: var(--wiki-box-bg); }
+        .comment-item:last-child { border-bottom: none; }
+        .comment-meta { display: flex; justify-content: space-between; font-size: 0.85rem; color: #888; }
+        .comment-author { font-weight: bold; color: var(--wiki-text); display: flex; align-items: center; gap: 4px; }
+        .comment-author svg { width: 12px; height: 12px; fill: var(--wiki-main); }
+        .comment-content { font-size: 0.9rem; }
+
+        .back-btn { 
+            display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; 
+            background: var(--wiki-gray-bg); border: 1px solid var(--wiki-border); 
+            border-radius: 4px; cursor: pointer; font-size: 0.9rem; font-weight: bold;
+            color: var(--wiki-text); transition: background 0.2s; margin: 15px 20px;
+        }
+        .back-btn:hover { background: #e5e7eb; }
+
+        .notice-restricted { padding: 20px; text-align: center; color: #888; font-size: 0.9rem; border-top: 1px dashed var(--wiki-border); }
+
+        /* 우측 사이드바 (최근 변경) */
+        .sidebar-box { background: var(--wiki-box-bg); border: 1px solid var(--wiki-border); }
+        .sidebar-header { padding: 15px; font-size: 1.1rem; font-weight: bold; border-bottom: 1px solid var(--wiki-border); }
+        .sidebar-list { list-style: none; padding: 0; margin: 0; }
+        .sidebar-list li { display: flex; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid var(--wiki-border); font-size: 0.9rem; }
+        .sidebar-list li:last-child { border-bottom: none; }
+        .sidebar-list li a { color: var(--wiki-link); text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 75%; }
+        .sidebar-list li a:hover { text-decoration: underline; }
+        .sidebar-list li span { color: #888; font-size: 0.8rem; }
+
+        /* 우측 하단 퀵 위젯 버튼 */
+        .widget-btn-group { position: fixed; right: 20px; bottom: 20px; display: flex; gap: 2px; z-index: 100; }
+        .widget-btn { width: 40px; height: 40px; background-color: var(--wiki-main); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: filter 0.2s; }
+        .widget-btn:hover { filter: brightness(1.1); }
+        .widget-btn svg { width: 20px; height: 20px; fill: currentColor; }
+        .widget-btn.settings { border-top-left-radius: 4px; border-bottom-left-radius: 4px; }
+        .widget-btn.down { border-top-right-radius: 4px; border-bottom-right-radius: 4px; }
+    </style>
+</head>
+<!-- STREAMING_CHUNK:Rendering Navigation & Main Layout... -->
+<body id="body">
+
+    <!-- 게시판 전용 헤더 -->
+    <nav class="board-nav">
+        <div class="board-nav-left">
+            <a href="index.html" class="board-logo">
+                <svg class="board-logo-icon" viewBox="0 0 24 24">
+                    <path d="M12 2L2 22h20L12 2zm0 3.8l6.3 12.2H5.7L12 5.8zM11 10h2v4h-2zm0 5h2v2h-2z"/>
+                </svg>
+                효빈위키
+            </a>
+            <a href="게시판.html" class="board-menu-link active">공지사항</a>
+            <a href="그루터기.html" class="board-menu-link">그루터기</a>
+            <div class="board-menu-dropdown">게시판</div>
+        </div>
+        <div class="board-nav-right">
+            <a href="index.html" class="nav-icon-btn">위키</a>
+            <a href="#" class="nav-icon-btn" title="내 정보">
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            </a>
+        </div>
+    </nav>
+
+    <!-- 메인 컨테이너 -->
+    <div class="board-container">
+        
+        <!-- 좌측 게시판 메인 영역 -->
+        <main class="board-main">
+            
+            <!-- ================= VIEW: LIST ================= -->
+            <div id="view-list">
+                <div class="board-title-area">
+                    <div class="board-title">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        공지사항
+                    </div>
+                    <div class="board-tabs">
+                        <div class="board-tab active">전체</div>
+                    </div>
+                </div>
+
+                <!-- 게시글 목록 테이블 -->
+                <table class="board-table">
+                    <thead>
+                        <tr>
+                            <th class="col-id">공지</th>
+                            <th class="col-title text-center">제목</th>
+                            <th class="col-author">작성자</th>
+                            <th class="col-date">작성일</th>
+                        </tr>
+                    </thead>
+                    <tbody id="board-tbody">
+                        <!-- JS에서 동적으로 렌더링 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ================= VIEW: DETAIL ================= -->
+            <div id="view-detail" style="display: none;">
+                
+                <div class="board-title-area" style="border-bottom: none; padding-bottom: 0;">
+                    <div class="board-title">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        공지사항
+                    </div>
+                </div>
+
+                <button class="back-btn" onclick="showListView()">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                    목록으로
+                </button>
+
+                <div class="post-header">
+                    <div class="post-title" id="post-title">제목 렌더링 영역</div>
+                    <div class="post-meta">
+                        <div class="post-meta-left">
+                            <span class="post-author">
+                                <span id="post-author">작성자</span>
+                                <svg viewBox="0 0 24 24" style="fill:#eab308;"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            </span>
+                            <span id="post-date">날짜</span>
+                        </div>
+                        <div class="cursor-pointer hover:text-[var(--wiki-link)]" title="URL 공유" onclick="alert('클립보드에 복사되었습니다.')">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="post-body" id="post-body">
+                    본문 렌더링 영역
+                </div>
+
+                <div class="comments-section">
+                    <div class="comments-header">댓글 <span id="comment-count" class="text-[var(--wiki-main)]">0</span></div>
+                    <div id="comments-container">
+                        <!-- 댓글 렌더링 영역 -->
+                    </div>
+                    <div class="notice-restricted">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-bottom:3px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-2h2v2h-2zm0-4V7h2v6h-2z"/></svg>
+                        공지사항 게시판은 일반 사용자의 댓글 작성이 제한되어 있습니다.
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- 우측 사이드바 (최근 변경) -->
+        <aside class="board-sidebar">
+            <div class="sidebar-box">
+                <div class="sidebar-header">최근 변경</div>
+                <ul class="sidebar-list">
+                    <li><a href="#">오내사거리역 지하상가 폭리 논란</a> <span>18:27</span></li>
+                    <li><a href="#">레일루미네/마스코트</a> <span>18:27</span></li>
+                    <li><a href="#">두청운수 75인승 과적 전복 사고</a> <span>18:27</span></li>
+                    <li><a href="#">1호선/안내방송</a> <span>18:27</span></li>
+                    <li><a href="#">창전선 개통 연기 논란</a> <span>18:27</span></li>
+                    <li><a href="#">제17회 효빈 애니메이션 페스티벌(HAF)</a> <span>18:27</span></li>
+                    <li><a href="#">박효빈</a> <span>18:27</span></li>
+                    <li><a href="#">토모리해수욕장 해양축제</a> <span>18:27</span></li>
+                    <li><a href="#">윤대환</a> <span>18:27</span></li>
+                    <li><a href="#">효빈시청 야구단</a> <span>18:27</span></li>
+                    <li><a href="#">북구청 점거 시위</a> <span>18:27</span></li>
+                    <li><a href="#">효빈대학교/교수진</a> <span>18:27</span></li>
+                    <li><a href="#">서신고등학교 폭행 사건</a> <span>18:27</span></li>
+                    <li><a href="#">효빈도시철도 4호선</a> <span>18:27</span></li>
+                </ul>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- 우측 하단 플로팅 위젯 버튼 -->
+    <div class="widget-btn-group">
+        <div class="widget-btn settings" title="다크 모드 설정" onclick="toggleDarkMode()">
+            <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+        </div>
+        <div class="widget-btn" title="위로 이동" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+            <svg viewBox="0 0 24 24"><path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/></svg>
+        </div>
+        <div class="widget-btn down" title="아래로 이동" onclick="window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'})">
+            <svg viewBox="0 0 24 24"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>
+        </div>
+    </div>
+
+    <!-- STREAMING_CHUNK:SPA Logic and Data Initialization... -->
+    <script>
+        // 게시판 Mock Data (효빈위키 로컬라이징 및 상세 콘텐츠 반영)
+        const notices = [
+            { 
+                id: 'notice1', 
+                badge: '공지',
+                title: '효빈위키 내 생성형 인공지능 이용 관련 안내', 
+                author: 'wikiadmin', 
+                date: '2025.12.03',
+                content: `
+                    <p>안녕하세요. 효빈위키 운영진입니다.</p>
+                    <p>최근 챗GPT 등 생성형 인공지능(AI)을 활용하여 효빈위키 문서를 대량으로 생성하거나 편집하는 사례가 다수 적발되고 있습니다.</p>
+                    <br>
+                    <p>효빈위키는 사용자 여러분의 자발적이고 주체적인 기여로 만들어가는 백과사전을 지향합니다. 기계적으로 생성된 글은 문맥의 부자연스러움, 허위 사실(할루시네이션), 로컬 정보의 심각한 오류 등을 동반하여 문서의 신뢰도를 크게 떨어뜨립니다.</p>
+                    <br>
+                    <p>이에 따라 <strong>인공지능이 생성한 결과물을そのまま 복사·붙여넣기 하거나 이를 바탕으로 문서를 생성/편집하는 행위는 엄격히 금지</strong>됩니다. 적발 시 <strong>편집권 남용</strong>으로 간주하여 경고 없이 차단 조치될 수 있음을 안내해 드립니다.</p>
+                    <p>관련 규정은 <a href="#" style="color:#0055AA;">효빈위키:기본방침/문서 관리 방침</a>을 참고하여 주시기 바랍니다.</p>
+                    <br>
+                    <p>감사합니다.</p>
+                `,
+                comments: []
+            },
+            { 
+                id: 162, 
+                badge: '162',
+                title: '2026년 2분기 효빈위키 프로젝트 정리가 종료되었습니다.', 
+                author: 'Ayumu_U', 
+                date: '2026.06.03',
+                content: `
+                    <p>안녕하세요, 효빈위키 관리자 Ayumu_U입니다.</p>
+                    <br>
+                    <p>2026년 4월부터 진행되었던 2분기 효빈위키 프로젝트 문서 정리가 모두 종료되었습니다.</p>
+                    <p>이번 분기 동안 장기 방치되었거나 활동이 전무했던 프로젝트들을 '중단된 프로젝트'로 이관하였으며, 활발하게 활동 중인 프로젝트(예: 효빈도시철도 프로젝트, 효빈광역시 행정구역 프로젝트 등)의 대문 정비를 지원하였습니다.</p>
+                    <br>
+                    <p>프로젝트 개설 및 유지 기준에 대한 자세한 내용은 <a href="#" style="color:#0055AA;">효빈위키:프로젝트 지침</a>을 확인해 주시기 바랍니다.</p>
+                    <p>쾌적한 위키 환경을 위해 기여해 주시는 모든 위키러 여러분께 깊은 감사를 드립니다.</p>
+                `,
+                comments: [
+                    { author: 'Luxia', date: '2026-06-03 14:22:10', text: '고생 많으셨습니다.' }
+                ]
+            },
+            { id: 161, badge: '161', title: '최근 지역 언론 보도 및 개인정보 관련 조사에 대한 입장', author: 'Hyobin_Corp', date: '2026.05.10', content: '<p>해당 공지의 상세 내용은 운영진만 열람 가능합니다.</p>' },
+            { id: 160, badge: '160', title: 'Hyobin Corp DNS 서버 장애 안내', author: 'wikiadmin', date: '2026.04.06', content: '<p>해당 공지의 상세 내용은 운영진만 열람 가능합니다.</p>' },
+            { 
+                id: 159, 
+                badge: '159',
+                title: '일부 지역 커뮤니티 여론에 대한 효빈위키의 입장 및 사실관계 안내', 
+                author: 'Hyobin_Corp', 
+                date: '2026.03.30',
+                content: `
+                    <p>최근 효빈시 관내 일부 온라인 커뮤니티(창전구 맘카페 등)에서 효빈위키의 문서 서술 방향성 및 운영에 관해 사실과 다른 루머가 유포되고 있어 이에 대한 당사의 입장을 밝힙니다.</p>
+                    <br>
+                    <p><strong>1. 효빈위키는 특정 정당이나 정치인을 지지하지 않습니다.</strong></p>
+                    <p>효빈위키는 중립적 관점(NPOV)을 지향하며, 전·현직 시장이나 지자체장 관련 문서는 오직 확인된 언론 보도와 공식 자료에 의거하여 서술됩니다. 편향된 서술은 발견 즉시 운영진에 의해 제재 조치되고 있습니다.</p>
+                    <br>
+                    <p><strong>2. 상권 및 상호명 관련 서술에 대하여</strong></p>
+                    <p>최근 오내사거리역 지하상가 폭리 논란 등 지역 상권과 관련된 서술에 대하여 상인회의 항의가 접수된 바 있습니다. 그러나 해당 논란은 효빈일보 등 주요 지역 언론에서 다루어진 공익적 사실에 해당하므로, 효빈위키는 이를 임의로 삭제하거나 블라인드 처리하지 않습니다.</p>
+                    <br>
+                    <p>앞으로도 효빈위키는 지역 사회의 투명하고 자유로운 정보 공유의 장이 될 수 있도록 최선을 다하겠습니다.</p>
+                `,
+                comments: []
+            },
+            { id: 158, badge: '158', title: '2026년 1분기 효빈위키 프로젝트 정리가 종료되었습니다.', author: 'Shizuku_O', date: '2026.03.19', content: '<p>내용 생략</p>' },
+            { id: 157, badge: '157', title: '신고 게시판 내 \'위원회 신고\' 카테고리 신설 안내', author: 'Chika_T', date: '2026.03.11', content: '<p>내용 생략</p>' },
+            { id: 156, badge: '156', title: '봇 계정 API 접근 권한 정책 안내', author: 'wikiadmin', date: '2026.03.05', content: '<p>내용 생략</p>' },
+            { id: 155, badge: '155', title: '제재 소명 게시판 댓글 허용 안내', author: 'yurisu', date: '2026.02.12', content: '<p>내용 생략</p>' },
+            { id: 154, badge: '154', title: '제재 소명 절차 변경 안내', author: 'yurisu', date: '2026.02.07', content: '<p>내용 생략</p>' },
+            { id: 153, badge: '153', title: '신고 게시판 분류 안내', author: 'wikiadmin', date: '2025.12.26', content: '<p>내용 생략</p>' },
+            { id: 152, badge: '152', title: '효빈광역시/덕빈북도 통합 관련 문서 관리 안내', author: 'Luxia', date: '2025.12.20', content: '<p>내용 생략</p>' },
+            { id: 151, badge: '151', title: '2025년 4분기 프로젝트 정리가 종료되었습니다.', author: 'Luxia', date: '2025.12.10', content: '<p>내용 생략</p>' },
+            { id: 150, badge: '150', title: '규정 개정 토론 관련 안내', author: 'wikiadmin', date: '2025.12.07', content: '<p>내용 생략</p>' },
+            { id: 149, badge: '149', title: '생성형 인공지능 이용 관련 안내', author: 'wikiadmin', date: '2025.12.03', content: '<p>상단 고정 공지와 동일합니다.</p>' },
+            { id: 148, badge: '148', title: '가입 인사 및 기여 내역 인증 게시글 작성 관련 안내', author: 'yurisu', date: '2025.11.10', content: '<p>내용 생략</p>' }
+        ];
+
+        // 초기 목록 렌더링
+        function renderList() {
+            const tbody = document.getElementById('board-tbody');
+            let html = '';
+
+            notices.forEach(n => {
+                const isNoticeRow = n.id === 'notice1' ? 'style="background-color: var(--wiki-gray-bg);"' : '';
+                const idClass = n.id === 'notice1' ? 'notice-badge' : '';
+                
+                html += `
+                    <tr ${isNoticeRow}>
+                        <td class="col-id ${idClass}">${n.badge}</td>
+                        <td class="col-title ${n.id === 'notice1' ? 'font-bold' : ''}" onclick="openDetail('${n.id}')">${n.title}</td>
+                        <td class="col-author">${n.author}</td>
+                        <td class="col-date">${n.date}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // 특정 글 상세 뷰 열기 (SPA 라우팅)
+        window.openDetail = function(postId) {
+            // String/Number 타입 호환을 위해 느슨한 비교(==) 또는 String 치환 사용
+            const post = notices.find(p => String(p.id) === String(postId));
+            
+            if(!post) {
+                alert("게시글을 찾을 수 없습니다.");
+                return;
+            }
+
+            // 뷰 전환
+            document.getElementById('view-list').style.display = 'none';
+            document.getElementById('view-detail').style.display = 'block';
+            window.scrollTo(0, 0);
+
+            // 데이터 바인딩
+            document.getElementById('post-title').innerText = post.title;
+            document.getElementById('post-author').innerText = post.author;
+            document.getElementById('post-date').innerText = post.date;
+            document.getElementById('post-body').innerHTML = post.content || '<p>상세 내용이 없습니다.</p>';
+            
+            // 공지사항 댓글 렌더링 (대부분 0이지만 있는 경우 렌더링)
+            const commentsContainer = document.getElementById('comments-container');
+            let commentsHtml = '';
+            
+            if(post.comments && post.comments.length > 0) {
+                document.getElementById('comment-count').innerText = post.comments.length;
+                post.comments.forEach(c => {
+                    commentsHtml += `
+                        <div class="comment-item">
+                            <div class="comment-meta">
+                                <span class="comment-author">
+                                    ${c.author}
+                                    <svg viewBox="0 0 24 24" style="fill:#eab308;"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm4 11H8v-1.5c0-1.33 2.67-2 4-2s4 .67 4 2V17z"/></svg>
+                                </span>
+                                <span>${c.date}</span>
+                            </div>
+                            <div class="comment-content mt-2">${c.text}</div>
+                        </div>
+                    `;
+                });
+            } else {
+                document.getElementById('comment-count').innerText = '0';
+            }
+            commentsContainer.innerHTML = commentsHtml;
+        };
+
+        // 목록으로 돌아가기
+        window.showListView = function() {
+            document.getElementById('view-detail').style.display = 'none';
+            document.getElementById('view-list').style.display = 'block';
+            window.scrollTo(0, 0);
+        };
+
+        // 다크 모드 토글
+        window.toggleDarkMode = function() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('hb_dark_mode', document.body.classList.contains('dark-mode'));
+        };
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            if(localStorage.getItem('hb_dark_mode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+            renderList(); // 초기화 렌더링
+        });
+    </script>
+</body>
+</html>
