@@ -5026,6 +5026,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const navbar = document.querySelector('nav');
     if (!navbar) return;
 
+    // [예외 처리] URL이나 문서 제목에 '블라인드'(또는 blind)가 포함된 페이지는 상단 바를 숨기지 않고 항상 고정함
+    const currentPath = decodeURIComponent(window.location.pathname + window.location.href).toLowerCase();
+    const pageTitle = document.title.toLowerCase();
+    if (currentPath.includes('블라인드') || currentPath.includes('blind') || pageTitle.includes('블라인드') || pageTitle.includes('blind')) {
+        return; // 스크롤 이벤트를 등록하지 않고 여기서 즉시 종료!
+    }
+
     // 부드럽게 나타나고 사라지도록 애니메이션 효과 적용
     navbar.style.transition = 'transform 0.3s ease-in-out';
 
