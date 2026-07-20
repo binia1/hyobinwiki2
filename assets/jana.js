@@ -5022,3 +5022,201 @@ document.addEventListener("DOMContentLoaded", function() {
         el.textContent = age;
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+    const navbar = document.querySelector('nav');
+    if (!navbar) return;
+
+    // 부드럽게 나타나고 사라지도록 애니메이션 효과 적용
+    navbar.style.transition = 'transform 0.3s ease-in-out';
+
+    // 스크롤 감지
+    window.addEventListener('scroll', function() {
+        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // 페이지 맨 위(50px 이내)에 도달했을 때만 바를 보여주고, 그 외에는 숨김
+        if (scrollTop > 50) {
+            navbar.style.transform = 'translateY(-100%)';
+        } else {
+            navbar.style.transform = 'translateY(0)';
+        }
+    });
+});
+// ============================================================================
+// 페이지 로드 시 공통 CSS 주입, 모달 HTML 주입(없는 경우만), 설정 초기화
+// ============================================================================
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. 네비게이션 바 스크롤 효과 (맨 위 50px에 도달했을 때만 표시)
+    const navbar = document.querySelector('nav');
+    if (navbar) {
+        navbar.style.transition = 'transform 0.3s ease-in-out';
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > 50) {
+                navbar.style.transform = 'translateY(-100%)';
+            } else {
+                navbar.style.transform = 'translateY(0)';
+            }
+        });
+    }
+
+    // 2. 공통 모달 및 다크 모드 개선 CSS는 문서에 없으면 어떤 페이지든 무조건 주입
+    if (!document.getElementById('hyobin-modal-styles')) {
+        const modalStyle = `
+            <style id="hyobin-modal-styles">
+                .modal-overlay {
+                    position: fixed !important; top: 0; left: 0; width: 100%; height: 100%;
+                    background-color: rgba(0, 0, 0, 0.65); display: none;
+                    justify-content: center; align-items: center; z-index: 99999 !important;
+                    backdrop-filter: blur(2px);
+                }
+                .modal-overlay.active, .modal-overlay.show, .modal-overlay.open {
+                    display: flex !important;
+                }
+                .modal-window {
+                    background-color: #ffffff; padding: 24px; border-radius: 10px;
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); width: 90%; max-width: 400px;
+                    position: relative; box-sizing: border-box; font-family: inherit; color: #222;
+                    border: 1px solid #e5e7eb;
+                }
+                body.dark-mode { background-color: #1f2023 !important; color: #ddd !important; }
+                body.dark-mode nav { background-color: #33334d !important; }
+                body.dark-mode .modal-window { background-color: #2a2d30; color: #eee; border-color: #444; }
+                body.dark-mode .modal-header { border-bottom: 1px solid #444; color: #fff; }
+                body.dark-mode .modal-input { background-color: #1a1a24; border-color: #444; color: #fff; }
+                body.dark-mode .modal-input:focus { border-color: #8888cc; }
+                .modal-header {
+                    font-size: 1.15rem; font-weight: bold; margin-bottom: 18px; padding-bottom: 12px;
+                    border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;
+                }
+                .close-btn { cursor: pointer; font-size: 1.5rem; color: #888; line-height: 1; }
+                .close-btn:hover { color: #ef4444; }
+                .modal-input {
+                    width: 100%; padding: 11px 14px; margin-bottom: 12px; border: 1px solid #ccc;
+                    border-radius: 6px; font-size: 0.9rem; box-sizing: border-box; background-color: #fafafa;
+                }
+                .modal-input:focus { outline: none; border-color: #7777AA; background-color: #fff; }
+                .modal-btn {
+                    width: 100%; background-color: #666699; color: white; padding: 11px; border: none;
+                    border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 6px;
+                }
+                .modal-btn:hover { background-color: #555588; }
+                .modal-btn-sub { background-color: #6b7280; margin-top: 8px; }
+                .modal-btn-sub:hover { background-color: #4b5563; }
+                .modal-link { color: #666699; cursor: pointer; font-weight: bold; text-decoration: underline; }
+                body.dark-mode .modal-link { color: #6699ff; }
+                .setting-item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; font-size: 0.95rem; }
+            </style>
+        `;
+        document.head.insertAdjacentHTML('beforeend', modalStyle);
+    }
+
+    // 3. 문서 내에 모달창 HTML이 없을 때만(일반 문서들) 모달 HTML 구조를 생성하여 주입
+    if (!document.getElementById('loginModal')) {
+        const modalHTML = `
+            <div id="loginModal" class="modal-overlay" style="display: none;">
+                <div class="modal-window">
+                    <div class="modal-header">
+                        <span>로그인</span>
+                        <span class="close-btn" onclick="toggleModal('loginModal')">&times;</span>
+                    </div>
+                    <div id="loginErrorMsg" style="font-size: 0.8rem; color: #ef4444; margin-bottom: 12px; display: none;"></div>
+                    <input type="text" id="loginId" class="modal-input" placeholder="아이디" autocomplete="username">
+                    <input type="password" id="loginPw" class="modal-input" placeholder="비밀번호" autocomplete="current-password" onkeypress="if(event.keyCode==13) doLogin()">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 14px; font-size: 0.8rem; color: #6b7280;">
+                        <label style="cursor: pointer;"><input type="checkbox" id="keepLogin" style="accent-color: #7777AA;"> 로그인 상태 유지</label>
+                        <span class="modal-link" onclick="alert('효빈위키 관리자에게 문의 바랍니다.');">비밀번호 찾기</span>
+                    </div>
+                    <button class="modal-btn" onclick="doLogin()">로그인</button>
+                    <div style="font-size: 0.75rem; margin-top: 14px; text-align: center; color: #6b7280; border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                        계정이 없으신가요? <span class="modal-link" onclick="toggleModal('loginModal'); toggleModal('signupModal');">회원가입</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="signupModal" class="modal-overlay" style="display: none;">
+                <div class="modal-window">
+                    <div class="modal-header">
+                        <span>회원가입</span>
+                        <span class="close-btn" onclick="toggleModal('signupModal')">&times;</span>
+                    </div>
+                    <div id="signupErrorMsg" style="font-size: 0.8rem; color: #ef4444; margin-bottom: 12px; display: none;"></div>
+                    <input type="text" id="signupId" class="modal-input" placeholder="사용할 아이디 (2자 이상)" autocomplete="username">
+                    <input type="password" id="signupPw" class="modal-input" placeholder="비밀번호 (4자 이상)" autocomplete="new-password">
+                    <input type="password" id="signupPwConfirm" class="modal-input" placeholder="비밀번호 확인" autocomplete="new-password" onkeypress="if(event.keyCode==13) doSignup()">
+                    <button class="modal-btn" onclick="doSignup()">가입하기</button>
+                    <div style="font-size: 0.75rem; margin-top: 14px; text-align: center; color: #6b7280; border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                        이미 계정이 있으신가요? <span class="modal-link" onclick="toggleModal('signupModal'); toggleModal('loginModal');">로그인</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settingsModal" class="modal-overlay" style="display: none;">
+                <div class="modal-window">
+                    <div class="modal-header">
+                        <span>⚙️ 효빈위키 환경설정</span>
+                        <span class="close-btn" onclick="toggleModal('settingsModal')">&times;</span>
+                    </div>
+                    <div class="setting-item">
+                        <span>🌙 다크 모드</span>
+                        <input type="checkbox" id="darkModeCheck" onchange="toggleDarkMode()" style="width: 18px; height: 18px; accent-color: #7777AA; cursor: pointer;">
+                    </div>
+                    <div class="setting-item">
+                        <span>📐 레이아웃 너비</span>
+                        <select id="layoutSelect" onchange="changeLayout(this.value)" style="padding: 6px; border-radius: 4px; border: 1px solid #ccc; background: white; color: #222;">
+                            <option value="normal">고정폭 (기본)</option>
+                            <option value="wide">광폭 (전체 화면)</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.95rem;">
+                            <span>🔠 글자 크기</span>
+                            <span id="fontSizeVal" style="font-weight: bold; color: #6699ff;">100%</span>
+                        </div>
+                        <input type="range" id="fontSizeRange" min="80" max="130" value="100" step="5" style="width: 100%; accent-color: #7777AA; cursor: pointer;" oninput="changeFontSize(this.value)">
+                    </div>
+                    <button class="modal-btn mt-4" onclick="toggleModal('settingsModal')">설정 저장 및 닫기</button>
+                    <button class="modal-btn modal-btn-sub" onclick="resetSettings()">기본값으로 초기화</button>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    // 4. [핵심 수정] 저장된 환경설정 적용은 모달 존재 여부와 상관없이 무조건 실행!
+    if (localStorage.getItem('hyobin_dark_mode') === 'true') {
+        document.body.classList.add('dark-mode');
+        const darkCheck = document.getElementById('darkModeCheck');
+        if (darkCheck) darkCheck.checked = true;
+    } else {
+        document.body.classList.remove('dark-mode');
+        const darkCheck = document.getElementById('darkModeCheck');
+        if (darkCheck) darkCheck.checked = false;
+    }
+
+    const savedFontSize = localStorage.getItem('hyobin_font_size');
+    if (savedFontSize) {
+        document.body.style.fontSize = (savedFontSize / 100) + 'rem';
+        const fontRange = document.getElementById('fontSizeRange');
+        const fontVal = document.getElementById('fontSizeVal');
+        if (fontRange) fontRange.value = savedFontSize;
+        if (fontVal) fontVal.textContent = savedFontSize + '%';
+    }
+
+    const savedLayout = localStorage.getItem('hyobin_layout');
+    if (savedLayout && typeof changeLayout === 'function') {
+        changeLayout(savedLayout);
+        const layoutSel = document.getElementById('layoutSelect');
+        if (layoutSel) layoutSel.value = savedLayout;
+    }
+
+    // 5. 상단 네비게이션 로그인 상태 UI 반영 역시 무조건 실행!
+    if (typeof updateAuthUI === 'function') {
+        updateAuthUI();
+    }
+});
+
+// 브라우저 기본 자동완성(최근 검색어) 팝업 영구 차단
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('headerSearchInput');
+    if (searchInput) searchInput.setAttribute('autocomplete', 'off');
+});
