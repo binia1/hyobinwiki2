@@ -6241,8 +6241,8 @@ window.HB_WIKI_PAGES = [
     "href": "창건동.html"
   },
   {
-    "title": "창문공원역",
-    "href": "창문공원역.html"
+    "title": "창문공원",
+    "href": "창문공원.html"
   },
   {
     "title": "창선역",
@@ -11330,7 +11330,7 @@ window.HB_WIKI_PAGES = [
   "진희동": "진희동.html",
   "진희역": "진희역.html",
   "창건동": "창건동.html",
-  "창문공원역": "창문공원역.html",
+  "창문공원": "창문공원.html",
   "창선동1가": "중앙동.html",
   "창선동2가": "중앙동.html",
   "창선동3가": "중앙동.html",
