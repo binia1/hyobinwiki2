@@ -67,7 +67,7 @@ function autoLinkBusNumbers() {
       "법전원": "효빈대_B선_역_템플릿.html?id=B05",
       "효빈대A선": "효빈대_A선.html",
       "효빈대B선": "효빈대_B선.html",
-      "262": "bus_261.html"
+      "262": "bus_260.html#261"
   };
 
   function getWikiData() {
@@ -450,4 +450,456 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // 문서에 추가
     document.body.appendChild(nav);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. 방어선: 이미 수동으로 '각주' 모음집을 만들어둔 문서 패스
+    if (document.querySelector('.wiki-footnote-section') || document.getElementById('footnote-list')) return;
+
+    const container = document.querySelector('.wiki-container');
+    if (!container) return;
+
+    // 2. 완벽 캐치: 모든 속성 총동원
+    const rawFootnotes = container.querySelectorAll('.wiki-fn, .wiki-tooltip, .wiki-tooltip-trigger, .fn-ref, .wiki-fn-link, .wiki-fn-trigger, .fn-link, .sup-ref, .custom-fn-link, .footnote-link, .footnote-ref, a[title], span[title], sup[onclick*="wiki-footnote-tooltip"], span[onclick*="wiki-footnote-tooltip"], [data-note]');
+    
+    const footnotes = Array.from(rawFootnotes).filter(fn => {
+        // UI 및 뒤로가기 버튼 거름
+        if (fn.closest('.action-group') || fn.closest('nav') || fn.classList.contains('action-btn') || fn.getAttribute('href') === '즐겨찾기.html') return false;
+        if (fn.classList.contains('fn-backlink') || fn.classList.contains('footnote-back') || fn.classList.contains('back-link')) return false;
+        
+        // 데이터 속성이 없으면 버림
+        const hasData = fn.hasAttribute('data-tooltip') || fn.hasAttribute('title') || fn.hasAttribute('data-note') || (fn.hasAttribute('onclick') && fn.getAttribute('onclick').includes('innerHTML'));
+        if (!hasData) return false;
+
+        // ★ 대참사 방어선: 각주 전용 클래스가 아닌데, 내용도 각주 형태가 아니면 버림! ★
+        const isOfficialFnClass = fn.matches('.wiki-fn, .wiki-tooltip, .wiki-tooltip-trigger, .fn-ref, .wiki-fn-link, .wiki-fn-trigger, .fn-link, .sup-ref, .custom-fn-link, .footnote-link, .footnote-ref, [data-note], sup[onclick*="wiki-footnote-tooltip"], span[onclick*="wiki-footnote-tooltip"]');
+        const textStr = fn.textContent.trim();
+        
+        // 텍스트가 대괄호로 감싸져 있거나('[1]'), 별표('*')거나, 비어있는 경우만 진짜 각주로 인정
+        const looksLikeFnText = (textStr.startsWith('[') && textStr.endsWith(']')) || textStr === '*' || textStr === '';
+        
+        if (!isOfficialFnClass && !looksLikeFnText) {
+            return false; // 일반 버튼(급행, 간선 등)이 title 속성을 가졌다고 해서 각주로 납치되는 것을 완벽 차단!
+        }
+
+        return true;
+    });
+
+    if (footnotes.length === 0) return; 
+
+    // 3. 각주 모음집 컨테이너 생성
+    const fnSection = document.createElement('div');
+    fnSection.className = 'wiki-footnote-section';
+    fnSection.style.marginTop = "40px";
+    fnSection.style.paddingTop = "20px";
+    fnSection.style.borderTop = "1px solid var(--wiki-border)";
+    fnSection.innerHTML = '<h2 class="wiki-heading-2" style="margin-top:0; border-bottom:none;">각주</h2><ul class="wiki-footnote-list" style="list-style:none; padding-left:0; font-size:0.85rem; color:var(--wiki-text);"></ul>';
+    
+    const fnList = fnSection.querySelector('.wiki-footnote-list');
+
+    // 4. 리스트 생성 및 삽입
+    footnotes.forEach((fn, index) => {
+        let tooltipText = fn.getAttribute('data-tooltip') || fn.getAttribute('data-note') || fn.getAttribute('title');
+
+        if (!tooltipText && fn.hasAttribute('onclick')) {
+            const match = fn.getAttribute('onclick').match(/innerHTML\s*=\s*'([^']+)'/);
+            if (match) {
+                tooltipText = match[1];
+            } else {
+                tooltipText = "내용 없음"; 
+            }
+        }
+
+        const fnNumber = index + 1;
+        fn.removeAttribute('title'); 
+
+        fn.id = `fn-ref-${fnNumber}`;
+        fn.href = `#fn-${fnNumber}`;
+        fn.textContent = `[${fnNumber}]`;
+        fn.style.textDecoration = "none";
+
+        const li = document.createElement('li');
+        li.id = `fn-${fnNumber}`;
+        li.style.marginBottom = "8px";
+        li.style.display = "flex";
+        li.style.alignItems = "flex-start";
+        li.style.gap = "8px";
+        li.innerHTML = `<a href="#fn-ref-${fnNumber}" class="fn-up-link" title="본문으로 돌아가기" style="color:var(--wiki-link); text-decoration:none; font-weight:bold;">[^]</a> <span>[${fnNumber}] ${tooltipText}</span>`;
+        fnList.appendChild(li);
+    });
+
+    // 5. 문서 하단에 삽입
+    const footerContainer = document.getElementById('footer-container');
+    if (footerContainer) {
+        footerContainer.parentNode.insertBefore(fnSection, footerContainer);
+    } else {
+        container.appendChild(fnSection);
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. 현재 페이지 정보 수집
+    const pageTitle = document.title.replace(" - 효빈위키", "").trim();
+    const pageUrl = window.location.pathname.split("/").pop();
+
+    // 2. 실제 즐겨찾기 동작 함수
+    function toggleBookmark(btnElement) {
+        let bookmarks = JSON.parse(localStorage.getItem('hyobinBookmarks')) || [];
+        const existingIndex = bookmarks.findIndex(b => b.url === pageUrl);
+
+        if (existingIndex > -1) {
+            bookmarks.splice(existingIndex, 1);
+            alert('즐겨찾기에서 해제되었습니다.');
+            btnElement.style.color = ''; // 색상 초기화
+        } else {
+            bookmarks.push({ title: pageTitle, url: pageUrl });
+            alert('즐겨찾기에 추가되었습니다.');
+            btnElement.style.color = '#FFCC11'; // 3호선 노란색으로 칠하기
+        }
+        localStorage.setItem('hyobinBookmarks', JSON.stringify(bookmarks));
+    }
+
+    // 3. 로딩 시 별 색상 칠해주는 함수
+    function applyStarColor(btnElement) {
+        let bookmarks = JSON.parse(localStorage.getItem('hyobinBookmarks')) || [];
+        if (bookmarks.some(b => b.url === pageUrl)) {
+            btnElement.style.color = '#FFCC11';
+        }
+    }
+
+    // --- [작전 1] 화면 전체를 뒤져서 '★' 텍스트를 가진 녀석을 싹 다 납치한다 ---
+    const allElements = document.querySelectorAll('a, div, span, button');
+    let starFound = false;
+
+    allElements.forEach(el => {
+        // 자식 태그가 없고 순수하게 텍스트만 '★'인 요소를 찾음
+        if (el.textContent.trim() === '★' && el.children.length === 0) {
+            // a 태그일 경우 원래 걸려있던 링크(http://127.0.0.1:5501/%EC%A6%90%EA%B2%A8%EC%B0%BE%EA%B8%B0.html 같은 것) 무력화
+            if (el.tagName.toLowerCase() === 'a') {
+                el.href = 'javascript:void(0);'; 
+            }
+            
+            // 즐겨찾기 기능 덮어씌우기
+            el.style.cursor = 'pointer';
+            el.onclick = function(e) {
+                e.preventDefault(); // 기본 클릭 이벤트 차단
+                toggleBookmark(el);
+            };
+            
+            applyStarColor(el);
+            starFound = true;
+        }
+    });
+
+    // --- [작전 2] 화면에 '★'가 단 하나도 없다면? ---
+    if (!starFound) {
+        // '역사' 버튼을 찾아내서 그 옆에 기생(?)시킨다.
+        const historyBtn = Array.from(allElements).find(el => el.textContent.trim() === '역사');
+        
+        if (historyBtn && historyBtn.parentElement) {
+            // 역사 버튼과 똑같은 태그(a 혹은 div)로 새 버튼 생성
+            const newStarBtn = document.createElement(historyBtn.tagName);
+            newStarBtn.className = historyBtn.className; // 디자인(클래스) 그대로 복사
+            newStarBtn.style.cursor = 'pointer';
+            newStarBtn.textContent = '★';
+            
+            if (newStarBtn.tagName.toLowerCase() === 'a') {
+                newStarBtn.href = 'javascript:void(0);';
+            }
+            
+            newStarBtn.onclick = function(e) {
+                e.preventDefault();
+                toggleBookmark(newStarBtn);
+            };
+            
+            // 역사 버튼 바로 뒤에 찰싹 붙이기
+            historyBtn.parentElement.insertBefore(newStarBtn, historyBtn.nextSibling);
+            applyStarColor(newStarBtn);
+        }
+    }
+});
+
+// --- [작전 3 - '최근 토론' 옆에 얌전하게 끼워넣기] ---
+    
+    // 1. 화면에서 '최근 토론' 텍스트를 가진 요소를 찾음
+    const navElements = document.querySelectorAll('a, span, li, div');
+    let targetNode = null;
+
+    for (let el of navElements) {
+        if (el.textContent.trim() === '최근 토론' && el.children.length === 0) {
+            targetNode = el;
+            break;
+        }
+    }
+
+    // 2. '최근 토론'을 찾았다면 그 바로 옆에 추가
+    if (targetNode && targetNode.parentElement) {
+        const myFavLink = document.createElement('a');
+        myFavLink.href = '즐겨찾기.html';
+        myFavLink.innerHTML = '⭐ 내 즐겨찾기';
+        
+        // 주변 메뉴(대문, 최근 변경 등)와 위화감 없도록 스타일 조정
+        myFavLink.style.marginLeft = '12px'; // 간격 살짝 띄우기
+        myFavLink.style.color = '#ffffff'; // 상단바 흰색 텍스트와 맞춤
+        myFavLink.style.textDecoration = 'none'; // 기본 밑줄 제거
+        myFavLink.style.opacity = '0.9'; // 너무 튀지 않게 투명도 살짝 조절
+
+        // 마우스 올렸을 때만 자연스럽게 강조되도록 설정
+        myFavLink.onmouseover = function() { this.style.opacity = '1'; this.style.textDecoration = 'underline'; };
+        myFavLink.onmouseout = function() { this.style.opacity = '0.9'; this.style.textDecoration = 'none'; };
+
+        // '최근 토론' 버튼 바로 뒤에 살포시 얹기
+        targetNode.parentElement.insertBefore(myFavLink, targetNode.nextSibling);
+    }
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. 현재 페이지 정보 수집
+    const pageTitle = document.title.replace(" - 효빈위키", "").trim();
+    const pageUrl = window.location.pathname.split("/").pop();
+
+    // 2. 실제 즐겨찾기 동작 함수
+    function toggleBookmark(btnElement) {
+        let bookmarks = JSON.parse(localStorage.getItem('hyobinBookmarks')) || [];
+        const existingIndex = bookmarks.findIndex(b => b.url === pageUrl);
+
+        if (existingIndex > -1) {
+            bookmarks.splice(existingIndex, 1);
+            alert('즐겨찾기에서 해제되었습니다.');
+            btnElement.style.color = ''; // 색상 초기화
+        } else {
+            bookmarks.push({ title: pageTitle, url: pageUrl });
+            alert('즐겨찾기에 추가되었습니다.');
+            btnElement.style.color = '#FFCC11'; // 3호선 노란색으로 칠하기
+        }
+        localStorage.setItem('hyobinBookmarks', JSON.stringify(bookmarks));
+    }
+
+    // 3. 로딩 시 별 색상 칠해주는 함수
+    function applyStarColor(btnElement) {
+        let bookmarks = JSON.parse(localStorage.getItem('hyobinBookmarks')) || [];
+        if (bookmarks.some(b => b.url === pageUrl)) {
+            btnElement.style.color = '#FFCC11';
+        }
+    }
+
+    // --- [작전 1] 화면 전체를 뒤져서 '★' 텍스트를 가진 녀석을 싹 다 납치한다 ---
+    const allElements = document.querySelectorAll('a, div, span, button');
+    let starFound = false;
+
+    allElements.forEach(el => {
+        // 자식 태그가 없고 순수하게 텍스트만 '★'인 요소를 찾음
+        if (el.textContent.trim() === '★' && el.children.length === 0) {
+            // a 태그일 경우 원래 걸려있던 링크(http://127.0.0.1:5501/%EC%A6%90%EA%B2%A8%EC%B0%BE%EA%B8%B0.html 같은 것) 무력화
+            if (el.tagName.toLowerCase() === 'a') {
+                el.href = 'javascript:void(0);'; 
+            }
+            
+            // 즐겨찾기 기능 덮어씌우기
+            el.style.cursor = 'pointer';
+            el.onclick = function(e) {
+                e.preventDefault(); // 기본 클릭 이벤트 차단
+                toggleBookmark(el);
+            };
+            
+            applyStarColor(el);
+            starFound = true;
+        }
+    });
+
+    // --- [작전 2] 화면에 '★'가 단 하나도 없다면? ---
+    if (!starFound) {
+        // '역사' 버튼을 찾아내서 그 옆에 기생(?)시킨다.
+        const historyBtn = Array.from(allElements).find(el => el.textContent.trim() === '역사');
+        
+        if (historyBtn && historyBtn.parentElement) {
+            // 역사 버튼과 똑같은 태그(a 혹은 div)로 새 버튼 생성
+            const newStarBtn = document.createElement(historyBtn.tagName);
+            newStarBtn.className = historyBtn.className; // 디자인(클래스) 그대로 복사
+            newStarBtn.style.cursor = 'pointer';
+            newStarBtn.textContent = '★';
+            
+            if (newStarBtn.tagName.toLowerCase() === 'a') {
+                newStarBtn.href = 'javascript:void(0);';
+            }
+            
+            newStarBtn.onclick = function(e) {
+                e.preventDefault();
+                toggleBookmark(newStarBtn);
+            };
+            
+            // 역사 버튼 바로 뒤에 찰싹 붙이기
+            historyBtn.parentElement.insertBefore(newStarBtn, historyBtn.nextSibling);
+            applyStarColor(newStarBtn);
+        }
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const pageTitle = document.title.replace(" - 효빈위키", "").trim();
+    const pageUrl = decodeURIComponent(window.location.pathname.split("/").pop());
+
+    // 1. HTML 태그 다 무시하고 '순수 텍스트'만 냄새 맡고 추적하는 사냥개(TreeWalker) 소환
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    let targetNode = null;
+
+    while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const text = node.nodeValue.trim();
+        
+        // 텍스트가 '☆'나 '★'로 시작하고, 상단 네비게이션 바(<nav>) 안에 있지 않은 놈을 적발!
+        if ((text.startsWith('☆') || text.startsWith('★')) && !node.parentElement.closest('nav')) {
+            targetNode = node;
+            break; // 찾았으면 추적 종료
+        }
+    }
+
+    // 2. 범인(별 모양 텍스트)을 찾았다면, 그 글자 자체를 뽑아버리고 버튼으로 개조해서 끼워넣음
+    if (targetNode) {
+        const originalText = targetNode.nodeValue.trim();
+        const numText = originalText.replace(/[☆★]/g, ''); // 뒤에 붙은 숫자나 공백만 분리
+        
+        // 새롭게 기능을 부여할 span 태그 창조
+        const starBtn = document.createElement('span');
+        starBtn.style.cursor = 'pointer';
+        starBtn.style.display = 'inline-block';
+        
+        // 혹시 그 글자가 이미 a 태그 안에 있었다면 링크 기능부터 박살냄 (딴 데로 날아가는 것 방지)
+        if (targetNode.parentElement.tagName.toLowerCase() === 'a') {
+            targetNode.parentElement.href = 'javascript:void(0);';
+            targetNode.parentElement.onclick = function(e) { e.preventDefault(); };
+        }
+
+        // 즐겨찾기 상태 판별 및 색상(3호선 노란색) 칠하기
+        let bookmarks = JSON.parse(localStorage.getItem('hyobinBookmarks')) || [];
+        if (bookmarks.some(b => b.url === pageUrl)) {
+            starBtn.textContent = '★' + numText;
+            starBtn.style.color = '#FFCC11'; 
+        } else {
+            starBtn.textContent = '☆' + numText;
+        }
+
+        // 클릭 이벤트 주입
+        starBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // 오작동 방지 절대 방어막
+            
+            let currentBookmarks = JSON.parse(localStorage.getItem('hyobinBookmarks')) || [];
+            const existingIndex = currentBookmarks.findIndex(b => b.url === pageUrl);
+
+            if (existingIndex > -1) {
+                currentBookmarks.splice(existingIndex, 1);
+                alert('즐겨찾기에서 해제되었습니다.');
+                starBtn.textContent = '☆' + numText;
+                starBtn.style.color = ''; 
+            } else {
+                currentBookmarks.push({ title: pageTitle, url: pageUrl });
+                alert('즐겨찾기에 추가되었습니다.');
+                starBtn.textContent = '★' + numText;
+                starBtn.style.color = '#FFCC11'; 
+            }
+            
+            localStorage.setItem('hyobinBookmarks', JSON.stringify(currentBookmarks));
+        });
+
+        // 원본 문서에 있던 아무 기능 없던 '☆' 텍스트를 뽑아버리고, 우리가 만든 강력한 새 버튼으로 교체!
+        targetNode.parentNode.replaceChild(starBtn, targetNode);
+    }
+});document.addEventListener("DOMContentLoaded", function() {
+    const pageTitle = document.title.replace(" - 효빈위키", "").trim();
+    const pageUrl = decodeURIComponent(window.location.pathname.split("/").pop());
+
+    // 1. 별 모양 찾기 (기존 로직)
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    let targetNode = null;
+    let isNewInsertion = false; // 별이 없어서 무에서 유를 창조해야 하는 상황인지 체크
+
+    while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const text = node.nodeValue.trim();
+        // 상단바(nav)에 있는 별은 건너뛰고 본문 별만 타겟팅
+        if ((text.startsWith('☆') || text.startsWith('★')) && !node.parentElement.closest('nav')) {
+            targetNode = node;
+            break;
+        }
+    }
+
+    // 2. 맙소사, 별이 아예 없다! -> '역사' 버튼을 멱살 잡고 찾아내기
+    let historyBtn = null;
+    if (!targetNode) {
+        const allElements = document.querySelectorAll('a, button, span, div');
+        for (let el of allElements) {
+            // 상단바(nav)가 아닌 곳에 있는 '역사' 버튼 적발
+            if (el.textContent.trim() === '역사' && !el.closest('nav')) {
+                historyBtn = el;
+                isNewInsertion = true;
+                break;
+            }
+        }
+    }
+
+    // 3. 별을 찾았거나, '역사' 버튼을 찾았다면 작업 시작
+    if (targetNode || historyBtn) {
+        let numText = '';
+        if (targetNode) {
+            numText = targetNode.nodeValue.trim().replace(/[☆★]/g, ''); // 뒤에 숫자 있으면 보존
+        }
+
+        // 새롭게 만들(혹은 교체할) a 태그 창조
+        const starBtn = document.createElement('a');
+        starBtn.style.cursor = 'pointer';
+        starBtn.href = 'javascript:void(0);'; // 클릭 시 엉뚱한 데로 안 날아가게 고정
+        
+        // ★ 핵심: 기존 버튼과 위화감이 없도록 '역사' 버튼의 클래스(디자인)를 그대로 베껴옴
+        if (historyBtn) {
+            starBtn.className = historyBtn.className;
+        } else if (targetNode && targetNode.parentElement.tagName.toLowerCase() === 'a') {
+            starBtn.className = targetNode.parentElement.className;
+        } else if (targetNode) {
+            starBtn.className = 'wiki-btn'; // 최후의 보루
+        }
+
+        // 로컬 스토리지 확인해서 색상 및 모양 결정
+        let bookmarks = JSON.parse(localStorage.getItem('hyobinBookmarks')) || [];
+        if (bookmarks.some(b => b.url === pageUrl)) {
+            starBtn.textContent = '★' + numText;
+            starBtn.style.color = '#FFCC11'; // 3호선 노란색
+        } else {
+            starBtn.textContent = '☆' + numText;
+        }
+
+        // 클릭 이벤트 (즐겨찾기 토글)
+        starBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); 
+            
+            let currentBookmarks = JSON.parse(localStorage.getItem('hyobinBookmarks')) || [];
+            const existingIndex = currentBookmarks.findIndex(b => b.url === pageUrl);
+
+            if (existingIndex > -1) {
+                currentBookmarks.splice(existingIndex, 1);
+                alert('즐겨찾기에서 해제되었습니다.');
+                starBtn.textContent = '☆' + numText;
+                starBtn.style.color = ''; 
+            } else {
+                currentBookmarks.push({ title: pageTitle, url: pageUrl });
+                alert('즐겨찾기에 추가되었습니다.');
+                starBtn.textContent = '★' + numText;
+                starBtn.style.color = '#FFCC11'; 
+            }
+            
+            localStorage.setItem('hyobinBookmarks', JSON.stringify(currentBookmarks));
+        });
+
+        // 4. 화면에 적용하기
+        if (isNewInsertion && historyBtn) {
+            // 별이 없어서 새로 만든 경우 -> '역사' 버튼 바로 뒤에 찰싹 붙여넣기
+            historyBtn.parentNode.insertBefore(starBtn, historyBtn.nextSibling);
+        } else if (targetNode) {
+            // 기존에 별이 있던 경우 -> 기존 낡은 별을 뽑아버리고 새 별로 교체
+            if (targetNode.parentElement.tagName.toLowerCase() === 'a') {
+                 targetNode.parentElement.replaceWith(starBtn); 
+            } else {
+                 targetNode.parentNode.replaceChild(starBtn, targetNode);
+            }
+        }
+    }
 });

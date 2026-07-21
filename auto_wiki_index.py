@@ -340,13 +340,18 @@ def generate_wiki_index():
 
         <div id="app" class="min-h-[500px]"></div>
 
-        <footer class="wiki-footer mt-16 pt-4 border-t border-gray-300">
-            <div class="mb-2 font-bold text-lg">HyobinWiki</div>
-            <p class="mb-2 text-sm text-gray-700"><strong>크리에이티브 커먼즈 라이선스</strong><br>
-            이 저작물은 <a href="#" class="wiki-link">CC BY-NC-SA 2.0 KR</a>에 따라 이용할 수 있습니다.<br>
-            효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</p>
-        </footer>
+
+    <div id="footer-container"></div>
+
     </div>
+    <script src="assets/wiki_index.js"></script>
+    <script src="secret_search.js"></script>
+    <script src="assets/hb_wiki_core.js?v=2"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+        <script src="assets/load-footer.js"></script>
+
+
 
     <script>
         function handleSearch() {{

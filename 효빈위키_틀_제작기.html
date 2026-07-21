@@ -1063,79 +1063,80 @@
             const vals = document.querySelectorAll('.val-input');
             let rowsHtml = '';
 
-            // 1. 인포박스 & 행정구역 정보표 (구조 유사)
-            if (type === 'infobox' || type === 'admin_box') {
-                let imgHtml = '';
-                if (imgName) {
-                    const safeImg = imgName.trim() + '.webp';
-                    imgHtml = `
-    <div class="infobox-image">
-        <img src="이미지/${safeImg}" alt="${titleInput}" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
-    </div>`;
-                }
+// 1. 인포박스 & 행정구역 정보표 (구조 유사)
+if (type === 'infobox' || type === 'admin_box') {
+    let imgHtml = '';
+    if (imgName) {
+        const safeImg = imgName.trim() + '.webp';
+        imgHtml = `
+<div style="text-align: center; padding: 10px; border-bottom: 1px solid #ccc; background: white;">
+    <img src="이미지/${safeImg}" alt="${titleInput}" style="max-width: 100%; border-radius: 4px;" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+</div>`;
+    }
 
+    let rowsHtml = '';
+    for (let i = 0; i < keys.length; i++) {
+        if(keys[i].value) {
+            let content = parseWikiText(vals[i].value);
+            
+            rowsHtml += `
+    <tr>
+        <th style="background-color: #f5f5f5; color: #333; width: 35%; padding: 6px 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; vertical-align: middle;">${keys[i].value}</th>
+        <td style="padding: 6px 8px; border: 1px solid #ddd; vertical-align: middle; text-align: left;">${content}</td>
+    </tr>`;
+        }
+    }
+
+    const html = `
+<aside style="border: 2px solid ${color}; background-color: #fff; width: 100%; max-width: 400px; font-size: 0.9rem; margin: 0 auto; border-radius: 4px; overflow: hidden; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);">
+<div style="background-color: ${color}; color: white; padding: 10px; text-align: center; font-size: 1.2rem; font-weight: 900;">${title}</div>${imgHtml}
+<table style="width: 100%; border-collapse: collapse; border: none; margin: 0;">${rowsHtml}
+</table>
+</aside>`;
+    render(html);
+}
+// 2. 둘러보기 틀 (Navbox) - 일반 및 접힘형
+            else if (type === 'navbox' || type === 'collapsible_navbox') {
+                let rowsHtml = '';
                 for (let i = 0; i < keys.length; i++) {
                     if(keys[i].value) {
                         let content = parseWikiText(vals[i].value);
-                        
+
                         rowsHtml += `
         <tr>
-            <th>${keys[i].value}</th>
-            <td>${content}</td>
-        </tr>`;
-                    }
-                }
-
-                const html = `
-<aside class="infobox" style="border-color: ${color};">
-    <div class="infobox-title" style="background-color: ${color};">${title}</div>${imgHtml}
-    <table>${rowsHtml}
-    </table>
-</aside>`;
-                render(html);
-            } 
-            // 2. 둘러보기 틀 (Navbox) - 일반 및 접힘형
-            else if (type === 'navbox' || type === 'collapsible_navbox') {
-                for (let i = 0; i < keys.length; i++) {
-                    if(keys[i].value) {
-                        let content = parseWikiText(vals[i].value);
-
-                        rowsHtml += `
-        <tr class="namu-nav-row">
-            <th style="background-color: ${color};">${keys[i].value}</th>
-            <td>${content}</td>
+            <th style="background-color: ${color}; color: white; width: 120px; text-align: center; font-weight: bold; border-bottom: 1px solid white; border-right: 1px solid white; padding: 8px;">${keys[i].value}</th>
+            <td style="background-color: #fff; padding: 8px; text-align: left; border-bottom: 1px solid #ccc;">${content}</td>
         </tr>`;
                     }
                 }
 
                 const rndId = 'nav-' + Math.random().toString(36).substr(2, 9);
-                // 접힘형일 경우 초기 display: none 설정
                 const isCollapsed = (type === 'collapsible_navbox');
-                const displayStyle = isCollapsed ? 'style="display: none;"' : '';
+                const displayStyle = isCollapsed ? 'display: none;' : 'display: block;';
                 const btnText = isCollapsed ? '[펼치기]' : '[접기]';
 
                 const html = `
-<div class="namu-nav-container" style="border-color: ${color};">
-    <div class="namu-nav-header" style="background-color: ${color};">
+<div style="border: 2px solid ${color}; margin: 10px 0; font-size: 0.9rem; background: white; width: 100%; border-radius: 4px; overflow: hidden;">
+    <div style="background-color: ${color}; color: white; padding: 6px 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; position: relative;">
         <span>${title}</span>
-        <span class="text-xs bg-white/20 px-2 py-0.5 rounded cursor-pointer" style="position: absolute; right: 10px;" onclick="const c=document.getElementById('${rndId}'); c.style.display = c.style.display==='none'?'block':'none'; this.innerText = c.style.display==='none'?'[펼치기]':'[접기]';">${btnText}</span>
+        <span style="position: absolute; right: 10px; font-size: 0.75rem; background-color: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; cursor: pointer;" onclick="const c=document.getElementById('${rndId}'); c.style.display = c.style.display==='none'?'block':'none'; this.innerText = c.style.display==='none'?'[펼치기]':'[접기]';">${btnText}</span>
     </div>
-    <div id="${rndId}" class="namu-nav-content" ${displayStyle}>
-        <table class="namu-nav-table">${rowsHtml}
+    <div id="${rndId}" style="${displayStyle} padding: 0;">
+        <table style="width: 100%; border-collapse: collapse; border: none; margin: 0;">${rowsHtml}
         </table>
     </div>
 </div>`;
                 render(html);
             }
-            // 3. 일반 데이터 표 (Custom Table - 2열 고정)
+// 3. 일반 데이터 표 (Custom Table - 2열 고정)
             else if (type === 'custom_table') {
                 let headerHtml = '';
                 let bodyHtml = '';
                 
                 if (keys.length > 0) {
                     headerHtml = `<tr>`;
-                    headerHtml += `<th style="background-color:${color}; color:white;">${keys[0].value || '항목'}</th>`;
-                    headerHtml += `<th style="background-color:${color}; color:white;">${parseWikiText(vals[0].value) || '내용'}</th>`;
+                    headerHtml += `<th style="background-color: ${color}; color: white; padding: 8px; border: 1px solid #ccc; text-align: center; font-weight: bold;">${keys[0].value || '항목'}</th>`;
+                    headerHtml += `<th style="background-color: ${color}; color: white; padding: 8px; border: 1px solid #ccc; text-align: center; font-weight: bold;">${parseWikiText(vals[0].value) || '내용'}</th>`;
                     headerHtml += `</tr>`;
                 }
 
@@ -1143,42 +1144,40 @@
                     if(keys[i].value || vals[i].value) {
                          bodyHtml += `
         <tr>
-            <td>${parseWikiText(keys[i].value)}</td>
-            <td>${parseWikiText(vals[i].value)}</td>
+            <td style="padding: 8px; border: 1px solid #ccc; background-color: #fff; text-align: left; vertical-align: middle;">${parseWikiText(keys[i].value)}</td>
+            <td style="padding: 8px; border: 1px solid #ccc; background-color: #fff; text-align: left; vertical-align: middle;">${parseWikiText(vals[i].value)}</td>
         </tr>`;
                     }
                 }
 
                 const html = `
-<table class="wiki-table" style="border-top: 2px solid ${color};">
-    <caption style="font-weight:bold; padding: 5px; color: ${color}; text-align: left;">${title}</caption>
+<table style="width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.95em; border-top: 2px solid ${color}; border-bottom: 2px solid ${color};">
+    <caption style="font-weight: bold; padding: 5px; color: ${color}; text-align: left;">${title}</caption>
     <thead>${headerHtml}</thead>
     <tbody>${bodyHtml}
     </tbody>
 </table>`;
                 render(html);
             }
-            // 4. N행 N열 데이터 표 (Grid Table - 동적 생성)
+// 4. N행 N열 데이터 표 (Grid Table - 동적 생성)
             else if (type === 'grid_table') {
                 const rows = parseInt(document.getElementById('gridRows').value) || 2;
                 const cols = parseInt(document.getElementById('gridCols').value) || 2;
                 const useHeader = document.getElementById('gridHeader').checked;
                 const cells = document.querySelectorAll('.grid-cell');
                 
-                let tableHtml = `<table class="wiki-table" style="border-top: 2px solid ${color}; width: 100%;">\n`;
-                if(title) tableHtml += `    <caption style="font-weight:bold; padding: 5px; color: ${color}; text-align: center;">${title}</caption>\n`;
+                let tableHtml = `<table style="width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.95em; border-top: 2px solid ${color}; border-bottom: 2px solid ${color};">\n`;
+                if(title) tableHtml += `    <caption style="font-weight: bold; padding: 5px; color: ${color}; text-align: center;">${title}</caption>\n`;
                 
                 // 그리드 데이터 수집 (1차원 NodeList -> 2차원 매핑)
-                // cells[r * cols + c]
-                
                 for (let r = 0; r < rows; r++) {
                     // 첫 행이고 헤더 옵션 켜짐 -> thead 생성
                     if (r === 0 && useHeader) {
                         tableHtml += `    <thead>\n        <tr>\n`;
                         for (let c = 0; c < cols; c++) {
                             const val = parseWikiText(cells[r * cols + c]?.value || '');
-                            // 헤더 배경색 적용
-                            tableHtml += `            <th style="background-color:${color}; color:white;">${val}</th>\n`;
+                            // 헤더 셀 인라인 스타일 적용
+                            tableHtml += `            <th style="background-color: ${color}; color: white; padding: 8px; border: 1px solid #ccc; text-align: center; font-weight: bold;">${val}</th>\n`;
                         }
                         tableHtml += `        </tr>\n    </thead>\n    <tbody>\n`;
                     } 
@@ -1188,7 +1187,8 @@
                         tableHtml += `        <tr>\n`;
                         for (let c = 0; c < cols; c++) {
                             const val = parseWikiText(cells[r * cols + c]?.value || '');
-                            tableHtml += `            <td>${val}</td>\n`;
+                            // 본문 셀 인라인 스타일 적용
+                            tableHtml += `            <td style="padding: 8px; border: 1px solid #ccc; background-color: #fff; text-align: left; vertical-align: middle;">${val}</td>\n`;
                         }
                         tableHtml += `        </tr>\n`;
                     }
@@ -1196,7 +1196,7 @@
                 tableHtml += `    </tbody>\n</table>`;
                 render(tableHtml);
             }
-            // 5. 알림 상자 (Alert)
+// 5. 알림 상자 (Alert)
             else if (type === 'alert') {
                 let icon = 'fa-circle-info';
                 let content = '내용을 입력하세요.';
@@ -1206,15 +1206,14 @@
                     if(keys[i].value === '내용') content = vals[i].value;
                 }
 
-                // 아이콘에도 파싱 적용 (필요하다면)
                 const parsedContent = parseWikiText(content);
 
                 const html = `
-<div style="border: 2px solid ${color}; background-color: #fff; padding: 15px; border-radius: 6px; display: flex; align-items: center; gap: 15px; margin: 15px 0;">
-    <div style="font-size: 2rem; color: ${color}; min-width: 50px; text-align: center;">
+<div style="border: 2px solid ${color}; background-color: #ffffff; padding: 15px; border-radius: 6px; display: flex; align-items: center; gap: 15px; margin: 15px 0; font-size: 0.95rem; color: #333333;">
+    <div style="font-size: 2rem; color: ${color}; min-width: 50px; text-align: center; flex-shrink: 0;">
         <i class="fa-solid ${icon}"></i>
     </div>
-    <div style="flex-grow: 1; line-height: 1.5;">
+    <div style="flex-grow: 1; line-height: 1.5; overflow-wrap: break-word;">
         ${parsedContent}
     </div>
 </div>`;

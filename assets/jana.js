@@ -806,8 +806,8 @@
         "효빈_시티투어버스_T09": "효빈_시티투어버스_T09.html",
         "효빈_시티투어버스_T10": "효빈_시티투어버스_T10.html",
         "bus_1111": "bus_1111.html",
-        "bus_2222": "bus_2222.html",
-        "bus_3333": "bus_3333.html",
+        "bus_2222": "bus_220.html#222",
+        "bus_3333": "333.html",
         "bus_4004": "bus_4004.html",
         "bus_6666": "bus_6666.html",
         "bus_7777": "bus_7777.html",
@@ -822,32 +822,32 @@
         "bus_132": "bus_132.html",
         "bus_141": "bus_141.html",
         "bus_143": "bus_143.html",
-        "bus_151": "bus_151.html",
-        "bus_154": "bus_154.html",
+        "bus_151": "bus_150.html#151",
+        "bus_154": "bus_150.html#154",
         "bus_161": "bus_161.html",
         "bus_171": "bus_171.html",
         "bus_172": "bus_172.html",
         "bus_173": "bus_173.html",
         "bus_181": "bus_181.html",
-        "bus_191": "bus_191.html",
-        "bus_192": "bus_192.html",
-        "bus_193": "bus_193.html",
-        "bus_194": "bus_194.html",
-        "bus_221": "bus_221.html",
-        "bus_222": "bus_222.html",
-        "bus_231": "bus_231.html",
-        "bus_232": "bus_232.html",
+        "bus_191": "bus_190.html#191",
+        "bus_192": "bus_190.html#192",
+        "bus_193": "bus_190.html#193",
+        "bus_194": "bus_190.html#194",
+        "bus_221": "bus_220.html#221",
+        "bus_222": "bus_220.html#222",
+        "bus_231": "bus_230.html#231",
+        "bus_232": "bus_230.html#232",
         "bus_241": "bus_241.html",
-        "bus_251": "bus_251.html",
-        "bus_258": "bus_258.html",
-        "bus_261": "bus_261.html",
-        "bus_262": "bus_262.html",
+        "bus_251": "bus_250.html#251",
+        "bus_258": "bus_250.html#258",
+        "bus_261": "bus_260.html#261",
+        "bus_262": "bus_260.html#262",
         "bus_271": "bus_271.html",
         "bus_281": "bus_281.html",
-        "bus_291": "bus_291.html",
-        "bus_292": "bus_292.html",
-        "bus_331": "bus_331.html",
-        "bus_334": "bus_334.html",
+        "bus_291": "bus_290.html#291",
+        "bus_292": "bus_290.html#292",
+        "bus_331": "bus_330.html#331",
+        "bus_334": "bus_330.html#334",
         "bus_341": "bus_341.html",
         "bus_351": "bus_351.html",
         "bus_361": "bus_361.html",
@@ -857,21 +857,21 @@
         "bus_441": "bus_441.html",
         "bus_451": "bus_451.html",
         "bus_461": "bus_461.html",
-        "bus_471": "bus_471.html",
-        "bus_472": "bus_472.html",
+        "bus_471": "bus_470.html#471",
+        "bus_472": "bus_470.html#472",
         "bus_481": "bus_481.html",
-        "bus_491": "bus_491.html",
-        "bus_492": "bus_492.html",
+        "bus_491": "bus_490.html#491",
+        "bus_492": "bus_490.html#492",
         "bus_522": "bus_522.html",
-        "bus_551": "bus_551.html",
-        "bus_552": "bus_552.html",
-        "bus_5555": "bus_5555.html",
+        "bus_551": "bus_550.html#551",
+        "bus_552": "bus_550.html#552",
+        "bus_5555": "555.html",
         "bus_561": "bus_561.html",
         "bus_571": "bus_571.html",
-        "bus_581": "bus_581.html",
-        "bus_582": "bus_582.html",
-        "bus_591": "bus_591.html",
-        "bus_592": "bus_592.html",
+        "bus_581": "bus_580.html#581",
+        "bus_582": "bus_580.html#582",
+        "bus_591": "bus_590.html#591",
+        "bus_592": "bus_590.html#592",
         "bus_612": "bus_612.html",
         "bus_632": "bus_632.html",
         "bus_661": "bus_661.html",
@@ -1272,7 +1272,11 @@
         "학생B": "학생B.html",
         "학생C": "학생C.html",
         "권기택": "권기택.html",
+        "고유현": "고유현.html",
         "박효빈(03)": "박효빈(03).html",
+        "03 박효빈": "박효빈(03).html",
+        "03년생 박효빈": "박효빈(03).html",
+        "2003년생 박효빈": "박효빈(03).html",
         "A씨": "A씨.html",
         "권영성": "권영성.html",
         "노상현": "노상현.html",
@@ -3886,158 +3890,281 @@ if (document.readyState === 'loading') {
 }
 
 // =========================================================================
-// [효빈위키 전역 적용을 위한 나무위키식 '파일:' 문서 모달 동적 생성 스크립트]
-// 효빈위키 내의 모든 페이지에서 이미지 더블클릭 시, 단순한 확대 창이 아닌
-// 실제 나무위키의 '파일:' 네임스페이스 문서와 동일한 디자인의 모달 페이지를 띄웁니다.
-// 이미지 확대 시 떨림 현상(Jitter)을 제거하여 위치가 고정되도록 개선했습니다.
+// [효빈위키 파일 문서 모달 전용 스크립트 - 내용 생략 없는 100% 통합 풀버전 (오류 수정완료)]
 // =========================================================================
 
-// 💡 전역 파일 뷰어 검색 함수 (입력값에 맞춰 실제 html 페이지로 강제 이동)
 window.handleFileSearch = () => {
     const fileSearchInput = document.getElementById('fileSearchInput');
-    const query = fileSearchInput ? fileSearchInput.value.trim() : '';
-    if (!query) return;
-
-    // 검색한 '단어.html'로 즉시 이동합니다.
-    location.href = query + '.html';
-};
-
-// 💡 기존 메인 검색창 기능도 메시지만 띄우지 않고 실제 페이지로 이동하도록 전역에서 덮어씌웁니다.
-window.handleSearch = () => {
-    const searchInput = document.getElementById('searchInput');
-    const query = searchInput ? searchInput.value.trim() : '';
-    if (!query) return;
-
-    // 검색한 '단어.html'로 즉시 이동합니다.
-    location.href = query + '.html';
+    if (fileSearchInput && fileSearchInput.value.trim()) {
+        location.href = fileSearchInput.value.trim() + '.html';
+    }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. 모달 및 나무위키 파일 페이지용 CSS 동적 추가
+    // 1. 모달 전용 CSS
     const filePageStyle = document.createElement('style');
     filePageStyle.innerHTML = `
-        .zoomable-image { cursor: zoom-in; }
-        
-        /* 파일 모달 전체 래퍼 */
-        #global-file-page-modal {
-            display: none; position: fixed; z-index: 9999999; left: 0; top: 0; width: 100vw; height: 100vh;
-            background-color: #ffffff; overflow-y: auto; overflow-x: hidden;
-            animation: slideUp 0.3s ease-out; font-family: 'Noto Sans KR', sans-serif;
-            color: #373a3c;
+        .zoomable-image { 
+            cursor: zoom-in; 
         }
-
-        /* 가짜 네비게이션 바 - 무조건 #7777AA 고정 */
-        #file-page-navbar {
-            position: sticky; top: 0; 
-            background-color: #7777AA !important; /* 강제 고정 */
-            color: white;
-            padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
-            z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        #global-file-page-modal { 
+            display: none; 
+            position: fixed; 
+            z-index: 9999999; 
+            left: 0; 
+            top: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            background-color: #ffffff; 
+            overflow-y: auto; 
+            overflow-x: hidden; 
+            animation: slideUp 0.3s ease-out; 
+            font-family: 'Noto Sans KR', sans-serif; 
+            color: #373a3c; 
         }
-        .file-page-close-btn {
-            background-color: rgba(0,0,0,0.2); border-radius: 4px; padding: 6px 16px;
-            font-weight: bold; cursor: pointer; transition: background 0.2s; font-size: 14px;
+        #file-page-navbar { 
+            position: sticky; 
+            top: 0; 
+            background-color: #7777AA !important; 
+            color: white; 
+            padding: 10px 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            z-index: 1000; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
         }
-        .file-page-close-btn:hover { background-color: rgba(0,0,0,0.4); }
-
-        /* 컨텐츠 본문 영역 */
-        #file-page-content { max-width: 1000px; margin: 0 auto; padding: 40px 20px 40px 20px; min-height: calc(100vh - 250px); }
-
-        /* 제목 및 상단 버튼들 */
-        .file-page-header-container { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-        .file-page-title { font-size: 2.2rem; font-weight: 800; margin: 0; color: #000; word-break: break-all; }
-        .file-page-tools { display: flex; gap: 4px; }
-        .file-page-tool-btn { border: 1px solid #ccc; background: #fff; padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #333; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-        .file-page-tool-btn:hover { background: #f4f4f4; }
-
-        /* 이미지 컨테이너 (확대/드래그 지원) */
+        .file-page-close-btn { 
+            background-color: rgba(0,0,0,0.2); 
+            border-radius: 4px; 
+            padding: 6px 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 14px; 
+        }
+        .file-page-close-btn:hover { 
+            background-color: rgba(0,0,0,0.4); 
+        }
+        #file-page-content { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            padding: 40px 20px 40px 20px; 
+            min-height: calc(100vh - 250px); 
+        }
+        .file-page-header-container { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-end; 
+            border-bottom: 1px solid #ccc; 
+            padding-bottom: 10px; 
+            margin-bottom: 20px; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+        }
+        .file-page-title { 
+            font-size: 2.2rem; 
+            font-weight: 800; 
+            margin: 0; 
+            color: #000; 
+            word-break: break-all; 
+        }
+        .file-page-tools { 
+            display: flex; 
+            gap: 4px; 
+        }
+        .file-page-tool-btn { 
+            border: 1px solid #ccc; 
+            background: #fff; 
+            padding: 5px 12px; 
+            border-radius: 4px; 
+            font-size: 12px; 
+            font-weight: bold; 
+            color: #333; 
+            cursor: pointer; 
+        }
+        .file-page-tool-btn:hover { 
+            background: #f4f4f4; 
+        }
         .file-page-img-wrapper { 
-            text-align: center; margin-bottom: 15px; position: relative; min-height: 200px; 
-            display: flex; justify-content: center; align-items: center; overflow: visible;
+            text-align: center; 
+            margin-bottom: 15px; 
+            position: relative; 
+            min-height: 200px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            overflow: visible; 
         }
-        #file-page-main-img {
-            max-width: 100%; max-height: 70vh; border: 1px solid #ddd; padding: 10px; background: #fff;
-            cursor: grab; user-select: none; -webkit-user-drag: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05); transform-origin: center center;
-            /* 휠 굴릴 때 흔들림(Jitter)을 방지하기 위해 기본 transition은 제거하고 JS에서 제어 */
+        #file-page-main-img { 
+            max-width: 100%; 
+            max-height: 70vh; 
+            border: 1px solid #ddd; 
+            padding: 10px; 
+            background: #fff; 
+            cursor: grab; 
+            user-select: none; 
+            -webkit-user-drag: none; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+            transform-origin: center center; 
         }
-        #file-page-main-img:active { cursor: grabbing; }
-
-        /* 2. 이미지 설명(캡션) 및 줌 안내 문구 */
-        #file-modal-desc {
-            text-align: center; font-size: 1.05rem; font-weight: bold; color: #444; 
-            margin-bottom: 5px; padding: 0 10px; word-break: keep-all;
+        #file-page-main-img:active { 
+            cursor: grabbing; 
         }
-        .zoom-hint-text { text-align: center; font-size: 12px; color: #888; margin-bottom: 30px; font-weight: bold; }
-
-        /* 제한적 이용 경고 박스 */
-        .file-warning-box {
-            border: 1px solid #ccc; border-top: 3px solid #d9534f; background: #fdfdfd;
-            padding: 20px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center;
+        #file-modal-desc { 
+            text-align: center; 
+            font-size: 1.05rem; 
+            font-weight: bold; 
+            color: #444; 
+            margin-bottom: 5px; 
+            padding: 0 10px; 
+            word-break: keep-all; 
         }
-        .file-warning-text { font-size: 0.9rem; line-height: 1.6; color: #444; flex: 1; padding-right: 20px; }
-        .file-warning-text strong { font-size: 1.1rem; color: #000; display: block; margin-bottom: 10px; }
-        .file-warning-icon {
-            font-size: 60px; font-weight: 900; color: #d9534f; line-height: 1;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1); user-select: none;
+        .zoom-hint-text { 
+            text-align: center; 
+            font-size: 12px; 
+            color: #888; 
+            margin-bottom: 30px; 
+            font-weight: bold; 
         }
-
-        /* 문단 제목 (기본 정보, 이미지 설명 등) */
-        .file-info-h3 { font-size: 1.5rem; font-weight: bold; border-bottom: 2px solid #ddd; padding-bottom: 8px; margin-bottom: 15px; color: #000; display: flex; align-items: center; gap: 8px; margin-top: 35px; }
-        .file-info-h3::before { content: 'v'; display: inline-block; font-size: 1rem; color: #888; transform: scaleY(0.6); }
+        .file-warning-box { 
+            border: 1px solid #ccc; 
+            border-top: 3px solid #d9534f; 
+            background: #fdfdfd; 
+            padding: 20px; 
+            margin-bottom: 40px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .file-warning-text { 
+            font-size: 0.9rem; 
+            line-height: 1.6; 
+            color: #444; 
+            flex: 1; 
+            padding-right: 20px; 
+        }
+        .file-warning-text strong { 
+            font-size: 1.1rem; 
+            color: #000; 
+            display: block; 
+            margin-bottom: 10px; 
+        }
+        .file-warning-icon { 
+            font-size: 60px; 
+            font-weight: 900; 
+            color: #d9534f; 
+            line-height: 1; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1); 
+            user-select: none; 
+        }
+        .file-info-h3 { 
+            font-size: 1.5rem; 
+            font-weight: bold; 
+            border-bottom: 2px solid #ddd; 
+            padding-bottom: 8px; 
+            margin-bottom: 15px; 
+            color: #000; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            margin-top: 35px; 
+        }
+        .file-info-h3::before { 
+            content: 'v'; 
+            display: inline-block; 
+            font-size: 1rem; 
+            color: #888; 
+            transform: scaleY(0.6); 
+        }
+        .file-info-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            border: 1px solid #ccc; 
+            font-size: 0.9rem; 
+            max-width: 600px; 
+        }
+        .file-info-table th { 
+            background-color: #f5f5f5; 
+            border: 1px solid #ccc; 
+            padding: 10px; 
+            width: 120px; 
+            text-align: center; 
+            color: #333; 
+        }
+        .file-info-table td { 
+            border: 1px solid #ccc; 
+            padding: 10px 15px; 
+        }
+        .file-desc-box { 
+            border: 1px solid #ccc; 
+            padding: 15px 20px; 
+            background: #fff; 
+            border-radius: 4px; 
+            font-size: 0.95rem; 
+            line-height: 1.6; 
+            color: #333; 
+            max-width: 800px; 
+        }
         
-        /* 기본 정보 테이블 */
-        .file-info-table { width: 100%; border-collapse: collapse; border: 1px solid #ccc; font-size: 0.9rem; max-width: 600px; }
-        .file-info-table th { background-color: #f5f5f5; border: 1px solid #ccc; padding: 10px; width: 120px; text-align: center; color: #333; }
-        .file-info-table td { border: 1px solid #ccc; padding: 10px 15px; }
-
-        /* 이미지 설명 박스 */
-        .file-desc-box {
-            border: 1px solid #ccc; padding: 15px 20px; background: #fff; border-radius: 4px;
-            font-size: 0.95rem; line-height: 1.6; color: #333; max-width: 800px;
+        /* 모달 전용 검색 드롭다운 스타일 */
+        #fileSearchDropdown { 
+            display: none; 
+            position: absolute; 
+            top: 100%; 
+            left: 0; 
+            width: 100%; 
+            background: #fff; 
+            border: 1px solid #ccc; 
+            border-top: none; 
+            max-height: 250px; 
+            overflow-y: auto; 
+            z-index: 1001; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            border-radius: 0 0 4px 4px; 
+            color: black; 
+            margin-top: 2px; 
         }
-
-        /* 모달 내부 전용 푸터 스타일 */
-        .modal-wiki-footer {
-            padding: 50px 20px; background-color: #f0f0f0; border-top: 1px solid #ccc; 
-            color: #777; font-size: 0.8rem; line-height: 1.8; margin-top: auto;
+        .file-dropdown-item { 
+            padding: 8px 12px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #eee; 
+            font-size: 0.85rem; 
+            text-align: left;
         }
-        .modal-wiki-footer-container { max-width: 1200px; margin: 0 auto; text-align: center; font-weight: bold; opacity: 0.7; }
-        @media (min-width: 768px) { .modal-wiki-footer-container { text-align: left; } }
-        .modal-wiki-footer-disclaimer { padding-top: 15px; border-top: 1px solid #ddd; }
-
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .file-dropdown-item:hover { 
+            background-color: #f0f0f0; 
+        }
+        @keyframes slideUp { 
+            from { transform: translateY(20px); opacity: 0; } 
+            to { transform: translateY(0); opacity: 1; } 
+        }
     `;
     document.head.appendChild(filePageStyle);
 
-    // 2. 나무위키 스타일 파일 페이지 모달 HTML 생성
+    // 2. 모달 HTML 구조
     const modalOverlay = document.createElement('div');
     modalOverlay.id = 'global-file-page-modal';
-    
     modalOverlay.innerHTML = `
         <div id="file-page-navbar">
             <div style="display: flex; align-items: center; gap: 15px;">
                 <div class="file-page-close-btn" onclick="closeFilePageModal()">← 문서로 돌아가기</div>
                 <div style="font-weight:900; font-size: 18px; letter-spacing:-1px; cursor:pointer;" onclick="location.href='index.html'">HyobinWiki 파일 뷰어</div>
             </div>
-            <div class="flex items-center gap-2">
-                <input type="text" id="fileSearchInput" placeholder="역명 검색" class="p-1.5 px-4 rounded text-black text-sm w-80 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleFileSearch()">
+            
+            <div style="position: relative; display: flex; align-items: center; gap: 4px;">
+                <input type="text" id="fileSearchInput" autocomplete="off" placeholder="역명 검색" class="p-1.5 px-4 rounded text-black text-sm w-80 focus:outline-none shadow-inner" onkeypress="if(event.keyCode==13) handleFileSearch()">
                 <button onclick="handleFileSearch()" class="bg-[#555588] p-1.5 px-5 rounded text-sm hover:bg-[#444477] font-bold transition-colors" style="border:none; color:white; cursor:pointer;">검색</button>
+                <div id="fileSearchDropdown"></div>
             </div>
         </div>
         <div id="file-page-content">
-            <!-- 제목 영역 -->
             <div class="file-page-header-container">
                 <h1 class="file-page-title">파일:<span id="file-modal-filename">이미지</span></h1>
                 <div class="file-page-tools">
-                    <button class="file-page-tool-btn">☆</button>
-                    <button class="file-page-tool-btn">편집</button>
-                    <button class="file-page-tool-btn">토론</button>
-                    <button class="file-page-tool-btn">역사</button>
+                    <button class="file-page-tool-btn" onclick="resetZoom()">크기 초기화</button>
+                    <button class="file-page-tool-btn" onclick="window.open(document.getElementById('file-page-main-img').src, '_blank')">원본 보기</button>
                 </div>
             </div>
-
-            <!-- 나무위키식 경고 박스 -->
             <div class="file-warning-box">
                 <div class="file-warning-text">
                     <strong>이 파일은 효빈위키에서 제한된 한도 안에서 쓰입니다.</strong>
@@ -4051,15 +4178,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="file-warning-icon">ⓒ</div>
             </div>
-
-            <!-- 이미지 뷰어 영역 -->
             <div class="file-page-img-wrapper">
                 <img id="file-page-main-img" src="" alt="파일 원본 이미지">
             </div>
-            
             <div class="zoom-hint-text">💡 이미지 위에서 마우스 휠을 굴려 확대/축소하고, 드래그하여 이동할 수 있습니다. (더블클릭 시 초기화)</div>
-
-            <!-- 1. 기본 정보 테이블 -->
             <h3 class="file-info-h3">1. 기본 정보</h3>
             <table class="file-info-table">
                 <tbody>
@@ -4067,112 +4189,84 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tr><th>날짜</th><td>최근 수정됨</td></tr>
                     <tr><th>저작자</th><td>해당 이미지 원작자 및 효빈위키</td></tr>
                     <tr><th>저작권</th><td><span style="color:#d9534f; font-weight:bold;">제한적 이용 (Copyrighted)</span></td></tr>
-                    <!-- 표에 기타 정보 행 추가 -->
                     <tr><th>기타 정보</th><td id="file-modal-extra-info">해당 파일에 대한 추가 정보가 등록되지 않았습니다.</td></tr>
                 </tbody>
             </table>
-
-            <!-- 2. 이미지 설명 문단 -->
             <h3 class="file-info-h3">2. 이미지 설명</h3>
-            <div class="file-desc-box">
-                <span id="file-modal-desc">효빈위키에 업로드된 문서용 이미지입니다.</span>
-            </div>
+            <div class="file-desc-box"><span id="file-modal-desc">효빈위키에 업로드된 문서용 이미지입니다.</span></div>
         </div>
-
-        <!-- 모달 내부 푸터 -->
-        <footer class="modal-wiki-footer">
-            <div class="modal-wiki-footer-container">
-                <div class="modal-wiki-footer-disclaimer">
-                    이 저작물은 <span class="font-bold text-black">CC BY-NC-SA 2.0 KR</span>에 따라 이용할 수 있습니다.<br>
-                    기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.<br><br>
-                    효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.
-                </div>
-            </div>
-        </footer>
+        <div id="modal-footer-container"></div>
     `;
-    
     document.body.appendChild(modalOverlay);
 
+    // 3. 본문 푸터 복사 로직
+    setTimeout(() => {
+        const mainFooter = document.querySelector('footer'); 
+        const modalFooterContainer = document.getElementById('modal-footer-container');
+        if (mainFooter && modalFooterContainer && modalFooterContainer.innerHTML.trim() === '') {
+            modalFooterContainer.appendChild(mainFooter.cloneNode(true));
+        }
+    }, 300);
+
+    // 4. 모달 제어 변수 및 함수
     const modalImg = document.getElementById('file-page-main-img');
     const filenameSpan = document.getElementById('file-modal-filename');
     const descSpan = document.getElementById('file-modal-desc');
 
-    // 전역 함수로 닫기 기능 노출
-    window.closeFilePageModal = () => {
-        modalOverlay.style.display = 'none';
-        document.body.style.overflow = 'auto'; // 본문 스크롤 복구
-        resetZoom();
+    window.closeFilePageModal = () => { 
+        modalOverlay.style.display = 'none'; 
+        document.body.style.overflow = 'auto'; 
+        resetZoom(); 
     };
 
-    // =========================================================================
-    // 흔들림 없는 다단계 확대(Zoom) 및 드래그(Pan) 로직
-    // =========================================================================
-    let currentScale = 1;
-    let translateX = 0, translateY = 0;
-    let isDragging = false;
-    let startX = 0, startY = 0;
-
-    const MIN_SCALE = 0.5; 
-    const MAX_SCALE = 5.0; 
-    const SCALE_STEP = 0.2; 
+    let currentScale = 1, translateX = 0, translateY = 0, isDragging = false, startX = 0, startY = 0;
+    const MIN_SCALE = 0.5, MAX_SCALE = 5.0, SCALE_STEP = 0.2; 
+    
+    window.resetZoom = () => { 
+        currentScale = 1; 
+        translateX = 0; 
+        translateY = 0; 
+        updateTransform(true); 
+    };
 
     const updateTransform = (useTransition = false) => {
-        if (useTransition) {
-            modalImg.style.transition = 'transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)';
-        } else {
-            modalImg.style.transition = 'none';
-        }
+        modalImg.style.transition = useTransition ? 'transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)' : 'none';
         modalImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
     };
 
-    const resetZoom = () => {
-        currentScale = 1; translateX = 0; translateY = 0;
-        updateTransform(true); // 복구할 때만 부드럽게
-    };
-
-    // 이미지 위에서 마우스 휠 굴릴 때 위치 고정 확대/축소
-    modalImg.addEventListener('wheel', (e) => {
+    modalImg.addEventListener('wheel', (e) => { 
         e.preventDefault(); 
-        
-        if (e.deltaY < 0) currentScale += SCALE_STEP; // 줌 인
-        else currentScale -= SCALE_STEP; // 줌 아웃
-        
-        currentScale = Math.min(Math.max(MIN_SCALE, currentScale), MAX_SCALE);
-        updateTransform(false);
+        currentScale += (e.deltaY < 0) ? SCALE_STEP : -SCALE_STEP; 
+        currentScale = Math.min(Math.max(MIN_SCALE, currentScale), MAX_SCALE); 
+        updateTransform(false); 
     }, { passive: false });
 
-    // 이미지 드래그(패닝) 시작
-    modalImg.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        isDragging = true;
-        startX = e.clientX - translateX;
-        startY = e.clientY - translateY;
+    modalImg.addEventListener('mousedown', (e) => { 
+        e.preventDefault(); 
+        isDragging = true; 
+        startX = e.clientX - translateX; 
+        startY = e.clientY - translateY; 
         updateTransform(false); 
     });
 
-    window.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        translateX = e.clientX - startX;
-        translateY = e.clientY - startY;
-        updateTransform(false);
+    window.addEventListener('mousemove', (e) => { 
+        if (!isDragging) return; 
+        translateX = e.clientX - startX; 
+        translateY = e.clientY - startY; 
+        updateTransform(false); 
     });
 
-    window.addEventListener('mouseup', () => {
-        if (isDragging) {
-            isDragging = false;
-        }
+    window.addEventListener('mouseup', () => { 
+        isDragging = false; 
     });
 
-    // 이미지 내에서 더블클릭 시 원래 위치/크기로 부드럽게 복구
-    modalImg.addEventListener('dblclick', (e) => {
-        e.preventDefault();
+    modalImg.addEventListener('dblclick', (e) => { 
+        e.preventDefault(); 
         e.stopPropagation(); 
-        resetZoom();
+        resetZoom(); 
     });
 
-    // =========================================================================
-    // 페이지 내 원본 이미지 더블클릭 시 파일 문서 모달 띄우기
-    // =========================================================================
+    // 5. 문서 내 모든 이미지에 모달 열기 이벤트 부여
     const images = document.querySelectorAll('img:not(#file-page-main-img)');
     images.forEach(img => {
         img.classList.add('zoomable-image');
@@ -4181,46 +4275,60 @@ document.addEventListener('DOMContentLoaded', () => {
             let rawFilename = img.getAttribute('src');
             if(rawFilename) {
                 let parts = rawFilename.split('/');
-                let filename = parts[parts.length - 1];
-                filename = decodeURIComponent(filename);
-                filenameSpan.innerText = filename;
-            } else {
-                filenameSpan.innerText = "알수없는_이미지.webp";
+                filenameSpan.innerText = decodeURIComponent(parts[parts.length - 1]);
+            } else { 
+                filenameSpan.innerText = "알수없는_이미지.webp"; 
             }
             
             let imgAlt = img.getAttribute('alt');
-            if(imgAlt && imgAlt.trim() !== '') {
-                descSpan.innerHTML = imgAlt;
-            } else {
-                descSpan.innerHTML = "효빈위키 문서용 참고 이미지입니다.";
-            }
+            descSpan.innerHTML = (imgAlt && imgAlt.trim() !== '') ? imgAlt : "효빈위키 문서용 참고 이미지입니다.";
 
             modalImg.src = img.src;
             modalOverlay.style.display = 'block';
             document.body.style.overflow = 'hidden'; 
-            
             modalOverlay.scrollTop = 0;
             resetZoom(); 
         });
     });
 
-    // =========================================================================
-    // 💡 전역 푸터(Footer) 일괄 수정 및 삽입 스크립트 💡
-    // 모든 페이지의 푸터를 요청하신 최신 버전으로 자동 변경해 줍니다.
-    // =========================================================================
-    const footerElement = document.querySelector('.wiki-footer');
-    if (footerElement) {
-        footerElement.innerHTML = `
-            <div class="wiki-footer-container text-center md:text-left font-bold opacity-70">
-                <div class="wiki-footer-disclaimer">
-                    이 저작물은 <span class="font-bold text-black">CC BY-NC-SA 2.0 KR</span>에 따라 이용할 수 있습니다.<br>
-                    기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.<br><br>
-                    효빈위키는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.
-                </div>
-            </div>
-        `;
-    }
+    // 6. 모달 검색창 드롭다운(자동완성) 렌더링 로직 (문법 오류 수정됨!)
+    const fileSearchInput = document.getElementById('fileSearchInput');
+    const fileSearchDropdown = document.getElementById('fileSearchDropdown');
+    
+    if(fileSearchInput && fileSearchDropdown) {
+        fileSearchInput.addEventListener('input', function() {
+            const query = this.value.trim().toLowerCase();
+            
+            fileSearchDropdown.innerHTML = '';
+            
+            if(query.length > 0) {
+                let searchResults = []; 
+                
+                // 🔥 여기서 에러났던 기호를 완벽하게 고쳤습니다 🔥
+                searchResults.push({ name: `"${query}" 문서로 이동`, url: `${query}.html` });
+                
+                searchResults.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'file-dropdown-item';
+                    div.textContent = item.name;
+                    div.onclick = function() {
+                        location.href = item.url;
+                    };
+                    fileSearchDropdown.appendChild(div);
+                });
+                
+                fileSearchDropdown.style.display = 'block';
+            } else {
+                fileSearchDropdown.style.display = 'none';
+            }
+        });
 
+        document.addEventListener('click', function(e) {
+            if(e.target !== fileSearchInput && e.target !== fileSearchDropdown) {
+                fileSearchDropdown.style.display = 'none';
+            }
+        });
+    }
     // =========================================================================
     // 주석 툴팁 스크립트 (기존 기능)
     // =========================================================================
