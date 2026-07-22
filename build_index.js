@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm'); // 🌟 에러 해결을 위해 추가된 내장 모듈
 
 // 1. [수동 별칭 구역] - 특수 별칭들은 여기에 유지됩니다.
 const MANUAL_ALIASES = {
@@ -340,7 +341,7 @@ const MANUAL_ALIASES = {
   "색수통": "색수통.html",
   "서고준": "서고준.html",
   "서목해양공단": "서목해양공단.html",
-  "빈주권_광역전철": "빈주권_광역전철.html",
+  "빈주권_전철": "빈주권_전철.html",
   "빈주도시철도공사 1000호대 전동차": "빈주도시철도공사 1000호대 전동차.html",
   "빈주도시철도공사 2000호대 전동차": "빈주도시철도공사 2000호대 전동차.html",
   "빈주도시철도공사": "빈주도시철도공사.html",
@@ -1919,8 +1920,8 @@ const MANUAL_ALIASES = {
   "빈전역": "빈전역.html",
   "빈주1호선": "빈주1호선.html",
   "빈주2호선": "빈주2호선.html",
-  "빈주권 광역전철": "빈주권 광역전철.html",
-  "빈주권광역전철": "빈주권 광역전철.html",
+  "빈주권_전철": "빈주권_전철.html",
+  "빈주권광역전철": "빈주권_전철.html",
   "빈주시": "빈주시.html",
   "빈주역": "빈주역.html",
   "빈효광역선": "빈효광역선.html",
@@ -2449,8 +2450,8 @@ const MANUAL_ALIASES = {
   "효빈국제공항역": "효빈국제공항역.html",
   "효빈공항역": "효빈국제공항역.html",
   "효빈군": "효빈군.html",
-  "효빈권 광역전철": "효빈권 광역전철.html",
-  "효빈권광역전철": "효빈권 광역전철.html",
+  "효빈권 광역전철": "효빈권전철.html",
+  "효빈권광역전철": "효빈권전철.html",
   "효빈남부시외버스터미널역": "효빈남부시외버스터미널역.html",
   "효빈대역": "효빈대역.html",
   "효빈대학교역": "효빈대역.html",
@@ -4332,8 +4333,8 @@ const MANUAL_ALIASES = {
   "빈전역":"빈전역.html",
   "빈주1호선":"빈주1호선.html",
   "빈주2호선":"빈주2호선.html",
-  "빈주권 광역전철":"빈주권 광역전철.html",
-  "빈주권광역전철":"빈주권 광역전철.html",
+  "빈주권_전철":"빈주권_전철.html",
+  "빈주권광역전철":"빈주권_전철.html",
   "빈주시":"빈주시.html",
   "빈주역":"빈주역.html",
   "빈효광역선":"빈효광역선.html",
@@ -4864,8 +4865,8 @@ const MANUAL_ALIASES = {
   "효빈국제공항역":"효빈국제공항역.html",
   "효빈공항역":"효빈국제공항역.html",
   "효빈군":"효빈군.html",
-  "효빈권 광역전철":"효빈권 광역전철.html",
-  "효빈권광역전철":"효빈권 광역전철.html",
+  "효빈권 광역전철":"효빈권전철.html",
+  "효빈권광역전철":"효빈권전철.html",
   "효빈남부시외버스터미널역":"효빈남부시외버스터미널역.html",
   "효빈대역":"효빈대역.html",
   "효빈대학교역":"효빈대역.html",
@@ -6668,67 +6669,117 @@ const MANUAL_DYNAMIC_PAGES = [
   { "title": "상과대 학생회관", "href": "효빈대_B선_역_템플릿.html?id=B14" }
   // 필요한 동적 템플릿/뷰 링크를 여기에 계속 추가하세요.
 ];
-
+// 기본 설정
 const docsDir = './'; 
 const outputFile = './assets/wiki_index.js';
+const newLogFile = './assets/recent_updates.txt'; // 🌟 신규 데이터 추출용 텍스트 파일
 const ignoreFiles = ['index.html', '분류.html', '수정.html', '역사.html', '토론.html', '효빈위키 검색.html'];
 
-// 2. 파일 목록 가져오기 및 시간순 정렬
-const files = fs.readdirSync(docsDir)
+// 2. 기존 데이터 읽어오기 (vm 모듈을 이용한 안전한 브라우저 시뮬레이션 방식)
+let existingPages = [];
+let existingAliases = {};
+
+if (fs.existsSync(outputFile)) {
+    try {
+        const currentContent = fs.readFileSync(outputFile, 'utf8');
+        
+        // 가상의 샌드박스 환경 생성
+        const sandbox = { window: {} };
+        vm.createContext(sandbox);
+        vm.runInContext(currentContent, sandbox);
+
+        if (sandbox.window.HB_WIKI_PAGES) existingPages = sandbox.window.HB_WIKI_PAGES;
+        if (sandbox.window.HB_WIKI_ALIASES) existingAliases = sandbox.window.HB_WIKI_ALIASES;
+        
+        console.log(`[안내] 기존 인덱스 안전하게 파싱 완료! (기존 등록 문서: ${existingPages.length}개)`);
+    } catch (error) {
+        console.log(`[경고] 기존 파일을 읽는 데 실패했습니다. 처음부터 다시 작성합니다.`, error.message);
+    }
+}
+
+// 검색 속도 향상 및 중복 방지용 Set
+const existingHrefs = new Set(existingPages.map(page => page.href));
+
+// 🌟 이번 작업에서 '새로 추가된' 데이터만 담아둘 바구니
+const newAddedPages = [];
+const newAddedAliases = {};
+
+// 3. 신규 파일 목록만 가져오기 및 시간순 정렬
+const newFiles = fs.readdirSync(docsDir)
     .filter(file => file.endsWith('.html') && !ignoreFiles.includes(file))
+    .filter(file => !existingHrefs.has(file)) // 기존에 없는 새 파일만 필터링
     .map(file => {
         return {
             name: file,
             time: fs.statSync(path.join(docsDir, file)).mtime.getTime()
         };
     })
-    .sort((a, b) => a.time - b.time);
+    .sort((a, b) => a.time - b.time); 
 
-const pages = [];
-const autoAliases = {};
-
-// 3. 정렬된 순서대로 정적 파일 데이터 생성
-files.forEach(fileObj => {
+// 4. 신규 정적 파일 데이터를 처리
+newFiles.forEach(fileObj => {
     const file = fileObj.name;
     const title = file.replace('.html', '');
+    const newPage = { "title": title, "href": file };
     
-    pages.push({ "title": title, "href": file });
+    existingPages.push(newPage); // 메인 배열에 추가
+    newAddedPages.push(newPage); // 검증용 새 배열에 추가
 
-    if (!MANUAL_ALIASES[title]) {
-        autoAliases[title] = file;
+    if (!MANUAL_ALIASES[title] && !existingAliases[title]) {
+        existingAliases[title] = file;
+        newAddedAliases[title] = file;
     }
 });
 
-// 🌟 3.5. 동적 페이지 데이터를 리스트 마지막에 병합
+// 5. 신규 동적 페이지 데이터 처리
+let newDynamicCount = 0;
 MANUAL_DYNAMIC_PAGES.forEach(page => {
-    // 인덱스 배열에 추가
-    pages.push(page);
-    
-    // 자동 별칭에도 추가 (MANUAL_ALIASES에 중복 정의되지 않은 경우만)
-    if (!MANUAL_ALIASES[page.title]) {
-        autoAliases[page.title] = page.href;
+    if (!existingHrefs.has(page.href)) {
+        existingPages.push(page);
+        newAddedPages.push(page); 
+        existingHrefs.add(page.href);
+        newDynamicCount++;
+        
+        if (!MANUAL_ALIASES[page.title] && !existingAliases[page.title]) {
+            existingAliases[page.title] = page.href;
+            newAddedAliases[page.title] = page.href;
+        }
     }
 });
 
-// 4. 수동 별칭과 자동 별칭 병합
-const finalAliases = Object.assign({}, MANUAL_ALIASES, autoAliases);
+// 6. 수동 별칭 최종 병합
+const finalAliases = Object.assign({}, existingAliases, MANUAL_ALIASES);
 
-// 5. 결과물 저장
+// 7. 메인 인덱스 결과물 저장
 const outputContent = `/**
- * HyobinWiki Chronological Index (Auto-generated)
+ * HyobinWiki Chronological Index (Incrementally Updated)
  * 업데이트: ${new Date().toLocaleString()}
  */
 
-window.HB_WIKI_PAGES = ${JSON.stringify(pages, null, 2)};
+window.HB_WIKI_PAGES = ${JSON.stringify(existingPages, null, 2)};
 
 window.HB_WIKI_ALIASES = ${JSON.stringify(finalAliases, null, 2)};
 `;
-
 fs.writeFileSync(outputFile, outputContent, 'utf8');
 
+// 8. 신규 데이터만 텍스트 파일로 별도 출력
+if (newAddedPages.length > 0 || Object.keys(newAddedAliases).length > 0) {
+    const logContent = `[업데이트 일시: ${new Date().toLocaleString()}]\n\n` +
+                       `=== 🟢 새로 추가된 페이지 (${newAddedPages.length}개) ===\n` +
+                       `${JSON.stringify(newAddedPages, null, 2)}\n\n` +
+                       `=== 🟢 새로 추가된 별칭 (${Object.keys(newAddedAliases).length}개) ===\n` +
+                       `${JSON.stringify(newAddedAliases, null, 2)}\n`;
+                       
+    fs.writeFileSync(newLogFile, logContent, 'utf8');
+    console.log(`📝 새로 추가된 항목이 [${newLogFile}] 파일에 별도로 추출되었습니다.`);
+} else {
+    console.log(`📝 새로 추가된 데이터가 없어 추출본을 갱신하지 않았습니다.`);
+}
+
 console.log('-------------------------------------------');
-console.log(`✅ 정적 & 동적 인덱싱 완료!`);
-console.log(`📄 정적 문서: ${files.length}개`);
-console.log(`📄 동적 문서: ${MANUAL_DYNAMIC_PAGES.length}개`);
-console.log(`🔗 전체 별칭: ${Object.keys(finalAliases).length}개`);
+console.log(`✅ 증분(차분) 인덱싱 완료!`);
+console.log(`📄 새로 추가된 정적 문서: ${newFiles.length}개`);
+console.log(`📄 새로 추가된 동적 문서: ${newDynamicCount}개`);
+console.log(`📊 누적 전체 문서: ${existingPages.length}개`);
+console.log(`🔗 누적 전체 별칭: ${Object.keys(finalAliases).length}개`);
 console.log('-------------------------------------------');

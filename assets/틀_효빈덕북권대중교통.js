@@ -125,7 +125,7 @@
                             
                             <td style="text-align:center; border: 1px solid #000;">
                                 <div style="margin-bottom: 5px;">
-                                    <a href="효빈권 광역전철.html" class="wiki-link">효빈권 전철</a><br>
+                                    <a href="효빈권전철.html" class="wiki-link">효빈권 전철</a><br>
                                     <span style="vertical-align: middle;">(</span>
                                     
                                     <a href="1호선.html" class="wiki-line-icon" style="
@@ -197,7 +197,7 @@
 
                             <td style="text-align:center; border: 1px solid #000;">
                                 <div style="margin-bottom: 8px;">
-                                    <a href="빈주권 광역전철.html" class="wiki-link">빈주권 광역전철</a><br>
+                                    <a href="빈주권_전철.html" class="wiki-link">빈주권_전철</a><br>
                                     (
                                     <a href="빈주1호선.html" class="wiki-line-icon square filled" style="background-color: #CCCC00; color: white; padding: 2px 5px; border-radius: 3px; text-decoration: none;">1</a>·
                                     <a href="빈주2호선.html" class="wiki-line-icon square filled" style="background-color: #AA33FF; color: white; padding: 2px 5px; border-radius: 3px; text-decoration: none;">2</a>·
