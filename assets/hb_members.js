@@ -596,7 +596,7 @@ function loadMember(key) {
         <a href="#" class="wiki-link">${data.birth.substring(0,4)}년 출생</a>
     `;
 
-// 2. 우측 인포박스 조립 (수정된 갓-코드)
+    // 2. 우측 인포박스 조립 (수정된 갓-코드)
     
     // 💡 [추가] 출생지 스마트 추출기
     // "1992년 효빈직할시 남구에서 태어났다" -> "효빈직할시 남구"만 쏙 빼옴
@@ -614,14 +614,16 @@ function loadMember(key) {
         education = historyFirstLine.replace(/(?: 총학생회장| 학생회장| 특임강사| 졸업| 재학)/g, '').trim();
     }
 
+    // 💡 [수정] 인포박스 이미지 삽입 반영
     let infoHtml = `
         <div class="${data.partyClass} text-white text-center p-3 font-bold text-lg leading-tight">
             ${data.current}<br>
             <span class="text-2xl mt-1 block">${key}</span>
             <span class="text-xs font-normal">${data.hanja}</span>
         </div>
-        <div class="bg-gray-100 border-b border-gray-300 h-48 flex items-center justify-center text-gray-400 text-sm">
-            </div>
+        <div class="border-b border-gray-300 flex items-center justify-center bg-white overflow-hidden">
+            <img src="이미지/${key}.webp" alt="${key} 의원 사진" class="w-full h-auto object-cover">
+        </div>
         <table>
             <tr><th>출생</th><td class="text-sm">${data.birth}<br>${birthplace}</td></tr>
             <tr><th>국적</th><td class="text-sm">대한민국</td></tr>

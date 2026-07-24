@@ -4177,8 +4177,8 @@ window.HB_WIKI_PAGES = [
     "href": "아오바 모카.html"
   },
   {
-    "title": "아은역",
-    "href": "아은역.html"
+    "title": "이은역",
+    "href": "이은역.html"
   },
   {
     "title": "아이대로",
@@ -10599,7 +10599,7 @@ window.HB_WIKI_PAGES = [
   "아사카 카린": "아사카 카린.html",
   "아야세 에리": "아야세 에리.html",
   "아오바 모카": "아오바 모카.html",
-  "아은역": "아은역.html",
+  "이은역": "이은역.html",
   "아이대로": "아이대로.html",
   "아이동": "아이동.html",
   "아이산로": "아이산로.html",

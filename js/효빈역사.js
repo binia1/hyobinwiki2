@@ -1,5 +1,3 @@
-/* 파일 경로: js/효빈역사.js */
-
 /**
  * 효빈광역시 3. 역사 문단 렌더링 함수
  * @param {string} containerId - 내용을 넣을 HTML 요소의 ID
@@ -73,8 +71,14 @@ function renderHyobinHistorySection(containerId) {
     // 3.1 & 3.2 텍스트 (구한말 원류 전신 면 데이터 완전 반영)
     const textContent = `
         <div class="hb-text-body">
-            <h3 id="s-3.1">3.1. 조선 시대 (1914년 부군면 통폐합 이전)</h3>
-            <p>옆동네인 덕주나 빈주에 비해서는 그리 크지 않은 고을<del>시골 깡촌</del>이었다. 나름 지역의 중심지 역할을 하긴 했지만 현재와 같은 거대 메가시티의 위상은 전혀 아니었다. 그러나 1914년 일제의 대칼질(부군면 통폐합) 직전까지 존재했던 구한말 행정구역의 파편들을 뜯어보면, 현재 효빈광역시를 구성하는 각 읍·면·동의 조상님들이 어디 출신인지 아주 골 때리는 계보가 적나라하게 드러난다.</p>
+            <h3 id="s-3.1">3.1. 고대 ~ 고려 시대</h3>
+            <p>효빈 지역의 역사는 <strong>원삼국시대</strong> 마한 54개 소국 중 하나였던 <strong>호봉국(虎峰國)</strong>에서 출발한다. 당시 이곳은 드넓은 갯벌과 해안선이 내륙 깊숙이 들어와 있던 지형으로, 거대한 패총(조개무지)을 남긴 해양 부족들이 원시적인 어로와 소규모 해상 교역을 통해 생계를 잇던 터전이었다. 이후 <strong>백제</strong>의 영토로 편입되면서 <strong>태신웅산군(太神熊山郡)</strong>과 <strong>부부리성(夫夫里城)</strong> 등으로 불렸으며, 백제의 쌀독 역할을 하던 내륙의 거점 덕주(德州)와 달리 중국(동진) 및 왜(일본)의 상선이 오가고 해상을 방어하는 해양 전초기지로 기능했다.</p>
+            <p><strong>남북국 시대(통일신라)</strong>에 이르러서는 신라가 지방을 <strong>10주 5소경</strong>으로 개편함에 따라, 덕빈 지역을 총괄하는 거점인 <strong>덕주(德州)</strong>의 관할 아래 <strong>효보군(孝保郡)</strong>, <strong>태웅군(太熊郡)</strong>, <strong>빈산현(彬山縣)</strong>으로 나뉘어 편제되었다. 당나라와 일본을 잇는 교역선들이 쉬어가는 기착지이자 신라구(해적)를 토벌하는 수군진이 설치되어 상업적 부를 축적했으나, 드넓은 평야를 바탕으로 막대한 농업 생산력을 뽐내던 10주의 중심지 덕주 본진에 비하면 갯벌 투성이의 변방 해안 고을에 불과한 소박한 생활상을 띠었다.</p>
+            <p><strong>고려시대</strong>에 접어들며 현대 행정구역의 뼈대가 본격적으로 잡힌다. 성종 대의 12도(해중도/해서도) 체제를 거쳐 지방 제도가 6도 양계로 정비되며 마침내 <strong>덕빈도(德彬道)</strong>가 확립되었다. 이때 '효보군'과 '빈산현'이 합병되면서 역사상 처음으로 <strong>'효빈군(孝彬郡)'</strong>이라는 명칭이 탄생했다. 인근 탄성 지역 역시 <strong>태성군(太城郡)</strong>과 <strong>탄양군(彈陽郡)</strong>으로 편제되었다가 훗날 합쳐져 <strong>'탄성군(彈城郡)'</strong>이 된다. 고려시대의 효빈은 덕빈도 산하에서 제2의 무역항인 <strong>'효빈포'</strong>를 중심으로 아라비아와 송나라 상인들이 향료와 비단을 싣고 드나드는 화려한 국제 교역의 시기를 누렸다. 상인들의 객주가 들어서고 이국적인 물산이 넘쳐났지만, 간척이 이루어지기 전이라 시가지로 쓸 평지가 턱없이 부족했고, 전체적인 인구와 읍격(행정 등급) 면에서는 전통의 농업 중심지 덕주나 새로운 행정 거점 빈주(빈州)에 밀리는 권역 내 제3의 도시에 머물렀다.</p>
+
+            <h3 id="s-3.2">3.2. 조선 시대 (1914년 부군면 통폐합 이전)</h3>
+            <p><strong>조선 전기</strong>, 고려시대의 화려했던 국제 무역항의 지위는 조선의 강력한 해금(海禁) 및 억불 정책과 함께 저물었다. <strong>덕빈도(德彬道)</strong> 관할의 <strong>효빈도호부(孝彬都護府)</strong>로 편제되며 군사적 가치와 위상은 인정받았으나, 외국 상단이 북적이던 포구는 조운선을 호위하고 왜구를 방어하는 삭막한 수군 요새와 짠내 나는 어촌 마을로 성격이 변모했다. 상업이 천대받고 농업이 근본이었던 조선에서 쌀 생산량이 적은 효빈은 도호부라는 간판만 달았을 뿐, 실질적인 권역의 패권은 드넓은 평야를 가진 덕주나 도 관아가 위치한 빈주로 완전히 넘어간 상태였다. 인근 탄성 지역 역시 덕빈도 산하 <strong>탄성현/탄성군</strong>으로 유지되며 전형적인 농어촌의 생활상을 보였다.</p>
+            <p>조선 후기를 거쳐 1895년 26부제 시행 당시에는 <strong>천주부(泉州府)</strong> 소속 1등군인 <strong>효빈군(孝彬郡)</strong>으로 개편되었고, 1896년 13도제(15도제) 복원 시 <strong>덕빈북도</strong> 관할로 확정되었다. 당시 효빈은 대양을 향한 지리적 잠재력을 품고 있었지만, 여전히 도 관아가 있는 옆 동네 빈주에 비하면 조용한 고을<del>시골 깡촌</del>이었다. 그러나 1914년 일제의 대칼질(부군면 통폐합) 직전까지 존재했던 구한말 행정구역의 파편들을 뜯어보면, 현재 효빈광역시를 구성하는 각 읍·면·동의 조상님들이 어디 출신인지 아주 골 때리는 계보가 적나라하게 드러난다.</p>
             
             <h4>① 1914년 통합 당시 성립된 면(面)별 전신(前身) 계보 분석</h4>
             <p>1914년 일제의 행정구역 개편으로 탄생했던 각 면들이 사실은 구한말 어떤 면들을 쪼개고 합쳐서 만든 끔찍한 혼종(...)이었는지 상세히 기록한다. (현재 존속 여부 및 소속 불문 누락 없이 서술)</p>
@@ -101,7 +105,7 @@ function renderHyobinHistorySection(containerId) {
                 <li><strong>정근면 (현재도 존속):</strong> 온전히 약산군 소속이었던 <strong>정선면</strong>과 <strong>근원면</strong> 두 혈통이 합쳐져 탄성군 소속의 면으로 정착했다.</li>
             </ul>
 
-            <h3 id="s-3.2">3.2. 일제강점기 ~ 현대</h3>
+            <h3 id="s-3.3">3.3. 일제강점기 ~ 현대</h3>
             <p>일본어로는 한국어 발음 그대로 독음되었다. 1880년대 들어 개항의 영향으로 포구 중심의 무역이 발달하기 시작하더니, <strong>1883년 계미군란(빈주 전역의 군인들이 일으킨 난)과 계미홍수</strong>가 겹치며 기존 중심지였던 도 관아가 처참하게 파괴되는 대참사가 발생한다. 이때 일제와 일본인들이 도 관아의 대체 거주지로서 지형이 평탄하고 확장성이 좋은 효빈 지역을 찍어서 밀어주기 시작했고, 자연스럽게 철도 교통망이 효빈을 중심으로 빗장 지르듯 발달하게 된다. 이후 폭풍 성장을 거듭하여 1929년에는 이미 전통의 큰 고을이었던 빈주의 규모를 추월해 버렸으며, 앞서 1914년에는 탄성군과의 전격 합군을 단행했다. <sup><a class="wiki-fn-trigger" href="#fn-5">[5]</a></sup></p>
         </div>
     `;
@@ -119,6 +123,33 @@ function renderHyobinHistorySection(containerId) {
     
     const table1Body = `
         <tr>
+            <th class="hb-hist-row-header">삼국시대<br/>(백제)</th>
+            <td colspan="4" >마한 <strong>호봉국</strong>(虎峰國)<br/>백제 <strong>태신웅산군</strong>(太神熊山郡)<br/><strong>부부리성</strong>(夫夫里城)</td>
+        </tr>
+        <tr>
+            <th class="hb-hist-row-header">남북국시대<br/>(통일신라)</th>
+            <td ><strong>효보군</strong>(孝保郡)<br/><strong>빈산현</strong>(彬山縣)</td>
+            <td colspan="3"><strong>태웅군</strong>(太熊郡)</td>
+        </tr>
+        <tr>
+            <th class="hb-hist-row-header">고려시대</th>
+            <td class="hb-bg-blue-50"><strong>효빈군</strong>(孝彬郡)<br/><span class="hb-small-text">효보군+빈산현 병합</span></td>
+            <td colspan="3">태성군, 탄양군<br/>&rarr; <strong>탄성군</strong>(彈城郡)</td>
+        </tr>
+        <tr>
+            <th class="hb-hist-row-header">조선시대<br/>(전/후기)</th>
+            <td class="hb-bg-blue-100">덕빈도<br/><strong>효빈도호부</strong>(孝彬都護府)</td>
+            <td colspan="2">덕빈도<br/><strong>탄성현 / 탄성군</strong></td>
+            <td>덕빈도 약산군<br/><span class="hb-small-text">(일부 영토)</span></td>
+        </tr>
+        <tr>
+            <th class="hb-hist-row-header">조선후기<br/>(26부제, 1895)</th>
+            <td>${mkLink('천주부', '천주부.html')} 1등군<br/><strong>${mkLink('효빈군', '효빈군.html')}</strong><br/><span class="hb-small-text">天州府 孝彬郡</span></td>
+            <td>${mkLink('빈주부', '빈주부.html')} 3등군<br/><strong>${mkLink('탄성군', '탄성군.html')}</strong><br/><span class="hb-small-text">彬州府 彈城郡</span></td>
+            <td>${mkLink('빈주부', '빈주부.html')} 3등군 ${mkLink('선곡군', '선곡군.html')} ${mkLink('남내면', '남내면.html')}<br/>${mkLink('빈주부', '빈주부.html')} 3등군 ${mkLink('탄성군', '탄성군.html')}<br/>${mkLink('야진면', '야진면.html')}, ${mkLink('동면', '동면.html')}, ${mkLink('서목면', '서목면.html')}<br/><span class="hb-small-text">彬州府 選曲郡 南內面<br/>彬州府 彈城郡 西木/野津/西面</span></td>
+            <td>${mkLink('천주부', '천주부.html')} 3등군 ${mkLink('약산군', '약산군.html')}<br/>${mkLink('향리면', '향리면.html')}, ${mkLink('정선면', '정선면.html')}, ${mkLink('근원면', '근원면.html')}<br/>${mkLink('빈주부', '빈주부.html')} 3등군 ${mkLink('탄성군', '탄성군.html')} ${mkLink('도진면', '도진면.html')}<br/><span class="hb-small-text">天州府 藥山郡 香里/井扇/芹原面<br/>彬州府 彈城郡 挑眞面</span></td>
+        </tr>
+        <tr>
             <th class="hb-hist-row-header">구한말<br/>(1896)</th>
             <td>${mkLink('덕빈북도', '덕빈북도.html')}<br/><strong>${mkLink('효빈군', '효빈군.html')}</strong><br/><span class="hb-small-text">孝彬郡</span></td>
             <td>${mkLink('덕빈북도', '덕빈북도.html')}<br/><strong>${mkLink('탄성군', '탄성군.html')}</strong><br/><span class="hb-small-text">彈城郡</span></td>
@@ -127,8 +158,7 @@ function renderHyobinHistorySection(containerId) {
         </tr>
         <tr>
             <th class="hb-hist-row-header">일제강점기<br/>(1914)</th>
-            <td>${mkLink('덕빈북도', '덕빈북도.html')}<br/><strong>${mkLink('효빈군', '효빈군.html')}</strong><br/><span class="hb-small-text">孝彬郡</span></td>
-            <td style="color: #9ca3af;">-</td>
+            <td colspan="2">${mkLink('덕빈북도', '덕빈북도.html')}<br/><strong>${mkLink('효빈군', '효빈군.html')}</strong><br/><span class="hb-small-text">孝彬郡</span></td>
             <td>${mkLink('덕빈북도', '덕빈북도.html')}<br/>${mkLink('선곡군', '선곡군.html')} ${mkLink('서목면', '서목면.html')}, ${mkLink('야진면', '야진면.html')}<br/><span class="hb-small-text">選曲郡 西木/野津面</span></td>
             <td>${mkLink('덕빈북도', '덕빈북도.html')}<br/>${mkLink('약산군', '약산군.html')} ${mkLink('도향면', '도향면.html')}, ${mkLink('정근면', '정근면.html')}<br/><span class="hb-small-text">藥山郡 挑香/井芹面</span></td>
         </tr>
