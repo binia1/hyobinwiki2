@@ -3612,6 +3612,9 @@ window.HB_WIKI_PAGES = [
   {
     "title": "빅분기3-4-2",
     "href": "빅분기3-4-2.html"
+  },  {
+    "title": "미소율",
+    "href": "미소율.html"
   },
   {
     "title": "빅분기3-4-3",

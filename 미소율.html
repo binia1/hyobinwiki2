@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link href="이미지/효빈위키아이콘.webp" rel="icon"/>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>미소율 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: #EE0022; /* 5호선 계열 빨간색 */
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #F9F9FA; 
+            --wiki-link: #0022AA;
+            --wiki-table-header: #EE0022;
+            --wiki-table-header-text: #ffffff;
+            --wiki-alert-border: #a2a9b1;
+            --wiki-alert-bg: #f8f9fa;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 타이틀 스타일 */
+        .txt-lvl-1 { font-size: var(--font-h1) !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        /* 문단 제목 스타일 */
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.1rem !important; font-weight: 700; margin-top: 1.5rem; margin-bottom: 1rem; }
+
+        /* 위키 요소 */
+        del { color: #7f7f7f; text-decoration: line-through; cursor: help; }
+        .wiki-drip { color: #aaa; font-size: 0.85em; }
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-quote { background-color: #f8f9fa; border-left: 4px solid var(--wiki-main); padding: 15px; margin: 10px 0; font-style: italic; color: #555; position: relative; }
+
+        /* 분류 박스 스타일 */
+        .category-box { background: #f9f9f9; border: 1px solid #ccc; padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+
+        /* 목차 */
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+
+        /* 테이블 스타일 */
+        table.wiki-table-custom { border-collapse: collapse !important; width: 100%; margin: 15px 0; border: 1px solid #ddd !important; font-size: 0.9rem; }
+        table.wiki-table-custom th, table.wiki-table-custom td { border: 1px solid #ddd !important; padding: 6px 10px; vertical-align: middle; }
+        table.wiki-table-custom th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; text-align: center; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 380px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.3rem !important; font-weight: bold; }
+        .infobox-image { text-align: center; padding: 10px; border-bottom: 1px solid #ddd; background: white; }
+        .infobox table { border: none !important; margin: 0 !important; width: 100% !important; }
+        .infobox th { background-color: var(--wiki-gray-bg); text-align: center; padding: 8px 5px; border: 1px solid #ddd; width: 30%; font-weight: bold; vertical-align: middle;}
+        .infobox td { padding: 8px 5px; border: 1px solid #ddd; text-align: left; vertical-align: middle;}
+
+        /* 상단 버튼 */
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: var(--font-small); font-weight: bold; color: #555; cursor: pointer; }
+
+        /* 각주 & 호버보드 */
+        .footnote-ref { color: var(--wiki-link); font-size: 0.8em; vertical-align: super; cursor: pointer; text-decoration: none; font-weight: bold; }
+        .footnotes-area { margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px; font-size: 0.85rem; color: #555; }
+        
+        /* 각주 툴팁 (호버보드) */
+        #footnote-tooltip {
+            position: fixed;
+            display: none;
+            background-color: #fff;
+            border: 1px solid #999;
+            padding: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            z-index: 9999; 
+            max-width: 400px;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            line-height: 1.4;
+            pointer-events: none; 
+        }
+
+        /* 둘러보기 틀 (nw-box) */
+        .nw-box { border: 2px solid; margin-bottom: 30px; border-radius: 4px; overflow: hidden; font-size: 0.9rem; background: white; }
+        .nw-box summary { padding: 10px; text-align: center; font-weight: bold; cursor: pointer; display: block; }
+        .nw-tbl { width: 100%; border-collapse: collapse; text-align: center; }
+        .nw-tbl th, .nw-tbl td { border: 1px solid #ccc; padding: 8px; vertical-align: middle; }
+        .nw-th-col { font-weight: bold; background-color: #f9f9f9; }
+        .nw-link { color: inherit; text-decoration: none; display: block; }
+        .nw-img { width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: block; margin: 0 auto 5px; background-color: #f8f9fa; }
+        
+        /* 로고 박스 스타일 */
+        .nav-logo-box {
+            width: 30px; height: 30px; background: white; color: var(--wiki-main);
+            border-radius: 4px; font-weight: 900; display: flex; align-items: center;
+            justify-content: center; font-size: 1.2rem;
+        }   
+    </style>
+    <!-- 외부 스크립트 엄격히 포함 -->
+    <script src="ad_logic.js"></script>
+    <link rel="stylesheet" href="wiki_font_standard.css">
+</head>        
+
+<body>
+<div id="footnote-tooltip"></div>
+<nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <div class="flex items-center gap-2">
+        <div class="nav-logo-box">H</div>
+        <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white">HyobinWiki</a>
+        <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+            <a href="index.html" class="hover:underline font-bold text-white no-underline">대문</a>
+            <a href="최근_변경.html" class="hover:underline text-white no-underline">최근 변경</a>
+            <a href="최근_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
+        </div>
+    </div>
+    <div class="flex flex-col items-end gap-1">
+        <div class="flex items-center gap-2">
+            <div class="hidden lg:flex items-center gap-1 mr-2">
+                <a href="편집요청.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">편집요청</a>
+                <a href="최근_토론.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">토론</a>
+                <a href="역사.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">역사</a>
+                <a href="즐겨찾기.html" class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" title="즐겨찾기">★</a>
+                <a href="더보기.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1">더보기 <span class="text-[9px]">▼</span></a>
+            </div>
+            <input type="text" id="headerSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }">
+            <button onclick="handleSearch('headerSearchInput')" class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
+        </div>
+        <div class="flex gap-1" id="auth-buttons">
+            <button onclick="toggleModal('loginModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" id="btn-login">로그인</button>
+            <button onclick="toggleModal('settingsModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">설정</button>
+        </div>
+    </div>
+</nav>
+
+<div class="wiki-container shadow-lg">
+    <div class="title-area">
+        <div class="txt-lvl-1">미소율</div>
+        <div class="flex gap-2 mb-1">
+            <button onclick="location.href='토론.html'" style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">토론</button>
+            <button onclick="location.href='수정.html'" style="background-color:#0275d8; color:#ffffff; border:1px solid #0275d8 !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">편집</button>
+            <button onclick="location.href='역사.html'" style="background-color:#ffffff; color:#373a3c; border:1px solid #cccccc !important; border-radius:4px; padding:6px 12px; margin:0 2px; font-size:14px; cursor:pointer;">역사</button>
+        </div>
+    </div>
+
+    <div class="category-box border border-[#ccc] p-3 rounded mb-6">
+        <span class="font-bold text-[#7777AA]">분류:</span>
+        <a class="wiki-link" href="효빈교통공사 가족.html">효빈교통공사 가족</a> | 
+        <a class="wiki-link" href="고등학생 캐릭터.html">고등학생 캐릭터</a> | 
+        <a class="wiki-link" href="천사표.html">천사표</a> |
+        <a class="wiki-link" href="콩알 요정.html">콩알 요정</a> |
+        <a class="wiki-link" href="08즈.html">08즈</a>
+    </div>
+
+    <details class="nw-box" open="" style="border-color:#555588;">
+        <summary class="outline-none" style="background-color:#555588; color: white;">
+            <a class="text-white text-lg hover:underline" href="효빈교통공사.html"><span class="font-bold">효빈교통공사 캐릭터들</span></a>
+        </summary>
+        <table class="nw-tbl">
+            <tr>
+                <th class="w-[10%] nw-th-col text-[#555588]" rowspan="4">등<br/>장<br/>인<br/>물</th>
+                <td class="font-bold text-white w-[15%]" style="background-color: #0077DD;"><a class="nw-link hover:underline" href="1호선.html">1호선</a></td>
+                <td class="font-bold text-white w-[15%]" style="background-color: #00CCAA;"><a class="nw-link hover:underline" href="2호선.html">2호선</a></td>
+                <td class="font-bold text-[#333] w-[15%]" style="background-color: #FFCC11;"><a class="nw-link hover:underline" href="3호선.html">3호선</a></td>
+                <td class="font-bold text-white w-[15%]" style="background-color: #FF5522;"><a class="nw-link hover:underline" href="4호선.html">4호선</a></td>
+                <td class="font-bold text-white w-[15%]" style="background-color: #EE0022;"><a class="nw-link hover:underline" href="5호선.html">5호선</a></td>
+                <td class="font-bold text-[#333] w-[15%]" style="background-color: #33aaff;"><a class="nw-link hover:underline" href="창전선.html">창전선</a></td>
+            </tr>
+            <tr>
+                <td><a class="nw-link hover:underline" href="고나미.html"><img class="nw-img" onerror="this.style.display='none'" src="이미지/고나미_로고.webp"/>고나미</a></td>
+                <td><a class="nw-link hover:underline" href="하루빈.html"><img class="nw-img" onerror="this.style.display='none'" src="이미지/하루빈_로고.webp"/>하루빈</a></td>
+                <td><a class="nw-link hover:underline" href="박라미.html"><img class="nw-img" onerror="this.style.display='none'" src="이미지/박라미_로고.webp"/>박라미</a></td>
+                <td><a class="nw-link hover:underline" href="다로나.html"><img class="nw-img" onerror="this.style.display='none'" src="이미지/다로나_로고.webp"/>다로나</a></td>
+                <td><a class="nw-link hover:underline" href="미소하.html"><img class="nw-img" onerror="this.style.display='none'" src="이미지/미소하_로고.webp"/>미소하</a></td>
+                <td><a class="nw-link hover:underline" href="심세이.html"><img class="nw-img" onerror="this.style.display='none'" src="이미지/심세이_로고.webp"/>심세이</a></td>
+            </tr>
+            <tr>
+                <td class="font-bold text-white" style="background-color: #881188;"><a class="nw-link hover:underline" href="6호선.html">6호선</a></td>
+                <td class="font-bold text-[#333]" colspan="2" style="background-color: #FF8899;"><a class="nw-link hover:underline" href="7호선.html">7호선</a></td>
+                <td class="font-bold text-white" style="background-color: #9856FF;"><a class="nw-link hover:underline" href="8호선.html">8호선</a></td>
+                <td class="font-bold text-white" colspan="2" style="background-color: #6677CC;"><a class="nw-link hover:underline" href="빈효광역선.html">빈효선*</a></td>
+            </tr>
+            <tr>
+                <td><a class="nw-link hover:underline" href="라세나.html"><img class="nw-img" onerror="this.style.display='none'" src="이미지/라세나_로고.webp"/>라세나</a></td>
+                <td><a class="nw-link hover:underline" href="임세정.html"><img class="nw-img" onerror="this.style.display='none'" src="이미지/임세정_로고.webp"/>임세정</a></td>
+                <td><a class="nw-link hover:underline" href="임세하.html"><img class="nw-img" onerror="this.style.display='none'" src="이미지/임세하_로고.webp"/>임세하</a></td>
+                <td><a class="nw-link hover:underline" href="유리아.html"><img class="nw-img" onerror="this.style.display='none'" src="이미지/유리아_로고.webp"/>유리아</a></td>
+                <td colspan="2"><a class="nw-link hover:underline" href="전노아.html"><img class="nw-img" onerror="this.style.display='none'" src="이미지/전노아_로고.webp"/>전노아</a></td>
+            </tr>
+        </table>
+    </details>
+
+    <aside class="infobox">
+        <div class="infobox-title">미소율<br/><span class="text-sm font-normal">Mi So-yul | 米昭律</span></div>
+        <div class="infobox-image">
+            <img alt="미소율 공식 일러스트" src="이미지/미소율.webp" style="width:100%; height:auto;"/>
+            <div class="text-xs text-gray-500 mt-1">복지여고 2학년, 학급 부반장 및 살림 요정</div>
+        </div>
+        <table>
+            <tr><th>나이</th><td>만 <span class="calc-age" data-birthyear="2008">18</span>세 (2008년생)</td></tr>
+            <tr><th>생일</th><td>9월 30일</td></tr>
+            <tr><th>소속</th><td>복지여자고등학교 2학년 (재학)</td></tr>
+            <tr><th>장래희망</th><td>초등학교 교사 (교대 진학 목표)</td></tr>
+            <tr><th>신체 사이즈</th><td>145cm / 단발머리</td></tr>
+            <tr><th>출신지</th><td><a class="wiki-link" href="효빈광역시.html">효빈광역시</a> 서구 당선동</td></tr>
+            <tr>
+                <th>가족 관계</th>
+                <td>
+                    아버지: 미성규(49)<br/>
+                    어머니: 오순임(49)<br/>
+                    언니: <a class="wiki-link" href="미소하.html">미소하</a>(21)
+                </td>
+            </tr>
+            <tr><th>경제 상태</th><td>기초생활수급자</td></tr>
+            <tr><th>MBTI</th><td>ISFJ (용감한 수호자)</td></tr>
+            <tr><th>성격</th><td>순도 100% 천사표, 극강의 무해함</td></tr>
+            <tr><th>별명</th><td>콩알 요정, 언니의 역린, 08즈 마스코트, 반 공식 소동물</td></tr>
+            <tr><th>성우</th><td><a class="wiki-link" href="나가나와_마리아.html">나가나와 마리아</a> (日)<br/><a class="wiki-link" href="이지현.html">이지현</a> (韓)</td></tr>
+            <tr><th>관련 인물</th><td><span style="color:var(--wiki-main); font-weight:bold;">●</span> <a class="wiki-link" href="미소하.html">미소하</a> (5호선 마스코트)</td></tr>
+        </table>
+    </aside>
+
+    <div class="toc">
+        <div class="toc-title">목차</div>
+        <ul>
+            <li>1. <a class="wiki-link" href="#s-1">개요</a></li>
+            <li>2. <a class="wiki-link" href="#s-2">상세 설정</a>
+                <ul>
+                    <li>2.1. <a class="wiki-link" href="#s-2-1">성격 및 특징 (천사표 소동물)</a></li>
+                    <li>2.2. <a class="wiki-link" href="#s-2-2">학력 및 장래희망 (예비 선생님)</a></li>
+                    <li>2.3. <a class="wiki-link" href="#s-2-3">외형 및 디자인</a></li>
+                </ul>
+            </li>
+            <li>3. <a class="wiki-link" href="#s-3">인간 관계</a>
+                <ul>
+                    <li>3.1. <a class="wiki-link" href="#s-3-1">가족 관계 (언니 미소하)</a></li>
+                    <li>3.2. <a class="wiki-link" href="#s-3-2">전설의 콩알 사건 (vs 유리아: 영혼의 짱친)</a></li>
+                    <li>3.3. <a class="wiki-link" href="#s-3-3">언니의 찐친들 (vs 임세하, 전노아)</a></li>
+                    <li>3.4. <a class="wiki-link" href="#s-3-4">마의 '08년생 동갑내기' 라인 (하루아, 임세연, 심세이)</a></li>
+                </ul>
+            </li>
+            <li>4. <a class="wiki-link" href="#s-4">사건 사고</a>
+                <ul>
+                    <li>4.1. <a class="wiki-link" href="#s-4-1">소율이 장래희망에 대한 악질 교사의 비하사건</a></li>
+                </ul>
+            </li>
+            <li>5. <a class="wiki-link" href="#s-5">여담 및 트리비아</a>
+                <ul>
+                    <li>5.1. <a class="wiki-link" href="#s-5-1">[밈] 100명의 그녀 성우 장난 대통합 (5명 참전)</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div style="clear:both;"></div>
+
+    <h2 id="s-1">1. 개요</h2>
+    <div class="wiki-quote relative">
+        "언니, 오늘도 수고 많았어! 내가 밥 맛있게 해놨으니까 얼른 먹고 쉬어~"<br/>
+        <span class="wiki-drip text-sm block mt-2 text-gray-500">효빈시 최강의 팩트 폭격기 미소하를 단숨에 무장해제시키는 마법의 주문.</span>
+    </div>
+    <p>
+        <a class="wiki-link" href="효빈교통공사.html">효빈교통공사</a> <a class="wiki-link" href="5호선.html">5호선</a> 마스코트인 <a class="wiki-link" href="미소하.html">미소하</a>의 하나뿐인 소중한 여동생. 현재 복지여자고등학교 2학년에 재학 중이다. 언니 미소하와 판박이처럼 닮았으나 체구는 훨씬 작고 가녀린 145cm의 콩알 요정이다. 
+    </p>
+    <p>
+        냉철하고 무자비한 정책 심판관인 언니와는 정반대로, 남에게 싫은 소리 한 번 못하는 100% 순도의 천사표 성격을 지녔다. 아픈 아버지를 간호하며 묵묵히 집안일을 돕는 영리하고 착한 동생으로, 언니 소하가 근로장학생을 뛰고 사회의 부조리와 맞서 싸우는 <strong>가장 절대적인 이유이자 '역린' 그 자체</strong>이다. 
+    </p>
+
+    <h2 id="s-2">2. 상세 설정</h2>
+    
+    <h3 id="s-2-1">2.1. 성격 및 특징 (천사표 소동물)</h3>
+    <p>
+        <strong>"세상의 부조리로부터 지켜내야 할 마지막 순수함"</strong>
+    </p>
+    <p>
+        언니 미소하가 무자비한 '다중회귀분석'과 '빨간 바인더'로 세상을 팩트로 두들겨 패고 다닌다면, 소율이는 팩폭 스킬이 전무한 맑고 무해한 성격이다. 가난하고 힘든 가정 환경 속에서도 구김살 없이 밝게 자라며 아버지를 전담하여 간호하는 자칭 타칭 <strong>살림 요정</strong>이다. 타인에 대한 배려심이 깊고, 작은 칭찬에도 얼굴을 붉히며 쉽게 감동하는 순진무구함을 지녔다. 
+    </p>
+    <div class="p-3 bg-red-50 border-l-4 border-[#EE0022] rounded leading-relaxed mt-3 mb-3">
+        <p class="text-sm font-bold text-[#EE0022] mb-1">🐾 반 공식 '소동물(보호 대상 1호)'</p>
+        고등학교 진학 후 특유의 순둥하고 싹싹한 성격 덕분에 반 친구들 사이에서 완벽한 <strong>'소동물 취급'</strong>을 받고 있다. 쉬는 시간마다 같은 반 여자애들이 소율이의 자리로 몰려와 머리를 <strong>'쓰담쓰담' 해주는 것이 아예 학급의 정례화된 루틴(의식)</strong>이 되어버렸을 정도다. 
+        <br><br>
+        소율이 본인은 "나 어린애 아니야~"라며 입술을 삐죽 내밀고 부끄러워하는 척하지만, 사실 속으로는 다정한 친구들의 극진한 애정과 스킨십을 내심 엄청 즐기고 있다는 게 가장 귀여운 함정 포인트다.
+    </div>
+
+    <h3 id="s-2-2">2.2. 학력 및 장래희망 (예비 선생님)</h3>
+    <p>
+        언니인 미소하가 워낙 다중회귀분석을 숨 쉬듯 해내는 '규격 외의 천재(아웃라이어)'라 묻히는 감이 없지 않으나, 소율이 역시 반에서 늘 최상위권을 유지하는 성실한 모범생이다. 본인이 맘만 먹으면 당장 언니가 다니는 명문 <a class="wiki-link" href="효빈대학교.html">효빈대학교</a>에도 충분히 진학할 수 있는 준수한 학업 성취도를 자랑한다.
+    </p>
+    <p>
+        하지만 소율이의 진짜 꿈은 통계나 정책 분석 같은 거창한 분야가 아니라, 아이들을 진심으로 사랑하고 올바른 길로 이끌어주는 <strong>초등학교 선생님</strong>이 되는 것이다. 다정다감하고 아이들을 유독 좋아하는 성격 덕분에, 고등학교 졸업 후 교대(교육대학교)로 진학하는 것을 최우선 목표로 삼고 열심히 공부하고 있다.
+    </p>
+
+    <h3 id="s-2-3">2.3. 외형 및 디자인</h3>
+    <p>
+        언니 미소하의 상징인 굵은 갈색 웨이브 머리와 청순한 파란색 눈동자를 고스란히 물려받았지만, 스타일링에서 큰 차이를 보인다. 긴 머리를 묶고 다니는 언니와 달리 <strong>산뜻한 단발머리</strong>를 하고 있으며, 머리 옆에는 커다란 빨간 리본 대신 <strong>순수한 하얀색 리본</strong>을 달고 있어 요정 같은 분위기를 자아낸다. <del>이 설정을 헷갈린 어떤 AI가 둘의 나이와 리본 색깔을 뒤바꿔놓아 소하가 구글 서버를 셧다운 시키려 했다는 무서운 전설이 있다.</del>
+    </p>
+    <p>
+        마스코트 중 최단신(153cm)인 언니보다 무려 8cm나 더 작은 <strong>145cm</strong>의 왜소한 체형을 가졌다. 본인은 작고 아담한 체구를 딱히 신경 쓰지 않지만, 주변에서 귀엽다며 머리를 쓰다듬는 일이 일상다반사다.
+    </p>
+
+    <h2 id="s-3">3. 인간 관계</h2>
+    
+    <h3 id="s-3-1">3.1. 가족 관계 (언니 미소하)</h3>
+    <ul class="list-disc pl-5 space-y-3">
+        <li><strong>언니 <a class="wiki-link" href="미소하.html">미소하</a>:</strong> 소율이 세상에서 가장 존경하고 사랑하는 가족이자 방패. 매일 고생하는 언니를 위해 따뜻한 밥을 챙겨주며 언니의 멘탈을 치유한다. 반대로 소하에게 소율은 <strong>절대 건드려서는 안 될 역린</strong>이다. 만약 학교나 길거리에서 누군가 소율이의 체형이나 가난을 비하했다간, 그 학생의 3대 가문은 소하의 빅데이터 민원 폭격에 의해 사회적으로 매장당한다.</li>
+        <li><strong>아버지 미성규 & 어머니 오순임:</strong> 투병 중인 아버지를 매일 간호하는 전담 간병인 역할을 자처하며, 억척스럽게 생계를 책임지는 어머니를 도와 살림을 꾸려나가는 효녀 중의 효녀.</li>
+    </ul>
+
+    <h3 id="s-3-2">3.2. 전설의 콩알 사건 (vs 유리아: 영혼의 짱친)</h3>
+    <div class="p-4 border-2 border-red-200 bg-red-50 rounded-lg mb-6 shadow-sm">
+        <p class="text-sm text-gray-800 leading-relaxed">
+            어느 날 8호선 마스코트 <a class="wiki-link" href="유리아.html">유리아</a>(2008년생, 동갑)가 역으로 놀러 왔다가 소율이를 처음 보고 깜짝 놀라 해맑게 <strong>"와, 진짜 콩알만 하다!"</strong>라고 외친 대형 참사가 발생했다. 소하가 동생의 체형을 비하한 줄 알고 두꺼운 서류철을 물리적 흉기로 바꾸려던 찰나, 유리아가 광속으로 <strong>"일, 일본에선 콩알(마메, 豆)만큼 작고 소중해서 미치도록 귀엽다는 최고의 극찬입니다!!"</strong>라고 필사적으로 포장하여 겨우 살아남았다.
+            <br><br>
+            그런데 놀라운 반전은, <strong>평소 소심하고 숫기 없는 소율이가 유리아의 이 '콩알' 발언을 진짜로 '귀엽다'는 최고의 칭찬으로 순수하게 받아들였다는 점이다.</strong> 소율이는 태어나서 처음으로 먼저 용기를 내어 유리아에게 "친해지고 싶어!"라며 다가가는 기적을 보여주었고, 붙임성 만렙인 유리아 역시 이를 격하게 환영하며 두 사람은 현재 틈만 나면 같이 놀러 다니는 <strong>영혼의 짱친(베프)</strong> 사이가 되었다. 
+        </p>
+    </div>
+
+    <h3 id="s-3-3">3.3. 언니의 찐친들 (vs 임세하, 전노아의 '비행기 놀이' 사태)</h3>
+    <p class="mb-4 text-sm text-gray-800">
+        소율이가 중학교 3학년이던 시절, 언니 소하의 절친인 7호선 <a class="wiki-link" href="임세하.html">임세하</a>와 빈효선 <a class="wiki-link" href="전노아.html">전노아</a>가 처음으로 소율이의 실물을 영접하게 되었다. 
+    </p>
+    <ul class="list-disc pl-5 space-y-3 text-sm text-gray-800">
+        <li>
+            문제는 소율이의 말도 안 되는 콩알 요정 비주얼(당시 키 140cm 초반 추정)을 본 두 사람이, <strong>소율이를 유치원생 내지 초등학교 저학년 쯤 되는 진짜 꼬마애로 착각해 버렸다는 것</strong>이다. 심지어 두 사람은 너무 귀엽다며 소율이를 번쩍 들어서 <strong>'비행기 놀이'</strong>를 태워주려고 했다.(...)
+        </li>
+        <li>
+            이 광경을 목격한 미소하가 기겁하며 <strong>"야 미친놈들아!! 얘 중3이야!!"</strong>라고 팩트 폭격을 날리자, 상식인(?) 포지션인 임세하는 <strong>초 단위로 멘탈이 나가며 충격에 굳어버렸다.</strong>
+        </li>
+        <li>
+            그러나 관종력과 뻔뻔함이 만렙인 전노아는 당황하기는커녕 <strong>"그런 거 알 빠냐!!"</strong>를 시전하며 기어코 소율이에게 비행기 놀이를 강행하는 광기를 보여주었다. <del>미소하가 빨간 바인더를 장전했다.</del>
+        </li>
+        <li>
+            참고로 당사자인 소율이는 공중에서 꺄르륵 웃으며 진심으로 그 비행기 놀이를 즐거워했다는 건 안 비밀이다. 이 사건 이후 세하와 노아는 소율이를 친조카 대하듯 끔찍이 아낀다.
+        </li>
+    </ul>
+
+    <h3 id="s-3-4">3.4. 마의 '08년생 동갑내기' 라인 (하루아, 임세연, 심세이)</h3>
+    <p class="mb-3 text-sm text-gray-800">
+        효빈교통공사 마스코트와 가족들 중 <strong>2008년생(08즈)</strong> 라인업은 화려하다. 소율이는 이 모임에서 힐링 마스코트로 통한다.
+    </p>
+    <ul class="list-disc pl-5 space-y-4 text-sm text-gray-800">
+        <li>
+            <strong>하루아 (<a class="wiki-link" href="하루빈.html">하루빈</a>의 여동생):</strong> 교외 청소년 자원봉사단 첫날, 낯을 가려 구석에 쭈뼛거리고 있던 소율이에게 극E(외향형) 텐션의 하루아가 다짜고짜 다가와 <strong>"너 완전 귀엽다! 오늘부터 내 친구 해라!"</strong>라며 손을 덥석 잡은 것이 첫 만남이다. 기가 쪽 빨려 하던 소율이가 조심스레 정성껏 싸 온 계란말이 간식을 건네자, 그걸 먹은 하루아가 폭풍 감동의 눈물을 흘리며 평생의 충성을 맹세(?)했다는 훈훈한 비화가 전해진다.
+        </li>
+        <li>
+            <strong>임세연 (<a class="wiki-link" href="임세하.html">임세하</a>의 여동생):</strong> 같은 봉사활동 조였던 세연이가 휴식 시간에 <em>"아... 우리 언니(임세하)가 또 내 방에 쇳덩어리 기계 부품 주워다 놨어..."</em>라며 깊은 한숨을 쉬고 있자, 소율이가 슬며시 다가가 <em>"우리 언니(미소하)는 밤새도록 엑셀로 다중회귀분석표 돌리면서 화내..."</em>라고 맞장구를 쳤다. 공대 너드 언니와 팩폭 심판관 언니를 둔 <strong>'비범한(광기 어린) 언니들 밑에서 고통받는 동생들의 애환'</strong>이 완벽하게 공감대를 형성하며, 그 자리에서 손을 맞잡고 영혼의 단짝으로 거듭났다. <del>서로 언니 뒷담화를 할 때 가장 눈이 반짝인다.</del>
+        </li>
+        <li>
+            <strong><a class="wiki-link" href="심세이.html">심세이</a> (창전선 마스코트):</strong> 유리아를 통해 건너건너 소개받아 만난 창전구의 우아한 아가씨. 평소 세련된 라틴 하이텐션을 뽐내던 심세이가 소율이를 처음 보자마자 그 말도 안 되는 무해한 귀여움에 압도되어 <strong>스페인어 감탄사(¡Dios mío!)조차 뱉지 못하고 입을 떡 벌린 채 할 말을 잃었다는 전설적인 소문</strong>이 있다. 이후 심세이는 소율이만 보면 최고급 수제 디저트를 한가득 사다 바치는 극성 팬보이(?) 모드가 된다고 한다.
+        </li>
+    </ul>
+
+    <h2 id="s-4">4. 사건 사고</h2>
+    <h3 id="s-4-1">4.1. 소율이 장래희망에 대한 악질 교사의 비하사건</h3>
+    <div class="mb-6 p-4 border border-[#EE0022] rounded-lg bg-red-50 relative shadow-sm">
+        <p class="text-sm text-gray-800 leading-relaxed mb-3">
+            학교에 다니던 중 발생했던, 미소율을 건드리면 왜 진짜로 뼈도 못 추리게 되는지를 똑똑히 보여준 대사건.
+        </p>
+        <p class="text-sm text-gray-800 leading-relaxed mb-3">
+            사실 소율이는 어릴 적 유독 작은 체구와 기초생활수급자라는 가난한 환경 때문에 짓궂은 아이들에게 지독한 따돌림과 괴롭힘을 당한 가슴 아픈 기억이 있었다. <del>(물론 그 가해자 놈들의 만행을 뒤늦게 알아챈 언니 <a class="wiki-link" href="미소하.html">미소하</a>가 눈이 완전히 돌아가버렸고, 그 주동자 학생들의 학폭위 회부 및 부모들의 직장 내 비위 사실까지 영혼까지 털어버리는 '빨간 바인더'의 무자비한 빅데이터 폭격에 의해 그 가해자 일가족 전체가 야반도주하듯 <a class="wiki-link" href="효빈시.html">효빈시</a>를 떠나야 했다는 흉흉하고도 통쾌한 전설이 전해진다...^^)</del> 
+        </p>
+        <p class="text-sm text-gray-800 leading-relaxed mb-3">
+            그 후 고등학교에 진학한 소율이는 과거의 상처에도 억지로라도 밝게 웃으려 노력하는 착한 성격 덕분에 <strong>반 친구들에게 완벽한 '소동물(보호 대상 1호)' 취급</strong>을 받았다. 심지어 어쩌다 보니 학급 부반장까지 맡게 되었는데, 궂은일도 도맡아 하는 성실하고 예쁜 짓만 골라 하는 소율이를 같은 반 여자애들은 물론 담임 선생님마저도 친딸처럼 극진히 아끼고 사랑하고 있는 상태였다.
+        </p>
+        <p class="text-sm text-gray-800 leading-relaxed mb-3">
+            그러던 어느 날, <strong>학교의 진로 상담 교사(사실상 교사 호소인)</strong>가 2학년 진로 상담 중 소율이의 장래희망이 '초등학교 교사(교대 진학)'인 것을 보고 <strong>"네 키가 145cm인데 초등학교에 발령받으면 초등학생 애들과 네가 구분이 가겠냐? 칠판에 손이나 닿겠어? 네가 무슨 선생을 하냐"</strong>며 학생의 신체적 콤플렉스와 장래희망을 동시에 무참히 짓밟는 최악의 악질 막말과 비아냥을 공개적으로 쏟아냈다.
+        </p>
+        <p class="text-sm text-gray-800 leading-relaxed mb-3">
+            순도 100% 천사표인 소율이는 그 자리에서 화 한 번 내지 못하고 눈물을 참으며 억지로 웃어넘겼지만, <strong>그 망언을 곁에서 직관한 반장과 반 친구들은 이미 그 악질 교사를 쓰레기 보듯 경멸하며 대신 분노를 터뜨리고 있었다.</strong> 반장은 즉시 이 사실을 담임 선생님에게 보고했고, 반 친구들은 소율이를 에워싸고 위로하며 그 진로 교사가 지나갈 때마다 대놓고 혐오스러운 눈빛을 보내며 꼽을 주기 시작했다.
+        </p>
+        <p class="text-sm text-gray-800 leading-relaxed mb-3 font-bold text-[#EE0022]">
+            더 압권인 것은 소율이를 각별히 아꼈던 담임 선생님(여성)의 반응이었다.
+        </p>
+        <p class="text-sm text-gray-800 leading-relaxed mb-3">
+            그렇게 싹싹하고 듬직했던 부반장을 울렸다는 소식을 듣자마자 <strong>극대노한 담임 선생님이 곧바로 교무실로 쳐들어가 그 진로 교사의 멱살을 잡기 직전까지 가며 진짜로 '맞다이'를 뜰 뻔한 험악한 사태가 벌어졌다.</strong> 동료 교사들마저도 담임 선생님을 말리기는커녕, 성실하고 착한 소율이에게 그딴 천박한 비아냥을 쏟아부은 그 진로 교사를 <strong>사람 취급도 하지 않고 완벽하게 기수열외</strong>시켜버렸다. 이미 가족들이 등판하기도 전에 학교 전체가 그 교사를 쓰레기로 규정한 것이다.
+        </p>
+        <p class="text-sm text-gray-800 leading-relaxed mb-3">
+            그리고 그날 밤, 혼자 방에서 숨죽여 우는 소율이를 언니 미소하가 기어코 발견하고 말았고, <strong>다음 날 학교에는 '물리적 폭주'와 '데이터의 광기'가 동시에 강림했다.</strong> 
+        </p>
+        <p class="text-sm text-gray-800 leading-relaxed mb-3">
+            딸이 겪은 수모를 전해 듣게 된 <strong>아버지 미성규가, 평소 디스크와 후유증으로 누워만 지내던 병상을 박차고 일어나 그대로 학교로 쳐들어가 교무실을 완전히 뒤집어엎으며 벼락같은 사자후를 토해냈다.</strong> (과거 지옥의 <a class="wiki-link" href="두청운수.html">두청운수</a> 시절 75인승 과적 버스를 몰며 온갖 진상을 때려잡았던 베테랑 기사의 짬바가 폭발했다 카더라)
+        </p>
+        <div class="bg-white border border-[#EE0022] p-3 rounded mt-2 mb-3">
+            <span class="font-bold text-[#EE0022]">🚨 언니 찐친 연합의 뼈 시린 '광기 어린 경고'</span><br>
+            이 소식을 전해 들은 미소하와 그녀의 찐친들(<a class="wiki-link" href="임세하.html">임세하</a>, <a class="wiki-link" href="전노아.html">전노아</a>)의 분노는 상상을 초월했다. 
+            <ul class="list-disc pl-5 mt-2 space-y-1 text-xs">
+                <li><strong><a class="wiki-link" href="미소하.html">미소하</a>:</strong> 핏빛 '빨간 바인더'에 해당 교사의 비위 사실을 1원 단위로 채워 넣으며 교육청 징계 서류를 썼다.</li>
+                <li><strong><a class="wiki-link" href="임세하.html">임세하</a>:</strong> 눈이 완전히 뒤집혀 기계실에서 묵직한 '몽키스패너'를 말없이 챙겨 들었다.</li>
+                <li><strong><a class="wiki-link" href="전노아.html">전노아</a>:</strong> "이딴 쓰레기는 행정망에서 영구 삭제해야 한다"며 교육청 마비용 '민원 폭격 서류 500장'을 인쇄했다.</li>
+            </ul>
+            이 셋은 짐을 싸던 교사를 몰래 찾아가 <strong>"조용히 효빈시를 뜨지 않으면, 물리적, 행정적, 사회적으로 네 존재 자체를 완벽하게 포맷해 버리겠다 (방긋)"</strong>라는 등골 오싹한 경고를 남겼다고 전해진다.
+        </div>
+        <p class="text-sm text-gray-800 leading-relaxed">
+            동료 교사와 학생들에게 완벽히 버림받아 고립된 상태에서, 분노한 아버지의 교무실 사자후와 언니들의 자비 없는 물리적/행정적 융단 폭격이 콜라보를 이루자 해당 악질 교사는 쏟아지는 지탄과 공포를 견디지 못하고 스스로 사직서를 제출한 뒤 야반도주하듯 효빈시를 떠나야 했다.
+        </p>
+    </div>
+
+    <h2 id="s-5">5. 여담 및 트리비아</h2>
+    <ul class="list-disc pl-5 space-y-3 mb-6 text-gray-800">
+        <li>
+            언니와 식성이 반대라고 알려져 있었으나, <strong>의외로 매운 것을 은근히 잘 먹는다는 사실</strong>이 밝혀졌다. 극한의 캡사이신을 퍼먹는 언니나 마라탕 5단계를 즐기는 어머니라는 '아웃라이어(규격 외)'들 옆에 있어서 상대적으로 맵찔이처럼 보였을 뿐이다. 반 친구들과 엽기떡볶이 오리지널 맛을 먹을 때는 땀 한 방울 흘리지 않고 평온하게 계란찜을 떠먹어 친구들을 경악하게 만들곤 한다.
+        </li>
+        <li>
+            언니 소하가 늘 품고 다니는 두꺼운 <strong>'빨간 바인더'의 진짜 위력(사회적, 물리적 파괴력)을 어느 정도 확실하게 눈치채고 있다.</strong> 가끔 언니 소하가 빡쳐서 출근할 때, 현관에서 해맑게 웃으며 <strong>"언니! 오늘 그 주무관님 만나러 간댔지? 빨간 바인더 잊지 말고 꼭 챙겨가~"</strong>라고 살뜰하게(?) 챙겨주는 모습은 곁에 있던 사람들의 등골을 오싹하게 만든다.
+        </li>
+    </ul>
+
+    <div class="p-4 border-2 border-[#0055AA] bg-[#f0f8ff] rounded-lg mb-6 shadow-sm relative">
+        <span class="absolute top-0 right-0 bg-[#0055AA] text-white font-bold px-2 py-1 text-xs rounded-bl-lg">Meme / 성우 장난</span>
+        <h3 id="s-5-1" style="margin-top:0; color:#003366; font-weight:900;">🎤 [밈] 100명의 그녀 성우 장난 대통합 사태 (무려 5명 참전)</h3>
+        <p class="text-sm text-gray-800 leading-relaxed mt-2">
+            임씨 가문 6남매 중 셋째 언니 <strong>임선아</strong>, 다섯째 동생 <strong>임세연</strong>, 미소하의 동생인 <strong>미소율</strong>, 1호선 기관사 <strong><a class="wiki-link font-bold text-[#0055AA]" href="고나미.html">고나미</a></strong>, 그리고 덕주 1호선 마스코트 <strong><a class="wiki-link font-bold text-[#0055AA]" href="이덕희.html">이덕희</a></strong>까지 한자리에 모이면 서브컬처 팬덤이 그대로 폭발해버린다.
+        </p>
+        <p class="text-sm text-gray-800 leading-relaxed mt-2">
+            하필이면 이 다섯 명의 일본판 성우 조합이, 모 여친이 100명이나 되는 전설의 러브코미디 애니메이션(<strong>너를 너무너무너무너무 좋아하는 100명의 그녀</strong>)의 <strong>1번째, 2번째, 3번째, 4번째, 그리고 7번째 여친 성우진 라인업과 소름 돋게 완벽히 일치</strong>하기 때문이다! 
+        </p>
+        <ul class="list-disc pl-5 mt-3 space-y-1 text-xs text-gray-700 font-bold bg-white p-3 rounded border border-[#0055AA]">
+            <li>1번째 여친 (하나조노 하카리) = 임선아 (CV. 혼도 카에데)</li>
+            <li>2번째 여친 (인다 카라네) = 임세연 (CV. 토미타 미유)</li>
+            <li>3번째 여친 (요시모토 시즈카) = 미소율 (CV. 나가나와 마리아)</li>
+            <li>4번째 여친 (에이아이 나노) = 고나미 (CV. 세토 아사미)</li>
+            <li>7번째 여친 (하라가 쿠루미) = 이덕희 (CV. 신도 아마네)</li>
+        </ul>
+        <p class="text-sm text-gray-800 leading-relaxed mt-3">
+            이쯤 되면 효빈메트로 캐스팅 담당자가 대놓고 노린 게 아니냐는 합리적 의심이 들 정도. 덕분에 위키 2차 창작 게시판이나 팬아트에서는 이 5명이 모여서 밥을 먹고 있으면, 어디선가 <strong>하죠 렌타로</strong>가 튀어나와 100등분의 사랑을 실천하며 플래그를 꽂으려 드는 기묘한 패러디가 대폭발했다.
+            <br><br>
+            <del>물론 이 세계관에 렌타로가 등장해서 저들에게 플래그를 꽂으려 들면, 5호선 미소하의 다중회귀분석 <strong>빨간 바인더</strong>, 7호선 임세하의 <strong>몽키스패너</strong>, 1호선 고나미의 <strong>철도안전법 매뉴얼</strong>, 그리고 덕주 1호선 이덕희의 <strong>다대기 푼 뚝배기</strong>에 맞아 죽을 확률이 500%다.</del>
+        </p>
+    </div>
+
+    <div class="footnotes-area">
+        <h3 style="margin-top:0; font-size:1.1rem; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px;">각주</h3>
+        <div class="footnote-content" id="fn-1">[1] 미소하의 가장 소중한 여동생이자 가난한 가정의 힐링 요정 포지션을 담당한다.</div>
+    </div>
+    <div id="footer-container"></div>
+    
+    <script src="assets/load-footer.js"></script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+    <script>
+        // 각주 호버보드 (툴팁) 기능
+        document.addEventListener('DOMContentLoaded', () => {
+            const refs = document.querySelectorAll('.footnote-ref');
+            const tooltip = document.getElementById('footnote-tooltip');
+
+            refs.forEach(ref => {
+                ref.addEventListener('mouseenter', (e) => {
+                    e.preventDefault(); 
+                    let href = ref.getAttribute('href');
+                    if (!href) return;
+                    
+                    const targetId = href.substring(1); 
+                    const targetContent = document.querySelector(`.footnote-content[id="${targetId}"]`);
+                    
+                    if (targetContent) {
+                        tooltip.innerHTML = targetContent.innerHTML;
+                        tooltip.style.display = 'block';
+                        moveTooltip(e);
+                    }
+                });
+
+                ref.addEventListener('mousemove', (e) => {
+                    moveTooltip(e);
+                });
+
+                ref.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+            });
+
+            function moveTooltip(e) {
+                const x = e.clientX + 15;
+                const y = e.clientY + 15;
+                
+                const tooltipRect = tooltip.getBoundingClientRect();
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+
+                let finalX = x;
+                let finalY = y;
+
+                if (x + tooltipRect.width > windowWidth) {
+                    finalX = x - tooltipRect.width - 20;
+                }
+                if (y + tooltipRect.height > windowHeight) {
+                    finalY = y - tooltipRect.height - 20;
+                }
+
+                tooltip.style.left = finalX + 'px';
+                tooltip.style.top = finalY + 'px';
+            }
+        });
+    </script>
+</div>
+</body>
+</html>
