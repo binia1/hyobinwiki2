@@ -3616,6 +3616,14 @@ window.HB_WIKI_PAGES = [
     "title": "미소율",
     "href": "미소율.html"
   },
+
+  {
+    "title": "복지여자고등학교",
+    "href": "복지여자고등학교.html"
+  },  {
+    "title": "복지고등학교",
+    "href": "복지고등학교.html"
+  },
   {
     "title": "빅분기3-4-3",
     "href": "빅분기3-4-3.html"
