@@ -19,6 +19,11 @@
                 --wiki-line-bj2: #C455F6;
                 --wiki-line-bjm: #005BAC;
                 --wiki-line-dj1: #FF4F91;
+                --wiki-line-dj2: #FF9800;
+                --wiki-line-dn: #005BAC;
+                --wiki-line-bs: #795548;
+                --wiki-line-nakju: #4CAF50;
+                --wiki-line-ms: #009688;
                 --wiki-line-changjeon: #33AAFF;
             }
 
@@ -43,27 +48,30 @@
             .folding-btn:hover { background-color: #eee; }
             .folding-content { display: none; padding: 10px; border-top: 1px solid #ccc; background: #fff; }
 
-            /* 노선 아이콘 기본 구조 */
-            .station-ring, .station-rect, .station-pill { 
-                display: inline-flex; 
-                align-items: center; 
-                justify-content: center; 
-                height: 24px; 
-                border: 2.5px solid; 
-                background: #fff; 
-                font-weight: 900; 
-                font-size: 0.75rem; 
-                line-height: 1; 
-                flex-shrink: 0; 
-                text-decoration: none !important;
-                margin: 0 1px;
-                vertical-align: middle;
-                box-sizing: border-box;
+            /* 노선 아이콘 기본 구조 (테두리 분리 완벽 적용) */
+            .station-ring { 
+                display: inline-flex; align-items: center; justify-content: center; 
+                width: 24px; height: 24px; border-radius: 50%; 
+                background: #fff; border: 2.5px solid currentColor !important; 
+                font-weight: 900; font-size: 0.75rem; line-height: 1; flex-shrink: 0; 
+                text-decoration: none !important; margin: 0 1px; vertical-align: middle; box-sizing: border-box; 
             }
             
-            .station-ring { width: 24px; border-radius: 50%; }
-            .station-rect { width: 24px; border-radius: 4px; }
-            .station-pill { padding: 0 8px; border-radius: 12px; }
+            .station-rect { 
+                display: inline-flex; align-items: center; justify-content: center; 
+                width: 24px; height: 24px; border-radius: 4px; 
+                font-weight: 900; font-size: 0.85rem; line-height: 1; flex-shrink: 0; 
+                text-decoration: none !important; margin: 0 1px; vertical-align: middle; box-sizing: border-box; 
+                border: 0px transparent !important; outline: none !important; box-shadow: none !important;
+            }
+            
+            .station-pill { 
+                display: inline-flex; align-items: center; justify-content: center; 
+                height: 24px; padding: 0 8px; border-radius: 12px; 
+                font-weight: 900; font-size: 0.8rem; line-height: 1; flex-shrink: 0; 
+                text-decoration: none !important; margin: 0 1px; vertical-align: middle; box-sizing: border-box; 
+                border: 0px transparent !important; outline: none !important; box-shadow: none !important;
+            }
 
             /* 효빈도시철도 (테두리 및 글자색) */
             .line-1 { border-color: var(--wiki-line-1); color: var(--wiki-line-1); }
@@ -76,14 +84,19 @@
             .line-8 { border-color: var(--wiki-line-8); color: var(--wiki-line-8); }
             .line-bin { border-color: var(--wiki-line-bin); color: var(--wiki-line-bin); font-size: 0.65rem; }
 
-            /* 덕주 및 빈주 노선 (채워진 배경) */
-            .line-dj1-filled { background-color: var(--wiki-line-dj1); color: #fff; border: none; font-size: 0.85rem; }
-            .line-bj1-filled { background-color: var(--wiki-line-bj1); color: #000; border: none; font-size: 0.85rem; } /* 빈주 1호선 숫자 검은색 */
-            .line-bj2-filled { background-color: var(--wiki-line-bj2); color: #000; border: none; font-size: 0.85rem; } /* 빈주 2호선 숫자 검은색 */
-            .line-bjm-filled { background-color: var(--wiki-line-bjm); color: #fff; border: none; font-size: 0.8rem; }
+            /* 덕주 및 빈주, 기타 노선 (채워진 배경) */
+            .line-dj1-filled { background-color: var(--wiki-line-dj1); color: #fff; }
+            .line-dj2-filled { background-color: var(--wiki-line-dj2); color: #fff; }
+            .line-dn-filled { background-color: var(--wiki-line-dn); color: #fff; }
+            .line-bs-filled { background-color: var(--wiki-line-bs); color: #fff; }
+            .line-nakju-filled { background-color: var(--wiki-line-nakju); color: #fff; }
+            .line-ms-filled { background-color: var(--wiki-line-ms); color: #fff; }
+            .line-bj1-filled { background-color: var(--wiki-line-bj1); color: #000; }
+            .line-bj2-filled { background-color: var(--wiki-line-bj2); color: #000; }
+            .line-bjm-filled { background-color: var(--wiki-line-bjm); color: #fff; }
             
-            /* 폐선/기타 노선 */
-            .line-disabled { background-color: #aaa; color: #fff; border: none; text-decoration: line-through !important; }
+            /* 폐선/미개통 노선 (회색 + 취소선) */
+            .line-disabled { background-color: #aaa !important; color: #fff !important; text-decoration: line-through !important; }
         `;
         document.head.appendChild(style);
     }
@@ -167,7 +180,7 @@
                             <td style="background:#AAA; font-weight:bold; text-align: center; border: 1px solid #000;"></td>
                             
                             <!-- 효빈권 전철 -->
-                            <td style="text-align:center; border: 1px solid #000;">
+                            <td style="text-align:center; border: 1px solid #000; vertical-align: top; padding-top: 10px;">
                                 <div style="margin-bottom: 5px;">
                                     <a href="효빈권전철.html" class="wiki-link">효빈권 전철</a><br>
                                     <span style="vertical-align: middle;">(</span>
@@ -184,8 +197,11 @@
                                 </div>
                             </td>
 
-                            <!-- 빈주권 전철 -->
-                            <td style="text-align:center; border: 1px solid #000;">
+                            <!-- 덕북권 전철 -->
+                            <td style="text-align:center; border: 1px solid #000; vertical-align: top; padding-top: 10px;">
+                                <div style="margin-bottom: 10px; border-bottom: 1px dashed #ccc; padding-bottom: 6px;">
+                                    <a href="덕북권_전철.html" class="wiki-link" style="font-size: 1.05em; color: #0054A6;">덕북권 전철</a>
+                                </div>
                                 <div style="margin-bottom: 8px;">
                                     <a href="빈주권_전철.html" class="wiki-link">빈주권 전철</a><br>
                                     <span style="vertical-align: middle;">(</span>
@@ -194,7 +210,7 @@
                                     <a href="빈주광역철도.html" class="station-pill line-bjm-filled">빈주</a>
                                     <span style="vertical-align: middle;">)</span>
                                 </div>
-                                <div>
+                                <div style="margin-bottom: 5px;">
                                     <a href="서해경전철.html" class="wiki-link" style="color: #aaa; text-decoration: line-through;">서해경전철</a><br>
                                     <span style="color: #aaa; vertical-align: middle;">(</span>
                                     <a href="서해경전철.html" class="station-pill line-disabled">서해</a>
@@ -209,11 +225,12 @@
                             </td>
 
                             <!-- 덕남권 전철 -->
-                            <td style="text-align:center; border: 1px solid #000;">
+                            <td style="text-align:center; border: 1px solid #000; vertical-align: top; padding-top: 10px;">
                                 <div style="margin-bottom: 5px;">
-                                    <a href="덕주1호선.html" class="wiki-link">덕남권 전철</a><br>
+                                    <a href="덕남권_전철.html" class="wiki-link">덕남권 전철</a><br>
                                     <span style="vertical-align: middle;">(</span>
-                                    <a href="덕주1호선.html" class="station-rect line-dj1-filled">1</a>
+                                    <a href="덕주1호선.html" class="station-rect line-dj1-filled" title="덕주 도시철도 1호선">1</a>·
+                                    <a href="덕남권_광역철도.html" class="station-pill line-disabled" title="덕남권 광역철도(착공예정)">덕남</a>
                                     <span style="vertical-align: middle;">)</span>
                                 </div>
                             </td>
