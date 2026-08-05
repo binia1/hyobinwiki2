@@ -4515,7 +4515,262 @@
   "박효빈_생기부_및_입시분석": "박효빈_생기부_및_입시분석.html",
   "박효빈_알바_및_근로": "박효빈_알바_및_근로.html",
   "박효빈_성지순례_연대기": "박효빈_성지순례_연대기.html",
-  "ㅈ포초_빌런목록": "ㅈ포초_빌런목록.html"
+  "ㅈ포초_빌런목록": "ㅈ포초_빌런목록.html",
+    "HDTX-B": "HDTX-B.html",
+"ad_logic": "틀_뷰어_SPA.html#ad_logic",
+"광고 스크립트": "틀_뷰어_SPA.html#ad_logic",
+"애드센스 로직": "틀_뷰어_SPA.html#ad_logic",
+
+"build_index": "틀_뷰어_SPA.html#build_index",
+"빌드 인덱스": "틀_뷰어_SPA.html#build_index",
+"검색엔진 빌드": "틀_뷰어_SPA.html#build_index",
+
+"config": "틀_뷰어_SPA.html#config",
+"컨피그": "틀_뷰어_SPA.html#config",
+"위키 설정": "틀_뷰어_SPA.html#config",
+
+"find-missing": "틀_뷰어_SPA.html#find-missing",
+"누락문서 찾기": "틀_뷰어_SPA.html#find-missing",
+"빨간링크": "틀_뷰어_SPA.html#find-missing",
+
+"make_list": "틀_뷰어_SPA.html#make_list",
+"목록 생성기": "틀_뷰어_SPA.html#make_list",
+
+"fix-highway-images": "틀_뷰어_SPA.html#fix-highway-images",
+"고속도로 마크 수정": "틀_뷰어_SPA.html#fix-highway-images",
+"방패마크 스크립트": "틀_뷰어_SPA.html#fix-highway-images",
+
+"region_data": "틀_뷰어_SPA.html#region_data",
+"지역 데이터": "틀_뷰어_SPA.html#region_data",
+"행정구역 db": "틀_뷰어_SPA.html#region_data",
+
+"secret_search": "틀_뷰어_SPA.html#secret_search",
+"비밀 검색": "틀_뷰어_SPA.html#secret_search",
+"관리자 검색": "틀_뷰어_SPA.html#secret_search",
+
+"seed_data": "틀_뷰어_SPA.html#seed_data",
+"시드 데이터": "틀_뷰어_SPA.html#seed_data",
+"초기 데이터": "틀_뷰어_SPA.html#seed_data",
+
+"update-archive": "틀_뷰어_SPA.html#update-archive",
+"아카이브 업데이트": "틀_뷰어_SPA.html#update-archive",
+"역사 백업": "틀_뷰어_SPA.html#update-archive",
+
+"wiki_char": "틀_뷰어_SPA.html#wiki_char",
+"특수문자 매핑": "틀_뷰어_SPA.html#wiki_char",
+
+"wiki_main": "틀_뷰어_SPA.html#wiki_main",
+"위키 대문": "틀_뷰어_SPA.html#wiki_main",
+
+"미개통노선도_덕남권": "틀_뷰어_SPA.html#미개통노선도_덕남권",
+"덕남권 미개통": "틀_뷰어_SPA.html#미개통노선도_덕남권",
+"덕남권 전철 틀": "틀_뷰어_SPA.html#미개통노선도_덕남권",
+
+"미개통노선도_덕빈권": "틀_뷰어_SPA.html#미개통노선도_덕빈권",
+"덕빈권 미개통": "틀_뷰어_SPA.html#미개통노선도_덕빈권",
+"덕북권 미개통": "틀_뷰어_SPA.html#미개통노선도_덕빈권",
+
+"emscripten_fetch_worker": "틀_뷰어_SPA.html#emscripten_fetch_worker",
+"비동기 워커": "틀_뷰어_SPA.html#emscripten_fetch_worker",
+
+"10대_효빈시의원_목록": "틀_뷰어_SPA.html#10대_효빈시의원_목록",
+"10대 효빈시의원": "틀_뷰어_SPA.html#10대_효빈시의원_목록",
+"시의원 목록": "틀_뷰어_SPA.html#10대_효빈시의원_목록",
+
+"app": "틀_뷰어_SPA.html#app",
+"메인 앱": "틀_뷰어_SPA.html#app",
+
+"auto_link": "틀_뷰어_SPA.html#auto_link",
+"자동 링크": "틀_뷰어_SPA.html#auto_link",
+
+"auto_navbox": "틀_뷰어_SPA.html#auto_navbox",
+"자동 둘러보기 틀": "틀_뷰어_SPA.html#auto_navbox",
+
+"bangdream-nav": "틀_뷰어_SPA.html#bangdream-nav",
+"뱅드림 틀": "틀_뷰어_SPA.html#bangdream-nav",
+"방도리 틀": "틀_뷰어_SPA.html#bangdream-nav",
+
+"blind_board_core": "틀_뷰어_SPA.html#blind_board_core",
+"블라인드 게시판": "틀_뷰어_SPA.html#blind_board_core",
+
+"bukgu_highschool_nav": "틀_뷰어_SPA.html#bukgu_highschool_nav",
+"북구 고등학교 틀": "틀_뷰어_SPA.html#bukgu_highschool_nav",
+
+"data": "틀_뷰어_SPA.html#data",
+"기본 데이터": "틀_뷰어_SPA.html#data",
+
+"defunct_admin_nav": "틀_뷰어_SPA.html#defunct_admin_nav",
+"폐지 행정구역 틀": "틀_뷰어_SPA.html#defunct_admin_nav",
+"과거 행정청": "틀_뷰어_SPA.html#defunct_admin_nav",
+
+"hb_index_scripts": "틀_뷰어_SPA.html#hb_index_scripts",
+"효빈 인덱스": "틀_뷰어_SPA.html#hb_index_scripts",
+
+"hb_members": "틀_뷰어_SPA.html#hb_members",
+"효빈 멤버": "틀_뷰어_SPA.html#hb_members",
+
+"hb_wiki_core": "틀_뷰어_SPA.html#hb_wiki_core",
+"효빈위키 파서": "틀_뷰어_SPA.html#hb_wiki_core",
+
+"image_data": "틀_뷰어_SPA.html#image_data",
+"이미지 매핑": "틀_뷰어_SPA.html#image_data",
+
+"jana": "틀_뷰어_SPA.html#jana",
+"쟈나 스크립트": "틀_뷰어_SPA.html#jana",
+
+"load-footer": "틀_뷰어_SPA.html#load-footer",
+"푸터 스크립트": "틀_뷰어_SPA.html#load-footer",
+
+"lovelive_hasu_nav": "틀_뷰어_SPA.html#lovelive_hasu_nav",
+"하스노소라 틀": "틀_뷰어_SPA.html#lovelive_hasu_nav",
+
+"lovelive_liella_nav": "틀_뷰어_SPA.html#lovelive_liella_nav",
+"리엘라 틀": "틀_뷰어_SPA.html#lovelive_liella_nav",
+"슈퍼스타 틀": "틀_뷰어_SPA.html#lovelive_liella_nav",
+
+"lovelive_muse_nav": "틀_뷰어_SPA.html#lovelive_muse_nav",
+"뮤즈 틀": "틀_뷰어_SPA.html#lovelive_muse_nav",
+
+"lovelive_nav": "틀_뷰어_SPA.html#lovelive_nav",
+"러브라이브 틀": "틀_뷰어_SPA.html#lovelive_nav",
+"럽라 틀": "틀_뷰어_SPA.html#lovelive_nav",
+
+"lovelive_niji_nav": "틀_뷰어_SPA.html#lovelive_niji_nav",
+"니지동 틀": "틀_뷰어_SPA.html#lovelive_niji_nav",
+"니지가사키 틀": "틀_뷰어_SPA.html#lovelive_niji_nav",
+
+"neugumma": "틀_뷰어_SPA.html#neugumma",
+"방어 스크립트": "틀_뷰어_SPA.html#neugumma",
+
+"wiki_index": "틀_뷰어_SPA.html#wiki_index",
+"위키 인덱스": "틀_뷰어_SPA.html#wiki_index",
+
+"틀_미개통": "틀_뷰어_SPA.html#틀_미개통",
+"미개통 틀": "틀_뷰어_SPA.html#틀_미개통",
+
+"틀_미개통노선도": "틀_뷰어_SPA.html#틀_미개통노선도",
+"효빈권 미개통": "틀_뷰어_SPA.html#틀_미개통노선도",
+"미개통노선도 틀": "틀_뷰어_SPA.html#틀_미개통노선도",
+
+"틀_효빈광역시의_교통": "틀_뷰어_SPA.html#틀_효빈광역시의_교통",
+"효빈 교통 틀": "틀_뷰어_SPA.html#틀_효빈광역시의_교통",
+"효빈시의 교통": "틀_뷰어_SPA.html#틀_효빈광역시의_교통",
+
+"틀_효빈광역시전철노선": "틀_뷰어_SPA.html#틀_효빈광역시전철노선",
+"효빈 전철 노선": "틀_뷰어_SPA.html#틀_효빈광역시전철노선",
+"효빈 전철 틀": "틀_뷰어_SPA.html#틀_효빈광역시전철노선",
+
+"틀_효빈덕북권대중교통": "틀_뷰어_SPA.html#틀_효빈덕북권대중교통",
+"덕북권 대중교통": "틀_뷰어_SPA.html#틀_효빈덕북권대중교통",
+"덕북권 교통 틀": "틀_뷰어_SPA.html#틀_효빈덕북권대중교통",
+
+"wiki_core": "틀_뷰어_SPA.html#wiki_core",
+"위키 코어": "틀_뷰어_SPA.html#wiki_core",
+
+"광역단체": "틀_뷰어_SPA.html#광역단체",
+"광역단체 틀": "틀_뷰어_SPA.html#광역단체",
+
+"남구행정": "틀_뷰어_SPA.html#남구행정",
+"남구 행정동": "틀_뷰어_SPA.html#남구행정",
+"남구 법정동": "틀_뷰어_SPA.html#남구행정",
+
+"동구행정": "틀_뷰어_SPA.html#동구행정",
+"동구 행정동": "틀_뷰어_SPA.html#동구행정",
+"동구 법정동": "틀_뷰어_SPA.html#동구행정",
+
+"민선효빈광역시장": "틀_뷰어_SPA.html#민선효빈광역시장",
+"역대 효빈시장": "틀_뷰어_SPA.html#민선효빈광역시장",
+
+"북구행정": "틀_뷰어_SPA.html#북구행정",
+"북구 행정동": "틀_뷰어_SPA.html#북구행정",
+"북구 법정동": "틀_뷰어_SPA.html#북구행정",
+
+"서구행정": "틀_뷰어_SPA.html#서구행정",
+"서구 행정동": "틀_뷰어_SPA.html#서구행정",
+"서구 법정동": "틀_뷰어_SPA.html#서구행정",
+
+"안천구행정": "틀_뷰어_SPA.html#안천구행정",
+"안천구 행정동": "틀_뷰어_SPA.html#안천구행정",
+"안천구 법정동": "틀_뷰어_SPA.html#안천구행정",
+
+"전체효빈광역시장": "틀_뷰어_SPA.html#전체효빈광역시장",
+"효빈시장 목록": "틀_뷰어_SPA.html#전체효빈광역시장",
+
+"중구행정": "틀_뷰어_SPA.html#중구행정",
+"중구 행정동": "틀_뷰어_SPA.html#중구행정",
+"중구 법정동": "틀_뷰어_SPA.html#중구행정",
+
+"창전구행정": "틀_뷰어_SPA.html#창전구행정",
+"창전구 행정동": "틀_뷰어_SPA.html#창전구행정",
+"창전구 법정동": "틀_뷰어_SPA.html#창전구행정",
+
+"청엽구행정": "틀_뷰어_SPA.html#청엽구행정",
+"청엽구 행정동": "틀_뷰어_SPA.html#청엽구행정",
+"청엽구 법정동": "틀_뷰어_SPA.html#청엽구행정",
+
+"탄성군행정": "틀_뷰어_SPA.html#탄성군행정",
+"탄성군 행정면": "틀_뷰어_SPA.html#탄성군행정",
+"탄성군 법정리": "틀_뷰어_SPA.html#탄성군행정",
+
+"효빈22대국회의원": "틀_뷰어_SPA.html#효빈22대국회의원",
+"효빈 국회의원": "틀_뷰어_SPA.html#효빈22대국회의원",
+
+"효빈공공기관": "틀_뷰어_SPA.html#효빈공공기관",
+"효빈시 공공기관": "틀_뷰어_SPA.html#효빈공공기관",
+
+"효빈대학": "틀_뷰어_SPA.html#효빈대학",
+"효빈시 대학교": "틀_뷰어_SPA.html#효빈대학",
+
+"효빈도시구조": "틀_뷰어_SPA.html#효빈도시구조",
+"효빈 도시구조": "틀_뷰어_SPA.html#효빈도시구조",
+
+"효빈버스권역": "틀_뷰어_SPA.html#효빈버스권역",
+"효빈 버스권역": "틀_뷰어_SPA.html#효빈버스권역",
+
+"효빈선거": "틀_뷰어_SPA.html#효빈선거",
+"효빈 지방선거": "틀_뷰어_SPA.html#효빈선거",
+
+"효빈시군구": "틀_뷰어_SPA.html#효빈시군구",
+"효빈 산하구역": "틀_뷰어_SPA.html#효빈시군구",
+
+"효빈시내버스목록": "틀_뷰어_SPA.html#효빈시내버스목록",
+"효빈 버스 목록": "틀_뷰어_SPA.html#효빈시내버스목록",
+"효빈 시내버스": "틀_뷰어_SPA.html#효빈시내버스목록",
+
+"효빈여담": "틀_뷰어_SPA.html#효빈여담",
+"효빈 밈": "틀_뷰어_SPA.html#효빈여담",
+
+"효빈역사": "틀_뷰어_SPA.html#효빈역사",
+"효빈시 역사": "틀_뷰어_SPA.html#효빈역사",
+
+"효빈의료기관": "틀_뷰어_SPA.html#효빈의료기관",
+"효빈 병원": "틀_뷰어_SPA.html#효빈의료기관",
+
+"효빈인구": "틀_뷰어_SPA.html#효빈인구",
+"효빈 인구추이": "틀_뷰어_SPA.html#효빈인구",
+
+"효빈일반철도선": "틀_뷰어_SPA.html#효빈일반철도선",
+"효빈 여객철도": "틀_뷰어_SPA.html#효빈일반철도선",
+
+"효빈자매도시": "틀_뷰어_SPA.html#효빈자매도시",
+"자매결연 도시": "틀_뷰어_SPA.html#효빈자매도시",
+
+"효빈전문대": "틀_뷰어_SPA.html#효빈전문대",
+"효빈 전문대학": "틀_뷰어_SPA.html#효빈전문대",
+
+"효빈지구": "틀_뷰어_SPA.html#효빈지구",
+"효빈 신도시": "틀_뷰어_SPA.html#효빈지구",
+"효빈 택지지구": "틀_뷰어_SPA.html#효빈지구",
+
+"효빈터미널목록": "틀_뷰어_SPA.html#효빈터미널목록",
+"효빈 버스터미널": "틀_뷰어_SPA.html#효빈터미널목록",
+
+"효빈행정": "틀_뷰어_SPA.html#효빈행정",
+"효빈 행정구역": "틀_뷰어_SPA.html#효빈행정",
+
+"효빈행정구역변천": "틀_뷰어_SPA.html#효빈행정구역변천",
+"효빈 행정구역 변천사": "틀_뷰어_SPA.html#효빈행정구역변천"
+
 
 
     };

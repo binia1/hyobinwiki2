@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.webp">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈위키 동적 문서 뷰어</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
+        
+        :root { 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #F9F9FA; 
+            --wiki-link: #0022AA;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 2.2rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.0px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        .wiki-btn { 
+            border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; color: #555; 
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; line-height: 1.2; 
+        }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        .doc-box { background-color: #ecf0f1; border: 1px solid #a2a9b1; padding: 15px; border-radius: 4px; margin-bottom: 20px; margin-top: 30px; }
+        .doc-header { background-color: #cedff2; padding: 8px 12px; font-weight: bold; border-radius: 4px; margin-bottom: 15px; border: 1px solid #a2a9b1; display: flex; justify-content: space-between; align-items: center; }
+
+        h2 { font-size: 1.5rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2rem; color: var(--wiki-main); }
+        
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }   
+        
+        /* 렌더링 존: 사이드바 충돌을 막고 무조건 제자리에 있도록 수정 */
+        #template-render-zone {
+            min-height: 150px; border: 1px dashed #ddd; padding: 20px; border-radius: 8px; background: #fafafa;
+            margin-top: 20px; margin-bottom: 20px; overflow: hidden; display: block; width: 100%; box-sizing: border-box;
+        }
+
+        .util-box {
+            padding: 20px; color: #333; text-align: center; border: 2px solid #555588; background: #f0f0f5; border-radius: 8px; margin: 20px 0;
+        }
+    </style>
+    <!-- 루트 디렉토리 공통 스크립트 -->
+    <script src="assets/ad_logic.js"></script>
+    <link rel="stylesheet" href="wiki_font_standard.css">
+</head>        
+
+<body>
+    <!-- 완벽 복구된 네비게이션 바 -->
+    <nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <div class="nav-logo-box">H</div>
+            <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white">HyobinWiki</a>
+            <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+                <a href="index.html" class="hover:underline font-bold text-white no-underline">대문</a>
+                <a href="최근_변경.html" class="hover:underline text-white no-underline">최근 변경</a>
+                <a href="최근_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
+            </div>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2">
+                <div class="hidden lg:flex items-center gap-1 mr-2">
+                    <a href="편집요청.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">편집요청</a>
+                    <a href="최근_토론.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">토론</a>
+                    <a href="역사.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">역사</a>
+                    <a href="즐겨찾기.html" class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" title="즐겨찾기">★</a>
+                    <a href="더보기.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1">더보기 <span class="text-[9px]">▼</span></a>
+                </div>
+                
+                <!-- 검색창 연동 -->
+                <input type="text" id="headerSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }">
+                <button onclick="handleSearch('headerSearchInput')" class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
+            </div>
+            <div class="flex gap-1" id="auth-buttons">
+                <button onclick="toggleModal('loginModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" id="btn-login">로그인</button>
+                <button onclick="toggleModal('settingsModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">설정</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="title-area mt-4">
+            <div class="txt-lvl-1" id="page-title">로딩 중...</div>
+            <div class="flex gap-2 mb-1">
+                <button class="wiki-btn">토론</button>
+                <button class="wiki-btn">편집</button>
+                <button class="wiki-btn">역사</button>
+                <button class="wiki-btn">ACL</button>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <span id="category-list"></span>
+        </div>
+
+        <!-- ★ 렌더링 존 : 스크립트도, 표도 무조건 이 안으로 들어옵니다 ★ -->
+        <div id="template-render-zone"></div>
+
+        <div class="doc-box">
+            <div class="doc-header">
+                <div>
+                    <span style="color:green;"><i class="fas fa-file-alt"></i></span> 
+                    <span class="text-lg" id="doc-title">설명문서 로딩중...</span>
+                </div>
+                <span class="text-sm font-normal">
+                    [<a href="#" class="wiki-link">편집</a>] 
+                    [<a href="#" class="wiki-link">역사</a>]
+                </span>
+            </div>
+
+            <h2 id="s-1">1. 개요</h2>
+            <p id="doc-overview">설명문서 데이터를 불러오고 있습니다.</p>
+
+            <h2 id="s-2">2. 사용법 / 로드 경로</h2>
+            <p>이 스크립트는 실제 서버의 <strong><span id="doc-path" style="color:#d9534f; font-weight:bold;"></span></strong> 경로에 위치하고 있습니다. 사용하려면 HTML 내에 아래 코드를 삽입하세요.</p>
+            <div style="background:#f0f7ff; padding:15px; border:1px solid #0055AA; border-radius:4px; margin: 10px 0;">
+                <code style="font-family:monospace; font-weight:bold; color:#0055AA;" id="doc-usage"></code>
+            </div>
+
+            <h2 id="s-3">3. 속성 및 갱신 내역</h2>
+            <ul style="list-style-type: circle; margin-left: 20px;" id="doc-history">
+                <!-- 동적 주입 -->
+            </ul>
+        </div>
+        
+        <div id="footer-container"></div>
+        <script src="assets/load-footer.js"></script>
+    </div>
+
+    <script>
+        // DOMContentLoaded 이벤트를 놓치지 않게 즉시 실행 처리
+        const originalAddEventListener = document.addEventListener;
+        document.addEventListener = function(type, listener, options) {
+            if (type === 'DOMContentLoaded') {
+                setTimeout(listener, 10);
+            } else {
+                originalAddEventListener.call(document, type, listener, options);
+            }
+        };
+
+        const aliasMap = {
+            "럽라": "lovelive_nav", "러브라이브": "lovelive_nav", "뮤즈": "lovelive_muse_nav", "니지동": "lovelive_niji_nav",
+            "리에라": "lovelive_liella_nav", "하스노소라": "lovelive_hasu_nav", "방도리": "bangdream-nav", "뱅드림": "bangdream-nav",
+            "미개통": "틀_미개통노선도", "효빈미개통": "틀_미개통노선도", "덕남미개통": "미개통노선도_덕남권", "덕북미개통": "미개통노선도_덕빈권",
+            "효빈전철": "틀_효빈광역시전철노선", "효빈교통": "틀_효빈광역시의_교통", "효빈버스": "효빈시내버스목록",
+            "안천구": "안천구행정", "남구": "남구행정", "동구": "동구행정", "서구": "서구행정", "북구": "북구행정", "중구": "중구행정",
+            "창전구": "창전구행정", "청엽구": "청엽구행정", "탄성군": "탄성군행정", "시장": "민선효빈광역시장", "효빈시장": "전체효빈광역시장",
+            "국회의원": "효빈22대국회의원", "느금마": "neugumma"
+        };
+
+        const filePaths = {
+            "ad_logic": "assets/", "build_index": "", "config": "", "find-missing": "", "make_list": "", 
+            "fix-highway-images": "", "region_data": "", "secret_search": "", "seed_data": "", 
+            "update-archive": "", "wiki_char": "", "wiki_main": "", "미개통노선도_덕남권": "", "미개통노선도_덕빈권": "",
+            "emscripten_fetch_worker": ".venv/Lib/site-packages/pip/_vendor/urllib3/contrib/emscripten/",
+            "10대_효빈시의원_목록": "assets/", "app": "assets/", "auto_link": "assets/", "auto_navbox": "assets/", 
+            "bangdream-nav": "assets/", "blind_board_core": "assets/", "bukgu_highschool_nav": "assets/", 
+            "data": "assets/", "defunct_admin_nav": "assets/", "hb_index_scripts": "assets/", 
+            "hb_members": "assets/", "hb_wiki_core": "assets/", "image_data": "assets/", "jana": "assets/", 
+            "load-footer": "assets/", "lovelive_hasu_nav": "assets/", "lovelive_liella_nav": "assets/", 
+            "lovelive_muse_nav": "assets/", "lovelive_nav": "assets/", "lovelive_niji_nav": "assets/", 
+            "neugumma": "assets/", "wiki_index": "assets/", "틀_미개통": "assets/", "틀_미개통노선도": "assets/", 
+            "틀_효빈광역시의_교통": "assets/", "틀_효빈광역시전철노선": "assets/", "틀_효빈덕북권대중교통": "assets/",
+            "wiki_core": "js/", "광역단체": "js/", "남구행정": "js/", "동구행정": "js/", "민선효빈광역시장": "js/", 
+            "북구행정": "js/", "서구행정": "js/", "안천구행정": "js/", "전체효빈광역시장": "js/", "중구행정": "js/", 
+            "창전구행정": "js/", "청엽구행정": "js/", "탄성군행정": "js/", "효빈22대국회의원": "js/", "효빈공공기관": "js/", 
+            "효빈대학": "js/", "효빈도시구조": "js/", "효빈버스권역": "js/", "효빈선거": "js/", "효빈시군구": "js/", 
+            "효빈시내버스목록": "js/", "효빈여담": "js/", "효빈역사": "js/", "효빈의료기관": "js/", "효빈인구": "js/", 
+            "효빈일반철도선": "js/", "효빈자매도시": "js/", "효빈전문대": "js/", "효빈지구": "js/", "효빈터미널목록": "js/", 
+            "효빈행정": "js/", "효빈행정구역변천": "js/"
+        };
+
+        const specificDB = {
+            "ad_logic": { title: "스크립트:ad_logic", categories: ["시스템 스크립트"], overview: "배너 광고(AdSense) 송출 및 위치 제어를 담당하는 루트 스크립트입니다.", isUtil: true },
+            "build_index": { title: "Node 툴:build_index", categories: ["백엔드 툴"], overview: "HTML을 파싱하여 JSON 검색 인덱스를 빌드하는 Node.js 유틸리티입니다.", isNode: true },
+            "config": { title: "스크립트:config", categories: ["시스템 환경설정"], overview: "위키 시스템 전역 환경변수를 정의합니다.", isUtil: true },
+            "find-missing": { title: "Node 툴:find-missing", categories: ["백엔드 툴"], overview: "링크된 문서 중 존재하지 않는 문서를 색인하는 유틸리티입니다.", isNode: true },
+            "make_list": { title: "Node 툴:make_list", categories: ["백엔드 툴"], overview: "문서 목록을 스캔하여 리스트로 덤프합니다.", isNode: true },
+            "fix-highway-images": { title: "Node 툴:fix-highway-images", categories: ["백엔드 툴"], overview: "고속도로 방패 마크 등 깨진 이미지 경로를 일괄 수정합니다.", isNode: true },
+            "region_data": { title: "스크립트:region_data", categories: ["데이터 스크립트"], overview: "행정구역 기반 기초 지역 데이터를 보관합니다.", isUtil: true },
+            "secret_search": { title: "스크립트:secret_search", categories: ["검색 확장"], overview: "특정 키워드 입력 시 히든 문서나 이스터에그로 리다이렉트합니다.", isUtil: true },
+            "seed_data": { title: "스크립트:seed_data", categories: ["데이터 스크립트"], overview: "DB 초기화 및 기초 위키 문서 데이터를 담고 있습니다.", isUtil: true },
+            "update-archive": { title: "Node 툴:update-archive", categories: ["백엔드 툴"], overview: "문서 이력(역사) 보관소를 갱신합니다.", isNode: true },
+            "wiki_char": { title: "스크립트:wiki_char", categories: ["문자 파서"], overview: "특수문자 및 위키 고유 문법을 렌더링 가능한 코드로 치환합니다.", isUtil: true },
+            "wiki_main": { title: "스크립트:wiki_main", categories: ["메인 엔진"], overview: "효빈위키 대문 및 메인 프레임을 초기화합니다.", isUtil: true },
+            "미개통노선도_덕남권": { title: "틀:미개통노선도/덕남권", categories: ["노선도 틀", "교통 관련 틀"], overview: "덕빈남도 권역의 미개통 전철 노선을 보여주는 표 틀입니다." },
+            "미개통노선도_덕빈권": { title: "틀:미개통노선도/덕북권", categories: ["노선도 틀", "교통 관련 틀"], overview: "덕빈북도 권역의 복잡한 미개통 철도망을 렌더링합니다." },
+            "emscripten_fetch_worker": { title: "모듈:emscripten_fetch_worker", categories: ["외부 모듈"], overview: "Python 의존성 및 패키지 통신을 위한 워커 스크립트입니다.", isUtil: true },
+            "10대_효빈시의원_목록": { title: "틀:10대 효빈시의원 목록", categories: ["정치/행정 틀"], overview: "효빈광역시의회 10대 의원들을 정당 및 선거구별로 분류한 틀입니다." },
+            "app": { title: "스크립트:app", categories: ["클라이언트 앱"], overview: "프론트엔드 라우팅 및 상태 관리를 제어합니다.", isUtil: true },
+            "auto_link": { title: "스크립트:auto_link", categories: ["UI 유틸리티"], overview: "텍스트 내의 단어를 감지해 자동으로 위키 링크를 삽입합니다.", isUtil: true },
+            "auto_navbox": { title: "스크립트:auto_navbox", categories: ["UI 유틸리티"], overview: "문서 하단 둘러보기 틀(Navbox)을 동적으로 펼치거나 접습니다.", isUtil: true },
+            "bangdream-nav": { title: "틀:뱅드림! 프로젝트", categories: ["서브컬처 틀"], overview: "창전선 및 노선 밈과 관련된 뱅드림 밴드 캐릭터 둘러보기 틀입니다." },
+            "blind_board_core": { title: "스크립트:blind_board_core", categories: ["시스템 스크립트"], overview: "블라인드 처리된 토론 및 게시판 로직을 제어합니다.", isUtil: true },
+            "bukgu_highschool_nav": { title: "틀:북구 관내 고등학교", categories: ["교육 틀"], overview: "효빈광역시 북구에 위치한 고등학교 목록 틀입니다." },
+            "data": { title: "스크립트:data", categories: ["글로벌 데이터"], overview: "전역에서 참조하는 정적 JSON 데이터를 내포하고 있습니다.", isUtil: true },
+            "defunct_admin_nav": { title: "틀:폐지된 행정구역", categories: ["역사/행정 틀"], overview: "과거에 존재했으나 통폐합된 효빈/덕빈 권역 행정구역 틀입니다." },
+            "hb_index_scripts": { title: "스크립트:hb_index_scripts", categories: ["핵심 엔진"], overview: "메인 인덱스의 스크립트 비동기 로딩을 담당합니다.", isUtil: true },
+            "hb_members": { title: "스크립트:hb_members", categories: ["사용자 관리"], overview: "로그인, 회원가입, ACL 권한을 제어하는 스크립트입니다.", isUtil: true },
+            "hb_wiki_core": { title: "스크립트:hb_wiki_core", categories: ["핵심 파서"], overview: "효빈위키 문법을 HTML로 변환하는 코어 엔진입니다.", isUtil: true },
+            "image_data": { title: "스크립트:image_data", categories: ["미디어 관리"], overview: "문서에 삽입되는 webp, png 이미지들의 주소를 맵핑합니다.", isUtil: true },
+            "jana": { title: "스크립트:jana", categories: ["UI 유틸리티"], overview: "위키 내 자나(Jana) 관련 이스터에그 및 특수 UI 이펙트를 렌더링합니다.", isUtil: true },
+            "load-footer": { title: "스크립트:load-footer", categories: ["UI 레이아웃"], overview: "문서 최하단 CCL 라이선스 및 꼬리말 영역을 동적으로 붙여넣습니다.", isUtil: true },
+            "lovelive_hasu_nav": { title: "틀:하스노소라 여학원", categories: ["서브컬처 틀"], overview: "러브라이브 하스노소라 스쿨 아이돌 클럽 전용 둘러보기 틀입니다." },
+            "lovelive_liella_nav": { title: "틀:Liella!", categories: ["서브컬처 틀"], overview: "러브라이브 슈퍼스타! Liella! 멤버 둘러보기 틀입니다." },
+            "lovelive_muse_nav": { title: "틀:μ's", categories: ["서브컬처 틀"], overview: "러브라이브! 뮤즈 멤버 둘러보기 틀입니다." },
+            "lovelive_nav": { title: "틀:러브라이브! 시리즈", categories: ["서브컬처 틀"], overview: "러브라이브 전반을 아우르는 메인 네비게이션 틀입니다." },
+            "lovelive_niji_nav": { title: "틀:니지가사키 학원", categories: ["서브컬처 틀"], overview: "니지가사키 스쿨 아이돌 동호회 멤버 둘러보기 틀입니다." },
+            "neugumma": { title: "스크립트:neugumma", categories: ["어그로/이스터에그"], overview: "특수 조건 발동 시 알림을 띄우는 이스터에그 스크립트입니다.", isUtil: true },
+            "wiki_index": { title: "스크립트:wiki_index", categories: ["목차 렌더러"], overview: "문서 내 헤딩 태그를 감지하여 우측에 자동 목차(TOC)를 생성합니다.", isUtil: true },
+            "틀_미개통": { title: "틀:일반 미개통", categories: ["상태 틀"], overview: "범용적인 미개통 상태를 알리는 최상단 배너 틀입니다." },
+            "틀_미개통노선도": { title: "틀:미개통노선도 (효빈권)", categories: ["노선도 틀", "효빈광역시 틀"], overview: "효빈광역시 관내 공사중/계획중인 전철 노선 상태를 시각화합니다." },
+            "틀_효빈광역시의_교통": { title: "틀:효빈광역시의 교통", categories: ["교통 관련 틀"], overview: "효빈광역시 관내 철도, 버스, 도로망 총괄 네비게이션 틀입니다." },
+            "틀_효빈광역시전철노선": { title: "틀:효빈광역시 전철 노선", categories: ["노선도 틀"], overview: "현재 개통되어 운영 중인 효빈권 도시철도 1~8호선 노선도 틀입니다." },
+            "틀_효빈덕북권대중교통": { title: "틀:효빈/덕북 대중교통", categories: ["교통 관련 틀"], overview: "효빈광역시와 덕빈북도를 잇는 광역 대중교통망 안내 틀입니다." },
+            "wiki_core": { title: "스크립트:wiki_core", categories: ["레거시 파서"], overview: "초기 버전의 위키 렌더링 파서입니다.", isUtil: true },
+            "광역단체": { title: "틀:대한민국 광역자치단체", categories: ["지리/행정 틀"], overview: "전국 광역자치단체 둘러보기 틀입니다." },
+            "남구행정": { title: "틀:남구 행정구역", categories: ["행정구역 틀"], overview: "효빈광역시 남구 관할 행정구역 목록 틀입니다." },
+            "동구행정": { title: "틀:동구 행정구역", categories: ["행정구역 틀"], overview: "효빈광역시 동구 관할 행정구역 목록 틀입니다." },
+            "민선효빈광역시장": { title: "틀:민선 효빈광역시장", categories: ["정치/인물 틀"], overview: "민선 시장 역대 계보 틀입니다." },
+            "북구행정": { title: "틀:북구 행정구역", categories: ["행정구역 틀"], overview: "효빈광역시 북구 관할 행정구역 목록 틀입니다." },
+            "서구행정": { title: "틀:서구 행정구역", categories: ["행정구역 틀"], overview: "효빈광역시 서구 관할 행정구역 목록 틀입니다." },
+            "안천구행정": { title: "틀:안천구 행정구역", categories: ["행정구역 틀"], overview: "효빈광역시 안천구 관할 행정구역 목록 틀입니다." },
+            "전체효빈광역시장": { title: "틀:역대 효빈시장", categories: ["정치/인물 틀"], overview: "전체 효빈시장 명단 틀입니다." },
+            "중구행정": { title: "틀:중구 행정구역", categories: ["행정구역 틀"], overview: "효빈광역시 중구 관할 행정구역 목록 틀입니다." },
+            "창전구행정": { title: "틀:창전구 행정구역", categories: ["행정구역 틀"], overview: "효빈광역시 창전구 관할 행정구역 목록 틀입니다." },
+            "청엽구행정": { title: "틀:청엽구 행정구역", categories: ["행정구역 틀"], overview: "효빈광역시 청엽구 관할 행정구역 목록 틀입니다." },
+            "탄성군행정": { title: "틀:탄성군 행정구역", categories: ["행정구역 틀"], overview: "효빈광역시 탄성군 관할 행정구역 목록 틀입니다." },
+            "효빈22대국회의원": { title: "틀:효빈시 제22대 국회의원", categories: ["정치/인물 틀"], overview: "제22대 국회의원 당선인 목록 틀입니다." },
+            "효빈공공기관": { title: "틀:효빈광역시 공공기관", categories: ["행정 틀"], overview: "관내 공공기관 목록 틀입니다." },
+            "효빈대학": { title: "틀:효빈광역시 4년제 대학", categories: ["교육 틀"], overview: "관내 대학교 목록 틀입니다." },
+            "효빈도시구조": { title: "틀:효빈광역시 도시구조", categories: ["지리/도시 틀"], overview: "효빈의 다핵 도시구조 설명 틀입니다." },
+            "효빈버스권역": { title: "틀:효빈광역시 버스 권역", categories: ["교통 틀"], overview: "권역별 번호 부여 체계 안내 틀입니다." },
+            "효빈선거": { title: "틀:효빈광역시 역대 선거", categories: ["정치/역사 틀"], overview: "역대 선거 결과 요약 틀입니다." },
+            "효빈시군구": { title: "틀:효빈광역시 산하 자치구", categories: ["행정구역 틀"], overview: "자치구 및 군 행정구역 통합 틀입니다." },
+            "효빈시내버스목록": { title: "틀:효빈광역시 시내버스", categories: ["교통 틀"], overview: "전체 시내버스 노선 목록 틀입니다." },
+            "효빈여담": { title: "틀:효빈광역시 여담/밈", categories: ["문화/밈 틀"], overview: "인터넷 밈과 여담 정리 틀입니다." },
+            "효빈역사": { title: "틀:효빈광역시의 역사", categories: ["역사 틀"], overview: "역사 연표 틀입니다." },
+            "효빈의료기관": { title: "틀:효빈광역시 주요 병원", categories: ["의료/생활 틀"], overview: "상급종합병원 목록 틀입니다." },
+            "효빈인구": { title: "틀:효빈광역시 인구추이", categories: ["통계 틀"], overview: "인구 통계 틀입니다." },
+            "효빈일반철도선": { title: "틀:효빈광역시 일반철도", categories: ["교통/철도 틀"], overview: "철도망 안내 틀입니다." },
+            "효빈자매도시": { title: "틀:효빈광역시 자매결연도시", categories: ["행정/외교 틀"], overview: "자매결연 도시 목록 틀입니다." },
+            "효빈전문대": { title: "틀:효빈광역시 전문대학", categories: ["교육 틀"], overview: "전문대학교 목록 틀입니다." },
+            "효빈지구": { title: "틀:효빈광역시 택지지구", categories: ["지리/도시 틀"], overview: "택지개발지구 목록 틀입니다." },
+            "효빈터미널목록": { title: "틀:효빈광역시 버스터미널", categories: ["교통 틀"], overview: "버스터미널 목록 틀입니다." },
+            "효빈행정": { title: "틀:효빈광역시 행정 체계", categories: ["행정 틀"], overview: "행정 체제 둘러보기 틀입니다." },
+            "효빈행정구역변천": { title: "틀:효빈광역시 행정구역 변천사", categories: ["역사/행정 틀"], overview: "행정구역 변천 연혁 틀입니다." }
+        };
+
+        // 검색창 엔터키 입력 처리
+        window.handleSearch = function(inputId) {
+            let input = document.getElementById(inputId).value.trim();
+            if(input) {
+                if(input.endsWith('.js')) input = input.replace('.js', '');
+                let targetHash = aliasMap[input] || input;
+                window.location.hash = targetHash;
+            }
+        };
+
+        // 모달창 토글 (임시)
+        window.toggleModal = function(modalId) {
+            console.log(modalId + " 모달창이 열렸습니다.");
+        };
+
+        function loadTemplateByHash() {
+            let hash = window.location.hash.substring(1);
+            if (!hash) { hash = "틀_미개통노선도"; window.location.hash = hash; return; }
+            hash = decodeURIComponent(hash);
+
+            let folderPath = filePaths[hash];
+            if (folderPath === undefined) { folderPath = "assets/"; }
+            
+            let fullPath = folderPath + hash + ".js";
+            let data = specificDB[hash];
+
+            if (!data) {
+                let formattedTitle = hash.replace(/_/g, ' ');
+                data = {
+                    title: "틀:" + formattedTitle,
+                    categories: ["둘러보기 틀"],
+                    overview: `<code>${hash}.js</code> 틀 뷰어입니다.`
+                };
+            }
+
+            document.title = data.title + " - HyobinViewer";
+            document.getElementById('page-title').innerText = data.title;
+            document.getElementById('doc-title').innerText = data.title + "/설명문서";
+            document.getElementById('doc-overview').innerHTML = data.overview;
+            document.getElementById('doc-path').innerText = folderPath === "" ? "(Root Directory)" : folderPath;
+            document.getElementById('category-list').innerHTML = data.categories.map(c => `<a href="#" class="wiki-link">${c}</a>`).join(" | ");
+            document.getElementById('doc-usage').innerText = `<script src="${fullPath}"><\/script>`;
+
+            document.getElementById('doc-history').innerHTML = `
+                <li><strong>경로 검증:</strong> <code>${fullPath}</code> 파일 매핑 완료.</li>
+                <li><strong>종류:</strong> UI 렌더링 틀</li>
+            `;
+
+            // ★ 1. 렌더링 존 초기화
+            const renderZone = document.getElementById('template-render-zone');
+            renderZone.innerHTML = '';
+
+            // ★ 2. document.write 가로채기 (렌더링 존 안으로 텍스트 강제 주입)
+            const originalWrite = document.write;
+            const originalWriteln = document.writeln;
+            document.write = function(html) { renderZone.insertAdjacentHTML('beforeend', html); };
+            document.writeln = function(html) { renderZone.insertAdjacentHTML('beforeend', html + '\n'); };
+
+            // ★ 3. 스크립트가 찾는 모든 컨테이너 ID를 렌더링 존 내부에 미리 생성
+            const containerIds = [
+                'lovelive-nav-container',
+                'lovelive-niji-nav-container',
+                'lovelive-muse-nav-container',
+                'lovelive-liella-nav-container',
+                'lovelive-hasu-nav-container',
+                'bangdream-container',
+                'deokbuk-transit-zone',
+                hash.replace(/_/g, '-') + '-container',
+                hash.replace(/_/g, '') + '-container'
+            ];
+
+            containerIds.forEach(id => {
+                let div = document.createElement('div');
+                div.id = id;
+                div.style.width = "100%";
+                renderZone.appendChild(div);
+            });
+
+            // ★ 4. 이전의 잘못된 appendChild 패치를 완전히 제거하고, 순수하게 렌더링 존에 스크립트를 삽입!
+            const script = document.createElement('script');
+            script.src = fullPath;
+            script.className = 'dynamic-injected-script';
+            
+            script.onload = () => {
+                // 실행이 끝나면 document.write 원상복구
+                document.write = originalWrite;
+                document.writeln = originalWriteln;
+            };
+            script.onerror = () => {
+                document.write = originalWrite;
+                document.writeln = originalWriteln;
+                renderZone.innerHTML += `<div style="padding:20px; color:#d9534f; text-align:center;">오류: 스크립트 경로(${fullPath})를 찾을 수 없습니다.</div>`;
+            };
+
+            document.querySelectorAll('.dynamic-injected-script').forEach(s => s.remove());
+            
+            // 핵심 조치: 이 한 줄로 스크립트는 문서 밑바닥이 아닌, 정확히 이 상자 안에서 실행됩니다.
+            renderZone.appendChild(script); 
+        }
+
+        window.addEventListener('hashchange', loadTemplateByHash);
+        window.addEventListener('DOMContentLoaded', loadTemplateByHash);
+    </script>
+    
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+</body>
+</html>

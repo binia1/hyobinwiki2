@@ -120,7 +120,7 @@
             .bg-binju2 { background-color: #C455F6; }
             .bg-binju3 { background-color: #6AE673; }
             .bg-seohae { background-color: #0088CC; }
-            .bg-cheonju1 { background-color: #FF7043; }
+            .bg-cheonju1 { background-color: #008B8B; }
             .bg-cheonju2 { background-color: #8D6E63; }
             .bg-binhyo { background-color: #6677CC; }
             .bg-hdtxa { background-color: #FB637E; }
