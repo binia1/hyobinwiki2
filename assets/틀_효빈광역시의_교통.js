@@ -120,7 +120,7 @@ document.write(`
         <tr>
             <td colspan="3" class="transport-header">
                 <div style="display:flex; align-items:center; justify-content:center; gap:10px;">
-                    <a href="효빈광역시.html"><img src="이미지/효빈시_로고.webp" height="45" style="vertical-align:middle;" onerror="this.src='https://placehold.co/45x45/7777aa/white?text=HYOBIN'"></a>
+                    <a href="효빈광역시.html"><img src="이미지/logo.webp" height="45" style="vertical-align:middle;" onerror="this.src='https://placehold.co/45x45/7777aa/white?text=HYOBIN'"></a>
                     <div style="line-height:1.2;">
                         <span style="font-size:1.1em;"><a href="효빈광역시.html" style="color:inherit; text-decoration:none;">효빈광역시</a></span><br>
                         <span style="font-size:1.4em; font-weight:bold;"><a href="효빈광역시_교통.html" style="color:inherit; text-decoration:none;">교통</a></span>

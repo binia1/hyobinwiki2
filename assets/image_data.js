@@ -2773,7 +2773,7 @@ const imageFiles = [
     "효빈성로.webp",
     "효빈성북문역_승강장.webp",
     "효빈성앞역_승강장.webp",
-    "효빈시_로고.webp",
+    "logo.webp",
     "효빈시교육청.webp",
     "효빈시설관리공단_로고.webp",
     "효빈시설관리공단_본사.webp",
