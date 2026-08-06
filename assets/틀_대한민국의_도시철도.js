@@ -36,8 +36,8 @@
                 <td style="background:#f0f0f0; color:#000000; font-weight:bold; border: 1px solid #ccc; padding:8px;">덕빈권</td>
                 <td style="text-align:left; background:#ffffff; color:#000000; border: 1px solid #ccc; padding:8px;">
                     <a class="wiki-link" href="효빈권 전철.html" style="color: #0022AA; text-decoration: none; font-weight: bold;">효빈권 전철</a> (<a class="wiki-link" href="효빈 도시철도.html" style="color: #0022AA; text-decoration: none; font-weight: bold;">효빈 도시철도</a>), 
-                    <a class="wiki-link" href="덕북권_전철.html" style="color: #0022AA; text-decoration: none; font-weight: bold;">덕북권 전철</a> (<a class="wiki-link" href="빈주권 전철.html" style="color: #0022AA; text-decoration: none; font-weight: bold;">빈주권 전철</a> 등),
-                    <a class="wiki-link" href="덕남권 전철.html" style="color: #0022AA; text-decoration: none; font-weight: bold;">덕남권 전철</a> (<a class="wiki-link" href="덕주1호선.html" style="color: #0022AA; text-decoration: none; font-weight: bold;">덕주 도시철도</a>)
+                    <a class="wiki-link" href="덕북권_전철.html" style="color: #0022AA; text-decoration: none; font-weight: bold;">덕북권 전철</a> (<a class="wiki-link" href="덕북권_전철.html" style="color: #0022AA; text-decoration: none; font-weight: bold;">빈주권 전철</a> 등),
+                    <a class="wiki-link" href="덕남권_전철.html" style="color: #0022AA; text-decoration: none; font-weight: bold;">덕남권 전철</a> (<a class="wiki-link" href="덕주1호선.html" style="color: #0022AA; text-decoration: none; font-weight: bold;">덕주 도시철도</a>)
                 </td>
             </tr>
         </tbody>

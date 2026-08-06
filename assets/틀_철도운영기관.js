@@ -275,8 +275,8 @@ document.write(`
 <div class="kr-rail-name-cell" style="background-color: #1A2A59;"><a href="에이치디티엑스운영.html" target="_blank">에이치디티엑스운영</a></div>
 </td>
 <td>
-<div class="kr-rail-logo-cell"><span class="font-bold text-[#008B8B] text-[0.9rem] tracking-tighter">천주도시공사</span></div>
-<div class="kr-rail-name-cell" style="background-color: #008B8B;"><a href="천주도시공사.html" target="_blank">천주도시공사</a></div>
+<div class="kr-rail-logo-cell"><span class="font-bold text-[#00AABB] text-[0.9rem] tracking-tighter">천주도시공사</span></div>
+<div class="kr-rail-name-cell" style="background-color: #00AABB;"><a href="천주도시공사.html" target="_blank">천주도시공사</a></div>
 </td>
 <td colspan="2" style="background: #fdfdfd;"></td>
 </tr>

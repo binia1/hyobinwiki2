@@ -898,3 +898,35 @@ window.goToRandomPage = function() {
         if(menu) menu.style.display = 'none';
     }
 };
+
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. 카테고리 박스 찾기
+    const categoryBox = document.querySelector('.category-box');
+    
+    // 문서 내에 카테고리 박스가 없으면 작동하지 않고 종료
+    if (!categoryBox) return;
+
+    // 카테고리 박스 안의 텍스트 전체를 가져옵니다. (예: "분류: 효빈광역시의 초등학교 | 북구...")
+    const categoryText = categoryBox.innerText; 
+    
+    // 타겟 학교(초, 중, 고) 키워드가 있는지 확인
+    const isTargetSchool = categoryText.includes('초등학교') || 
+                           categoryText.includes('중학교') || 
+                           categoryText.includes('고등학교');
+    
+    // 제외할 학교(대학교) 키워드가 있는지 확인
+    const isUniversity = categoryText.includes('대학교');
+
+    // 초/중/고등학교이면서 대학교가 아닌 문서일 경우에만 삽입 실행
+    if (isTargetSchool && !isUniversity) {
+        // 동적으로 script 태그 생성
+        const script = document.createElement('script');
+        
+        // 저장해두신 파일 경로로 수정
+        script.src = 'assets/틀_교육기관.js'; 
+        
+        // 카테고리 박스(categoryBox)의 바로 다음 형제 요소(nextSibling) 위치에 스크립트를 삽입
+        // 즉, <div class="category-box">...</div> 바로 아래에 틀이 생성됩니다.
+        categoryBox.parentNode.insertBefore(script, categoryBox.nextSibling);
+    }
+});

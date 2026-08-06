@@ -1,370 +1,288 @@
-        (function() {
-            // 1. 스타일 (CSS) 자동 주입
-            // 문서 내에 스타일이 없으면 동적으로 삽입합니다.
-            if (!document.getElementById('style-template-unopened-map')) {
-                const style = document.createElement('style');
-                style.id = 'style-template-unopened-map';
-                
-                style.textContent = `
-                    /* 미개통 노선도 틀 전용 전체 컨테이너 스타일 */
-                    .wiki-table-container {
-                        width: 100%;
-                        max-width: 800px;
-                        background-color: #fff;
-                        border: 1px solid #ccc;
-                        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                        margin: 20px auto;
-                        font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif;
-                        font-size: 14px;
-                        text-align: center;
-                        color: #373a3c;
-                    }
-                    .wiki-table-container table {
-                        width: 100% !important;
-                        border-collapse: collapse !important;
-                        border: none !important;
-                        margin: 0 !important;
-                    }
-                    .wiki-table-container th, .wiki-table-container td {
-                        border: 1px solid #ccc !important;
-                        padding: 0 !important;
-                    }
+(function() {
+    // 1. 기존의 쓰레기 같은 스타일과 태그들을 싹 다 청소
+    const oldStyles = document.querySelectorAll('style[id^="style-template-unopened-map"]');
+    oldStyles.forEach(el => el.remove());
+    const existingMaps = document.querySelectorAll('.wiki-table-container, .wiki-hb-wrap-v4, #hyobin-unopened-map');
+    existingMaps.forEach(el => el.remove());
 
-                    /* 헤더 영역 */
-                    .header-cell {
-                        background-color: #1F2023 !important;
-                        color: #fff !important;
-                        padding: 16px !important;
-                        font-size: 1.2rem !important;
-                        font-weight: bold;
-                        border-bottom: 1px solid #000 !important;
-                        letter-spacing: 0.5px;
-                    }
-                    .header-link { color: #fff; text-decoration: none; }
-                    .header-link:hover { text-decoration: underline; }
+    // 2. image_3.png 완벽 오마주 CSS 주입 (붕 뜨는 현상 100% 차단)
+    const style = document.createElement('style');
+    style.id = 'style-template-unopened-map-final';
+    style.textContent = `
+        .wiki-hb-wrap-v4 {
+            width: 100% !important;
+            max-width: 850px !important;
+            margin: 20px auto !important;
+            border: 1px solid #ccc !important;
+            background: #fff;
+            box-sizing: border-box !important;
+            font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+            clear: both;
+        }
+        
+        .wiki-hb-table-v4 {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            border: none !important;
+            margin: 0 !important;
+            table-layout: fixed !important; 
+        }
+        .wiki-hb-table-v4 th, .wiki-hb-table-v4 td {
+            border: 1px solid #ccc !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            color: #333;
+            font-size: 14px;
+            word-break: keep-all;
+        }
+        
+        /* 최상단 타이틀 */
+        .wiki-hb-header-v4 {
+            padding: 12px !important;
+            font-size: 15px !important;
+            font-weight: 900 !important;
+            background-color: #fff !important;
+            color: #000 !important;
+            border-bottom: 1px solid #ccc !important;
+        }
+        
+        /* 접기/펼치기 버튼 설정 */
+        .wiki-hb-details-v4 summary {
+            cursor: pointer;
+            font-weight: bold;
+            list-style: none;
+            outline: none;
+            padding: 8px;
+            background-color: #fff !important;
+            color: #000 !important;
+            display: block;
+            text-align: center;
+            border-bottom: 1px solid #ccc !important;
+            font-size: 13px;
+        }
+        .wiki-hb-details-v4 summary::-webkit-details-marker { display: none; }
+        
+        /* 내부 테이블 */
+        .wiki-hb-inner-table-v4 {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            border: none !important;
+            table-layout: fixed !important;
+            margin: 0 !important;
+        }
+        .wiki-hb-inner-table-v4 td {
+            border-top: none !important;
+            border-bottom: 1px solid #ccc !important;
+            border-right: 1px solid #ccc !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            background-color: #fff !important;
+            padding: 15px 5px !important;
+        }
+        .wiki-hb-inner-table-v4 td:last-child {
+            border-right: none !important;
+        }
+        
+        /* 뱃지 영역 (테두리 없음 처리) */
+        .badge-row-v4 td {
+            padding: 10px !important;
+            border-top: none !important;
+        }
 
-                    /* 펼치기/접기 기능 (details/summary) */
-                    .wiki-table-container details { width: 100%; }
-                    .wiki-table-container summary {
-                        cursor: pointer;
-                        padding: 5px;
-                        font-size: 13px;
-                        color: #000;
-                        background-color: #fff;
-                        border-bottom: 1px solid #ddd;
-                        list-style: none;
-                    }
-                    .wiki-table-container summary::-webkit-details-marker { display: none; }
-                    .wiki-table-container summary::before {
-                        content: "[ 펼치기 · 접기 ]";
-                        color: #0275d8;
-                        font-size: 12px;
-                        display: block;
-                        text-align: center;
-                    }
-                    .content-area { padding: 5px 10px 10px 10px; background-color: #fff; }
+        /* 뱃지 디자인 */
+        .hb-badge-v4 {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #fff !important;
+            font-size: 12px;
+            font-weight: 900;
+            margin-right: 4px;
+        }
+        
+        /* 텍스트 링크 (image_3.png 파란색) */
+        .hb-link-v4 {
+            color: #0275d8 !important;
+            text-decoration: none !important;
+            font-weight: bold !important;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 3px;
+        }
+        .hb-link-v4:hover { text-decoration: underline !important; }
+        
+        .hb-sublink-v4 {
+            color: #0275d8 !important;
+            text-decoration: none !important;
+            font-size: 13px;
+        }
+        .hb-sublink-v4:hover { text-decoration: underline !important; }
 
-                    /* 뱃지 스타일 (위키 이미지 참조) */
-                    .status-header {
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        margin: 15px 0 5px 0;
-                        gap: 5px;
-                    }
-                    .status-badge {
-                        display: inline-block;
-                        padding: 2px 8px;
-                        border-radius: 4px;
-                        color: #fff;
-                        font-weight: bold;
-                        font-size: 12px;
-                    }
-                    /* 건설 중 (초록) */
-                    .badge-construction { background-color: #4F8320; }
-                    /* 착공 예정 (노랑) */
-                    .badge-scheduled { background-color: #ffcc00; color: #333; }
-                    /* 설계 중 (주황) */
-                    .badge-design { background-color: #FF8000; }
-                    /* 계획/추진 중 (회색) */
-                    .badge-planned { background-color: #999; }
-                    
-                    .status-desc { font-size: 11px; color: #555; }
+        /* 하단 텍스트 */
+        .hb-footer-v4 {
+            font-size: 12px !important;
+            color: #555 !important;
+            background-color: #fff !important;
+            padding: 10px !important;
+            text-align: center !important;
+            line-height: 1.5;
+        }
+    `;
+    document.head.appendChild(style);
 
-                    /* 노선 그리드 시스템 */
-                    .line-grid {
-                        display: grid;
-                        grid-template-columns: repeat(4, 1fr);
-                        gap: 2px;
-                        margin-bottom: 15px;
-                        border: 1px solid #ccc;
-                        background-color: #ccc;
-                    }
-                    .line-cell {
-                        background-color: #fff;
-                        display: flex;
-                        flex-direction: column;
-                        text-decoration: none;
-                        color: #000;
-                        min-height: 50px;
-                        position: relative;
-                    }
-                    .line-cell:hover { background-color: #f4f5f7; }
-                    .line-color-bar { height: 12px; width: 100%; }
-                    .line-text {
-                        padding: 8px 4px;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-                        align-items: center;
-                        height: 100%;
-                    }
-                    .line-name { font-weight: bold; font-size: 14px; display: flex; align-items: baseline; gap: 2px; text-align: center; line-height: 1.2; }
-                    .line-year { font-size: 0.8em; font-weight: normal; color: #555; }
-                    .line-detail { font-size: 11px; color: #666; margin-top: 4px; line-height: 1.3; text-align: center; word-break: keep-all; }
-                    .empty-cell { background-color: #f9f9f9; cursor: default; }
+    // 3. image_3.png 완벽 오마주 HTML (빈 줄 없이 border-top 두꺼운 선으로 색상 띠 구현)
+    const templateHTML = `
+        <div class="wiki-hb-wrap-v4" id="hyobin-unopened-map">
+            <table class="wiki-hb-table-v4">
+                <tbody>
+                    <tr>
+                        <th class="wiki-hb-header-v4">효빈권 전철 미개통 노선</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0 !important; border: none !important;">
+                            <details class="wiki-hb-details-v4" open>
+                                <summary>[ 펼치기 · 접기 ]</summary>
+                                
+                                <table class="wiki-hb-inner-table-v4">
+                                    <tbody>
+                                        <!-- 건설 중 -->
+                                        <tr class="badge-row-v4">
+                                            <td colspan="4">
+                                                <span class="hb-badge-v4" style="background-color: #4F8320;">건설 중</span>
+                                                <span style="font-size: 12px; font-weight: bold;">실착공 기준</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-top: 5px solid #33AAFF !important;">
+                                                <a href="창전선.html" class="hb-link-v4">창전선</a><sup style="color:#0275d8;">('27)</sup><br>
+                                                <a href="창전선.html" class="hb-sublink-v4">1단계(팔조-하성천)</a>
+                                            </td>
+                                            <td style="border-top: 5px solid #0077DD !important;">
+                                                <a href="운양역.html" class="hb-link-v4">1호선</a><sup style="color:#0275d8;">('28)</sup><br>
+                                                <a href="운양역.html" class="hb-sublink-v4">운양역 신설</a>
+                                            </td>
+                                            <td style="border-top: 5px solid #EE0022 !important;">
+                                                <a href="5호선.html" class="hb-link-v4">5호선</a><sup style="color:#0275d8;">('32)</sup><br>
+                                                <a href="5호선.html" class="hb-sublink-v4">하미연장선</a>
+                                            </td>
+                                            <td style="border-top: 5px solid #e0e0e0 !important; color: #999;">-</td>
+                                        </tr>
 
-                    /* 하단 각주 영역 */
-                    .footnote-box {
-                        font-size: 11px;
-                        color: #555;
-                        text-align: left;
-                        margin-top: 10px;
-                        padding: 8px;
-                        border-top: 1px solid #eee;
-                        line-height: 1.5;
-                        word-break: keep-all;
-                    }
+                                        <!-- 착공 예정 / 설계 중 -->
+                                        <tr class="badge-row-v4">
+                                            <td colspan="2" style="border-right: 1px solid #ccc !important;">
+                                                <span class="hb-badge-v4" style="background-color: #FFC107; color: #000 !important;">착공 예정</span><sup style="font-weight:bold;">1·2</sup>
+                                            </td>
+                                            <td colspan="2">
+                                                <span class="hb-badge-v4" style="background-color: #FF8000;">설계 중</span><sup style="font-weight:bold;">3·4·5</sup>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-top: 5px solid #EE0022 !important;">
+                                                <a href="덕현중앙역.html" class="hb-link-v4">5호선</a><sup style="color:#0275d8;">('29)</sup><br>
+                                                <a href="덕현중앙역.html" class="hb-sublink-v4">덕현중앙역</a>
+                                            </td>
+                                            <td style="border-top: 5px solid #6677CC !important;">
+                                                <a href="덕현중앙역.html" class="hb-link-v4">빈효선</a><sup style="color:#0275d8;">('29)</sup><br>
+                                                <a href="덕현중앙역.html" class="hb-sublink-v4">덕현중앙역</a>
+                                            </td>
+                                            <td style="border-top: 5px solid #D6D5CA !important;">
+                                                <a href="청엽선.html" class="hb-link-v4">청엽선</a><sup style="color:#0275d8;">('34)</sup><br>
+                                                <a href="청엽선.html" class="hb-sublink-v4">엽월대-청엽국제학교</a>
+                                            </td>
+                                            <td style="border-top: 5px solid #6677CC !important;">
+                                                <a href="치원지선.html" class="hb-link-v4">빈효선</a><sup style="color:#0275d8;">('31)</sup><br>
+                                                <a href="치원지선.html" class="hb-sublink-v4">치원지선</a>
+                                            </td>
+                                        </tr>
 
-                    /* 노선 색상 클래스 (지정해주신 공식 색상 완벽 반영) */
-                    .bg-line1 { background-color: #0077DD; }
-                    .bg-line2 { background-color: #00CCAA; }
-                    .bg-line3 { background-color: #FFCC11; }
-                    .bg-line4 { background-color: #FF5522; }
-                    .bg-line5 { background-color: #EE0022; }
-                    .bg-line6 { background-color: #881188; }
-                    .bg-line7 { background-color: #FF8899; } /* 수정됨 */
-                    .bg-line8 { background-color: #9856FF; }
-                    .bg-line9 { background-color: #808080; } /* 수정됨 */
-                    .bg-changjeon { background-color: #33AAFF; } /* 수정됨 */
-                    .bg-binhyo { background-color: #6677CC; }
-                    .bg-cheongyeop { background-color: #D6D5CA; border-bottom: 1px solid #ccc; box-sizing: border-box; } /* 수정됨 */
-                    .bg-gangbin { background-color: #0054A6; }
-                    .bg-ancheon { background-color: #B2FFDD; } /* 수정됨 */
-                    .bg-hdtx-a { background-color: #FB637E; } /* 수정됨 */
-                    .bg-hdtx-b { background-color: #9d8de2; } /* 수정됨 */
-                `;
-                document.head.appendChild(style);
-            }
+                                        <!-- 계획 중 (HDTX, 강빈선 등등) -->
+                                        <tr class="badge-row-v4">
+                                            <td colspan="4" style="background-color: #f9f9f9 !important;">
+                                                <span class="hb-badge-v4" style="background-color: #9E9E9E;">계획 중</span><sup style="font-weight:bold;">6·7</sup>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-top: 5px solid #FB637E !important;">
+                                                <a href="HDTX-A.html" class="hb-link-v4">HDTX-A</a><sup style="color:#0275d8;">('36)</sup><br>
+                                                <a href="HDTX-A.html" class="hb-sublink-v4">고송교차로-덕주</a>
+                                            </td>
+                                            <td style="border-top: 5px solid #9d8de2 !important;">
+                                                <a href="HDTX-B.html" class="hb-link-v4">HDTX-B</a><br>
+                                                <a href="HDTX-B.html" class="hb-sublink-v4">창전중앙-군천</a>
+                                            </td>
+                                            <td style="border-top: 5px solid #0054A6 !important;">
+                                                <a href="강빈선.html" class="hb-link-v4">강빈선</a><br>
+                                                <a href="강빈선.html" class="hb-sublink-v4">평천대-강주</a>
+                                            </td>
+                                            <td style="border-top: 5px solid #B2FFDD !important;">
+                                                <a href="안천선.html" class="hb-link-v4">안천선</a><br>
+                                                <a href="안천선.html" class="hb-sublink-v4">당가중앙-앵내중앙</a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-top: 5px solid #808080 !important;">
+                                                <a href="9호선.html" class="hb-link-v4">9호선</a><br>
+                                                <a href="9호선.html" class="hb-sublink-v4">북고송-흑택</a>
+                                            </td>
+                                            <td style="border-top: 5px solid #0077DD !important;">
+                                                <a href="1호선.html" class="hb-link-v4">1호선</a><br>
+                                                <a href="1호선.html" class="hb-sublink-v4">장선-궁하 연장</a>
+                                            </td>
+                                            <td style="border-top: 5px solid #9856FF !important;">
+                                                <a href="8호선.html" class="hb-link-v4">8호선</a><br>
+                                                <a href="8호선.html" class="hb-sublink-v4">연장 방향 미정</a>
+                                            </td>
+                                            <td style="border-top: 5px solid #FF8899 !important;">
+                                                <a href="7호선.html" class="hb-link-v4">7호선</a><sup style="color:#0275d8;">('33)</sup><br>
+                                                <a href="7호선.html" class="hb-sublink-v4">사능선(사능삼거리-해서)</a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-top: 5px solid #FF5522 !important;">
+                                                <a href="성저역.html" class="hb-link-v4">4호선</a><br>
+                                                <a href="성저역.html" class="hb-sublink-v4">성저역 신설</a>
+                                            </td>
+                                            <td style="border-top: 5px solid #FF5522 !important;">
+                                                <a href="4호선.html" class="hb-link-v4">4호선</a><br>
+                                                <a href="4호선.html" class="hb-sublink-v4">약산연장(고해-약산)</a>
+                                            </td>
+                                            <td style="border-top: 5px solid #e0e0e0 !important; color: #999;">-</td>
+                                            <td style="border-top: 5px solid #e0e0e0 !important; color: #999;">-</td>
+                                        </tr>
+                                        
+                                        <!-- 하단 링크 및 각주 -->
+                                        <tr>
+                                            <td colspan="4" class="hb-footer-v4" style="border-top: 1px solid #ccc !important;">
+                                                개통된 효빈권 전철 노선은 <a href="효빈권_전철.html" style="color:#0275d8; text-decoration:none; font-weight:bold;">틀:효빈권 전철 노선</a> 참조
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" class="hb-footer-v4" style="text-align: left !important; padding: 10px 15px !important; border-top: 1px solid #eee !important;">
+                                                <sup>1</sup>: 사업계획 승인 · <sup>2</sup>: 실시계획 승인 / <sup>3</sup>: 기본계획 승인 · <sup>4</sup>: 실시협약 체결 · <sup>5</sup>: 중앙투자심사 통과 / <sup>6</sup>: 예비타당성조사 통과 · <sup>7</sup>: 민자적격성조사 통과<br>
+                                                ※ 상기 노선별 개통 시기 및 노선은 효빈광역시 및 국가 계획에 따라 변동될 수 있습니다.<br>
+                                                ※ 강빈선 등 일부 노선은 상위 철도망 계획(HDTX) 추진 현황에 따라 사업 계획이 변경될 수 있습니다.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </details>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    `;
 
-            // 2. HTML 템플릿 (새로운 데이터와 연도 반영)
-            const templateHTML = `
-                <div class="wiki-table-container">
-                     <table>
-                         <thead>
-                             <tr>
-                                 <th class="header-cell">
-                                     <a href="효빈광역시_미개통_노선.html" class="header-link">효빈권 전철 미개통 노선</a>
-                                 </th>
-                             </tr>
-                         </thead>
-                         <tbody>
-                             <tr>
-                                 <td style="padding: 0;">
-                                     <details open>
-                                         <summary></summary>
-                                         <div class="content-area">
-                                             
-                                             <div class="status-header">
-                                                 <span class="status-badge badge-construction">건설 중</span>
-                                                 <span class="status-desc">실착공 기준</span>
-                                             </div>
-                                             
-                                             <div class="line-grid">
-                                                 <!-- 창전선 -->
-                                                 <a href="창전선.html" class="line-cell">
-                                                     <div class="line-color-bar bg-changjeon"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">창전선<span class="line-year">('27)</span></span>
-                                                         <span class="line-detail">1단계(팔조-하성천)</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- 1호선 신설역 -->
-                                                 <a href="운양역.html" class="line-cell">
-                                                     <div class="line-color-bar bg-line1"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">1호선<span class="line-year">('28)</span></span>
-                                                         <span class="line-detail">운양역 신설</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- 5호선 하미연장선 -->
-                                                 <a href="5호선.html" class="line-cell">
-                                                     <div class="line-color-bar bg-line5"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">5호선<span class="line-year">('32)</span></span>
-                                                         <span class="line-detail">하미연장선(포성산-하미)</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- 빈칸 채우기 -->
-                                                 <div class="line-cell empty-cell"></div>
-                                             </div>
-                                             
-                                             <div class="status-header">
-                                                 <span class="status-badge badge-scheduled">착공 예정</span>
-                                             </div>
-                                             
-                                             <div class="line-grid">
-                                                 <!-- 5호선 덕현중앙역 -->
-                                                 <a href="덕현중앙역.html" class="line-cell">
-                                                     <div class="line-color-bar bg-line5"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">5호선<span class="line-year">('29)</span></span>
-                                                         <span class="line-detail">덕현중앙역</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- 빈효선 덕현중앙역 -->
-                                                 <a href="덕현중앙역.html" class="line-cell">
-                                                     <div class="line-color-bar bg-binhyo"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">빈효선<span class="line-year">('29)</span></span>
-                                                         <span class="line-detail">덕현중앙역</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- 청엽선 -->
-                                                 <a href="청엽선.html" class="line-cell">
-                                                     <div class="line-color-bar bg-cheongyeop"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">청엽선<span class="line-year">('34)</span></span>
-                                                         <span class="line-detail">엽월대 - 청엽국제학교</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- 빈효선 치원지선 -->
-                                                 <a href="치원지선.html" class="line-cell">
-                                                     <div class="line-color-bar bg-binhyo"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">빈효선<span class="line-year">('31)</span></span>
-                                                         <span class="line-detail">치원지선(화소-치원)</span>
-                                                     </div>
-                                                 </a>
-                                             </div>
-                                             
-                                             <div class="status-header">
-                                                 <span class="status-badge badge-planned">계획 중</span>
-                                                 <span class="status-desc">구상 및 타당성 검토 중 포함</span>
-                                             </div>
-                                             
-                                             <div class="line-grid">
-                                                 <!-- HDTX-A -->
-                                                 <a href="HDTX-A.html" class="line-cell">
-                                                     <div class="line-color-bar bg-hdtx-a"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">HDTX-A<span class="line-year">('36)</span></span>
-                                                         <span class="line-detail">고송교차로 - 덕주</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- HDTX-B -->
-                                                 <a href="HDTX-B.html" class="line-cell">
-                                                     <div class="line-color-bar bg-hdtx-b"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">HDTX-B</span>
-                                                         <span class="line-detail">창전중앙 - 군천</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- 강빈선 -->
-                                                 <a href="강빈선.html" class="line-cell">
-                                                     <div class="line-color-bar bg-gangbin"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">강빈선</span>
-                                                         <span class="line-detail">평천대 - 강주</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- 안천선 -->
-                                                 <a href="안천선.html" class="line-cell">
-                                                     <div class="line-color-bar bg-ancheon"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">안천선</span>
-                                                         <span class="line-detail">당가중앙 - 앵내중앙</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- 9호선 -->
-                                                 <a href="9호선.html" class="line-cell">
-                                                     <div class="line-color-bar bg-line9"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">9호선</span>
-                                                         <span class="line-detail">북고송 - 흑택</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- 1호선 연장 -->
-                                                 <a href="1호선.html" class="line-cell">
-                                                     <div class="line-color-bar bg-line1"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">1호선</span>
-                                                         <span class="line-detail">장선 - 궁하 연장</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- 8호선 연장 -->
-                                                 <a href="8호선.html" class="line-cell">
-                                                     <div class="line-color-bar bg-line8"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">8호선</span>
-                                                         <span class="line-detail">연장 방향 미정</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- 7호선 사능선 복구 -->
-                                                 <a href="7호선.html" class="line-cell">
-                                                     <div class="line-color-bar bg-line7"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">7호선<span class="line-year">('33)</span></span>
-                                                         <span class="line-detail">사능선(사능삼거리-해서)</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- 4호선 성저역 신설 -->
-                                                 <a href="성저역.html" class="line-cell">
-                                                     <div class="line-color-bar bg-line4"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">4호선</span>
-                                                         <span class="line-detail">성저역 신설</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- 4호선 약산연장 -->
-                                                 <a href="4호선.html" class="line-cell">
-                                                     <div class="line-color-bar bg-line4"></div>
-                                                     <div class="line-text">
-                                                         <span class="line-name">4호선</span>
-                                                         <span class="line-detail">약산연장(고해-약산)</span>
-                                                     </div>
-                                                 </a>
-                                                 <!-- 빈칸 채우기 -->
-                                                 <div class="line-cell empty-cell"></div>
-                                                 <div class="line-cell empty-cell"></div>
-                                             </div>
-                                             
-                                             <div style="font-size: 11px; text-align: center; margin: 15px 0 5px 0;">
-                                                 개통된 효빈광역시 전철 노선은 <b><a href="효빈권 전철 노선.html" style="color:#0275d8; text-decoration: none;">효빈권 전철 노선</a></b> 참조
-                                             </div>
-                                             
-                                             <!-- 하단 범례 -->
-                                             <div class="footnote-box">
-                                                 ※ <b>1</b> : 사업계획 승인 · <b>2</b> : 실시계획 승인 / <b>3</b> : 기본계획 승인 · <b>4</b> : 실시협약 체결 · <b>5</b> : 중앙투자심사 통과 / <b>6</b> : 예비타당성조사 통과 · <b>7</b> : 민자적격성조사 통과<br>
-                                                 ※ 노선명 옆의 연도는 개통 목표 연도이며, 상기 노선별 개통 시기 및 노선은 효빈광역시 및 국가 계획에 따라 변동될 수 있습니다.<br>
-                                                 ※ 강빈선 등 일부 노선은 상위 철도망 계획(HDTX) 추진 현황에 따라 사업 계획이 변경될 수 있습니다.
-                                             </div>
-                                          </div>
-                                     </details>
-                                 </td>
-                             </tr>
-                         </tbody>
-                     </table>
-                </div>
-            `;
-
-            // 3. HTML 삽입
-            // 스크립트가 실행된 위치(문서 내)에 틀을 추가합니다.
-            const scriptTag = document.currentScript;
-            if(scriptTag) {
-                scriptTag.insertAdjacentHTML('afterend', templateHTML);
-            } else {
-                // 테스트용 fallback (currentScript가 없을 경우 body 맨 뒤에 추가)
-                document.body.insertAdjacentHTML('beforeend', templateHTML);
-            }
-        })();
+    // 4. 스크립트 실행 위치에 템플릿 삽입
+    if (document.currentScript) {
+        document.currentScript.insertAdjacentHTML('afterend', templateHTML);
+    } else {
+        const renderZone = document.getElementById('template-render-zone') || document.querySelector('.wiki-container');
+        if (renderZone) {
+            renderZone.insertAdjacentHTML('beforeend', templateHTML);
+        } else {
+            document.body.insertAdjacentHTML('beforeend', templateHTML);
+        }
+    }
+})();

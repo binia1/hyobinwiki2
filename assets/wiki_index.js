@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 8. 5. 오후 7:57:09
+ * 업데이트: 2026. 8. 6. 오후 7:24:19
  */
 
 window.HB_WIKI_PAGES = [
@@ -11537,28 +11537,28 @@ window.HB_WIKI_PAGES = [
     "href": "틀_뷰어_SPA.html#wiki_main"
   },
   {
-    "title": "미개통노선도_덕남권",
-    "href": "틀_뷰어_SPA.html#미개통노선도_덕남권"
+    "title": "노선도_덕남권",
+    "href": "틀_뷰어_SPA.html#노선도_덕남권"
   },
   {
     "title": "덕남권 미개통",
-    "href": "틀_뷰어_SPA.html#미개통노선도_덕남권"
+    "href": "틀_뷰어_SPA.html#노선도_덕남권"
   },
   {
     "title": "덕남권 전철 틀",
-    "href": "틀_뷰어_SPA.html#미개통노선도_덕남권"
+    "href": "틀_뷰어_SPA.html#노선도_덕남권"
   },
   {
-    "title": "미개통노선도_덕빈권",
-    "href": "틀_뷰어_SPA.html#미개통노선도_덕빈권"
+    "title": "노선도_덕북권",
+    "href": "틀_뷰어_SPA.html#노선도_덕북권"
   },
   {
     "title": "덕빈권 미개통",
-    "href": "틀_뷰어_SPA.html#미개통노선도_덕빈권"
+    "href": "틀_뷰어_SPA.html#노선도_덕북권"
   },
   {
     "title": "덕북권 미개통",
-    "href": "틀_뷰어_SPA.html#미개통노선도_덕빈권"
+    "href": "틀_뷰어_SPA.html#노선도_덕북권"
   },
   {
     "title": "emscripten_fetch_worker",
@@ -12135,6 +12135,10 @@ window.HB_WIKI_PAGES = [
   {
     "title": "에이치디티엑스운영",
     "href": "에이치디티엑스운영.html"
+  },
+  {
+    "title": "양덕성",
+    "href": "양덕성.html"
   }
 ];
 
@@ -17445,12 +17449,12 @@ window.HB_WIKI_ALIASES = {
   "특수문자 매핑": "틀_뷰어_SPA.html#wiki_char",
   "wiki_main": "틀_뷰어_SPA.html#wiki_main",
   "위키 대문": "틀_뷰어_SPA.html#wiki_main",
-  "미개통노선도_덕남권": "틀_뷰어_SPA.html#미개통노선도_덕남권",
-  "덕남권 미개통": "틀_뷰어_SPA.html#미개통노선도_덕남권",
-  "덕남권 전철 틀": "틀_뷰어_SPA.html#미개통노선도_덕남권",
-  "미개통노선도_덕빈권": "틀_뷰어_SPA.html#미개통노선도_덕빈권",
-  "덕빈권 미개통": "틀_뷰어_SPA.html#미개통노선도_덕빈권",
-  "덕북권 미개통": "틀_뷰어_SPA.html#미개통노선도_덕빈권",
+  "노선도_덕남권": "틀_뷰어_SPA.html#노선도_덕남권",
+  "덕남권 미개통": "틀_뷰어_SPA.html#노선도_덕남권",
+  "덕남권 전철 틀": "틀_뷰어_SPA.html#노선도_덕남권",
+  "노선도_덕북권": "틀_뷰어_SPA.html#노선도_덕북권",
+  "덕빈권 미개통": "틀_뷰어_SPA.html#노선도_덕북권",
+  "덕북권 미개통": "틀_뷰어_SPA.html#노선도_덕북권",
   "emscripten_fetch_worker": "틀_뷰어_SPA.html#emscripten_fetch_worker",
   "비동기 워커": "틀_뷰어_SPA.html#emscripten_fetch_worker",
   "10대_효빈시의원_목록": "틀_뷰어_SPA.html#10대_효빈시의원_목록",
@@ -17592,5 +17596,6 @@ window.HB_WIKI_ALIASES = {
   "효빈 행정구역 변천사": "틀_뷰어_SPA.html#효빈행정구역변천",
   "틀_대한민국_경전철": "틀_대한민국_경전철.html",
   "틀_뷰어_SPA": "틀_뷰어_SPA.html",
-  "에이치디티엑스운영": "에이치디티엑스운영.html"
+  "에이치디티엑스운영": "에이치디티엑스운영.html",
+  "양덕성": "양덕성.html"
 };
