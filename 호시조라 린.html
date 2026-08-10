@@ -611,67 +611,35 @@
 <script src="assets/load-footer.js"></script>
     </div>
 
-    <!-- 네비게이션 및 위키 코어 JS 불러오기 -->
-    <script src="assets/lovelive_all_nav.js"></script>
-    <script src="assets/lovelive_muse_nav.js"></script>
-    <script src="assets/wiki_index.js"></script>
-    <script src="assets/hb_wiki_core.js"></script>
-    <script src="assets/jana.js"></script>
+<script src="js/lovelive_nav.js"></script>
+<script src="assets/wiki_index.js"></script>
 
-    <script>
-        function toggleTheme() {
-            const body = document.body;
-            const isDark = body.getAttribute('data-theme') === 'dark';
-            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
-            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+<!-- ★ 한방 해결 자동화 스크립트 추가 ★ -->
+<script>
+    document.querySelectorAll('.wiki-fn').forEach(a => {
+        // 1. href 속성에서 타겟 ID (fn-1 등) 추출
+        const targetId = a.getAttribute('href')?.substring(1);
+        if (!targetId) return;
+
+        // 2. 수동으로 작성된 하단 각주 div 요소 찾기
+        const manualDiv = document.getElementById(targetId);
+        if (manualDiv) {
+            // 3. '[1] ' 같은 말머리를 정규식으로 떼어내고 순수 텍스트만 추출
+            const realText = manualDiv.innerHTML.replace(/\[\d+\]\s*/, '').trim();
+            
+            // 4. a 태그의 data-note에 진짜 각주 내용을 강제 삽입
+            a.setAttribute('data-note', realText);
+            
+            // 5. 화면에 중복으로 뜨지 않게 기존 수동 각주 덩어리 완전 삭제
+            manualDiv.remove();
         }
-        
-        function showMsg(text) {
-            const box = document.getElementById('wiki-msg-box');
-            box.innerText = text; box.style.display = 'block';
-            setTimeout(() => { box.style.display = 'none'; }, 2000);
-        }
-        
-        window.onload = function() {
-            const savedTheme = localStorage.getItem('wiki_theme');
-            if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
-        };
-        
-        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && this.value.trim()) {
-                location.href = this.value.trim() + ".html";
-            }
-        });
+    });
+</script>
 
-        // 각주 툴팁 기능 구현
-        document.querySelectorAll('.wiki-fn').forEach(el => {
-            el.addEventListener('mouseover', function(e) {
-                const noteId = this.getAttribute('data-note');
-                const noteEl = document.getElementById(noteId);
-                if (noteEl) {
-                    const tooltip = document.getElementById('wiki-tooltip-container');
-                    tooltip.innerHTML = noteEl.innerHTML;
-                    
-                    tooltip.style.display = 'block';
-                    
-                    const rect = this.getBoundingClientRect();
-                    let left = e.pageX + 10;
-                    let top = e.pageY + 10;
-
-                    if (left + 320 > window.innerWidth) {
-                        left = window.innerWidth - 330;
-                    }
-
-                    tooltip.style.left = left + 'px';
-                    tooltip.style.top = top + 'px';
-                }
-            });
-            el.addEventListener('mouseout', function() {
-                document.getElementById('wiki-tooltip-container').style.display = 'none';
-            });
-        });
-    </script>
+<!-- 이제 위에서 세팅된 데이터를 바탕으로 코어 스크립트가 정상적인 각주를 만듭니다 -->
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/jana.js"></script>
+<script src="assets/tooltip.js"></script>
 
     <script src="assets/hb_index_scripts.js"></script>
 </body>

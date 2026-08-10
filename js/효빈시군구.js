@@ -1,6 +1,5 @@
 const hyobinNavContent = `
-<div class="nav-box rounded overflow-hidden shadow-sm" style="--nav-color: #7777AA;">
-    <div class="nav-box-header" onclick="toggleNav('localNav', 'localLabel')" style="background-color: #7777AA !important; color: white !important;">
+<div class="nav-box rounded overflow-hidden shadow-sm" style="--nav-color: #7777AA;">    <div class="nav-box-header" onclick="toggleNav('localNav', 'localLabel')" style="background-color: #7777AA !important; color: white !important;">
         <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
             <img onerror="this.style.display='none'" src="이미지/hyobin1.webp" style="height: 18px; width: auto;"/>
             <span>효빈광역시의 행정구역</span>
@@ -89,3 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
         target.innerHTML = hyobinNavContent;
     }
 });
+
+const target = document.getElementById('효빈시군구-container') || document.getElementById('template-render-zone');
+if (target) {
+    target.innerHTML = hyobinNavContent;
+}
