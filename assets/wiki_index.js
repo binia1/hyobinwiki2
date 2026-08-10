@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 8. 10. 오전 12:11:38
+ * 업데이트: 2026. 8. 10. 오후 4:57:40
  */
 
 window.HB_WIKI_PAGES = [
@@ -10611,6 +10611,14 @@ window.HB_WIKI_PAGES = [
   {
     "title": "아이미_출연작",
     "href": "아이미_출연작.html"
+  },
+  {
+    "title": "아이다_리카코",
+    "href": "아이다_리카코.html"
+  },
+  {
+    "title": "이나미_안쥬",
+    "href": "이나미_안쥬.html"
   }
 ];
 
@@ -15585,5 +15593,7 @@ window.HB_WIKI_ALIASES = {
   "상과대역": "효빈대_B선_역_템플릿.html?id=B14",
   "상대역": "효빈대_B선_역_템플릿.html?id=B14",
   "B14": "효빈대_B선_역_템플릿.html?id=B14",
-  "아이미_출연작": "아이미_출연작.html"
+  "아이미_출연작": "아이미_출연작.html",
+  "아이다_리카코": "아이다_리카코.html",
+  "이나미_안쥬": "이나미_안쥬.html"
 };
