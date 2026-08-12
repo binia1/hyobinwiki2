@@ -123,7 +123,7 @@
                     <!-- 권역 리스트 (누락됐던 수도권, 동남권 등 100% 복구) -->
                     <tr>
                         <td colspan="3" style="padding: 10px !important; font-size: 13px !important; color: #555 !important; background-color: #fff !important;">
-                            수도권 · 동남권 · 대구권 · 대전권 · 광주권 · 효빈권 · <b>덕북권</b> · 덕남권
+                            수도권 · 동남권 · 대구권 · 대전권 · 광주권 · <a href="효빈권_전철.html" class="dn-link-v3">효빈권</a> · <b><a href="덕북권_전철.html" class="dn-link-v3">덕북권</a></b> · <a href="덕남권_전철.html" class="dn-link-v3">덕남권</a>
                         </td>
                     </tr>
                     
@@ -146,7 +146,7 @@
                                         <!-- 노선 영역 1 (건설 중) -->
                                         <tr>
                                             <td style="width: 33.33%; padding: 20px 10px !important; border-right: 1px solid #ccc !important; border-top: 5px solid #6677CC !important;">
-                                                <a href="빈효선.html" class="db-link-v3">빈효선</a><br>
+                                                <a href="빈효광역선.html" class="db-link-v3">빈효선</a><br>
                                                 <span style="font-size: 12px !important; color: #666 !important; display: inline-block; margin-top: 5px;">부진 연장('30)</span>
                                             </td>
                                             <td style="width: 33.33%; padding: 20px 10px !important; border-right: 1px solid #ccc !important; border-top: 5px solid #EE0022 !important;">
@@ -171,7 +171,7 @@
                                                 <span style="font-size: 12px !important; color: #666 !important; display: inline-block; margin-top: 5px;">서해경전철('34)</span>
                                             </td>
                                             <td style="padding: 20px 10px !important; border-right: 1px solid #ccc !important; border-top: 5px solid #6677CC !important;">
-                                                <a href="빈효선.html" class="db-link-v3">빈효선</a><br>
+                                                <a href="빈효광역선.html" class="db-link-v3">빈효선</a><br>
                                                 <span style="font-size: 12px !important; color: #666 !important; display: inline-block; margin-top: 5px;">치원지선('31)</span>
                                             </td>
                                             <td style="padding: 20px 10px !important; border-top: 5px solid #00AABB !important;">

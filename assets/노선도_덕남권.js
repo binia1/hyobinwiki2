@@ -114,7 +114,7 @@
                     <!-- 권역 리스트 (누락됐던 수도권, 동남권 등 100% 복구) -->
                     <tr>
                         <td colspan="3" style="padding: 10px !important; font-size: 13px !important; color: #555 !important; background-color: #fff !important;">
-                            수도권 · 동남권 · 대구권 · 대전권 · 광주권 · 효빈권 · 덕북권 · <b>덕남권</b>
+                            수도권 · 동남권 · 대구권 · 대전권 · 광주권 · <a href="효빈권_전철.html" class="dn-link-v3">효빈권</a> · <a href="덕북권_전철.html" class="dn-link-v3">덕북권</a> · <b><a href="덕남권_전철.html" class="dn-link-v3">덕남권</a></b>
                         </td>
                     </tr>
                     

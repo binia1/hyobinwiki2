@@ -212,8 +212,8 @@
                                                 <a href="HDTX-B.html" class="hb-sublink-v4">창전중앙-군천</a>
                                             </td>
                                             <td style="border-top: 5px solid #0054A6 !important;">
-                                                <a href="강빈선.html" class="hb-link-v4">강빈선</a><br>
-                                                <a href="강빈선.html" class="hb-sublink-v4">평천대-강주</a>
+                                                <a href="강빈선 광역철도.html" class="hb-link-v4">강빈선</a><br>
+                                                <a href="강빈선 광역철도.html" class="hb-sublink-v4">평천대-강주</a>
                                             </td>
                                             <td style="border-top: 5px solid #B2FFDD !important;">
                                                 <a href="안천선.html" class="hb-link-v4">안천선</a><br>
