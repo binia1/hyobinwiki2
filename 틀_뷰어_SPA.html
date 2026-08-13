@@ -1,13 +1,14 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
-    <link rel="icon" href="이미지/효빈위키아이콘.webp">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>효빈위키 동적 문서 뷰어</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+<link href="이미지/효빈위키아이콘.webp" rel="icon"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>효빈위키 동적 문서 뷰어</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
         
@@ -53,95 +54,56 @@
             padding: 20px; color: #333; text-align: center; border: 2px solid #555588; background: #f0f0f5; border-radius: 8px; margin: 20px 0;
         }
     </style>
-    <!-- 루트 디렉토리 공통 스크립트 -->
-    <script src="assets/ad_logic.js"></script>
-    <link rel="stylesheet" href="wiki_font_standard.css">
-</head>        
-
+<!-- 루트 디렉토리 공통 스크립트 -->
+<script src="assets/ad_logic.js"></script>
+<link href="wiki_font_standard.css" rel="stylesheet"/>
+</head>
 <body>
-    <!-- 완벽 복구된 네비게이션 바 -->
-    <nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
-        <div class="flex items-center gap-2">
-            <div class="nav-logo-box">H</div>
-            <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white">HyobinWiki</a>
-            <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
-                <a href="index.html" class="hover:underline font-bold text-white no-underline">대문</a>
-                <a href="최근_변경.html" class="hover:underline text-white no-underline">최근 변경</a>
-                <a href="최근_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
-            </div>
-        </div>
-        <div class="flex flex-col items-end gap-1">
-            <div class="flex items-center gap-2">
-                <div class="hidden lg:flex items-center gap-1 mr-2">
-                    <a href="편집요청.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">편집요청</a>
-                    <a href="최근_토론.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">토론</a>
-                    <a href="역사.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">역사</a>
-                    <a href="즐겨찾기.html" class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" title="즐겨찾기">★</a>
-                    <a href="더보기.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1">더보기 <span class="text-[9px]">▼</span></a>
-                </div>
-                
-                <!-- 검색창 연동 -->
-                <input type="text" id="headerSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }">
-                <button onclick="handleSearch('headerSearchInput')" class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
-            </div>
-            <div class="flex gap-1" id="auth-buttons">
-                <button onclick="toggleModal('loginModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" id="btn-login">로그인</button>
-                <button onclick="toggleModal('settingsModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">설정</button>
-            </div>
-        </div>
-    </nav>
-
-    <div class="wiki-container shadow-lg">
-        <div class="title-area mt-4">
-            <div class="txt-lvl-1" id="page-title">로딩 중...</div>
-            <div class="flex gap-2 mb-1">
-                <button class="wiki-btn">토론</button>
-                <button class="wiki-btn">편집</button>
-                <button class="wiki-btn">역사</button>
-                <button class="wiki-btn">ACL</button>
-            </div>
-        </div>
-
-        <div class="category-box">
-            <span class="font-bold text-[#7777AA]">분류:</span> 
-            <span id="category-list"></span>
-        </div>
-
-        <!-- ★ 렌더링 존 : 스크립트도, 표도 무조건 이 안으로 들어옵니다 ★ -->
-        <div id="template-render-zone"></div>
-
-        <div class="doc-box">
-            <div class="doc-header">
-                <div>
-                    <span style="color:green;"><i class="fas fa-file-alt"></i></span> 
-                    <span class="text-lg" id="doc-title">설명문서 로딩중...</span>
-                </div>
-                <span class="text-sm font-normal">
-                    [<a href="#" class="wiki-link">편집</a>] 
-                    [<a href="#" class="wiki-link">역사</a>]
+<!-- 완벽 복구된 네비게이션 바 -->
+<script defer="defer" src="js/hb_header.js"></script><header id="hb-header-container"></header>
+<div class="wiki-container shadow-lg">
+<div class="title-area mt-4">
+<div class="txt-lvl-1" id="page-title">로딩 중...</div>
+<div class="flex gap-2 mb-1">
+<button class="wiki-btn">토론</button>
+<button class="wiki-btn">편집</button>
+<button class="wiki-btn">역사</button>
+<button class="wiki-btn">ACL</button>
+</div>
+</div>
+<div class="category-box">
+<span class="font-bold text-[#7777AA]">분류:</span>
+<span id="category-list"></span>
+</div>
+<!-- ★ 렌더링 존 : 스크립트도, 표도 무조건 이 안으로 들어옵니다 ★ -->
+<div id="template-render-zone"></div>
+<div class="doc-box">
+<div class="doc-header">
+<div>
+<span style="color:green;"><i class="fas fa-file-alt"></i></span>
+<span class="text-lg" id="doc-title">설명문서 로딩중...</span>
+</div>
+<span class="text-sm font-normal">
+                    [<a class="wiki-link" href="#">편집</a>] 
+                    [<a class="wiki-link" href="#">역사</a>]
                 </span>
-            </div>
-
-            <h2 id="s-1">1. 개요</h2>
-            <p id="doc-overview">설명문서 데이터를 불러오고 있습니다.</p>
-
-            <h2 id="s-2">2. 사용법 / 로드 경로</h2>
-            <p>이 스크립트는 실제 서버의 <strong><span id="doc-path" style="color:#d9534f; font-weight:bold;"></span></strong> 경로에 위치하고 있습니다. 사용하려면 HTML 내에 아래 코드를 삽입하세요.</p>
-            <div style="background:#f0f7ff; padding:15px; border:1px solid #0055AA; border-radius:4px; margin: 10px 0;">
-                <code style="font-family:monospace; font-weight:bold; color:#0055AA;" id="doc-usage"></code>
-            </div>
-
-            <h2 id="s-3">3. 속성 및 갱신 내역</h2>
-            <ul style="list-style-type: circle; margin-left: 20px;" id="doc-history">
-                <!-- 동적 주입 -->
-            </ul>
-        </div>
-        
-        <div id="footer-container"></div>
-        <script src="assets/load-footer.js"></script>
-    </div>
-
-    <script>
+</div>
+<h2 id="s-1">1. 개요</h2>
+<p id="doc-overview">설명문서 데이터를 불러오고 있습니다.</p>
+<h2 id="s-2">2. 사용법 / 로드 경로</h2>
+<p>이 스크립트는 실제 서버의 <strong><span id="doc-path" style="color:#d9534f; font-weight:bold;"></span></strong> 경로에 위치하고 있습니다. 사용하려면 HTML 내에 아래 코드를 삽입하세요.</p>
+<div style="background:#f0f7ff; padding:15px; border:1px solid #0055AA; border-radius:4px; margin: 10px 0;">
+<code id="doc-usage" style="font-family:monospace; font-weight:bold; color:#0055AA;"></code>
+</div>
+<h2 id="s-3">3. 속성 및 갱신 내역</h2>
+<ul id="doc-history" style="list-style-type: circle; margin-left: 20px;">
+<!-- 동적 주입 -->
+</ul>
+</div>
+<div id="footer-container"></div>
+<script src="assets/load-footer.js"></script>
+</div>
+<script>
         // DOMContentLoaded 이벤트를 놓치지 않게 즉시 실행 처리
         const originalAddEventListener = document.addEventListener;
         document.addEventListener = function(type, listener, options) {
@@ -364,10 +326,9 @@
         window.addEventListener('hashchange', loadTemplateByHash);
         window.addEventListener('DOMContentLoaded', loadTemplateByHash);
     </script>
-    
-    <script src="assets/wiki_index.js"></script>
-    <script src="assets/hb_wiki_core.js"></script>
-    <script src="assets/hb_index_scripts.js"></script>
-    <script src="assets/jana.js"></script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
 </body>
 </html>

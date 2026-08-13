@@ -3,68 +3,100 @@ import re
 import shutil
 from bs4 import BeautifulSoup
 
-def process_html_files(directory="."):
-    # js 폴더가 없으면 생성
-    js_dir = os.path.join(directory, "js")
+def process_html_files(root_dir="."):
+    js_dir = os.path.join(root_dir, "js")
     if not os.path.exists(js_dir):
         os.makedirs(js_dir)
 
-    # 디렉토리 내의 모든 HTML 파일 탐색
-    for filename in os.listdir(directory):
-        if not filename.endswith(".html"):
+    total_converted = 0
+    print("🚀 [최종 진화판] 흰색 로고 100% 보존 및 일반구(천주시) 계층 완벽 반영 시작...")
+
+    for dirpath, _, filenames in os.walk(root_dir):
+        if 'js' in dirpath.split(os.sep):
             continue
 
-        filepath = os.path.join(directory, filename)
-        
-        # 1. 파일 읽기
-        with open(filepath, 'r', encoding='utf-8') as f:
-            html_content = f.read()
+        for filename in filenames:
+            if not filename.endswith(".html") or filename.endswith(".bak"):
+                continue
 
-        soup = BeautifulSoup(html_content, 'html.parser')
-        
-        # 2. 타겟 네비게이션 박스 찾기 (<div class="hb-admin-table">)
-        admin_table_div = soup.find('div', class_='hb-admin-table')
-        
-        if not admin_table_div:
-            continue # 해당 박스가 없는 문서는 패스
+            filepath = os.path.join(dirpath, filename)
+            backup_path = filepath + ".bak"
+            
+            with open(filepath, 'r', encoding='utf-8') as f:
+                html_content = f.read()
 
-        print(f"🔄 처리 중: {filename}")
+            soup = BeautifulSoup(html_content, 'html.parser')
+            
+            # 클래스가 hb- 어쩌구로 시작하는 박스 또는 테두리가 있는 행정구역 박스 싹 다 추적
+            admin_table_divs = soup.find_all('div', class_=re.compile(r'hb-.*-(table|nav)'))
+            
+            if not admin_table_divs:
+                for d in soup.find_all('div', style=re.compile(r'border:\s*2px')):
+                    if '행정구역' in d.text and d.find('table') and d not in admin_table_divs:
+                        admin_table_divs.append(d)
+            
+            if not admin_table_divs:
+                continue
 
-        # 3. 원본 100% 보존을 위한 백업 파일 생성 (.bak)
-        backup_path = filepath + ".bak"
-        shutil.copy2(filepath, backup_path)
+            print(f"\n🔄 탐색됨: {filepath}")
 
-        # 4. 데이터 추출
-        # (1) 테이블 원본 HTML 추출 (데이터 손실 방지를 위해 통째로 가져옴)
-        table_tag = admin_table_div.find('table')
-        table_html = str(table_tag).replace('`', '\\`') if table_tag else ""
+            if not os.path.exists(backup_path):
+                shutil.copy2(filepath, backup_path)
+                print(f"  └─ 💾 [백업 완료] {filename}.bak")
+            else:
+                print(f"  └─ ⚠️ [백업 통과] 이미 존재함")
 
-        # (2) 헤더 정보 추출 (로고 이미지, 제목 등)
-        img_tag = admin_table_div.find('img')
-        img_src = img_tag['src'] if img_tag else "이미지/기본.webp"
+            modified = False
 
-        # 글자 크기가 13px인 div를 찾아 시/도 이름 추출 (예: 덕빈북도 강주시)
-        title_div = admin_table_div.find('div', style=re.compile(r'font-size:\s*13px'))
-        main_title = title_div.text.strip() if title_div else "지자체명"
-        region_name = main_title.split()[-1] if main_title else "알수없음" # 강주시, 북구 등
+            for idx, admin_table_div in enumerate(admin_table_divs):
+                table_tag = admin_table_div.find('table')
+                if not table_tag:
+                    continue
+                    
+                table_html = str(table_tag).replace('`', '\\`')
 
-        # (3) 메인 테마 색상 및 글자색 추출
-        header_div = admin_table_div.find('div')
-        style_text = header_div.get('style', '') if header_div else ''
-        
-        color_match = re.search(r'background-color:\s*(#[0-9a-fA-F]+)', style_text)
-        main_color = color_match.group(1) if color_match else "#ffc94a"
-        
-        font_color_match = re.search(r'color:\s*([a-zA-Z]+|#[0-9a-fA-F]+)', style_text)
-        text_color = font_color_match.group(1) if font_color_match else "black"
+                # 🔥 [핵심 수정 1] 로고 태그 원본 100% 긁어오기 (흰색 적용, 인라인 스타일 모조리 보존)
+                img_tag = admin_table_div.find('img')
+                if img_tag:
+                    img_html = str(img_tag).replace('`', '\\`')
+                else:
+                    img_html = '<img src="이미지/기본.webp" alt="로고" style="height: 40px;">'
 
-        # 5. JS 파일 생성 (요청하신 2단 분리형 헤더 디자인 템플릿 적용)
-        js_content = f"""/**
+                # 메인 타이틀 추출
+                main_title = "지자체명"
+                for d in admin_table_div.find_all('div'):
+                    if d.text.strip() == '행정구역':
+                        prev_div = d.find_previous_sibling('div')
+                        if prev_div:
+                            main_title = prev_div.text.strip()
+                        break
+                
+                # 🔥 [핵심 수정 2] 일반구(천주시 천성구 등) 근본 유지
+                # 광역지자체 이름만 싹 날리고 남은 이름들을 붙여서 씁니다. 
+                # 예: '덕빈북도 천주시 천성구' -> '천주시천성구'
+                clean_title = re.sub(r'^(덕빈북도|효빈광역시|서울특별시|경기도|강원특별자치도|전북특별자치도|충청북도|충청남도|전라남도|경상북도|경상남도|제주특별자치도)\s+', '', main_title)
+                region_name = clean_title.replace(" ", "") if clean_title else f"알수없음_{idx}"
+
+                # 배경색 추출
+                bg_div = admin_table_div.find(lambda t: t.has_attr('style') and 'background-color' in t['style'])
+                main_color = "#ffc94a"
+                if bg_div:
+                    color_match = re.search(r'background-color:\s*(#[0-9a-fA-F]+)', bg_div['style'])
+                    if color_match:
+                        main_color = color_match.group(1)
+
+                # 폰트색 추출
+                header_html_str = str(admin_table_div)
+                font_color_match = re.search(r'(?<!-)\bcolor:\s*([a-zA-Z]+|#[0-9a-fA-F]+)', header_html_str)
+                text_color = font_color_match.group(1) if font_color_match else "black"
+
+                js_filepath = os.path.join(js_dir, f"{region_name}행정.js")
+                
+                js_content = f"""/**
  * 파일명: js/{region_name}행정.js
  * 설명: {main_title} 행정구역 전체 내비게이션 자동 생성
- * 특징: 원본 데이터 무손실 보존 및 2단 분리형 헤더 구조 적용
  */
-(function() {{
+document.addEventListener("DOMContentLoaded", function() {{
     var mainColor = "{main_color}";
     var textColor = "{text_color}";
     var containers = document.querySelectorAll(".hb-{region_name}-nav");
@@ -75,40 +107,18 @@ def process_html_files(directory="."):
 
         var navHTML = `
         <style>
-            /* 헤더 전용 스타일 */
             .nav-box-auto {{ border: 2px solid ${{mainColor}}; background-color: white; font-family: 'Noto Sans KR', sans-serif; box-sizing: border-box; margin: 20px 0; }}
             .nav-header-container-auto {{ cursor: pointer; }}
-            .nav-header-top-auto {{ 
-                background-color: ${{mainColor}}; 
-                color: ${{textColor}}; 
-                display: flex; 
-                justify-content: center; 
-                align-items: center; 
-                padding: 15px 0; 
-            }}
-            .nav-header-title-box {{
-                border: 1px solid ${{textColor}}; 
-                display: flex; 
-                align-items: center; 
-                padding: 5px 15px; 
-                gap: 15px;
-            }}
-            .nav-header-bottom-auto {{ 
-                background-color: ${{mainColor}}; 
-                color: ${{textColor}}; 
-                text-align: center; 
-                padding: 6px 0; 
-                font-size: 13px; 
-                font-weight: bold; 
-                border-top: 1px solid rgba(0, 0, 0, 0.3);
-            }}
+            .nav-header-top-auto {{ background-color: ${{mainColor}}; color: ${{textColor}}; display: flex; justify-content: center; align-items: center; padding: 15px 0; }}
+            .nav-header-title-box {{ border: 1px solid ${{textColor}}; display: flex; align-items: center; padding: 5px 15px; gap: 15px; }}
+            .nav-header-bottom-auto {{ background-color: ${{mainColor}}; color: ${{textColor}}; text-align: center; padding: 6px 0; font-size: 13px; font-weight: bold; border-top: 1px solid rgba(0, 0, 0, 0.3); }}
         </style>
         
         <div class="nav-box-auto">
             <div class="nav-header-container-auto" onclick="toggleNav('${{uniqueNavId}}', '${{uniqueLabelId}}')">
                 <div class="nav-header-top-auto">
                     <div class="nav-header-title-box">
-                        <img src="{img_src}" alt="로고" style="height: 40px;" onerror="this.src='이미지/hyobin1.webp'">
+                        {img_html}
                         <div style="text-align: left; line-height: 1.3;">
                             <div style="font-size: 13px; font-weight: bold;">{main_title}</div>
                             <div style="font-size: 20px; font-weight: 900;">행정구역</div>
@@ -121,7 +131,6 @@ def process_html_files(directory="."):
             </div>
             
             <div id="${{uniqueNavId}}" style="transition: max-height 0.3s ease-out; overflow: hidden; max-height: 2000px; display: block;">
-                <!-- 원본 테이블 100% 무손실 삽입 -->
                 {table_html}
             </div>
         </div>
@@ -129,41 +138,43 @@ def process_html_files(directory="."):
         
         container.innerHTML = navHTML;
     }});
+}});
 
-    // 전역 토글 함수 (중복 선언 방지)
-    if (typeof window.toggleNav === 'undefined') {{
-        window.toggleNav = function(id, labelId) {{
-            var content = document.getElementById(id);
-            if (!content) return;
-
-            if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {{
-                content.style.maxHeight = '2000px';
-            }} else {{
-                content.style.maxHeight = '0px';
-            }}
-        }};
-    }}
-}})();
+if (typeof window.toggleNav === 'undefined') {{
+    window.toggleNav = function(id, labelId) {{
+        var content = document.getElementById(id);
+        if (!content) return;
+        if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {{
+            content.style.maxHeight = '2000px';
+        }} else {{
+            content.style.maxHeight = '0px';
+        }}
+    }};
+}}
 """
-        # JS 파일 저장
-        js_filepath = os.path.join(js_dir, f"{region_name}행정.js")
-        with open(js_filepath, 'w', encoding='utf-8') as js_file:
-            js_file.write(js_content)
+                with open(js_filepath, 'w', encoding='utf-8') as js_file:
+                    js_file.write(js_content)
 
-        # 6. 원본 HTML에서 기존 태그를 새 태그로 치환
-        new_div = soup.new_tag("div", **{'class': f'hb-{region_name}-nav'})
-        new_script = soup.new_tag("script", src=f"js/{region_name}행정.js")
-        
-        admin_table_div.insert_before(new_script)
-        admin_table_div.replace_with(new_div)
+                rel_path = os.path.relpath(js_dir, dirpath)
+                script_src = f"{rel_path}/{region_name}행정.js".replace('\\', '/')
 
-        # 7. 수정된 HTML 저장
-        with open(filepath, 'w', encoding='utf-8') as f:
-            f.write(str(soup))
-            
-        print(f"✅ 완료: {filename} -> {region_name}행정.js 생성 및 치환 성공 (백업 완료)")
+                # 치환할 때 꼬이지 않게 계층 이름(천주시천성구) 그대로 클래스 적용
+                new_div = soup.new_tag("div", **{'class': f'hb-{region_name}-nav'})
+                new_script = soup.new_tag("script", src=script_src, defer="defer")
+                
+                if not soup.find('script', src=script_src):
+                    admin_table_div.insert_before(new_script)
+                admin_table_div.replace_with(new_div)
+                
+                modified = True
+                total_converted += 1
+                print(f"  └─ 🛠️ [변환 완료] {region_name} (로고 원본 100% 유지)")
+
+            if modified:
+                with open(filepath, 'w', encoding='utf-8') as f:
+                    f.write(str(soup))
+
+    print(f"\n🎉 총 {total_converted}개의 네비 박스 변환 완료! 이제 흰색 로고도 정상적으로 뜹니다!")
 
 if __name__ == "__main__":
-    print("🚀 HTML -> JS 변환 스크립트를 시작합니다...")
     process_html_files()
-    print("🎉 모든 작업이 완료되었습니다!")
