@@ -6,7 +6,7 @@ const imageFolder = './이미지';
 const outputJsFile = './assets/image_data.js';
 
 // 허용할 이미지 확장자
-const allowedExtensions = ['.webp', '.jpg', '.jpeg', '.gif', '.webp', '.svg'];
+const allowedExtensions = ['.webp', '.webp', '.jpeg', '.gif', '.webp', '.svg'];
 
 async function updateArchive() {
     try {

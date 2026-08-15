@@ -142,7 +142,7 @@ window.addEventListener("load", function() {
                 
                 <div class="font-bold mb-1 text-gray-700 dark:text-gray-300">크리에이티브 커먼즈 라이선스</div>
                 <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank" rel="noopener" class="inline-block mb-3">
-                    <img src="https://licensebuttons.net/l/by-nc-sa/3.0/88x31.png" alt="CC BY-NC-SA" class="w-[88px] h-[31px]">
+                    <img src="https://licensebuttons.net/l/by-nc-sa/3.0/88x31.webp" alt="CC BY-NC-SA" class="w-[88px] h-[31px]">
                 </a>
                 
                 <div class="leading-relaxed">

@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="font-bold text-lg mb-4" style="color: #7777AA;">HyobinWiki</div>
                     <div class="font-bold mb-1 text-gray-700 dark:text-gray-300">크리에이티브 커먼즈 라이선스</div>
                     <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank" rel="noopener" class="inline-block mb-3">
-                        <img src="https://licensebuttons.net/l/by-nc-sa/3.0/88x31.png" alt="CC BY-NC-SA" class="w-[88px] h-[31px]">
+                        <img src="https://licensebuttons.net/l/by-nc-sa/3.0/88x31.webp" alt="CC BY-NC-SA" class="w-[88px] h-[31px]">
                     </a>
                     <div class="leading-relaxed">
                         이 저작물은 <strong class="text-gray-800 dark:text-gray-200">CC BY-NC-SA 2.0 KR</strong>에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)<br>

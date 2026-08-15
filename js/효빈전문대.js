@@ -8,98 +8,116 @@ function renderHyobinCollegeTable(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    // --- 1. 스타일 정의 (대학 목록과 디자인 통일) ---
-    const styleId = 'hyobin-college-style';
+    // --- 1. 스타일 정의 (대학 목록과 완벽히 통일) ---
+    const styleId = 'hyobin-col-style';
     if (!document.getElementById(styleId)) {
         const style = document.createElement('style');
         style.id = styleId;
         style.textContent = `
-            .hb-col-wrapper { width: 100%; overflow-x: auto; margin-bottom: 1rem; }
-            .hb-col-table { width: 100%; min-width: 500px; border-collapse: collapse; border: 1px solid #ccc; font-size: 0.8rem; }
+            .hb-col-wrapper { width: 100%; border: 1px solid #ccc; font-family: 'Noto Sans KR', sans-serif; margin-bottom: 20px; font-size: 0.85rem; }
+            .hb-col-table { width: 100%; border-collapse: collapse; text-align: center; }
             
-            /* 헤더 스타일 */
-            .hb-col-thead th { background-color: #7777AA; color: white; padding: 10px; position: relative; }
-            .hb-col-header-content { display: flex; align-items: center; justify-content: center; gap: 10px; }
-            .hb-col-logo { max-height: 28px; width: auto; }
-            .hb-col-title { font-weight: bold; font-size: 1.2em; }
-            .hb-toggle-btn { font-size: 0.8rem; cursor: pointer; margin-left: 15px; opacity: 0.8; user-select: none; }
-            .hb-toggle-btn:hover { text-decoration: underline; opacity: 1; }
-
-            /* 본문 스타일 */
-            .hb-col-tbody { transition: all 0.2s; }
+            /* 헤더 스타일 (#7777AA) */
+            .hb-col-thead .hb-header-title { background-color: #7777aa; color: white; padding: 8px; font-weight: bold; font-size: 1.1rem; border: 1px solid #7777aa; }
+            .hb-header-content { display: flex; align-items: center; justify-content: center; gap: 8px; }
+            .hb-header-logo { height: 20px; width: auto; filter: brightness(0) invert(1); object-fit: contain; pointer-events: none; } 
+            
+            /* 접기/펼치기 버튼 행 */
+            .hb-col-thead .hb-toggle-row { background-color: #fff; padding: 6px; border: 1px solid #ccc; border-bottom: none; font-weight: bold; font-size: 0.95rem; }
+            .hb-toggle-btn { cursor: pointer; user-select: none; color: #333; }
+            .hb-toggle-btn:hover { text-decoration: underline; }
+            
+            /* 본문 영역 */
+            .hb-col-tbody { transition: display 0.2s; }
             .hb-col-tbody.hidden { display: none; }
-            .hb-col-tbody th, .hb-col-tbody td { border: 1px solid #e5e7eb; padding: 6px 8px; vertical-align: middle; }
+            .hb-col-tbody th, .hb-col-tbody td { border: 1px solid #ccc; padding: 8px; vertical-align: middle; }
             
-            /* 셀 스타일 유틸리티 */
-            .hb-th-type { text-align: center; font-weight: bold; width: 5rem; background-color: #7777AA; }
-            .hb-td-initial { text-align: center; font-weight: bold; width: 2rem; background-color: #fff; }
-            .hb-td-content { text-align: left; }
-
-            /* 링크 스타일 */
-            .hb-link { cursor: pointer; color: inherit; text-decoration: none; }
-            .hb-link:hover { text-decoration: underline; color: #2563eb; }
-            .hb-sep { margin: 0 4px; color: #9ca3af; }
+            /* 카테고리 헤더 */
+            .hb-th-category { background-color: #0c1b54; color: white; width: 60px; font-weight: 900; font-size: 0.95rem; }
+            .hb-th-category.poly { background-color: #4a5568; }
+            
+            /* 초성칸 */
+            .hb-td-initial { background-color: #f9f9f9; width: 30px; font-weight: 900; color: #000; }
+            
+            /* 대학 목록칸 */
+            .hb-td-content { text-align: left; background-color: #fff; line-height: 2.4; }
+            
+            /* 대학 링크 및 개별 로고 스타일 */
+            .hb-link { color: #005BAC; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+            .hb-link:hover { text-decoration: underline; color: #d81c2f; }
+            .hb-item-logo { height: 16px; width: auto; object-fit: contain; pointer-events: none; } 
+            
+            .hb-sep { margin: 0 8px; color: #ccc; font-size: 0.8rem; }
+            .hb-col-wrapper table tr:last-child th, .hb-col-wrapper table tr:last-child td { border-bottom: none; }
         `;
         document.head.appendChild(style);
     }
 
-    // --- 2. 데이터 정의 ---
-    const mkLink = (name) => `<span class="hb-link" onclick="handleSearchFromNav('${name}')">${name}</span>`;
+    // --- 2. 헬퍼: 링크 및 로고 생성 (클릭 에러 방지 처리 완료) ---
+    const mkLink = (name, logoFile, linkName = null) => {
+        const target = linkName || name.split('(')[0] + '.html'; 
+        const logoHtml = logoFile ? `<img src="이미지/${logoFile}" class="hb-item-logo" alt="${name} 로고" onerror="this.style.display='none'">` : '';
+        return `<a href="javascript:void(0);" onclick="if(typeof window.goToLink === 'function'){ window.goToLink('${target}'); } else { location.href='${target}'; } return false;" class="hb-link">${logoHtml}${name}</a>`;
+    };
 
-    // 전문대학 데이터 (초성별)
+    // --- 3. 전문대학 데이터 세팅 (제공해주신 로고 파일명 매핑 및 초성 정렬) ---
     const specialized = [
-        { char: 'ㅎ', schools: [mkLink('효빈보건대학교'), mkLink('해총대학교')] },
-        { char: 'ㅊ', schools: [mkLink('치고대학교')] },
-        { char: 'ㄷ', schools: [mkLink('대찬대학교')] },
-        { char: 'ㅅ', schools: [mkLink('선자대학교'), mkLink('삽곡대학교')] },
-        { char: 'ㅇ', schools: [mkLink('안신대학교'), mkLink('안월대학교')] },
-        { char: 'ㅎ', schools: [mkLink('효빈과학대학교'), mkLink('효빈예술대학교')] }
+        { char: 'ㄷ', schools: [mkLink('대찬대학교', '대찬대학교.svg')] },
+        { char: 'ㅅ', schools: [mkLink('삽곡대학교', '삽곡대학교.svg'), mkLink('선자대학교', '선자대학교_UI.webp')] },
+        { char: 'ㅇ', schools: [mkLink('안신대학교', '안신대학교_UI.svg'), mkLink('안월대학교', '안월대학교_UI.svg')] },
+        { char: 'ㅊ', schools: [mkLink('치고대학교', '치고대학교_UI.webp')] },
+        { char: 'ㅎ', schools: [
+            mkLink('해총대학교', '해총대학교_UI.webp'),
+            mkLink('효빈과학대학교', '효빈과학대학교_UI.webp'), 
+            mkLink('효빈보건대학교', '효빈보건대학교.svg'), 
+            mkLink('효빈예술대학교', '효빈예술대.svg')
+        ]}
     ];
 
     // 기능대학 데이터
     const polytechnic = {
         char: 'ㅎ',
-        school: mkLink('한국폴리텍VIII대학(효빈캠퍼스)')
+        school: mkLink('한국폴리텍VIII대학(효빈캠퍼스)', '한국폴리텍.webp', '한국폴리텍VIII대학.html')
     };
 
-    // --- 3. HTML 조립 ---
-    const bodyId = 'hb-col-tbody';
+    // --- 4. HTML 조립 ---
     let html = `
         <div class="hb-col-wrapper">
             <table class="hb-col-table">
                 <thead class="hb-col-thead">
                     <tr>
-                        <th colspan="3">
-                            <div class="hb-col-header-content">
-                                <img src="이미지/hyobin1.webp" class="hb-col-logo" alt="로고" onerror="this.style.display='none'"/>
-                                <span class="hb-col-title">효빈광역시의 전문대학</span>
-                                <span class="hb-toggle-btn" id="hb-col-toggle">[접기]</span>
+                        <td colspan="3" class="hb-header-title">
+                            <div class="hb-header-content">
+                                <img src="이미지/효빈광역시.webp" class="hb-header-logo" alt="효빈광역시 로고" onerror="this.src='이미지/효빈광역시_흰색로고.webp'; this.onerror=function(){this.style.display='none';};">
+                                효빈광역시의 전문대학
                             </div>
-                        </th>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="hb-toggle-row">
+                            [ <span class="hb-toggle-btn" onclick="toggleHbColTable(this)">접기</span> ]
+                        </td>
                     </tr>
                 </thead>
-                <tbody id="${bodyId}" class="hb-col-tbody">
-                    <tr>
-                        <th class="hb-th-type" rowspan="6">전문</th>
-                        <td class="hb-td-initial">${specialized[0].char}</td>
-                        <td class="hb-td-content">${specialized[0].schools.join('<span class="hb-sep">·</span>')}</td>
-                    </tr>
+                <tbody class="hb-col-tbody">
     `;
 
-    // 전문대학 나머지 행 반복
-    for (let i = 1; i < specialized.length; i++) {
-        html += `
-            <tr>
-                <td class="hb-td-initial">${specialized[i].char}</td>
-                <td class="hb-td-content">${specialized[i].schools.join('<span class="hb-sep">·</span>')}</td>
-            </tr>
-        `;
-    }
+    // 전문대학 렌더링
+    const specializedRowCount = specialized.length;
+    specialized.forEach((group, index) => {
+        html += `<tr>`;
+        if (index === 0) {
+            html += `<th class="hb-th-category" rowspan="${specializedRowCount}">전문</th>`;
+        }
+        html += `<td class="hb-td-initial">${group.char}</td>`;
+        html += `<td class="hb-td-content">${group.schools.join('<span class="hb-sep">·</span>')}</td>`;
+        html += `</tr>`;
+    });
 
-    // 기능대학
+    // 기능대학 렌더링
     html += `
                     <tr>
-                        <th class="hb-th-type">기능</th>
+                        <th class="hb-th-category poly">기능</th>
                         <td class="hb-td-initial">${polytechnic.char}</td>
                         <td class="hb-td-content">${polytechnic.school}</td>
                     </tr>
@@ -109,19 +127,18 @@ function renderHyobinCollegeTable(containerId) {
     `;
 
     container.innerHTML = html;
-
-    // --- 4. 이벤트 연결 ---
-    const toggleBtn = container.querySelector('#hb-col-toggle');
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', function() {
-            const tbody = document.getElementById(bodyId);
-            if (tbody.classList.contains('hidden')) {
-                tbody.classList.remove('hidden');
-                this.textContent = '[접기]';
-            } else {
-                tbody.classList.add('hidden');
-                this.textContent = '[펼치기]';
-            }
-        });
-    }
 }
+
+// --- 5. 전역 토글 함수 (문서 어디서든 작동하도록 window 객체에 할당) ---
+window.toggleHbColTable = function(btn) {
+    const wrapper = btn.closest('.hb-col-wrapper');
+    const tbody = wrapper.querySelector('.hb-col-tbody');
+    
+    if (tbody.classList.contains('hidden')) {
+        tbody.classList.remove('hidden');
+        btn.textContent = '접기';
+    } else {
+        tbody.classList.add('hidden');
+        btn.textContent = '펼치기';
+    }
+};

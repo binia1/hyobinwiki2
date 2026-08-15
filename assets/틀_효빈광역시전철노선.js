@@ -68,7 +68,7 @@
     `;
     document.head.appendChild(style);
 
-    // 2. image_2.png와 100% 동일한 HTML 테이블 템플릿
+    // 2. image_2.webp와 100% 동일한 HTML 테이블 템플릿
     const templateHTML = `
         <div class="wiki-hb-container" id="hyobin-opened-map">
             <table class="wiki-hb-table">

@@ -5,7 +5,7 @@
     const existingMaps = document.querySelectorAll('.wiki-table-container, .wiki-hb-wrap-v4, #hyobin-unopened-map');
     existingMaps.forEach(el => el.remove());
 
-    // 2. image_3.png 완벽 오마주 CSS 주입 (붕 뜨는 현상 100% 차단)
+    // 2. image_3.webp 완벽 오마주 CSS 주입 (붕 뜨는 현상 100% 차단)
     const style = document.createElement('style');
     style.id = 'style-template-unopened-map-final';
     style.textContent = `
@@ -100,7 +100,7 @@
             margin-right: 4px;
         }
         
-        /* 텍스트 링크 (image_3.png 파란색) */
+        /* 텍스트 링크 (image_3.webp 파란색) */
         .hb-link-v4 {
             color: #0275d8 !important;
             text-decoration: none !important;
@@ -130,7 +130,7 @@
     `;
     document.head.appendChild(style);
 
-    // 3. image_3.png 완벽 오마주 HTML (빈 줄 없이 border-top 두꺼운 선으로 색상 띠 구현)
+    // 3. image_3.webp 완벽 오마주 HTML (빈 줄 없이 border-top 두꺼운 선으로 색상 띠 구현)
     const templateHTML = `
         <div class="wiki-hb-wrap-v4" id="hyobin-unopened-map">
             <table class="wiki-hb-table-v4">
