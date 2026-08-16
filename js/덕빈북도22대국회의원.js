@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const style = document.createElement('style');
         style.id = styleId;
         style.textContent = `
-            .bg-minju { background-color: #004EA2 !important; }
+            .bg-minju { background-color: #003B96 !important; }
             .bg-ppp { background-color: #E61E2B !important; }
             .bg-jinbo { background-color: #D6001C !important; }
         `;

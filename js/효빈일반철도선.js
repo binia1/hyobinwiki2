@@ -18,34 +18,55 @@ function renderHyobinNationalRail(containerId) {
             .hb-rail-table { width: 100%; min-width: 600px; border-collapse: collapse; border: 1px solid #ccc; font-size: 0.78rem; text-align: center; }
             .hb-rail-table th, .hb-rail-table td { border: 1px solid #e5e7eb; padding: 8px 6px; vertical-align: middle; }
             
-            /* 헤더 스타일 (로고 적용) */
-            .hb-rail-thead th.main-header { background-color: #7777AA; color: white; padding: 10px; position: relative; }
+            /* 메인 헤더 스타일 (서브 영역까지 보라색 박스 안으로 통합) */
+            .hb-rail-thead th.main-header { background-color: #7777AA !important; color: white !important; padding: 10px; position: relative; text-align: center; }
             .hb-rail-header-content { display: flex; align-items: center; justify-content: center; gap: 10px; }
             .hb-rail-logo { max-height: 28px; width: auto; }
-            .hb-rail-title { font-weight: bold; font-size: 1.1em; }
-            .hb-toggle-btn { font-size: 0.8rem; cursor: pointer; margin-left: 15px; opacity: 0.8; user-select: none; color: white; }
+            .hb-rail-title { font-weight: bold; font-size: 1.1em; color: white !important; }
+            .hb-toggle-btn { font-size: 0.8rem; cursor: pointer; margin-left: 15px; opacity: 0.8; user-select: none; color: white !important; }
             .hb-toggle-btn:hover { text-decoration: underline; opacity: 1; }
 
-            /* 서브 헤더 */
-            .hb-rail-sub-header { background-color: #f3f4f6; color: #333; font-weight: bold; text-align: left; padding: 8px 12px; }
-            .hb-rail-col-header th { background-color: #f9fafb; font-weight: bold; }
+            /* 보라색 박스 내부의 서브 노선 안내 영역 */
+            .hb-rail-sub-section {
+                text-align: left !important;
+                padding: 8px 6px 4px 6px !important;
+                margin-top: 8px !important;
+                border-top: 1px solid rgba(255, 255, 255, 0.25) !important;
+                font-weight: normal !important;
+                line-height: 1.6 !important;
+                color: white !important;
+            }
+            .hb-rail-sub-section strong { color: #ffdf00 !important; }
+            .hb-rail-sub-section .hb-sub-link {
+                color: white !important;
+                text-decoration: underline !important;
+                cursor: pointer;
+            }
+            .hb-rail-sub-section .hb-sub-link:hover {
+                color: #ffdf00 !important;
+            }
+
+            /* 컬럼 헤더 (행선지, 등급, 탑승역) 글자색 및 배경색 강제 고정 */
+            .hb-rail-col-header th { 
+                background-color: #f9fafb !important; 
+                color: #333333 !important; 
+                font-weight: bold !important; 
+            }
 
             /* 본문 토글용 */
             .hb-rail-tbody { transition: all 0.2s; }
             .hb-rail-tbody.hidden { display: none; }
 
-            /* 배지 스타일 (색상 수정됨) */
+            /* 배지 스타일 */
             .hb-rail-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.75rem; min-width: 70px; margin: 1px 0; }
-            .badge-ktx { background-color: #3e5ac7; } /* KTX: 청보라색 (나무위키 스타일) */
-            .badge-srt { background-color: #5E273F; } /* SRT: 자주색 */
-            .badge-itx { background-color: #E61E2B; } /* ITX-새마을: 빨간색 */
-            .badge-mgh { background-color: #ea545d; } /* 무궁화호: 주홍/적색 계열 */
+            .badge-ktx { background-color: #3e5ac7; }
+            .badge-srt { background-color: #5E273F; }
+            .badge-itx { background-color: #E61E2B; }
+            .badge-mgh { background-color: #ea545d; }
 
-            /* 링크 스타일 (밑줄 제거) */
+            /* 링크 스타일 (본문용) */
             .hb-link { cursor: pointer; color: inherit; text-decoration: none; border: none; }
             .hb-link:hover { text-decoration: underline; color: #004EA2; }
-            .hb-link-bold { font-weight: bold; cursor: pointer; text-decoration: none; border: none; }
-            .hb-link-bold:hover { text-decoration: underline; color: #004EA2; }
         `;
         document.head.appendChild(style);
     }
@@ -56,8 +77,12 @@ function renderHyobinNationalRail(containerId) {
         return `<span class="hb-link" onclick="handleSearchFromNav('${q}')">${name}</span>`;
     };
 
+    const mkSubLink = (name, query = null) => {
+        const q = query || name;
+        return `<span class="hb-sub-link" onclick="handleSearchFromNav('${q}')">${name}</span>`;
+    };
+
     // --- 3. 데이터 및 HTML 조립 ---
-    
     const tableBodyId = 'hb-rail-tbody';
     const html = `
         <div class="hb-rail-wrapper">
@@ -70,13 +95,12 @@ function renderHyobinNationalRail(containerId) {
                                 <span class="hb-rail-title">효빈광역시 관내 국가 철도</span>
                                 <span class="hb-toggle-btn" id="hb-rail-toggle">[접기]</span>
                             </div>
+                            <!-- 독립된 흰색 행을 만들지 않고 메인 보라색 헤더 안으로 완전히 통합 -->
+                            <div class="hb-rail-sub-section">
+                                <strong>고속철도:</strong> ${mkSubLink('빈효고속선')}<br/>
+                                <strong>일반철도:</strong> ${mkSubLink('빈효선')} · ${mkSubLink('강빈선')} · ${mkSubLink('내천선')}(예정) · ${mkSubLink('안빈선')}(예정)
+                            </div>
                         </th>
-                    </tr>
-                    <tr>
-                        <td colspan="3" class="hb-rail-sub-header">
-                            <strong>고속철도:</strong> ${mkLink('빈효고속선')}<br/>
-                            <strong>일반철도:</strong> ${mkLink('빈효선')} · ${mkLink('강빈선')} · ${mkLink('내천선')}(예정) · ${mkLink('안빈선')}(예정)
-                        </td>
                     </tr>
                     <tr class="hb-rail-col-header">
                         <th style="width: 35%;">행선지</th>
