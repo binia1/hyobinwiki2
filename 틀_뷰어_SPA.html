@@ -237,7 +237,6 @@
         const specificDB = {
             "ad_logic": { title: "스크립트:ad_logic", categories: ["시스템 스크립트"], overview: "배너 광고(AdSense) 송출 및 위치 제어를 담당하는 루트 스크립트입니다." },
             "틀_미개통노선도": { title: "틀:미개통노선도 (효빈권)", categories: ["노선도 틀", "효빈광역시 틀"], overview: "효빈광역시 관내 공사중/계획중인 전철 노선 상태를 시각화합니다." }
-            // 상세 DB는 아래의 완벽한 자동 폴백(Fallback) 시스템이 처리하여 어떤 파일이 들어와도 제목과 카테고리를 완벽하게 뽑아냅니다.
         };
 
         // 검색창 엔터키 입력 처리
@@ -261,12 +260,11 @@
             hash = decodeURIComponent(hash);
 
             let folderPath = filePaths[hash];
-            if (folderPath === undefined) { folderPath = "assets/"; } // 목록에 없어도 기본값 보장
+            if (folderPath === undefined) { folderPath = "assets/"; } 
             
             let fullPath = folderPath + hash + ".js";
             let data = specificDB[hash];
 
-            // 완벽한 자동 네이밍/분류 폴백 시스템 (DB에 일일이 안 적어도 알아서 분류함)
             if (!data) {
                 let formattedTitle = hash.replace(/_/g, ' ');
                 let isTemplate = hash.startsWith('틀') || hash.endsWith('행정') || hash.endsWith('학교') || hash.endsWith('목록');
@@ -286,61 +284,82 @@
             document.getElementById('doc-usage').innerText = `<script src="${fullPath}"><\/script>`;
 
             document.getElementById('doc-history').innerHTML = `
-                <li><strong>경로 검증:</strong> <code>${fullPath}</code> 파일 매핑 및 로드 준비 완료.</li>
-                <li><strong>종류:</strong> 동적 렌더링 스크립트</li>
+                <li><strong>경로 검증:</strong> <code>${fullPath}</code> 로드 중...</li>
+                <li><strong>종류:</strong> 동적 렌더링 스크립트 (자동 컨테이너 할당)</li>
             `;
 
-            // ★ 1. 렌더링 존 초기화
             const renderZone = document.getElementById('template-render-zone');
             renderZone.innerHTML = '';
 
-            // ★ 2. document.write 가로채기 (스크립트가 innerHTML 대신 write를 쓰더라도 무조건 상자 안에 갇힘)
             const originalWrite = document.write;
             const originalWriteln = document.writeln;
             document.write = function(html) { renderZone.insertAdjacentHTML('beforeend', html); };
             document.writeln = function(html) { renderZone.insertAdjacentHTML('beforeend', html + '\n'); };
 
-            // ★ 3. 스크립트가 DOM ID를 기반으로 렌더링할 때를 대비한 '동적 무적 컨테이너' 생성
-            // 특정 스크립트가 '본인 이름-container'나 '본인 이름' id를 요구할 때 무조건 받아낼 수 있도록 조합된 ID들 생성
-            const dynamicIds = [
-                hash + '-container',
-                hash.replace(/_/g, '-') + '-container',
-                hash.replace(/_/g, '') + '-container',
-                hash + '-wrapper',
-                hash, // 확장자 뺀 원본 이름 자체를 ID로 요구할 경우
-                'lovelive-nav-container',
-                'lovelive-niji-nav-container',
-                'lovelive-muse-nav-container',
-                'lovelive-liella-nav-container',
-                'lovelive-hasu-nav-container',
-                'bangdream-container',
-                'deokbuk-transit-zone'
-            ];
-
-            dynamicIds.forEach(id => {
-                let div = document.createElement('div');
-                div.id = id;
-                div.style.width = "100%";
-                renderZone.appendChild(div);
-            });
-
-            // ★ 4. 렌더링 존 내부에 스크립트를 삽입하여 실행
-            const script = document.createElement('script');
-            script.src = fullPath;
-            script.className = 'dynamic-injected-script';
-            
-            script.onload = () => {
-                document.write = originalWrite;
-                document.writeln = originalWriteln;
-            };
-            script.onerror = () => {
-                document.write = originalWrite;
-                document.writeln = originalWriteln;
-                renderZone.innerHTML += `<div style="padding:20px; color:#d9534f; text-align:center; font-weight:bold;">오류: 스크립트 경로(${fullPath})에서 파일을 불러올 수 없습니다. 경로 또는 파일명을 확인하세요.</div>`;
-            };
-
+            // 이전 스크립트 찌꺼기 제거
             document.querySelectorAll('.dynamic-injected-script').forEach(s => s.remove());
-            renderZone.appendChild(script); 
+
+            // ★ 핵심 로직: 스크립트를 바로 실행하지 않고, 먼저 텍스트로 읽어옵니다.
+            fetch(fullPath)
+                .then(response => {
+                    if (!response.ok) throw new Error("파일 로드 실패");
+                    return response.text();
+                })
+                .then(scriptText => {
+                    // 1. JS 파일 내용을 스캔해서 이 파일이 찾고 있는 클래스(class)와 아이디(id)를 싹 다 찾아냅니다.
+                    let classes = [];
+                    let ids = [];
+                    
+                    [...scriptText.matchAll(/querySelector(?:All)?\(['"]\.([^'"]+)['"]\)/g)].forEach(m => classes.push(m[1]));
+                    [...scriptText.matchAll(/getElementsByClassName\(['"]([^'"]+)['"]\)/g)].forEach(m => classes.push(m[1]));
+                    
+                    [...scriptText.matchAll(/querySelector(?:All)?\(['"]#([^'"]+)['"]\)/g)].forEach(m => ids.push(m[1]));
+                    [...scriptText.matchAll(/getElementById\(['"]([^'"]+)['"]\)/g)].forEach(m => ids.push(m[1]));
+
+                    // 2. 찾아낸 이름(클래스)대로 렌더링 존에 미리 빈 상자를 깔아줍니다.
+                    [...new Set(classes)].forEach(cls => {
+                        let div = document.createElement('div');
+                        div.className = cls;
+                        div.style.width = "100%";
+                        renderZone.appendChild(div);
+                    });
+
+                    // 3. 찾아낸 이름(ID)대로 렌더링 존에 미리 빈 상자를 깔아줍니다.
+                    [...new Set(ids)].forEach(id => {
+                        if(!document.getElementById(id)) {
+                            let div = document.createElement('div');
+                            div.id = id;
+                            div.style.width = "100%";
+                            renderZone.appendChild(div);
+                        }
+                    });
+
+                    // 기본 폴백 ID들 (만약을 대비해 추가)
+                    const fallbackIds = [hash + '-container', hash];
+                    fallbackIds.forEach(id => {
+                        if(!document.getElementById(id)) {
+                            let div = document.createElement('div');
+                            div.id = id;
+                            div.style.width = "100%";
+                            renderZone.appendChild(div);
+                        }
+                    });
+
+                    // 4. 완벽하게 무대가 세팅되었으니, 이제 스크립트를 진짜로 실행합니다.
+                    const script = document.createElement('script');
+                    script.textContent = scriptText; // 읽어온 코드를 그대로 삽입
+                    script.className = 'dynamic-injected-script';
+                    renderZone.appendChild(script);
+
+                    // 마무리 원상복구
+                    document.write = originalWrite;
+                    document.writeln = originalWriteln;
+                })
+                .catch(err => {
+                    document.write = originalWrite;
+                    document.writeln = originalWriteln;
+                    renderZone.innerHTML += `<div style="padding:20px; color:#d9534f; text-align:center; font-weight:bold;">오류: 스크립트 경로(${fullPath})에서 파일을 불러올 수 없습니다. 경로 또는 파일명을 확인하세요.</div>`;
+                });
         }
 
         window.addEventListener('hashchange', loadTemplateByHash);
