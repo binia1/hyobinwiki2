@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="이미지/효빈위키아이콘.webp">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>센고쿠 유노 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        :root { 
+            /* 상단바 및 검색창 배경색 무조건 #7777AA */
+            --wiki-nav: #7777AA; 
+            
+            /* 모든 헤더 및 항목열 배경색 (유노 퍼스널 컬러 - 심홍색) */
+            --wiki-header: #ff6688;
+            --wiki-header-text: #ffffff; 
+            
+            /* 테마 컬러 */
+            --wiki-main: #ff6688; 
+            --wiki-point: #e64d70; /* 가독성과 대비를 위한 약간 짙은 심홍색 */
+            
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #F9F9FA; 
+            --wiki-link: #0022AA; 
+        }
+
+        [data-theme='dark'] { 
+            --wiki-nav: #555588;
+            --wiki-header: #e64d70; /* 다크모드용 약간 짙은 심홍색 */
+            --wiki-header-text: #ffffff;
+            --wiki-border: #444; 
+            --wiki-bg: #121212; 
+            --wiki-text: #eeeeee; 
+            --wiki-gray-bg: #F9F9FA; 
+            --wiki-link: #ff99bb; 
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; margin: 0; }
+        .wiki-container { max-width: 1152px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); display: flex; flex-direction: column; }
+
+        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: auto !important; }
+        th { background-color: var(--wiki-header) !important; color: var(--wiki-header-text) !important; font-weight: bold; border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        td { border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; }
+        
+        .item-label { background-color: var(--wiki-header) !important; color: var(--wiki-header-text) !important; font-weight: bold; width: 120px; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 2px solid var(--wiki-point); padding-bottom: 10px; }
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-point); }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: var(--wiki-point); border-left: 4px solid var(--wiki-point); padding-left: 12px; }
+        h4 { font-size: 1.15rem !important; font-weight: bold !important; margin-top: 1.2rem; margin-bottom: 0.5rem; }
+
+        /* 인포박스 */
+        .infobox { border: 2px solid var(--wiki-point); background-color: var(--wiki-gray-bg); width: 100%; max-width: 380px; font-size: 0.82rem; margin-bottom: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-top-label { background-color: var(--wiki-header); color: var(--wiki-header-text); padding: 5px; text-align: center; font-weight: bold; }
+        .infobox-title-row { display: flex; border-bottom: 1px solid var(--wiki-border); background: #fff; color: #000; align-items: center; }
+        [data-theme='dark'] .infobox-title-row { background: #2b2d31; color: #fff; }
+        .infobox-logo { width: 100%; border-bottom: 1px solid var(--wiki-border); display: flex; align-items: center; justify-content: center; padding: 10px; background: #fff; overflow: hidden; max-height: 380px; }
+        .infobox-logo img { width: 100%; height: auto; object-fit: contain; }
+        .infobox-name { flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 10px; background-color: var(--wiki-gray-bg); }
+        
+        .infobox th { background-color: var(--wiki-header) !important; color: var(--wiki-header-text) !important; width: 110px; text-align: left; padding: 5px 8px; font-size: 0.75rem; }
+        .infobox td { padding: 5px 8px; text-align: left; }
+
+        nav { background-color: var(--wiki-nav) !important; }
+
+        .wiki-btn-group { display: flex; background: #fff; border: 1px solid var(--wiki-border); border-radius: 4px; overflow: hidden; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-tool-btn.active { background-color: var(--wiki-header); color: var(--wiki-header-text) !important; font-weight: bold; }
+
+        /* 인용구 박스 */
+        .quote-box { border-left: 4px solid var(--wiki-point); background-color: #ffeef2; padding: 10px 15px; margin: 10px 0; color: #555; font-weight: bold; border-radius: 0 8px 8px 0; }
+        [data-theme='dark'] .quote-box { background-color: #331a22; color: #ccc; }
+
+        /* 하이라이트 박스 (유노 효빈시 천석동 밈 전용) */
+        .eve-box { border: 2px solid var(--wiki-point); background-color: #ffeef2; color: #333; padding: 15px; border-radius: 8px; margin-top: 10px; font-size: 0.95rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
+        .eve-box::before { content: "🎧"; position: absolute; top: -14px; left: 10px; font-size: 24px; background: #fff; padding: 0 5px; }
+        [data-theme='dark'] .eve-box { background-color: #331a22; color: #eee; }
+        [data-theme='dark'] .eve-box::before { background: #121212; }
+        
+        [data-theme='dark'] .wiki-btn-group { background: #2b2d31; }
+        [data-theme='dark'] .infobox-logo { background: #2b2d31; }
+
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        
+        /* 가독성 패치: 카테고리 박스 및 목차 박스 다크모드 대응 */
+        .category-box, #toc-box { background-color: var(--wiki-gray-bg); border-color: var(--wiki-border); }
+        [data-theme='dark'] .category-box, [data-theme='dark'] #toc-box { background-color: #2b2d31 !important; border-color: #444 !important; color: #e5e7eb !important; }
+
+        /* [각주 툴팁 스타일] */
+        .wiki-fn { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; font-size: 0.8em; vertical-align: super; }
+        .wiki-tooltip { position: absolute; background: white; border: 1px solid var(--wiki-border); padding: 10px; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 9999; display: none; max-width: 320px; font-size: 0.85rem; line-height: 1.4; color: var(--wiki-text); word-break: keep-all; }
+        [data-theme='dark'] .wiki-tooltip { background: #2b2d31; border-color: #444; color: #eee; }
+        
+        del { color: #aaa; text-decoration: line-through; }
+        [data-theme='dark'] del { color: #777; }
+        
+        .eve-text { color: var(--wiki-point); font-weight: bold; }
+        .script-box { background-color: #f0f0f0; border-left: 4px solid var(--wiki-point); padding: 10px; margin: 10px 0; font-size: 0.85rem; white-space: pre-wrap; }
+        [data-theme='dark'] .script-box { background-color: #2b2d31; border-color: var(--wiki-point); color: #ddd; }
+
+        .wiki-table tbody tr:nth-child(even) { background-color: var(--wiki-gray-bg); }
+        .wiki-table tbody tr:nth-child(odd) { background-color: var(--wiki-bg); }
+        
+        details summary { cursor: pointer; font-weight: bold; color: var(--wiki-link); outline: none; }
+        
+        .youtube-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px; }
+        .youtube-item { border: 1px solid var(--wiki-border); border-radius: 6px; padding: 10px; background: var(--wiki-gray-bg); }
+        [data-theme='dark'] .youtube-item { background: #2b2d31; }
+
+        /* 로고 박스 스타일 추가 */
+        .nav-logo-box {
+            width: 30px; height: 30px; background: white; color: var(--wiki-nav);
+            border-radius: 4px; font-weight: 900; display: flex; align-items: center;
+            justify-content: center; font-size: 1.2rem;
+        }   
+    </style>
+    <script src="ad_logic.js"></script>
+    <link rel="stylesheet" href="wiki_font_standard.css">
+</head>        
+
+<body data-theme="light">
+    <div id="wiki-msg-box"></div>
+    <div id="wiki-tooltip-container" class="wiki-tooltip"></div>
+
+    <nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <div class="flex items-center gap-2">
+        <div class="nav-logo-box text-black">H</div>
+        <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white">HyobinWiki</a>
+        <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+            <a href="index.html" class="hover:underline font-bold text-white no-underline">대문</a>
+            <a href="최근_변경.html" class="hover:underline text-white no-underline">최근 변경</a>
+            <a href="최근_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
+        </div>
+    </div>
+    <div class="flex flex-col items-end gap-1">
+        <div class="flex items-center gap-2">
+            <div class="hidden lg:flex items-center gap-1 mr-2">
+                <a href="편집요청.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">편집요청</a>
+                <a href="최근_토론.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">토론</a>
+                <a href="역사.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">역사</a>
+                <a href="즐겨찾기.html" class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" title="즐겨찾기">★</a>
+                <a href="더보기.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1">더보기 <span class="text-[9px]">▼</span></a>
+            </div>
+            <input type="text" id="headerSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }">
+            <button onclick="handleSearch('headerSearchInput')" class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
+        </div>
+        <div class="flex gap-1" id="auth-buttons">
+            <button onclick="toggleModal('loginModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" id="btn-login">로그인</button>
+            <button onclick="toggleModal('settingsModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">설정</button>
+        </div>
+    </div>
+</nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="text-xs text-gray-500 dark:text-gray-400 text-right mb-2">최근 수정 시각: 2026-08-16 12:05:12</div>
+        
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="m-0 border-none p-0">센고쿠 유노</h1>
+            <div class="wiki-btn-group shadow-sm mb-4">
+                <a href="토론.html" class="wiki-tool-btn">토론</a>
+                <a href="수정.html" class="wiki-tool-btn">편집</a>
+                <a href="역사.html" class="wiki-tool-btn">역사</a>
+                <div class="px-3 py-1 text-[11px] cursor-pointer hover:bg-gray-100" onclick="showMsg('즐겨찾기에 추가됨')">★</div>
+            </div>
+        </div>
+
+        <!-- 분류 박스 -->
+        <div class="category-box border p-2 mb-4 text-xs rounded">
+            <span class="font-bold eve-text">분류:</span> 
+            <a href="2023년 데뷔.html" class="wiki-link">2023년 데뷔</a> |
+            <a href="일본어 버츄얼 유튜버.html" class="wiki-link">일본어 버츄얼 유튜버</a> |
+            <a href="일본의 여성 유튜버.html" class="wiki-link">일본의 여성 유튜버</a> |
+            <a href="BanG Dream!.html" class="wiki-link">BanG Dream!/등장인물</a> |
+            <a href="무겐다이 뮤타입.html" class="wiki-link">무겐다이 뮤타입</a> |
+            <a href="가나가와현 출신 인물.html" class="wiki-link">가나가와현 출신 인물</a> |
+            <a href="나무위키 뱅드림! 프로젝트.html" class="wiki-link">나무위키 뱅드림! 프로젝트</a> |
+            <a href="2023년 창조된 캐릭터.html" class="wiki-link">2023년 창조된 캐릭터</a> |
+            <a href="조유동.html" class="wiki-link">중구 조유동 천석동 명예동민</a>
+        </div>
+
+        <!-- 내비게이션 박스 삽입 위치 -->
+        <div class="no-autolink" id="bangdream-nav-zone">
+            <div id="bangdream-nav-container"></div>
+            <script src="assets/bangdream-nav.js"></script>
+            <script>
+                (function() {
+                    var checkExist = setInterval(function() {
+                        if (typeof renderBangdreamNav === 'function') {
+                            renderBangdreamNav('bangdream-nav-container');
+                            clearInterval(checkExist);
+                        }
+                    }, 10);
+                    setTimeout(function() { clearInterval(checkExist); }, 3000);
+                })();
+            </script>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4 flex-grow">
+            <!-- 목차 -->
+            <div id="toc-box" class="toc shrink-0 shadow-sm h-fit order-2 md:order-1 w-full md:w-auto border p-4 rounded">
+                <div class="text-center font-bold border-b border-gray-300 dark:border-gray-600 mb-2 pb-1">목차</div>
+                <ul class="text-sm list-none p-0 m-0 space-y-1">
+                    <li>1. <a href="#s-1" class="wiki-link">개요</a></li>
+                    <li>2. <a href="#s-2" class="wiki-link">특징</a>
+                        <ul class="pl-4 mt-1 space-y-1">
+                            <li>2.1. <a href="#s-2-1" class="wiki-link">비주얼</a></li>
+                            <li>2.2. <a href="#s-2-2" class="wiki-link">성격</a></li>
+                        </ul>
+                    </li>
+                    <li>3. <a href="#s-3" class="wiki-link eve-text">효빈광역시와의 관계 (조유동 천석동 유니버스)</a></li>
+                    <li>4. <a href="#s-4" class="wiki-link">다른 캐릭터와의 관계</a>
+                        <ul class="pl-4 mt-1 space-y-1">
+                            <li>4.1. <a href="#s-4-1" class="wiki-link">무겐다이 뮤타입</a></li>
+                            <li>4.2. <a href="#s-4-2" class="wiki-link">커플링</a></li>
+                        </ul>
+                    </li>
+                    <li>5. <a href="#s-5" class="wiki-link">호칭</a></li>
+                    <li>6. <a href="#s-6" class="wiki-link">음악</a>
+                        <ul class="pl-4 mt-1 space-y-1">
+                            <li>6.1. <a href="#s-6-1" class="wiki-link">오리지널 곡</a></li>
+                            <li>6.2. <a href="#s-6-2" class="wiki-link">커버곡</a></li>
+                            <li>6.3. <a href="#s-6-3" class="wiki-link">Remix</a></li>
+                        </ul>
+                    </li>
+                    <li>7. <a href="#s-7" class="wiki-link">매체별 행적</a>
+                        <ul class="pl-4 mt-1 space-y-1">
+                            <li>7.1. <a href="#s-7-1" class="wiki-link">방송 일화</a></li>
+                            <li>7.2. <a href="#s-7-2" class="wiki-link">애니메이션</a></li>
+                            <li>7.3. <a href="#s-7-3" class="wiki-link">뱅드림! 아워 노트</a></li>
+                        </ul>
+                    </li>
+                    <li>8. <a href="#s-8" class="wiki-link">기타</a></li>
+                    <li>9. <a href="#s-9" class="wiki-link">각주</a></li>
+                </ul>
+            </div>
+
+            <!-- 인포박스 -->
+            <aside class="infobox shrink-0 shadow-sm rounded order-1 md:order-2">
+                <div class="infobox-top-label">프로필</div>
+                <div class="infobox-logo">
+                    <img src="이미지/아워노츠 센고쿠 유노.webp" alt="센고쿠 유노 이미지" onerror="this.parentNode.innerHTML='<div style=\'padding: 50px; text-align: center; color: #888;\'><br><span style=\'font-size: 10px;\' class=\'dark:text-gray-400\'>이미지/아워노츠 센고쿠 유노.webp</span></div>'">
+                </div>
+                <div class="infobox-name">
+                    <div class="text-xl font-bold">센고쿠 유노</div>
+                    <div class="text-xs font-bold mt-1 text-gray-600 dark:text-gray-300">千石 ユノ | Sengoku Yuno</div>
+                </div>
+                <table class="wiki-table">
+                    <tr><th class="item-label">밴드</th><td><a href="무겐다이 뮤타입.html" class="wiki-link font-bold" style="color: var(--wiki-point);">무겐다이 뮤타입</a></td></tr>
+                    <tr><th class="item-label">파트</th><td>DJ & 매니퓰레이터</td></tr>
+                    <tr><th class="item-label">사용 악기</th><td><a href="파이오니아.html" class="wiki-link">Pioneer</a> DJ XDJ-XZ<br><a href="Novation.html" class="wiki-link">Novation</a> <a href="Novation Launchpad#s-3.2.2.html" class="wiki-link">Launchpad Pro MK3</a></td></tr>
+                    <tr><th class="item-label" rowspan="2">학적</th><td><span class="text-xs">학교:</span> 불명</td></tr>
+                    <tr><td><span class="text-xs">학년/반:</span> 불명</td></tr>
+                    <tr><th class="item-label">생일</th><td>11월 4일 (전갈자리)</td></tr>
+                    <tr><th class="item-label">신장</th><td>151cm</td></tr>
+                    <tr><th class="item-label">좋아하는 음식</th><td>화이트 초콜릿, 에너지 드링크</td></tr>
+                    <tr><th class="item-label">취미</th><td>게임</td></tr>
+                    <tr><th class="item-label">이미지 컬러</th><td><span style="color:#ff6688; font-weight:bold; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">✦</span> 심홍색 (#ff6688)</td></tr>
+                    <tr><th class="item-label">효빈시 한정 직함</th><td class="text-xs"><span class="eve-text">천석동의 귀환자(?)</span><br><strong>중구 조유동 명예동민</strong></td></tr>
+                </table>
+            </aside>
+        </div>
+
+        <h2 id="s-1">1. 개요</h2>
+
+        <div class="my-6 flex flex-col items-center">
+            <iframe width="650" height="365" src="https://www.youtube.com/embed/krgBzDi2x1I" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="rounded shadow-md border border-gray-300"></iframe>
+            <div class="bg-[var(--wiki-main)] text-[var(--wiki-header-text)] font-bold w-[650px] text-center p-2 rounded-b shadow-md">무겐다이 뮤타입 캐릭터 CM</div>
+        </div>
+
+        <div class="quote-box text-center text-lg">
+            무겐다이 뮤타입의 DJ & 매니퓰레이터 담당
+        </div>
+        <div class="script-box">
+            무겐다이 뮤타입의 나른한 DJ & 매니퓰레이터이다.<br>유메미타의 음악의 중심을 잡으며 밴드 사운 전체를 조율한다.<br>집 밖으로 나가지 않는 히키코모리로, 사람을 대할 때에는 쿨하고 덤덤하지만 실은 정이 깊은 구석도 있다. <span class="text-xs text-gray-500">(뱅드림! 아워 노트)</span><br><br>
+            화이트 초콜릿과 에너지 드링크가 일상의 단짝. 인기 작곡가로서 많은 의뢰를 받고 있는, 쿨한 DJ & Mp.. 에너지 절약형에 신랄하고, 밴드 활동은 일처럼 받아들이는 자세를 보이지만, 음악에 대해선 타협이 없다. 아라레의 노래와 리츠의 결단을 정면으로 인정하고, 귀찮아하면서도 동료를 돕는, 뮤타입의 냉정한 버팀목. <span class="text-xs text-gray-500">(BanG Dream! YUME∞MITA)</span>
+        </div>
+        <p class="mt-4"><a href="BanG Dream!.html" class="wiki-link">BanG Dream!</a>의 등장인물. <a href="무겐다이 뮤타입.html" class="wiki-link">무겐다이 뮤타입</a>의 DJ, 매니퓰레이터 담당.</p>
+
+        <h2 id="s-2">2. 특징</h2>
+        <p>애니 공개 이전에도 보통 집 안을 선호하는 모습이 종종 묘사되었고 애니메이션 예고 PV에서 다소 개그스러운 모습으로 길거리에 쓰러져 있던 것을 보아 저질체력으로 보인다.</p>
+
+        <h3 id="s-2-1">2.1. 비주얼</h3>
+        <div class="flex flex-col md:flex-row gap-4 my-4 justify-center items-center">
+            <div class="border border-gray-300 rounded p-2 text-center bg-[var(--wiki-gray-bg)]">
+                <img src="이미지/mugendai_mewtype_yuno.png" alt="라이브 의상" class="w-64 h-auto object-contain mx-auto" onerror="this.parentNode.innerHTML='<div style=\'width:256px; height:300px; line-height:300px; text-align:center; color:#888;\'>이미지/mugendai_mewtype_yuno.png</div>'">
+                <div class="font-bold text-sm mt-2">라이브 의상 (버추얼 아바타)</div>
+            </div>
+            <div class="border border-gray-300 rounded p-2 text-center bg-[var(--wiki-gray-bg)]">
+                <img src="이미지/yuno_casual.webp" alt="사복 일러스트" class="w-64 h-auto object-contain mx-auto" onerror="this.parentNode.innerHTML='<div style=\'width:256px; height:300px; line-height:300px; text-align:center; color:#888;\'>이미지/yuno_casual.webp</div>'">
+                <div class="font-bold text-sm mt-2">사복 일러스트 (평상시 모습)</div>
+            </div>
+        </div>
+        <p>다른 멤버들은 버추얼 아바타(밴드 의상) 모습일 때 그라데이션 헤어가 되는 특징이 있는데, 유노는 멤버들과 달리 완전한 투톤 헤어로 바뀐다. 뱅드림 전체 시리즈를 통틀어 <a href="파레오(BanG Dream!).html" class="wiki-link">파레오</a>에 이은 두 번째 투톤 헤어 캐릭터이지만<a href="#fn-1" id="rfn-1" class="wiki-fn" data-note="fn-1">[1]</a>, 파레오와 마찬가지로 자연산은 아니며 핑크색 머리에 검은색이 더해진 스타일이다. 또한 <a href="바보털.html" class="wiki-link">바보털</a> 속성도 가지고 있는데, 라이브 의상일 때보다 평상시 모습일 때 더 많이 보인다.</p>
+        <p>라이브 의상일 때 머리를 묶지 않은 생머리, 평상시 모습일 때에는 뒷머리를 땋은 헤어스타일이라는 점에서 <a href="록(BanG Dream!).html" class="wiki-link">록</a>과 비슷하다.<a href="#fn-2" id="rfn-2" class="wiki-fn" data-note="fn-2">[2]</a></p>
+        <p>눈이 주로 도끼눈으로 묘사되며, 평상시에는 안경을 착용한다.<a href="#fn-3" id="rfn-3" class="wiki-fn" data-note="fn-3">[3]</a> <a href="야마토 마야.html" class="wiki-link">야마토 마야</a>, 록(아사히 롯카), 파레오(뉴바라 레오나), <a href="치하야 아논.html" class="wiki-link">치하야 아논</a><a href="#fn-4" id="rfn-4" class="wiki-fn" data-note="fn-4">[4]</a> 이후로 간만의 안경 착용자이다.</p>
+
+        <h3 id="s-2-2">2.2. 성격</h3>
+        <p>카테고리로써는 다루데레 쪽으로 봐야 하는데, 유노를 뱅드림 다루데레의 대표격인 <a href="오쿠사와 미사키.html" class="wiki-link">미사키</a>랑 동시에 놓고 비교해 봐도 오히려 미사키가 훨씬 의욕적으로 보일 정도로 의욕 없음의 상위호환 격이다. 쿨데레의 사이까지 놓고 봐도 무방한 정도.</p>
+        <p>사실 헬로해피에 관여하기 전의 다루는 기본으로 먹고 들어가던 극초반 미사키조차도 그냥 어이없는 소리를 들으면 쓴웃음이라도 짓는 편이었던 반면, 유노는 웃는 모습을 진짜 드러내질 않는다. 농담반으로 대인관계에서 <a href="타카마츠 토모리.html" class="wiki-link">토모리</a>가 없는 <a href="시이나 타키.html" class="wiki-link">타키</a> 수준.</p>
+        <p>다루데레 특징이 으레 그렇듯 매사에 의욕이 없지만 상냥한 건 확실하다. 작중 노노카가 쓸데없는 개인 셀카를 대량으로 투척해대며 귀찮게 해도 그냥 무시하면 되거나 할 텐데도 답변을 안 해준 적이 없다. 그것도 확인하자마자 바로. <del>AI복붙 딸깍이지만</del></p>
+        <p>병약속성급까진 아니더라도 체력이 매우 부족한 편. 당초부터가 집에서만 활동하는 편이며 3화에서 밥도 안 챙기고 밖에 나간 경우라면 도중 길거리에 쓰러져 버리는 저질급 체력을 선보인다. 똑같이 인도어파 쪽인 <a href="이치가야 아리사.html" class="wiki-link">아리사</a>나 <a href="미나토 유키나.html" class="wiki-link">유키나</a>, <a href="츄츄(BanG Dream!).html" class="wiki-link">츄츄</a>조차도 뜀걸음 정도는 헥헥거리며 마무리 할 수나 있지, 과연 이 라인업과도 좋은 승부를 할 수 있을지부터가 미지수.</p>
+
+        <!-- 효빈광역시 유니버스 특별 추가 문단 -->
+        <h2 id="s-3">3. 효빈광역시와의 관계 (조유동 천석동 유니버스)</h2>
+        <div class="eve-box mb-5">
+            <div class="font-bold text-lg mb-2 border-b border-[#e64d70] pb-1">
+                💖 안천구 이십기동 대신 중구 조유동 천석동! '센고쿠(千石)'의 귀환!
+            </div>
+            <p class="text-sm">"이 원룸촌 월세는 얼마인가요? ...네? 애니메이션에서 밴드 탈퇴하고 여기로 귀농 온 거 아니냐고요?"<br><span class="text-xs text-gray-500 dark:text-gray-400">— <a href="조유동.html" class="wiki-link">조유동</a> 천석동2가 원룸촌에서 혼란에 빠진 내한 당시의 <a href="센고쿠 유노.html" class="wiki-link">센고쿠 유노</a></span></p>
+        </div>
+
+        <p>효빈광역시 <a href="중구(효빈).html" class="wiki-link">중구</a> <strong><a href="조유동.html" class="wiki-link">조유동</a></strong> 관할 법정동 중에는 <strong>천석동1가, 천석동2가, 천석동3가</strong>가 있다. 기가 막히게도 이 '천석(千石)'이라는 지명은 일본의 성씨인 '센고쿠'와 한자 표기가 완벽하게 동일하다. 마침 무겐다이 뮤타입의 DJ 센고쿠 유노의 성씨 한자도 천석(千石)이었기에, 천석동 일대는 <a href="토치만호텔.html" class="wiki-link">토치만호텔</a>과 함께 중구의 양대 서브컬처 성지로 급부상했다.</p>
+        
+        <p>팬들은 쾌적한 초품아 주거지인 <strong>천석동1가</strong> 천석초등학교 교문 앞에서 심홍색(#ff6688) 굿즈를 들고 인증샷을 남기는 것을 기본 소양으로 삼고 있다. 그러나 진짜 밈의 폭발은 2026년 8월 8일, 유노가 <strong><a href="김치쿠라.html" class="wiki-link">KIMCHIKURA Fes '26</a></strong>에 참여하기 위해 무겐다이 뮤타입 멤버 중 최초로 <strong>나 홀로 <a href="내한.html" class="wiki-link">내한</a></strong>을 하면서 시작되었다.</p>
+
+        <p class="mt-4 mb-4">하필이면 애니메이션 전개상 유노가 <strong>"밴드를 탈퇴하겠다"</strong>는 폭탄 선언을 한 직후에 솔로로 한국에 온 터라, 뱅드림 팬덤은 <strong>"유노가 밴드 탈퇴하고 본가인 천석동으로 귀농하러 갔다"</strong>며 온갖 개드립을 쏟아냈다. 가성비 좋은 원룸촌이 밀집한 <strong>천석동2가</strong>를 두고 "유노가 자취방 구하러 내한했다"고 수군대거나, 10년째 재개발 떡밥만 도는 <strong>천석동3가</strong>를 보며 "우리 유노가 내한해서 천석3구역 재개발 조합장 하려는 거 아니냐"는 실없는 농담이 정설(?)처럼 굳어졌다.</p>
+        
+        <p>게다가 유노가 실제 방송에서 <strong>"응, 밴드 그만두고 한국 갔다 왔어"</strong>라며 팬들의 드립에 무심하게 맞장구를 치면서 이 '탈퇴-천석동 내한 밈'은 반쯤 공식 설정으로 승격해 버렸다. 덕분에 지금도 조유동 천석동 일대 골목에서는 심홍색 굿즈를 주렁주렁 매단 오타쿠들이 "유노의 자취방"을 상상하며 배회하는 진풍경을 심심치 않게 볼 수 있다.</p>
+
+
+        <h2 id="s-4">4. 다른 캐릭터와의 관계</h2>
+        <h3 id="s-4-1">4.1. 무겐다이 뮤타입</h3>
+        <ul class="list-disc pl-5 mt-2 space-y-2 text-sm">
+            <li><strong><a href="미네츠키 리츠.html" class="wiki-link">미네츠키 리츠</a>:</strong> TVA 1화 막판에 아라레와 리츠가 우연히 만났을 때 아라레의 큰 목소리를 듣고 잠깐 둘을 봤으며, 3화에서 밥도 안 먹고 나갔다가 쓰러져 있는 상태를 리츠가 발견하면서 처음 접점이 생겼다. 1화에서 있었던 일을 떠올리곤 리츠가 아라레<a href="#fn-5" id="rfn-5" class="wiki-fn" data-note="fn-5">[5]</a>와의 관계에 대해 고민이 있다는 것을 되레짐작하며 상담을 해줬다.</li>
+        </ul>
+
+        <h3 id="s-4-2">4.2. 커플링</h3>
+        <p class="text-sm text-gray-600 pl-4 border-l-2 border-gray-300 my-2">내용 추가가 필요합니다.</p>
+
+        <h2 id="s-5">5. 호칭</h2>
+        <div class="overflow-x-auto mt-4">
+            <table class="wiki-table text-sm">
+                <thead>
+                    <tr>
+                        <th class="w-1/4">인물</th>
+                        <th class="w-2/4">부르는 호칭</th>
+                        <th class="w-1/4">불리는 호칭</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="font-bold bg-[var(--wiki-header)] text-center text-[var(--wiki-header-text)]">1인칭</td><td colspan="2" class="text-center">나(あたし)</td></tr>
+                    <tr><td class="font-bold">나카마치 아라레</td><td>나카마치 씨(仲町さん)<br>아라레(あられ)</td><td>유노 씨 쨩(ユノさんちゃん)<br>유노치(ユノち)</td></tr>
+                    <tr><td class="font-bold">미야나가 노노카</td><td>미야나가 씨(宮永さん)<br>노노카(ののか)</td><td>유노 쨩(ユノちゃん)</td></tr>
+                    <tr><td class="font-bold">미네츠키 리츠</td><td>리츠(律)</td><td>유노 씨(ユノさん)<br>유노 쨩(ユノちゃん)</td></tr>
+                    <tr><td class="font-bold">후지 미야코</td><td>후지 씨(藤さん)<br>미야코(都子)</td><td>센고쿠 씨(千石さん)<br>유노 쨩(ユノちゃん)</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 id="s-6">6. 음악</h2>
+        
+        <h3 id="s-6-1">6.1. 오리지널 곡</h3>
+        <p class="font-bold">YoU kNOw the overture (feat. 나나히라)</p>
+        <p class="text-sm text-gray-600">상세 내용은 해당 문서를 참고하십시오.</p>
+
+        <h3 id="s-6-2">6.2. 커버곡</h3>
+        <div class="youtube-grid">
+            <!-- 1 -->
+            <div class="youtube-item flex flex-col items-center">
+                <h4 class="font-bold text-center text-sm mb-2 border-b w-full pb-1">CH4NGE</h4>
+                <iframe width="100%" height="200" src="https://www.youtube.com/embed/ivfYQxQBiXQ" frameborder="0" allowfullscreen class="rounded shadow-sm"></iframe>
+                <div class="w-full text-xs mt-2 space-y-1">
+                    <p><span class="font-bold text-gray-500">가수:</span> 센고쿠 유노</p>
+                </div>
+            </div>
+            <!-- 2 -->
+            <div class="youtube-item flex flex-col items-center">
+                <h4 class="font-bold text-center text-sm mb-2 border-b w-full pb-1">끊임없는 남빛</h4>
+                <iframe width="100%" height="200" src="https://www.youtube.com/embed/bLIW2klD4Ms" frameborder="0" allowfullscreen class="rounded shadow-sm"></iframe>
+                <div class="w-full text-xs mt-2 space-y-1">
+                    <p><span class="font-bold text-gray-500">가수:</span> 센고쿠 유노</p>
+                </div>
+            </div>
+            <!-- 3 -->
+            <div class="youtube-item flex flex-col items-center">
+                <h4 class="font-bold text-center text-sm mb-2 border-b w-full pb-1">쓰다듬지 마</h4>
+                <iframe width="100%" height="200" src="https://www.youtube.com/embed/tZzToEEZjgo" frameborder="0" allowfullscreen class="rounded shadow-sm"></iframe>
+                <div class="w-full text-xs mt-2 space-y-1">
+                    <p><span class="font-bold text-gray-500">가수:</span> 센고쿠 유노</p>
+                </div>
+            </div>
+            <!-- 4 -->
+            <div class="youtube-item flex flex-col items-center">
+                <h4 class="font-bold text-center text-sm mb-2 border-b w-full pb-1">무엇을 해도 잘 되지 않아</h4>
+                <iframe width="100%" height="200" src="https://www.youtube.com/embed/9Ba8G_i4dAg" frameborder="0" allowfullscreen class="rounded shadow-sm"></iframe>
+                <div class="w-full text-xs mt-2 space-y-1">
+                    <p><span class="font-bold text-gray-500">가수:</span> 센고쿠 유노</p>
+                </div>
+            </div>
+            <!-- 5 -->
+            <div class="youtube-item flex flex-col items-center">
+                <h4 class="font-bold text-center text-sm mb-2 border-b w-full pb-1">마셜 맥시마이저</h4>
+                <iframe width="100%" height="200" src="https://www.youtube.com/embed/Gc7vzpnIYSU" frameborder="0" allowfullscreen class="rounded shadow-sm"></iframe>
+                <div class="w-full text-xs mt-2 space-y-1">
+                    <p><span class="font-bold text-gray-500">가수:</span> 센고쿠 유노</p>
+                </div>
+            </div>
+            <!-- 6 -->
+            <div class="youtube-item flex flex-col items-center">
+                <h4 class="font-bold text-center text-sm mb-2 border-b w-full pb-1">ZEAL of proud</h4>
+                <iframe width="100%" height="200" src="https://www.youtube.com/embed/4MPXhnbf29o" frameborder="0" allowfullscreen class="rounded shadow-sm"></iframe>
+                <div class="w-full text-xs mt-2 space-y-1">
+                    <p><span class="font-bold text-gray-500">가수:</span> 센고쿠 유노</p>
+                </div>
+            </div>
+            <!-- 7 -->
+            <div class="youtube-item flex flex-col items-center">
+                <h4 class="font-bold text-center text-sm mb-2 border-b w-full pb-1">되풀이 한 방울</h4>
+                <iframe width="100%" height="200" src="https://www.youtube.com/embed/xjGwcPHPAo8" frameborder="0" allowfullscreen class="rounded shadow-sm"></iframe>
+                <div class="w-full text-xs mt-2 space-y-1">
+                    <p><span class="font-bold text-gray-500">가수:</span> 센고쿠 유노</p>
+                </div>
+            </div>
+        </div>
+
+        <h3 id="s-6-3" class="mt-8">6.3. Remix</h3>
+        <div class="youtube-grid">
+            <!-- 1 -->
+            <div class="youtube-item flex flex-col items-center">
+                <h4 class="font-bold text-center text-sm mb-2 border-b w-full pb-1">무한 마이 월드 -YUNO Remix-</h4>
+                <iframe width="100%" height="200" src="https://www.youtube.com/embed/66BasavIsHE" frameborder="0" allowfullscreen class="rounded shadow-sm"></iframe>
+            </div>
+            <!-- 2 -->
+            <div class="youtube-item flex flex-col items-center">
+                <h4 class="font-bold text-center text-sm mb-2 border-b w-full pb-1">빅 마우스 -YUNO Remix-</h4>
+                <iframe width="100%" height="200" src="https://www.youtube.com/embed/IDkVbz6V88E" frameborder="0" allowfullscreen class="rounded shadow-sm"></iframe>
+            </div>
+        </div>
+
+        <h2 id="s-7">7. 매체별 행적</h2>
+        <h3 id="s-7-1">7.1. 방송 일화</h3>
+        <ul class="list-disc pl-5 mt-2 space-y-2 text-sm">
+            <li>작중에서 묘사되는 캐릭터의 성격과 생방송에서 보여주는 성격이 전혀 다르다. 작품 내에서는 드라이한 이미지를 보여줘 AI라는 말까지 듣지만 방송 중에는 밝고 유머러스한 성격을 보여주며 수다가 많은 스타일이다. 콘텐츠도 잡담과 토크 위주로, 애니메이션에서 한 쿨하고 차가운 대사에 대해서 "전 그런 말 안 합니다." 라고 하기도.</li>
+            <li>유노의 방송 중 모습이 애니메이션의 <a href="나카마치 아라레.html" class="wiki-link">나카마치 아라레</a>와 더 비슷한 것 같다는 이야기도 나온다. 애니메이션에서 나오는 아라레의 속사포 토크는 오히려 아라레 방송이 아닌 이쪽에서 들을 수 있다. 거의 랩하는 수준. 살짝 <a href="멘헤라.html" class="wiki-link">멘헤라</a> 기운이 있다고 본인이 인정했으며 그런 부분도 애니메이션의 아라레와 비슷하다.</li>
+            <li>말솜씨가 좋아 단체 방송의 MC를 맡을 때가 많다.</li>
+            <li>생활력이 거의 제로. 집안 일도 못하고 잘 챙겨먹지도 않아서 가족과 멤버들이 항상 "살아있니?" 라며 물어본다고. 뭔가를 차려먹고 설거지하는 게 귀찮아서 간편식을 선호한다고 한다. 식사를 잘 챙겨먹지 않아서 평균 하루 섭취 칼로리가 1000 이하이다.<a href="#fn-6" id="rfn-6" class="wiki-fn" data-note="fn-6">[6]</a><a href="#fn-7" id="rfn-7" class="wiki-fn" data-note="fn-7">[7]</a></li>
+            <li>단 음식, 음료를 좋아하며, <a href="고양이 혀.html" class="wiki-link">고양이 혀</a>라 매운 음식, 뜨거운 음식은 전혀 먹지 못한다고 한다.</li>
+            <li>집에서 노는 걸 정말 좋아해서 일을 시키거나 누가 나가라고 하지 않는 이상 절대 집에서 나가지 않는다고 한다. 이는 애니메이션의 설정에도 반영되었다.</li>
+            <li>뮤타입 멤버 중 운동을 싫어하는 유일한 멤버이며 가장 체력이 안 좋다고 한다.</li>
+            <li><a href="왼손잡이.html" class="wiki-link">왼손잡이</a>이며 평소 왼손만 써서 왼손 근력은 평균 이상이며 악력도 32나 된다고 한다. 그런데 오른손은 퇴화해서 힘이 전혀 없으며 악력도 12라고.</li>
+            <li>방송 콘텐츠로서는 잘 다루지 않지만, 작사, 작곡, 편곡 전부 할 수 있다고 한다. 다만 프로급은 아니라 다른 분들이 다듬어주고 있다고. 직접 작곡, 편곡을 한 곡으로는 튜닝<a href="#fn-8" id="rfn-8" class="wiki-fn" data-note="fn-8">[8]</a>, Face The Next<a href="#fn-9" id="rfn-9" class="wiki-fn" data-note="fn-9">[9]</a>가 있다. <a href="뮤직 비디오.html" class="wiki-link">뮤직 비디오</a>의 <a href="연출.html" class="wiki-link">연출</a> 작업도 할 수 있다.</li>
+            <li>DJ와 전자 악기를 배운 건 데뷔 후가 처음으로 그 전에는 피아노를 16년<a href="#fn-10" id="rfn-10" class="wiki-fn" data-note="fn-10">[10]</a> 했으며, <a href="컴퓨터 음악.html" class="wiki-link">DTM</a> 소프트웨어를 다룰 수 있다고 한다. 기타도 좀 배웠지만<a href="#fn-11" id="rfn-11" class="wiki-fn" data-note="fn-11">[11]</a> 잘하는 건 아니라고 한다.</li>
+            <li>게임을 매우 좋아하며 장르를 가리지 않고 게임을 한다. 절대음감으로, <a href="리듬 게임.html" class="wiki-link">리듬 게임</a> 실력이 뛰어나다. <a href="FPS.html" class="wiki-link">FPS</a>도 좋아하지만 실력은 꽝.<a href="#fn-12" id="rfn-12" class="wiki-fn" data-note="fn-12">[12]</a>
+                <ul class="list-[circle] pl-5 mt-1 text-gray-600 dark:text-gray-400">
+                    <li>유일하게 싫어하는 장르는 <a href="공포 게임.html" class="wiki-link">공포 게임</a>. <a href="귀신.html" class="wiki-link">귀신</a>, <a href="벌레.html" class="wiki-link">벌레</a>를 매우 싫어해서 질색한다. 그런데 캐릭터 사망 장면을 볼 때는 무덤덤한 반응을 보인다. 예전부터 자신이 좋아하는 캐릭터는 대부분 죽어서 죽는 걸 봐도 "또 죽었네." 라는 생각밖에 안 든다고. '<a href="몽키 D. 루피.html" class="wiki-link">사람은 언젠가 죽어</a>'라는 말을 자주 한다.</li>
+                </ul>
+            </li>
+            <li><a href="TCG.html" class="wiki-link">TCG</a> 매니아이며 <a href="카드파이트!! 뱅가드.html" class="wiki-link">카드파이트!! 뱅가드</a>의 팬이다. 뱅드림과 같은 <a href="부시로드.html" class="wiki-link">부시로드</a> 계열이라서가 아니라 예전부터 꾸준히 좋아해왔다고. 다른 TCG 카드도 수집은 하는데 플레이까지 하는 건 뱅가드 정도라고 한다.</li>
+            <li><a href="화장품.html" class="wiki-link">코스메틱</a>, <a href="네일 아트.html" class="wiki-link">네일 아트</a> 매니아로 방송 콘텐츠로 네일 아트를 할 때가 있다.</li>
+            <li>만화, 애니메이션 팬으로 <a href="순정만화.html" class="wiki-link">순정만화</a>, <a href="소년만화.html" class="wiki-link">소년만화</a> 가리지 않고 본다. <a href="배틀만화.html" class="wiki-link">배틀만화</a>를 좋아하며 특히 <a href="주술회전.html" class="wiki-link">주술회전</a>, <a href="체인소 맨.html" class="wiki-link">체인소 맨</a>, <a href="귀멸의 칼날.html" class="wiki-link">귀멸의 칼날</a>, <a href="원피스(만화).html" class="wiki-link">원피스</a>를 좋아한다고 한다.</li>
+            <li><a href="Fate 시리즈.html" class="wiki-link">Fate 시리즈</a> 팬으로 애니메이션으로 나온 건 전부 봤다고 한다. <a href="호리미야(TVA).html" class="wiki-link">호리미야</a>, <a href="소드 아트 온라인/애니메이션.html" class="wiki-link">소드 아트 온라인</a>은 너무 좋아해서 수십 번은 반복해서 돌려봤다고 한다. <a href="프리큐어 시리즈.html" class="wiki-link">프리큐어 시리즈</a>도 좋아해서 대부분 봤다고 한다.<a href="#fn-13" id="rfn-13" class="wiki-fn" data-note="fn-13">[13]</a></li>
+            <li>성우 <a href="우치다 마아야.html" class="wiki-link">우치다 마아야</a>, <a href="우치다 유우마.html" class="wiki-link">우치다 유우마</a> 남매, <a href="에구치 타쿠야.html" class="wiki-link">에구치 타쿠야</a>, <a href="토마츠 하루카.html" class="wiki-link">토마츠 하루카</a>의 팬이다.
+                <ul class="list-[circle] pl-5 mt-1 text-gray-600 dark:text-gray-400">
+                    <li>우치다 마아야<a href="#fn-14" id="rfn-14" class="wiki-fn" data-note="fn-14">[14]</a>와 토마츠 하루카가 주연으로 나오는 작품은 대부분 다 봤다고 보면 된다고 한다. <a href="달링 인 더 프랑키스.html" class="wiki-link">달링 인 더 프랑키스</a>도 자신은 감동적으로 봤다고 한다.</li>
+                </ul>
+            </li>
+            <li>스야。(すや。)라는 친구가 있으며 유노의 유튜브 썸네일은 대부분 스야。가 제작한다. 가끔씩 로고나 다른 뮤타입 멤버들의 썸네일을 제작하기도 한다.</li>
+            <li>목욕을 너무 좋아해서 목욕하면서 스마트폰을 보며, 목욕하면서 식사도 한다고 한다.</li>
+        </ul>
+
+        <h3 id="s-7-2" class="mt-4">7.2. 애니메이션</h3>
+        <p class="font-bold mb-1">BanG Dream! YUME∞MITA</p>
+        <p class="text-sm"><strong>1화</strong><br>
+            뮤타입 첫 모임때 등장. 이쪽도 다른 멤버들과 마찬가지로 계약 당시에 <a href="계약서.html" class="wiki-link">계약서</a>를 제대로 읽지 않은건지 매니저가 뮤타입이 밴드 활동이라고 하자 적잖이 당황하고 우리말고도 이미 밴드는 많다며 회의적인 의견을 비춘다. 다음 모임의 밴드 연습시간엔 유노의 연습용 음원을 통해 모두가 연습한다. 음원을 들은 노노카가 이전에도 유노의 곡을 들어보고 연습해봤다며 말하지만 유노는 다소 떨떠름한 반응을 보인다. 이후 아라레가 유노의 이력에 대해 궁금하며 구글링을 하며 나온 정보로는 과거 유노는 밴드 활동을 하였지만 2년 전에 해산하였고, 작곡 활동을 많이 해서 아라레가 해봤던 게임의 곡도 작곡한 것을 알게된다. 아라레가 신나서 유노에게 그 곡에 대해 엄청나게 이야기 하지만 유노는 당황하며 <a href="그게 뭔데 씹덕아.html" class="wiki-link">무슨 얘기 하는거냐며</a> 무시해버린다. 에피소드 막바지엔 멀리서 아라레와 리츠가 마주쳐 아라레가 당황하여 억지로 수다를 떨다 도망치는 것을 보게된다.</p>
+        <p class="text-sm mt-2"><strong>3화</strong><br>
+            아라레가 연습시간때마다 노래를 부르지 않자 밴드의 보컬이 그러면 밴드의 활동이 힘들거라고 매니저에게 이야기한다. 그 와중에 어처구니없게도 노노카에 의해 <a href="인공지능.html" class="wiki-link">AI</a>로 오해받는다. 노노카가 메세지를 보낼 때 광속으로 장문의 답변을 하는데 그 문장이 너무나도 인공적이고 하나하나 쳐서 보냈다기엔 너무 장문이라 노노카는 "유노는 고성능 <a href="음악 인공지능.html" class="wiki-link">작곡 AI</a>가 분명하다." 라고 주장했다.<a href="#fn-15" id="rfn-15" class="wiki-fn" data-note="fn-15">[15]</a> 그러나 실은 노노카의 메세지를 받고는 답변하기 귀찮다고 AI한테 적당한 답변을 대신 써달라고 부탁한 뒤 나오는 답변을 그대로 <a href="복붙.html" class="wiki-link">복붙</a>해서 보냈기 때문에 생긴 오해이다. 진지하게 오해 받은건지 다음 합주때에 노노카에 의해 <a href="reCAPTCHA.html" class="wiki-link">CAPTCHA</a> 인증을 요구받게 된다.<br><br>
+            그 후 음악 작업을 할때 <a href="DAW.html" class="wiki-link">DAW</a>가 먹통이 되어 문제를 해결하려 하지만 필요한 케이블이 없어서 아키하바라로 외출하게 된다. 그러나 <a href="영양실조.html" class="wiki-link">제대로 된 식사를 하지 않아</a> 길거리에 쓰러지게 되고 이때 <a href="미네츠키 리츠.html" class="wiki-link">클레마티스</a>를 만나게 된다. 쓰러진 유노가 건내준 1만엔으로 리츠가 음식을 사고 공원에서 그것을 먹으며 리츠의 고민<a href="#fn-16" id="rfn-16" class="wiki-fn" data-note="fn-16">[16]</a>을 들어주는데 유노는 끝난것과 끝내지 않고 싶은 것은 다른거라며 원하는데로 하라고 조언해준다.<a href="#fn-17" id="rfn-17" class="wiki-fn" data-note="fn-17">[17]</a> 하지만 이때 서로 통성명을 안해서 리츠가 사온 음식중 하나인 <a href="만화고기.html" class="wiki-link">뼈고기</a>에 착안하여 '뼈고기님'이라고 부르게 된다. 이후 합주 시간때 노노카는 여전히 유노와 유노 곡들에 대해 팬심을 드러내지만 유노도 여전히 석연찮은 반응을 보인다.</p>
+        <p class="text-sm mt-2"><strong>4화</strong><br>
+            앞서 1화에서 멀리서 보았던 아라레와 리츠의 만남과 3화에서의 리츠의 고민 이야기, 둘 사이의 연관성을 떠올려 아라레에게 잠깐 이야기 하자고 메세지를 보내지만 이내 괜한 짓을 한다는 생각에 전송을 취소한다. 대신 아라레가 활동했던 라라라라 걸즈를 구글링 해보자 <a href="염상.html" class="wiki-link">인터넷에 올라와 있는 수많은 논란에</a> 적잖이 당황한다.</p>
+        <p class="text-sm mt-2"><strong>5화</strong><br>
+            클레마티스가 방송을 끄는걸 까먹고 <a href="나카마치 아라레.html" class="wiki-link">에레아</a>의 곡을 연주하는걸 보며 '사정이 있어도 정도가 있지'라며 리츠의 행동에 지나침을 느끼면서도 걱정한다.</p>
+        <p class="text-sm mt-2"><strong>6화</strong><br>
+            아라레가 리츠를 페어리 부케 행사에서 빼온 것으로 밴드에 피해를 끼친 것에 대해 계속해서 사과하자 하고싶은데로 했으니 됐다고 하며 아라레를 위로하고 진정 시키면서도, <a href="나비 효과.html" class="wiki-link">자신이 리츠에게 해준말이 뭔가 거대한 결과를 불러온 것같아</a> 내심 불안을 느낀다. 이후 리츠가 뮤타입에 합류하자 하고싶은데로 했으니 됐다며 다독인다. 그 후 미야코와 아라레가 리츠 합류건으로 잡음이 가득한 내외 상황을 라이브로 타개하자고 건의하자 시기가 너무 이르다며 반대한다.</p>
+        <p class="text-sm mt-2"><strong>7화</strong><br>
+            라이브를 반대했지만 라이브가 결국 성사되어 라이브 두 곡중 <a href="TearJerker.html" class="wiki-link">TearJerker</a>에서 비중있는 랩 파트를 담당한다. <del>금융치료가 좀 된 듯하다</del></p>
+        <p class="text-sm mt-2"><strong>8화</strong><br>
+            작품 중반이 넘어갈 때까지도 큰 비중이 없다가 8화에서 미야코가 노노카가 싫다는 발언을 하자 갑자기 나타나서는 밴드를 그만두겠다는 폭탄 발언을 한다. 미야코와 노노카의 갈등이 최고조에 달하는 와중에 자세한 앞뒤 사정 설명 없이 갑작스러운 발언을 내뱉다 보니 당황한 시청자들이 많은데, 이를 보아 유노가 과거에 이와 비슷한 트라우마가 있었던 게 아니냐고 추측되고 있다. 유노가 이러한 말을 한 이유는 9화부터 드러날 것으로 보인다.</p>
+        <p class="text-sm mt-2"><strong>9화</strong><br>
+            밴드를 그만두겠다고 하자마자 접속을 종료하면서 침대에 누우며 타이업 곡의 작사자가 'koharu'인 것을 보면서 어째서냐며 중얼거린다.<a href="#fn-18" id="rfn-18" class="wiki-fn" data-note="fn-18">[18]</a> 노노카 시점에서 따로 확인된 바로는 유노가 전에 있던 밴드와 관련된 인물임이 확인되었으며, 타이업 작곡은 밴드와는 별개로 일이니까 시작하려고 하다가 작사자의 가사 파일을 보자마자 어딘가로 뛰쳐나간다. 이후로는 노노카가 유노의 SNS 부계정의 게시글을 읽는 것으로만 상태가 나오면서 등장이 종료되었고, 10화 예고편에서 유노의 과거가 일분 나온 것으로 보아 여기서 유노의 이야기가 다뤄질 가능성이 매우 높다.</p>
+
+        <h3 id="s-7-3" class="mt-4">7.3. 뱅드림! 아워 노트</h3>
+        <p class="text-sm text-gray-500 pl-4 border-l-2">내용 추가가 필요합니다.</p>
+
+        <h2 id="s-8">8. 기타</h2>
+        <ul class="list-disc pl-5 mt-2 space-y-2 text-sm">
+            <li>캐스트가 <a href="가나가와현.html" class="wiki-link">가나가와현</a> 출신이다.</li>
+            <li><a href="레이야(BanG Dream!).html" class="wiki-link">레이야(와카나 레이)</a> 이후 정말 오랜만에 나온 이름이 가타카나인 캐릭터이다.<a href="#fn-19" id="rfn-19" class="wiki-fn" data-note="fn-19">[19]</a></li>
+            <li>TVA 방영 전에는 <a href="미네츠키 리츠.html" class="wiki-link">미네츠키 리츠</a>와 엮이는 빈도가 높고 리츠가 16세에 2월생이어서 고등부 2학년 멤버로 확실시되는 상황인 데다, 유노 역시 16세 치고는 생일이 비교적 늦은 11월생인지라 리츠와 같은 고등부 2학년일 가능성이 높았다. 걸파 시즌 3 기준 고등부 2학년 멤버가 많은 편이 아니고 2학년 슬롯 자체가 없는 학교도 있어 이를 채우기 위한 의도로 보였다.<a href="#fn-20" id="rfn-20" class="wiki-fn" data-note="fn-20">[20]</a> 그러나 정작 리츠가 2학년이 아닌 1학년으로 공개되었고 다른 멤버들은 전원이 '칸다 시로야마 아카데미'라는 새로운 학교에 다니고 있는 것에 비해<a href="#fn-21" id="rfn-21" class="wiki-fn" data-note="fn-21">[21]</a> 유노는 학력이 아직 나온 것이 없다.<a href="#fn-22" id="rfn-22" class="wiki-fn" data-note="fn-22">[22]</a><a href="#fn-23" id="rfn-23" class="wiki-fn" data-note="fn-23">[23]</a></li>
+            <li>DJ 담당이지만 악기별로 포지션 분류를 할 때에는 보통 팬덤에서는 드럼조로 간주하는 분위기가 많다. 엄연히 키보드 담당 멤버인 <a href="후지 미야코.html" class="wiki-link">후지 미야코</a>가 있기 때문에 키보드조로는 분류할 수 없고, 마찬가지로 키보드 멤버의 존재로 인해 DJ 담당이었음에도 베이스조로 분류된 <a href="츄츄(BanG Dream!).html" class="wiki-link">츄츄</a>의 선례<a href="#fn-24" id="rfn-24" class="wiki-fn" data-note="fn-24">[24]</a>를 따라가면 트윈 기타 중 1명이 베이스조로 분류될 확률이 높기 때문에<a href="#fn-25" id="rfn-25" class="wiki-fn" data-note="fn-25">[25]</a> 유노가 남아있는 드럼조에 배치된다. 만약 공식에서도 유노를 드럼조로 인정한다면 DJ 포지션은 한 포지션에 특정되지 않고 여러 악기 포지션에 배치된다는 특징을 갖게 된다.</li>
+            <li><a href="MyGO!!!!!.html" class="wiki-link">MyGO!!!!!</a>의 <a href="카나메 라나.html" class="wiki-link">카나메 라나</a>와 비슷한 점이 상당수 있다. TVA 공개 이후로도 베일에 싸여 있는 학력에 밴드 내 최단신인 점, 그리고 타인에 대해 비교적 관심을 크게 가지지 않는다는 점과 말수가 적다는 점이 비슷하다.</li>
+            <li>2026년 8월 8일, <a href="김치쿠라.html" class="wiki-link">KIMCHIKURA Fes `26</a>에 참여하면서, <a href="무겐다이 뮤타입.html" class="wiki-link">무겐다이 뮤타입</a> 멤버 중 처음으로 <a href="내한.html" class="wiki-link">내한</a>한다. 그런데 하필이면 애니메이션 전개에서 유노가 밴드를 탈퇴한다는 폭탄선언을 하고 며칠 뒤에 솔로로 내한하는 것이라 내한을 하기 위해 밴드를 탈퇴했다는 것이란 밈이 붙었다. 그런데 진짜로 방송에서 밴드 그만두고 한국 갔다왔다고 말해서 밈을 넘어 준공식 설정이 되었다.</li>
+            <li>2026년 8월 10일 팔로워 <del>50,000,000,000,000,000만 명</del> 5만을 돌파했다.</li>
+        </ul>
+
+        <!-- 각주 데이터 -->
+        <h2 id="s-9">9. 각주</h2>
+        <div class="footnotes-container border-t pt-4 mt-8 space-y-1">
+            <div id="fn-1" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-1" class="wiki-link mr-1">[1]</a> 미타케 란은 브릿지 정도이므로 예외.</div>
+            <div id="fn-2" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-2" class="wiki-link mr-1">[2]</a> 반대의 경우로는 마루야마 아야가 있으며, 아야의 경우 라이브 의상일 때 트윈 테일, 평상시에는 묶지 않은 생머리를 하고 다닌다.</div>
+            <div id="fn-3" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-3" class="wiki-link mr-1">[3]</a> 애니메이션 방영 직전 신규 키비주얼이 새롭게 해금되면서 아워노트 버전 프로필에도 안경을 착용한 버전이 추가되었다.</div>
+            <div id="fn-4" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-4" class="wiki-link mr-1">[4]</a> 다만 아논은 콘택트렌즈와 안경을 번갈아가면서 착용하며, 파레오는 대부분의 상황에서 콘택트렌즈(혹은 컬러렌즈)를 착용하기 때문에 마야나 롯카에 비하면 안경을 쓰지 않은 모습이 더 많이 나온다.</div>
+            <div id="fn-5" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-5" class="wiki-link mr-1">[5]</a> 정확하게는 아라레라 지칭하지 않고 '페넥'이라고 예를 들어 지칭했다.</div>
+            <div id="fn-6" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-6" class="wiki-link mr-1">[6]</a> 여성의 권장 섭취 칼로리는 1600 ~ 2200kcal.</div>
+            <div id="fn-7" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-7" class="wiki-link mr-1">[7]</a> 이래서 애니메이션 3화에서 안 먹어서 쓰러지는 장면이 나왔다.</div>
+            <div id="fn-8" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-8" class="wiki-link mr-1">[8]</a> 작사도 했다.</div>
+            <div id="fn-9" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-9" class="wiki-link mr-1">[9]</a> 애니메이션 7화 삽입곡.</div>
+            <div id="fn-10" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-10" class="wiki-link mr-1">[10]</a> 멤버들이 "네 나이가 16세인데 어떻게 피아노를 16년 동안 한 거냐."라고 지적하자 "어라? 이상하네."라고 반응했다.</div>
+            <div id="fn-11" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-11" class="wiki-link mr-1">[11]</a> 정확하게는 베이스 기타라고 한다.</div>
+            <div id="fn-12" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-12" class="wiki-link mr-1">[12]</a> 가끔 멋있는 모습을 보여주기도 한다. 본인의 변명으로는 방송 끄면 잘 하는데 방송을 키면 잘 안 된다고 한다.</div>
+            <div id="fn-13" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-13" class="wiki-link mr-1">[13]</a> 안 본 작품도 있는데 안 본 건 몇 개 안 된다고.</div>
+            <div id="fn-14" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-14" class="wiki-link mr-1">[14]</a> 다만 그랑블루는 왠지 무서워서 안 봤다고 한다.</div>
+            <div id="fn-15" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-15" class="wiki-link mr-1">[15]</a> 이때 연출로 전형적인 로봇 형상의 유노와 커다랗게 나오는 U-NO 글자는 덤.</div>
+            <div id="fn-16" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-16" class="wiki-link mr-1">[16]</a> 아라레와 멀어진 사이를 회복하고 싶은것</div>
+            <div id="fn-17" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-17" class="wiki-link mr-1">[17]</a> 이때 유노의 방 한켠에 걸려있는 밴드 라이브의 러버밴드에 클로즈업 되는데, 정확한 내막은 모르지만 유노도 과거 밴드에서 비슷한 고충을 겪은걸로 보인다.</div>
+            <div id="fn-18" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-18" class="wiki-link mr-1">[18]</a> 이때 koharu&kaede 라고 쓰여져 있는 라이브 손목 밴드가 클로즈업 된다.</div>
+            <div id="fn-19" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-19" class="wiki-link mr-1">[19]</a> 그동안 가타카나 이름을 가지고 있는 캐릭터는 모카, 이브, 리사, 레이야가 전부였다. 그마저도 이브는 혼혈인이기 때문에 순혈 중에서는 네 번째 캐릭터이며, 그 중에서도 레이야와 유이하게 이름이 영미권식 표기가 아닌 일본식 로마자로 표기된다.</div>
+            <div id="fn-20" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-20" class="wiki-link mr-1">[20]</a> 시즌 3 기준으로 Morfonica 전원과 아코, 록 만이 고등부 2학년이며, 이 중에서 하나사키가와 여학원에 재학 중인 캐릭터는 없고 학년은 고등부 1학년이지만 나이 자체는 고등부 2학년 멤버들과 같다는 추측이 있는 치하야 아논 역시 하네오카에 재학 중이다. 일단 비어있던 하나사키가와 여학원 고등부 2학년 슬롯은 일가 Dumb Rock!의 마하시 미쿠가 채웠다.</div>
+            <div id="fn-21" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-21" class="wiki-link mr-1">[21]</a> 유일하게 학교가 달랐던 리츠는 '아키바 여자고등학교'라는 학교에 다녔으나, 7화 마지막에 칸다 시로야마 아카데미로 전학을 오게 된다.</div>
+            <div id="fn-22" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-22" class="wiki-link mr-1">[22]</a> 아라레의 언급에 의하면 칸다 시로야마 아카데미는 온라인 수업도 있다고 한 것으로 보아 학년은 몰라도 이 학교의 온라인 수업 수강생일 가능성이 아니냐는 추측이 많으며, 일단 10화 예고편에서 유노가 과거 밴드를 하던 시절이 학교를 다니던 때였던 것으로 보아 중학생일 가능성은 소멸했다. 유노가 1학년일 경우 헬로, 해피 월드!와 동일한 연령대 구성(연장자가 2명, 나머지 3명끼리 동급생)이 되고, 2학년일 경우 헬로해피의 연령대 구성을 뒤집은 구성이 된다. 이외에 소수 의견이지만 아예 야쿠라 요모기처럼 대학생이 아니냐는 추측도 돌고 있다.</div>
+            <div id="fn-23" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-23" class="wiki-link mr-1">[23]</a> 다만 애니메이션의 배경이 2021년, 즉 마이고 애니메이션과 아베 무지카 애니메이션으로부터 1년 뒤를 다루었다는 가설과 함께, 현재 뮤타입의 대척점에 서 있는 페어리 부케의 학년 구성이 1학년 1명, 2학년 2명, 3학년 1명이라는 점 때문에 고등학교 3학년일 가능성도 있다. 만약 2021년 설과 함께 3학년이 맞을 경우 Morfonica 멤버들과 같은 걸파 시즌 3 기준 고등학교 2학년 멤버들과 같은 세대가 되며, 뮤타입의 연령대 구성은 밴드 내 막내가 혼자였던 millsage 맴버들의 연령대 순서를 뒤집은 구성이 된다.</div>
+            <div id="fn-24" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-24" class="wiki-link mr-1">[24]</a> 이쪽은 보컬 담당 멤버가 베이스를 겸하고 있고, 다른 멤버들도 각각 기타/드럼/키보드로 중복되는 악기를 담당하지 않아서 츄츄가 비어있는 베이스조 슬롯에 들어갔다.</div>
+            <div id="fn-25" class="text-xs text-gray-500 dark:text-gray-400 pl-2"><a href="#rfn-25" class="wiki-link mr-1">[25]</a> 팬덤에서는 공식 소개 순서상으로 노노카가 2번, 리츠가 3번이라는 점으로 인해 노노카를 기타조, 리츠를 베이스조로 취급하는 분위기이다.</div>
+        </div>
+
+        <div id="footer-container"></div>
+        <script src="assets/load-footer.js"></script>
+    </div>
+
+    <!-- 네비게이션 및 위키 코어 JS 불러오기 -->
+    <script src="assets/bangdream-nav.js"></script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/jana.js"></script>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+        }
+        
+        function showMsg(text) {
+            const box = document.getElementById('wiki-msg-box');
+            box.innerText = text; box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 2000);
+        }
+        
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('wiki_theme');
+            if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
+        };
+        
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                location.href = this.value.trim() + ".html";
+            }
+        });
+
+        // 각주 툴팁 기능 구현
+        document.querySelectorAll('.wiki-fn').forEach(el => {
+            el.addEventListener('mouseover', function(e) {
+                const noteId = this.getAttribute('data-note');
+                const noteEl = document.getElementById(noteId);
+                if (noteEl) {
+                    const tooltip = document.getElementById('wiki-tooltip-container');
+                    tooltip.innerHTML = noteEl.innerHTML;
+                    
+                    tooltip.style.display = 'block';
+                    
+                    const rect = this.getBoundingClientRect();
+                    let left = e.pageX + 10;
+                    let top = e.pageY + 10;
+
+                    if (left + 320 > window.innerWidth) {
+                        left = window.innerWidth - 330;
+                    }
+
+                    tooltip.style.left = left + 'px';
+                    tooltip.style.top = top + 'px';
+                }
+            });
+            el.addEventListener('mouseout', function() {
+                document.getElementById('wiki-tooltip-container').style.display = 'none';
+            });
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('data-note');
+                const targetEl = document.getElementById(targetId);
+                if(targetEl) {
+                    targetEl.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    targetEl.style.backgroundColor = "rgba(255, 102, 136, 0.3)";
+                    setTimeout(() => targetEl.style.backgroundColor = "transparent", 1500);
+                }
+            });
+        });
+    </script>
+<script>
+    document.querySelectorAll('.wiki-fn').forEach(a => {
+        // 1. href 속성에서 타겟 ID (fn-1 등) 추출
+        const targetId = a.getAttribute('href')?.substring(1);
+        if (!targetId) return;
+
+        // 2. 수동으로 작성된 하단 각주 div 요소 찾기
+        const manualDiv = document.getElementById(targetId);
+        if (manualDiv) {
+            // 3. '[1] ' 같은 말머리를 정규식으로 떼어내고 순수 텍스트만 추출
+            const realText = manualDiv.innerHTML.replace(/\[\d+\]\s*/, '').trim();
+            
+            // 4. a 태그의 data-note에 진짜 각주 내용을 강제 삽입
+            a.setAttribute('data-note', realText);
+            
+            // 5. 화면에 중복으로 뜨지 않게 기존 수동 각주 덩어리 완전 삭제
+            manualDiv.remove();
+        }
+    });
+</script>
+    <script src="assets/hb_index_scripts.js"></script>
+</body>
+</html>

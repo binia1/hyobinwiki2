@@ -32,7 +32,7 @@
     const templateHTML = `
         <div class="wiki-frame-spoiler">
             <div class="wiki-frame-spoiler-title">
-                이 문서에 <a href="#">스포일러</a>가 포함되어 있습니다.
+                이 문서에 <a href="스포일러.html">스포일러</a>가 포함되어 있습니다.
             </div>
             <div style="font-size: 0.95rem;">
                 이 문서가 설명하는 작품이나 인물 등에 대한 줄거리, 결말, 반전 요소 등을 직·간접적으로 포함하고 있습니다.

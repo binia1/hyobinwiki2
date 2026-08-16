@@ -38,7 +38,7 @@
                 이 문서는 <span>토막글</span>입니다.
             </div>
             <div style="font-size: 0.95rem;">
-                <a href="#">토막글 규정</a>을 유의하시기 바랍니다.
+                <a href="토막글 규정.html">토막글 규정</a>을 유의하시기 바랍니다.
             </div>
         </div>
     `;

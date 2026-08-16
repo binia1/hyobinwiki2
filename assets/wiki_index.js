@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 8. 12. 오후 11:55:17
+ * 업데이트: 2026. 8. 16. 오후 2:27:05
  */
 
 window.HB_WIKI_PAGES = [
@@ -10683,6 +10683,42 @@ window.HB_WIKI_PAGES = [
   {
     "title": "낙주컨벤션센터",
     "href": "낙주컨벤션센터.html"
+  },
+  {
+    "title": "나카마치_아라레",
+    "href": "나카마치_아라레.html"
+  },
+  {
+    "title": "미야나가_노노카",
+    "href": "미야나가_노노카.html"
+  },
+  {
+    "title": "미네츠키_리츠",
+    "href": "미네츠키_리츠.html"
+  },
+  {
+    "title": "후지_미야코",
+    "href": "후지_미야코.html"
+  },
+  {
+    "title": "센고쿠_유노",
+    "href": "센고쿠_유노.html"
+  },
+  {
+    "title": "록(BanG%20Dream!)",
+    "href": "록(BanG%20Dream!).html"
+  },
+  {
+    "title": "록(BanG Dream!)",
+    "href": "록(BanG Dream!).html"
+  },
+  {
+    "title": "빈주3호선",
+    "href": "빈주3호선.html"
+  },
+  {
+    "title": "족주고속",
+    "href": "족주고속.html"
   }
 ];
 
@@ -15679,5 +15715,14 @@ window.HB_WIKI_ALIASES = {
   "행정동": "행정동.html",
   "법정동": "법정동.html",
   "빈주장기컨벤션센터": "빈주장기컨벤션센터.html",
-  "낙주컨벤션센터": "낙주컨벤션센터.html"
+  "낙주컨벤션센터": "낙주컨벤션센터.html",
+  "나카마치_아라레": "나카마치_아라레.html",
+  "미야나가_노노카": "미야나가_노노카.html",
+  "미네츠키_리츠": "미네츠키_리츠.html",
+  "후지_미야코": "후지_미야코.html",
+  "센고쿠_유노": "센고쿠_유노.html",
+  "센고쿠 유노": "센고쿠_유노.html",
+  "록": "록(BanG Dream!).html",
+  "빈주3호선": "빈주3호선.html",
+  "족주고속": "족주고속.html"
 };

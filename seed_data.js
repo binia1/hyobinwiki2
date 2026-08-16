@@ -361,8 +361,8 @@ export async function seedInitialData(db) {
 
           <div class="wiki-category-box" style="border: 1px solid #ccc; padding: 8px 12px; margin-bottom: 10px; border-radius: 4px; background-color: #fcfcfc; font-size: 0.9rem; color: #555;">
              <strong style="color: #373a3c;">분류:</strong> 
-             <a href="#" data-wiki-title="효빈광역시" class="text-[#0645ad] hover:underline" style="margin-left: 5px;">효빈광역시</a> <span style="color:#ccc;">|</span>
-             <a href="#" data-wiki-title="덕빈권" class="text-[#0645ad] hover:underline" style="margin-left: 5px;">덕빈권</a>
+             <a href="효빈광역시.html" data-wiki-title="효빈광역시" class="text-[#0645ad] hover:underline" style="margin-left: 5px;">효빈광역시</a> <span style="color:#ccc;">|</span>
+             <a href="덕빈권.html" data-wiki-title="덕빈권" class="text-[#0645ad] hover:underline" style="margin-left: 5px;">덕빈권</a>
           </div>
           
           ${WIKI_HEADER_TABLE_INTEGRATED}
