@@ -1,9 +1,9 @@
 /**
  * 파일명: js/역대단체장_계성.js
- * 설명: 덕빈북도 계성시장 내비게이션 자동 생성
+ * 설명: 역대 단체장 내비게이션 자동 생성
  */
 document.addEventListener("DOMContentLoaded", function() {
-    var containers = document.querySelectorAll(".hb-history-계성-nav");
+    var containers = document.querySelectorAll(".hb-history-계성-0-nav");
 
     containers.forEach(function(container) {
         container.innerHTML = `
@@ -15,12 +15,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     </td>
 </tr>
 <tr>
-<td class="history-nav-toggle" colspan="5" onclick="toggleHistoryNav_계성()">
-<span id="history-nav-text-계성">[ 펼치기 · 접기 ]</span>
+<td class="history-nav-toggle" colspan="5" onclick="toggleHistoryNav_계성_0()">
+<span id="history-nav-text-계성-0">[ 펼치기 · 접기 ]</span>
 </td>
 </tr>
 </thead>
-<tbody id="history-nav-body-계성">
+<tbody id="history-nav-body-계성-0">
 <tr>
 <td><span class="th-span">초대</span><span class="name-span">김창현</span></td>
 <td><span class="th-span">제2대</span><span class="name-span">이승호</span></td>
@@ -48,19 +48,18 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-// 개별 토글 함수 자동 생성
-if (typeof window.toggleHistoryNav_계성 === 'undefined') {
-    window.toggleHistoryNav_계성 = function() {
-        var body = document.getElementById("history-nav-body-계성");
-        var text = document.getElementById("history-nav-text-계성");
-        if (!body || !text) return;
+if (typeof window.toggleHistoryNav_계성_0 === 'undefined') {
+    window.toggleHistoryNav_계성_0 = function() {
+        var body = document.getElementById("history-nav-body-계성-0");
+        var text = document.getElementById("history-nav-text-계성-0");
+        if (!body) return;
         
-        if (body.style.display === 'none' || body.style.display === '') {
+        if (body.style.display === 'none' || window.getComputedStyle(body).display === 'none') {
             body.style.display = 'table-row-group';
-            text.innerText = '[ 펼치기 · 접기 ]';
+            if (text) text.innerText = '[ 펼치기 · 접기 ]';
         } else {
             body.style.display = 'none';
-            text.innerText = '[ 펼치기 ]';
+            if (text) text.innerText = '[ 펼치기 ]';
         }
     };
 }
