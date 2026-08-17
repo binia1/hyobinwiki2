@@ -1222,7 +1222,7 @@ const imageFiles = [
     "빈주권_노선도.webp",
     "빈주권광역철도_노선도.webp",
     "빈주대학교_UI.webp",
-    "빈주도시철도 캐릭터.webp",
+    "박빛나.webp",
     "빈주동신역_승강장.webp",
     "빈주보건대학_UI.svg",
     "빈주시 시내버스.webp",
