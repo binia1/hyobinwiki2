@@ -48,9 +48,9 @@ document.addEventListener("DOMContentLoaded", function() {
                         <a href="/w/순천차량사업소" style="text-decoration: none; color: inherit;">순천</a><br>
                         <a href="덕빈철도차량정비단.html" style="text-decoration: none; color: inherit;">덕빈단</a> | 
                         <a href="효빈일반철도차량정비단.html" style="text-decoration: none; color: inherit;">효빈일반단</a> | 
-                        <a href="빈주차량사업소.html" style="text-decoration: none; color: inherit;">빈주</a><span style="font-size:10px; color:#555;">[주박]</span> | 
+                        <a href="빈주역.html" style="text-decoration: none; color: inherit;">빈주</a><span style="font-size:10px; color:#555;">[주박]</span> | 
                         <a href="계성차량사업소.html" style="text-decoration: none; color: inherit;">계성</a><span style="font-size:10px; color:#555;">[주박]</span> | 
-                        <a href="매성차량사업소.html" style="text-decoration: none; color: inherit;">매성</a><span style="font-size:10px; color:#555;">[주박]</span>
+                        <a href="매성역.html" style="text-decoration: none; color: inherit;">매성</a><span style="font-size:10px; color:#555;">[주박]</span>
                     </td>
                     <td style="padding: 12px 5px; border-bottom: 1px solid #ccc; color: #0052a4; word-break: keep-all; line-height: 1.6;">
                         <a href="/w/부산철도차량정비단" style="text-decoration: none; color: inherit;">부산단 고속차량운영처</a> | 
@@ -208,7 +208,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 <tr>
                     <td colspan="4" style="background-color: #0052a4; color: white; font-weight: bold; padding: 5px; border-bottom: 1px solid #ccc;">
-                        <a href="빈주선.html" style="text-decoration: none; color: inherit;">빈주권 전철<br>빈주권 광역철도(빈주선)</a>
+                        <a href="빈주광역철도.html" style="text-decoration: none; color: inherit;">빈주권 전철<br>빈주권 광역철도(빈주선)</a>
                     </td>
                 </tr>
                 <tr>
@@ -270,10 +270,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 <a href="빈주차량사업소.html" style="text-decoration: none; color: inherit;">빈주</a> | 
                 <a href="풍영차량사업소.html" style="text-decoration: none; color: inherit;">풍영</a> | 
                 <a href="서해차량사업소.html" style="text-decoration: none; color: inherit;">서해</a> | 
-                <a href="운진차량사업소.html" style="text-decoration: none; color: inherit;">운진</a> | 
-                <a href="비천차량사업소.html" style="text-decoration: none; color: inherit;">비천</a> | 
-                <a href="천주차량사업소.html" style="text-decoration: none; color: inherit;">천주</a> | 
-                <a href="군천차량사업소.html" style="text-decoration: none; color: inherit;">군천</a> | 
+                <a href="운진역.html" style="text-decoration: none; color: inherit;">운진</a> | 
+                <a href="비천역.html" style="text-decoration: none; color: inherit;">비천</a> | 
+                <a href="천주역.html" style="text-decoration: none; color: inherit;">천주</a> | 
+                <a href="군천역.html" style="text-decoration: none; color: inherit;">군천</a> | 
                 <a href="효빈차량사업소.html" style="text-decoration: none; color: inherit;">효빈</a>
             </div>
 

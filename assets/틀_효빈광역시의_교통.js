@@ -263,7 +263,7 @@ document.write(`
                 <td class="transport-sub-header">해운</td>
                 <td class="transport-label">항만</td>
                 <td class="transport-content">
-                    <a href="효빈항.html">효빈항</a> (국제여객터미널) · <a href="어간항.html">어간항</a> · <a href="효빈내항.html">효빈내항</a>
+                    <a href="효빈항 국제여객터미널.html">효빈항</a> (국제여객터미널) · <a href="어간항.html">어간항</a> · <a href="효빈내항.html">효빈내항</a>
                 </td>
             </tr>
 

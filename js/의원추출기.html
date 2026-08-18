@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈광역시 국회의원 개별 JS 생성기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Pretendard', 'Noto Sans KR', sans-serif; background-color: #f3f4f6; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 250px; background-color: #2d3748; color: white; display: flex; flex-direction: column; overflow-y: auto; }
+        .sidebar h1 { padding: 1rem; font-size: 1.1rem; font-weight: bold; border-bottom: 1px solid #4a5568; background-color: #1a202c; text-align: center; }
+        .term-btn { padding: 0.75rem 1.5rem; text-align: left; background: none; border: none; color: #cbd5e0; cursor: pointer; border-bottom: 1px solid #4a5568; transition: all 0.2s; font-size: 0.95rem; }
+        .term-btn:hover { background-color: #4a5568; color: white; }
+        .term-btn.active { background-color: #7777AA; color: white; font-weight: bold; border-left: 4px solid white; }
+        
+        .main-content { flex: 1; display: flex; flex-direction: column; background-color: #ffffff; }
+        .header { padding: 1rem 2rem; background-color: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .header h2 { font-size: 1.25rem; font-weight: bold; color: #2d3748; }
+        .action-btns { display: flex; gap: 0.5rem; }
+        .copy-btn { background-color: #7777AA; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: bold; border: none; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+        .copy-btn:hover { background-color: #555588; }
+        .download-btn { background-color: #48bb78; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: bold; border: none; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+        .download-btn:hover { background-color: #38a169; }
+        
+        .code-container { flex: 1; padding: 1.5rem; overflow: auto; background-color: #1e1e1e; position: relative; }
+        pre { margin: 0; color: #d4d4d4; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.9rem; line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
+        
+        #toast { position: fixed; bottom: 20px; right: 20px; background-color: #48bb78; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar" id="sidebar">
+        <h1>효빈광역시 대수 선택</h1>
+        <div id="term-list" class="flex flex-col"></div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h2 id="current-term-title">제22대 국회의원 JS 코드</h2>
+            <div class="action-btns">
+                <button class="download-btn" onclick="downloadCode()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    .js 파일로 저장
+                </button>
+                <button class="copy-btn" onclick="copyCode()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    코드 복사
+                </button>
+            </div>
+        </div>
+        <div class="code-container">
+            <pre><code id="code-block">코드를 불러오는 중입니다...</code></pre>
+        </div>
+    </div>
+
+    <div id="toast">복사 완료!</div>
+
+    <script>
+        const partyColors = {
+            "민주정의당": "#0A84E9", "신한민주당": "#E6573B", "한국국민당": "#498C00", "통일민주당": "#E60026",
+            "평화민주당": "#FADA5E", "신민주공화당": "#59955E", "민주자유당": "#003990", "민주당": "#000080",
+            "통일국민당": "#22B14C", "신한국당": "#003990", "새정치국민회의": "#009A44", "자유민주연합": "#1B5B40",
+            "새천년민주당": "#00AA7B", "한나라당": "#0095DA", "통합민주당": "#04972D", "무소속": "#808080",
+            "민주통합당": "#FFD400", "자유선진당": "#00529C", "새누리당": "#C9252B", "국민의당": "#006241",
+            "더불어민주당": "#003B96", "민생당": "#43B02A", "국민의힘": "#E61E2B", "진보당": "#D6001C"
+        };
+
+        const electionFootnotes = {
+            "제21대": "* 중구·동구 주민우 당선무효 (2022.2.1.)",
+            "제16대": "* 남구·중구 을 안덕경 당선무효 (2002.1.4.)",
+        };
+
+        const rawData = `대수	연도	선거구명	정당	의원
+12대	1985년	효빈 제1(중구/동구)	민주정의당	박동진
+12대	1985년	효빈 제2(남구/청엽구)	신한민주당	김우임
+12대	1985년	효빈 제3(서구/북구/안천구)	신한민주당	구승락
+12대	1985년	효빈 제1(중구/동구)	신한민주당	송류진
+12대	1985년	효빈 제2(남구/청엽구)	민주정의당	이학성
+12대	1985년	효빈 제3(서구/북구/안천구)	한국국민당	나무현
+13대	1988년	남구 갑	통일민주당	안덕경
+13대	1988년	남구 을	평화민주당	나무현
+13대	1988년	북구	평화민주당	구승락
+13대	1988년	청엽갑	통일민주당	김우임
+13대	1988년	청엽을	평화민주당	환산채
+13대	1988년	청엽병	평화민주당	구사영
+13대	1988년	안천구	평화민주당	주성만
+13대	1988년	서구	평화민주당	구임준
+13대	1988년	탄성군	민주정의당	조산태
+13대	1988년	중구	신민주공화당	문간현
+13대	1988년	동구	통일민주당	도성현
+14대	1992년	남구 갑	민주자유당	안덕경
+14대	1992년	남구 을	민주당	지성수
+14대	1992년	북구	민주당	구승락
+14대	1992년	청엽갑	민주당	김우임
+14대	1992년	청엽을	민주당	구사영
+14대	1992년	안천구	민주당	주성만
+14대	1992년	서구	민주당	구임준
+14대	1992년	창전구	민주당	유권대
+14대	1992년	중구	통일국민당	문간현
+14대	1992년	동구	통일국민당	도성현
+15대	1996년	남구 갑	신한국당	안덕경
+15대	1996년	남구 을	새정치국민회의	상안길
+15대	1996년	북구·동구 갑	새정치국민회의	권미현
+15대	1996년	북구·동구 을	새정치국민회의	구승락
+15대	1996년	청엽갑	새정치국민회의	문능현
+15대	1996년	청엽을	새정치국민회의	송류진
+15대	1996년	안천갑	새정치국민회의	고형민
+15대	1996년	안천을	새정치국민회의	진성현
+15대	1996년	서구	자유민주연합	강석현
+15대	1996년	창전구·탄성군 갑	새정치국민회의	김국민
+15대	1996년	창전구·탄성군 을	새정치국민회의	원대현
+15대	1996년	중구	자유민주연합	개성민
+16대	2000년	북구·동구 갑	새천년민주당	주영만
+16대	2000년	북구·동구 을	새천년민주당	권미현
+16대	2000년	청엽갑	새천년민주당	문능현
+16대	2000년	청엽을	새천년민주당	송류진
+16대	2000년	안천갑	새천년민주당	고형민
+16대	2000년	안천을	새천년민주당	진성현
+16대	2000년	서구	자유민주연합	강석현
+16대	2000년	창전구·탄성군 갑	새천년민주당	김국민
+16대	2000년	창전구·탄성군 을	새천년민주당	원대현
+16대	2000년	남구·중구 갑	한나라당	오세로
+16대	2000년	남구·중구 을	새천년민주당	구지남
+17대	2004년	남구 갑	한나라당	우신면
+17대	2004년	남구 을	통합민주당	구지남
+17대	2004년	북구 갑	통합민주당	조상현
+17대	2004년	북구 을	통합민주당	고형민
+17대	2004년	청엽갑	통합민주당	문능현
+17대	2004년	청엽을	통합민주당	구유민
+17대	2004년	안천갑	통합민주당	고형민
+17대	2004년	안천을	통합민주당	진성현
+17대	2004년	서구	통합민주당	조영태
+17대	2004년	창전구·탄성군 갑	통합민주당	고상민
+17대	2004년	창전구·탄성군 을	통합민주당	원대현
+17대	2004년	동구·중구	자유민주연합	강석현
+18대	2008년	남구 갑	무소속	한광식
+18대	2008년	남구 을	민주통합당	구지남
+18대	2008년	북구 갑	민주통합당	이찬대
+18대	2008년	북구 을	무소속	고형민
+18대	2008년	청엽갑	민주통합당	문연민
+18대	2008년	청엽을	민주통합당	두강민
+18대	2008년	안천갑	민주통합당	도구연
+18대	2008년	안천을	민주통합당	진성현
+18대	2008년	서구	민주통합당	주민태
+18대	2008년	창전 갑	민주통합당	진운민
+18대	2008년	창전 을	민주통합당	원대현
+18대	2008년	탄성군	자유선진당	우신면
+18대	2008년	동구·중구	무소속	구윤태
+19대	2012년	남구 갑	새누리당	한광식
+19대	2012년	남구 을	국민의당	구지남
+19대	2012년	북구 갑	더불어민주당	조상현
+19대	2012년	북구 을	더불어민주당	원성준
+19대	2012년	청엽갑	더불어민주당	문연민
+19대	2012년	청엽을	더불어민주당	두강민
+19대	2012년	안천갑	국민의당	도구연
+19대	2012년	안천을	더불어민주당	진성현
+19대	2012년	서구	국민의당	두영민
+19대	2012년	창전 갑	민주통합당	고안성
+19대	2012년	창전 을	민주통합당	노상현
+19대	2012년	탄성군	민주통합당	조성연
+19대	2012년	동구·중구	민주통합당	용시현
+20대	2016년	남구 갑	더불어민주당	노신상
+20대	2016년	남구 을	민생당	구지남
+20대	2016년	북구 갑	더불어민주당	조상현
+20대	2016년	북구 을	더불어민주당	원성준
+20대	2016년	청엽갑	더불어민주당	기명민
+20대	2016년	청엽을	더불어민주당	두강민
+20대	2016년	안천갑	민생당	도구연
+20대	2016년	안천을	더불어민주당	우구인
+20대	2016년	서구	민생당	두영민
+20대	2016년	창전 갑	더불어민주당	고안성
+20대	2016년	창전 을	더불어민주당	노상현
+20대	2016년	탄성군	더불어민주당	박현만
+20대	2016년	동구·중구	무소속	용시현
+21대	2020년	남구 갑	국민의힘	우신면
+21대	2020년	남구 을	더불어민주당	고정민
+21대	2020년	북구 갑	더불어민주당	조상현
+21대	2020년	북구 을	더불어민주당	원성준
+21대	2020년	북구 병	더불어민주당	이찬대
+21대	2020년	청엽갑	더불어민주당	신수인
+21대	2020년	청엽을	더불어민주당	도상현
+21대	2020년	안천갑	더불어민주당	우성중
+21대	2020년	안천을	더불어민주당	유산성
+21대	2020년	서구	더불어민주당	상신고
+21대	2020년	창전 갑	더불어민주당	추산령
+21대	2020년	창전 을	더불어민주당	노상현
+21대	2020년	탄성군	더불어민주당	박현만
+21대	2020년	동구·중구	더불어민주당	김성민
+22대	2024년	남구 갑	더불어민주당	고정민
+22대	2024년	남구 을	진보당	신원임
+22대	2024년	북구 갑	더불어민주당	조상현
+22대	2024년	북구 을	더불어민주당	원성준
+22대	2024년	북구 병	더불어민주당	이찬대
+22대	2024년	청엽갑	더불어민주당	신수인
+22대	2024년	청엽을	더불어민주당	소판권
+22대	2024년	안천갑	더불어민주당	고선규
+22대	2024년	안천을	더불어민주당	신진영
+22대	2024년	서구	더불어민주당	지선진
+22대	2024년	창전 갑	더불어민주당	추산령
+22대	2024년	창전 을	더불어민주당	노상현
+22대	2024년	탄성군	더불어민주당	박청권
+22대	2024년	동구·중구	더불어민주당	김성민`;
+
+        function isLightColor(hex) {
+            if (!hex) return false;
+            const lightColors = ["#FADA5E", "#FFD400", "#FFED00", "#FFEF10", "#FAC813", "#FFD2AD", "#C2C247"];
+            return lightColors.includes(hex.toUpperCase());
+        }
+
+        const parsedData = {};
+        const lines = rawData.trim().split('\n').slice(1);
+        lines.forEach(line => {
+            const parts = line.split('\t');
+            if (parts.length >= 5) {
+                const [daesu, year, district, party, name] = parts;
+                if (!parsedData[daesu]) parsedData[daesu] = [];
+                parsedData[daesu].push({ district, party, name });
+            }
+        });
+
+        const sortedDaesu = Object.keys(parsedData).sort((a, b) => parseInt(b) - parseInt(a));
+
+        function generateJSCode(daesu) {
+            const num = daesu.replace(/[^0-9]/g, '');
+            const members = parsedData[daesu];
+            const isOpen = (num === '22') ? 'open=""' : ''; // 22대만 기본 펼침 처리
+
+            let rowsHtml = '';
+            for (let i = 0; i < members.length; i += 4) {
+                const group = members.slice(i, i + 4);
+                
+                // 지역구(th 역할) 행
+                rowsHtml += `                                        <tr>\n`;
+                group.forEach(m => {
+                    const bg = partyColors[m.party] || '#808080';
+                    const txt = isLightColor(bg) ? '#000000' : '#ffffff';
+                    rowsHtml += `                                            <td style="width: 25%; background-color: ${bg};"><a class="nav-th" href="${m.district}.html" style="color: ${txt}; font-weight: bold;">${m.district}</a></td>\n`;
+                });
+                for(let j = group.length; j < 4; j++) rowsHtml += `                                            <td style="width: 25%; background-color: #f9f9f9; border: none;"></td>\n`;
+                rowsHtml += `                                        </tr>\n`;
+
+                // 의원 이름 행
+                rowsHtml += `                                        <tr>\n`;
+                group.forEach(m => {
+                    let color = partyColors[m.party] || '#000000';
+                    if (color.toLowerCase() === '#ffffff') color = '#000000';
+                    rowsHtml += `                                            <td><a class="nav-link" href="${m.name}.html" style="color: ${color}; font-weight: bold;">${m.name}</a></td>\n`;
+                });
+                for(let j = group.length; j < 4; j++) rowsHtml += `                                            <td style="border: none;"></td>\n`;
+                rowsHtml += `                                        </tr>\n`;
+            }
+
+            const footnoteText = electionFootnotes[`제${num}대`] || "";
+            const footnoteHtml = footnoteText ? `<br><span style="font-size: 0.85em; color: #555;">${footnoteText}</span>` : "";
+
+            const prevNum = parseInt(num) - 1;
+            const nextNum = parseInt(num) + 1;
+            const hasPrev = !!parsedData[`${prevNum}대`];
+            const hasNext = !!parsedData[`${nextNum}대`];
+
+            const prevLink = hasPrev ? `<span style="color: #7777AA; font-weight: bold; cursor: pointer;">◀ 제${prevNum}대</span> | ` : '';
+            const nextLink = hasNext ? ` | <span style="color: #7777AA; font-weight: bold; cursor: pointer;">제${nextNum}대 ▶</span>` : '';
+
+            // 정확한 JS 템플릿 반환
+            return `document.addEventListener("DOMContentLoaded", function() {
+    function renderHyobinAssembly${num}Nav(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const html = \`
+        <table class="nav-table" style="border: 2px solid #7777AA; width: 100%; margin-bottom: 20px; background-color: #fff;">
+            <tbody>
+                <tr>
+                    <td class="nav-header" style="background-color: #7777AA; text-align: center; padding: 8px;">
+                        <span class="nav-header-wrap" style="display:inline-flex; align-items:center; gap:4px;">
+                            <a class="wiki-link" href="효빈광역시.html" style="color:white; text-decoration: none;">
+                                <div style="font-weight: bold; background-color: white; color: #7777AA; padding: 0 4px; border-radius: 2px; font-size: 0.8rem;">H</div>
+                            </a>
+                            <a class="wiki-link" href="제${num}대_국회의원.html" style="color:white; text-decoration: none; font-weight: bold; font-size: 1.05rem;">효빈광역시 제${num}대 국회의원</a>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 0;">
+                        <details ${isOpen} style="border: none; margin: 0;">
+                            <summary style="display:none;">[ 펼치기 · 접기 ]</summary>
+                            <div style="padding: 5px;">
+                                <table style="width: 100%; text-align: center; border-collapse: collapse;">
+                                    <tbody>
+${rowsHtml}                                        <tr>
+                                            <td colspan="4" style="background-color: #f9f9f9; font-size: 0.9em; padding: 15px 0 10px 0; border-top: 1px solid #ccc;">
+                                                <a class="wiki-link" href="제${num}대_국회의원_선거_효빈광역시.html" style="color: #005CB9; font-weight:bold; text-decoration: none;">선거 결과</a>${footnoteHtml}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div style="margin-top: 5px; font-size: 0.85em; display: flex; justify-content: space-between; padding: 5px 15px; background-color: #f1f5f9; border-top: 1px solid #ddd;">
+                                    <span>${prevLink.replace(' | ', '')}</span>
+                                    <span>
+                                        <span style="background-color: #7777AA; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold;">효빈</span> 외 타 지역 보기
+                                    </span>
+                                    <span>${nextLink.replace(' | ', '')}</span>
+                                </div>
+                            </div>
+                        </details>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        \`;
+
+        container.innerHTML = html;
+    }
+    
+    // 컴포넌트 렌더링 실행
+    renderHyobinAssembly${num}Nav('hyobin-assembly-${num}-nav-container');
+});`;
+        }
+
+        const termList = document.getElementById('term-list');
+        const codeBlock = document.getElementById('code-block');
+        const titleEl = document.getElementById('current-term-title');
+        let currentCode = '';
+
+        function selectTerm(daesu) {
+            document.querySelectorAll('.term-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${daesu}`).classList.add('active');
+            
+            titleEl.textContent = `${daesu} 국회의원 JS 코드`;
+            currentCode = generateJSCode(daesu);
+            codeBlock.textContent = currentCode;
+        }
+
+        sortedDaesu.forEach((daesu, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'term-btn';
+            btn.id = `btn-${daesu}`;
+            btn.textContent = `${daesu} 국회의원`;
+            btn.onclick = () => selectTerm(daesu);
+            termList.appendChild(btn);
+        });
+
+        // 초기 화면 설정 (22대)
+        if (sortedDaesu.length > 0) selectTerm(sortedDaesu[0]);
+
+        function copyCode() {
+            const textarea = document.createElement('textarea');
+            textarea.value = currentCode;
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                const toast = document.getElementById('toast');
+                toast.style.opacity = '1';
+                toast.style.pointerEvents = 'auto';
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.pointerEvents = 'none';
+                }, 2000);
+            } catch (err) {
+                console.error('복사 실패', err);
+            }
+            
+            document.body.removeChild(textarea);
+        }
+
+        function downloadCode() {
+            const activeBtn = document.querySelector('.term-btn.active');
+            if (!activeBtn) return;
+            
+            const daesu = activeBtn.id.replace('btn-', '');
+            const num = daesu.replace(/[^0-9]/g, '');
+            const fileName = `hyobin_${num}.js`; // 파일명 설정 (예: hyobin_22.js)
+            
+            const blob = new Blob([currentCode], { type: 'text/javascript;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', fileName);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
