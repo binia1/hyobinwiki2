@@ -7,7 +7,8 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="nav-box shadow-sm" style="border: 1px solid #aaa; margin-bottom: 30px; background-color: #fff; font-family: 'Noto Sans KR', sans-serif;">
             <div class="nav-header tracking-wide" style="background-color: #4AD898; color: white; text-align: center; font-weight: bold; padding: 8px; font-size: 1.05rem;">
                 <span style="display:inline-flex; align-items:center; gap:4px;">
-                    <div class="font-bold bg-white px-1 text-xs rounded" style="color: #4AD898;">H</div>
+                                <img onerror="this.style.display='none'" src="이미지/덕북로고흰색.webp" style="vertical-align: middle; display:block;" width="20"/>
+                            </a>
                     <a href="덕빈북도.html" style="color:white; text-decoration: none;">덕빈북도 제헌 국회의원</a>
                 </span>
             </div>

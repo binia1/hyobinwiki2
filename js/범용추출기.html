@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>범용 위키 국회의원 JS 코드 추출기</title>
+    <title>범용 위키 기초자치단체장 JS 코드 자동 추출기</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;700&display=swap');
@@ -28,6 +28,8 @@
         .copy-btn:hover { background-color: #2d3748; }
         .download-btn { background-color: #48bb78; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: bold; border: none; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; gap: 0.5rem; }
         .download-btn:hover { background-color: #38a169; }
+        .download-all-btn { background-color: #d69e2e; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: bold; border: none; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+        .download-all-btn:hover { background-color: #b7791f; }
 
         #toast { position: fixed; bottom: 20px; right: 20px; background-color: #48bb78; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 1000; }
         
@@ -38,11 +40,11 @@
 
     <div class="w-[350px] bg-gray-800 flex flex-col h-full border-r border-gray-700 z-10 shadow-lg shrink-0">
         <div class="p-4 bg-gray-900 border-b border-gray-700 flex justify-between items-center">
-            <h1 class="text-white font-bold text-lg">⚙️ 추출기 설정</h1>
+            <h1 class="text-white font-bold text-lg">⚙️ 지자체장 추출기</h1>
         </div>
         <div class="p-4 overflow-y-auto flex-1">
             <div class="form-group">
-                <label class="form-label">지역명 (예: 덕빈북도)</label>
+                <label class="form-label">지역명 (예: 덕빈북도, 덕빈남도, 효빈광역시)</label>
                 <input type="text" id="input-region" class="form-input" value="덕빈북도">
             </div>
             <div class="form-group">
@@ -58,10 +60,10 @@
             </div>
             <div class="form-group">
                 <label class="form-label">특이사항 (선거 결과 등)</label>
-                <textarea id="input-footnotes" class="form-input h-24" placeholder="형식 (줄바꿈 구분):&#10;제21대:* 홍길동 당선무효&#10;제16대:* 아무개 사퇴"></textarea>
+                <textarea id="input-footnotes" class="form-input h-24" placeholder="형식 (줄바꿈 구분):&#10;민선 1기:* 아무개 사퇴"></textarea>
             </div>
             <div class="form-group flex-1 flex flex-col mb-0">
-                <label class="form-label">원시 데이터 (TSV: 대수/연도/선거구명/정당/의원)</label>
+                <label class="form-label">원시 데이터 (TSV: 기수/연도/지자체명/정당/단체장)</label>
                 <textarea id="input-rawdata" class="form-input h-48 resize-y" placeholder="엑셀 복사 붙여넣기..."></textarea>
             </div>
         </div>
@@ -74,7 +76,7 @@
 
     <div class="w-[220px] bg-gray-800 flex flex-col h-full border-r border-gray-700 shrink-0">
         <div class="p-4 bg-gray-900 border-b border-gray-700">
-            <h2 class="text-white font-bold text-md text-center" id="term-list-title">대수 선택</h2>
+            <h2 class="text-white font-bold text-md text-center" id="term-list-title">기수(대수) 선택</h2>
         </div>
         <div id="term-list" class="flex-1 overflow-y-auto">
             <div class="text-gray-400 text-sm text-center mt-10 p-4">좌측에서 데이터를<br>적용해주세요.</div>
@@ -85,13 +87,14 @@
         <div class="p-4 bg-white border-b border-gray-200 flex justify-between items-center shrink-0">
             <h2 id="current-term-title" class="text-lg font-bold text-gray-800 truncate">JS 코드</h2>
             <div class="flex gap-2 shrink-0">
+                <button class="download-all-btn" onclick="downloadAllCodes()">
+                    📦 전체 JS 일괄 저장
+                </button>
                 <button class="download-btn" onclick="downloadCode()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    .js 저장
+                    ⬇️ 현재 JS 저장
                 </button>
                 <button class="copy-btn" onclick="copyCode()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    복사
+                    📋 복사
                 </button>
             </div>
         </div>
@@ -117,234 +120,36 @@
 
         // 범용 정당 색상 (효빈, 덕빈북 및 주요 정당 모두 포함)
         const partyColors = {
-            "대한독립촉성국민회": "#1271B5",
-            "한국민주당": "#008000",
-            "대동청년단": "#27176F",
-            "대한독립촉성노동총연맹": "#00A495",
-            "대한청년단": "#DA251D",
-            "남조선로동당": "#FF0000",
-            "민주국민당1949": "#ADFF2F",
-            "민주국민당": "#ADFF2F",
-            "대한국민당": "#0087BD",
-            "일민구락부": "#C0C0FF",
-            "사회당": "#E63E62",
-            "한국독립당1963": "#113DA6",
-            "한국독립당": "#113DA6",
-            "자유당": "#254170",
-            "민주당1955": "#000080",
-            "민주당": "#000080",
-            "민주당(구파)": "#000080",
-            "민주당(신파)": "#000080",
-            "민주공화당": "#835B38",
-            "민정당": "#FFD700",
-            "민주당1963": "#332B43",
-            "자유민주당1963": "#005848",
-            "국민의당1963": "#C2C247",
-            "신민회": "#3366FF",
-            "신흥당": "#005099",
-            "정민회": "#4B0080",
-            "추풍회": "#C78665",
-            "신민당": "#DC352A",
-            "대중당": "#3069A5",
-            "민중당1967": "#FFD2AD",
-            "정의당1967": "#350887",
-            "자민당": "#88C8C8",
-            "통한당": "#312F2A",
-            "통일사회당": "#104D8E",
-            "민주당1967": "#9ACD32",
-            "반제민족민주전선": "#007FFF",
-            "국민당1971": "#00AF89",
-            "민주통일당": "#FAC813",
-            "민주정의당": "#0A84E9",
-            "민주한국당": "#ED2939",
-            "한국국민당": "#498C00",
-            "민주사회당": "#FF8201",
-            "신정당": "#4697B2",
-            "민주농민당": "#A52A2A",
-            "원일민립당": "#E0E0E0",
-            "신한민주당": "#E6573B",
-            "신정사회당": "#FF4500",
-            "신민주당": "#189868",
-            "평화민주당": "#FADA5E",
-            "통일민주당": "#E60026",
-            "신민주공화당": "#59955E",
-            "한겨레민주당": "#FF7F50",
-            "민주자유당": "#003990",
-            "민주당1991": "#009D68",
-            "통일국민당": "#22B14C",
-            "민중당1990": "#FFA500",
-            "신정치개혁당": "#101299",
-            "신민당1994": "#3D9069",
-            "무정파전국연합": "#FF6699",
-            "무당파국민연합": "#5290DB",
-            "신한국당": "#003990",
+            "더불어민주당": "#003B96",
+            "국민의힘": "#E61E2B",
+            "진보당": "#D6001C",
+            "정의당": "#FFED00",
+            "개혁신당": "#FF7210",
             "새정치국민회의": "#009A44",
             "자유민주연합": "#1B5B40",
-            "민주당1995": "#009D68",
-            "통합민주당": "#04972D",
             "한나라당": "#0095DA",
-            "국민신당": "#336C77",
-            "건설국민승리21": "#FF3D00",
             "새천년민주당": "#00AA7B",
-            "민주국민당2000": "#353F9C",
-            "희망의한국신당": "#283C7B",
-            "하나로국민연합": "#215AA6",
-            "개혁국민정당": "#4CBB17",
-            "녹색평화당": "#4EB233",
-            "한국사회민주당": "#0080FF",
-            "녹색사민당": "#51B749",
             "열린우리당": "#FFD700",
-            "민주노동당": "#EE7700",
-            "국민통합21": "#4F689A",
-            "대통합민주신당": "#FF7F00",
-            "국민중심당": "#E85298",
-            "중도통합민주당": "#F7C517",
-            "민주당2008": "#04972D",
             "자유선진당": "#00529C",
-            "친박연대": "#0C449B",
-            "시민통합당": "#F7B618",
-            "창조한국당": "#B30000",
-            "진보신당": "#DC143C",
-            "국민참여당": "#FCCA00",
-            "가자!대국민중심당": "#1A2C8E",
-            "국민중심연합": "#E85298",
-            "국민생각": "#F5821F",
-            "미래연합": "#264280",
-            "대한국당": "#005FB1",
-            "정통민주당": "#FEDD02",
-            "청년당": "#F47920",
             "새누리당": "#C9252B",
-            "민주당2011": "#015DA9",
-            "민주통합당": "#FFD400",
-            "통합진보당": "#782B90",
-            "진보정의당": "#FF007F",
-            "국민의당": "#006241",
-            "정의당": "#FFED00",
-            "새정치연합": "#00CCFF",
-            "새정치민주연합": "#0082CD",
-            "공화당2014": "#D2232A",
-            "녹색당": "#5CB32E",
-            "기독자유통일당": "#0095DA",
-            "민주당2014": "#FBD02B",
-            "기독당": "#0167B7",
-            "한나라당2012": "#E32B34",
-            "가자코리아": "#4F1D12",
-            "일제위안부인권정당": "#0085C6",
-            "대한당": "#4B3293",
-            "통일민주당2015": "#00AF97",
-            "국민참여신당": "#F8C400",
-            "한국경제당": "#F58229",
-            "그린불교연합당": "#609060",
-            "친박연대2012": "#0C449B",
-            "한국복지당": "#EA5404",
-            "한나라당2013": "#D61921",
-            "더불어민주당": "#003B96",
             "자유한국당": "#C9151E",
-            "바른정당": "#00B1EB",
-            "노동당": "#FF0000",
-            "고용복지연금선진화연대": "#EA5C30",
-            "민중연합당": "#EE5927",
-            "늘푸른한국당": "#085C81",
-            "경제애국당": "#781482",
-            "홍익당": "#871E60",
-            "국민대통합당": "#F26F21",
-            "한국국민당2015": "#013588",
-            "통일한국당2016": "#F47433",
-            "복지국가당": "#FA6500",
-            "한반도미래연합": "#E33334",
-            "새누리당2017": "#D91E48",
-            "대한애국당": "#0D2680",
-            "우리공화당2017": "#14A83B",
-            "사회변혁노동자당": "#D70C19",
-            "새민중정당": "#FF0D00",
-            "미래당": "#2E3192",
-            "사회민주당2016": "#950F16",
-            "민중민주당": "#8E2650",
-            "민중당2017": "#F26522",
-            "진보당2017": "#D6001C",
-            "진보당": "#D6001C",
-            "민주평화당": "#43B02A",
-            "바른미래당": "#00B4B4",
-            "자유의새벽당": "#101922",
-            "국가혁명당": "#E7141A",
-            "국민새정당": "#1F6DDC",
-            "대안신당": "#236736",
-            "새로운보수당": "#00A7E5",
-            "미래를향한전진4.0": "#D42427",
-            "기본소득당": "#00D2C3",
-            "자유통일당2020": "#DF0913",
-            "직능자영업당": "#752B88",
-            "미래한국당": "#EF426F",
             "미래통합당": "#EF426F",
-            "국민의당2020": "#EA5504",
-            "민주평화당2020": "#0BA95F",
-            "친박신당": "#E20010",
-            "가자환경당": "#2A91C0",
-            "가자!평화인권당": "#7B9D2E",
-            "신자유민주연합": "#AD469F",
-            "시대전환": "#5A147E",
-            "열린민주당": "#003E9B",
-            "자유당2020": "#30318B",
-            "여성의당": "#6400AA",
-            "중소자영업당": "#144A88",
-            "미래민주당": "#00A7E6",
-            "더불어시민당": "#004EA2",
-            "우리공화당2020": "#009944",
-            "남북통일당": "#AC0300",
-            "깨어있는시민연대당": "#000056",
-            "우리당2020": "#1A2F5C",
-            "미래자영업당": "#AA0B2D",
-            "국민의힘": "#E61E2B",
-            "독도한국당": "#00984A",
-            "자유한국21": "#172A88",
-            "거지당": "#038ED3",
-            "한류연합당": "#733A87",
-            "자유민주당2021": "#033692",
-            "신한반도당": "#008DD7",
-            "신한반도평화체제당": "#292C93",
-            "혁명21": "#044EA3",
-            "통일한국당2021": "#003793",
-            "대한국민당2021": "#51A776",
-            "국민혁명당": "#013792",
-            "새로운물결": "#02BB71",
-            "한국의희망": "#004B83",
-            "한국농어민당": "#0056B8",
-            "새로운선택": "#1AD199",
-            "국민주권당": "#00A0EA",
-            "개혁신당": "#FF7210",
-            "사회민주당2024": "#F58400",
-            "국민의미래": "#E4002B",
-            "새진보연합": "#00D2C3",
-            "K정치혁신연합당": "#3E63AA",
-            "조국혁신당": "#0073CF",
-            "더불어민주연합": "#003B96",
-            "소나무당": "#1A246B",
-            "금융개혁당": "#9900CC",
-            "대한상공인당": "#7030A0",
-            "대중민주당": "#FFEF10",
-            "히시태그국민정책당": "#F16335",
-            "공화당2020": "#012154",
-            "가가호호공명선거대한당": "#4B286F",
-            "새미래민주당": "#51BDC5",
-            "국민연합": "#E4017F",
-            "자유와혁신": "#A50034",
-            "무소속": "#808080",
-            "사회대중당": "#E63E62"            // 필요에 따라 더 추가 가능하며 없는 정당은 기본 회색 처리됨
+            "무소속": "#808080"
+            // 필요에 따라 더 추가 가능하며 없는 정당은 기본 회색 처리됨
         };
 
-        // 밝은 색상 판별 함수 (글자색 대비용)
         function isLightColor(hex) {
             if (!hex) return false;
             const lightColors = ["#FFD700", "#ADFF2F", "#C0C0FF", "#FADA5E", "#FFD400", "#FFED00", "#E0E0E0", "#FFEF10", "#FAC813", "#FFD2AD", "#C2C247"];
             return lightColors.includes(hex.toUpperCase());
         }
 
-        // 대수 문자열 포맷팅
+        // 대수/기수 문자열 포맷팅
         function formatDaesu(str) {
             if (str === "제헌") return "제헌";
-            if (str.startsWith("제") && str.includes("대")) return str;
-            let match = str.match(/^(\d+)대(.*)$/);
-            if (match) return `제${match[1]}대${match[2]}`;
+            if (str.includes("민선")) return str; // 이미 민선 X기 형태면 그대로 유지
+            let match = str.match(/^(\d+)(대|기)(.*)$/);
+            if (match) return `민선 ${match[1]}기${match[3]}`; // 기본적으로 민선 X기로 통일
             return str;
         }
 
@@ -354,7 +159,6 @@
             return str.replace(/[^0-9]/g, '');
         }
 
-        // 색상 픽커 연동
         document.getElementById('input-color-picker').addEventListener('input', function(e) {
             document.getElementById('input-color').value = e.target.value.toUpperCase();
         });
@@ -363,16 +167,13 @@
         });
 
         function applySettings() {
-            // 1. 설정값 읽기
             appState.region = document.getElementById('input-region').value.trim() || '덕빈북도';
             appState.engId = document.getElementById('input-eng').value.trim() || 'Deokbinbuk';
             appState.color = document.getElementById('input-color').value.trim() || '#4AD898';
             
-            // 색상 변수 CSS 업데이트 (활성화 버튼 색상)
             document.documentElement.style.setProperty('--active-bg', appState.color);
-            document.getElementById('term-list-title').textContent = `${appState.region} 대수`;
+            document.getElementById('term-list-title').textContent = `${appState.region} 대수/기수`;
 
-            // 2. 특이사항 파싱
             appState.footnotes = {};
             const fnRaw = document.getElementById('input-footnotes').value;
             fnRaw.split('\n').forEach(line => {
@@ -382,20 +183,18 @@
                 }
             });
 
-            // 3. TSV 데이터 파싱
             appState.parsedData = {};
             const rawData = document.getElementById('input-rawdata').value;
             const lines = rawData.trim().split('\n');
             
-            // 헤더 건너뛰기 로직 개선
             let startIndex = 0;
-            if (lines.length > 0 && lines[0].includes('선거구명')) startIndex = 1;
+            if (lines.length > 0 && (lines[0].includes('선거구') || lines[0].includes('지자체'))) startIndex = 1;
 
             for (let i = startIndex; i < lines.length; i++) {
                 const parts = lines[i].split('\t');
                 if (parts.length >= 5) {
                     const daesu = parts[0].trim();
-                    const year = parts[1].trim();
+                    const year = parts[1].trim(); // 연도는 파싱만 하고 현재 구조상 생략
                     const district = parts[2].trim();
                     const party = parts[3].trim();
                     const name = parts[4].trim();
@@ -405,10 +204,9 @@
                 }
             }
 
-            // 4. 대수 정렬
             appState.sortedDaesu = Object.keys(appState.parsedData).sort((a, b) => {
-                let numA = parseInt(a.replace(/[^0-9]/g, '')) || (a === '제헌' ? 1 : 0);
-                let numB = parseInt(b.replace(/[^0-9]/g, '')) || (b === '제헌' ? 1 : 0);
+                let numA = parseInt(a.replace(/[^0-9]/g, '')) || 0;
+                let numB = parseInt(b.replace(/[^0-9]/g, '')) || 0;
                 return numB - numA;
             });
 
@@ -429,12 +227,11 @@
                 const btn = document.createElement('button');
                 btn.className = 'term-btn';
                 btn.id = `btn-${extractNumId(daesu)}`;
-                btn.textContent = `${formatted} 국회의원`;
+                btn.textContent = `${formatted} 단체장`;
                 btn.onclick = () => selectTerm(daesu, index);
                 termList.appendChild(btn);
             });
 
-            // 가장 최신 대수 자동 선택
             selectTerm(appState.sortedDaesu[0], 0);
         }
 
@@ -445,61 +242,61 @@
             const isLatest = (index === 0);
             const isOpen = isLatest ? 'open=""' : '';
 
-            // 이전/다음 대수 링크 계산
             const prevDaesuRaw = index < appState.sortedDaesu.length - 1 ? appState.sortedDaesu[index + 1] : null;
             const nextDaesuRaw = index > 0 ? appState.sortedDaesu[index - 1] : null;
             
             const prevLink = prevDaesuRaw ? `◀ <a href="${formatDaesu(prevDaesuRaw)}.html" style="color:#333; text-decoration:none; font-weight:bold;">${formatDaesu(prevDaesuRaw)}</a>` : '';
             const nextLink = nextDaesuRaw ? `<a href="${formatDaesu(nextDaesuRaw)}.html" style="color:#333; text-decoration:none; font-weight:bold;">${formatDaesu(nextDaesuRaw)}</a> ▶` : '';
 
+            // 로고 자동 분기 로직
+            let logoHtml = '';
+            if (appState.region.includes("효빈광역시")) {
+                logoHtml = `<img src="이미지/logo.webp" alt="효빈광역시 로고" style="height: 40px !important; width: auto; vertical-align: middle; filter: brightness(0) invert(1);">`;
+            } else if (appState.region.includes("덕빈북도")) {
+                logoHtml = `<img src="이미지/덕북로고.webp" alt="덕빈북도 로고" style="height: 20px; vertical-align: middle;">`;
+            } else if (appState.region.includes("덕빈남도")) {
+                logoHtml = `<img src="이미지/덕빈남도_로고.webp" alt="덕빈남도 로고" style="height: 40px !important; width: auto; vertical-align: middle; filter: brightness(0) invert(1);">`;
+            } else {
+                logoHtml = `<div class="font-bold bg-white px-1 text-xs rounded" style="color: ${appState.color};">H</div>`;
+            }
+
             let rowsHtml = '';
-            for (let i = 0; i < members.length; i += 4) {
-                const group = members.slice(i, i + 4);
+            for (let i = 0; i < members.length; i += 5) {
+                const group = members.slice(i, i + 5);
                 
-                // 지역구(th) 행
                 rowsHtml += `                                        <tr>\n`;
                 group.forEach(m => {
                     const bg = partyColors[m.party] || '#808080';
                     const txt = isLightColor(bg) ? '#000000' : '#ffffff';
-                    rowsHtml += `                                            <td class="district-cell" style="width: 25%; background-color: ${bg}; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="${m.district}.html" style="color: ${txt}; text-decoration: none;">${m.district}</a></td>\n`;
+                    rowsHtml += `                                            <td class="district-cell" style="width: 20%; background-color: ${bg}; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="${m.district}.html" style="color: ${txt}; text-decoration: none;">${m.district}</a></td>\n`;
                 });
-                for(let j = group.length; j < 4; j++) rowsHtml += `                                            <td style="width: 25%; background-color: #f9f9f9; border: 1px solid #aaa; border-style: none solid;"></td>\n`;
+                for(let j = group.length; j < 5; j++) rowsHtml += `                                            <td style="width: 20%; background-color: #f9f9f9; border: 1px solid #aaa; "></td>\n`;
                 rowsHtml += `                                        </tr>\n`;
 
-                // 의원 이름 행
                 rowsHtml += `                                        <tr>\n`;
                 group.forEach(m => {
                     let color = partyColors[m.party] || '#000000';
                     if (color.toLowerCase() === '#ffffff') color = '#000000';
                     rowsHtml += `                                            <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="${m.name}.html" style="color: ${color}; text-decoration: none;">${m.name}</a></td>\n`;
                 });
-                for(let j = group.length; j < 4; j++) rowsHtml += `                                            <td style="border: 1px solid #aaa; border-style: none solid;"></td>\n`;
+                for(let j = group.length; j < 5; j++) rowsHtml += `                                            <td style="border: 1px solid #aaa; "></td>\n`;
                 rowsHtml += `                                        </tr>\n`;
             }
 
-            // 특이사항 블록
             let resultBlockHtml = '';
-            const footnoteText = appState.footnotes[formattedDaesu];
+            const footnoteText = appState.footnotes[daesu] || appState.footnotes[formattedDaesu];
             if (footnoteText) {
                 resultBlockHtml = `
                             <div class="result-header" style="text-align: center; padding: 8px; background-color: #f8f9fa; border-top: 1px solid #aaa; color: #005CB9; font-size: 0.95rem; font-weight: bold;">
-                                <a href="${formattedDaesu}_국회의원_선거.html" style="color: #005CB9; text-decoration: none;">선거 결과</a>
+                                <a href="${formattedDaesu}_기초자치단체장_선거.html" style="color: #005CB9; text-decoration: none;">선거 결과</a>
                             </div>
                             <div class="result-content" style="text-align: center; padding: 12px; border-top: 1px solid #aaa; font-size: 0.85rem; background-color: #fff; line-height: 1.8; color: #444;">
                                 ${footnoteText}
                             </div>`;
-            } else {
-                resultBlockHtml = `
-                            <div class="result-header" style="text-align: center; padding: 8px; background-color: #f8f9fa; border-top: 1px solid #aaa; color: #005CB9; font-size: 0.95rem; font-weight: bold;">
-                                <a href="${formattedDaesu}_국회의원_선거.html" style="color: #005CB9; text-decoration: none;">선거 결과</a>
-                            </div>
-                            <div class="result-content" style="text-align: center; padding: 12px; border-top: 1px solid #aaa; font-size: 0.85rem; background-color: #fff; line-height: 1.8; color: #888;">
-                                * 해당 대수에는 당선무효, 사퇴 등의 특이사항이 없습니다.
-                            </div>`;
             }
 
-            const funcName = `render${appState.engId}Assembly${numId}Nav`;
-            const containerId = `${appState.engId.toLowerCase()}-assembly-${numId}-nav-container`;
+            const funcName = `render${appState.engId}Head${numId}Nav`;
+            const containerId = `${appState.engId.toLowerCase()}-head-${numId}-nav-container`;
 
             return `document.addEventListener("DOMContentLoaded", function() {
     function ${funcName}(containerId) {
@@ -509,9 +306,9 @@
         const html = \`
         <div class="nav-box shadow-sm" style="border: 1px solid #aaa; margin-bottom: 30px; background-color: #fff; font-family: 'Noto Sans KR', sans-serif;">
             <div class="nav-header tracking-wide" style="background-color: ${appState.color}; color: white; text-align: center; font-weight: bold; padding: 8px; font-size: 1.05rem;">
-                <span style="display:inline-flex; align-items:center; gap:4px;">
-                    <div class="font-bold bg-white px-1 text-xs rounded" style="color: ${appState.color};">H</div>
-                    <a href="${appState.region}.html" style="color:white; text-decoration: none;">${appState.region} ${formattedDaesu} 국회의원</a>
+                <span style="display:inline-flex; align-items:center; gap:6px;">
+                    ${logoHtml}
+                    <a href="${appState.region}.html" style="color:white; text-decoration: none;">${appState.region} ${formattedDaesu} 기초자치단체장</a>
                 </span>
             </div>
             <details ${isOpen} style="width: 100%;">
@@ -528,10 +325,6 @@ ${resultBlockHtml}
                         <div>${prevLink}</div>
                         <div>${nextLink}</div>
                     </div>
-                    <div class="nav-footer-areas tracking-wider" style="background-color: #667666; color: white; text-align: center; padding: 10px; font-size: 0.85rem; line-height: 1.8; border-top: 1px solid #aaa; letter-spacing: 0.5px;">
-                        비례 · 서울 · 부산 · 대구 · 인천 · 광주 · 대전 · 울산 · 세종<br>
-                        경기 · 강원 · 충북 · 충남 · 전남 · 전북 · 경북 · 경남 · 제주 · 효빈 · <span style="font-weight: bold; color: #fde047;">${appState.region}</span> 
-                    </div>
                 </div>
             </details>
         </div>
@@ -540,12 +333,11 @@ ${resultBlockHtml}
         container.innerHTML = html;
     }
     
-    // 컴포넌트 렌더링 실행 (생성할 문서에 id="\${containerId}" 인 div를 추가하세요)
+    // 컴포넌트 렌더링 실행
     ${funcName}('${containerId}');
 });`;
         }
 
-        // 대수 선택 핸들러
         function selectTerm(daesu, index) {
             document.querySelectorAll('.term-btn').forEach(btn => btn.classList.remove('active'));
             const numId = extractNumId(daesu);
@@ -569,28 +361,52 @@ ${resultBlockHtml}
             try {
                 document.execCommand('copy');
                 const toast = document.getElementById('toast');
+                toast.textContent = '복사 완료!';
                 toast.style.opacity = '1';
-                toast.style.pointerEvents = 'auto';
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.style.pointerEvents = 'none';
-                }, 2000);
-            } catch (err) {
-                console.error('복사 실패', err);
-            }
+                setTimeout(() => toast.style.opacity = '0', 2000);
+            } catch (err) {}
             document.body.removeChild(textarea);
         }
 
+        // 현재 보고 있는 대수(기수) 1개 다운로드
         function downloadCode() {
             if(!currentCode) return;
             const activeBtn = document.querySelector('.term-btn.active');
             if (!activeBtn) return;
             
-            const daesuRaw = activeBtn.textContent.replace(' 국회의원', '').trim();
+            const daesuRaw = activeBtn.textContent.replace(' 단체장', '').trim();
             const numId = extractNumId(daesuRaw);
-            const fileName = `${appState.engId.toLowerCase()}_${numId}.js`;
+            const fileName = `${appState.engId.toLowerCase()}_head_${numId}.js`;
             
-            const blob = new Blob([currentCode], { type: 'text/javascript;charset=utf-8;' });
+            triggerDownload(currentCode, fileName);
+        }
+
+        // 전체 대수(기수) 일괄 다운로드 (브라우저 차단 방지를 위해 약간의 딜레이 적용)
+        function downloadAllCodes() {
+            if (appState.sortedDaesu.length === 0) {
+                alert("추출할 데이터가 없습니다.");
+                return;
+            }
+
+            let delay = 0;
+            appState.sortedDaesu.forEach((daesu, index) => {
+                setTimeout(() => {
+                    const code = generateJSCode(daesu, index);
+                    const numId = extractNumId(daesu);
+                    const fileName = `${appState.engId.toLowerCase()}_head_${numId}.js`;
+                    triggerDownload(code, fileName);
+                }, delay);
+                delay += 300; // 0.3초마다 1개씩 다운로드 트리거
+            });
+
+            const toast = document.getElementById('toast');
+            toast.textContent = `총 ${appState.sortedDaesu.length}개의 JS 파일을 일괄 다운로드합니다!`;
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', 3000);
+        }
+
+        function triggerDownload(codeContent, fileName) {
+            const blob = new Blob([codeContent], { type: 'text/javascript;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             
@@ -604,18 +420,14 @@ ${resultBlockHtml}
             URL.revokeObjectURL(url);
         }
 
-        // 초기 데이터 (덕빈북도 예시 샘플)
-        document.getElementById('input-rawdata').value = `대수	연도	선거구명	정당	의원
-제헌	1948년	천주군 갑	한국민주당	송진우
-제헌	1948년	천주군 을	무소속	백남식
-22대	2024년	천주시 갑	더불어민주당	고규미
-22대	2024년	천주시 을	더불어민주당	하성민
-22대	2024년	빈주시 갑	더불어민주당	박현언
-22대	2024년	빈주시 을	더불어민주당	고한선
-22대	2024년	서해시 갑	더불어민주당	김세솔
-22대	2024년	약산시·선곡군 갑	진보당	소산현`;
+        // 초기 데이터 샘플
+        document.getElementById('input-rawdata').value = `기수	연도	지자체명	정당	단체장
+민선 1기	1995년	서해시	새정치국민회의	경지현
+민선 1기	1995년	빈주시	자유민주연합	한광호
+민선 1기	1995년	천주시	새정치국민회의	남재일
+민선 8기	2022년	서해시	더불어민주당	최정아
+민선 8기	2022년	빈주시	국민의힘	이재성`;
         
-        // 실행
         applySettings();
     </script>
 </body>

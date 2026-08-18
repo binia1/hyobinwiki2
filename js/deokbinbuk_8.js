@@ -7,7 +7,8 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="nav-box shadow-sm" style="border: 1px solid #aaa; margin-bottom: 30px; background-color: #fff; font-family: 'Noto Sans KR', sans-serif;">
             <div class="nav-header tracking-wide" style="background-color: #4AD898; color: white; text-align: center; font-weight: bold; padding: 8px; font-size: 1.05rem;">
                 <span style="display:inline-flex; align-items:center; gap:4px;">
-                    <div class="font-bold bg-white px-1 text-xs rounded" style="color: #4AD898;">H</div>
+                                <img onerror="this.style.display='none'" src="이미지/덕북로고흰색.webp" style="vertical-align: middle; display:block;" width="20"/>
+                            </a>
                     <a href="덕빈북도.html" style="color:white; text-decoration: none;">덕빈북도 제8대 국회의원</a>
                 </span>
             </div>
@@ -70,13 +71,13 @@ document.addEventListener("DOMContentLoaded", function() {
                                             <td class="district-cell" style="width: 25%; background-color: #835B38; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="제17선거구(탄성/선곡).html" style="color: #ffffff; text-decoration: none;">제17선거구(탄성/선곡)</a></td>
                                             <td class="district-cell" style="width: 25%; background-color: #835B38; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="제18선거구(모제/전산).html" style="color: #ffffff; text-decoration: none;">제18선거구(모제/전산)</a></td>
                                             <td class="district-cell" style="width: 25%; background-color: #835B38; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="제19선거구(약산군).html" style="color: #ffffff; text-decoration: none;">제19선거구(약산군)</a></td>
-                                            <td style="width: 25%; background-color: #f9f9f9; border: 1px solid #aaa; border-style: none solid;"></td>
+                                            <td style="width: 25%; background-color: #f9f9f9; border: 1px solid #aaa; "></td>
                                         </tr>
                                         <tr>
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="조산태.html" style="color: #835B38; text-decoration: none;">조산태</a></td>
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="신동철.html" style="color: #835B38; text-decoration: none;">신동철</a></td>
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="이언생.html" style="color: #835B38; text-decoration: none;">이언생</a></td>
-                                            <td style="border: 1px solid #aaa; border-style: none solid;"></td>
+                                            <td style="border: 1px solid #aaa; "></td>
                                         </tr>
                         </tbody>
                     </table>

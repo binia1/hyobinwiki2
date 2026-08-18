@@ -7,7 +7,8 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="nav-box shadow-sm" style="border: 1px solid #aaa; margin-bottom: 30px; background-color: #fff; font-family: 'Noto Sans KR', sans-serif;">
             <div class="nav-header tracking-wide" style="background-color: #4AD898; color: white; text-align: center; font-weight: bold; padding: 8px; font-size: 1.05rem;">
                 <span style="display:inline-flex; align-items:center; gap:4px;">
-                    <div class="font-bold bg-white px-1 text-xs rounded" style="color: #4AD898;">H</div>
+                                <img onerror="this.style.display='none'" src="이미지/덕북로고흰색.webp" style="vertical-align: middle; display:block;" width="20"/>
+                            </a>
                     <a href="덕빈북도.html" style="color:white; text-decoration: none;">덕빈북도 제12대 국회의원</a>
                 </span>
             </div>
@@ -69,14 +70,14 @@ document.addEventListener("DOMContentLoaded", function() {
                                         <tr>
                                             <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제8(상안/서진/모제).html" style="color: #ffffff; text-decoration: none;">덕빈북 제8(상안/서진/모제)</a></td>
                                             <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제9(군천/군양/전산).html" style="color: #ffffff; text-decoration: none;">덕빈북 제9(군천/군양/전산)</a></td>
-                                            <td style="width: 25%; background-color: #f9f9f9; border: 1px solid #aaa; border-style: none solid;"></td>
-                                            <td style="width: 25%; background-color: #f9f9f9; border: 1px solid #aaa; border-style: none solid;"></td>
+                                            <td style="width: 25%; background-color: #f9f9f9; border: 1px solid #aaa; "></td>
+                                            <td style="width: 25%; background-color: #f9f9f9; border: 1px solid #aaa; "></td>
                                         </tr>
                                         <tr>
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="조명환.html" style="color: #0A84E9; text-decoration: none;">조명환</a></td>
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="신동일.html" style="color: #0A84E9; text-decoration: none;">신동일</a></td>
-                                            <td style="border: 1px solid #aaa; border-style: none solid;"></td>
-                                            <td style="border: 1px solid #aaa; border-style: none solid;"></td>
+                                            <td style="border: 1px solid #aaa; "></td>
+                                            <td style="border: 1px solid #aaa; "></td>
                                         </tr>
                         </tbody>
                     </table>

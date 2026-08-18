@@ -17,7 +17,7 @@ document.write(`
         background-color: #7777AA;
         color: #fff;
         text-align: center;
-        padding: 5px;
+        padding: 8px;
     }
     .transport-sub-header {
         background-color: #f9f9f9;
@@ -58,22 +58,33 @@ document.write(`
         text-decoration: none !important;
     }
 
-    /* [신규] 도시철도용 원형 아이콘 스타일 (요청 반영) */
+    /* 도시철도용 원형 아이콘 스타일 */
     .round-line-icon {
-        display: inline-flex;
+        display: inline-flex !important;
         justify-content: center;
         align-items: center;
-        width: 24px;
-        height: 24px;
+        width: 22px !important;
+        height: 22px !important;
         border-radius: 50%;
         background-color: #fff;
         border-width: 2px;
         border-style: solid;
         font-weight: bold;
-        font-size: 14px;
+        font-size: 13px;
         text-decoration: none !important;
         vertical-align: middle;
         margin: 0 2px;
+    }
+
+    /* [신규] 도로 아이콘 폭주 방지용 강제 고정 스타일 */
+    .highway-icon {
+        width: 18px !important;
+        height: auto !important;
+        max-height: 20px !important;
+        vertical-align: middle !important;
+        display: inline-block !important;
+        margin-right: 2px;
+        box-shadow: none !important;
     }
 
     .bus-badge {
@@ -109,21 +120,21 @@ document.write(`
 
 <div class="transport-template-container">
     <table class="transport-template">
-        <!-- [중요] colgroup으로 열 너비 물리적 고정 -->
+        <!-- colgroup으로 열 너비 물리적 고정 -->
         <colgroup>
             <col style="width: 12%;">
             <col style="width: 15%;">
             <col style="width: 73%;">
         </colgroup>
 
-        <!-- 메인 헤더 -->
+        <!-- 메인 헤더 (로고 강제 인라인 블록 처리) -->
         <tr>
             <td colspan="3" class="transport-header">
-                <div style="display:flex; align-items:center; justify-content:center; gap:10px;">
-                    <a href="효빈광역시.html"><img src="이미지/logo.webp" height="45" style="vertical-align:middle;" onerror="this.src='https://placehold.co/45x45/7777aa/white?text=HYOBIN'"></a>
-                    <div style="line-height:1.2;">
-                        <span style="font-size:1.1em;"><a href="효빈광역시.html" style="color:inherit; text-decoration:none;">효빈광역시</a></span><br>
-                        <span style="font-size:1.4em; font-weight:bold;"><a href="효빈광역시_교통.html" style="color:inherit; text-decoration:none;">교통</a></span>
+                <div style="display:flex; align-items:center; justify-content:center; gap:8px;">
+                    <a href="효빈광역시.html" style="display: inline-flex;"><img src="이미지/logo.webp" style="width: 24px !important; height: auto !important; display: inline-block !important; vertical-align:middle; filter: brightness(0) invert(1);" onerror="this.src='https://placehold.co/24x24/7777aa/white?text=H'"></a>
+                    <div style="line-height:1.1; text-align:left;">
+                        <span style="font-size:0.75em; opacity:0.9;"><a href="효빈광역시.html" style="color:inherit; text-decoration:none;">효빈광역시</a></span><br>
+                        <span style="font-size:1.15em; font-weight:bold;"><a href="효빈광역시_교통.html" style="color:inherit; text-decoration:none;">교통</a></span>
                     </div>
                 </div>
             </td>
@@ -131,7 +142,7 @@ document.write(`
         
         <!-- 접기/펼치기 제어 -->
         <tr style="background-color:#fff; cursor:pointer;" onclick="toggleTransportContent()">
-            <td colspan="3" style="text-align:center; font-size:0.8em; color:#777; padding:2px;">[ 펼치기 · 접기 ]</td>
+            <td colspan="3" style="text-align:center; font-size:0.8em; color:#777; padding:4px; font-weight:bold; border-bottom: 1px solid #ccc;">[ 펼치기 · 접기 ]</td>
         </tr>
 
         <tbody id="transport-body">
@@ -199,10 +210,10 @@ document.write(`
                 </td>
                 <td class="transport-label"><a href="고속도로.html">고속도로</a></td>
                 <td class="transport-content">
-                    <img src="이미지/대한민국_고속국도.webp" height="15" style="vertical-align:middle;"> <a href="효빈빈주고속도로.html">효빈빈주선</a> · 
-                    <img src="이미지/대한민국_고속국도.webp" height="15" style="vertical-align:middle;"> <a href="효빈서해고속도로.html">효빈서해선</a> · 
-                    <img src="이미지/대한민국_고속국도.webp" height="15" style="vertical-align:middle;"> <a href="덕북고속도로.html">덕북선</a> · 
-                    <img src="이미지/대한민국_고속국도.webp" height="15" style="vertical-align:middle;"> <a href="효빈외곽순환고속도로.html">효빈외곽순환선</a>
+                    <img src="이미지/대한민국_고속국도.webp" class="highway-icon"> <a href="효빈빈주고속도로.html">효빈빈주선</a> · 
+                    <img src="이미지/대한민국_고속국도.webp" class="highway-icon"> <a href="효빈서해고속도로.html">효빈서해선</a> · 
+                    <img src="이미지/대한민국_고속국도.webp" class="highway-icon"> <a href="덕북고속도로.html">덕북선</a> · 
+                    <img src="이미지/대한민국_고속국도.webp" class="highway-icon"> <a href="효빈외곽순환고속도로.html">효빈외곽순환선</a>
                 </td>
             </tr>
             <tr>
@@ -214,9 +225,9 @@ document.write(`
             <tr>
                 <td class="transport-label"><a href="국도.html">국도</a></td>
                 <td class="transport-content">
-                    <img src="이미지/국도.webp" height="15" style="vertical-align:middle;"> <a href="7번_국도.html">7번</a> · 
-                    <img src="이미지/국도.webp" height="15" style="vertical-align:middle;"> <a href="14번_국도.html">14번</a> · 
-                    <img src="이미지/국도.webp" height="15" style="vertical-align:middle;"> <a href="31번_국도.html">31번</a>
+                    <img src="이미지/국도.webp" class="highway-icon"> <a href="7번_국도.html">7번</a> · 
+                    <img src="이미지/국도.webp" class="highway-icon"> <a href="14번_국도.html">14번</a> · 
+                    <img src="이미지/국도.webp" class="highway-icon"> <a href="31번_국도.html">31번</a>
                 </td>
             </tr>
 
