@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <!-- [리엘라 멤버 목록 표 박스] -->
         <div class="w-full max-w-[600px] mx-auto border-[1.5px] border-[#994488] rounded-[10px] bg-[#f2e0f7] text-center overflow-hidden mb-6 shadow-sm">
             <div class="w-11/12 mx-auto py-3 border-b-[1.5px] border-[#994488] font-bold text-xl text-black">
-                <a href="Liella!.html" class="nw-link"><img src="이미지/Liella!_Official_Logo.webp" alt="Liella!" class="h-10 mx-auto" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none;">Liella!</span></a>
+                <a href="Liella!.html" class="nw-link"><img src="이미지/리에라.webp" alt="Liella!" class="h-10 mx-auto" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none;">Liella!</span></a>
             </div>
             
             <!-- 멤버 (펼치기/접기) -->

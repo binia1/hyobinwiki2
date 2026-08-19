@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <!-- [니지동 멤버 목록 표 박스] -->
         <div class="w-full max-w-[600px] mx-auto border-[1.5px] border-[#fab920] rounded-[10px] bg-[#fab920] text-center overflow-hidden mb-6 shadow-sm">
             <div class="w-11/12 mx-auto py-3 border-b border-white font-bold text-xl text-black">
-                <a href="니지가사키 학원 스쿨 아이돌 동호회.html" class="nw-link"><img src="이미지/unit_nijigasaki_kr.webp" alt="니지가사키 학원 스쿨 아이돌 동호회" class="h-10 mx-auto" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none; color:white;">니지가사키 학원 스쿨 아이돌 동호회</span></a>
+                <a href="니지가사키 학원 스쿨 아이돌 동호회.html" class="nw-link"><img src="이미지/러브 라이브! 니지가사키 학원 스쿨 아이돌 동호회.webp" alt="니지가사키 학원 스쿨 아이돌 동호회" class="h-10 mx-auto" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none; color:white;">니지가사키 학원 스쿨 아이돌 동호회</span></a>
             </div>
             
             <!-- 멤버 (펼치기/접기) -->

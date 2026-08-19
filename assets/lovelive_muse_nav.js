@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <!-- [뮤즈 멤버 목록 표 박스] -->
         <div class="w-full max-w-[600px] mx-auto border border-[#e10082] rounded-[10px] bg-[#ffc8c8] text-center text-[#e10082] overflow-hidden mb-6 shadow-sm">
             <div class="w-4/5 mx-auto py-2 border-b border-[#e10082] font-bold text-xl text-black">
-                <a href="μ’s.html" class="nw-link"><img src="이미지/뮤즈 로고.webp" alt="μ’s" class="h-8 mx-auto" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none;">μ’s</span></a>
+                <a href="μ’s.html" class="nw-link"><img src="이미지/뮤즈.svg" alt="μ’s" class="h-8 mx-auto" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none;">μ’s</span></a>
             </div>
             
             <!-- 멤버 (펼치기/접기) -->
