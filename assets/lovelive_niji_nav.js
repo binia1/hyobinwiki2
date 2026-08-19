@@ -676,63 +676,62 @@ document.addEventListener("DOMContentLoaded", () => {
                     </table>
                 </details>
 
-                <!-- Series Common -->
+<!-- Series Common -->
                 <details class="nw-box mb-2" style="border-color:#ccc;">
-                    <summary class="bg-white dark:bg-[#1f2023] text-black dark:text-white outline-none flex gap-2 justify-center items-center py-2">
+                    <summary class="!bg-white dark:!bg-[#1f2023] !text-black dark:!text-white outline-none flex gap-2 justify-center items-center py-2">
                         <img src="이미지/러브 라이브! School idol project series 로고.webp" alt="시리즈 로고" class="h-6" onerror="this.style.display='none'">
-                        <span class="font-bold text-lg">시리즈 공통</span>
+                        <span class="font-bold text-lg !text-black dark:!text-white">시리즈 공통</span>
                         <span class="text-xs font-normal text-gray-500">[ 펼치기 · 접기 ]</span>
                     </summary>
                     <table class="nw-tbl" style="border-color:#ccc;">
                         <tr>
-                            <th colspan="2" class="w-[16%] bg-[#ffcce6] text-[#33001a] dark:bg-[#33001a] dark:text-[#dddddd]"><a href="러브 라이브! School idol project series/유닛.html" class="nw-link">유닛</a></th>
+                            <th colspan="2" class="w-[16%] !bg-[#ffcce6] !text-[#33001a] dark:!bg-[#33001a] dark:!text-[#dddddd]"><a href="러브 라이브! School idol project series/유닛.html" class="nw-link">유닛</a></th>
                             <td class="text-left px-2"><a href="AiScReam.html" class="nw-link">AiScReam</a></td>
                         </tr>
                         <tr>
-                            <th colspan="2" class="bg-[#ffcce6] text-[#33001a] dark:bg-[#33001a] dark:text-[#dddddd]"><a href="러브 라이브! School idol project series/음반.html" class="nw-link">음반</a></th>
+                            <th colspan="2" class="!bg-[#ffcce6] !text-[#33001a] dark:!bg-[#33001a] dark:!text-[#dddddd]"><a href="러브 라이브! School idol project series/음반.html" class="nw-link">음반</a></th>
                             <td class="text-left px-2"><a href="LIVE with a smile!.html" class="nw-link">LIVE with a smile!</a><br><a href="러브 라이브! 시리즈의 올 나이트 닛폰 GOLD.html" class="nw-link">올 나이트 닛폰 GOLD</a> 타이업송 (<a href="not ALONE not HITORI.html" class="nw-link">Aqours</a> · <a href="ミラクル STAY TUNE!.html" class="nw-link">니지가사키</a> · <a href="Shooting Voice!!.html" class="nw-link">Liella!</a>)<br><a href="異次元★♥BIGBANG.html" class="nw-link">異次元★♥BIGBANG</a><br><a href="Bring the LOVE！.html" class="nw-link">Bring the LOVE！</a><br><a href="愛♡スクリ～ム！.html" class="nw-link">愛♡スクリ～ム！</a><br><a href="LoveLive! Series 15th Anniversary Tribute Album.html" class="nw-link">LoveLive! Series 15th Anniversary Tribute Album</a></td>
                         </tr>
                         <tr>
-                            <th colspan="2" class="bg-[#ffcce6] text-[#33001a] dark:bg-[#33001a] dark:text-[#dddddd]"><a href="러브 라이브! School idol project series/라이브.html" class="nw-link">라이브</a></th>
+                            <th colspan="2" class="!bg-[#ffcce6] !text-[#33001a] dark:!bg-[#33001a] dark:!text-[#dddddd]"><a href="러브 라이브! School idol project series/라이브.html" class="nw-link">라이브</a></th>
                             <td class="text-left px-2"><a href="러브 라이브! 페스 LoveLive! Series 9th Anniversary.html" class="nw-link">러브 라이브! 페스</a><br><a href="LoveLive! Series Presents COUNTDOWN LoveLive! 2021→2022 ~LIVE with a smile!~.html" class="nw-link">COUNTDOWN Live</a><br><a href="이차원 페스 아이돌마스터★♥러브 라이브! 노래 대항전.html" class="nw-link">이차원 페스 아이돌마스터★♥러브 라이브!</a><br><a href="LoveLive! Series Presents 유닛 고시엔 2024.html" class="nw-link">유닛 고시엔 2024</a><br><a href="Love Live! Series Asia Tour 2024 ~모두 함께 이뤄가는 이야기~.html" class="nw-link">Asia Tour 2024</a><br><a href="U-NEXT MUSIC FES.html" class="nw-link">U-NEXT MUSIC FES</a><br><a href="AiScReam presents TOPPING LIVE 녹기 전에 만나러 와♡♡♡.html" class="nw-link">TOPPING LIVE</a><br><a href="LoveLive! Series 15th Anniversary 러브 라이브! 페스.html" class="nw-link">15th Anniversary 러브 라이브! 페스</a></td>
                         </tr>
                         <tr>
-                            <th colspan="2" class="bg-[#ffcce6] text-[#33001a] dark:bg-[#33001a] dark:text-[#dddddd]">이벤트</th>
+                            <th colspan="2" class="!bg-[#ffcce6] !text-[#33001a] dark:!bg-[#33001a] dark:!text-[#dddddd]">이벤트</th>
                             <td class="text-left px-2"><a href="스쿠페스 시리즈 감사제.html" class="nw-link">스쿠페스 시리즈 감사제</a> · <a href="러브 라이브! 퍼시픽 리그 6개 구단 콜라보 시합.html" class="nw-link">퍼시픽 리그 6개 구단 콜라보 시합</a> · <a href="러브 라이브! 시리즈의 올 나이트 닛폰 GOLD/신춘 감사 학원제.html" class="nw-link">신춘 감사 학원제</a> · <a href="J리그×러브 라이브! 시리즈 콜라보.html" class="nw-link">J리그 콜라보</a> · <a href="러브 라이브! 더비.html" class="nw-link">러브 라이브! 더비</a></td>
                         </tr>
                         <tr>
-                            <th rowspan="3" class="w-[5%] bg-[#ffcce6] text-[#33001a] dark:bg-[#33001a] dark:text-[#dddddd]"><a href="러브 라이브! School idol project series/미디어 믹스.html" class="nw-link">미<br>디<br>어<br><br>믹<br>스</a></th>
-                            <th class="w-[11%] bg-[#ffcce6] text-[#33001a] dark:bg-[#33001a] dark:text-[#dddddd]">잡지</th>
+                            <th rowspan="3" class="w-[5%] !bg-[#ffcce6] !text-[#33001a] dark:!bg-[#33001a] dark:!text-[#dddddd]"><a href="러브 라이브! School idol project series/미디어 믹스.html" class="nw-link">미<br>디<br>어<br><br>믹<br>스</a></th>
+                            <th class="w-[11%] !bg-[#ffcce6] !text-[#33001a] dark:!bg-[#33001a] dark:!text-[#dddddd]">잡지</th>
                             <td class="text-left px-2"><del><a href="전격 G's magazine.html" class="nw-link">전격 G's magazine</a></del>(폐간) · <a href="LoveLive! Days.html" class="nw-link">LoveLive! Days</a></td>
                         </tr>
                         <tr>
-                            <th class="bg-[#ffcce6] text-[#33001a] dark:bg-[#33001a] dark:text-[#dddddd]">라디오</th>
+                            <th class="!bg-[#ffcce6] !text-[#33001a] dark:!bg-[#33001a] dark:!text-[#dddddd]">라디오</th>
                             <td class="text-left px-2"><del><a href="러브 라이브! 시리즈의 올 나이트 닛폰 GOLD.html" class="nw-link">올 나이트 닛폰 GOLD</a></del> · <a href="러브 라이브! 시리즈 오피셜 카드 게임 presents AiScReam의 녹아내리는 시간♡♡♡.html" class="nw-link">AiScReam의 녹아내리는 시간♡♡♡</a></td>
                         </tr>
                         <tr>
-                            <th class="bg-[#ffcce6] text-[#33001a] dark:bg-[#33001a] dark:text-[#dddddd]">게임</th>
+                            <th class="!bg-[#ffcce6] !text-[#33001a] dark:!bg-[#33001a] dark:!text-[#dddddd]">게임</th>
                             <td class="text-left px-2">스쿠페스 시리즈(<del><a href="러브라이브! 스쿨 아이돌 페스티벌.html" class="nw-link">스쿠페스</a></del> · <del><a href="러브 라이브! 스쿨 아이돌 페스티벌 ~after school ACTIVITY~.html" class="nw-link">아케페스</a></del>(<a href="러브 라이브! 스쿨 아이돌 페스티벌 ~after school ACTIVITY~ Wai-Wai! Home Meeting!!.html" class="nw-link">PS판</a>) · <del><a href="러브라이브! ALL STARS.html" class="nw-link">스쿠스타</a></del> · <del><a href="러브라이브! 스쿨 아이돌 페스티벌 2 MIRACLE LIVE!.html" class="nw-link">스쿠페스 2</a></del>)<br><a href="러브 라이브! 시리즈 오피셜 카드 게임.html" class="nw-link">러브카</a> · <a href="러브 라이브! 스쿨 아이돌 컬렉션.html" class="nw-link">스쿠코레</a>(발매 중단) · <del><a href="ぷちぐるラブライブ！.html" class="nw-link">푸치구루</a></del></td>
                         </tr>
                         <tr>
-                            <th rowspan="4" class="bg-[#ffcce6] text-[#33001a] dark:bg-[#33001a] dark:text-[#dddddd]">관<br>련<br><br>문<br>서</th>
-                            <th class="bg-[#ffcce6] text-[#33001a] dark:bg-[#33001a] dark:text-[#dddddd]"><a href="러브 라이브! School idol project series/용어.html" class="nw-link">용어</a></th>
+                            <th rowspan="4" class="!bg-[#ffcce6] !text-[#33001a] dark:!bg-[#33001a] dark:!text-[#dddddd]">관<br>련<br><br>문<br>서</th>
+                            <th class="!bg-[#ffcce6] !text-[#33001a] dark:!bg-[#33001a] dark:!text-[#dddddd]"><a href="러브 라이브! School idol project series/용어.html" class="nw-link">용어</a></th>
                             <td class="text-left px-2"><a href="스쿨 아이돌.html" class="nw-link">스쿨 아이돌</a> · <a href="당신(러브 라이브!).html" class="nw-link">당신</a> · <a href="러브 라이브(용어).html" class="nw-link">러브 라이브 대회</a></td>
                         </tr>
                         <tr>
-                            <th class="bg-[#ffcce6] text-[#33001a] dark:bg-[#33001a] dark:text-[#dddddd]">팬</th>
+                            <th class="!bg-[#ffcce6] !text-[#33001a] dark:!bg-[#33001a] dark:!text-[#dddddd]">팬</th>
                             <td class="text-left px-2"><a href="러브라이버.html" class="nw-link">러브라이버</a> · <a href="럽폭도.html" class="nw-link">럽폭도</a> · <a href="럽까.html" class="nw-link">럽까</a></td>
                         </tr>
                         <tr>
-                            <th class="bg-[#ffcce6] text-[#33001a] dark:bg-[#33001a] dark:text-[#dddddd]">커뮤니티</th>
+                            <th class="!bg-[#ffcce6] !text-[#33001a] dark:!bg-[#33001a] dark:!text-[#dddddd]">커뮤니티</th>
                             <td class="text-left px-2"><a href="루리웹 러브 라이브 게시판.html" class="nw-link">루리웹</a> · <a href="오덕갤.html" class="nw-link">디시인사이드</a>(<a href="러브라이브 선샤인 마이너 갤러리.html" class="nw-link">선샤인 갤러리</a> · <a href="러브라이브! 니지동 마이너 갤러리.html" class="nw-link">니지동 갤러리</a>) · <a href="러브라이브 채널.html" class="nw-link">아카라이브</a></td>
                         </tr>
                         <tr>
-                            <th class="bg-[#ffcce6] text-[#33001a] dark:bg-[#33001a] dark:text-[#dddddd]">기타</th>
+                            <th class="!bg-[#ffcce6] !text-[#33001a] dark:!bg-[#33001a] dark:!text-[#dddddd]">기타</th>
                             <td class="text-left px-2"><a href="러브 라이브! School idol project series/애니메이션 연표.html" class="nw-link">애니메이션 연표</a> · <a href="러브 라이브! 시리즈 9주년 발표회.html" class="nw-link">시리즈 9주년 발표회</a> · <a href="러브 라이브! School idol project series/역대 내한 일람.html" class="nw-link">역대 내한 일람</a> · <a href="러브 라이브! School idol project series/유닛.html" class="nw-link">유닛</a> · <a href="러브 라이브! School idol project series/노래방 수록 목록.html" class="nw-link">노래방 수록 목록</a> · <a href="러브 라이브! School idol project series/시리즈 내 공통점.html" class="nw-link">시리즈 내 공통점</a> · <a href="러브 라이브! School idol project series/각종 기록.html" class="nw-link">각종 기록</a></td>
                         </tr>
                     </table>
                 </details>
-
             </details>
             <!-- 하단 공통 링크 -->
             <div class="text-white font-bold text-center mt-2 text-[11px] pb-1">

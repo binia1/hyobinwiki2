@@ -16312,7 +16312,10 @@ window.HB_WIKI_ALIASES = {
   "기도(섬)": "기도(섬).html",
   "중만도": "중만도.html",
   "고포도": "고포도.html",
-  "인채도": "인채도.html",// [기타 자산]
+  "인채도": "인채도.html",
+  "이나미 안쥬": "이나미_안쥬.html",
+  "동구·중구": "중구-동구.html",
+  // [기타 자산]
     "nimisibal": "틀_뷰어_SPA.html#nimisibal", "님 이시발": "틀_뷰어_SPA.html#nimisibal",
 
     // [덕북권 국회의원 및 헤더]
