@@ -5392,7 +5392,9 @@
   "중만도": "중만도.html",
   "고포도": "고포도.html",
   "인채도": "인채도.html",// [기타 자산]
-    "nimisibal": "틀_뷰어_SPA.html#nimisibal", "님 이시발": "틀_뷰어_SPA.html#nimisibal",
+    "nimisibal": "틀_뷰어_SPA.html#nimisibal","니미씨발": "틀_뷰어_SPA.html#nimisibal", "님 이시발": "틀_뷰어_SPA.html#nimisibal",  "wiki_navboxes": "wiki_navboxes.html",
+  "전체도로틀": "전체도로틀.html",
+  "방하대로": "방하대로.html",
 
     // [덕북권 국회의원 및 헤더]
     "deokbinbuk_1": "틀_뷰어_SPA.html#deokbinbuk_1", "덕북권 국회의원 1": "틀_뷰어_SPA.html#deokbinbuk_1",
@@ -5641,6 +5643,7 @@ const forbiddenSelectors = [
     ].join(', ');
 
 // 💡 3. 카멜레온 스텔스 구역
+// 💡 3. 카멜레온 스텔스 구역
     const preserveStyleSelectors = [
         '.infobox', '.nav-line-name', 'th', '.infobox-top-label', '.nav-box-body td',
         'span[style*="color"]', 'span[style*="background"]', 
@@ -5648,10 +5651,12 @@ const forbiddenSelectors = [
         '.subway-badge', '.wiki-badge', '.line-badge', 'span[style*="font-size"]','div[style*="font-size"]',
         '.l1', '.l2', '.l3', '.l4', '.l5', '.l6', '.l7', '.l8', '.lbinhyo', 
         '.wiki-fn', '.namu-head', '.namu-title', '.city', '.kind', '.badge', '.rounded', '.route-tab', '.text-white', 'summary', 'details', 'table', '.bus-badge',
-        // 👇 여기서부터 이번에 새로 추가된 대문 전용 스텔스 클래스들입니다.
-        '.hb-guide-icon', '.hb-project-header', '.hb-project-footer', '.hb-structure-header', '.hb-badge'
+        '.hb-guide-icon', '.hb-project-header', '.hb-project-footer', '.hb-structure-header', '.hb-badge',
+        // 👇 구역(컨테이너) 자체를 통째로 스텔스 처리
+        'nav', '.wiki-navbox-header', '.wiki-navbox-footer', '.wiki-navbox', '.red-link', '.blue-link'
     ].join(', ');
 
+    
     while (walker.nextNode()) {
         const node = walker.currentNode;
         const parent = node.parentElement;
