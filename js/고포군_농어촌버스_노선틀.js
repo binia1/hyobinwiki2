@@ -1,0 +1,54 @@
+document.addEventListener("DOMContentLoaded", function() {
+    const container = document.getElementById("고포군_농어촌버스-nav-container");
+    if (!container) return;
+
+    container.innerHTML = `
+<details class="nav-table-container mb-8" open="">
+<summary class="route-summary-header list-none flex-col">
+<div class="flex items-center justify-center gap-2">
+<img alt="고포군 로고" class="h-[24px]" src="이미지/고포군.webp"/>
+<div class="flex flex-col items-center">
+<span class="text-xs">고포군</span>
+<span class="text-sm font-bold">농어촌버스 노선</span>
+</div>
+</div>
+<span class="toggle-text">[ 펼치기 · 접기 ]</span>
+</summary>
+<table class="route-table-grid">
+<tbody>
+<tr>
+<th class="zone-header" style="background-color: #0068B7; color: white;">간선 (본섬)</th>
+<td class="route-list">
+<a class="font-bold text-[#0068B7]" href="#10">10</a> <a class="font-bold text-[#0068B7]" href="#11">11</a>
+</td>
+</tr>
+<tr>
+<th class="zone-header" style="background-color: #66C133; color: white;">지선 (고포읍/동원면)</th>
+<td class="route-list">
+<span class="text-xs text-gray-500 mr-1">고포:</span> <a class="text-[#66C133]" href="#101">101</a> <a class="text-[#66C133]" href="#102">102</a> <a class="text-[#66C133]" href="#103">103</a> <a class="text-[#66C133]" href="#104">104</a> <a class="text-[#66C133]" href="#105">105</a> <a class="text-[#66C133]" href="#106">106</a> <a class="text-[#66C133]" href="#107">107</a> <a class="text-[#66C133]" href="#108">108</a> <br/>
+<span class="text-xs text-gray-500 mr-1">동원:</span> <a class="text-[#66C133]" href="#201">201</a> <a class="text-[#66C133]" href="#202">202</a> <a class="text-[#66C133]" href="#203">203</a> <a class="text-[#66C133]" href="#204">204</a> <a class="text-[#66C133]" href="#205">205</a> <a class="text-[#66C133]" href="#206">206</a> <a class="text-[#66C133]" href="#207">207</a> <a class="text-[#66C133]" href="#208">208</a> <a class="text-[#66C133]" href="#209">209</a> <a class="text-[#66C133]" href="#210">210</a>
+</td>
+</tr>
+<tr>
+<th class="zone-header" style="background-color: #66C133; color: white;">지선 (대산면/포선면)</th>
+<td class="route-list">
+<span class="text-xs text-gray-500 mr-1">대산:</span> <a class="text-[#66C133]" href="#301">301</a> <a class="text-[#66C133]" href="#302">302</a> <a class="text-[#66C133]" href="#303">303</a> <a class="text-[#66C133]" href="#304">304</a> <a class="text-[#66C133]" href="#305">305</a> <a class="text-[#66C133]" href="#306">306</a> <a class="text-[#66C133]" href="#307">307</a> <a class="text-[#66C133]" href="#308">308</a> <br/>
+<span class="text-xs text-gray-500 mr-1">포선:</span> <a class="text-[#66C133]" href="#401">401</a> <a class="text-[#66C133]" href="#402">402</a> <a class="text-[#66C133]" href="#403">403</a> <a class="text-[#66C133]" href="#404">404</a> <a class="text-[#66C133]" href="#405">405</a> <a class="text-[#66C133]" href="#406">406</a> <a class="text-[#66C133]" href="#407">407</a> <a class="text-[#66C133]" href="#408">408</a> <a class="text-[#66C133]" href="#409">409</a> <a class="text-[#66C133]" href="#410">410</a> <a class="text-[#66C133]" href="#411">411</a> <a class="text-[#66C133]" href="#412">412</a> <a class="text-[#66C133]" href="#413">413</a>
+</td>
+</tr>
+<tr>
+<th class="zone-header" style="background-color: #FFC107; color: black;">공영 (낙도) / 마을</th>
+<td class="route-list bg-gray-50">
+<span class="text-xs text-gray-500 mr-1">북부:</span> <a class="text-gray-700 font-bold" href="#501">501</a> <a class="text-gray-700 font-bold" href="#502">502</a> <a class="text-gray-700 font-bold" href="#503">503</a> <a class="text-gray-700 font-bold" href="#504">504</a> <a class="text-gray-700 font-bold" href="#505">505</a> <a class="text-gray-700 font-bold" href="#506">506</a> <br/>
+<span class="text-xs text-gray-500 mr-1">신성:</span> <a class="text-gray-700 font-bold" href="#601">601</a> <a class="text-gray-700 font-bold" href="#602">602</a> <a class="text-gray-700 font-bold" href="#603">603</a> <a class="text-gray-700 font-bold" href="#604">604</a> <a class="text-gray-700 font-bold" href="#605">605</a> <a class="text-gray-700 font-bold" href="#606">606</a> <a class="text-gray-700 font-bold" href="#607">607</a> <a class="text-gray-700 font-bold" href="#608">608</a> <br/>
+<span class="text-xs text-gray-500 mr-1">마을:</span> <a class="text-gray-700 font-bold" href="#m1">고포 1번</a> <a class="text-gray-700 font-bold" href="#m2">고포 2번</a>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="bg-[var(--wiki-main)] text-white text-xs text-center py-1 font-bold">
+                폐선 목록 · 문제점 · 개편 내역
+            </div>
+</details>
+    `;
+});

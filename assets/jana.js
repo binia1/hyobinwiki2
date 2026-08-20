@@ -5643,7 +5643,6 @@ const forbiddenSelectors = [
     ].join(', ');
 
 // 💡 3. 카멜레온 스텔스 구역
-// 💡 3. 카멜레온 스텔스 구역
     const preserveStyleSelectors = [
         '.infobox', '.nav-line-name', 'th', '.infobox-top-label', '.nav-box-body td',
         'span[style*="color"]', 'span[style*="background"]', 
@@ -5684,9 +5683,10 @@ const forbiddenSelectors = [
             let targetUrl = lowerCaseMap[match.toLowerCase()];
             if (!targetUrl) return match;
             
-            // 🚨 핵심 해결책: targetUrl에 언더바(_)가 있다면 무조건 띄어쓰기로 치환해버림!
-            targetUrl = targetUrl.replace(/_/g, ' ');
-            let safeUrl = encodeURI(targetUrl);
+// [수정 후]
+// 🚨 진짜 해결책: targetUrl에 띄어쓰기가 있다면 무조건 언더바(_)로 치환!
+targetUrl = targetUrl.replace(/ /g, '_'); 
+let safeUrl = encodeURI(targetUrl);
 
             if (isPreserveZone) {
                 return `<a href="${safeUrl}" style="color: inherit !important; text-decoration: none !important; font-weight: inherit !important; font-size: inherit !important;">${match}</a>`;
