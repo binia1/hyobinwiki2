@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <td style="border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9;"></td>
 </tr>
 <tr>
-<td rowspan="5" style="border: 1px solid #ccc; padding: 10px; background-color: #ffeeaa; font-weight: bold; color: #333;"><a href="중앙동.html" style="text-decoration: none; color: #333;">중앙동</a></td>
+<td rowspan="5" style="border: 1px solid #ccc; padding: 10px; background-color: #ffeeaa; font-weight: bold; color: #333;"><a href="빈성구.html#중앙동" style="text-decoration: none; color: #333;">중앙동</a></td>
 <td style="border: 1px solid #ccc; padding: 10px; background-color: white;">중앙동1가</td>
 <td style="border: 1px solid #ccc; padding: 10px; background-color: white;">중앙동2가</td>
 <td style="border: 1px solid #ccc; padding: 10px; background-color: white;">중앙동3가</td>

@@ -198,13 +198,11 @@ def generate_wiki_index():
             with open(os.path.join(WIKI_PATH, filename), 'r', encoding='utf-8') as f:
                 soup = BeautifulSoup(f, 'html.parser')
                 
-                # 🌟 [해결 1] 다중 뷰(view-section)를 각각 독립 문서로 분리!
                 view_sections = soup.find_all('div', class_='view-section')
                 person_views = [v for v in view_sections if v.get('id', '').startswith('view-') and v.get('id') != 'view-home']
                 
                 target_blocks = []
                 if person_views:
-                    # 박신언, 서유원 등 다중 뷰 문서일 경우 뷰마다 URL(#이름) 생성
                     for view in person_views:
                         name = view.get('id').replace('view-', '')
                         target_blocks.append({
@@ -213,25 +211,25 @@ def generate_wiki_index():
                             'soup': view
                         })
                 else:
-                    # 일반 단일 문서일 경우
                     doc_title = soup.title.string.replace(' - 효빈위키', '').strip() if soup.title else filename.replace('.html', '')
                     target_blocks.append({'title': doc_title, 'url': filename, 'soup': soup})
 
-                # 분리된 각각의 뷰(블록) 단위로 카테고리 스캔
                 for block in target_blocks:
                     final_categories = []
                     
-                    # 🌟 [해결 2] ResultSet을 리스트로 명시적 변환하여 append 에러 방지!
+                    # 기존 방식 유지 (표준 카테고리 박스)
                     cat_boxes = list(block['soup'].find_all('div', class_=re.compile(r'category-box|classification-box|wiki-context-area')))
                     
-                    if not cat_boxes:
-                        labels = block['soup'].find_all(string=re.compile(r'분류\s*:'))
-                        for label in labels:
-                            parent = label.parent
-                            if parent.name in ['b', 'strong', 'span', 'td', 'th', 'a']:
-                                parent = parent.parent
-                            if parent and parent.name != 'body' and not any(bc in parent.get('class', []) for bc in ['wiki-container', 'wiki-content', 'view-section']):
-                                cat_boxes.append(parent) # 이제 cat_boxes가 파이썬 기본 리스트이므로 append 오류 없음!
+                    # 🌟 [노가다 해방 100% 무적 코드] 🌟
+                    # 클래스 이름이 bg-gray-100 이든, 뭐든 상관없이 '분류:' 텍스트를 가진 말단 <p>나 <div>를 무조건 잡아냅니다.
+                    for tag in block['soup'].find_all(['div', 'p']):
+                        if tag.text and ('분류:' in tag.text or '분류 :' in tag.text):
+                            # 문서 전체를 덮는 껍데기 박스는 패스
+                            is_bad = any(bc in tag.get('class', []) for bc in ['wiki-container', 'wiki-content', 'view-section', 'wiki-footer'])
+                            # 그 태그 안에 또 다른 div나 p가 없어야 진짜 텍스트가 담긴 말단 상자임!
+                            if not is_bad and not tag.find(['div', 'p']):
+                                if tag not in cat_boxes:
+                                    cat_boxes.append(tag)
                     
                     for cb in cat_boxes:
                         a_tags = cb.find_all('a')

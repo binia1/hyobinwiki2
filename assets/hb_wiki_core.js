@@ -940,3 +940,135 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
+// =====================================================================
+// 🚨 [HTML 노가다 영구 해방 치트키] 모든 문서의 "분류:" 박스 링크를 자동 수리!
+// =====================================================================
+document.addEventListener("DOMContentLoaded", function() {
+    // 문서 내의 모든 상자(div, p)를 뒤져서 '분류:' 글씨가 있는 말단 상자를 찾아냅니다.
+    const tags = document.querySelectorAll('div, p');
+    tags.forEach(tag => {
+        if (tag.textContent.includes('분류:') && tag.querySelectorAll('div, p').length === 0) {
+            // 이 상자 안의 모든 링크(a 태그)를 싹 다 압수해서 개조합니다.
+            const links = tag.querySelectorAll('a');
+            links.forEach(link => {
+                const catName = link.innerText.trim();
+                // 링크 텍스트가 정상적인 분류명이라면
+                if (catName && !catName.includes('분류')) {
+                    link.href = "javascript:void(0);"; // 기존의 잘못된 링크 완전 무력화
+                    link.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // 올바른 분류 페이지(분류.html#이름)로 묻지도 따지지도 않고 강제 사출!
+                        window.location.href = "분류.html#" + encodeURIComponent(catName);
+                    };
+                }
+            });
+        }
+    });
+});
+
+// =====================================================================
+// 🌟 [즐겨찾기(★) 동적 페이지 완벽 호환 절대 방어막] 🌟
+// 박상구, 김만석 등 해시(#)로 쪼개진 문서들을 각각 '별도 이름'으로 완벽하게 따로 저장합니다!
+// =====================================================================
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. 화면에서 별 모양(★, ☆) 버튼이나 '역사' 버튼을 찾아냅니다.
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    let targetNode = null;
+    let isNewInsertion = false;
+
+    while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const text = node.nodeValue.trim();
+        if ((text.startsWith('☆') || text.startsWith('★')) && !node.parentElement.closest('nav')) {
+            targetNode = node;
+            break;
+        }
+    }
+
+    let historyBtn = null;
+    if (!targetNode) {
+        const allElements = document.querySelectorAll('a, button, span, div');
+        for (let el of allElements) {
+            if (el.textContent.trim() === '역사' && !el.closest('nav')) {
+                historyBtn = el;
+                isNewInsertion = true;
+                break;
+            }
+        }
+    }
+
+    // 2. 버튼을 찾았다면 동적 즐겨찾기 로직을 주입합니다.
+    if (targetNode || historyBtn) {
+        let numText = '';
+        if (targetNode) numText = targetNode.nodeValue.trim().replace(/[☆★]/g, ''); 
+
+        const starBtn = document.createElement('a');
+        starBtn.style.cursor = 'pointer';
+        starBtn.href = 'javascript:void(0);'; 
+        
+        if (historyBtn) starBtn.className = historyBtn.className;
+        else if (targetNode && targetNode.parentElement.tagName.toLowerCase() === 'a') starBtn.className = targetNode.parentElement.className;
+        else if (targetNode) starBtn.className = 'wiki-btn'; 
+
+        // 💡 [핵심] 껍데기 HTML만 저장하던 옛날 방식 폐기!
+        // 버튼을 '누르는 순간'의 진짜 제목과 주소(#해시 포함)를 실시간으로 긁어옵니다.
+        function getLivePageInfo() {
+            const liveTitle = document.title.replace(" - 효빈위키", "").trim();
+            // html 파일명 뒤에 붙은 ?쿼리와 #해시태그까지 싹 다 끌어와서 고유 주소로 만듦!
+            const liveUrl = decodeURIComponent(window.location.pathname.split("/").pop() + window.location.search + window.location.hash);
+            return { title: liveTitle, url: liveUrl };
+        }
+
+        // 별 색상(노란색/빈별) 칠해주는 함수
+        function updateStarUI() {
+            const info = getLivePageInfo();
+            let bookmarks = JSON.parse(localStorage.getItem('hyobinBookmarks')) || [];
+            
+            if (bookmarks.some(b => b.url === info.url)) {
+                starBtn.textContent = '★' + numText;
+                starBtn.style.color = '#FFCC11'; // 3호선 노란색으로 강조
+            } else {
+                starBtn.textContent = '☆' + numText;
+                starBtn.style.color = '';
+            }
+        }
+
+        // 🌟 박상구 -> 김만석으로 탭을 바꿀 때마다 별 상태를 즉각 새로고침!
+        window.addEventListener('hashchange', updateStarUI);
+        // 페이지 켜지고 0.2초 뒤(로딩 중... 이 이름으로 바뀐 직후)에 칠하기
+        setTimeout(updateStarUI, 200);
+
+        // 클릭 시 즐겨찾기 추가/해제
+        starBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); 
+            
+            const info = getLivePageInfo(); // 누른 시점의 이름(박상구 등)과 주소 추출
+            let currentBookmarks = JSON.parse(localStorage.getItem('hyobinBookmarks')) || [];
+            const existingIndex = currentBookmarks.findIndex(b => b.url === info.url);
+
+            if (existingIndex > -1) {
+                currentBookmarks.splice(existingIndex, 1);
+                alert(`'${info.title}' 문서를 즐겨찾기에서 해제했습니다.`);
+            } else {
+                currentBookmarks.push({ title: info.title, url: info.url });
+                alert(`'${info.title}' 문서를 즐겨찾기에 추가했습니다!`);
+            }
+            
+            localStorage.setItem('hyobinBookmarks', JSON.stringify(currentBookmarks));
+            updateStarUI(); // 클릭 직후 바로 별 색상 변경
+        });
+
+        // 화면에 생성된 완벽한 버튼을 끼워넣기
+        if (isNewInsertion && historyBtn) {
+            historyBtn.parentNode.insertBefore(starBtn, historyBtn.nextSibling);
+        } else if (targetNode) {
+            if (targetNode.parentElement.tagName.toLowerCase() === 'a') {
+                 targetNode.parentElement.replaceWith(starBtn); 
+            } else {
+                 targetNode.parentNode.replaceChild(starBtn, targetNode);
+            }
+        }
+    }
+});

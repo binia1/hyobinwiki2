@@ -100,7 +100,7 @@ function renderHyobinHistorySection(containerId) {
                 <li><strong>흑택면 (현재도 존속):</strong> 탄성군 소속의 오리지널 <strong>흑택면</strong>과 <strong>유선면</strong>이 깔끔하게 합쳐졌다.</li>
                 <li><strong>소원면 (현재도 존속):</strong> 탄성군 소속의 오리지널 <strong>소전면</strong>과 <strong>원남면</strong>이 퓨전하여 탄생했다.</li>
                 <li><strong>서목면 (현재도 존속):</strong> 본래 탄성군 <strong>서목면</strong> 땅에다가, 원래 선곡군 관할이었던 <strong>남내면</strong> 영토를 떼어다가 강제로 접착시켰다. <del>선곡군 의문의 1패</del></li>
-                <li><strong>야진면 (현재도 존속):</strong> 본래 탄성군 <strong>야진면</strong> 땅에다가, 선곡군 관할이었던 <strong>동면</strong>을 흡수 통합하여 성립되었다.</li>
+                <li><strong>야진면 (현재도 존속):</strong> 본래 탄성군 <strong>야진면</strong> 땅에다가, 선곡군 관할이었던 <strong>동면(효빈)</strong>을 흡수 통합하여 성립되었다.</li>
                 <li><strong>도향면 (현재도 존속):</strong> 본래 탄성군 <strong>도진면</strong> 땅에다가, 머나먼 약산군 관할이었던 <strong>향리면</strong>을 뜯어와 섞어버린 기괴한 구조다.</li>
                 <li><strong>정근면 (현재도 존속):</strong> 온전히 약산군 소속이었던 <strong>정선면</strong>과 <strong>근원면</strong> 두 혈통이 합쳐져 탄성군 소속의 면으로 정착했다.</li>
             </ul>
@@ -146,14 +146,14 @@ function renderHyobinHistorySection(containerId) {
             <th class="hb-hist-row-header">조선후기<br/>(26부제, 1895)</th>
             <td>${mkLink('천주부', '천주부.html')} 1등군<br/><strong>${mkLink('효빈군', '효빈군.html')}</strong><br/><span class="hb-small-text">天州府 孝彬郡</span></td>
             <td>${mkLink('빈주부', '빈주부.html')} 3등군<br/><strong>${mkLink('탄성군', '탄성군.html')}</strong><br/><span class="hb-small-text">彬州府 彈城郡</span></td>
-            <td>${mkLink('빈주부', '빈주부.html')} 3등군 ${mkLink('선곡군', '선곡군.html')} ${mkLink('남내면', '남내면.html')}<br/>${mkLink('빈주부', '빈주부.html')} 3등군 ${mkLink('탄성군', '탄성군.html')}<br/>${mkLink('야진면', '야진면.html')}, ${mkLink('동면', '동면.html')}, ${mkLink('서목면', '서목면.html')}<br/><span class="hb-small-text">彬州府 選曲郡 南內面<br/>彬州府 彈城郡 西木/野津/西面</span></td>
+            <td>${mkLink('빈주부', '빈주부.html')} 3등군 ${mkLink('선곡군', '선곡군.html')} ${mkLink('남내면', '남내면.html')}<br/>${mkLink('빈주부', '빈주부.html')} 3등군 ${mkLink('탄성군', '탄성군.html')}<br/>${mkLink('야진면', '야진면.html')}, ${mkLink('동면(효빈)', '야진읍.html')}, ${mkLink('서목면', '서목면.html')}<br/><span class="hb-small-text">彬州府 選曲郡 南內面<br/>彬州府 彈城郡 西木/野津/西面</span></td>
             <td>${mkLink('천주부', '천주부.html')} 3등군 ${mkLink('약산군', '약산군.html')}<br/>${mkLink('향리면', '향리면.html')}, ${mkLink('정선면', '정선면.html')}, ${mkLink('근원면', '근원면.html')}<br/>${mkLink('빈주부', '빈주부.html')} 3등군 ${mkLink('탄성군', '탄성군.html')} ${mkLink('도진면', '도진면.html')}<br/><span class="hb-small-text">天州府 藥山郡 香里/井扇/芹原面<br/>彬州府 彈城郡 挑眞面</span></td>
         </tr>
         <tr>
             <th class="hb-hist-row-header">구한말<br/>(1896)</th>
             <td>${mkLink('덕빈북도', '덕빈북도.html')}<br/><strong>${mkLink('효빈군', '효빈군.html')}</strong><br/><span class="hb-small-text">孝彬郡</span></td>
             <td>${mkLink('덕빈북도', '덕빈북도.html')}<br/><strong>${mkLink('탄성군', '탄성군.html')}</strong><br/><span class="hb-small-text">彈城郡</span></td>
-            <td>${mkLink('덕빈북도', '덕빈북도.html')} ${mkLink('선곡군', '선곡군.html')} ${mkLink('남내면', '남내면.html')}<br/>${mkLink('덕빈북도', '덕빈북도.html')} ${mkLink('탄성군', '탄성군.html')}<br/>${mkLink('야진면', '야진면.html')}, ${mkLink('동면', '동면.html')}, ${mkLink('서목면', '서목면.html')}<br/><span class="hb-small-text">選曲郡 南內面<br/>彈城郡 西木/野津/西面</span></td>
+            <td>${mkLink('덕빈북도', '덕빈북도.html')} ${mkLink('선곡군', '선곡군.html')} ${mkLink('남내면', '남내면.html')}<br/>${mkLink('덕빈북도', '덕빈북도.html')} ${mkLink('탄성군', '탄성군.html')}<br/>${mkLink('야진면', '야진면.html')}, ${mkLink('동면(효빈)', '야진읍.html')}, ${mkLink('서목면', '서목면.html')}<br/><span class="hb-small-text">選曲郡 南內面<br/>彈城郡 西木/野津/西面</span></td>
             <td>${mkLink('덕빈북도', '덕빈북도.html')} ${mkLink('약산군', '약산군.html')}<br/>${mkLink('향리면', '향리면.html')}, ${mkLink('정선면', '정선면.html')}, ${mkLink('근원면', '근원면.html')}<br/>${mkLink('덕빈북도', '덕빈북도.html')} ${mkLink('탄성군', '탄성군.html')} ${mkLink('도진면', '도진면.html')}<br/><span class="hb-small-text">藥山郡 香里/井扇/芹原面<br/>彈城郡 挑眞面</span></td>
         </tr>
         <tr>

@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <td colspan="3" style="border: 1px solid #ccc; padding: 10px; background-color: white;">무영동</td>
 </tr>
 <tr>
-<td rowspan="2" style="border: 1px solid #ccc; padding: 10px; background-color: #4a90e2; font-weight: bold; color: white;"><a href="중앙동.html" style="text-decoration: none; color: white;">중앙동</a></td>
+<td rowspan="2" style="border: 1px solid #ccc; padding: 10px; background-color: #4a90e2; font-weight: bold; color: white;"><a href="덕산구.html#중앙동" style="text-decoration: none; color: white;">중앙동</a></td>
 <td style="border: 1px solid #ccc; padding: 10px; background-color: white;">
 <span style="background-color: #9e9e9e; color: white; padding: 2px 5px; border-radius: 3px; font-size: 11px; margin-right: 5px; display: inline-block; line-height: 1;">시청</span>중앙동1~4가
             </td>
