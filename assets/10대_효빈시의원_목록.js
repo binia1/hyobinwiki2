@@ -77,7 +77,7 @@ const db = {
         terms: "제10대 (초선) / 기초의원 1선", current: "제10대 효빈광역시의회 의원", 
         history: "효빈대학교 정치외교학과 재학<br>제9대 북구의회 의원<br>제10대 효빈광역시의회 의원",
         overview: "북구의 대모 오서영(5선)이 국회의원 출마를 위해 불출마한 자리를 꿰찬 <strong>Z세대 돌풍의 핵</strong>이자 법적 하한선 최연소 당선자.",
-        life: "2004년 효빈광역시 북구 구포동 출생. 2022년 만 18세로 북구의원에 당선되며 정계에 충격을 주더니, 오서영 의원의 전폭적인 지지를 받아 2026년 체급을 올려 시의회까지 단숨에 입성했다.",
+        life: "2004년 효빈광역시 북구 중수동 출생. 2022년 만 18세로 북구의원에 당선되며 정계에 충격을 주더니, 오서영 의원의 전폭적인 지지를 받아 2026년 체급을 올려 시의회까지 단숨에 입성했다.",
         activities: `<p>5선의 거물급 인사가 지키던 지역구를 물려받은 초신성. 의회 휴게실에서 유신민, 지민성 등 Z세대 의원들과 모여서 마라탕후루를 먹으며 본회의장을 틱톡 스튜디오로 변질시키고 있다.</p>
         <p>가끔 오서영 전 의원이 시의회에 놀러 오면 "아이고 우리 보람이 잘하고 있나~"라며 쓰다듬어 주는데, 그럴 때마다 황보람은 "네 어무이!"라며 살갑게 안긴다. 공무원들은 대모와 초신성의 조합에 기절할 노릇이라고.</p>`,
         elections: [
@@ -605,7 +605,7 @@ const db = {
     }
 };
 
-// 동적 로드 함수 (프레임워크 완벽 복원 - 이미지 로드 추가)
+// 동적 로드 함수 (프레임워크 완벽 복원 - 이미지 로드 및 다중 분류 추가)
 function loadMember(key) {
     const data = db[key];
     if (!data) {
@@ -613,33 +613,48 @@ function loadMember(key) {
         return;
     }
 
-    // 1. 문서 제목 및 카테고리 업데이트
+    // 1. 문서 제목 업데이트
     document.getElementById('doc-title').innerText = key;
-    document.getElementById('doc-category').innerHTML = `
-        <span class="font-bold text-[#7777AA]">분류:</span> 
-        <a href="효빈광역시의원.html" class="wiki-link">효빈광역시의원</a> | 
-        <a href="${data.district.split(' ')[0]}의 정치.html" class="wiki-link">${data.district.split(' ')[0]}의 정치</a> | 
-        <a href="${data.party} 소속.html" class="wiki-link">${data.party} 소속</a> | 
-        <a href="${data.birth.substring(0,4)}년 출생.html" class="wiki-link">${data.birth.substring(0,4)}년 출생</a>
-    `;
 
-    // 2. 우측 인포박스 조립
-    
-    // 💡 [추가] 출생지 스마트 추출기
+    // 💡 [추가] 출생지 및 학력 스마트 추출기 (인포박스 & 분류 박스에서 공통 사용)
     let birthplace = "알 수 없음";
     const birthMatch = data.life.match(/\d{4}년\s+(.+?)(?:\s*출생|\s*에서 태어났다|\s*에서)/);
     if (birthMatch && birthMatch[1]) {
         birthplace = birthMatch[1].trim();
     }
 
-    // 💡 [추가] 학력 스마트 추출기
     let education = "알 수 없음";
     const historyFirstLine = data.history.split('<br>')[0];
     if (historyFirstLine.includes('학교')) {
         education = historyFirstLine.replace(/(?: 총학생회장| 학생회장| 특임강사| 졸업| 재학)/g, '').trim();
     }
 
-    // 💡 [수정] 인포박스 이미지 삽입 반영
+// 🌟 [신규 추가] 다채로운 분류용 스마트 추출기
+    
+    // (1) 출신 학교 분류 추출
+    let schoolCategory = "";
+    const schoolMatch = data.history.match(/([가-힣a-zA-Z]+(?:대학교|고등학교|중학교|초등학교))/);
+    if (schoolMatch) {
+        schoolCategory = ` | <a href="분류.html#${schoolMatch[1]} 출신" class="wiki-link">${schoolMatch[1]} 출신</a>`;
+    }
+
+    // (2) 출신 지역구 분류 추출 (비례대표 제외)
+    let regionCategory = "";
+    const regionName = data.district.split(' ')[0];
+    if (!regionName.includes('비례')) { 
+        regionCategory = ` | <a href="분류.html#${regionName} 출신" class="wiki-link">${regionName} 출신</a>`;
+    }
+
+    // 🌟 화면 상단 분류 박스 업데이트 (모든 링크를 분류.html# 로 수정!)
+    document.getElementById('doc-category').innerHTML = `
+        <span class="font-bold text-[#7777AA]">분류:</span> 
+        <a href="분류.html#효빈광역시의원" class="wiki-link">효빈광역시의원</a> | 
+        <a href="분류.html#${data.district.split(' ')[0]}의 정치" class="wiki-link">${data.district.split(' ')[0]}의 정치</a> | 
+        <a href="분류.html#${data.party} 소속" class="wiki-link">${data.party} 소속</a> | 
+        <a href="분류.html#${data.birth.substring(0,4)}년 출생" class="wiki-link">${data.birth.substring(0,4)}년 출생</a>${regionCategory}${schoolCategory}
+    `;
+
+    // 2. 우측 인포박스 조립
     let infoHtml = `
         <div class="${data.partyClass} text-white text-center p-3 font-bold text-lg leading-tight">
             ${data.current}<br>
@@ -775,7 +790,6 @@ function loadMember(key) {
 
     window.scrollTo({ top: 150, behavior: 'smooth' });
 }
-
 // URL의 쿼리 파라미터(?name=이름)나 해시(#이름)를 읽어 자동으로 페이지를 로드하는 로직
 function checkAutoLoad() {
     const urlParams = new URLSearchParams(window.location.search);

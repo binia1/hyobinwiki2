@@ -2,144 +2,146 @@ document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("bangdream-nav-container");
     if (!container) return;
 
-    // 1. 방대한 밴드 및 멤버 데이터베이스 (누락 절대 방지용)
+    // 1. 방대한 밴드 및 멤버 데이터베이스 (정확한 공식 헥스코드 반영)
     const bandData = {
         "Poppin'Party": {
-            bg: "#ff3377", color: "#FF3377",
+            bg: "#FF3377", color: "#FF3377",
             logo: "Poppin_party_logo.webp", image10th: "Poppin Party 10th.webp",
             members: [
-                { name: "토야마 카스미", role: "기타 & 보컬", color: "#f52", textColor: "#FFF", hasCard: true },
-                { name: "하나조노 타에", role: "기타", color: "#07d", textColor: "#FFF", hasCard: true },
-                { name: "우시고메 리미", role: "베이스", color: "#f5b", textColor: "#FFF", hasCard: true },
-                { name: "야마부키 사아야", role: "드럼", color: "#fc1", textColor: "#000", hasCard: true },
-                { name: "이치가야 아리사", role: "키보드", color: "#a6d", textColor: "#FFF", hasCard: true }
+                { name: "토야마 카스미", role: "기타 & 보컬", color: "#FF5522", textColor: "#FFF", hasCard: true },
+                { name: "하나조노 타에", role: "기타", color: "#0077DD", textColor: "#FFF", hasCard: true },
+                { name: "우시고메 리미", role: "베이스", color: "#FF55BB", textColor: "#FFF", hasCard: true },
+                { name: "야마부키 사아야", role: "드럼", color: "#FFCC11", textColor: "#000", hasCard: true },
+                { name: "이치가야 아리사", role: "키보드", color: "#AA66DD", textColor: "#FFF", hasCard: true }
             ]
         },
         "Afterglow": {
-            bg: "#ee3344", color: "#ee3344",
+            bg: "#EE3344", color: "#EE3344",
             logo: "Afterglow(BanG Dream!) 로고.svg", image10th: "Afterglow 10th.webp",
             members: [
-                { name: "미타케 란", role: "기타 & 보컬", color: "#e11", textColor: "#FFF", hasCard: true },
-                { name: "아오바 모카", role: "기타", color: "#0a6", textColor: "#FFF", hasCard: true },
-                { name: "우에하라 히마리", role: "베이스", color: "#f88", textColor: "#FFF", hasCard: true },
-                { name: "우다가와 토모에", role: "드럼", color: "#b03", textColor: "#FFF", hasCard: true },
-                { name: "하자와 츠구미", role: "키보드", color: "#fe8", textColor: "#000", hasCard: true }
+                { name: "미타케 란", role: "기타 & 보컬", color: "#EE0022", textColor: "#FFF", hasCard: true },
+                { name: "아오바 모카", role: "기타", color: "#00CCAA", textColor: "#000", hasCard: true },
+                { name: "우에하라 히마리", role: "베이스", color: "#FF9999", textColor: "#000", hasCard: true },
+                { name: "우다가와 토모에", role: "드럼", color: "#BB0033", textColor: "#FFF", hasCard: true },
+                { name: "하자와 츠구미", role: "키보드", color: "#FFEE88", textColor: "#000", hasCard: true }
             ]
         },
         "Pastel*Palettes": {
-            bg: "#33ddaa", color: "#33ddaa",
+            bg: "#33DDAA", color: "#33DDAA",
             logo: "파스파레로고.svg", image10th: "Pastel Palettes 10th.webp",
             members: [
-                { name: "마루야마 아야", role: "보컬", color: "#f8b", textColor: "#FFF", hasCard: true },
-                { name: "히카와 히나", role: "기타", color: "#4cd", textColor: "#FFF", hasCard: true },
-                { name: "시라사기 치사토", role: "베이스", color: "#fe8", textColor: "#000", hasCard: true },
-                { name: "야마토 마야", role: "드럼", color: "#8d8", textColor: "#FFF", hasCard: true },
-                { name: "와카미야 이브", role: "키보드", color: "#ddf", textColor: "#000", hasCard: true }
+                { name: "마루야마 아야", role: "보컬", color: "#FF88BB", textColor: "#000", hasCard: true },
+                { name: "히카와 히나", role: "기타", color: "#55DDEE", textColor: "#000", hasCard: true },
+                { name: "시라사기 치사토", role: "베이스", color: "#FFEEAA", textColor: "#000", hasCard: true },
+                { name: "야마토 마야", role: "드럼", color: "#99DD88", textColor: "#000", hasCard: true },
+                { name: "와카미야 이브", role: "키보드", color: "#DDBBFF", textColor: "#000", hasCard: true }
             ]
         },
         "Roselia": {
-            bg: "#3344aa", color: "#3344aa",
+            bg: "#3344AA", color: "#3344AA",
             logo: "Roselia_logo.webp", image10th: "Roselia 10th.webp",
             members: [
-                { name: "미나토 유키나", role: "보컬", color: "#82b", textColor: "#FFF", hasCard: true },
-                { name: "히카와 사요", role: "기타", color: "#0aa", textColor: "#FFF", hasCard: true },
-                { name: "이마이 리사", role: "베이스", color: "#d42", textColor: "#FFF", hasCard: true },
-                { name: "우다가와 아코", role: "드럼", color: "#d08", textColor: "#FFF", hasCard: true },
-                { name: "시로카네 린코", role: "키보드", color: "#ccc", textColor: "#000", hasCard: true }
+                { name: "미나토 유키나", role: "보컬", color: "#881188", textColor: "#FFF", hasCard: true },
+                { name: "히카와 사요", role: "기타", color: "#00AABB", textColor: "#FFF", hasCard: true },
+                { name: "이마이 리사", role: "베이스", color: "#DD2200", textColor: "#FFF", hasCard: true },
+                { name: "우다가와 아코", role: "드럼", color: "#DD0088", textColor: "#FFF", hasCard: true },
+                { name: "시로카네 린코", role: "키보드", color: "#BBBBBB", textColor: "#000", hasCard: true }
             ]
         },
         "헬로, 해피 월드!": {
-            bg: "#ffdd00", color: "#ffdd00", textShadow: "1px 1px 2px rgba(0,0,0,0.4)",
+            bg: "#FFDD00", color: "#FFDD00", textShadow: "1px 1px 2px rgba(0,0,0,0.4)",
             logo: "Hello_happy_world_logo.webp", image10th: "Hello Happy World 10th.webp",
             members: [
-                { name: "키타자와 하구미", role: "베이스", color: "#f82", textColor: "#FFF", hasCard: true },
-                { name: "오쿠사와 미사키", displayName: "미셸", role: "DJ", color: "#000", textColor: "#FFF", hasCard: true },
-                { name: "츠루마키 코코로", role: "보컬", color: "#fe0", textColor: "#000", hasCard: true },
-                { name: "세타 카오루", role: "기타", color: "#a0c", textColor: "#FFF", hasCard: true },
-                { name: "마츠바라 카논", role: "드럼", color: "#0ce", textColor: "#FFF", hasCard: true }
+                { name: "키타자와 하구미", role: "베이스", color: "#FF9922", textColor: "#000", hasCard: true },
+                { name: "오쿠사와 미사키", displayName: "미셸", role: "DJ", color: "#DD33CC", textColor: "#FFF", hasCard: true },
+                { name: "츠루마키 코코로", role: "보컬", color: "#FFEE22", textColor: "#000", hasCard: true },
+                { name: "세타 카오루", role: "기타", color: "#AA33CC", textColor: "#FFF", hasCard: true },
+                { name: "마츠바라 카논", role: "드럼", color: "#44DDFF", textColor: "#000", hasCard: true }
             ]
         },
         "Morfonica": {
-            bg: "#ebf7ff", color: "#33aaff",
+            bg: "#33AAFF", color: "#33AAFF",
             logo: "morfonica_logo.webp", image10th: "Morfonica 10th.webp",
             members: [
-                { name: "야시오 루이", role: "바이올린", color: "#4c8", textColor: "#FFF", hasCard: true },
-                { name: "히로마치 나나미", role: "베이스", color: "#f84", textColor: "#FFF", hasCard: true },
-                { name: "쿠라타 마시로", role: "보컬", color: "#28f", textColor: "#FFF", hasCard: true },
-                { name: "후타바 츠쿠시", role: "드럼", color: "#f8a", textColor: "#FFF", hasCard: true },
-                { name: "키리가야 토우코", role: "기타", color: "#f44", textColor: "#FFF", hasCard: true }
+                { name: "야시오 루이", role: "바이올린", color: "#669988", textColor: "#FFF", hasCard: true },
+                { name: "히로마치 나나미", role: "베이스", color: "#EE7744", textColor: "#FFF", hasCard: true },
+                { name: "쿠라타 마시로", role: "보컬", color: "#6677CC", textColor: "#FFF", hasCard: true },
+                { name: "후타바 츠쿠시", role: "드럼", color: "#EE7788", textColor: "#FFF", hasCard: true },
+                { name: "키리가야 토우코", role: "기타", color: "#EE6666", textColor: "#FFF", hasCard: true }
             ]
         },
         "RAISE A SUILEN": {
-            bg: "#aaeeee", color: "#33cccc",
+            bg: "#33CCCC", color: "#33CCCC",
             logo: "RAISE_A_SUILEN_logo.webp", image10th: "RAISE A SUILEN 10th.webp",
             members: [
-                { name: "파레오(BanG Dream!)", displayName: "파레오", role: "키보드", color: "#f8b", textColor: "#FFF", hasCard: true },
-                { name: "마스킹(BanG Dream!)", displayName: "마스킹", role: "드럼", color: "#da4", textColor: "#FFF", hasCard: true },
-                { name: "레이야(BanG Dream!)", displayName: "레이야", role: "보컬 & 베이스", color: "#c02", textColor: "#FFF", hasCard: true },
-                { name: "츄츄(BanG Dream!)", displayName: "츄츄", role: "DJ", color: "#0cc", textColor: "#FFF", hasCard: true },
-                { name: "록(BanG Dream!)", displayName: "록", role: "기타", color: "#aeb", textColor: "#FFF", hasCard: true }
+                { name: "파레오(BanG Dream!)", displayName: "파레오", role: "키보드", color: "#FF99BB", textColor: "#000", hasCard: true },
+                { name: "마스킹(BanG Dream!)", displayName: "마스킹", role: "드럼", color: "#EEBB44", textColor: "#000", hasCard: true },
+                { name: "레이야(BanG Dream!)", displayName: "레이야", role: "보컬 & 베이스", color: "#CC0000", textColor: "#FFF", hasCard: true },
+                { name: "츄츄(BanG Dream!)", displayName: "츄츄", role: "DJ", color: "#00BBFF", textColor: "#000", hasCard: true },
+                { name: "록(BanG Dream!)", displayName: "록", role: "기타", color: "#AAEE22", textColor: "#000", hasCard: true }
             ]
         },
         "MyGO!!!!!": {
-            bg: "#cbf1fe", color: "#0088bb",
+            bg: "#00a3de", color: "#00a3de",
             logo: "마이고.webp", image10th: "MyGO 10th.webp",
             members: [
-                { name: "치하야 아논", role: "기타", color: "#f8a", textColor: "#FFF", hasCard: true, hasArea: true },
-                { name: "나가사키 소요", role: "베이스", color: "#fd8", textColor: "#000", hasCard: true, hasArea: true },
-                { name: "타카마츠 토모리", role: "보컬", color: "#7ba", textColor: "#FFF", hasCard: true, hasArea: true },
-                { name: "시이나 타키", role: "드럼", color: "#889", textColor: "#FFF", hasCard: true, hasArea: true },
-                { name: "카나메 라나", role: "기타", color: "#8d8", textColor: "#FFF", hasCard: true, hasArea: true }
+                { name: "치하야 아논", role: "기타", color: "#FF8899", textColor: "#000", hasCard: true, hasArea: true },
+                { name: "나가사키 소요", role: "베이스", color: "#FFDD88", textColor: "#000", hasCard: true, hasArea: true },
+                { name: "타카마츠 토모리", role: "보컬", color: "#77BBDD", textColor: "#000", hasCard: true, hasArea: true },
+                { name: "시이나 타키", role: "드럼", color: "#7777AA", textColor: "#FFF", hasCard: true, hasArea: true },
+                { name: "카나메 라나", role: "기타", color: "#77DD77", textColor: "#000", hasCard: true, hasArea: true }
             ]
         },
         "Ave Mujica": {
-            bg: "#cc7b9e", color: "#881144",
+            bg: "#881144", color: "#881144",
             logo: "Ave_Mujica_logo.webp", image10th: "Ave Mujica 10th.webp",
             members: [
-                { name: "토가와 사키코", displayName: "오블리비오니스", role: "키보드", color: "#358", textColor: "#FFF", hasCard: false },
-                { name: "야하타 우미리", displayName: "티모리스", role: "베이스", color: "#567", textColor: "#FFF", hasCard: false },
-                { name: "미스미 우이카", displayName: "돌로리스", role: "기타 & 보컬", color: "#614", textColor: "#FFF", hasCard: false },
-                { name: "유텐지 냐무", displayName: "아모리스", role: "드럼", color: "#a47", textColor: "#FFF", hasCard: false },
-                { name: "와카바 무츠미", displayName: "모르티스", role: "기타", color: "#797", textColor: "#FFF", hasCard: false }
+                { name: "토가와 사키코", displayName: "오블리비오니스", role: "키보드", color: "#7799CC", textColor: "#000", hasCard: false },
+                { name: "야하타 우미리", displayName: "티모리스", role: "베이스", color: "#335566", textColor: "#FFF", hasCard: false },
+                { name: "미스미 우이카", displayName: "돌로리스", role: "기타 & 보컬", color: "#BB9955", textColor: "#FFF", hasCard: false },
+                { name: "유텐지 냐무", displayName: "아모리스", role: "드럼", color: "#AA4477", textColor: "#FFF", hasCard: false },
+                { name: "와카바 무츠미", displayName: "모르티스", role: "기타", color: "#779977", textColor: "#FFF", hasCard: false }
             ]
         },
         "무겐다이 뮤타입": {
-            bg: "#ffbbc4", color: "#ff7788",
+            bg: "#FF7788", color: "#FF7788",
             logo: "yumemita_logo.webp", image10th: "Yumemita 10th.webp",
             members: [
-                { name: "미네츠키 리츠", role: "멤버", color: "#ff7788", textColor: "#FFF", hasCard: false },
-                { name: "센고쿠 유노", role: "멤버", color: "#ff7788", textColor: "#FFF", hasCard: false },
-                { name: "나카마치 아라레", role: "멤버", color: "#ff7788", textColor: "#FFF", hasCard: false },
-                { name: "후지 미야코", role: "멤버", color: "#ff7788", textColor: "#FFF", hasCard: false },
-                { name: "미야나가 노노카", role: "멤버", color: "#ff7788", textColor: "#FFF", hasCard: false }
+                { name: "미네츠키 리츠", role: "멤버", color: "#5588DD", textColor: "#FFF", hasCard: false },
+                { name: "센고쿠 유노", role: "멤버", color: "#FF6688", textColor: "#FFF", hasCard: false },
+                { name: "나카마치 아라레", role: "멤버", color: "#FFDD33", textColor: "#000", hasCard: false },
+                { name: "후지 미야코", role: "멤버", color: "#9977DD", textColor: "#FFF", hasCard: false },
+                { name: "미야나가 노노카", role: "멤버", color: "#FFAACC", textColor: "#000", hasCard: false }
             ]
         },
         "millsage": {
-            bg: "#e8c9ff", color: "#AA22EE",
+            bg: "#AA22EE", color: "#AA22EE",
             logo: "millsage_logo.webp", image10th: "millsage.webp",
             members: [
-                { name: "코토히라 나기", role: "멤버", color: "#AA22EE", textColor: "#FFF", hasCard: false },
-                { name: "하마사키 마호로", role: "멤버", color: "#AA22EE", textColor: "#FFF", hasCard: false },
-                { name: "시오미 호타루", role: "멤버", color: "#AA22EE", textColor: "#FFF", hasCard: false },
-                { name: "이즈미 호우카", role: "멤버", color: "#AA22EE", textColor: "#FFF", hasCard: false },
-                { name: "이자와 나츠메", role: "멤버", color: "#AA22EE", textColor: "#FFF", hasCard: false }
+                { name: "코토히라 나기", role: "멤버", color: "#5555FF", textColor: "#FFF", hasCard: false },
+                { name: "하마사키 마호로", role: "멤버", color: "#77FFFF", textColor: "#000", hasCard: false },
+                { name: "시오미 호타루", role: "멤버", color: "#99FF99", textColor: "#000", hasCard: false },
+                { name: "이즈미 호우카", role: "멤버", color: "#EE99EE", textColor: "#000", hasCard: false },
+                { name: "이자와 나츠메", role: "멤버", color: "#FF4444", textColor: "#FFF", hasCard: false }
             ]
         },
         "일가 Dumb Rock!": {
             bg: "#FFAA33", color: "#FFAA33",
             logo: "Ikka_Dumb_Rock_logo.webp", image10th: "ikkadumbrock.webp",
             members: [
-                { name: "야쿠라 요모기", role: "멤버", color: "#FFAA33", textColor: "#FFF", hasCard: false },
-                { name: "우메자토 치에리", role: "멤버", color: "#FFAA33", textColor: "#FFF", hasCard: false },
-                { name: "스가 라이카", role: "멤버", color: "#FFAA33", textColor: "#FFF", hasCard: false },
-                { name: "시노미야 시즈쿠(BanG Dream!)", displayName: "시노미야 시즈쿠", role: "멤버", color: "#FFAA33", textColor: "#FFF", hasCard: false },
-                { name: "마하시 미쿠", role: "멤버", color: "#FFAA33", textColor: "#FFF", hasCard: false }
+                { name: "야쿠라 요모기", role: "멤버", color: "#448888", textColor: "#FFF", hasCard: false },
+                { name: "우메자토 치에리", role: "멤버", color: "#FF55AA", textColor: "#FFF", hasCard: false },
+                { name: "스가 라이카", role: "멤버", color: "#FF7700", textColor: "#FFF", hasCard: false },
+                { name: "시노미야 시즈쿠(BanG Dream!)", displayName: "시노미야 시즈쿠", role: "멤버", color: "#9999FF", textColor: "#000", hasCard: false },
+                { name: "마하시 미쿠", role: "멤버", color: "#22CCFF", textColor: "#000", hasCard: false }
             ]
         }
     };
 
-    // 2. 현재 접속한 캐릭터의 소속 밴드 찾기
-    const currentPageName = decodeURIComponent(window.location.pathname).split('/').pop() || document.title;
+    // 2. 언더바를 공백으로 치환하여 현재 접속한 캐릭터의 소속 밴드 매칭
+    const rawPageName = decodeURIComponent(window.location.pathname).split('/').pop();
+    const currentPageName = rawPageName.replace(/_/g, ' ') || document.title;
+    
     let targetBand = "Poppin'Party"; // 기본값
     for (const [bandName, bandInfo] of Object.entries(bandData)) {
         for (const member of bandInfo.members) {
@@ -160,20 +162,35 @@ document.addEventListener("DOMContentLoaded", () => {
         .nw-del { text-decoration: line-through; color: #888; font-size: 0.85em; }
         
         .bd-main-frame { max-width: 800px; margin: 0 auto 20px; border: 2px solid #ffc02a; border-radius: 13px; overflow: hidden; background-color: #ff3b72; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .bd-main-header { background-image: linear-gradient(to bottom, #ffffff 10%, #ff3b72); text-align: center; padding: 15px 10px; }
+        
+        /* 모든 헤더 영역 로고 중앙 정렬 강제 고정 (!important 활용) */
+        .bd-main-header, .bd-dynamic-header { text-align: center !important; }
+        .bd-main-header a, .bd-dynamic-header a { display: block !important; text-align: center !important; margin: 0 auto !important; }
+        .bd-main-header img, .bd-dynamic-header img { margin: 0 auto !important; display: inline-block !important; }
+        
+        .bd-main-header { background-image: linear-gradient(to bottom, #ffffff 10%, #ff3b72); padding: 15px 10px; }
         .bd-main-title-sub { color: #fff; font-size: 1rem; margin-top: 5px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
         .bd-main-title { color: #e5004f; font-size: 1.8rem; font-weight: bold; font-style: italic; letter-spacing: 0.5px; }
         
-        .bd-details { border-top: 1px solid rgba(255,255,255,0.4); }
-        .bd-summary { background-color: transparent; color: #fff; font-weight: bold; font-size: 0.9rem; padding: 10px; text-align: center; cursor: pointer; list-style: none; outline: none; }
-        .bd-summary::-webkit-details-marker { display: none; }
-        .bd-summary:hover { background-color: rgba(255,255,255,0.1); }
+        .bd-details { border-top: 1px solid rgba(0,0,0,0.1); background-color: #fff; }
+        [data-theme='dark'] .bd-details { background-color: #2d2f34; border-top-color: #444; }
         
-        /* 전체 명단 행 스타일 */
+        /* [수정됨] 토글 버튼(summary) 글자색 및 배경색 강제 지정 */
+        .bd-summary { background-color: #f8f9fa !important; color: #333 !important; font-weight: bold; font-size: 0.9rem; padding: 10px; text-align: center; cursor: pointer; list-style: none; outline: none; border-bottom: 1px solid #eaeaea; }
+        .bd-summary:hover { background-color: #e9ecef !important; }
+        .bd-summary::-webkit-details-marker { display: none; }
+        
+        /* 다크모드 대응 */
+        [data-theme='dark'] .bd-summary { background-color: #3a3c40 !important; color: #e0e0e0 !important; border-bottom-color: #444; }
+        [data-theme='dark'] .bd-summary:hover { background-color: #4a4c50 !important; }
+        
+        /* 밴드 명단 행 스타일 (목록 로고 중앙 정렬 강제) */
         .bd-band-row { text-align: center; display: flex; flex-direction: column; border-bottom: 1px solid rgba(0,0,0,0.1); }
-        .bd-band-logos { padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
-        .bd-band-logo-img { max-height: 60px; object-fit: contain; }
-        .bd-band-10th-img { width: 100%; object-fit: cover; border-radius: 4px; }
+        .bd-band-logos { padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; text-align: center; width: 100%; }
+        .bd-band-logos a { display: block !important; width: 100%; text-align: center !important; }
+        .bd-band-logo-img { max-height: 60px; object-fit: contain; margin: 0 auto !important; display: inline-block !important; }
+        .bd-band-10th-img { width: 100%; object-fit: cover; border-radius: 4px; display: block; margin: 0 auto; }
+        
         .bd-band-members { display: flex; justify-content: space-evenly; flex-wrap: wrap; padding: 8px 0; gap: 5px; }
         .bd-member-item { flex: 1; min-width: 18%; font-size: 0.85rem; font-weight: bold; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
         .bd-badge-container { display: flex; gap: 4px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 2px; }
@@ -190,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         /* 동적 하단 틀 스타일 */
         .bd-dynamic-frame { max-width: 800px; margin: 0 auto 20px; border: 2px solid ${currentBandInfo.color}; border-radius: 13px; overflow: hidden; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .bd-dynamic-header { background-color: ${currentBandInfo.color}; text-align: center; padding: 12px; }
+        .bd-dynamic-header { background-color: ${currentBandInfo.color}; padding: 12px; }
         .bd-dynamic-list { display: flex; justify-content: space-around; padding: 15px 0; }
         .bd-dynamic-card { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; border-right: 1px solid #eaeaea; padding: 0 5px; }
         [data-theme='dark'] .bd-dynamic-card { border-color: #444; }
@@ -204,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
     </style>
     `;
 
-    // 4. [상단] 전체 밴드 명단 HTML 자동 생성 (절대 누락 안됨!)
+    // 4. [상단] 전체 밴드 명단 HTML
     let allBandsHtml = '';
     for (const [bName, bInfo] of Object.entries(bandData)) {
         let membersHtml = '';
@@ -235,7 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
-    // 5. [하단] 현재 접속 캐릭터 소속 밴드 동적 HTML 생성
+    // 5. [하단] 동적 밴드 HTML
     let dynamicMembersHtml = '';
     currentBandInfo.members.forEach(m => {
         const dName = m.displayName || m.name;
@@ -254,26 +271,21 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     });
 
-    // 6. 전체 HTML 조립 (위쪽 거대 둘러보기 틀 + 아래쪽 동적 밴드 틀)
+    // 6. 렌더링 조립
     const navHtml = `
     <div class="bd-wrapper">
-        
         <div class="bd-main-frame">
             <div class="bd-main-header">
                 <a href="BanG Dream!.html" class="nw-link">
-                    <img src="이미지/BanG Dream! 가로 로고.webp" alt="BanG Dream!" style="width: 200px;" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none; color:#e5004f; font-weight:bold; font-size:1.5rem;">BanG Dream!</span>
+                    <img src="이미지/BanG Dream! 가로 로고.svg" alt="BanG Dream!" style="width: 200px;" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none; color:#e5004f; font-weight:bold; font-size:1.5rem;">BanG Dream!</span>
                 </a>
                 <div class="bd-main-title-sub">차세대 걸즈 밴드 프로젝트</div>
                 <div class="bd-main-title">BanG Dream!</div>
             </div>
-
             <details class="bd-details" open>
                 <summary class="bd-summary">[ 밴드 목록 열기 · 닫기 ]</summary>
-                <div>
-                    ${allBandsHtml}
-                </div>
+                <div>${allBandsHtml}</div>
             </details>
-
             <details class="bd-details" open>
                 <summary class="bd-summary">[ 관련 문서 열기 · 닫기 ]</summary>
                 <table class="bd-doc-table">
@@ -370,10 +382,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${dynamicMembersHtml}
             </div>
         </div>
-        
     </div>
     `;
 
-    // 7. 컨테이너에 일괄 주입
     container.innerHTML = navStyle + navHtml;
 });

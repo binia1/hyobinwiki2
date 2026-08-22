@@ -8,6 +8,42 @@
     } catch(e) {}
 })();
 
+// =====================================================================
+// 🚨 [추가된 절대 방어막] 버스 문서의 지하철 뱃지 & 정류장 링크 납치 원천 차단 
+// =====================================================================
+document.addEventListener("click", function(e) {
+    var target = e.target.closest("a");
+    if (!target) return;
+
+    // 1. 지하철 환승 뱃지 클릭 방어 (예: '2 남구청' -> '남구청역.html'로 강제 정상화)
+    if (target.classList.contains("subway-badge-rect") || target.classList.contains("subway-badge")) {
+        e.preventDefault();
+        e.stopPropagation(); // 분류 스크립트 등 다른 놈들이 못 건드리게 0순위로 차단!
+
+        // 뱃지 안의 텍스트에서 '2' 같은 호선 번호는 버리고 순수 역 이름만 빼오기
+        var station = "";
+        if (target.childNodes.length > 1) {
+            station = target.childNodes[1].textContent.trim();
+        } else {
+            station = target.innerText.replace(/^[A-Za-z0-9가-힣]+\s*/, "").trim(); 
+        }
+        station = station.replace("역", ""); // '역' 글자 중복 방지
+        window.location.href = station + "역.html";
+        return;
+    }
+
+    // 2. 버스 정류장 목록 클릭 방어 (예: '마잡' -> '마잡역.html')
+    if (target.closest(".stop-item")) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var station = target.innerText.trim().replace("역", "");
+        window.location.href = station + "역.html";
+        return;
+    }
+}, true); // ★ 핵심: true를 넣어서 캡처링 단계(모든 스크립트 중 가장 먼저)에서 낚아챔
+// =====================================================================
+
 /* HyobinWiki Core - THE FINAL ULTIMATE PATH-SENSITIVE VERSION */
 (function(){
   "use strict";

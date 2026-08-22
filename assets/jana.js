@@ -5395,6 +5395,10 @@
     "nimisibal": "틀_뷰어_SPA.html#nimisibal","니미씨발": "틀_뷰어_SPA.html#nimisibal", "님 이시발": "틀_뷰어_SPA.html#nimisibal",  "wiki_navboxes": "wiki_navboxes.html",
   "전체도로틀": "전체도로틀.html",
   "방하대로": "방하대로.html",
+    "중앙로(효빈)": "중앙로(효빈).html",
+  "강_부장판사": "강_부장판사.html",
+  "효빈가정법원": "효빈가정법원.html",
+
 
     // [덕북권 국회의원 및 헤더]
     "deokbinbuk_1": "틀_뷰어_SPA.html#deokbinbuk_1", "덕북권 국회의원 1": "틀_뷰어_SPA.html#deokbinbuk_1",
@@ -7203,4 +7207,39 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('headerSearchInput');
     if (searchInput) searchInput.setAttribute('autocomplete', 'off');
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const rows = document.querySelectorAll('table tr');
+    
+    rows.forEach(tr => {
+        const trText = tr.innerText;
+        let badgeClass = '';
+        
+        if (trText.includes('광역')) badgeClass = 'badge-widearea';
+        else if (trText.includes('공항')) badgeClass = 'badge-airport';
+        else if (trText.includes('급행')) badgeClass = 'badge-express';
+        else if (trText.includes('간선')) badgeClass = 'badge-trunk';
+        else if (trText.includes('지선')) badgeClass = 'badge-branch';
+        else if (trText.includes('순환')) badgeClass = 'badge-circular';
+        else if (trText.includes('마을')) badgeClass = 'badge-village';
+        
+        if (badgeClass) {
+            const links = tr.querySelectorAll('a');
+            links.forEach(link => {
+                const linkText = link.innerText.trim();
+                
+                // 각주 클래스이거나 [1], [2] 같은 대괄호 형태의 각주 링크는 무조건 제외
+                if (link.classList.contains('wiki-fn') || /^\[\d+\]$/.test(linkText)) {
+                    return;
+                }
+                
+                // 링크 텍스트에 숫자가 포함되어 있고, 아직 뱃지가 없으면 부여
+                if (/\d/.test(linkText) && !link.classList.contains('transport-badge')) {
+                    link.classList.add('transport-badge', badgeClass);
+                }
+            });
+        }
+    });
 });

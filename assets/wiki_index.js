@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 8. 20. 오후 9:18:13
+ * 업데이트: 2026. 8. 22. 오전 10:38:09
  */
 
 window.HB_WIKI_PAGES = [
@@ -10751,6 +10751,18 @@ window.HB_WIKI_PAGES = [
   {
     "title": "방하대로",
     "href": "방하대로.html"
+  },
+  {
+    "title": "중앙로(효빈)",
+    "href": "중앙로(효빈).html"
+  },
+  {
+    "title": "강_부장판사",
+    "href": "강_부장판사.html"
+  },
+  {
+    "title": "효빈가정법원",
+    "href": "효빈가정법원.html"
   }
 ];
 
@@ -16657,5 +16669,8 @@ window.HB_WIKI_ALIASES = {
   "효빈광역시 역대 국회 22": "틀_뷰어_SPA.html#효빈광역시_역대_국회_22",
   "wiki_navboxes": "wiki_navboxes.html",
   "전체도로틀": "전체도로틀.html",
-  "방하대로": "방하대로.html"
+  "방하대로": "방하대로.html",
+  "중앙로(효빈)": "중앙로(효빈).html",
+  "강_부장판사": "강_부장판사.html",
+  "효빈가정법원": "효빈가정법원.html"
 };

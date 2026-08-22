@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import re
 from bs4 import BeautifulSoup
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -9,23 +10,17 @@ from watchdog.events import FileSystemEventHandler
 WIKI_PATH = './'
 RESULT_FILE = '분류.html'
 
-# 🛡️ 시장님의 절대 보존 구역: 150개 동적 리스트 고정
+# 🛡️ 기존 150개 동적 리스트 고정
 DYNAMIC_LIST = [
     ["간호대 - 한의관", "효빈대_A선_역_템플릿.html?id=A03"],
     ["강갑수", "두청운수_빌런_기사_목록.html?villain=강갑수"],
     ["강대호", "두청운수_피해_사례집.html?victim=강대호"],
-    ["강상현", "효빈광역시의회_동적뷰.html#강상현"],
     ["강주항역", "빈주권광역철도_역사_템플릿.html?station=강주항"],
     ["계성진백역", "빈주권광역철도_역사_템플릿.html?station=계성진백"],
-    ["고상면", "효빈광역시의회_동적뷰.html#고상면"],
     ["고송강변", "창전선_역사_템플릿.html?station=고송강변"],
     ["고송경찰서", "창전선_역사_템플릿.html?station=고송경찰서"],
-    ["고한선", "덕빈남의원.html#고한선"],
     ["관동4가역", "빈주1호선_역사_템플릿.html?station=관동4가"],
     ["교통대학 기지", "효빈대_B선_역_템플릿.html?id=B01"],
-    ["구상민", "효빈광역시의회_동적뷰.html#구상민"],
-    ["구상원", "효빈광역시의회_동적뷰.html#구상원"],
-    ["구신원", "덕빈남의원.html#구신원"],
     ["규암로2가역", "덕주1호선_역사_템플릿.html?station=규암로2가"],
     ["김만석", "두청운수_피해_사례집.html?victim=김만석"],
     ["김칠성", "두청운수_빌런_기사_목록.html?villain=김칠성"],
@@ -45,8 +40,6 @@ DYNAMIC_LIST = [
     ["민산역", "빈주2호선_역사_템플릿.html?station=민산"],
     ["박상구", "두청운수_피해_사례집.html?victim=박상구"],
     ["박성역", "빈주권광역철도_역사_템플릿.html?station=박성"],
-    ["박성임", "효빈광역시의회_동적뷰.html#박성임"],
-    ["박신언", "덕빈남의원.html#박신언"],
     ["박현역", "덕주1호선_역사_템플릿.html?station=박현"],
     ["방거역", "빈주권광역철도_역사_템플릿.html?station=방거"],
     ["배칠두", "두청운수_빌런_기사_목록.html?villain=배칠두"],
@@ -73,17 +66,13 @@ DYNAMIC_LIST = [
     ["서비마역", "청엽선 통합 역 템플릿.html?station=서비마"],
     ["서원동1가역", "빈주1호선_역사_템플릿.html?station=서원동1가"],
     ["서원동2가역", "빈주1호선_역사_템플릿.html?station=서원동2가"],
-    ["서유원", "덕빈남의원.html#서유원"],
     ["석서역", "빈주권광역철도_역사_템플릿.html?station=석서"],
-    ["성지언", "효빈광역시의회_동적뷰.html#성지언"],
-    ["소상리", "효빈광역시의회_동적뷰.html#소상리"],
     ["소창고등학교", "북구_고등학교_템플릿.html?id=sochang"],
     ["수곡역", "빈주1호선_역사_템플릿.html?station=수곡"],
     ["수옥역", "빈주2호선_역사_템플릿.html?station=수옥"],
     ["수의대·동물병원", "효빈대_A선_역_템플릿.html?id=A01"],
     ["승루역", "빈주2호선_역사_템플릿.html?station=승루"],
     ["시능역", "빈주1호선_역사_템플릿.html?station=시능"],
-    ["신단성", "효빈광역시의회_동적뷰.html#신단성"],
     ["신도역", "덕주1호선_역사_템플릿.html?station=신도"],
     ["신쌍엽", "창전선_역사_템플릿.html?station=신쌍엽"],
     ["신월삼역", "빈주2호선_역사_템플릿.html?station=신월삼"],
@@ -93,7 +82,6 @@ DYNAMIC_LIST = [
     ["심전역", "빈주권광역철도_역사_템플릿.html?station=심전"],
     ["쌍엽중앙", "창전선_역사_템플릿.html?station=쌍엽중앙"],
     ["아논역", "빈주권광역철도_역사_템플릿.html?station=아논"],
-    ["안일암", "효빈광역시의회_동적뷰.html#안일암"],
     ["애산역", "빈주권광역철도_역사_템플릿.html?station=애산"],
     ["약대 보건대", "효빈대_A선_역_템플릿.html?id=A04"],
     ["엄치돈", "두청운수_빌런_기사_목록.html?villain=엄치돈"],
@@ -103,33 +91,16 @@ DYNAMIC_LIST = [
     ["영목역", "덕주1호선_역사_템플릿.html?station=영목"],
     ["예술대", "효빈대_B선_역_템플릿.html?id=B07"],
     ["오내고등학교", "북구_고등학교_템플릿.html?id=onae"],
-    ["오상원", "효빈광역시의회_동적뷰.html#오상원"],
-    ["오서영", "효빈광역시의회_동적뷰.html#오서영"],
-    ["오선온", "덕빈남의원.html#오선온"],
-    ["오지대", "효빈광역시의회_동적뷰.html#오지대"],
-    ["옥산민", "효빈광역시의회_동적뷰.html#옥산민"],
     ["완현역", "빈주권광역철도_역사_템플릿.html?station=완현"],
-    ["용서민", "효빈광역시의회_동적뷰.html#용서민"],
     ["우격역", "덕주1호선_역사_템플릿.html?station=우격"],
     ["우전중앙역", "청엽선 통합 역 템플릿.html?station=우전중앙"],
-    ["우지남", "효빈광역시의회_동적뷰.html#우지남"],
     ["우택중앙", "창전선_역사_템플릿.html?station=우택중앙"],
     ["웅읍역", "빈주2호선_역사_템플릿.html?station=웅읍"],
-    ["원개현", "효빈광역시의회_동적뷰.html#원개현"],
-    ["원기덕", "효빈광역시의회_동적뷰.html#원기덕"],
     ["원명중앙역", "덕주1호선_역사_템플릿.html?station=원명중앙"],
-    ["원상민", "효빈광역시의회_동적뷰.html#원상민"],
-    ["원수현", "효빈광역시의회_동적뷰.html#원수현"],
-    ["원지현", "효빈광역시의회_동적뷰.html#원지현"],
     ["월삼역", "빈주권광역철도_역사_템플릿.html?station=월삼"],
-    ["유상미", "덕빈남의원.html#유상미"],
-    ["유신민", "효빈광역시의회_동적뷰.html#유신민"],
-    ["유증민", "효빈광역시의회_동적뷰.html#유증민"],
-    ["윤월선", "효빈광역시의회_동적뷰.html#윤월선"],
     ["이갑수", "두청운수_피해_사례집.html?victim=이갑수"],
     ["이남고등학교", "북구_고등학교_템플릿.html?id=inam"],
     ["이독사", "두청운수_빌런_기사_목록.html?villain=이독사"],
-    ["이수라남", "효빈광역시의회_동적뷰.html#이수라남"],
     ["인서고등학교", "북구_고등학교_템플릿.html?id=inseo"],
     ["입동2가역", "청엽선 통합 역 템플릿.html?station=입동2가"],
     ["자연대", "효빈대_B선_역_템플릿.html?id=B08"],
@@ -139,16 +110,12 @@ DYNAMIC_LIST = [
     ["제가동2가역", "빈주2호선_역사_템플릿.html?station=제가동2가"],
     ["제가역", "빈주1호선_역사_템플릿.html?station=제가"],
     ["조만석", "두청운수_빌런_기사_목록.html?villain=조만석"],
-    ["조성일", "효빈광역시의회_동적뷰.html#조성일"],
     ["조영식", "두청운수_피해_사례집.html?victim=조영식"],
     ["조전구청역", "덕주1호선_역사_템플릿.html?station=조전구청"],
     ["조전역", "덕주1호선_역사_템플릿.html?station=조전"],
     ["조천산역", "덕주1호선_역사_템플릿.html?station=조천산"],
-    ["조청남", "효빈광역시의회_동적뷰.html#조청남"],
     ["주기역", "덕주1호선_역사_템플릿.html?station=주기"],
-    ["주방선", "효빈광역시의회_동적뷰.html#주방선"],
     ["주성역", "덕주1호선_역사_템플릿.html?station=주성"],
-    ["주옥현", "효빈광역시의회_동적뷰.html#주옥현"],
     ["주전중앙역", "빈주2호선_역사_템플릿.html?station=주전중앙"],
     ["중앙도서관", "효빈대_B선_역_템플릿.html?id=B02"],
     ["중앙동3가역", "빈주1호선_역사_템플릿.html?station=중앙동3가"],
@@ -156,8 +123,6 @@ DYNAMIC_LIST = [
     ["증림역", "빈주권광역철도_역사_템플릿.html?station=증림"],
     ["지미역", "빈주권광역철도_역사_템플릿.html?station=지미"],
     ["지산역", "빈주1호선_역사_템플릿.html?station=지산"],
-    ["지소현", "효빈광역시의회_동적뷰.html#지소현"],
-    ["지은민", "효빈광역시의회_동적뷰.html#지은민"],
     ["진백중앙", "창전선_역사_템플릿.html?station=진백중앙"],
     ["진희고등학교", "북구_고등학교_템플릿.html?id=jinhee"],
     ["창엽", "창전선_역사_템플릿.html?station=창엽"],
@@ -188,7 +153,6 @@ DYNAMIC_LIST = [
 ]
 
 def get_dynamic_category(url):
-    if "동적뷰" in url or "남의원" in url: return "정치인/의회"
     if "역사_템플릿" in url: return "교통/철도역"
     if "빌런" in url: return "인물/빌런"
     if "피해_사례집" in url: return "인물/피해자"
@@ -196,10 +160,37 @@ def get_dynamic_category(url):
     if "효빈대" in url: return "효빈대학교/시설"
     return "기타"
 
+# JS 파일에서 10대 의원 정보 긁어오는 함수
+def get_js_dynamic_categories():
+    js_path = os.path.join(WIKI_PATH, 'assets', '10대_효빈시의원_목록.js')
+    results = []
+    if not os.path.exists(js_path): return results
+    try:
+        with open(js_path, 'r', encoding='utf-8') as f: content = f.read()
+        member_blocks = re.findall(r'"([가-힣]+)":\s*\{(.*?)\}', content, re.DOTALL)
+        for name, block in member_blocks:
+            cats = ["효빈광역시의원"]
+            party = re.search(r'party:\s*"([^"]+)"', block)
+            if party: cats.append(f"{party.group(1)} 소속")
+            district = re.search(r'district:\s*"([^"]+)"', block)
+            if district:
+                dist_name = district.group(1).split()[0]
+                cats.append(f"{dist_name}의 정치")
+                if "비례" not in dist_name: cats.append(f"{dist_name} 출신")
+            birth = re.search(r'birth:\s*\'(\d{4})년', block)
+            if birth: cats.append(f"{birth.group(1)}년 출생")
+            history = re.search(r'history:\s*"([^"]+)"', block)
+            if history:
+                first_line = history.group(1).split('<br>')[0]
+                school_match = re.search(r'([가-힣a-zA-Z]+(?:대학교|고등학교|중학교|초등학교))', first_line)
+                if school_match: cats.append(f"{school_match.group(1)} 출신")
+            results.append({"title": name, "url": f"10대_시의원.html#{name}", "cats": cats})
+    except Exception as e: print(f"⚠️ JS 파일 파싱 오류: {e}")
+    return results
+
 def generate_wiki_index():
     category_map = {}
     sub_categories = {}
-
     html_files = [f for f in os.listdir(WIKI_PATH) if f.endswith('.html') and f != RESULT_FILE]
     
     for filename in html_files:
@@ -207,55 +198,76 @@ def generate_wiki_index():
             with open(os.path.join(WIKI_PATH, filename), 'r', encoding='utf-8') as f:
                 soup = BeautifulSoup(f, 'html.parser')
                 
-                # 1. 문서 제목 추출
-                if soup.title and soup.title.string:
-                    title = soup.title.string.replace(' - 효빈위키', '').strip()
+                # 🌟 [해결 1] 다중 뷰(view-section)를 각각 독립 문서로 분리!
+                view_sections = soup.find_all('div', class_='view-section')
+                person_views = [v for v in view_sections if v.get('id', '').startswith('view-') and v.get('id') != 'view-home']
+                
+                target_blocks = []
+                if person_views:
+                    # 박신언, 서유원 등 다중 뷰 문서일 경우 뷰마다 URL(#이름) 생성
+                    for view in person_views:
+                        name = view.get('id').replace('view-', '')
+                        target_blocks.append({
+                            'title': name,
+                            'url': f"{filename}#{name}",
+                            'soup': view
+                        })
                 else:
-                    title = filename.replace('.html', '')
+                    # 일반 단일 문서일 경우
+                    doc_title = soup.title.string.replace(' - 효빈위키', '').strip() if soup.title else filename.replace('.html', '')
+                    target_blocks.append({'title': doc_title, 'url': filename, 'soup': soup})
 
-                # 2. 지능형 박스 탐지 (우선순위 스캔)
-                # 클래스든 ID든 상관없이 존재하는 것을 먼저 찾음
-                cat_box = (
-                    soup.find('div', class_='category-box') or
-                    soup.find(id='wiki-context-area') or
-                    soup.find('div', class_='wiki-context-area')
-                )
-                
-                # 3. 그래도 없으면? '분류:' 텍스트를 포함하는 부모 박스를 탐색
-                if not cat_box:
-                    label_tag = soup.find(lambda tag: tag.name in ['span', 'div', 'p', 'b', 'strong', 'td'] 
-                                         and tag.text and '분류' in tag.text and ':' in tag.text)
-                    if label_tag:
-                        # 텍스트가 속한 가장 가까운 상위 컨테이너 박스 추출
-                        cat_box = label_tag.find_parent(['div', 'table', 'section'])
-                
-                # 4. 데이터 추출
-                if cat_box:
-                    a_tags = cat_box.find_all('a')
+                # 분리된 각각의 뷰(블록) 단위로 카테고리 스캔
+                for block in target_blocks:
+                    final_categories = []
                     
-                    if a_tags:
-                        # "분류"라는 글자만 뺀 나머지 링크 텍스트 수집
-                        cat_list = [a.get_text(strip=True) for a in a_tags if '분류' not in a.get_text(strip=True)]
-                    else:
-                        # 링크 태그가 없는 경우 텍스트 파싱
-                        full_text = cat_box.get_text()
-                        raw_cat = full_text.split('분류:')[1] if '분류:' in full_text else (full_text.split('분류 :')[1] if '분류 :' in full_text else full_text)
-                        cat_list = [c.strip() for c in raw_cat.replace('\n', '').split('|') if c.strip()]
+                    # 🌟 [해결 2] ResultSet을 리스트로 명시적 변환하여 append 에러 방지!
+                    cat_boxes = list(block['soup'].find_all('div', class_=re.compile(r'category-box|classification-box|wiki-context-area')))
                     
-                    for cat_full in cat_list:
-                        if not cat_full: continue
+                    if not cat_boxes:
+                        labels = block['soup'].find_all(string=re.compile(r'분류\s*:'))
+                        for label in labels:
+                            parent = label.parent
+                            if parent.name in ['b', 'strong', 'span', 'td', 'th', 'a']:
+                                parent = parent.parent
+                            if parent and parent.name != 'body' and not any(bc in parent.get('class', []) for bc in ['wiki-container', 'wiki-content', 'view-section']):
+                                cat_boxes.append(parent) # 이제 cat_boxes가 파이썬 기본 리스트이므로 append 오류 없음!
+                    
+                    for cb in cat_boxes:
+                        a_tags = cb.find_all('a')
+                        raw_cat_list = []
+                        if a_tags:
+                            raw_cat_list = [a.get_text(strip=True) for a in a_tags if '분류' not in a.get_text(strip=True)]
+                        else:
+                            full_text = cb.get_text(separator=' ')
+                            if '분류:' in full_text:
+                                raw_cat = full_text.split('분류:')[1]
+                            elif '분류 :' in full_text:
+                                raw_cat = full_text.split('분류 :')[1]
+                            else:
+                                raw_cat = full_text
+                            raw_cat_list = [c.strip() for c in raw_cat.split('|')]
+                            
+                        for c in raw_cat_list:
+                            clean_c = c.split('\n')[0].strip()
+                            if clean_c and len(clean_c) <= 30 and '{' not in clean_c and '}' not in clean_c and 'function' not in clean_c and '=' not in clean_c:
+                                final_categories.append(clean_c)
+                    
+                    # 수집된 카테고리를 맵에 할당
+                    for cat_full in list(set(final_categories)):
                         if '/' in cat_full:
                             parent = cat_full.split('/')[0]
                             if parent not in sub_categories: sub_categories[parent] = []
                             if cat_full not in sub_categories[parent]: sub_categories[parent].append(cat_full)
                         if cat_full not in category_map: category_map[cat_full] = []
-                        category_map[cat_full].append({'title': title, 'url': filename})
+                        if not any(d['url'] == block['url'] for d in category_map[cat_full]):
+                            category_map[cat_full].append({'title': block['title'], 'url': block['url']})
+
         except Exception as e:
             print(f"⚠️ 파일 분석 오류 ({filename}): {e}")
             continue
 
-
-    # 2. 🛡️ 수동 150개 동적 리스트 무조건 추가!
+    # 동적 리스트 병합
     for title, url in DYNAMIC_LIST:
         cat_full = get_dynamic_category(url)
         if '/' in cat_full:
@@ -265,11 +277,21 @@ def generate_wiki_index():
         if cat_full not in category_map: category_map[cat_full] = []
         category_map[cat_full].append({'title': title, 'url': url})
 
-    # JSON 변환
+    # JS 리스트(10대 시의원) 병합
+    js_dynamic_list = get_js_dynamic_categories()
+    for item in js_dynamic_list:
+        for cat_full in item["cats"]:
+            if '/' in cat_full:
+                parent = cat_full.split('/')[0]
+                if parent not in sub_categories: sub_categories[parent] = []
+                if cat_full not in sub_categories[parent]: sub_categories[parent].append(cat_full)
+            if cat_full not in category_map: category_map[cat_full] = []
+            if not any(d['url'] == item['url'] for d in category_map[cat_full]):
+                category_map[cat_full].append({'title': item["title"], 'url': item["url"]})
+
     json_cat_map = json.dumps(category_map, ensure_ascii=False)
     json_sub_cat = json.dumps(sub_categories, ensure_ascii=False)
 
-    # 3. HTML (효빈위키 공식 스킨) 생성
     html_content = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -307,7 +329,6 @@ def generate_wiki_index():
         .search-bar {{ border: 1px solid #ccc; padding: 4px 8px; font-size: 14px; width: 250px; }}
         .search-btn {{ background-color: #555588; color: white; border: none; padding: 4px 10px; cursor: pointer; font-size: 14px; }}
 
-        /* 동적 분류용 추가 스타일 */
         .cat-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; list-style: none; padding: 0; }}
         .cat-grid li {{ margin-bottom: 5px; }}
         .sub-box {{ border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 20px; margin-bottom: 30px; border-radius: 4px; }}
@@ -329,7 +350,6 @@ def generate_wiki_index():
     </nav>
 
     <div class="wiki-container shadow-lg pt-6">
-        
         <div class="flex justify-between items-end border-b-2 border-gray-400 pb-2 mb-6">
             <div class="txt-lvl-1" id="page-title">분류: 전체</div>
             <div class="wiki-tool-group">
@@ -339,19 +359,16 @@ def generate_wiki_index():
         </div>
 
         <div id="app" class="min-h-[500px]"></div>
-
-
-    <div id="footer-container"></div>
-
+        
+        <div id="footer-container"></div>
     </div>
+
     <script src="assets/wiki_index.js"></script>
     <script src="secret_search.js"></script>
     <script src="assets/hb_wiki_core.js?v=2"></script>
     <script src="assets/hb_index_scripts.js"></script>
     <script src="assets/jana.js"></script>
-        <script src="assets/load-footer.js"></script>
-
-
+    <script src="assets/load-footer.js"></script>
 
     <script>
         function handleSearch() {{
@@ -359,11 +376,9 @@ def generate_wiki_index():
             if (query) window.location.href = query + '.html';
         }}
 
-        // 파이썬이 주입한 데이터
         const categoryMap = {json_cat_map};
         const subCategories = {json_sub_cat};
 
-        // 한글 초성 추출
         const CHOSUNG = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
         function getChosung(text) {{
             if (!text) return "#";
@@ -373,7 +388,6 @@ def generate_wiki_index():
             return first.match(/[a-zA-Z0-9]/) ? first.toUpperCase() : "#";
         }}
 
-        // 화면 렌더링
         function render() {{
             const app = document.getElementById('app');
             const pageTitle = document.getElementById('page-title');
@@ -382,17 +396,28 @@ def generate_wiki_index():
             if (!hash || hash === "전체") {{
                 pageTitle.innerText = "분류: 전체";
                 let html = '<p class="mb-6">이 위키에 존재하는 모든 분류의 목록입니다. 하위 분류 및 문서를 보려면 각 항목을 클릭하세요.</p>';
-                html += '<ul class="cat-grid">';
-                Object.keys(categoryMap).sort().forEach(cat => {{
-                    html += `<li><a href="#${{cat}}" class="wiki-link font-bold text-lg">📁 분류:${{cat}}</a> <span class="text-sm text-gray-500">(${{categoryMap[cat].length}}개)</span></li>`;
+                
+                const catGrouped = {{}};
+                Object.keys(categoryMap).forEach(cat => {{
+                    const cho = getChosung(cat);
+                    if (!catGrouped[cho]) catGrouped[cho] = [];
+                    catGrouped[cho].push(cat);
                 }});
-                html += '</ul>';
+
+                Object.keys(catGrouped).sort().forEach(cho => {{
+                    html += `<h2>${{cho}}</h2>`;
+                    html += '<ul class="cat-grid mb-8">';
+                    catGrouped[cho].sort().forEach(cat => {{
+                        html += `<li><a href="#${{cat}}" class="wiki-link font-bold text-lg">📁 분류:${{cat}}</a> <span class="text-sm text-gray-500">(${{categoryMap[cat].length}}개)</span></li>`;
+                    }});
+                    html += '</ul>';
+                }});
+                
                 app.innerHTML = html;
             }} else if (categoryMap[hash]) {{
                 pageTitle.innerText = `분류: ${{hash}}`;
                 let html = '';
 
-                // 하위 분류 박스
                 if (subCategories[hash] && subCategories[hash].length > 0) {{
                     html += `<div class="sub-box"><h3>이 분류의 하위 분류</h3><ul class="cat-grid" style="grid-template-columns: repeat(4, 1fr);">`;
                     subCategories[hash].sort().forEach(sub => {{
@@ -401,7 +426,6 @@ def generate_wiki_index():
                     html += `</ul></div>`;
                 }}
 
-                // 문서 목록 (초성별)
                 html += `<p class="mb-6 font-bold text-gray-600">다음은 이 분류에 속하는 문서 ${{categoryMap[hash].length}}개입니다.</p>`;
                 const grouped = {{}};
                 categoryMap[hash].forEach(d => {{
@@ -427,7 +451,7 @@ def generate_wiki_index():
         }}
 
         window.addEventListener('hashchange', render);
-        render(); // 초기 실행
+        render();
     </script>
 </body>
 </html>"""
@@ -437,21 +461,17 @@ def generate_wiki_index():
     
     print(f"✅ [업데이트 완료] 분류.html이 성공적으로 생성되었습니다! ({time.strftime('%H:%M:%S')})")
 
-# ---------------------------------------------------------
-# 🐕 감시견(Watchdog) 로직 - Ctrl+S 저장 시 자동 업데이트!
-# ---------------------------------------------------------
 last_trigger_time = 0
 
 class WikiFileHandler(FileSystemEventHandler):
     def on_modified(self, event):
         global last_trigger_time
-        # HTML 파일이 변경되었고, 분류.html 자신이 아닐 때 동작
-        if event.src_path.endswith('.html') and RESULT_FILE not in event.src_path:
+        if (event.src_path.endswith('.html') or event.src_path.endswith('.js')) and RESULT_FILE not in event.src_path:
             current_time = time.time()
-            if current_time - last_trigger_time > 2: # 2초 쿨타임
+            if current_time - last_trigger_time > 2: 
                 last_trigger_time = current_time
                 filename = os.path.basename(event.src_path)
-                print(f"\n🔄 문서 변경 감지됨: {filename} -> 인덱스 자동 재구축 시작!")
+                print(f"\n🔄 변경 감지됨: {filename} -> 인덱스 자동 재구축 시작!")
                 generate_wiki_index()
 
 if __name__ == "__main__":
@@ -459,18 +479,16 @@ if __name__ == "__main__":
     print(" 🚀 효빈위키 분류 자동화 엔진 가동 준비 완료 ")
     print("==============================================\n")
     
-    # 1. 켜자마자 한 번 실행해서 최신 상태로 굽기
     generate_wiki_index()
     
-    # 2. 파일 변경 감시 시작
     event_handler = WikiFileHandler()
     observer = Observer()
     observer.schedule(event_handler, path=WIKI_PATH, recursive=False)
     observer.start()
     
     print("\n👀 [감시견 모드 켜짐] 폴더를 지켜보고 있습니다.")
-    print("👉 터미널을 열어둔 채로, 위키 문서를 수정하고 저장(Ctrl+S)해 보세요.")
-    print("👉 분류.html이 알아서 백그라운드에서 최신화됩니다. (종료: Ctrl + C)\n")
+    print("👉 HTML이나 JS 문서(의원 목록 등)를 수정하고 저장(Ctrl+S)해 보세요.")
+    print("👉 분류.html이 백그라운드에서 실시간으로 완벽하게 최신화됩니다. (종료: Ctrl + C)\n")
     
     try:
         while True:
