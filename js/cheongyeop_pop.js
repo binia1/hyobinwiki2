@@ -225,7 +225,7 @@ function renderCheongyeopPopTable(containerId) {
         <!-- 4. 연도별 청엽구 인구 변천사 테이블 (1966~2026.4) -->
         <div style="margin: 30px auto; overflow-x: auto;">
             <div style="font-weight: bold; margin-bottom: 10px; font-size: 1.1em; text-align: center;">연도별 행정구역 인구 변천사 (1966~2026.4)</div>
-            <table style="width: 100%; border-collapse: collapse; text-align: right; font-size: 0.75em; white-space: nowrap; border: 1px solid #ccc;">
+            <table style="width: max-content !important; min-width: 100% !important; table-layout: auto !important; border-collapse: collapse; text-align: right; font-size: 0.75em; white-space: nowrap; border: 1px solid #ccc;">
                 <thead>
                     <tr style="background-color: #006699; color: white; text-align: center;">
                         <th style="padding: 8px; border: 1px solid #ccc;">구분</th>

@@ -27,8 +27,7 @@
             border-collapse: collapse !important;
             border: none !important;
             margin: 0 !important;
-            table-layout: fixed !important; 
-        }
+            table-layout: fixed !important;         }
         .wiki-db-table-v3 th, .wiki-db-table-v3 td {
             border: 1px solid #ccc !important;
             text-align: center !important;

@@ -1,18 +1,18 @@
 ﻿<!DOCTYPE html>
-
 <html lang="ko">
 <head>
-<link href="이미지/효빈위키아이콘.webp" rel="icon"/>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>회주복지재단 - 효빈위키</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
+    <link href="이미지/효빈위키아이콘.webp" rel="icon"/>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>회주복지재단 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;800;900&display=swap');
         
         :root { 
             --wiki-main: #7777AA; 
             --wiki-line-color: #00897B; /* 복지재단 테마 (따뜻하고 신뢰감 있는 틸 그린) */
+            --wiki-table-header-bg: #004D40;
             
             --wiki-border: #ccc; 
             --wiki-bg: #ffffff; 
@@ -48,7 +48,7 @@
         
         /* 인포박스 스타일 */
         .infobox { border: 2px solid var(--wiki-line-color); background-color: #fff; width: 100%; max-width: 400px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 30px; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); line-height: 1.6; }
-        .infobox-top-line-name { background-color: var(--wiki-line-color); padding: 15px; text-align: center; color: #fff; border-bottom: 4px solid #004D40; }
+        .infobox-top-line-name { background-color: var(--wiki-line-color); padding: 15px; text-align: center; color: #fff; border-bottom: 4px solid var(--wiki-table-header-bg); }
         .infobox-top-line-name b { font-size: 1.8rem; line-height: 1.1; letter-spacing: -1px; font-weight: 900; display: block; }
         .infobox-top-line-name span { display: block; font-size: 1rem; opacity: 0.9; margin-top: 5px; font-weight: 700; }
         .infobox-image { width: 100%; background: #fff; border-bottom: 1px solid var(--wiki-border); padding: 0; }
@@ -75,24 +75,26 @@
         del { color: #999; text-decoration: line-through; margin-right: 3px; }
         .strike-gray { color: #aaa; font-size: 0.9em; }
 
+        /* 각주 및 툴팁 */
+        .wiki-fn-link { vertical-align: super; font-size: 0.75em; color: var(--wiki-link); cursor: pointer; font-weight: 900; text-decoration: none; margin-left: 2px; }
+        .wiki-footnotes { margin-top: 80px; padding: 30px; border: 2px solid #eee; border-radius: 10px; font-size: 0.9rem; color: #555; background: #fafafa; }
+        .footnote-tooltip { position: absolute; background-color: #fff; color: #333; border: 1px solid #ccc; border-radius: 4px; padding: 10px; font-size: 0.85rem; max-width: 300px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000; display: none; pointer-events: none; }
+
         .wiki-footer { margin-top: 50px; padding: 20px; border-top: 1px solid #ccc; font-size: 0.85rem; color: #555; }
         .wiki-footer p { margin: 5px 0; }
-/* 로고 박스 스타일 추가 */
+        
         .nav-logo-box {
             width: 30px; height: 30px; background: white; color: var(--wiki-main);
             border-radius: 4px; font-weight: 900; display: flex; align-items: center;
             justify-content: center; font-size: 1.2rem;
         }   
- 
-    
-</style>
-<script src="ad_logic.js"></script>
-
-    <!-- 효빈위키 폰트 CSS -->
+    </style>
+    <script src="ad_logic.js"></script>
     <link rel="stylesheet" href="wiki_font_standard.css">
 </head>        
 
 <body>
+<div class="footnote-tooltip" id="footnote-tooltip-container"></div>
 <nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
     <div class="flex items-center gap-2">
         <div class="nav-logo-box">H</div>
@@ -112,8 +114,6 @@
                 <a href="즐겨찾기.html" class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" title="즐겨찾기">★</a>
                 <a href="더보기.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1">더보기 <span class="text-[9px]">▼</span></a>
             </div>
-            
-            <!-- 검색창 (Enter 작동 유지) -->
             <input type="text" id="headerSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }">
             <button onclick="handleSearch('headerSearchInput')" class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
         </div>
@@ -123,147 +123,390 @@
         </div>
     </div>
 </nav>
+
 <div class="wiki-container shadow-lg">
-<div class="title-area">
-<div class="txt-lvl-1">회주복지재단</div>
-<div class="flex gap-2 mb-1">
-<button class="wiki-btn bg-white border border-[#ccc] px-3 py-1 rounded text-xs font-bold text-[#555]">토론</button>
-<button class="wiki-btn bg-white border border-[#ccc] px-3 py-1 rounded text-xs font-bold text-[#555]">편집</button>
-<button class="wiki-btn bg-white border border-[#ccc] px-3 py-1 rounded text-xs font-bold text-[#555]">역사</button>
-</div>
-</div>
-<div class="category-box bg-[#f9f9f9] border border-[#ccc] p-3 mb-5 rounded text-sm font-bold text-black text-left">
-<span class="font-bold text-[#FF8899]">분류:</span>
-<a class="wiki-link" href="효빈광역시_단체.html">효빈광역시/단체</a> | 
-            <a class="wiki-link" href="재단법인.html">재단법인</a> | 
-            <a class="wiki-link" href="회주기업.html">회주기업</a> | 
-            <a class="wiki-link" href="사회복지.html">사회복지</a>
-</div>
-<!-- 인포박스 -->
-<aside class="infobox">
-<div class="infobox-top-line-name">
-<b>회주복지재단</b>
-<span>Hoiju Welfare Foundation</span>
-</div>
-<div class="infobox-image">
-<img alt="회주복지재단 로고" src="이미지/회주기업_로고.webp" style="width:100%;"/>
-<div style="font-size:0.8rem; color:#777; text-align:center; padding:5px;">"시민을 품는 따뜻한 마음"</div>
-</div>
-<div class="infobox-title-bar">법인 정보</div>
-<table>
-<tr><th>정식 명칭</th><td>재단법인 회주복지재단</td></tr>
-<tr><th>설립일</th><td>2008년 5월 15일</td></tr>
-<tr><th>설립자</th><td><a class="wiki-link" href="박성인.html">박성인</a></td></tr>
-<tr><th>이사장</th><td>박준형 (1974년생, 장남)</td></tr>
-<tr><th>모기업</th><td><a class="wiki-link" href="회주기업.html">회주기업</a></td></tr>
-<tr><th>소재지</th><td><b>본부:</b> 효빈광역시 <a class="wiki-link" href="효빈_북구.html">북구</a> <a class="wiki-link" href="평전동.html">평전동</a> 27-1<br/><b>분소:</b> 효빈광역시 <a class="wiki-link" href="효빈_북구.html">북구</a> <a class="wiki-link" href="사능동.html">사능동</a> 3가</td></tr>
-<tr><th>주요 사업</th><td>교통 복지, 노인 지원, 문화 예술 지원(밴드)</td></tr>
-</table>
-</aside>
-<!-- 목차 -->
-<div class="toc shrink-0 shadow-sm h-fit border border-[#ccc] p-6 bg-[#f9f9f9] min-w-[340px] max-w-[400px] mb-10" id="toc-box">
-<div class="text-center font-black border-b border-[#ccc] mb-4 pb-2 uppercase tracking-widest text-sm">목차</div>
-<ul class="space-y-1.5 text-sm font-bold text-black">
-<li>1. <a class="wiki-link" href="#s-1">개요</a></li>
-<li>2. <a class="wiki-link" href="#s-2">설립 배경</a></li>
-<li>3. <a class="wiki-link" href="#s-3">주요 사업</a>
-<ul class="pl-4 space-y-1">
-<li>3.1. <a class="wiki-link" href="#s-3-1">결자해지(結者解之): 사능동 집중 지원</a></li>
-<li>3.2. <a class="wiki-link" href="#s-3-2">교통 및 생활 안정</a></li>
-<li>3.3. <a class="wiki-link" href="#s-3-3">문화 사업: 하나조노의 뜰</a></li>
-<li>3.4. <a class="wiki-link" href="#s-3-4">사능종합사회복지관 (사능복지관)</a></li>
-</ul>
-</li>
-<li>4. <a class="wiki-link" href="#s-4">사건 사고</a>
-<ul class="pl-4 space-y-1">
-<li>4.1. <a class="wiki-link" href="#s-4-1">윤재훈의 사능복지관 패륜 난동 사건</a></li>
-</ul>
-</li>
-<li>5. <a class="wiki-link" href="#s-5">주요 인물</a></li>
-<li>6. <a class="wiki-link" href="#s-6">여담</a></li>
-<li>7. <a class="wiki-link" href="#s-7">관련 문서</a></li>
-</ul>
-</div>
-<h2 id="s-1"><b>1. 개요</b></h2>
-<p><b>회주복지재단</b>은 <a class="wiki-link" href="효빈광역시.html">효빈광역시</a>의 중견기업 <a class="wiki-link" href="회주기업.html">회주기업</a>이 설립한 사회복지법인이다. <a class="wiki-link" href="박성인.html">박성인</a> 회장의 장남이자 사회복지학 전공자인 <b>박준형 이사장</b>이 운영을 총괄하고 있다.</p>
-<p>창업주 <a class="wiki-link" href="박신유.html">박신유</a> 회장의 유지인 <b>"시민을 품어 안는다(懷主)"</b>는 정신을 계승하여, 기업 이윤을 사회에 환원하고 특히 교통 소외 지역과 저소득층을 위한 복지 사업에 주력하고 있다. 이사장의 개인적인 취향이 듬뿍 반영된 독특하고 따뜻한 복지 프로그램으로도 유명하다.</p>
-<h2 id="s-2"><b>2. 설립 배경</b></h2>
-<div class="quote-box">
-            "할아버지께서 평생 마음의 짐으로 안고 가셨던 사능동의 눈물, 이제는 제가 닦아드리겠습니다." <br/>
-            - 박준형 이사장, 재단 설립 취임사 중
+    <div class="title-area">
+        <div class="txt-lvl-1">회주복지재단</div>
+        <div class="flex gap-2 mb-1">
+            <button class="wiki-btn bg-white border border-[#ccc] px-3 py-1 rounded text-xs font-bold text-[#555]">토론</button>
+            <button class="wiki-btn bg-white border border-[#ccc] px-3 py-1 rounded text-xs font-bold text-[#555]">편집</button>
+            <button class="wiki-btn bg-white border border-[#ccc] px-3 py-1 rounded text-xs font-bold text-[#555]">역사</button>
         </div>
-<p>2008년, <a class="wiki-link" href="박신유.html">박신유</a> 창업주가 서거한 이듬해 설립되었다. 박성인 회장은 부친이 1969년 전차 노선 폐지로 인해 고통받은 <a class="wiki-link" href="사능동.html">사능동</a> 주민들에게 평생 미안해했던 것을 기억하며, 장남 박준형에게 재단 설립을 일임했다. 박준형 이사장은 경영권 승계 대신 "가문의 빚을 갚는 일에 헌신하겠다"며 이사장직을 수락했고, 재단의 최우선 과제를 '사능동 복지'로 설정했다.</p>
-<h2 id="s-3"><b>3. 주요 사업</b></h2>
-<h3 id="s-3-1"><b>3.1. 결자해지(結者解之): 사능동 집중 지원</b></h3>
-<p>재단 활동의 핵심. 과거 전차 폐지로 쇠락했던 <a class="wiki-link" href="사능동.html">사능동</a> 지역에 집중적인 지원을 쏟고 있다.</p>
-<ul class="list-disc ml-6 space-y-2">
-<li><b>사능분소 운영:</b> 사능동 3가에 별도 분소를 두고 사회복지사가 상주하며 지역 노인들을 밀착 케어한다.</li>
-<li><b>스마트 실버 케어:</b> 거동이 불편한 독거노인 가정에 IoT 센서를 설치하여 위급 상황을 감지한다. 회주공업의 기술력이 접목된 사업.</li>
-<li><b>주거 환경 개선 (회주 빌리지):</b> 낡은 주택의 단열 시공, 도배, 장판 교체 등을 무상으로 지원하여 '무덤'이라 불리던 동네를 '집'으로 바꾸고 있다.</li>
-</ul>
-<h3 id="s-3-2"><b>3.2. 교통 및 생활 안정</b></h3>
-<p>효빈시 노인들이 <a class="wiki-link" href="7호선.html">7호선</a> 등 도시철도를 이용할 때 자발적으로 요금을 내는 문화를 존중하여, 저소득층에게 <b>'회주 교통카드'</b>를 지급한다. 이 카드는 교통비뿐만 아니라 <a class="wiki-link" href="HJ몰_중수점.html">HJ몰</a> 내 식당가에서도 사용할 수 있다. 전차가 닿지 않는 좁은 골목길을 위해 전동 카트인 <b>'해피 카트'</b>도 운영 중이다.</p>
-<h3 id="s-3-3"><b>3.3. 문화 사업: 하나조노의 뜰</b></h3>
-<p>박준형 이사장의 '덕심'이 사회복지와 결합한 독특한 케이스. 처음엔 직원들이 당황했으나, 지금은 재단의 상징이 되었다.</p>
-<ul class="list-disc ml-6 space-y-2">
-<li><b>오띠(Oddie) 테라피 센터:</b> 사능동 노인 복지관 내에 토끼 20여 마리를 기르는 미니 동물원을 조성했다. 이사장의 최애 캐릭터 <a class="wiki-link" href="하나조노 타에.html">하나조노 타에</a>가 키우는 토끼 '오띠'에서 이름을 따왔다. 외로운 어르신들에게 정서적 안정감을 주어 대기표를 뽑아야 할 정도로 인기다.</li>
-<li><b>파란 기타 장학금:</b> 가정 형편이 어려운 청소년들에게 악기(특히 일렉기타) 구입비와 레슨비를 지원한다. 장학생 선발 오디션에 이사장이 직접 심사위원으로 참여하며, "기타 솔로에 영혼이 있는가"를 중요하게 본다고 한다.</li>
-<li><b>사능동 거리 라이브:</b> 사능동 재개발 구역과 공원에서 버스킹을 하는 청년 밴드들에게 장비와 활동비를 지원한다. "음악은 길거리에서 시작된다"는 타에의 정신을 계승했다.</li>
-</ul>
-<h3 id="s-3-4"><b>3.4. 사능종합사회복지관 (사능복지관)</b></h3>
-<p><a class="wiki-link" href="사능동.html">사능동</a> 2가에 위치한 지상 4층 규모의 종합 복지 시설. 회주복지재단이 건립하여 운영 중이며, <a class="wiki-link" href="7호선.html">7호선</a> <b>'사능복지관역'</b>의 역명이 이곳에서 유래되었다. 인구 1.1만 명이 거주하는 사능동 2가의 커뮤니티 허브 역할을 톡톡히 하고 있다.</p>
-<ul class="list-disc ml-6 space-y-2">
-<li><b>무료 급식소 (맛있는 타에네 부엌):</b> 1층에 위치하며, 매일 300명 이상의 어르신에게 점심을 제공한다. 박준형 이사장이 직접 앞치마를 두르고 배식하는 모습이 자주 목격된다.</li>
-<li><b>오띠 테라피 &amp; 실버 카페:</b> 2층 전체를 토끼 체험장과 카페로 꾸몄다. 토끼를 쓰다듬으며 커피를 마실 수 있어 손주를 데리고 오는 조부모님들에게 인기가 폭발적이다.</li>
-<li><b>청소년 음악 창작소:</b> 지하 1층에는 방음 시설이 완비된 합주실과 녹음실이 있어, '파란 기타 장학생'들이 꿈을 키우는 아지트가 되고 있다.</li>
-</ul>
-<div class="quote-box">
-<b>[이색 이벤트] Poppin'Party 콜라보 축제</b><br/>
-            2025년, 박준형 이사장(타에 오시)과 <a class="wiki-link" href="박효빈.html">박효빈</a> 시장(사아야 오시)의 합작으로 <a class="wiki-link" href="사능역.html">사능역</a>과 사능복지관 일대에서 <b>'BanG Dream! Poppin'Party 콜라보 페스티벌'</b>이 열렸다.
-            <ul class="list-disc ml-4 mt-2">
-<li><b>사능역:</b> '야마부키 베이커리' 팝업 스토어가 열려 시장님이 빵을 굽는(?) 퍼포먼스를 선보였다.</li>
-<li><b>사능복지관:</b> '하나조노 랜드' 테마파크로 꾸며져 토끼 체험과 밴드 공연이 이어졌다.</li>
-<li><b>반응:</b> 평소 조용하던 사능동 어르신들도 "우리 손녀 같은 예쁜이들이 노래도 잘하네"라며 야광봉을 흔드셨고, 전국에서 몰려온 덕후들과 주민들이 어우러지는 진풍경이 연출되었다. 이사장은 이날 무대에서 직접 기타 연주를 선보였다.</li>
-</ul>
+    </div>
+
+    <!-- 1. 카테고리 박스 -->
+    <div class="category-box bg-[#f9f9f9] border border-[#ccc] p-3 mb-5 rounded text-sm font-bold text-black text-left">
+        <span class="font-bold text-[#FF8899]">분류:</span>
+        <a class="wiki-link" href="효빈광역시_단체.html">효빈광역시/단체</a> | 
+        <a class="wiki-link" href="재단법인.html">재단법인</a> | 
+        <a class="wiki-link" href="회주기업.html">회주기업</a> | 
+        <a class="wiki-link" href="사회복지.html">사회복지</a>
+    </div>
+
+    <!-- 2. 내비게이션 박스 1 (역대 회장) -->
+    <div style="border: 1px solid #ccc; font-family: 'Noto Sans KR', sans-serif; background-color: #fff; max-width: 100%; box-sizing: border-box; clear: both; margin-bottom: 20px;">
+        <div style="background-color: #004D40; padding: 15px 0 10px 0; text-align: center; border-bottom: 1px solid #002620;">
+            <div style="color: #fff; font-size: 1.1rem; font-weight: bold; letter-spacing: -0.5px;">역대 회주기업그룹 회장</div>
+        </div>
+        <details open style="margin: 0; padding: 0;">
+            <summary style="background-color: #00695C; color: #fff; text-align: center; padding: 8px 0; font-size: 0.85rem; font-weight: bold; cursor: pointer; list-style: none; outline: none; border-bottom: 1px solid #ccc;">[ 펼치기 · 접기 ]</summary>
+            <div style="padding: 0;">
+                <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 0.95rem; margin: 0; background-color: #fff; table-layout: fixed;">
+                    <tr>
+                        <th colspan="2" style="background-color: #004D40; color: #fff; padding: 8px; font-weight: bold; border: 1px solid #ddd;">회주기업그룹 역대 회장</th>
+                    </tr>
+                    <tr style="line-height: 1.8;">
+                        <td style="width: 50%; padding: 15px 5px; border: 1px solid #ddd; vertical-align: top; background-color: #f8f9fa;"><span style="font-size: 0.8rem; color: #777;">제1대 (창업주)</span><br><a href="박신유.html" style="color: #004D40; font-weight: bold; text-decoration: none; font-size: 1.1rem;">박신유</a><br><span style="font-size: 0.75rem; color: #555;">(1945~2007)</span></td>
+                        <td style="width: 50%; padding: 15px 5px; border: 1px solid #ddd; vertical-align: top; background-color: #E0F2F1;"><span style="font-size: 0.8rem; color: #777;">제2대 (현직)</span><br><a href="박성인.html" style="color: #004D40; font-weight: bold; text-decoration: none; font-size: 1.1rem;">박성인</a><br><span style="font-size: 0.75rem; color: #555;">(2007~현재)</span></td>
+                    </tr>
+                </table>
+            </div>
+        </details>
+    </div>
+
+    <!-- 3. 내비게이션 박스 2 (주요 계열사 전체) -->
+    <div style="border: 1px solid #ccc; font-family: 'Noto Sans KR', sans-serif; background-color: #fff; max-width: 100%; box-sizing: border-box; clear: both; margin-bottom: 30px;">
+        <div style="background-color: #004D40; padding: 15px 0 10px 0; text-align: center; border-bottom: 1px solid #002620;">
+            <div style="color: #fff; font-size: 1.1rem; font-weight: bold; letter-spacing: -0.5px;">회주기업그룹 주요 계열사 및 산하 기관</div>
+        </div>
+        <details open style="margin: 0; padding: 0;">
+            <summary style="background-color: #00695C; color: #fff; text-align: center; padding: 8px 0; font-size: 0.85rem; font-weight: bold; cursor: pointer; list-style: none; outline: none; border-bottom: 1px solid #ccc;">[ 펼치기 · 접기 ]</summary>
+            <div style="padding: 0;">
+                <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 0.95rem; margin: 0; background-color: #fff; table-layout: fixed;">
+                    <tr>
+                        <th style="background-color: #004D40; color: #fff; padding: 8px; font-weight: bold; border: 1px solid #ddd; width: 25%;">분야</th>
+                        <th style="background-color: #E0F2F1; color: #333; padding: 8px; font-weight: bold; border: 1px solid #ddd; width: 75%;">계열사 및 기관명</th>
+                    </tr>
+                    <tr style="line-height: 1.8;">
+                        <td style="font-weight: bold; background-color: #f2f8f8; border: 1px solid #ddd;">지주사</td>
+                        <td style="text-align: left; padding: 10px; border: 1px solid #ddd;"><b><a href="회주기업.html" style="color: #00695C; font-weight: bold; text-decoration: none;">회주홀딩스</a></b></td>
+                    </tr>
+                    <tr style="line-height: 1.8;">
+                        <td style="font-weight: bold; background-color: #f2f8f8; border: 1px solid #ddd;">제조 / 중공업</td>
+                        <td style="text-align: left; padding: 10px; border: 1px solid #ddd;"><b><a href="회주공업.html" style="color: #00695C; font-weight: bold; text-decoration: none;">회주공업</a></b></td>
+                    </tr>
+                    <tr style="line-height: 1.8;">
+                        <td style="font-weight: bold; background-color: #f2f8f8; border: 1px solid #ddd;">미디어 / 언론</td>
+                        <td style="text-align: left; padding: 10px; border: 1px solid #ddd;"><b><a href="효빈방송.html" style="color: #00695C; font-weight: bold; text-decoration: none;">HBS 효빈방송</a></b> / <b><a href="효빈일보.html" style="color: #00695C; font-weight: bold; text-decoration: none;">효빈일보</a></b> (회주미디어센터)</td>
+                    </tr>
+                    <tr style="line-height: 1.8;">
+                        <td style="font-weight: bold; background-color: #f2f8f8; border: 1px solid #ddd;">유통 / 쇼핑</td>
+                        <td style="text-align: left; padding: 10px; border: 1px solid #ddd;"><b><a href="HJ몰_중수점.html" style="color: #00695C; font-weight: bold; text-decoration: none;">회주유통 (HJ몰)</a></b></td>
+                    </tr>
+                    <tr style="line-height: 1.8;">
+                        <td style="font-weight: bold; background-color: #f2f8f8; border: 1px solid #ddd;">스포츠 / 엔터</td>
+                        <td style="text-align: left; padding: 10px; border: 1px solid #ddd;"><b><a href="회주_돌핀즈.html" style="color: #00695C; font-weight: bold; text-decoration: none;">회주 돌핀즈</a></b> (프로야구단)</td>
+                    </tr>
+                    <tr style="line-height: 1.8;">
+                        <td style="font-weight: bold; background-color: #f2f8f8; border: 1px solid #ddd;">교육 / 복지</td>
+                        <td style="text-align: left; padding: 10px; border: 1px solid #ddd;"><b>학교법인 효빈회주학원</b> (<a href="효빈종합고등학교.html" style="color: #00695C; text-decoration: none;">효빈종합고</a>, <a href="삼각중학교.html" style="color: #00695C; text-decoration: none;">삼각중</a>) / <b><a href="회주복지재단.html" style="color: #00695C; text-decoration: none;">회주복지재단</a></b></td>
+                    </tr>
+                </table>
+            </div>
+        </details>
+    </div>
+
+    <!-- 인포박스 -->
+    <aside class="infobox">
+        <div class="infobox-top-line-name">
+            <b>회주복지재단</b>
+            <span>Hoiju Welfare Foundation</span>
+        </div>
+        <div class="infobox-image">
+            <img alt="회주복지재단 로고" src="이미지/회주기업_로고.webp" style="width:100%;"/>
+            <div style="font-size:0.8rem; color:#777; text-align:center; padding:5px;">"시민을 품는 따뜻한 마음, 그리고 빵과 음악"</div>
+        </div>
+        <div class="infobox-title-bar">법인 정보</div>
+        <table>
+            <tr><th>정식 명칭</th><td>재단법인 회주복지재단<br/>(회주공업 복지재단)</td></tr>
+            <tr><th>설립일</th><td>2008년 5월 15일</td></tr>
+            <tr><th>설립자</th><td><a class="wiki-link" href="박성인.html">박성인</a></td></tr>
+            <tr><th>이사장</th><td>박준형 (1974년생, 장남)</td></tr>
+            <tr><th>모기업</th><td><a class="wiki-link" href="회주기업.html">회주기업그룹</a></td></tr>
+            <tr><th>소재지</th><td>
+                <b>본부:</b> 효빈광역시 <a class="wiki-link" href="북구.html">북구</a> <a class="wiki-link" href="평전동.html">평전동</a> 27-1<br/>
+                <b>사능 분소:</b> 효빈광역시 <a class="wiki-link" href="북구.html">북구</a> <a class="wiki-link" href="사능동.html">사능동2가</a> 392
+            </td></tr>
+            <tr><th>주요 사업</th><td>교통 복지, 노인/아동 지원, 문화 예술 지원, <b>산하 복지 시설 위탁 운영</b></td></tr>
+        </table>
+    </aside>
+
+    <!-- 목차 -->
+    <div class="toc shrink-0 shadow-sm h-fit border border-[#ccc] p-6 bg-[#f9f9f9] min-w-[340px] max-w-[400px] mb-10" id="toc-box">
+        <div class="text-center font-black border-b border-[#ccc] mb-4 pb-2 uppercase tracking-widest text-sm">목차</div>
+        <ul class="space-y-1.5 text-sm font-bold text-black">
+            <li>1. <a class="wiki-link" href="#s-1">개요</a></li>
+            <li>2. <a class="wiki-link" href="#s-2">설립 배경 (사능동의 눈물)</a></li>
+            <li>3. <a class="wiki-link" href="#s-3">주요 사업 및 활동</a>
+                <ul class="pl-4 space-y-1">
+                    <li>3.1. <a class="wiki-link" href="#s-3-1">결자해지: 사능동 집중 지원</a></li>
+                    <li>3.2. <a class="wiki-link" href="#s-3-2">교통 및 생활 안정 (회주 교통카드)</a></li>
+                    <li>3.3. <a class="wiki-link" href="#s-3-3">문화 사업: 하나조노의 뜰</a></li>
+                    <li>3.4. <a class="wiki-link" href="#s-3-4">사능종합사회복지관 (사능복지관)</a></li>
+                </ul>
+            </li>
+            <li>4. <a class="wiki-link" href="#s-4">산하 직영 및 위탁 운영 시설 (극과 극의 감성)</a>
+                <ul class="pl-4 space-y-1">
+                    <li>4.1. <a class="wiki-link" href="#s-4-1">사능동 구역 (빵과 음악, 따뜻한 사아야&타에 감성)</a></li>
+                    <li>4.2. <a class="wiki-link" href="#s-4-2">팔조동 구역 (클래식과 스파르타, 극한의 효율 '루이' 감성)</a></li>
+                    <li>4.3. <a class="wiki-link" href="#s-4-3">월천동 구역 (철과 땀, 공단 감성)</a></li>
+                </ul>
+            </li>
+            <li>5. <a class="wiki-link" href="#s-5">사건 사고</a>
+                <ul class="pl-4 space-y-1">
+                    <li>5.1. <a class="wiki-link" href="#s-5-1">윤재훈의 사능복지관 패륜 난동 사건 (런치 대첩)</a></li>
+                </ul>
+            </li>
+            <li>6. <a class="wiki-link" href="#s-6">주요 인물</a></li>
+            <li>7. <a class="wiki-link" href="#s-7">여담 (덕후 이사장과 콜라보)</a></li>
+            <li>8. <a class="wiki-link" href="#s-8">관련 문서</a></li>
+        </ul>
+    </div>
+
+    <h2 id="s-1"><b>1. 개요</b></h2>
+    <p><b>회주복지재단</b>(회주공업 복지재단)은 <a class="wiki-link" href="효빈광역시.html">효빈광역시</a> 굴지의 거대 그룹인 <a class="wiki-link" href="회주기업.html">회주기업</a>이 설립한 대형 사회복지법인이다. <a class="wiki-link" href="박성인.html">박성인</a> 회장의 장남이자 그룹의 황태자 자리를 쿨하게 걷어차고 복지의 길을 택한 <b>박준형 이사장</b>이 운영을 총괄하고 있다.</p>
+    <p>창업주 <a class="wiki-link" href="박신유.html">박신유</a> 회장의 유지인 <b>"시민을 품어 안는다(懷主)"</b>는 숭고한 정신을 계승하여, 막대한 기업 이윤을 사회에 환원하고 특히 교통 소외 지역(사능동 일대)과 저소득층을 위한 복지 사업에 전력을 다하고 있다. 특이하게도 이사장의 개인적인 씹덕(?) 취향이 듬뿍 반영되어 지역별 운영 시설마다 극과 극의 독특한 테마와 분위기를 띠는 것으로 유명하다.</p>
+
+    <h2 id="s-2"><b>2. 설립 배경 (사능동의 눈물)</b></h2>
+    <div class="quote-box">
+        "할아버지께서 평생 가슴에 대못처럼 안고 가셨던 사능동의 피눈물, 이제는 제가 그 빚을 이어서 닦아드리겠습니다." <br/>
+        - 박준형 이사장, 재단 설립 취임사 중
+    </div>
+    <p>2008년, <a class="wiki-link" href="박신유.html">박신유</a> 창업주가 서거한 이듬해 전격적으로 설립되었다. 박성인 회장은 부친이 1969년 군사정권의 강압으로 인해 <a class="wiki-link" href="사능동.html">사능동</a> 전차 노선을 빼앗긴 것에 평생 피눈물을 흘리며 짐으로 안고 가신 것을 기억했다. 이에 장남 박준형에게 재단 설립을 일임했다. </p>
+    <p>박준형 이사장은 <b>"아버지가 너무 먼치킨이라 내가 기업 물려받으면 1년 안에 말아먹는다. 차라리 가문의 빚을 갚는 일에 평생 헌신하겠다"</b>며 후계 구도에서 도망쳐(...) 이사장직을 수락했고, 재단의 최우선 과제를 '사능동 지역의 완벽한 복지 부활'로 설정했다.</p>
+
+    <h2 id="s-3"><b>3. 주요 사업 및 활동</b></h2>
+    
+    <h3 id="s-3-1"><b>3.1. 결자해지: 사능동 집중 지원</b></h3>
+    <p>재단 활동의 가장 핵심적인 뼈대. 과거 전차 폐지로 급격히 쇠락하고 고립되었던 <a class="wiki-link" href="사능동.html">사능동</a> 지역에 천문학적인 지원을 쏟아붓고 있다.</p>
+    <ul class="list-disc ml-6 space-y-2">
+        <li><b>사능분소 운영:</b> 사능동2가에 별도의 복지 분소를 두고, 수십 명의 사회복지사가 상주하며 지역 노인들을 밀착 케어한다.</li>
+        <li><b>스마트 실버 케어:</b> 거동이 불편한 독거노인 가정에 IoT 센서를 무상 설치하여 위급 상황을 실시간 감지한다. 회주공업과 회주홀딩스의 최첨단 기술력이 접목된 혜자 사업.</li>
+        <li><b>주거 환경 개선 (회주 빌리지):</b> 낡은 주택의 단열 시공, 도배, 장판 교체, 지붕 수리 등을 무제한 무상으로 지원하여 '현대판 무덤'이라 불리던 동네를 따뜻한 '보금자리'로 뜯어고치고 있다.</li>
+    </ul>
+
+    <h3 id="s-3-2"><b>3.2. 교통 및 생활 안정 (회주 교통카드)</b></h3>
+    <p>효빈시 노인들이 <a class="wiki-link" href="7호선.html">7호선</a>(구 효빈전차)을 이용할 때 무임승차를 거부하고 <b>'박신유 회장이 지킨 전차에 공짜로 탈 수 없다'며 자발적으로 요금을 내는 낭만적인 문화</b>를 존중하여, 저소득층 어르신들에게 <b>'회주 교통카드'</b>를 매월 충전해 지급한다. 이 카드는 7호선 탑승은 물론 <a class="wiki-link" href="HJ몰_중수점.html">HJ몰</a> 내 지정 식당가에서도 현금처럼 긁을 수 있다. 전차가 닿지 않는 가파른 골목길 이동을 위해 전동 카트인 <b>'해피 카트'</b>도 무료 운영 중이다.</p>
+
+    <h3 id="s-3-3"><b>3.3. 문화 사업: 하나조노의 뜰</b></h3>
+    <p>박준형 이사장의 <b>'덕심(오타쿠적 취향)'</b>이 사회복지와 극적으로 결합한 기상천외한 케이스. 처음 이사장이 기획안을 냈을 땐 임원들이 뒷목을 잡았으나, 지금은 재단의 가장 폭발적인 인기 콘텐츠가 되었다.</p>
+    <ul class="list-disc ml-6 space-y-2">
+        <li><b>오띠(Oddie) 테라피 센터:</b> 사능복지관 내에 토끼 20여 마리를 기르는 미니 동물원(실내 정원)을 조성했다. 이사장의 인생 최애 캐릭터인 일본 뱅드림!의 <b><a class="wiki-link" href="하나조노 타에.html">하나조노 타에</a></b>가 키우는 토끼 '오띠'에서 냅다 이름을 따왔다. 외로운 어르신들과 동네 아이들에게 정서적 안정감을 주어 매일 아침 대기표를 뽑아야 할 정도로 대박이 났다.</li>
+        <li><b>파란 기타 장학금:</b> 가정 형편이 어려운 청소년들에게 악기(특히 일렉기타) 구입비와 고액의 음악 레슨비를 무상 지원한다. 장학생 선발 오디션에 이사장이 직접 심사위원으로 등판하며, <b>"너의 기타 솔로에 영혼이 있는가?"</b>를 가장 중요하게 본다고 한다. <del>이사장 본인이 기타를 쳐서 합격 기준이 매우 깐깐하다.</del></li>
+        <li><b>거리 라이브 지원:</b> 사능동 재개발 구역과 공원에서 버스킹을 하는 청년 밴드들에게 고가의 앰프 장비와 활동비를 아낌없이 지원한다. "음악은 길거리에서 시작된다"는 타에의 정신을 그대로 계승했다.</li>
+    </ul>
+
+    <h3 id="s-3-4"><b>3.4. 사능종합사회복지관 (사능복지관)</b></h3>
+    <p><a class="wiki-link" href="사능동.html">사능동</a> 2가 392번지에 위치한 지상 4층 규모의 초현대식 종합 복지 시설. 회주복지재단이 막대한 돈을 쏟아부어 건립해 운영 중이며, <a class="wiki-link" href="7호선.html">7호선</a> <b>'사능복지관역'</b>의 역명이 바로 이곳에서 유래되었다. 인구 1.1만 명이 거주하는 사능동 2가의 절대적인 커뮤니티 허브 역할을 톡톡히 하고 있다.</p>
+    <ul class="list-disc ml-6 space-y-1 text-sm">
+        <li><b>무료 급식소 (맛있는 타에네 부엌):</b> 1층에 위치. 매일 300명 이상의 어르신에게 고퀄리티 식단을 제공한다. 이사장이 앞치마를 두르고 직접 배식하는 모습이 자주 찍힌다.</li>
+        <li><b>오띠 테라피 & 실버 카페:</b> 2층 전체를 토끼 체험장과 프리미엄 커피 카페로 꾸몄다.</li>
+        <li><b>청소년 음악 창작소:</b> 지하 1층에는 방음 시설이 완벽하게 완비된 합주실과 녹음 스튜디오가 있다.</li>
+    </ul>
+
+    <h2 id="s-4"><b>4. 산하 직영 및 위탁 운영 시설 (극과 극의 감성)</b></h2>
+    <p>회주복지재단은 효빈시 곳곳의 복지 시설을 위탁 및 직영으로 관리하고 있는데, <b>이사장(박준형)의 기이한 오타쿠 철학에 따라 관할 구역마다 모티브가 되는 뱅드림 캐릭터의 특성이 미친 듯이 빙의된(...) 기상천외한 운영 방식</b>을 보여준다. </p>
+
+    <h3 id="s-4-1"><b>4.1. 사능동 구역 (빵과 음악, 따뜻한 사아야&타에 감성)</b></h3>
+    <p>사능동 일대의 시설들은 온화하고 가족적이며 <b>'빵 굽는 냄새'</b>와 <b>'음악 소리'</b>가 끊이지 않는 따뜻한 감성으로 운영된다. (모티브: 야마부키 사아야, 하나조노 타에)</p>
+    <table style="width:100%; border-collapse: collapse; text-align: left;">
+        <tr style="background-color:var(--wiki-table-header-bg); color:#fff; text-align:center;">
+            <th style="width:25%;">시설명</th>
+            <th style="width:15%;">위치 / 센터장</th>
+            <th style="width:60%;">운영 특징 및 여담</th>
+        </tr>
+        <tr>
+            <td style="font-weight:bold;">효빈시 북구 가족센터 (본소)</td>
+            <td style="text-align:center;">사능동2가 392<br>김태호</td>
+            <td>사능동 본소. 가족 홈베이킹 교실이 제일 인기 폭발. 단, 회주 종특답게 <b>빵 굽는 온도와 오븐 타이머를 1초의 오차도 없이 깐깐하게 통제</b>하는 기이한 완벽주의가 존재한다.</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold;">사능 문화의집</td>
+            <td style="text-align:center;">사능동2가 392</td>
+            <td>완벽한 사아야 감성의 청소년문화의집. 주최하는 빵 축제 때 지역 청소년들이 <b>야외에서 드럼을 치며 빵을 나눠주는</b> 진풍경이 벌어진다.</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold;">사능2가 지역아동센터</td>
+            <td style="text-align:center;">사능동2가</td>
+            <td>1.1만 명이 사는 사능동2가의 대장급 센터. 매일같이 빵 굽는 냄새가 진동을 해서 타지 사람들이 진짜 빵집인 줄 알고 빵을 사러 들어왔다 당황하고 나간다.</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold;">사능 푸른잎 다함께돌봄센터</td>
+            <td style="text-align:center;">사능동2가</td>
+            <td>아예 센터 정중앙에 대형 오븐이 비치되어 있다. 애들이 방과 후 학원 가기 전에 센터에 들러 갓 구운 메론빵을 입에 물고 나가는 동네 공식 참새 방앗간.</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold;">사능2가 샬롬 지역아동센터</td>
+            <td style="text-align:center;">사능동2가</td>
+            <td>이곳에서 간식으로 나오는 수제 빵 퀄리티가 웬만한 프리미엄 베이커리를 가볍게 압살한다. 애들이 빵 반죽을 미친 듯이 치대며 학업 스트레스를 푼다.</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold;">사능3가 지역아동센터</td>
+            <td style="text-align:center;">사능동3가</td>
+            <td>동네 아이들이 직접 유기농 쿠키를 구워서 인근 경로당 할머니, 할아버지들께 정기적으로 기부하는 훈훈함의 결정체.</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold;">사능1가 지역아동센터</td>
+            <td style="text-align:center;">사능동1가</td>
+            <td>부모님들이 늦게 퇴근하는 공단 근로자 맞춤형 야간 센터. 아이들이 마음껏 드럼을 치며 스트레스를 풀 수 있는 완벽한 방음 음악실이 구비되어 있다.</td>
+        </tr>
+    </table>
+
+    <h3 id="s-4-2"><b>4.2. 팔조동 구역 (클래식과 스파르타, 극한의 효율 '루이' 감성)</b></h3>
+    <p>창전구 팔조동 일대의 시설들은 사능동과 정반대로 <b>'클래식 음악'</b>, <b>'분 단위의 스파르타식 통제'</b>, <b>'극한의 효율'</b>을 추구하는 냉혹하고 정교한 감성으로 운영된다. 직원과 이용자 모두 혀를 내두를 정도의 완벽주의를 자랑한다. (모티브: 야시오 루이)</p>
+    <table style="width:100%; border-collapse: collapse; text-align: left;">
+        <tr style="background-color:var(--wiki-table-header-bg); color:#fff; text-align:center;">
+            <th style="width:25%;">시설명</th>
+            <th style="width:15%;">위치 / 센터장</th>
+            <th style="width:60%;">운영 특징 및 여담</th>
+        </tr>
+        <tr>
+            <td style="font-weight:bold;">팔조 복지관 (종합)</td>
+            <td style="text-align:center;">팔조동 99<br>차승민</td>
+            <td>복지관 실적과 프로그램 효율을 극한으로 따지는 냉혹한 운영으로 정평이 나 있다. 이곳을 이용하려면 <b>클래식 바이올린 교실 필수 수강</b>이라는 묘한 조건이 붙는다.</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold;">팔조 노인종합복지관</td>
+            <td style="text-align:center;">팔조동 99<br>김진호</td>
+            <td>어르신들의 복지관임에도 스파르타식 통제가 이루어진다. <b>정해진 시간에만 탁구를 치고, 1초도 틀림없이 정해진 시간에만 밥을 먹어야 하는</b> 군대급 운영을 자랑한다.</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold;">팔조 레일모형제작소</td>
+            <td style="text-align:center;">팔조동 88<br>신동우</td>
+            <td>장애인 직업 재활시설. 철도차량 부품 다듬기 및 <a class="wiki-link" href="효빈교통공사.html">효빈교통공사</a> 납품용 전동차 기념 모형을 조립한다. 야시오 루이 뺨치는 <b>소름 돋는 칼같은 조립 마감과 단차 제로(0)</b> 퀄리티로 철도 동호인들의 환호를 받는다.</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold;">팔조 라온 주간보호센터</td>
+            <td style="text-align:center;">팔조동 99<br>차승민</td>
+            <td>분명 이름은 순우리말 '라온(즐거운)'인데, 정작 안으로 들어가면 <b>야시오 루이식 극한의 깐깐한 분 단위 일정 통제</b>가 이루어지는 무서운 곳이다.</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold;">팔조 클래식 아동원</td>
+            <td style="text-align:center;">팔조동 99<br>차승민</td>
+            <td>아동양육시설. 보육원 전체에 하루 종일 웅장한 교향곡이 흐른다. 아이들이 식사 예절을 어기면 체벌 대신 <b>얄짤없이 바이올린 연습 1시간 추가형</b>에 처해지는 우아한(?) 스파르타 보육원이다.</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold;">팔조 지역아동센터</td>
+            <td style="text-align:center;">팔조동</td>
+            <td>1.6만 명이 거주하는 팔조동의 감성이 집약된 곳. 아이들의 놀이 시간과 공부 시간이 <b>스톱워치와 분 단위 타이머로 깐깐하게 관리되는 스파르타식 시간 관리의 산실</b>이다.</td>
+        </tr>
+    </table>
+
+    <h3 id="s-4-3"><b>4.3. 월천동 구역 (철과 땀, 공단 감성)</b></h3>
+    <table style="width:100%; border-collapse: collapse; text-align: left;">
+        <tr style="background-color:var(--wiki-table-header-bg); color:#fff; text-align:center;">
+            <th style="width:25%;">시설명</th>
+            <th style="width:15%;">위치 / 센터장</th>
+            <th style="width:60%;">운영 특징 및 여담</th>
+        </tr>
+        <tr>
+            <td style="font-weight:bold;">회주 워커스홈</td>
+            <td style="text-align:center;">월천동 55<br>하진태</td>
+            <td>월천동 공단 내 산재 장애인들을 위한 거주 시설. 환자들의 나태함을 방지하고 재활 의지를 불태우게 만들기 위해, <b>아침 기상 나팔 대신 '공장 교대 사이렌'이 미친 듯이 울린다</b>는 흉흉한 소문이 돈다.</td>
+        </tr>
+    </table>
+
+    <h2 id="s-5"><b>5. 사건 사고</b></h2>
+    
+    <h3 id="s-5-1"><b>5.1. 윤재훈의 사능복지관 패륜 난동 사건 (런치 대첩)</b></h3>
+    <p>2022년 효빈시장 선거에서 <a class="wiki-link" href="박효빈.html">박효빈</a>에게 영혼까지 털리며 참패하고, 온갖 기행으로 벼랑 끝에 몰린 <a class="wiki-link" href="윤재훈.html">윤재훈</a>(윤대환의 아들)이 정치적 재기를 노린다며 난동 장소로 선택한 곳은, 하필이면 <b>사능동 주민들의 절대적 성역인 '사능종합사회복지관'</b>이었다.</p>
+    
+    <div style="background-color:#ffebee; border-left:5px solid #d32f2f; padding:15px; margin:15px 0;">
+        <b>"이 복지관은 박효빈과 회주그룹이 야합하여 늙은이들을 세뇌하는 빨갱이 공산당 양성소다!"</b>
+        <br/><span style="font-size:0.9em; color:#555;">- 윤재훈, 점심시간 복지관 정문 앞에서 확성기로 소리치며</span>
+    </div>
+    
+    <p>사능동 주민들은 <b>1969년 군사정권의 강제 폐지</b>와 <b>2006년 윤대환의 전차 말살 시도</b>를 피로 겪어내며, <b>'불의한 외부 권력'</b>에 대한 거대한 적개심이 뼛속까지 박힌 <b>'효빈의 전투민족'</b>들이다. (효빈시 내에서도 가장 높은 92.1%의 민주당-박효빈 지지율을 기록하는 화약고다.) 윤재훈은 그런 호랑이 굴에 제 발로 확성기를 들고 걸어 들어온 것이다.</p>
+    
+    <p>그는 점심 무료 배식 시간에 맞춰 확성기 차량으로 복지관 입구를 봉쇄했다. "내 아버지(윤대환)가 옳았다. <b>너희 같은 거지들이 사는 사능동 빈민가는 싹 다 밀어버리고 아파트를 지었어야 했다</b>"며 주민들의 역린을 박살 내는 패륜적 망언을 쏟아냈고, 시끄럽다며 말리러 나온 대학생 자원봉사자의 얼굴에 침을 뱉는 짓까지 저질렀다.</p>
+    
+    <p><b>그러나, 그는 장소를 잘못 골라도 한참 잘못 골랐다.</b></p>
+    
+    <p>가장 평화롭고 행복해야 할 밥때를 짓밟힌 것에 극대노한 <b>사능동 노인회(일명 '전투 할매 부대') 50여 명이 배식받던 숟가락을 집어 던지고 뛰쳐나와 순식간에 윤재훈을 포위했다.</b></p>
+    <ul class="list-disc ml-6 space-y-2 text-sm">
+        <li><b>1차 타격 (지팡이 난타):</b> "네 놈 애비가 우리 밥상(전차)을 걷어차고 지옥에 가더니, 자식 놈은 밥 먹는데 와서 꽹과리를 쳐?!"라는 호통과 함께 <b>수십 개의 단단한 지팡이와 알루미늄 보행 보조기</b>가 공중을 갈라 윤재훈의 뚝배기를 강타했다.</li>
+        <li><b>2차 타격 (얼음 미사일 폭격):</b> 여름철 폭염 대비용으로 재단이 노인들에게 나눠드렸던 <b>'꽝꽝 얼린 500ml 생수병'</b> 수십 개가 투척 무기로 돌변하여 윤재훈과 확성기 차량을 향해 융단 폭격처럼 쏟아졌다. 당시 목격담에 따르면 "하늘에서 얼음 미사일이 떨어져서 유리가 박살 나는 줄 알았다"고 한다.</li>
+        <li><b>최후:</b> 윤재훈은 옷이 다 갈기갈기 찢어지고 멍투성이가 된 채 피를 흘리며, 뒤늦게 출동한 경찰의 바짓가랑이를 붙잡고 <b>"제발 저 미친 할망구들 좀 말려달라, 나 좀 살려달라!"</b>며 비굴하게 오열하며 경찰차로 도망쳤다.</li>
+    </ul>
+    <p>이 역사적인 참교육 사건은 일명 <b>'사능동 런치 대첩'</b>으로 불리며 효빈일보 1면에 대서특필되었고, 윤재훈은 '패륜아' 낙인이 찍혀 효빈시에서 사실상 영구 매장당했다. <del>이 사건 직후 사능복지관 식당 메뉴에 '윤재훈 묵사발'이 특식으로 나왔다는 흉흉한 소문이 있다.</del></p>
+
+    <h2 id="s-6"><b>6. 주요 인물</b></h2>
+    <ul class="list-disc ml-6 space-y-2">
+        <li><b>박준형 (이사장, 1974년생):</b> 박성인 회장의 맏아들. <a class="wiki-link" href="효빈대학교.html">효빈대</a> 사회복지학과 출신. 재벌 3세의 빳빳함을 내던지고 "난 아빠처럼 회사 못 굴린다"며 복지 현장으로 뛰어든 4차원 인물. 사능동 노인정에 출몰하면 할머니들이 "우리 준형이 왔냐"며 엉덩이를 두들겨 줄 정도로 친근하다. 시장 박효빈과는 '사능동 부활'이라는 끈끈한 목표를 공유하는 영혼의 파트너다.</li>
+        <li><b>김태호 (사능동 본소 가족센터장):</b> 사능동의 따뜻한 베이커리 감성(사아야) 복지를 최전선에서 진두지휘하는 온화한 센터장. 단, 빵 굽는 온도 세팅할 때만은 악마로 돌변한다.</li>
+        <li><b>차승민 (팔조 복지관 등 창전구 통합 센터장):</b> 팔조동 일대의 '루이 감성' 복지관을 총괄하는 스파르타의 화신. 입에 스톱워치를 달고 살며 모든 복지 일정을 초 단위로 쪼개서 굴린다.</li>
+    </ul>
+
+    <h2 id="s-7"><b>7. 여담 (덕후 이사장과 콜라보)</b></h2>
+    <ul class="list-disc ml-6 space-y-2 text-sm">
+        <li><b>효빈시장의 물주(?):</b> <a class="wiki-link" href="박효빈.html">박효빈</a> 시장이 사능동 복지 정책을 밀어붙일 때 시 의회에서 예산이 깎이거나 행정적으로 꼬이면, 회주복지재단이 '순수 민간 협력' 명목으로 귀신같이 지갑을 열어 돈으로 해결해 준다는 정설이 있다.</li>
+        <li><b>시장님과의 라이벌리 (최강자들의 회담):</b> 박준형 이사장(<b><a class="wiki-link" href="하나조노 타에.html">하나조노 타에</a></b> 극렬 오시)과 <a class="wiki-link" href="박효빈.html">박효빈</a> 시장(<b><a class="wiki-link" href="야마부키 사아야.html">야마부키 사아야</a></b> 오시)은 같은 뱅드림 프로젝트 밴드 <b>'<a class="wiki-link" href="Poppin'Party.html">Poppin'Party</a>(포핀파)'</b>를 빨면서도 최애가 다르다. 사석에서 만나면 <b>"천재 기타리스트 타에가 근본이다" vs "배려심 깊은 드러머 사아야가 밴드의 심장이다"</b>를 두고 테이블을 치며 논쟁을 벌인다고 한다.</li>
+        <li><b>Poppin'Party 콜라보 축제:</b> 2025년, 성덕 이사장과 시장의 미친 합작으로 <a class="wiki-link" href="사능역.html">사능역</a> 일대에서 <b>'BanG Dream! Poppin'Party 콜라보 페스티벌'</b>이 열렸다. 
+            <ul class="list-disc ml-4 mt-1">
+                <li>사능역사에는 '야마부키 베이커리' 팝업 스토어가 열려 시장님이 직접 빵을 굽는 퍼포먼스를 했고, 복지관은 '하나조노 랜드'로 꾸며져 기타 버스킹이 열렸다. </li>
+                <li>평소 조용하던 사능동 어르신들도 <b>"우리 손녀 같은 예쁜이들이 노래도 씰룩씰룩 잘하네"</b>라며 야광봉을 흔드셨고, 전국에서 몰려온 오타쿠들과 할매들이 위아더월드로 어우러지는 전설적인 진풍경이 연출되었다. 이날 박준형 이사장은 무대에서 직접 일렉 기타를 쳤다.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2 id="s-8"><b>8. 관련 문서</b></h2>
+    <div style="padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc; border-radius: 5px; text-align: center; font-weight: bold;">
+        <a class="wiki-link" href="회주기업.html">회주기업</a> · 
+        <a class="wiki-link" href="박신유.html">박신유 (창업주)</a> · 
+        <a class="wiki-link" href="박성인.html">박성인 (2대 회장)</a> · 
+        <a class="wiki-link" href="사능동.html">사능동</a> · 
+        <a class="wiki-link" href="박효빈.html">박효빈 (효빈광역시장)</a> · 
+        <a class="wiki-link" href="하나조노 타에.html">하나조노 타에</a> · 
+        <a class="wiki-link" href="야마부키 사아야.html">야마부키 사아야</a> · 
+        <a class="wiki-link" href="윤대환.html">윤대환</a> · 
+        <a class="wiki-link" href="윤재훈.html">윤재훈</a>
+    </div>
+
+    <div class="wiki-footer">
+        <p>이 저작물은 CC BY-NC-SA 2.0 KR에 따라 이용할 수 있습니다. (단, 라이선스가 명시된 일부 문서 및 삽화 제외)</p>
+        <p>기여하신 문서의 저작권은 각 기여자에게 있으며, 각 기여자는 기여하신 부분의 저작권을 갖습니다.</p>
+        <br/>
+        <p><a class="wiki-link" href="index.html">효빈위키</a>는 백과사전이 아니며 검증되지 않았거나, 편향적이거나, 잘못된 서술이 있을 수 있습니다.</p>
+        <p><a class="wiki-link" href="index.html">효빈위키</a>는 위키위키입니다. 여러분이 직접 문서를 고칠 수 있으며, 다른 사람의 의견을 원할 경우 직접 토론을 발제할 수 있습니다.</p>
+    </div>
 </div>
-<h2 id="s-4"><b>4. 사건 사고</b></h2>
-<h3 id="s-4-1"><b>4.1. 윤재훈의 사능복지관 패륜 난동 사건</b></h3>
-<p>2022년 효빈시장 선거에서 참패하고 <a class="wiki-link" href="HJ몰_중수점.html">HJ몰</a> 테러 미수 등 잇단 기행으로 벼랑 끝에 몰린 <a class="wiki-link" href="윤재훈.html">윤재훈</a>이 정치적 재기를 노린다며 선택한 곳은, 하필이면 회주복지재단의 심장부이자 사능동 주민들의 성역인 <b>사능종합사회복지관</b>이었다.</p>
-<div style="background-color:#ffebee; border-left:5px solid #d32f2f; padding:15px; margin:15px 0;">
-<b>"이 복지관은 박효빈과 회주가 야합하여 노인들을 세뇌하는 공산당 양성소다!"</b>
-<br/><span style="font-size:0.9em; color:#555;">- 윤재훈, 복지관 정문 앞에서 확성기로 소리치며</span>
-</div>
-<p>당시 사능동 주민들은 <b>1969년 군사정권의 강제 폐지</b>와 <b>2006년 윤대환의 전차 말살 시도</b>를 겪으며 '외부 권력'에 대한 깊은 불신과 적개심이 뼛속까지 박힌 상태였다. 이들은 효빈시 내에서도 가장 높은 <b>92.1%</b>라는 경이로운 민주당(박효빈 시장) 지지율을 기록하며 <b>'효빈의 전투민족'</b>이라 불리는 곳이다. 그런 화약고에 윤재훈이 제 발로 걸어 들어온 것이다.</p>
-<p>그는 점심 배식 시간에 맞춰 확성기 차량을 끌고 와 복지관을 봉쇄하듯 막아섰다. "내 아버지(<a class="wiki-link" href="윤대환.html">윤대환</a>)가 옳았다. <b>사능동 같은 빈민가는 밀어버리고 아파트를 지었어야 했다</b>"며 지역 주민들의 역린을 건드리는 패륜적인 망언을 쏟아냈다. 급기야 시끄럽다며 말리러 나온 자원봉사자(대학생)의 얼굴에 침을 뱉는 광기 어린 기행까지 저질렀다.</p>
-<p><b>그러나 그는 장소를 잘못 골라도 한참 잘못 골랐다.</b></p>
-<p>가장 평화롭고 행복해야 할 점심 식사를 방해받은 것에 격분한 <b>사능동 노인회(일명 '전투 할매 부대')</b> 50여 명이 숟가락을 놓고 뛰쳐나와 순식간에 윤재훈을 포위했다.</p>
-<ul class="list-disc ml-6 space-y-2">
-<li><b>1차 타격 (지팡이 난타):</b> "네 놈 아비가 우리 밥상(전차)을 걷어차더니, 자식 놈은 밥 먹는데 와서 꽹과리를 쳐?!"라는 호통과 함께 수십 개의 <b>지팡이와 보행 보조기</b>가 날아들어 윤재훈을 강타했다.</li>
-<li><b>2차 타격 (얼린 물병 폭격):</b> 여름철 폭염 대비용으로 나눠드렸던 <b>'꽝꽝 얼린 500ml 생수병'</b>이 투척 무기화되어 윤재훈의 확성기 차량과 본체(?)를 타격했다. 당시 목격담에 따르면 "하늘에서 얼음 미사일이 떨어지는 줄 알았다"고 한다. <del>이때 차량 유리가 박살 났다는 목격담이 있다.</del></li>
-<li><b>최후:</b> 윤재훈은 옷이 다 찢어지고 멍투성이가 된 채, 출동한 경찰의 바짓가랑이를 붙잡고 <b>"제발 저 할망구들 좀 말려달라, 살려달라"</b>며 비굴하게 구조(?)되었다.</li>
-</ul>
-<p>이 사건은 일명 <b>'사능동 런치 대첩'</b>으로 불리며 뉴스에 대서특필되었고, 윤재훈은 '패륜아' 낙인이 찍혀 효빈시에서 사실상 사회적 매장을 당했다. <del>이후 사능복지관 식당 메뉴에 '윤재훈 묵사발'이 특식으로 나왔다는 소문이 있다.</del></p>
-<h2 id="s-5"><b>5. 주요 인물</b></h2>
-<ul class="list-disc ml-6 space-y-2">
-<li><b>박준형 (이사장, 1974년생):</b> 박성인 회장의 장남. <a class="wiki-link" href="효빈대학교.html">효빈대</a> 사회복지학과 출신으로, 재벌 3세 답지 않게 소탈하고 4차원적인 매력을 지녔다. 사능동 노인정에 가면 할머니들이 "우리 준형이 왔냐"며 손자처럼 반긴다. <a class="wiki-link" href="박효빈.html">박효빈</a> 시장과는 '사능동 부활'이라는 공통의 목표를 가진 든든한 파트너다.</li>
-</ul>
-<h2 id="s-6"><b>6. 여담</b></h2>
-<ul class="list-disc ml-6 space-y-2">
-<li><b>효빈시장의 든든한 우군:</b> <a class="wiki-link" href="박효빈.html">박효빈</a> 시장이 사능동 복지 정책을 펼칠 때, 예산이 부족하거나 행정적으로 막히는 부분이 있으면 회주복지재단이 '민간 협력' 명목으로 귀신같이 나타나 해결해 준다는 소문이 있다.</li>
-<li><b>숨겨진 덕후:</b> 박준형 이사장은 겉보기엔 점잖은 복지 사업가지만, 사실 <b><a class="wiki-link" href="BanG_Dream!.html">BanG Dream!</a>(뱅드림)</b>의 등장인물 <b>'<a class="wiki-link" href="하나조노 타에.html">하나조노 타에</a>'</b>의 열렬한 팬(오시)이다. 집무실 한켠에 회주공업 원료로 만든 고퀄리티 타에 피규어가 전시되어 있다는 것은 재단 직원들 사이의 공공연한 비밀. 본인 말로는 "타에의 4차원적인 매력과 기타 실력에 반했다"고 한다.</li>
-<li><b>시장님과의 라이벌리(?):</b> <a class="wiki-link" href="박효빈.html">박효빈</a> 시장(<b><a class="wiki-link" href="야마부키 사아야.html">야마부키 사아야</a></b> 오시)과는 같은 뱅드림 프로젝트, 그것도 같은 밴드 <b>'<a class="wiki-link" href="Poppin'Party.html">Poppin'Party</a>(포핀파)'</b>를 지지하는 동지이자 라이벌이다. 사석에서는 <b>"천재 기타리스트 타에가 근본이다" vs "배려심 깊은 드러머 사아야가 밴드의 심장이다"</b>를 두고 최애 논쟁을 벌인다고 전해진다. <del>세계관 최강자들의 포핀파 회담</del></li>
-<li><b>장학금:</b> 효빈시 관내 학생들을 위한 장학 사업도 활발한데, 특히 사능동 거주 학생에게는 가산점이 부여된다고 한다. <del>사능동으로 위장 전입하려는 시도가 있었다 카더라.</del></li>
-</ul>
-<h2 id="s-7"><b>7. 관련 문서</b></h2>
-<div style="padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc; border-radius: 5px;">
-<a class="wiki-link" href="회주기업.html">회주기업</a> · <a class="wiki-link" href="박신유.html">박신유</a> · <a class="wiki-link" href="박성인.html">박성인</a> · <a class="wiki-link" href="사능동.html">사능동</a> · <a class="wiki-link" href="박효빈.html">박효빈</a> · <a class="wiki-link" href="하나조노 타에.html">하나조노 타에</a> · <a class="wiki-link" href="야마부키 사아야.html">야마부키 사아야</a> · <a class="wiki-link" href="윤재훈.html">윤재훈</a>
-</div>
-<div id="wiki-footer-area"></div>
-<script src="assets/wiki_main.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tooltip = document.getElementById('footnote-tooltip-container');
+        const fnLinks = document.querySelectorAll('.wiki-fn-link');
+
+        fnLinks.forEach(link => {
+            link.addEventListener('mouseenter', (e) => {
+                const targetId = link.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    let content = targetElement.innerHTML;
+                    if (content.includes('back-link')) {
+                       const tempDiv = document.createElement('div');
+                       tempDiv.innerHTML = content;
+                       const backLink = tempDiv.querySelector('.back-link');
+                       if(backLink) backLink.remove();
+                       content = tempDiv.innerHTML;
+                    }
+                    tooltip.innerHTML = content;
+                    tooltip.style.display = 'block';
+                }
+            });
+            link.addEventListener('mousemove', (e) => {
+                tooltip.style.left = (e.pageX + 15) + 'px';
+                tooltip.style.top = (e.pageY + 15) + 'px';
+            });
+            link.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    });
+</script>
 <script src="assets/wiki_index.js"></script>
 <script src="assets/hb_wiki_core.js"></script>
 <script src="assets/hb_index_scripts.js"></script>
 <script src="assets/jana.js"></script>
 <script src="assets/load-footer.js"></script>
-</div></body>
+</body>
 </html>

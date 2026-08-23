@@ -25,8 +25,7 @@
             border-collapse: collapse !important;
             border: none !important;
             margin: 0 !important;
-            table-layout: fixed !important; 
-        }
+            table-layout: fixed !important;         }
         .wiki-hb-table-v4 th, .wiki-hb-table-v4 td {
             border: 1px solid #ccc !important;
             text-align: center !important;
