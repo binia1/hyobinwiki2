@@ -91,6 +91,14 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "1053Saaya-Yamabuki-Pure-thag9A.webp",
+        "category": "etc"
+    },
+    {
+        "file": "1099Saaya-Yamabuki-Happy-m4J50L.webp",
+        "category": "etc"
+    },
+    {
         "file": "10원 단위 더치페이.webp",
         "category": "illustration"
     },
@@ -109,6 +117,14 @@ const imageFiles = [
     {
         "file": "112.webp",
         "category": "bus"
+    },
+    {
+        "file": "1151idolizedRiko.webp",
+        "category": "etc"
+    },
+    {
+        "file": "1151Riko.webp",
+        "category": "etc"
     },
     {
         "file": "12.webp",
@@ -135,6 +151,10 @@ const imageFiles = [
         "category": "bus"
     },
     {
+        "file": "1369Yukina-Minato.webp",
+        "category": "etc"
+    },
+    {
         "file": "14.webp",
         "category": "bus"
     },
@@ -145,6 +165,10 @@ const imageFiles = [
     {
         "file": "143.webp",
         "category": "bus"
+    },
+    {
+        "file": "1444Riko.webp",
+        "category": "etc"
     },
     {
         "file": "15.webp",
@@ -273,6 +297,10 @@ const imageFiles = [
     {
         "file": "2005트리오_호텔1.webp",
         "category": "facility_com"
+    },
+    {
+        "file": "201701182323442345..webp",
+        "category": "etc"
     },
     {
         "file": "2021년_부동산학과_강의실_사건.webp",
@@ -429,6 +457,10 @@ const imageFiles = [
     {
         "file": "3000.webp",
         "category": "bus"
+    },
+    {
+        "file": "306UR-Sakurauchi-Riko-私とあなた-二人だけの時間-薔薇のしらべ-GdT8b6.webp",
+        "category": "etc"
     },
     {
         "file": "30렙 폭격기.webp",
@@ -1003,6 +1035,10 @@ const imageFiles = [
         "category": "bus"
     },
     {
+        "file": "8a948b867a8398aa017aa4bb071f0054_medium..webp",
+        "category": "etc"
+    },
+    {
         "file": "8표정.webp",
         "category": "illustration"
     },
@@ -1055,6 +1091,10 @@ const imageFiles = [
         "category": "bus"
     },
     {
+        "file": "991Saaya-Yamabuki-Power-9kxZyh.webp",
+        "category": "etc"
+    },
+    {
         "file": "9999.webp",
         "category": "bus"
     },
@@ -1087,6 +1127,10 @@ const imageFiles = [
         "category": "logo"
     },
     {
+        "file": "arale_casual.webp",
+        "category": "etc"
+    },
+    {
         "file": "ASMR 수집가.webp",
         "category": "etc"
     },
@@ -1105,6 +1149,10 @@ const imageFiles = [
     {
         "file": "A씨.webp",
         "category": "etc"
+    },
+    {
+        "file": "BanG Dream! 가로 로고.svg",
+        "category": "logo"
     },
     {
         "file": "BLD.webp",
@@ -1203,6 +1251,14 @@ const imageFiles = [
         "category": "facility_com"
     },
     {
+        "file": "chikarico.webp",
+        "category": "road"
+    },
+    {
+        "file": "CTMHssnr..webp",
+        "category": "etc"
+    },
+    {
         "file": "dangseon_platform_2.webp",
         "category": "etc"
     },
@@ -1221,6 +1277,10 @@ const imageFiles = [
     {
         "file": "DK.svg",
         "category": "logo"
+    },
+    {
+        "file": "DOLLCHESTRA.webp",
+        "category": "etc"
     },
     {
         "file": "DRX.svg",
@@ -1280,6 +1340,10 @@ const imageFiles = [
     },
     {
         "file": "GenG.svg",
+        "category": "logo"
+    },
+    {
+        "file": "Guilty Kiss.webp",
         "category": "logo"
     },
     {
@@ -1543,6 +1607,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "miyako_casual.webp",
+        "category": "etc"
+    },
+    {
         "file": "Morfonica 10th.webp",
         "category": "road"
     },
@@ -1555,7 +1623,23 @@ const imageFiles = [
         "category": "event"
     },
     {
+        "file": "mugendai_mewtype_arale.webp",
+        "category": "etc"
+    },
+    {
+        "file": "mugendai_mewtype_miyako.webp",
+        "category": "etc"
+    },
+    {
+        "file": "mugendai_mewtype_nonoka.webp",
+        "category": "etc"
+    },
+    {
         "file": "mugendai_mewtype_ritsu.webp",
+        "category": "etc"
+    },
+    {
+        "file": "mugendai_mewtype_yuno.webp",
         "category": "etc"
     },
     {
@@ -1580,6 +1664,10 @@ const imageFiles = [
     },
     {
         "file": "nfc.webp",
+        "category": "etc"
+    },
+    {
+        "file": "nonoka_casual.webp",
         "category": "etc"
     },
     {
@@ -1675,6 +1763,10 @@ const imageFiles = [
         "category": "logo"
     },
     {
+        "file": "sYLc0bd.webp",
+        "category": "etc"
+    },
+    {
         "file": "S_교수.webp",
         "category": "person"
     },
@@ -1731,6 +1823,34 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "Yamabuki_Saaya_Signature.webp",
+        "category": "etc"
+    },
+    {
+        "file": "yamabuki_saya_0th.webp",
+        "category": "etc"
+    },
+    {
+        "file": "yamabuki_saya_1st.webp",
+        "category": "etc"
+    },
+    {
+        "file": "yamabuki_saya_2nd.webp",
+        "category": "etc"
+    },
+    {
+        "file": "yamabuki_saya_3rd.webp",
+        "category": "etc"
+    },
+    {
+        "file": "yamabuki_saya_5th.webp",
+        "category": "etc"
+    },
+    {
+        "file": "yamabuki_saya_6th.webp",
+        "category": "etc"
+    },
+    {
         "file": "Yui Hirasawa.webp",
         "category": "logo"
     },
@@ -1743,8 +1863,32 @@ const imageFiles = [
         "category": "logo"
     },
     {
+        "file": "yuno_casual.webp",
+        "category": "etc"
+    },
+    {
         "file": "ZETA.svg",
         "category": "logo"
+    },
+    {
+        "file": "[ワクワクなひととき] 山吹 沙綾 1.webp",
+        "category": "etc"
+    },
+    {
+        "file": "[花の咲く笑談] 山吹 沙綾 1.webp",
+        "category": "etc"
+    },
+    {
+        "file": "[내밀어진 손] 야마부키 사아야.webp",
+        "category": "character"
+    },
+    {
+        "file": "[미래의 고동을 느끼며] 야마부키 사아야 L2D.webp",
+        "category": "character"
+    },
+    {
+        "file": "[미래의 고동을 느끼며] 야마부키 사아야 SD.webp",
+        "category": "character"
     },
     {
         "file": "고등학교 졸업사진(2021).webp",
@@ -1877,6 +2021,10 @@ const imageFiles = [
     {
         "file": "칭다오 사변 당시(2019).webp",
         "category": "etc"
+    },
+    {
+        "file": "お日さまに手を振って - 야마부키 사아야 각전.webp",
+        "category": "character"
     },
     {
         "file": "ダレモ.webp",
@@ -2839,6 +2987,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "고토_아키라.webp",
+        "category": "etc"
+    },
+    {
         "file": "고토구.webp",
         "category": "etc"
     },
@@ -2961,6 +3113,14 @@ const imageFiles = [
     {
         "file": "공문체 브리핑.webp",
         "category": "etc"
+    },
+    {
+        "file": "공식_생일_굿즈_안요지_히메_2024.webp",
+        "category": "merch"
+    },
+    {
+        "file": "공식_생일_굿즈_안요지_히메_2025.webp",
+        "category": "merch"
     },
     {
         "file": "공유기 대역폭 대첩.webp",
@@ -3797,6 +3957,10 @@ const imageFiles = [
     {
         "file": "나카노 아즈사.webp",
         "category": "character"
+    },
+    {
+        "file": "나카마치 아라레.webp",
+        "category": "etc"
     },
     {
         "file": "나카스 카스미 사복.webp",
@@ -4831,6 +4995,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "도쿄의금안을조심해.gif",
+        "category": "etc"
+    },
+    {
         "file": "도탄로.webp",
         "category": "road"
     },
@@ -5455,7 +5623,39 @@ const imageFiles = [
         "category": "station"
     },
     {
+        "file": "리코 sss..webp",
+        "category": "character"
+    },
+    {
+        "file": "리코 경피..webp",
+        "category": "character"
+    },
+    {
+        "file": "리코 경피2..webp",
+        "category": "character"
+    },
+    {
         "file": "리코.webp",
+        "category": "character"
+    },
+    {
+        "file": "리코넨도..webp",
+        "category": "merch"
+    },
+    {
+        "file": "리코리코리코.webp",
+        "category": "character"
+    },
+    {
+        "file": "리코리코사인.webp",
+        "category": "logo"
+    },
+    {
+        "file": "리코스탠딩투명.webp",
+        "category": "character"
+    },
+    {
+        "file": "리코아오조라..webp",
         "category": "character"
     },
     {
@@ -5464,6 +5664,10 @@ const imageFiles = [
     },
     {
         "file": "립스틱 사수.webp",
+        "category": "etc"
+    },
+    {
+        "file": "릿꼬..webp",
         "category": "etc"
     },
     {
@@ -5871,6 +6075,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "무라노_사야카_극장판.webp",
+        "category": "etc"
+    },
+    {
         "file": "무적의 늦둥이.webp",
         "category": "etc"
     },
@@ -5968,6 +6176,10 @@ const imageFiles = [
     },
     {
         "file": "미나토 유키나.webp",
+        "category": "character"
+    },
+    {
+        "file": "미네츠키 리츠.webp",
         "category": "character"
     },
     {
@@ -6073,6 +6285,10 @@ const imageFiles = [
     {
         "file": "미아버거.webp",
         "category": "food"
+    },
+    {
+        "file": "미야나가 노노카.webp",
+        "category": "etc"
     },
     {
         "file": "미야시타 아이.webp",
@@ -7775,8 +7991,16 @@ const imageFiles = [
         "category": "character"
     },
     {
+        "file": "사아야 애니..webp",
+        "category": "character"
+    },
+    {
         "file": "사아야 열차 내부.webp",
         "category": "train"
+    },
+    {
+        "file": "사야리미.webp",
+        "category": "character"
     },
     {
         "file": "사야병원.webp",
@@ -8121,6 +8345,10 @@ const imageFiles = [
     {
         "file": "생명수 수혈.webp",
         "category": "food"
+    },
+    {
+        "file": "생일앨범리코.webp",
+        "category": "merch"
     },
     {
         "file": "서고준.webp",
@@ -8543,6 +8771,10 @@ const imageFiles = [
         "category": "road"
     },
     {
+        "file": "센고쿠 유노.webp",
+        "category": "etc"
+    },
+    {
         "file": "소금하우스 (2).webp",
         "category": "etc"
     },
@@ -8821,6 +9053,10 @@ const imageFiles = [
     {
         "file": "슈퍼스타 아파트.webp",
         "category": "facility_com"
+    },
+    {
+        "file": "스리즈_부케.webp",
+        "category": "etc"
     },
     {
         "file": "스마트폰을 들고 극대노한 윤간석 후보 (자료사진).webp",
@@ -9515,8 +9751,24 @@ const imageFiles = [
         "category": "food"
     },
     {
+        "file": "아워노츠 나카마치 아라레.webp",
+        "category": "etc"
+    },
+    {
         "file": "아워노츠 미네츠키 리츠.webp",
         "category": "character"
+    },
+    {
+        "file": "아워노츠 미야나가 노노카.webp",
+        "category": "etc"
+    },
+    {
+        "file": "아워노츠 센고쿠 유노.webp",
+        "category": "etc"
+    },
+    {
+        "file": "아워노츠 후지 미야코.webp",
+        "category": "etc"
     },
     {
         "file": "아이다_리카코_프로필.webp",
@@ -9624,6 +9876,18 @@ const imageFiles = [
     },
     {
         "file": "안요지 히메.webp",
+        "category": "character"
+    },
+    {
+        "file": "안요지_히메.webp",
+        "category": "character"
+    },
+    {
+        "file": "안요지_히메_105.webp",
+        "category": "character"
+    },
+    {
+        "file": "안요지_히메_극장판.webp",
         "category": "character"
     },
     {
@@ -9749,6 +10013,10 @@ const imageFiles = [
     {
         "file": "알코올 완전 거부.webp",
         "category": "etc"
+    },
+    {
+        "file": "알터편순이리코..webp",
+        "category": "character"
     },
     {
         "file": "암흑기 청산.webp",
@@ -10483,6 +10751,10 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "오오사와_루리노_극장판.webp",
+        "category": "character"
+    },
+    {
         "file": "오오하시 아야카.webp",
         "category": "person"
     },
@@ -10528,6 +10800,10 @@ const imageFiles = [
     },
     {
         "file": "오토무네 코즈에.webp",
+        "category": "character"
+    },
+    {
+        "file": "오토무네_코즈에_극장판.webp",
         "category": "character"
     },
     {
@@ -11327,6 +11603,10 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "유우기리_츠즈리_극장판.webp",
+        "category": "character"
+    },
+    {
         "file": "유우뽀무.webp",
         "category": "character"
     },
@@ -11517,6 +11797,10 @@ const imageFiles = [
     {
         "file": "이갑수.webp",
         "category": "person"
+    },
+    {
+        "file": "이거 귀여울지도♪.webp",
+        "category": "map"
     },
     {
         "file": "이규희.webp",
@@ -11857,6 +12141,10 @@ const imageFiles = [
     {
         "file": "이차야.webp",
         "category": "person"
+    },
+    {
+        "file": "이차원_사쿠라우치리코..webp",
+        "category": "character"
     },
     {
         "file": "이찬대.webp",
@@ -14287,6 +14575,10 @@ const imageFiles = [
         "category": "character"
     },
     {
+        "file": "쵸후_노리코.webp",
+        "category": "character"
+    },
+    {
         "file": "추산령.webp",
         "category": "etc"
     },
@@ -14353,6 +14645,14 @@ const imageFiles = [
     {
         "file": "츠시마 요시코.webp",
         "category": "character"
+    },
+    {
+        "file": "츠즈츠즈사인.webp",
+        "category": "logo"
+    },
+    {
+        "file": "츠즈츠즈츠즈.webp",
+        "category": "etc"
     },
     {
         "file": "츠치노코봇치.webp",
@@ -14567,12 +14867,28 @@ const imageFiles = [
         "category": "character"
     },
     {
+        "file": "카츠라기_이즈미_극장판.webp",
+        "category": "character"
+    },
+    {
         "file": "카치마치 코스즈.webp",
+        "category": "character"
+    },
+    {
+        "file": "카치마치_코스즈_극장판.webp",
         "category": "character"
     },
     {
         "file": "카페의 기안서.webp",
         "category": "document"
+    },
+    {
+        "file": "카호카호사인.webp",
+        "category": "logo"
+    },
+    {
+        "file": "카호카호카호.webp",
+        "category": "character"
     },
     {
         "file": "캐릭터 티셔츠 패션.webp",
@@ -14703,6 +15019,14 @@ const imageFiles = [
         "category": "character"
     },
     {
+        "file": "코즈코즈사인.webp",
+        "category": "logo"
+    },
+    {
+        "file": "코즈코즈코즈.webp",
+        "category": "etc"
+    },
+    {
         "file": "코타츠 마개조.webp",
         "category": "illustration"
     },
@@ -14717,6 +15041,10 @@ const imageFiles = [
     {
         "file": "콜라보시티투어버스.webp",
         "category": "bus"
+    },
+    {
+        "file": "쾌감펀치..webp",
+        "category": "etc"
     },
     {
         "file": "쿠노 미사키.webp",
@@ -14840,6 +15168,10 @@ const imageFiles = [
     },
     {
         "file": "타카하시 폴카.webp",
+        "category": "etc"
+    },
+    {
+        "file": "타카하시_폴카.webp",
         "category": "etc"
     },
     {
@@ -15191,6 +15523,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "편순이리코2..webp",
+        "category": "character"
+    },
+    {
         "file": "평당6동주민센터역_승강장.webp",
         "category": "station"
     },
@@ -15313,6 +15649,10 @@ const imageFiles = [
     {
         "file": "폴리텍.svg",
         "category": "logo"
+    },
+    {
+        "file": "폴카폴카폴카.webp",
+        "category": "etc"
     },
     {
         "file": "푸른 궤도의 슬렌더.webp",
@@ -17339,6 +17679,10 @@ const imageFiles = [
         "category": "map"
     },
     {
+        "file": "후지 미야코.webp",
+        "category": "etc"
+    },
+    {
         "file": "후지시마 메구미.webp",
         "category": "character"
     },
@@ -17424,6 +17768,10 @@ const imageFiles = [
     },
     {
         "file": "히노시타 카호.webp",
+        "category": "character"
+    },
+    {
+        "file": "히노시타_카호_극장판.webp",
         "category": "character"
     },
     {
