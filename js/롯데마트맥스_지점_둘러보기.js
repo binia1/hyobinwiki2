@@ -1,10 +1,11 @@
-document.addEventListener("DOMContentLoaded", function() {
+// SPA 뷰어 환경에 맞게 DOMContentLoaded를 제거하고 즉시 실행 함수로 변경
+(function() {
     const container = document.getElementById("lottemart-maxx-branch-nav-container");
     
     if (container) {
         container.innerHTML = `
         <div style="margin-bottom: 20px;">
-            <table class="maxx-table" style="width: 100%; border: 2px solid var(--maxx-green, #00A775);">
+            <table class="maxx-table" style="width: 100%; border: 2px solid var(--maxx-green, #00A775); border-spacing: 0; border-collapse: collapse;">
                 <tr>
                     <td style="background-color: var(--maxx-text-dark, #222222); text-align: center; padding: 15px; border-bottom: none !important;">
                         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;">
@@ -19,21 +20,26 @@ document.addEventListener("DOMContentLoaded", function() {
                 </tr>
                 <tr>
                     <td style="padding: 0; background-color: #fff; border-top: none !important;">
-                        <details open>
+                        <details open style="margin: 0; border: none; background: transparent; border-radius: 0;">
                             <summary style="background-color: var(--maxx-text-dark, #222222); color: white; padding: 8px 15px; cursor: pointer; font-weight: bold; list-style: none; display: flex; justify-content: center; align-items: center; border-top: 1px solid #333;">
                                 <span style="font-size: 0.9rem; margin: 0 auto;">[ 펼치기 · 접기 ]</span>
                             </summary>
                             <div class="details-content" style="padding: 10px;">
-                                <table style="width: 100%; border: none; text-align: center;">
+                                <table style="width: 100%; border-collapse: collapse; text-align: center;">
                                     <tr>
-                                        <td><a class="wiki-link" href="금천점.html" style="color:var(--maxx-green, #00A775); font-weight:bold;">금천점</a></td>
-                                        <td><a class="wiki-link" href="영등포점.html" style="color:var(--maxx-green, #00A775); font-weight:bold;">영등포점</a></td>
-                                        <td><a class="wiki-link" href="롯데마트_맥스_송천점.html" style="color:var(--maxx-green, #00A775); font-weight:bold;">송천점</a></td>
+                                        <td style="padding: 8px; border: none; width: 33.33%;"><a class="wiki-link" href="금천점.html" style="color:var(--maxx-green, #00A775); font-weight:bold;">금천점</a></td>
+                                        <td style="padding: 8px; border: none; width: 33.33%;"><a class="wiki-link" href="영등포점.html" style="color:var(--maxx-green, #00A775); font-weight:bold;">영등포점</a></td>
+                                        <td style="padding: 8px; border: none; width: 33.33%;"><a class="wiki-link" href="롯데마트_맥스_송천점.html" style="color:var(--maxx-green, #00A775); font-weight:bold;">송천점</a></td>
                                     </tr>
                                     <tr>
-                                        <td><a class="wiki-link" href="상무점.html" style="color:var(--maxx-green, #00A775); font-weight:bold;">상무점</a></td>
-                                        <td><a class="wiki-link" href="창전점.html" style="color:var(--maxx-green, #00A775); font-weight:bold;">창전점</a></td>
-                                        <td><a class="wiki-link" href="창원중앙점.html" style="color:var(--maxx-green, #00A775); font-weight:bold;">창원중앙점</a></td>
+                                        <td style="padding: 8px; border: none;"><a class="wiki-link" href="상무점.html" style="color:var(--maxx-green, #00A775); font-weight:bold;">상무점</a></td>
+                                        <td style="padding: 8px; border: none;"><a class="wiki-link" href="롯데마트_맥스_창전점.html" style="color:var(--maxx-green, #00A775); font-weight:bold;">창전점</a></td>
+                                        <td style="padding: 8px; border: none;"><a class="wiki-link" href="창원중앙점.html" style="color:var(--maxx-green, #00A775); font-weight:bold;">창원중앙점</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border: none;"><a class="wiki-link" href="롯데마트_맥스_천주점.html" style="color:var(--maxx-green, #00A775); font-weight:bold;">천주점</a></td>
+                                        <td style="padding: 8px; border: none;"></td>
+                                        <td style="padding: 8px; border: none;"></td>
                                     </tr>
                                 </table>
                                 <div style="margin-top: 10px; padding: 5px; background-color: var(--maxx-green, #00A775); text-align: center; border-radius: 4px;">
@@ -47,4 +53,4 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
         `;
     }
-});
+})();
