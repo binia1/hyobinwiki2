@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 8. 25. 오전 12:33:47
+ * 업데이트: 2026. 8. 25. 오후 7:05:09
  */
 
 window.HB_WIKI_PAGES = [
@@ -11031,6 +11031,18 @@ window.HB_WIKI_PAGES = [
   {
     "title": "홈플러스_평당점",
     "href": "홈플러스_평당점.html"
+  },
+  {
+    "title": "김시율",
+    "href": "김시율.html"
+  },
+  {
+    "title": "김시안",
+    "href": "김시안.html"
+  },
+  {
+    "title": "김시연",
+    "href": "김시연.html"
   }
 ];
 
@@ -17380,5 +17392,8 @@ window.HB_WIKI_ALIASES = {
   "홈플러스_약산점": "홈플러스_약산점.html",
   "홈플러스_장기점": "홈플러스_장기점.html",
   "홈플러스_천성점": "홈플러스_천성점.html",
-  "홈플러스_평당점": "홈플러스_평당점.html"
+  "홈플러스_평당점": "홈플러스_평당점.html",
+  "김시율": "김시율.html",
+  "김시안": "김시안.html",
+  "김시연": "김시연.html"
 };
