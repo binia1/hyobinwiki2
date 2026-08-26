@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효빈위키 마크다운 에디터 프로 v5.0 (완전통합판)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #0f111a; color: #a6accd; font-family: 'Pretendard', 'Noto Sans KR', sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        .header-area { background: #1a1c29; border-bottom: 1px solid #292d3e; }
+        .btn-primary { background: #E76092; color: white; transition: background 0.2s; }
+        .btn-primary:hover { background: #d04a7a; }
+        .btn-help { background: #444a66; color: #fff; transition: all 0.2s; border: 1px solid #5c6380; }
+        .btn-help:hover { background: #5c6380; }
+        
+        .toolbar-group { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; background: #1f2233; border-bottom: 1px solid #292d3e; }
+        .toolbar-btn { background: #292d3e; border: 1px solid #3b3f54; padding: 6px 10px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; color: #a6accd; display: flex; align-items: center; gap: 4px; font-family: inherit; }
+        .toolbar-btn:hover { background: #444a66; color: #ffffff; border-color: #E76092; }
+        .toolbar-btn.template-btn { border-color: #4CAF50; color: #81C784; }
+        .toolbar-btn.template-btn:hover { background: #1b5e20; border-color: #81C784; color: white; }
+        
+        .editor-area { background: #0f111a; color: #e0e0e0; font-family: 'Consolas', 'Fira Code', monospace; font-size: 14px; line-height: 1.6; border: none; padding: 20px; resize: none; width: 100%; height: 100%; outline: none; }
+        .editor-area:focus { outline: 2px solid #E76092; outline-offset: -2px; }
+        
+        .code-output { background: #1a1c29; color: #82aaff; font-family: 'Consolas', 'Fira Code', monospace; font-size: 13px; white-space: pre-wrap; overflow-y: auto; height: 100%; padding: 20px; border-radius: 0; }
+        
+        .tab-btn { padding: 12px 24px; cursor: pointer; border-bottom: 2px solid transparent; font-weight: bold; color: #676e95; background: #1a1c29; transition: all 0.2s; font-size: 0.9rem; }
+        .tab-btn:hover { color: #a6accd; }
+        .tab-btn.active { color: #E76092; border-bottom-color: #E76092; background: #1f2233; }
+        
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: #0f111a; }
+        ::-webkit-scrollbar-thumb { background: #292d3e; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3b3f54; }
+
+        .toast-msg { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #E76092; color: white; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: bold; z-index: 9999; opacity: 0; transition: opacity 0.3s; pointer-events: none; box-shadow: 0 4px 12px rgba(231, 96, 146, 0.4); }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9990; justify-content: center; align-items: center; }
+        .modal-content { background: #1a1c29; border: 1px solid #3b3f54; width: 90%; max-width: 800px; max-height: 85vh; border-radius: 8px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .modal-header { padding: 15px 20px; border-bottom: 1px solid #292d3e; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: #1a1c29; z-index: 10; }
+        .modal-close { cursor: pointer; color: #a6accd; font-size: 1.5rem; transition: color 0.2s; }
+        .modal-close:hover { color: #E76092; }
+        
+        .guide-table { width: 100%; border-collapse: collapse; margin-top: 10px; color: #e0e0e0; font-size: 0.9rem; }
+        .guide-table th, .guide-table td { border: 1px solid #292d3e; padding: 10px; text-align: left; }
+        .guide-table th { background: #1f2233; color: #82aaff; font-weight: bold; width: 25%; }
+        .guide-code { background: #0f111a; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: #c3e88d; }
+
+        .mode-tab { flex: 1; text-align: center; padding: 10px 0; cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .mode-tab.active { background: #292d3e; color: #E76092; border-bottom: 2px solid #E76092; }
+        .mode-tab.inactive { background: #1a1c29; color: #676e95; border-bottom: 2px solid transparent; }
+        .mode-tab.inactive:hover { color: #a6accd; background: #1f2233; }
+    </style>
+</head>
+<body>
+
+    <header class="header-area p-3 flex justify-between items-center shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="bg-[#E76092] text-white font-black w-8 h-8 flex items-center justify-center rounded shadow-md">H</div>
+            <h1 class="text-lg font-bold text-white tracking-wide">효빈위키 문서 제작기 <span class="text-xs font-normal text-gray-400 bg-gray-800 px-2 py-0.5 rounded ml-2">PRO v5.0</span></h1>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="toggleModal('guideModal')" class="btn-help px-4 py-2 rounded text-sm font-bold shadow"><i class="fas fa-question-circle mr-1"></i> 문법 가이드</button>
+            <button onclick="copyHTML('body')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded text-sm transition font-bold shadow"><i class="fas fa-code mr-1"></i> 본문 복사</button>
+            <button onclick="copyHTML('full')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded text-sm transition font-bold shadow"><i class="fas fa-copy mr-1"></i> 전체 복사</button>
+            <button onclick="downloadHTML()" class="btn-primary px-4 py-2 rounded text-sm font-bold shadow"><i class="fas fa-download mr-1"></i> HTML 다운로드</button>
+        </div>
+    </header>
+
+    <div id="guideModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-xl font-bold text-white"><i class="fas fa-book text-[#E76092] mr-2"></i> 효빈위키 전용 문법 가이드</h2>
+                <i class="fas fa-times modal-close" onclick="toggleModal('guideModal')"></i>
+            </div>
+            <div class="p-6">
+                <p class="text-gray-400 mb-4 text-sm">에디터에 아래 문법을 입력하면, 완벽한 효빈위키 HTML 코드로 자동 변환됩니다.</p>
+                <table class="guide-table">
+                    <tbody>
+                        <tr><th>기본 메타 데이터</th><td><span class="guide-code">!TITLE:김시연</span> (제목 지정)<br><span class="guide-code">!COLOR:#E76092</span> (테마 컬러)</td></tr>
+                        <tr><th>카테고리 박스</th><td><span class="guide-code">[cat:인물, 2004년 출생]</span></td></tr>
+                        <tr><th>인포박스</th><td><span class="guide-code">[info:title=이름|subtitle=영어|image=경로|항목=내용]</span></td></tr>
+                        <tr><th>제목 및 자동 목차</th><td><span class="guide-code">== 1. 개요 ==</span> (H2) <br><span class="guide-code">[TOC]</span> (목차 자동 생성)</td></tr>
+                        <tr><th>정당 뱃지</th><td><span class="guide-code">[badge:bg-theminju|더불어민주당]</span></td></tr>
+                        <tr><th>내부 링크</th><td><span class="guide-code">[[우에하라 아유무]]</span></td></tr>
+                        <tr><th>각주 달기</th><td><span class="guide-code">[*1]</span> 본문 / <span class="guide-code">[fn:1] 내용</span> 하단</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="smartGuideModal" class="modal-overlay">
+        <div class="modal-content border-yellow-600/30">
+            <div class="modal-header border-yellow-600/30">
+                <h2 class="text-xl font-bold text-white"><i class="fas fa-wand-magic-sparkles text-yellow-400 mr-2"></i> 스마트 변환 작성 가이드</h2>
+                <i class="fas fa-times modal-close" onclick="toggleModal('smartGuideModal')"></i>
+            </div>
+            <div class="p-6">
+                <p class="text-gray-400 mb-4 text-sm">일반 텍스트(줄글)를 효빈위키 문법으로 자동 변환합니다.</p>
+                <table class="guide-table">
+                    <tbody>
+                        <tr><th>정보상자 생성</th><td>맨 위에 <span class="text-yellow-400 font-bold">[정보]</span> 라고 적고 줄바꿈 후 <span class="guide-code">이름=홍길동</span> 형식으로 기입</td></tr>
+                        <tr><th>자동 제목/목차</th><td><span class="guide-code">1. 개요</span> 와 같이 번호로 시작하면 자동 목차 [TOC]와 제목 치환</td></tr>
+                        <tr><th>정당 뱃지 치환</th><td>더불어민주당, 국민의힘 등 정당명 입력시 뱃지로 치환</td></tr>
+                        <tr><th>키워드 링크</th><td>주요 인물명 자동 파란색 링크 처리</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <main class="flex-1 flex overflow-hidden">
+        <div class="w-1/2 flex flex-col border-r border-[#292d3e] relative bg-[#0f111a]">
+            
+            <div class="flex shrink-0 bg-[#1a1c29] border-b border-[#292d3e]">
+                <div id="tab-mode-wiki" class="mode-tab active" onclick="setEditMode('wiki')"><i class="fas fa-code mr-1"></i> 정밀 위키 모드</div>
+                <div id="tab-mode-smart" class="mode-tab inactive" onclick="setEditMode('smart')"><i class="fas fa-magic mr-1 text-yellow-400"></i> 자동 텍스트 변환</div>
+                <div id="tab-mode-namu" class="mode-tab inactive" onclick="setEditMode('namu')"><i class="fas fa-leaf mr-1 text-green-400"></i> 나무위키 템플릿 변환기</div>
+            </div>
+
+            <!-- 정밀 위키 모드 UI -->
+            <div id="ui-wiki" class="flex flex-col h-full overflow-hidden">
+                <div class="toolbar-group shrink-0">
+                    <button class="toolbar-btn" onclick="insertSyntax('**', '**')" title="볼드체"><i class="fas fa-bold"></i></button>
+                    <button class="toolbar-btn" onclick="insertSyntax('~~', '~~')" title="취소선"><i class="fas fa-strikethrough"></i></button>
+                    <button class="toolbar-btn" onclick="insertSyntax('[c:red]', '[/c]')" title="글자색"><i class="fas fa-palette"></i></button>
+                    <button class="toolbar-btn" onclick="insertSyntax('[[', ']]')" title="문서 링크"><i class="fas fa-link"></i> 링크</button>
+                    <button class="toolbar-btn" onclick="insertSyntax('[badge:bg-theminju|', ']')" title="정당 뱃지 생성"><i class="fas fa-id-badge"></i> 정당뱃지</button>
+                    <div class="w-px bg-[#3b3f54] mx-1"></div>
+                    <button class="toolbar-btn" onclick="insertText('\n== H2 제목 ==\n')" title="H2">H2</button>
+                    <button class="toolbar-btn" onclick="insertText('\n=== H3 소제목 ===\n')" title="H3">H3</button>
+                    <button class="toolbar-btn" onclick="insertText('\n[TOC]\n')" title="자동 목차"><i class="fas fa-list-ol"></i> 목차</button>
+                    <button class="toolbar-btn" onclick="insertText('\n> ')" title="인용문"><i class="fas fa-quote-right"></i> 인용</button>
+                    <div class="w-px bg-[#3b3f54] mx-1"></div>
+                    <button class="toolbar-btn" onclick="insertText('[*1]')" title="본문 각주번호"><i class="fas fa-superscript"></i> [1]</button>
+                    <button class="toolbar-btn" onclick="insertText('\n[fn:1] 각주 내용\n')" title="하단 각주내용">[fn]</button>
+                    <div class="w-px bg-[#3b3f54] mx-1"></div>
+                    <button class="toolbar-btn template-btn" onclick="insertTemplate('info')" title="정보상자 양식"><i class="fas fa-table"></i> Info상자</button>
+                    <button class="toolbar-btn template-btn" onclick="insertTemplate('cat')" title="카테고리 양식"><i class="fas fa-tags"></i> 분류</button>
+                    <button class="toolbar-btn template-btn" onclick="insertTemplate('table')" title="기본 표 HTML"><i class="fas fa-th-list"></i> 기본 표</button>
+                    <button class="toolbar-btn template-btn" onclick="insertTemplate('election')" title="선거결과 표 HTML"><i class="fas fa-vote-yea"></i> 선거 표</button>
+                </div>
+                <div class="flex-1 relative">
+                    <textarea id="editor" class="editor-area" oninput="debounceCompile()" spellcheck="false" placeholder="효빈위키 마크다운 문법을 입력하세요..."></textarea>
+                </div>
+            </div>
+
+            <!-- 스마트 일반 텍스트 모드 UI -->
+            <div id="ui-smart" class="flex flex-col h-full overflow-hidden hidden">
+                <div class="bg-[#1f2233] p-3 shrink-0 flex justify-between items-center border-b border-[#292d3e]">
+                    <div class="text-xs text-gray-400 leading-tight flex-1">
+                        자연스러운 줄글이나 메모장 쓰듯 작성 후 <b class="text-yellow-400">마법 변환</b>을 누르세요.<br>정보상자, 목차, 정당 뱃지, 링크 등이 위키 문법으로 자동 치환됩니다.
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="toggleModal('smartGuideModal')" class="bg-[#444a66] hover:bg-[#5c6380] text-white px-3 py-2 rounded text-sm font-bold shadow transition border border-[#5c6380]"><i class="fas fa-lightbulb mr-1 text-yellow-300"></i> 가이드</button>
+                        <button onclick="executeSmartConvert()" class="bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded text-sm font-bold shadow transition"><i class="fas fa-wand-magic-sparkles mr-1"></i> 마법 변환</button>
+                    </div>
+                </div>
+                <div class="flex-1 relative bg-[#131520]">
+                    <textarea id="editor-smart" class="editor-area bg-transparent border-none text-gray-300 placeholder-gray-600" spellcheck="false" placeholder="아래 예시처럼 편하게 줄글로 작성해보세요!&#10;&#10;[정보]&#10;이름=홍길동&#10;출생=2000년&#10;소속 정당=더불어민주당&#10;&#10;1. 개요&#10;효빈시의 차세대 괴물이다. 효빈대학교를 졸업했다.&#10;&#10;2. 특징&#10;2.1. 상세 특징&#10;우에하라 아유무를 매우 좋아한다.&#10;&#10;인용: 나는 무거운 사랑이 좋다."></textarea>
+                </div>
+            </div>
+
+            <!-- 나무위키 Raw 변환 모드 UI (JS 템플릿 생성 기능 추가) -->
+            <div id="ui-namu" class="flex flex-col h-full overflow-hidden hidden">
+                <div class="bg-[#1f2233] p-3 shrink-0 border-b border-[#292d3e]">
+                    <div class="flex items-center gap-2 mb-2">
+                        <input type="text" id="namu-title" placeholder="문서 또는 템플릿 제목 (예: 틀_도도부현)" class="p-2 rounded bg-[#0f111a] text-white border border-[#3b3f54] flex-1 text-sm focus:outline-none focus:border-[#E76092]">
+                        <button onclick="executeNamuConvert()" class="bg-green-600 hover:bg-green-500 text-white px-3 py-2 rounded text-sm font-bold shadow transition whitespace-nowrap"><i class="fas fa-sync-alt mr-1"></i> 에디터 치환</button>
+                        <button onclick="generateJsTemplateFile()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded text-sm font-bold shadow transition whitespace-nowrap"><i class="fas fa-file-code mr-1"></i> JS 템플릿 생성</button>
+                    </div>
+                    <div class="text-xs text-gray-400 leading-tight">
+                        나무위키 코드를 붙여넣으세요. <b>[에디터 치환]</b>은 좌측 에디터에 본문을, <b>[JS 템플릿 생성]</b>은 효빈위키 템플릿용 외부 스크립트(.js)를 생성합니다.
+                    </div>
+                </div>
+                <div class="flex-1 relative bg-[#131520]">
+                    <textarea id="editor-namu" class="editor-area bg-transparent border-none text-gray-300 placeholder-gray-600" spellcheck="false" placeholder="||<tablewidth=100%><tablebordercolor=#FE0000>... 나무위키 코드를 붙여넣으세요 ..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-1/2 flex flex-col bg-[#0f111a]">
+            <div class="flex bg-[#1a1c29] shrink-0 border-b border-[#292d3e]">
+                <div class="tab-btn active flex-1 text-center" id="tab-preview" onclick="switchTab('preview')"><i class="fas fa-desktop mr-1"></i> 완벽 미리보기</div>
+                <div class="tab-btn flex-1 text-center" id="tab-body" onclick="switchTab('body')"><i class="fas fa-code mr-1"></i> Body 컨텐츠</div>
+                <div class="tab-btn flex-1 text-center" id="tab-full" onclick="switchTab('full')"><i class="fas fa-file-code mr-1"></i> Full HTML</div>
+            </div>
+            
+            <div class="flex-1 overflow-hidden relative bg-white">
+                <div id="view-preview" class="h-full w-full">
+                    <iframe id="preview-iframe" class="w-full h-full border-none" sandbox="allow-same-origin allow-scripts"></iframe>
+                </div>
+                <div id="view-body" class="h-full w-full hidden">
+                    <div id="body-code" class="code-output"></div>
+                </div>
+                <div id="view-full" class="h-full w-full hidden">
+                    <div id="full-code" class="code-output"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast" class="toast-msg">메시지</div>
+
+    <script>
+        let compileTimer;
+
+        // DB: 제공해주신 JS 파일 리스트를 압축하여 내장
+        const rawJsFileList = `
+        ad_logic.js	.js	\\hyobinwiki2\\
+        build_index.js	.js	\\hyobinwiki2\\
+        config.js	.js	\\hyobinwiki2\\
+        find-missing.js	.js	\\hyobinwiki2\\
+        make_list.js	.js	\\hyobinwiki2\\
+        node fix-highway-images.js	.js	\\hyobinwiki2\\
+        region_data.js	.js	\\hyobinwiki2\\
+        secret_search.js	.js	\\hyobinwiki2\\
+        seed_data.js	.js	\\hyobinwiki2\\
+        server.js	.js	\\hyobinwiki2\\
+        update-archive.js	.js	\\hyobinwiki2\\
+        wiki_char.js	.js	\\hyobinwiki2\\
+        wiki_main.js	.js	\\hyobinwiki2\\
+        미개통노선도_덕남권.js	.js	\\hyobinwiki2\\
+        emscripten_fetch_worker.js	.js	\\hyobinwiki2\\.venv\\Lib\\site-packages\\pip\\_vendor\\urllib3\\contrib\\emscripten\\
+        10대_효빈시의원_목록.js	.js	\\hyobinwiki2\\assets\\
+        app.js	.js	\\hyobinwiki2\\assets\\
+        auto_link.js	.js	\\hyobinwiki2\\assets\\
+        auto_navbox.js	.js	\\hyobinwiki2\\assets\\
+        bangdream-nav.js	.js	\\hyobinwiki2\\assets\\
+        blind_board_core.js	.js	\\hyobinwiki2\\assets\\
+        bukgu_highschool_nav.js	.js	\\hyobinwiki2\\assets\\
+        data.js	.js	\\hyobinwiki2\\assets\\
+        defunct_admin_nav.js	.js	\\hyobinwiki2\\assets\\
+        hb_index_scripts.js	.js	\\hyobinwiki2\\assets\\
+        hb_members.js	.js	\\hyobinwiki2\\assets\\
+        hb_wiki_core.js	.js	\\hyobinwiki2\\assets\\
+        image_data.js	.js	\\hyobinwiki2\\assets\\
+        jana.js	.js	\\hyobinwiki2\\assets\\
+        korea_admini_class.js	.js	\\hyobinwiki2\\assets\\
+        load-footer.js	.js	\\hyobinwiki2\\assets\\
+        lovelive_bluebird_nav.js	.js	\\hyobinwiki2\\assets\\
+        lovelive_hasu_nav.js	.js	\\hyobinwiki2\\assets\\
+        lovelive_liella_nav.js	.js	\\hyobinwiki2\\assets\\
+        lovelive_muse_nav.js	.js	\\hyobinwiki2\\assets\\
+        lovelive_nav.js	.js	\\hyobinwiki2\\assets\\
+        lovelive_niji_nav.js	.js	\\hyobinwiki2\\assets\\
+        neugumma.js	.js	\\hyobinwiki2\\assets\\
+        nimisibal.js	.js	\\hyobinwiki2\\assets\\
+        tooltip.js	.js	\\hyobinwiki2\\assets\\
+        tooltip2.js	.js	\\hyobinwiki2\\assets\\
+        wiki_index.js	.js	\\hyobinwiki2\\assets\\
+        wiki_main.js	.js	\\hyobinwiki2\\assets\\
+        wiki_parktex.js	.js	\\hyobinwiki2\\assets\\
+        노선도_덕남권.js	.js	\\hyobinwiki2\\assets\\
+        노선도_덕북권.js	.js	\\hyobinwiki2\\assets\\
+        미개통노선도_덕빈권.js	.js	\\hyobinwiki2\\assets\\
+        틀_광역자치단체부단체장.js	.js	\\hyobinwiki2\\assets\\
+        틀_교육기관.js	.js	\\hyobinwiki2\\assets\\
+        틀_대한민국_광역자치단체.js	.js	\\hyobinwiki2\\assets\\
+        틀_대한민국의_도시철도.js	.js	\\hyobinwiki2\\assets\\
+        틀_대한민국의전시장.js	.js	\\hyobinwiki2\\assets\\
+        틀_덕빈남도기초자치단체.js	.js	\\hyobinwiki2\\assets\\
+        틀_덕빈남도대학목록.js	.js	\\hyobinwiki2\\assets\\
+        틀_덕빈북도기초자치단체.js	.js	\\hyobinwiki2\\assets\\
+        틀_덕빈북도대학목록.js	.js	\\hyobinwiki2\\assets\\
+        틀_미개통.js	.js	\\hyobinwiki2\\assets\\
+        틀_미개통노선도.js	.js	\\hyobinwiki2\\assets\\
+        틀_미완공.js	.js	\\hyobinwiki2\\assets\\
+        틀_사건사고.js	.js	\\hyobinwiki2\\assets\\
+        틀_스포일러.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대HSCO대표이사.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대만화애니메이션의전당관장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈경제진흥원장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈광역시경제부시장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈광역시행정부시장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈교통공사사장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈도시공사사장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈디자인진흥원장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈문화재단이사장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈문화회관원장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈사회서비스원장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈신용보증재단이사장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈애니메이션본부장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈연구원장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈의료원장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈정보산업진흥원장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈컬처레스풀센터장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈테크노파크원장.js	.js	\\hyobinwiki2\\assets\\
+        틀_역대효빈평생교육진흥원장.js	.js	\\hyobinwiki2\\assets\\
+        틀_운행중단.js	.js	\\hyobinwiki2\\assets\\
+        틀_철도운영기관.js	.js	\\hyobinwiki2\\assets\\
+        틀_취소.js	.js	\\hyobinwiki2\\assets\\
+        틀_토론중.js	.js	\\hyobinwiki2\\assets\\
+        틀_토막글.js	.js	\\hyobinwiki2\\assets\\
+        틀_폐선.js	.js	\\hyobinwiki2\\assets\\
+        틀_폐쇄.js	.js	\\hyobinwiki2\\assets\\
+        틀_효빈광역시의_교통.js	.js	\\hyobinwiki2\\assets\\
+        틀_효빈광역시전철노선.js	.js	\\hyobinwiki2\\assets\\
+        틀_효빈덕북권대중교통.js	.js	\\hyobinwiki2\\assets\\
+        ancheon_pop.js	.js	\\hyobinwiki2\\js\\
+        bukgu_pop.js	.js	\\hyobinwiki2\\js\\
+        CGV네비.js	.js	\\hyobinwiki2\\js\\
+        changjeon_pop.js	.js	\\hyobinwiki2\\js\\
+        cheongyeop_pop.js	.js	\\hyobinwiki2\\js\\
+        deokbinbuk_1.js	.js	\\hyobinwiki2\\js\\
+        deokbinbuk_head_1.js	.js	\\hyobinwiki2\\js\\
+        deokbinnam_1.js	.js	\\hyobinwiki2\\js\\
+        deokbinnam_head_1.js	.js	\\hyobinwiki2\\js\\
+        deokbuk_pop.js	.js	\\hyobinwiki2\\js\\
+        deoknam_pop.js	.js	\\hyobinwiki2\\js\\
+        donggu_pop.js	.js	\\hyobinwiki2\\js\\
+        hb_header.js	.js	\\hyobinwiki2\\js\\
+        hyobin_head_1.js	.js	\\hyobinwiki2\\js\\
+        hyobin_pop.js	.js	\\hyobinwiki2\\js\\
+        junggu_pop.js	.js	\\hyobinwiki2\\js\\
+        K리그1참가구단.js	.js	\\hyobinwiki2\\js\\
+        LCK참가구단.js	.js	\\hyobinwiki2\\js\\
+        namgu_pop.js	.js	\\hyobinwiki2\\js\\
+        seogu_pop.js	.js	\\hyobinwiki2\\js\\
+        wiki_core.js	.js	\\hyobinwiki2\\js\\
+        가원구_pop.js	.js	\\hyobinwiki2\\js\\
+        가원구학교.js	.js	\\hyobinwiki2\\js\\
+        가원구행정.js	.js	\\hyobinwiki2\\js\\
+        강주시_pop.js	.js	\\hyobinwiki2\\js\\
+        강주시_시내버스_노선틀.js	.js	\\hyobinwiki2\\js\\
+        강주시학교.js	.js	\\hyobinwiki2\\js\\
+        강주시행정.js	.js	\\hyobinwiki2\\js\\
+        개혁신당_효빈광역시당_당협위원장_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        광역단체.js	.js	\\hyobinwiki2\\js\\
+        광역자치단체장.js	.js	\\hyobinwiki2\\js\\
+        국민의힘_효빈광역시당_당협위원장_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        남구행정.js	.js	\\hyobinwiki2\\js\\
+        대한민국_고속도로_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        대한민국광역자치단체.js	.js	\\hyobinwiki2\\js\\
+        대한민국의_공항_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        대한민국의_지정항_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        더불어민주당_효빈광역시당_지역위원장_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        덕빈남도22대국회의원.js	.js	\\hyobinwiki2\\js\\
+        덕빈남도_교통_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        덕빈남도_롯데마트지점.js	.js	\\hyobinwiki2\\js\\
+        덕빈남도_이마트지점.js	.js	\\hyobinwiki2\\js\\
+        덕빈남도_홈플러스지점.js	.js	\\hyobinwiki2\\js\\
+        덕빈북도_교통_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        덕빈북도_롯데마트지점.js	.js	\\hyobinwiki2\\js\\
+        덕빈북도_이마트지점.js	.js	\\hyobinwiki2\\js\\
+        덕빈북도_홈플러스지점.js	.js	\\hyobinwiki2\\js\\
+        동구행정.js	.js	\\hyobinwiki2\\js\\
+        롯데마트_지점_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        롯데마트맥스_지점_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        롯데백화점_점포_목록.js	.js	\\hyobinwiki2\\js\\
+        롯데시네마네비.js	.js	\\hyobinwiki2\\js\\
+        메가박스네비.js	.js	\\hyobinwiki2\\js\\
+        민선9기기초자치단체장.js	.js	\\hyobinwiki2\\js\\
+        민선9기덕빈남도기초자치단체장.js	.js	\\hyobinwiki2\\js\\
+        민선9기덕빈북도기초자치단체장.js	.js	\\hyobinwiki2\\js\\
+        민선효빈광역시장.js	.js	\\hyobinwiki2\\js\\
+        새미래민주당_효빈광역시당_지역위원장_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        서구행정.js	.js	\\hyobinwiki2\\js\\
+        안천구행정.js	.js	\\hyobinwiki2\\js\\
+        역대단체장_효빈광역시.js	.js	\\hyobinwiki2\\js\\
+        역대덕빈남도지사.js	.js	\\hyobinwiki2\\js\\
+        역대덕빈북도지사.js	.js	\\hyobinwiki2\\js\\
+        이마트효빈지점목록.js	.js	\\hyobinwiki2\\js\\
+        전체효빈광역시장.js	.js	\\hyobinwiki2\\js\\
+        정의당_효빈광역시당_지역위원장_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        조국혁신당_효빈광역시당_지역위원장_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        중구행정.js	.js	\\hyobinwiki2\\js\\
+        진보당_효빈광역시당_지역위원장_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        창전구행정.js	.js	\\hyobinwiki2\\js\\
+        청엽구행정.js	.js	\\hyobinwiki2\\js\\
+        코스트코_지점_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        트레이더스_지점_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        한국지방신문협회.js	.js	\\hyobinwiki2\\js\\
+        한국철도공사전동차.js	.js	\\hyobinwiki2\\js\\
+        한국철도공사차량사업소.js	.js	\\hyobinwiki2\\js\\
+        한반도_지역구분.js	.js	\\hyobinwiki2\\js\\
+        홈플러스_지점_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        회주기업그룹_계열사.js	.js	\\hyobinwiki2\\js\\
+        회주기업그룹_역대회장.js	.js	\\hyobinwiki2\\js\\
+        효빈22대국회의원.js	.js	\\hyobinwiki2\\js\\
+        효빈광역시_간선버스_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        효빈광역시_공항버스_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        효빈광역시_광역버스_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        효빈광역시_급행버스_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        효빈광역시_마을버스_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        효빈광역시_소재_쇼핑시설.js	.js	\\hyobinwiki2\\js\\
+        효빈광역시_소재_할인점.js	.js	\\hyobinwiki2\\js\\
+        효빈광역시_소재언론사.js	.js	\\hyobinwiki2\\js\\
+        효빈광역시_순환버스_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        효빈광역시_시티투어버스_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        효빈광역시_역대_국회_22.js	.js	\\hyobinwiki2\\js\\
+        효빈광역시_좌석버스_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        효빈광역시_지선버스_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        효빈교통공사전동차.js	.js	\\hyobinwiki2\\js\\
+        효빈교통공사캐릭터.js	.js	\\hyobinwiki2\\js\\
+        효빈도시구조.js	.js	\\hyobinwiki2\\js\\
+        효빈도시철도차량사업소.js	.js	\\hyobinwiki2\\js\\
+        효빈버스권역.js	.js	\\hyobinwiki2\\js\\
+        효빈선거.js	.js	\\hyobinwiki2\\js\\
+        효빈시군구.js	.js	\\hyobinwiki2\\js\\
+        효빈시기초자치단체의회.js	.js	\\hyobinwiki2\\js\\
+        효빈시기초자치단체청사.js	.js	\\hyobinwiki2\\js\\
+        효빈시내버스.js	.js	\\hyobinwiki2\\js\\
+        효빈시장목록.js	.js	\\hyobinwiki2\\js\\
+        효빈역사.js	.js	\\hyobinwiki2\\js\\
+        효빈위키_구조표_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        효빈인구.js	.js	\\hyobinwiki2\\js\\
+        효빈일반철도선.js	.js	\\hyobinwiki2\\js\\
+        효빈자매도시.js	.js	\\hyobinwiki2\\js\\
+        효빈철도캐릭터유니버스.js	.js	\\hyobinwiki2\\js\\
+        효빈행정.js	.js	\\hyobinwiki2\\js\\
+        효빈행정구역변천.js	.js	\\hyobinwiki2\\js\\
+        효빈회주학원_역대이사장.js	.js	\\hyobinwiki2\\js\\
+        덕빈남도_고포군_관내_로.js	.js	\\hyobinwiki2\\js_templates\\
+        덕빈남도_곡천군_관내_로.js	.js	\\hyobinwiki2\\js_templates\\
+        `;
+        
+        const jsMap = {};
+        rawJsFileList.trim().split('\n').forEach(line => {
+            const parts = line.split('\t');
+            if(parts.length >= 3) {
+                let fname = parts[0].replace('.js', '').trim();
+                let folder = parts[2].replace(/\\hyobinwiki2\\/g, '').replace(/\\/g, '/').trim();
+                if(!folder.endsWith('/')) folder += '/';
+                if(folder === '/') folder = ''; 
+                jsMap[fname] = folder + fname + '.js';
+            }
+        });
+
+        const wikiCommonCSS = `
+        /* === 🚀 [효빈위키 폰트 표준화 및 반응형 통합 외부 스타일시트] === */
+        :root {
+            /* 폰트 사이즈 */
+            --font-base: 0.9rem;
+            --font-h1: 3.1rem;
+            --font-h2: 2rem;
+            --font-h3: 1.6rem;
+            --font-h4: 1.3rem;
+            --font-h5: 1.1rem;
+            --font-small: 0.8rem;
+
+            /* 도시철도 노선 색상 */
+            --line-1: #0077DD; 
+            --line-2: #00CCAA; 
+            --line-3: #FFCC11;
+            --line-4: #FF5522; 
+            --line-5: #EE0022; 
+            --line-6: #881188;
+            --line-7: #FF8899; 
+            --line-8: #9856FF;
+            --line-binhyo: #6677CC;
+            --wiki-line-deokju1: #FF4F91;
+            --wiki-line-binju1: #CFBA0F; 
+            --wiki-line-binju2: #C455F6;
+            --wiki-line-binju3: #6AE673;
+            --line-k: #005BAC;
+
+            /* 버스 색상 규정 */
+            --bus-trunk: #01B7ED;      /* 간선 */
+            --bus-circular: #E7D600;   /* 순환 */
+            --bus-branch: #37B484;     /* 지선 */
+            --bus-wide: #485EC6;       /* 광역 */
+            --bus-seat: #FF5800;       /* 좌석 */
+            --bus-village: #A664A0;    /* 마을 */
+            --bus-airport: #84C36E;    /* 공항 */
+            --bus-tour: #7777AA;       /* 시티투어 */
+            --bus-express: #D81C2F;    /* 급행 */
+        }
+
+        /* 🚨 [모바일 옆구리 터짐 방지 레이아웃] 🚨 */
+        *, *::before, *::after { box-sizing: border-box; }
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; overflow-x: hidden; width: 100%; }
+
+        .wiki-container { width: 100%; max-width: 1300px; margin: 0 auto; padding: 20px 15px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); box-sizing: border-box; }
+        @media (min-width: 768px) { .wiki-container { padding: 20px 40px; } }
+
+        h1 { font-size: var(--font-h1) !important; font-weight: 700 !important; margin-bottom: 1.5rem; border-bottom: 2px solid var(--wiki-main); padding-bottom: 10px; word-break: keep-all; line-height: 1.2; }
+        @media (max-width: 767px) { h1 { font-size: calc(var(--font-h1) * 0.7) !important; } }
+
+        h2 { font-size: var(--font-h2) !important; font-weight: 700 !important; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: var(--font-h3) !important; font-weight: bold !important; margin-top: 2rem; border-left: 7px solid var(--wiki-main); padding-left: 15px; color: var(--wiki-text); }
+        [data-theme='dark'] h3 { color: #ddd; }
+        h4 { font-size: var(--font-h4) !important; font-weight: 800; margin-top: 1.5rem; margin-bottom: 0.8rem; color: #444; border-bottom: 1px dashed #ccc; padding-bottom: 3px; line-height: 1.3 !important; }
+        h5 { font-size: var(--font-h5) !important; line-height: 1.3 !important; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: var(--font-small); font-weight: bold; color: #555; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; white-space: nowrap; }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; word-break: break-all; }
+
+        /* 🚨 뚱뚱한 선거 표들 모바일에선 가로 스크롤 허용 */
+        .data-table, .election-table, .gap-table, .nav-table, .namu-route-table, .nw-timetable-container, .infobox-table, table { 
+            border-collapse: collapse !important; 
+            width: 100% !important; 
+            margin: 15px 0; 
+            font-size: var(--font-base) !important; 
+            text-align: center !important; 
+            display: block; 
+            overflow-x: auto; 
+            white-space: nowrap; 
+            -webkit-overflow-scrolling: touch;
+        }
+        @media (min-width: 768px) {
+            .data-table, .election-table, .gap-table, .nav-table, .namu-route-table, .nw-timetable-container, .infobox-table, table { display: table; white-space: normal; }
+        }
+
+        .data-table th, table th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; border: 1px solid var(--wiki-border) !important; padding: 8px 12px; }
+        .data-table td, table td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; }
+        .data-table tr:nth-child(even) { background-color: #fdfdfd; }
+
+        .election-table { border: 2px solid #aaa !important; margin-bottom: 20px !important; font-family: 'Noto Sans KR', sans-serif !important; background-color: transparent !important; }
+        .election-table th, .election-table td { border: 1px solid #ccc !important; padding: 6px 4px !important; vertical-align: middle !important; word-break: keep-all !important; }
+
+        .election-header { color: white; font-weight: bold; font-size: 1.2em; padding: 10px; }
+        .election-subheader { background-color: #f0f0f0; color: #353535; font-weight: bold; }
+        .total-row { background-color: #eee; text-align: left; padding: 10px; border-top: 2px solid #ccc; font-size: 0.9rem; white-space: normal !important; word-break: keep-all !important; }
+        .gap-table th, .gap-table td { border: 1px solid #ddd; padding: 6px; text-align: center; }
+
+        .election-table .term-row td { color: #fff !important; font-weight: bold !important; font-size: 1.05rem !important; }
+        .election-table .party-row td { color: #fff !important; font-weight: bold !important; font-size: 0.85rem !important; letter-spacing: -0.5px !important; }
+        .election-table .name-row td { background-color: #fff !important; color: #1a5c9e !important; font-weight: bold !important; font-size: 1.1rem !important; border-bottom: 2px solid #ccc !important; }
+        .result-note { margin-top: 0 !important; padding: 12px !important; background-color: #f8f9fa !important; border: 1px solid #ccc !important; border-top: none !important; font-size: 0.85rem !important; color: #444 !important; text-align: center !important; line-height: 1.8 !important; }
+
+        .election-table .daesu { background-color: #f1f5f9 !important; color: #333 !important; font-weight: bold !important; width: 70px !important; }
+        .election-table .district-header, .election-table .district { background-color: #ffffff !important; color: #005CB9 !important; font-weight: bold !important; }
+
+        .toc { display: inline-block; width: 100%; max-width: 400px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; box-sizing: border-box; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc > ul > li { margin-bottom: 8px; font-weight: bold; font-size: 1.05rem; } 
+        .toc ul ul { margin-top: 4px; margin-left: 20px; } 
+        .toc ul ul li { margin-bottom: 4px; }
+        .toc ul ul li a { font-weight: bold !important; font-size: 1.0em !important; color: #444; }
+        .toc ul ul li a:hover { color: var(--wiki-link); }
+
+        details { border: 1px solid #ccc; border-radius: 4px; padding: 0.5em 0.5em 0; margin-bottom: 15px; background-color: #fff; width: 100%; overflow: hidden; }
+        summary { font-weight: bold; margin: -0.5em -0.5em 0; padding: 0.8em; cursor: pointer; background-color: #f9f9f9; list-style: none; display: flex; justify-content: space-between; align-items: center; color: var(--wiki-link); transition: background 0.2s; word-break: keep-all; }
+        summary:hover { background-color: #eee; }
+        details[open] { padding: 0.5em; }
+
+        .giho-num { font-weight: 900; font-size: 1.3em; margin-right: 5px; display: inline-block; width: 20px; text-align: center;}
+        del { color: #999; text-decoration: line-through; }
+        .quote-box { background-color: #f9f9f9; border-left: 4px solid #ccc; padding: 10px; margin: 10px 0; font-style: italic; color: #555; word-break: keep-all; }
+        .analysis-box { background-color: #f4f4f4; padding: 15px; border-radius: 5px; margin-bottom: 30px; border: 1px solid #ddd; word-break: keep-all; }
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+
+        .party-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.9em; line-height: 1.2; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .party-badge.text-black { color: #333; text-shadow: none; }
+        .wiki-fn-link { color: var(--wiki-link); font-size: 0.8em; vertical-align: super; text-decoration: none; font-weight: bold; cursor: pointer; margin-left: 2px; }
+        .wiki-fn-link:hover { text-decoration: underline; }
+
+        .infobox { border: 2px solid var(--wiki-main); background-color: #fff; width: 100%; max-width: 400px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.3rem !important; font-weight: bold; }
+        .infobox table { border: none; width: 100%; border-collapse: collapse; }
+        .infobox th { background-color: var(--wiki-main); color: #fff; width: 100px; padding: 6px 8px; border: 1px solid var(--wiki-border); text-align: center; vertical-align: middle; font-weight: bold; }
+        .infobox td { padding: 6px 8px; border: 1px solid var(--wiki-border); vertical-align: middle; }
+
+        /* 🎨 [정당 색상 완벽 강제 주입] */
+        .bg-대한독립촉성국민회, .bg-dokchok { background-color: #1271B5 !important; color: white !important; }
+        .bg-한국민주당, .bg-minju-korea { background-color: #008000 !important; color: white !important; }
+        .bg-대동청년단, .bg-daedong { background-color: #27176F !important; color: white !important; }
+        .bg-대한독립촉성노동총연맹 { background-color: #00A495 !important; color: white !important; }
+        .bg-대한청년단 { background-color: #DA251D !important; color: white !important; }
+        .bg-남조선로동당 { background-color: #FF0000 !important; color: white !important; }
+        .bg-민주국민당1949, .bg-minkook { background-color: #ADFF2F !important; color: black !important; }
+        .bg-대한국민당 { background-color: #0087BD !important; color: white !important; }
+        .bg-일민구락부, .bg-ilmin { background-color: #C0C0FF !important; color: black !important; }
+        .bg-사회당 { background-color: #E63E62 !important; color: white !important; }
+        .bg-한국독립당1963 { background-color: #113DA6 !important; color: white !important; }
+        .bg-자유당, .bg-jayu { background-color: #254170 !important; color: white !important; }
+        .bg-민주당1955, .bg-minju-55, .bg-민주당 { background-color: #000080 !important; color: white !important; }
+        .bg-민주공화당, .bg-mingong { background-color: #835B38 !important; color: white !important; }
+        .bg-민정당, .bg-minjung-63 { background-color: #FFD700 !important; color: black !important; }
+        .bg-민주당1963 { background-color: #332B43 !important; color: white !important; }
+        .bg-자유민주당1963 { background-color: #005848 !important; color: white !important; }
+        .bg-국민의당1963 { background-color: #C2C247 !important; color: black !important; }
+        .bg-신민회 { background-color: #3366FF !important; color: white !important; }
+        .bg-신흥당 { background-color: #005099 !important; color: white !important; }
+        .bg-한국독립당 { background-color: #113DA6 !important; color: white !important; }
+        .bg-정민회 { background-color: #4B0080 !important; color: white !important; }
+        .bg-추풍회 { background-color: #C78665 !important; color: white !important; }
+        .bg-신민당, .bg-shinmin { background-color: #DC352A !important; color: white !important; }
+        .bg-대중당 { background-color: #3069A5 !important; color: white !important; }
+        .bg-민중당1967 { background-color: #FFD2AD !important; color: black !important; }
+        .bg-정의당1967 { background-color: #350887 !important; color: white !important; }
+        .bg-자민당 { background-color: #88C8C8 !important; color: black !important; }
+        .bg-통한당 { background-color: #312F2A !important; color: white !important; }
+        .bg-통일사회당 { background-color: #104D8E !important; color: white !important; }
+        .bg-민주당1967 { background-color: #9ACD32 !important; color: black !important; }
+        .bg-반제민족민주전선 { background-color: #007FFF !important; color: white !important; }
+        .bg-국민당1971 { background-color: #00AF89 !important; color: white !important; }
+        .bg-민주통일당 { background-color: #FAC813 !important; color: black !important; }
+        .bg-민주정의당, .bg-minjeong { background-color: #0A84E9 !important; color: white !important; }
+        .bg-민주한국당, .bg-minhan { background-color: #ED2939 !important; color: white !important; }
+        .bg-한국국민당, .bg-kookmin-81 { background-color: #498C00 !important; color: white !important; }
+        .bg-민주사회당 { background-color: #FF8201 !important; color: white !important; }
+        .bg-신정당 { background-color: #4697B2 !important; color: white !important; }
+        .bg-민주농민당 { background-color: #A52A2A !important; color: white !important; }
+        .bg-원일민립당 { background-color: #E0E0E0 !important; color: black !important; }
+        .bg-신한민주당, .bg-shinhan { background-color: #E6573B !important; color: white !important; }
+        .bg-신정사회당 { background-color: #FF4500 !important; color: white !important; }
+        .bg-신민주당 { background-color: #189868 !important; color: white !important; }
+        .bg-평화민주당, .bg-pyeongmin { background-color: #FADA5E !important; color: black !important; }
+        .bg-통일민주당, .bg-tongmin { background-color: #E60026 !important; color: white !important; }
+        .bg-신민주공화당, .bg-shinmingong { background-color: #59955E !important; color: white !important; }
+        .bg-한겨레민주당 { background-color: #FF7F50 !important; color: white !important; }
+        .bg-민주자유당, .bg-minja { background-color: #003990 !important; color: white !important; }
+        .bg-민주당1991, .bg-minju-91, .bg-통합민주당1995 { background-color: #009D68 !important; color: white !important; }
+        .bg-통일국민당, .bg-tongkook { background-color: #22B14C !important; color: white !important; }
+        .bg-민중당1990 { background-color: #FFA500 !important; color: black !important; }
+        .bg-신정치개혁당 { background-color: #101299 !important; color: white !important; }
+        .bg-신민당1994 { background-color: #3D9069 !important; color: white !important; }
+        .bg-무정파전국연합 { background-color: #FF6699 !important; color: white !important; }
+        .bg-무당파국민연합 { background-color: #5290DB !important; color: white !important; }
+        .bg-신한국당, .bg-shinhangook { background-color: #003990 !important; color: white !important; }
+        .bg-새정치국민회의, .bg-kookminhoeui { background-color: #009A44 !important; color: white !important; }
+        .bg-자유민주연합, .bg-jamin { background-color: #1B5B40 !important; color: white !important; }
+        .bg-한나라당, .bg-hannara, .bg-한나라당2012, .bg-한나라당2013 { background-color: #0095DA !important; color: white !important; }
+        .bg-국민신당 { background-color: #336C77 !important; color: white !important; }
+        .bg-건설국민승리21 { background-color: #FF3D00 !important; color: white !important; }
+        .bg-새천년민주당, .bg-saecheon { background-color: #00AA7B !important; color: white !important; }
+        .bg-민주국민당2000 { background-color: #353F9C !important; color: white !important; }
+        .bg-희망의한국신당 { background-color: #283C7B !important; color: white !important; }
+        .bg-하나로국민연합 { background-color: #215AA6 !important; color: white !important; }
+        .bg-개혁국민정당 { background-color: #4CBB17 !important; color: white !important; }
+        .bg-녹색평화당 { background-color: #4EB233 !important; color: white !important; }
+        .bg-한국사회민주당 { background-color: #0080FF !important; color: white !important; }
+        .bg-녹색사민당 { background-color: #51B749 !important; color: white !important; }
+        .bg-열린우리당, .bg-yeollin { background-color: #FFD700 !important; color: black !important; }
+        .bg-민주노동당 { background-color: #EE7700 !important; color: white !important; }
+        .bg-국민통합21 { background-color: #4F689A !important; color: white !important; }
+        .bg-대통합민주신당 { background-color: #FF7F00 !important; color: white !important; }
+        .bg-국민중심당 { background-color: #E85298 !important; color: white !important; }
+        .bg-중도통합민주당 { background-color: #F7C517 !important; color: black !important; }
+        .bg-통합민주당, .bg-통합민주당2008, .bg-tongmin-08 { background-color: #04972D !important; color: white !important; }
+        .bg-자유선진당, .bg-jayuseonjin { background-color: #00529C !important; color: white !important; }
+        .bg-친박연대, .bg-친박연대2012 { background-color: #0C449B !important; color: white !important; }
+        .bg-시민통합당 { background-color: #F7B618 !important; color: black !important; }
+        .bg-창조한국당 { background-color: #B30000 !important; color: white !important; }
+        .bg-진보신당 { background-color: #DC143C !important; color: white !important; }
+        .bg-국민참여당 { background-color: #FCCA00 !important; color: black !important; }
+        .bg-가자대국민중심당 { background-color: #1A2C8E !important; color: white !important; }
+        .bg-국민중심연합 { background-color: #E85298 !important; color: white !important; }
+        .bg-국민생각 { background-color: #F5821F !important; color: white !important; }
+        .bg-미래연합 { background-color: #264280 !important; color: white !important; }
+        .bg-대한국당 { background-color: #005FB1 !important; color: white !important; }
+        .bg-정통민주당 { background-color: #FEDD02 !important; color: black !important; }
+        .bg-청년당 { background-color: #F47920 !important; color: white !important; }
+        .bg-새누리당, .bg-saenuri { background-color: #C9252B !important; color: white !important; }
+        .bg-민주통합당, .bg-mintong { background-color: #FFD400 !important; color: black !important; }
+        .bg-통합진보당, .bg-tongjin { background-color: #782B90 !important; color: white !important; }
+        .bg-진보정의당 { background-color: #FF007F !important; color: white !important; }
+        .bg-국민의당, .bg-kookmin-dang { background-color: #006241 !important; color: white !important; }
+        .bg-정의당 { background-color: #FFED00 !important; color: black !important; }
+        .bg-새정치연합 { background-color: #00CCFF !important; color: black !important; }
+        .bg-새정치민주연합 { background-color: #0082CD !important; color: white !important; }
+        .bg-더불어민주당, .bg-theminju { background-color: #003B96 !important; color: white !important; }
+        .bg-자유한국당 { background-color: #C9151E !important; color: white !important; }
+        .bg-바른정당 { background-color: #00B1EB !important; color: white !important; }
+        .bg-미래통합당, .bg-miraetong { background-color: #EF426F !important; color: white !important; }
+        .bg-국민의힘, .bg-kookminhim { background-color: #E61E2B !important; color: white !important; }
+        .bg-진보당, .bg-jinbo { background-color: #D6001C !important; color: white !important; }
+        .bg-무소속, .bg-musosok { background-color: #808080 !important; color: white !important; }
+        .bg-대중당, .bg-daejung { background-color: #3069A5 !important; color: white !important; }
+        .bg-민정당, .bg-minjung { background-color: #FFD700 !important; color: black !important; }
+        .bg-민주국민당 { background-color: #ADFF2F !important; color: black !important; }
+        
+        [data-theme='dark'] .wiki-container .election-table th, 
+        [data-theme='dark'] .wiki-container .election-table td { border-color: #444 !important; }
+        [data-theme='dark'] .wiki-container .election-table .name-row td { background-color: #2d2f34 !important; color: #7cb1ff !important; border-bottom: 2px solid #555 !important; }
+        [data-theme='dark'] .wiki-container .result-note { background-color: #25262a !important; border-color: #555 !important; color: #ccc !important; }
+        [data-theme='dark'] .wiki-container .election-table .daesu,
+        [data-theme='dark'] .wiki-container .election-table .district-header,
+        [data-theme='dark'] .wiki-container .election-table .district { background-color: #2d2f34 !important; color: #7cb1ff !important; }
+        `;
+
+        const fullHtmlTemplate = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link href="이미지/효빈위키아이콘.webp" rel="icon"/>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>{{TITLE}} - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"><\/script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            --wiki-main: {{COLOR}}; 
+            --wiki-nav-bg: #7777AA;
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #F9F9FA; 
+            --wiki-link: #0022AA;
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+        }
+
+{{CSS_CONTENT}}
+        
+        /* 추가 네비게이션 및 기본 툴팁/메시지 UI */
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }   
+        .anchor-offset { scroll-margin-top: 70px; }
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; clear: both; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+    </style>
+    <script src="ad_logic.js"><\/script>
+    <link rel="stylesheet" href="wiki_font_standard.css">
+</head>
+<body>
+<nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <div class="flex items-center gap-2">
+        <div class="nav-logo-box">H</div>
+        <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white">HyobinWiki</a>
+        <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+            <a href="index.html" class="hover:underline font-bold text-white no-underline">대문</a>
+            <a href="최근_변경.html" class="hover:underline text-white no-underline">최근 변경</a>
+            <a href="최근_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
+        </div>
+    </div>
+    <div class="flex flex-col items-end gap-1">
+        <div class="flex items-center gap-2">
+            <input type="text" id="headerSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48">
+            <button class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
+        </div>
+    </div>
+</nav>
+
+<div class="wiki-container shadow-lg">
+    <div class="flex justify-between items-end border-b-2 border-[#ccc] mb-5 pb-2">
+        <h1 class="!mb-0 !border-none !pb-0">{{TITLE}}</h1>
+        <div class="flex gap-2 mb-1">
+            <a class="wiki-btn" href="토론.html">토론</a>
+            <a class="wiki-btn" href="수정.html">편집</a>
+            <a class="wiki-btn" href="역사.html">역사</a>
+            <button class="wiki-btn">☆ </button>
+        </div>
+    </div>
+    
+{{BODY_CONTENT}}
+
+    <div class="no-autolink" style="display: none;">
+        <div id="hyobin-all-mayors-nav"></div>
+        <script src="js/전체효빈광역시장.js"><\/script>
+        <script> if(typeof renderAllHyobinMayorsNav === 'function') renderAllHyobinMayorsNav('hyobin-all-mayors-nav'); <\/script>
+    </div>
+    <div id="footer-container"></div>
+    <script src="assets/load-footer.js"><\/script>
+</div>
+<script>
+    document.querySelectorAll('.calc-age').forEach(span => {
+        const birthdate = span.getAttribute('data-birthdate');
+        if(birthdate) {
+            const age = 2026 - new Date(birthdate).getFullYear();
+            span.innerText = age;
+        }
+    });
+<\/script>
+<script src="assets/wiki_index.js"><\/script>
+<script src="assets/hb_wiki_core.js"><\/script>
+<script src="assets/hb_index_scripts.js"><\/script>
+<script src="assets/jana.js"><\/script>
+</body>
+</html>`;
+
+        const defaultText = `!TITLE:김시연\n!COLOR:#E76092\n\n[cat:효빈광역시의 인물]\n\n== 1. 개요 ==\n본문을 작성하세요...`;
+
+        function insertSyntax(open, close) {
+            const textarea = document.getElementById('editor');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            const selectedText = text.substring(start, end);
+            const replacement = open + selectedText + close;
+            textarea.value = text.substring(0, start) + replacement + text.substring(end);
+            textarea.focus();
+            textarea.selectionStart = start + open.length;
+            textarea.selectionEnd = end + open.length;
+            compileWiki();
+        }
+
+        function insertText(text) {
+            const textarea = document.getElementById('editor');
+            const start = textarea.selectionStart;
+            const val = textarea.value;
+            textarea.value = val.substring(0, start) + text + val.substring(textarea.selectionEnd);
+            textarea.focus();
+            textarea.selectionStart = textarea.selectionEnd = start + text.length;
+            compileWiki();
+        }
+
+        function insertTemplate(type) {
+            let template = "";
+            if (type === 'info') {
+                template = "\n[info:title=이름|subtitle=영어이름|image=경로.webp|항목1=내용1|항목2=내용2]\n";
+            } else if (type === 'table') {
+                template = `\n<table class="data-table">
+    <thead>
+        <tr><th>항목1</th><th>항목2</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>내용1</td><td>내용2</td></tr>
+    </tbody>
+</table>\n`;
+            } else if (type === 'election') {
+                template = `\n<table class="election-table">
+    <thead>
+        <tr>
+            <th colspan="2" class="election-header" style="background-color: var(--wiki-main);">
+                제00대 선거 효빈광역시장
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="party-row"><td colspan="2" class="bg-theminju">더불어민주당</td></tr>
+        <tr class="name-row"><td colspan="2">홍길동</td></tr>
+        <tr><td class="daesu">득표수</td><td>000,000표</td></tr>
+        <tr><td class="daesu">득표율</td><td><strong>50.00%</strong></td></tr>
+    </tbody>
+</table>\n`;
+            }
+            insertText(template);
+        }
+
+        function executeSmartConvert() {
+            let text = document.getElementById('editor-smart').value;
+            if (!text.trim()) { showToast("변환할 텍스트를 입력해주세요!"); return; }
+            let converted = text;
+
+            converted = converted.replace(/\[정보\]\n([\s\S]*?)(?=\n\n|\n==|\n1\.|$)/, (match, block) => {
+                let infoStr = "[info:";
+                let lines = block.trim().split('\n');
+                lines.forEach(line => {
+                    let parts = line.split('=');
+                    if (parts.length >= 2) {
+                        let k = parts.shift().trim();
+                        let v = parts.join('=').trim();
+                        if (k === '이름' || k === 'title') { infoStr += `title=${v}|`; }
+                        else if (k === 'subtitle') { infoStr += `subtitle=${v}|`; }
+                        else if (k === 'image') { infoStr += `image=${v}|`; }
+                        else { infoStr += `${k}=${v}|`; }
+                    }
+                });
+                if (infoStr.endsWith('|')) infoStr = infoStr.slice(0, -1);
+                return infoStr + "]\n\n";
+            });
+
+            converted = converted.replace(/^(\d+)\.\s+(.*)$/gm, '== $1. $2 ==');
+            converted = converted.replace(/^(\d+\.\d+)\.\s+(.*)$/gm, '=== $1. $2 ===');
+            converted = converted.replace(/^(\d+\.\d+\.\d+)\.\s+(.*)$/gm, '==== $1. $2 ====');
+
+            if (converted.match(/^== 1\./m) && !converted.includes('[TOC]')) {
+                converted = converted.replace(/^== 1\./m, '[TOC]\n\n== 1.');
+            }
+
+            const partyMap = { '더불어민주당': 'bg-theminju', '국민의힘': 'bg-kookminhim', '새누리당': 'bg-saenuri' };
+            for (const [party, bgClass] of Object.entries(partyMap)) {
+                const regex = new RegExp(`(?<!\\[badge:[^\\]]*?\\|)${party}(?!\\])`, 'g');
+                converted = converted.replace(regex, `[badge:${bgClass}|${party}]`);
+            }
+
+            const linkKeywords = ['김성민', '이한선', '김시율', '김시안', '김시연', '우에하라 아유무', '나카스 카스미', '효빈광역시', '효빈대학교'];
+            linkKeywords.forEach(keyword => {
+                const regex = new RegExp(`(?<!\\[\\[)${keyword}(?!\\]\\])`, 'g');
+                converted = converted.replace(regex, `[[${keyword}]]`);
+            });
+
+            converted = converted.replace(/^인용:\s*(.*)$/gm, '> $1');
+
+            if (!converted.includes('!TITLE:')) {
+                const titleMatch = converted.match(/title=([^|\]]+)/);
+                const autoTitle = titleMatch ? titleMatch[1] : "새 문서";
+                converted = `!TITLE:${autoTitle}\n!COLOR:#E76092\n\n` + converted;
+            }
+
+            document.getElementById('editor').value = converted;
+            setEditMode('wiki');
+            compileWiki();
+            showToast("텍스트가 효빈위키 문법으로 마법 변환되었습니다! ✨");
+        }
+
+        function parseWikiSyntax(rawText) {
+            let html = rawText;
+            let pageTitle = "제목 없음";
+            let themeColor = "#E76092";
+            let tocData = [];
+            let hCount = 0;
+
+            const titleMatch = html.match(/^!TITLE:(.*)$/m);
+            if (titleMatch) {
+                pageTitle = titleMatch[1].trim();
+                html = html.replace(/^!TITLE:.*$\n?/m, '');
+            }
+            
+            const colorMatch = html.match(/^!COLOR:(.*)$/m);
+            if (colorMatch) {
+                themeColor = colorMatch[1].trim();
+                html = html.replace(/^!COLOR:.*$\n?/m, '');
+            }
+
+            html = html.replace(/\[cat:(.*?)\]/g, (match, items) => {
+                const links = items.split(',').map(c => `<a class="wiki-link" href="${c.trim().replace(/ /g, '_')}.html">${c.trim()}</a>`).join(' | ');
+                return `\n<div class="category-box">\n    <span class="font-bold" style="color: var(--wiki-main);">분류:</span>\n    ${links}\n</div>\n`;
+            });
+
+            html = html.replace(/\[info:(.*?)\]/g, (match, data) => {
+                const parts = data.split('|');
+                let infoHtml = `\n<aside class="infobox shrink-0 shadow-sm rounded overflow-hidden lg:float-right lg:ml-5 mb-5">\n`;
+                let t = "", sub = "", img = "", rows = "";
+                
+                parts.forEach(part => {
+                    const kv = part.split('=');
+                    if(kv.length >= 2) {
+                        const k = kv.shift().trim();
+                        const v = kv.join('=').trim();
+                        if(k === 'title') t = v;
+                        else if(k === 'subtitle') sub = v;
+                        else if(k === 'image') img = v;
+                        else rows += `    <tr><th>${k}</th><td>${v}</td></tr>\n`;
+                    }
+                });
+
+                if(t) {
+                    infoHtml += `    <div class="infobox-title">${t}`;
+                    if(sub) infoHtml += `<br/><span class="text-sm font-normal">${sub}</span>`;
+                    infoHtml += `</div>\n`;
+                }
+                if(img) infoHtml += `    <div class="bg-white text-center border-b">\n        <img class="w-full block" src="${img}" alt="${t}"/>\n    </div>\n`;
+                infoHtml += `    <table class="infobox-table">\n${rows}    </table>\n</aside>\n`;
+                return infoHtml;
+            });
+
+            html = html.replace(/^(={2,5})\s+(.*?)\s+\1$/gm, (match, equals, titleText) => {
+                hCount++;
+                let level = equals.length; 
+                let id = `s-${hCount}`;
+                tocData.push({ level, title: titleText, id });
+                return `\n<h${level} class="anchor-offset" id="${id}">${titleText}</h${level}>`;
+            });
+
+            html = html.replace(/\[include\((.*?)\)\]/gi, (match, content) => {
+                let args = content.split(',');
+                let target = args[0].trim(); 
+                let cleanTarget = target.replace(/^틀\s*:\s*/, '').trim();
+
+                if (cleanTarget.includes('다른 뜻')) {
+                    let params = {};
+                    for (let k = 1; k < args.length; k++) {
+                        let kv = args[k].split('=');
+                        if (kv.length >= 2) {
+                            params[kv[0].trim()] = kv.slice(1).join('=').trim();
+                        }
+                    }
+                    let desc = params['설명1'] || '';
+                    let docName = params['문서1'] || params['문서명1'] || '';
+                    let encodedDocName = docName.replace(/ /g, '_');
+                    let customSvgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7777AA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block; margin-right: 6px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+
+                    return `
+                    <div style="border: 1px solid #dcdce6; background-color: #f8f8fc; padding: 10px 15px; margin-bottom: 15px; border-radius: 4px; font-size: 0.9rem; color: #373a3c; display: flex; align-items: center;">
+                        <span>${customSvgIcon}이 문서는 <b>${desc}</b>에 대한 내용을 다루고 있습니다. <b>${docName}</b>에 대한 내용은 <a class="wiki-link" href="${encodedDocName}.html">${docName}</a> 문서를 참조하세요.</span>
+                    </div>`;
+                }
+                
+                if (cleanTarget.includes('상위 문서') || cleanTarget.includes('상위문서')) {
+                    let params = {};
+                    for (let k = 1; k < args.length; k++) {
+                        let kv = args[k].split('=');
+                        if (kv.length >= 2) {
+                            params[kv[0].trim()] = kv.slice(1).join('=').trim();
+                        }
+                    }
+                    let docName = params['문서명'] || params['문서'] || '';
+                    if (!docName && args.length > 1) {
+                        let val = args[1].includes('=') ? args[1].split('=')[1] : args[1];
+                        if (val) docName = val.trim();
+                    }
+                    let encodedDocName = docName.replace(/ /g, '_');
+                    let upperSvgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7777AA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block; margin-right: 6px;"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>`;
+                    let displayDocHtml = docName ? `<a class="wiki-link" href="${encodedDocName}.html">${docName}</a>` : `상위 문서`;
+
+                    return `
+                    <div style="border: 1px solid #dcdce6; background-color: #f8f8fc; padding: 10px 15px; margin-bottom: 15px; border-radius: 4px; font-size: 0.9rem; color: #373a3c; display: flex; align-items: center;">
+                        <span>${upperSvgIcon}상위 문서: ${displayDocHtml}</span>
+                    </div>`;
+                }
+
+                if (cleanTarget.includes('상세 내용') || cleanTarget.includes('상세내용')) {
+                    let params = {};
+                    for (let k = 1; k < args.length; k++) {
+                        let kv = args[k].split('=');
+                        if (kv.length >= 2) {
+                            params[kv[0].trim()] = kv.slice(1).join('=').trim();
+                        }
+                    }
+                    let docName = params['문서명'] || params['문서'] || '';
+                    let encodedDocName = docName.replace(/ /g, '_');
+                    let detailSvgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" style="vertical-align: middle; display: inline-block; margin-right: 6px;"><circle cx="12" cy="12" r="12" fill="#7777AA"/><rect x="7" y="7" width="10" height="10" rx="1.5" fill="none" stroke="white" stroke-width="2"/><line x1="10" y1="11" x2="14" y2="11" stroke="white" stroke-width="2" stroke-linecap="round"/><line x1="10" y1="14" x2="13" y2="14" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>`;
+
+                    return `
+                    <div style="border: 1px solid #dcdce6; background-color: #f8f8fc; padding: 10px 15px; margin-bottom: 15px; border-radius: 4px; font-size: 0.9rem; color: #373a3c; display: flex; align-items: center;">
+                        <span>${detailSvgIcon}자세한 내용은 <a class="wiki-link" href="${encodedDocName}.html">${docName}</a> 문서를 참고하십시오.</span>
+                    </div>`;
+                }
+
+                if (cleanTarget.includes('관련 문서') || cleanTarget.includes('연관문서') || cleanTarget.includes('관련문서')) {
+                    let params = {};
+                    for (let k = 1; k < args.length; k++) {
+                        let kv = args[k].split('=');
+                        if (kv.length >= 2) {
+                            params[kv[0].trim()] = kv.slice(1).join('=').trim();
+                        }
+                    }
+                    let docs = [];
+                    for (let key in params) {
+                        if (key.includes('문서')) docs.push(params[key]);
+                    }
+                    if (docs.length === 0 && args.length > 1) {
+                        for (let k = 1; k < args.length; k++) {
+                            let val = args[k].includes('=') ? args[k].split('=')[1] : args[k];
+                            if (val) docs.push(val.trim());
+                        }
+                    }
+                    let docLinks = docs.map(doc => {
+                        let cleanDoc = doc.trim();
+                        return `<a class="wiki-link" href="${cleanDoc.replace(/ /g, '_')}.html">${cleanDoc}</a>`;
+                    }).join(', ');
+                    let relatedSvgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7777AA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block; margin-right: 6px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`;
+
+                    return `
+                    <div style="border: 1px solid #dcdce6; background-color: #f8f8fc; padding: 10px 15px; margin-bottom: 15px; border-radius: 4px; font-size: 0.9rem; color: #373a3c; display: flex; align-items: center;">
+                        <span>${relatedSvgIcon}관련 문서: ${docLinks}</span>
+                    </div>`;
+                }
+                
+                let searchName = cleanTarget.replace(/:/g, '_').replace(/ /g, '_');
+                let matchFile = null;
+                const manualAliasMap = { "대한민국의 행정구역": "assets/korea_admini_class.js" };
+
+                if (manualAliasMap[cleanTarget]) {
+                    matchFile = manualAliasMap[cleanTarget];
+                } else if(jsMap[searchName]) {
+                    matchFile = jsMap[searchName];
+                } else if(jsMap['틀_' + searchName]) {
+                    matchFile = jsMap['틀_' + searchName];
+                } else {
+                    let simpleSearch = searchName.replace(/[_]/g, '');
+                    for(let key in jsMap) {
+                        let simpleKey = key.replace(/[_틀]/g, '');
+                        if(simpleKey === simpleSearch) {
+                            matchFile = jsMap[key];
+                            break;
+                        }
+                    }
+                }
+
+                if(matchFile) {
+                    let randomId = "nav-container-" + Math.floor(Math.random() * 100000);
+                    return `<div class="no-autolink" style="margin-bottom: 20px;">\n    <div id="${randomId}"></div>\n    <script src="${matchFile}"><\/script>\n</div>`;
+                }
+                return `> 틀 포함: ${target}`;
+            });
+
+            html = html.replace(/\[TOC\]/g, () => {
+                if (tocData.length === 0) return '';
+                let tocHtml = `<div class="toc shrink-0 shadow-sm" id="toc-box">\n    <div class="toc-title">목차</div>\n    <ul>\n`;
+                let currentLevel = 2;
+                
+                tocData.forEach(item => {
+                    if (item.level > currentLevel) { tocHtml += '        <ul>\n'.repeat(item.level - currentLevel); } 
+                    else if (item.level < currentLevel) { tocHtml += '        </ul>\n'.repeat(currentLevel - item.level); }
+                    
+                    const indent = "        ".repeat(item.level - 1);
+                    tocHtml += `${indent}<li><a href="#${item.id}">${item.title}</a></li>\n`;
+                    currentLevel = item.level;
+                });
+                
+                while (currentLevel > 2) { tocHtml += '        </ul>\n'; currentLevel--; }
+                tocHtml += `    </ul>\n</div>`;
+                return tocHtml;
+            });
+
+            html = html.replace(/\[clearfix\]/gi, '<div style="clear: both;"></div>');
+            html = html.replace(/^>\s+(.*)$/gm, '<blockquote>$1</blockquote>');
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/\~\~(.*?)\~\~/g, '<del>$1</del>');
+            html = html.replace(/\[c:(.*?)\](.*?)\[\/c\]/g, '<span style="color:$1;">$2</span>');
+            
+            html = html.replace(/\[badge:([a-zA-Z0-9_-]+)\|(.*?)\]/g, '<span class="party-badge $1">$2</span>');
+            html = html.replace(/\[\[파일:([^|\].]+)(?:\.[a-zA-Z0-9]+)?(?:\|[^\]]*)?\]\]/gi, (match, filename) => {
+                return `<img src="이미지/${filename.trim()}.webp" style="max-width:100%; height:auto; display:block; margin: 0 auto;">`;
+            });
+            html = html.replace(/\[\[([^\]]+)\]\]/g, (match, inner) => {
+                let link = inner, text = inner;
+                if (inner.includes('|')) { const parts = inner.split('|'); link = parts[0]; text = parts[1]; }
+                const href = link.replace(/ /g, '_') + '.html';
+                return `<a class="wiki-link" href="${href}">${text}</a>`;
+            });
+
+            html = html.replace(/\[\*(\d+)\]/g, '<a class="wiki-fn-link" href="#fn-$1" id="rfn-$1">[$1]</a>');
+            
+            let footnotes = [];
+            html = html.replace(/^\[fn:(\d+)\]\s+(.*)$/gm, (match, id, text) => {
+                footnotes.push({ id, text });
+                return ''; 
+            });
+
+            if (footnotes.length > 0) {
+                footnotes.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+                let fnListHtml = '\n\n<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc; font-size: 0.9em;">\n';
+                fnListHtml += '    <ul style="list-style: none !important; padding-left: 0 !important; line-height: 1.8; color: #555;">\n';
+                footnotes.forEach(fn => {
+                    fnListHtml += `        <li id="fn-${fn.id}" style="margin-bottom: 4px;"><a href="#rfn-${fn.id}" style="color: var(--wiki-link); font-weight: bold; text-decoration: none;">[${fn.id}]</a> ${fn.text} <a class="wiki-link" href="#rfn-${fn.id}">↑</a></li>\n`;
+                });
+                fnListHtml += '    </ul>\n</div>';
+                html += fnListHtml;
+            }
+
+            let lines = html.split('\n');
+            let inList = false;
+            let newLines = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+                let match = line.match(/^(\s*)\*\s+(.*)$/) || line.match(/^(\s*)\-\s+(.*)$/);
+                if (match) {
+                    let content = match[2];
+                    if (!inList) {
+                        newLines.push('<ul style="list-style-type: disc; padding-left: 20px; margin: 10px 0; line-height: 1.6;">');
+                        inList = true;
+                    }
+                    newLines.push(`    <li>${content}</li>`);
+                } else {
+                    if (inList) {
+                        newLines.push('</ul>');
+                        inList = false;
+                    }
+                    newLines.push(line);
+                }
+            }
+            if (inList) newLines.push('</ul>');
+            html = newLines.join('\n');
+
+            let paragraphs = html.split(/\n\s*\n/);
+            for(let i=0; i<paragraphs.length; i++) {
+                let p = paragraphs[i].trim();
+                if (!p.match(/^(<h|<div|<aside|<blockquote|<table|<ul|<ol|<li|<script|<details)/) && p.length > 0) {
+                     p = p.replace(/\n/g, '<br/>\n');
+                     paragraphs[i] = `<p>${p}</p>`;
+                }
+            }
+            html = paragraphs.join('\n\n');
+
+            return { html, pageTitle, themeColor };
+        }
+
+        function parseNamuWikiCode(text, title) {
+            let converted = `!TITLE:${title}\n!COLOR:#E76092\n\n`;
+
+            // 분류 치환
+            let cats = [];
+            text = text.replace(/\[\[분류:(.*?)\]\]/g, (match, p1) => { cats.push(p1.trim()); return ''; });
+            if (cats.length > 0) converted += `[cat:${cats.join(', ')}]\n\n`;
+
+            text = text.replace(/\[목차\]/g, '[TOC]');
+            text = text.replace(/\[clearfix\]/gi, '');
+
+            let hCounters = [0, 0, 0, 0, 0, 0, 0];
+            text = text.replace(/^(={2,6})\s+(.*?)\s+\1$/gm, (match, equals, titleText) => {
+                let level = equals.length;
+                hCounters[level]++;
+                for(let i = level + 1; i <= 6; i++) { hCounters[i] = 0; }
+                let numStr = "";
+                for(let i = 2; i <= level; i++) { numStr += hCounters[i] + "."; }
+                return `${equals} ${numStr} ${titleText.trim()} ${equals}`;
+            });
+
+            // 스택 기반 괄호 매칭 파서 (위키 문법 및 폴딩 복합 대응)
+            let stack = [];
+            let parsedText = "";
+            let regex = /\{\{\{#!wiki\s+style="([^"]+)"|\{\{\{#!folding\s+\[(.*?)\]|\{\{\{\+([1-5])\s|\{\{\{#([a-zA-Z0-9,]+)\s|\{\{\{|\}\}\}/g;
+            let lastIndex = 0;
+            let matchBlock;
+
+            while ((matchBlock = regex.exec(text)) !== null) {
+                parsedText += text.substring(lastIndex, matchBlock.index);
+                if (matchBlock[0].startsWith('{{{#!wiki')) {
+                    parsedText += `<div style="${matchBlock[1]}">`;
+                    stack.push('wiki');
+                } else if (matchBlock[0].startsWith('{{{#!folding')) {
+                    parsedText += `<details><summary>${matchBlock[2]}</summary><div>`;
+                    stack.push('folding');
+                } else if (matchBlock[0].startsWith('{{{+')) {
+                    parsedText += `<span style="font-size: 1.${matchBlock[3]}em; font-weight: bold;">`;
+                    stack.push('span');
+                } else if (matchBlock[0].startsWith('{{{#')) {
+                    let color = matchBlock[4].includes(',') ? matchBlock[4].split(',')[0] : matchBlock[4];
+                    if (!color.startsWith('#') && /^[0-9a-fA-F]+$/.test(color)) color = '#' + color;
+                    parsedText += `<span style="color: ${color};">`;
+                    stack.push('span');
+                } else if (matchBlock[0] === '{{{') {
+                    parsedText += `<span>`;
+                    stack.push('span');
+                } else if (matchBlock[0] === '}}}') {
+                    let type = stack.pop();
+                    if (type === 'folding') parsedText += `</div></details>`;
+                    else if (type === 'wiki') parsedText += `</div>`;
+                    else parsedText += `</span>`;
+                }
+                lastIndex = regex.lastIndex;
+            }
+            parsedText += text.substring(lastIndex);
+            text = parsedText;
+
+            text = text.replace(/'''(.*?)'''/g, '**$1**'); 
+            text = text.replace(/~~(.*?)~~/g, '~~$1~~'); 
+            text = text.replace(/--(.*?)--/g, '~~$1~~'); 
+
+            let fnIndex = 1;
+            let fnList = [];
+            let outText = "";
+            for(let i = 0; i < text.length; i++) {
+                if(text.substr(i, 2) === '[*') {
+                    let depth = 1;
+                    let j = i + 2;
+                    while(j < text.length && depth > 0) {
+                        if(text[j] === '[') depth++;
+                        else if(text[j] === ']') depth--;
+                        j++;
+                    }
+                    if(depth === 0) {
+                        let content = text.substring(i+2, j-1).trim();
+                        fnList.push(`[fn:${fnIndex}] ${content}`);
+                        outText += `[*${fnIndex}]`;
+                        fnIndex++;
+                        i = j - 1; 
+                        continue;
+                    }
+                }
+                outText += text[i];
+            }
+            text = outText;
+
+            // 표 변환 로직
+            let lines = text.split('\n');
+            let inTable = false;
+            let newLines = [];
+            
+            function parseNamuCell(rawCellStr) {
+                let attrs = '';
+                let content = rawCellStr.trim();
+                
+                let rowspanMatch = content.match(/^<\|\s*(\d+)>\s*/);
+                if (rowspanMatch) { attrs += ` rowspan="${rowspanMatch[1]}"`; content = content.replace(/^<\|\s*(\d+)>\s*/, ''); }
+                
+                let colspanMatch = content.match(/^<-\s*(\d+)>\s*/);
+                if (colspanMatch) { attrs += ` colspan="${colspanMatch[1]}"`; content = content.replace(/^<-\s*(\d+)>\s*/, ''); }
+                
+                let bgMatch = content.match(/^<(?:row)?bgcolor=([^>]+)>\s*/i);
+                if (bgMatch) { 
+                    let color = bgMatch[1].includes(',') ? bgMatch[1].split(',')[0] : bgMatch[1];
+                    attrs += ` style="background-color: ${color};"`; 
+                    content = content.replace(/^<(?:row)?bgcolor=[^>]+>\s*/i, ''); 
+                }
+                
+                let widthMatch = content.match(/^<width=([^>]+)>\s*/i);
+                if (widthMatch) { attrs += ` width="${widthMatch[1]}"`; content = content.replace(/^<width=[^>]+>\s*/i, ''); }
+                
+                content = content.replace(/^<:[^>]*>\s*/, '').replace(/^<[^>]+>\s*/, '');
+                return `<td${attrs}>${content}</td>`;
+            }
+
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                
+                if (line.startsWith('||') && !line.endsWith('||')) line += '||';
+                
+                if (line.startsWith('||') && line.endsWith('||')) {
+                    if (!inTable) {
+                        let tableStyle = "width: 100%; border-collapse: collapse; text-align: center; margin: 15px 0;";
+                        let tableWidth = line.match(/<tablewidth=([^>]+)>/i);
+                        let tableBg = line.match(/<tablebgcolor=([^>]+)>/i);
+                        let tableBorder = line.match(/<tablebordercolor=([^>]+)>/i);
+                        
+                        if(tableWidth) tableStyle += ` width: ${tableWidth[1]};`;
+                        if(tableBg) {
+                            let bg = tableBg[1].includes(',') ? tableBg[1].split(',')[0] : tableBg[1];
+                            if(bg !== 'transparent') tableStyle += ` background-color: ${bg};`;
+                        }
+                        if(tableBorder) {
+                            let border = tableBorder[1].includes(',') ? tableBorder[1].split(',')[0] : tableBorder[1];
+                            tableStyle += ` border: 2px solid ${border};`;
+                        } else {
+                            tableStyle += ` border: 1px solid #ccc;`;
+                        }
+                        line = line.replace(/<(?:tablewidth|tablebgcolor|tablebordercolor|tablealign|nopad)=?[^>]*>/gi, '');
+                        newLines.push(`<table style="${tableStyle}">\n    <tbody>`);
+                        inTable = true;
+                    }
+                    
+                    let rowBgMatch = line.match(/^\|\|<rowbgcolor=([^>]+)>/i);
+                    let rowStyle = "";
+                    if (rowBgMatch) {
+                        let bg = rowBgMatch[1].includes(',') ? rowBgMatch[1].split(',')[0] : rowBgMatch[1];
+                        rowStyle = ` style="background-color: ${bg};"`;
+                        line = line.replace(/\|\|<rowbgcolor=[^>]+>/i, '||');
+                    }
+                    
+                    let rawCells = line.split('||').slice(1, -1);
+                    let rowHtml = `        <tr${rowStyle}>`;
+                    rawCells.forEach(cell => { rowHtml += parseNamuCell(cell); });
+                    rowHtml += '</tr>';
+                    newLines.push(rowHtml);
+                } else {
+                    if (inTable) { newLines.push('    </tbody>\n</table>'); inTable = false; }
+                    newLines.push(lines[i]);
+                }
+            }
+            if (inTable) newLines.push('    </tbody>\n</table>');
+            text = newLines.join('\n');
+            
+            converted += text.trim();
+
+            if (fnList.length > 0) {
+                converted += `\n\n== 각주 ==\n${fnList.join('\n')}`;
+            }
+            return converted;
+        }
+
+        function executeNamuConvert() {
+            let title = document.getElementById('namu-title').value.trim() || '새 문서';
+            let rawText = document.getElementById('editor-namu').value;
+            if (!rawText.trim()) { showToast("나무위키 코드를 입력해주세요!"); return; }
+
+            let converted = parseNamuWikiCode(rawText, title);
+            document.getElementById('editor').value = converted;
+            setEditMode('wiki');
+            compileWiki();
+            showToast("나무위키 문법이 효빈위키 에디터용으로 완벽 치환되었습니다! 🌿");
+        }
+
+        function generateJsTemplateFile() {
+            let title = document.getElementById('namu-title').value.trim();
+            if (!title) { showToast("생성할 템플릿의 제목을 입력하세요 (예: 틀_도도부현)"); return; }
+            
+            let rawText = document.getElementById('editor-namu').value;
+            if (!rawText.trim()) { showToast("나무위키 코드를 입력해주세요!"); return; }
+
+            // 1. 나무위키 -> 효빈위키 텍스트
+            let convertedWiki = parseNamuWikiCode(rawText, title);
+            
+            // 2. 효빈위키 텍스트 -> 최종 HTML
+            let parsedHtml = parseWikiSyntax(convertedWiki).html;
+
+            // 3. 자바스크립트 템플릿으로 래핑
+            let escapedHtml = parsedHtml.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
+            
+            let jsContent = `(function() {
+    const templateHtml = \`
+${escapedHtml}
+    \`;
+
+    // 효빈위키 렌더러가 [include(...)]를 치환할 때 사용하는 래퍼 div를 타겟팅합니다.
+    const currentScript = document.currentScript;
+    if (currentScript && currentScript.previousElementSibling) {
+        currentScript.previousElementSibling.innerHTML = templateHtml;
+    } else {
+        // Fallback
+        document.write(templateHtml);
+    }
+})();`;
+
+            // 4. JS 파일 다운로드 트리거
+            const blob = new Blob([jsContent], { type: 'application/javascript' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${title.replace(/ /g, '_')}.js`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast(`'${a.download}' JS 파일이 생성 및 다운로드 되었습니다! 🚀`);
+        }
+
+        function compileWiki() {
+            const rawText = document.getElementById('editor').value;
+            const parsed = parseWikiSyntax(rawText);
+            document.getElementById('body-code').textContent = parsed.html;
+            
+            let fullHtml = fullHtmlTemplate
+                .replaceAll('{{TITLE}}', parsed.pageTitle)
+                .replace(/\{\{COLOR\}\}/g, parsed.themeColor)
+                .replace('{{CSS_CONTENT}}', wikiCommonCSS)
+                .replace('{{BODY_CONTENT}}', '    ' + parsed.html.split('\n').join('\n    ')); 
+                
+            document.getElementById('full-code').textContent = fullHtml;
+            const iframe = document.getElementById('preview-iframe');
+            iframe.srcdoc = fullHtml;
+        }
+
+        function debounceCompile() {
+            clearTimeout(compileTimer);
+            compileTimer = setTimeout(compileWiki, 300);
+        }
+
+        window.onload = () => {
+            document.getElementById('editor').value = defaultText;
+            compileWiki();
+        };
+
+        function setEditMode(mode) {
+            document.querySelectorAll('.mode-tab').forEach(tab => tab.className = 'mode-tab inactive');
+            document.getElementById('tab-mode-' + mode).className = 'mode-tab active';
+            
+            document.getElementById('ui-wiki').classList.add('hidden');
+            document.getElementById('ui-smart').classList.add('hidden');
+            document.getElementById('ui-namu').classList.add('hidden');
+            document.getElementById('ui-' + mode).classList.remove('hidden');
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            
+            document.getElementById('view-preview').classList.add('hidden');
+            document.getElementById('view-body').classList.add('hidden');
+            document.getElementById('view-full').classList.add('hidden');
+            
+            document.getElementById('view-' + tabId).classList.remove('hidden');
+        }
+
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        window.onclick = function(event) {
+            const modal1 = document.getElementById('guideModal');
+            const modal2 = document.getElementById('smartGuideModal');
+            if (event.target == modal1) modal1.style.display = "none";
+            if (event.target == modal2) modal2.style.display = "none";
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+        }
+
+        function copyHTML(type) {
+            const targetId = type === 'body' ? 'body-code' : 'full-code';
+            const text = document.getElementById(targetId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(type === 'body' ? 'Body 컨텐츠가 복사되었습니다.' : '전체 HTML이 복사되었습니다.');
+            }).catch(err => { showToast('복사 실패!'); });
+        }
+
+        function downloadHTML() {
+            const text = document.getElementById('full-code').textContent;
+            const titleMatch = document.getElementById('editor').value.match(/^!TITLE:(.*)$/m);
+            const title = titleMatch ? titleMatch[1].trim() : '효빈위키문서';
+            
+            const blob = new Blob([text], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${title}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast(`'${title}.html' 파일이 다운로드 되었습니다.`);
+        }
+    </script>
+</body>
+</html>
