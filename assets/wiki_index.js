@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 8. 27. 오전 1:10:22
+ * 업데이트: 2026. 8. 27. 오후 11:28:53
  */
 
 window.HB_WIKI_PAGES = [
@@ -11111,6 +11111,34 @@ window.HB_WIKI_PAGES = [
   {
     "title": "고노애",
     "href": "고노애.html"
+  },
+  {
+    "title": "조향림",
+    "href": "조향림.html"
+  },
+  {
+    "title": "아이_좋아_전_집",
+    "href": "아이_좋아_전_집.html"
+  },
+  {
+    "title": "법정동_목록",
+    "href": "법정동_목록.html"
+  },
+  {
+    "title": "지랄",
+    "href": "지랄.html"
+  },
+  {
+    "title": "병신",
+    "href": "병신.html"
+  },
+  {
+    "title": "엠마_체레스떼",
+    "href": "엠마_체레스떼.html"
+  },
+  {
+    "title": "천리내",
+    "href": "천리내.html"
   }
 ];
 
@@ -17479,5 +17507,12 @@ window.HB_WIKI_ALIASES = {
   "오이슬": "오이슬.html",
   "강하애": "강하애.html",
   "나수미": "나수미.html",
-  "고노애": "고노애.html"
+  "고노애": "고노애.html",
+  "조향림": "조향림.html",
+  "아이_좋아_전_집": "아이_좋아_전_집.html",
+  "법정동_목록": "법정동_목록.html",
+  "지랄": "지랄.html",
+  "병신": "병신.html",
+  "엠마_체레스떼": "엠마_체레스떼.html",
+  "천리내": "천리내.html"
 };

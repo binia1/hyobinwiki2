@@ -9578,7 +9578,15 @@
   "오이슬": "오이슬.html",
   "강하애": "강하애.html",
   "나수미": "나수미.html",
-  "고노애": "고노애.html"
+  "고노애": "고노애.html",
+    "조향림": "조향림.html",
+  "아이_좋아_전_집": "아이_좋아_전_집.html",
+    "법정동_목록": "법정동_목록.html",
+  "지랄": "지랄.html",
+  "병신": "병신.html",
+    "엠마_체레스떼": "엠마_체레스떼.html",
+    "엠마 체레스떼": "엠마_체레스떼.html",
+  "천리내": "천리내.html"
 
 
 
@@ -10774,104 +10782,50 @@ populateRecentList();
     });
 }
 document.addEventListener('DOMContentLoaded', () => {
-    let tooltip = document.getElementById('wiki-fn-tooltip');
-    
-    // 문서에 툴팁 박스가 없으면 JS가 직접 만들고 디자인(CSS)까지 다 입혀버림
+    let tooltip = document.getElementById('wiki-tooltip');
     if (!tooltip) {
         tooltip = document.createElement('div');
-        tooltip.id = 'wiki-fn-tooltip';
-        
-        // [핵심] CSS를 강제 주입! 효빈역 문서처럼 CSS가 누락된 곳에서도 무조건 보이게 만듦
-        tooltip.style.position = 'fixed';
-        tooltip.style.background = '#ffffff';
-        tooltip.style.border = '1px solid #7777AA';
-        tooltip.style.padding = '10px 15px';
-        tooltip.style.fontSize = '14px';
-        tooltip.style.maxWidth = '350px';
-        tooltip.style.zIndex = '999999'; // 무조건 맨 위에 오도록
-        tooltip.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
-        tooltip.style.borderRadius = '6px';
-        tooltip.style.color = '#333';
-        tooltip.style.lineHeight = '1.5';
-        tooltip.style.pointerEvents = 'auto'; // 드래그/클릭 가능하게
-        tooltip.style.display = 'none';
-        
+        tooltip.id = 'wiki-tooltip';
+        tooltip.style.cssText = 'position: absolute; background: white; border: 1px solid #999; padding: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); max-width: 350px; z-index: 9999; font-size: 0.85rem; border-radius: 4px; line-height: 1.4; color: #333; pointer-events: none; display: none;';
         document.body.appendChild(tooltip);
-    } else {
-        // 이미 툴팁 HTML이 있는 문서라도 포인터 이벤트는 강제로 켜줌
-        tooltip.style.pointerEvents = 'auto';
     }
-    
-    let hideTimeout; // 툴팁 숨김 지연 타이머
 
-    // 클래스 이름이 다르거나 꼬인 녀석들까지 전부 다 잡아냄
-    const footnotes = document.querySelectorAll('.wiki-fn, .wiki-fn-link, a[href^="#fn-"]');
-
-    footnotes.forEach(oldFn => {
-        // 기존 문서들의 꼬인 이벤트를 날려버리는 마법 (복제 후 바꿔치기)
-        const fn = oldFn.cloneNode(true);
-        oldFn.parentNode.replaceChild(fn, oldFn);
-
-        // 마우스를 각주에 올렸을 때
-        fn.addEventListener('mouseenter', (e) => {
-            clearTimeout(hideTimeout);
-
-            const targetAttr = fn.getAttribute('href');
-            if (!targetAttr || !targetAttr.startsWith('#')) return;
+    // data-content가 있는 경우와 #fn- 링크 형태를 모두 잡아냅니다.
+    const fnLinks = document.querySelectorAll('.wiki-fn-link, a[href^="#fn-"]');
+    fnLinks.forEach(link => {
+        link.addEventListener('mouseenter', (e) => {
+            let content = link.getAttribute('data-content');
             
-            const targetId = targetAttr.substring(1); 
-            const contentEl = document.getElementById(targetId);
-            
-            if (contentEl) {
-                // 각주 내용 긁어오기
-                tooltip.innerHTML = contentEl.innerHTML;
-                
-                const backLink = tooltip.querySelector('.wiki-fn-back');
-                if (backLink) {
-                    backLink.style.display = 'none'; 
+            // data-content가 없다면 href(#fn-...)를 추적해서 하단 각주 내용을 가져옴
+            if (!content) {
+                const href = link.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    const target = document.querySelector(href);
+                    if (target) {
+                        let clone = target.cloneNode(true);
+                        const backLink = clone.querySelector('a[href^="#rfn-"]');
+                        if (backLink) backLink.remove();
+                        content = clone.innerHTML;
+                    }
                 }
-                
+            }
+
+            if (content) {
+                tooltip.innerHTML = content;
                 tooltip.style.display = 'block';
-
-                // 말풍선 위치 고정 계산
-                const rect = fn.getBoundingClientRect();
-                let topPos = rect.bottom + 8; 
-                let leftPos = rect.left;
-
-                // 화면 밖으로 안 나가게 방어
-                if (leftPos + tooltip.offsetWidth > window.innerWidth) {
-                    leftPos = window.innerWidth - tooltip.offsetWidth - 10;
-                }
-                if (topPos + tooltip.offsetHeight > window.innerHeight) {
-                    topPos = rect.top - tooltip.offsetHeight - 8;
-                }
-
-                tooltip.style.top = topPos + 'px';
-                tooltip.style.left = leftPos + 'px';
             }
         });
 
-        // 마우스가 각주 번호에서 나갔을 때 (0.3초 대기)
-        fn.addEventListener('mouseleave', () => {
-            hideTimeout = setTimeout(() => {
-                tooltip.style.display = 'none';
-            }, 300);
+        link.addEventListener('mousemove', (e) => {
+            tooltip.style.left = (e.pageX + 15) + 'px';
+            tooltip.style.top = (e.pageY + 15) + 'px';
+        });
+
+        link.addEventListener('mouseleave', () => {
+            tooltip.style.display = 'none';
         });
     });
-
-    // 마우스가 툴팁 안으로 들어오면 창 안 닫히게 유지 (글씨 긁기/클릭 가능)
-    tooltip.addEventListener('mouseenter', () => {
-        clearTimeout(hideTimeout);
-    });
-
-    // 마우스가 툴팁 밖으로 나가면 그때 닫힘
-    tooltip.addEventListener('mouseleave', () => {
-        hideTimeout = setTimeout(() => {
-            tooltip.style.display = 'none';
-        }, 300);
-    });
 });
-
 document.addEventListener('DOMContentLoaded', () => {
     
     // ==========================================
