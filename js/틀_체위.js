@@ -1,3 +1,4 @@
+// SPA 및 뷰어 환경에 맞게 즉시 실행 함수(IIFE)로 렌더링
 (function() {
     const templateHtml = `
 
@@ -32,12 +33,12 @@
 </table>
     `;
 
-    // 효빈위키 렌더러가 [include(...)]를 치환할 때 사용하는 래퍼 div를 타겟팅합니다.
+    // 효빈위키 렌더러가 템플릿을 호출한 스크립트 위치를 정확히 타겟팅합니다.
     const currentScript = document.currentScript;
-    if (currentScript && currentScript.previousElementSibling) {
-        currentScript.previousElementSibling.innerHTML = templateHtml;
+    if (currentScript) {
+        currentScript.insertAdjacentHTML('beforebegin', templateHtml);
     } else {
-        // Fallback
+        // Fallback: currentScript를 지원하지 않을 경우
         document.write(templateHtml);
     }
 })();

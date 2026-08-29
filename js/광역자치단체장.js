@@ -68,9 +68,9 @@ document.addEventListener("DOMContentLoaded", function() {
                             <td style="background-color: #f8f9fa; border: 1px solid #ddd;"></td>
                         </tr>
                         <tr style="background-color: #fff;">
-                            <td style="padding: 10px 5px; border: 1px solid #ddd; background-color: #f0f4ff;"><a href="박효빈.html" style="color: #333; text-decoration: none; font-weight: bold;">박효빈</a></td>
-                            <td style="padding: 10px 5px; border: 1px solid #ddd; background-color: #f0f4ff;"><a href="강수성.html" style="color: #333; text-decoration: none; font-weight: bold;">강수성</a></td>
-                            <td style="padding: 10px 5px; border: 1px solid #ddd; background-color: #f0f4ff;"><a href="김영산.html" style="color: #333; text-decoration: none; font-weight: bold;">김영산</a></td>
+                            <td style="padding: 10px 5px; border: 1px solid #ddd; "><a href="박효빈.html" style="color: #333; text-decoration: none; font-weight: bold;">박효빈</a></td>
+                            <td style="padding: 10px 5px; border: 1px solid #ddd; "><a href="강수성.html" style="color: #333; text-decoration: none; font-weight: bold;">강수성</a></td>
+                            <td style="padding: 10px 5px; border: 1px solid #ddd; "><a href="김영산.html" style="color: #333; text-decoration: none; font-weight: bold;">김영산</a></td>
                             <td style="padding: 10px 5px; border: 1px solid #ddd; background-color: #f8f9fa;"></td>
                         </tr>
                         <tr style="background-color: #fff; border-top: 1px solid #ddd;">

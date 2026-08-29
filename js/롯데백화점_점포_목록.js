@@ -188,6 +188,18 @@ document.addEventListener("DOMContentLoaded", function() {
                             <a href="롯데백화점_청엽점.html" class="text-[#0275d8] hover:underline">청엽점</a>
                         </td>
                     </tr>
+                                        <!-- 11열 (효빈광역시 지점) -->
+                    <tr class="border-b border-gray-200">
+                        <td class="py-2 px-2 border-r border-gray-200 hover:bg-gray-50 break-keep">
+                            <a href="롯데백화점_평당점.html" class="font-bold text-[#0275d8] hover:underline">평당점</a>
+                        </td>
+                        <td class="py-2 px-2 border-r border-gray-200 hover:bg-gray-50 break-keep">
+                            <a href="롯데백화점_빈주점.html" class="text-[#0275d8] hover:underline">빈주점</a>
+                        </td>
+                        <td class="py-2 px-2 hover:bg-gray-50 break-keep">
+                            <a href="롯데백화점_덕주점.html" class="text-[#0275d8] hover:underline">덕주점</a>
+                        </td>
+                    </tr>
 
                     <!-- 개점 준비 중인 점포 타이틀 -->
                     <tr>
