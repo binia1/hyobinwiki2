@@ -420,14 +420,14 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">일렉트로마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="일렉트로마트 마잡점.html" class="text-[#0275d8] hover:underline">마잡점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="일렉트로마트 사복점.html" class="text-[#0275d8] hover:underline">사복점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="일렉트로마트 안천점.html" class="text-[#0275d8] hover:underline">안천점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="일렉트로마트 월천점.html" class="text-[#0275d8] hover:underline">월천점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="일렉트로마트 중수점.html" class="text-[#0275d8] hover:underline">중수점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="일렉트로마트 창전점.html" class="text-[#0275d8] hover:underline">창전점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="일렉트로마트 효빈점.html" class="text-[#0275d8] hover:underline">효빈점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="일렉트로마트 효빈고속버스터미널점.html" class="text-[#0275d8] hover:underline">효빈고속버스터미널점</a>
+                            <a href="이마트_마잡점.html" class="text-[#0275d8] hover:underline">마잡점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="이마트_사복점.html" class="text-[#0275d8] hover:underline">사복점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="이마트_안천점.html" class="text-[#0275d8] hover:underline">안천점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="이마트_월천점.html" class="text-[#0275d8] hover:underline">월천점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="이마트_중수점.html" class="text-[#0275d8] hover:underline">중수점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="이마트_창전점.html" class="text-[#0275d8] hover:underline">창전점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="이마트_효빈점.html" class="text-[#0275d8] hover:underline">효빈점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="이마트_효빈고속버스터미널점.html" class="text-[#0275d8] hover:underline">효빈고속버스터미널점</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -446,11 +446,11 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">토이저러스</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="토이저러스 과진점.html" class="text-[#0275d8] hover:underline">과진점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="토이저러스 도변점.html" class="text-[#0275d8] hover:underline">도변점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="토이저러스 이자점.html" class="text-[#0275d8] hover:underline">이자점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="토이저러스 진희점.html" class="text-[#0275d8] hover:underline">진희점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="토이저러스 평당점.html" class="text-[#0275d8] hover:underline">평당점</a>
+                            <a href="롯데마트_과진점.html" class="text-[#0275d8] hover:underline">과진점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="롯데마트_도변점.html" class="text-[#0275d8] hover:underline">도변점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="롯데마트_이자점.html" class="text-[#0275d8] hover:underline">이자점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="롯데마트_진희점.html" class="text-[#0275d8] hover:underline">진희점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="롯데마트_평당점.html" class="text-[#0275d8] hover:underline">평당점</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
