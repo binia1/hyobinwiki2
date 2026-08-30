@@ -366,22 +366,14 @@ document.addEventListener("DOMContentLoaded", function() {
                             <a href="청엽 더샵 센트럴스퀘어.html" class="text-[#0275d8] hover:underline">청엽 더샵 센트럴스퀘어</a>
                         </td>
                     </tr>
-                    <tr class="border-b border-gray-200">
-                        <td class="bg-white border-r border-gray-300 align-middle p-1.5">
-                            <img src="이미지/스타시티몰_로고.svg" alt="스타시티몰" class="h-9 mx-auto object-contain">
-                        </td>
-                        <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">스타시티몰</th>
-                        <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="진희 스타시티몰.html" class="text-[#0275d8] hover:underline">진희 스타시티몰</a>
-                        </td>
-                    </tr>
+
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1.5">
                             <img src="이미지/아쿠아몰_로고.svg" alt="아쿠아몰" class="h-9 mx-auto object-contain">
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">아쿠아몰</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="효빈역아쿠아몰.html" class="text-[#0275d8] hover:underline">효빈역아쿠아몰</a>
+                            <a href="창전 아쿠아 1단지.html" class="text-[#0275d8] hover:underline">창전아쿠아몰</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -391,9 +383,9 @@ document.addEventListener("DOMContentLoaded", function() {
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">기타</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
                             <a href="평당 빌리브몰.html" class="text-[#0275d8] hover:underline">평당 빌리브몰</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="창전 더리브몰.html" class="text-[#0275d8] hover:underline">창전 더리브몰</a> <span class="text-gray-300 mx-1">·</span>
                             <a href="창전 마린시티.html" class="text-[#0275d8] hover:underline">창전 마린시티</a> <span class="text-gray-300 mx-1">·</span>
                             <a href="덕현 벨리움.html" class="text-[#0275d8] hover:underline">덕현 벨리움</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="진희 스타시티몰.html" class="text-[#0275d8] hover:underline">진희 스타시티몰</a> <span class="text-gray-300 mx-1">·</span>
                             <a href="고송아이파크 상가.html" class="text-[#0275d8] hover:underline">고송아이파크 상가</a>
                         </td>
                     </tr>
