@@ -251,6 +251,14 @@ const imageFiles = [
         "category": "train"
     },
     {
+        "file": "1호선_모형.webp",
+        "category": "etc"
+    },
+    {
+        "file": "1호선레고.webp",
+        "category": "etc"
+    },
+    {
         "file": "1호선콜캎메뉴판.webp",
         "category": "etc"
     },
@@ -441,6 +449,10 @@ const imageFiles = [
     {
         "file": "2호선 하루빈 컵케익.webp",
         "category": "food"
+    },
+    {
+        "file": "2호선_쿠션.webp",
+        "category": "etc"
     },
     {
         "file": "2호선모카열차.webp",
@@ -989,6 +1001,10 @@ const imageFiles = [
     {
         "file": "7호선 임세하 콜캎메뉴판.webp",
         "category": "character"
+    },
+    {
+        "file": "7호선_다이캐스트.webp",
+        "category": "etc"
     },
     {
         "file": "7호선의 맏언니.webp",
@@ -2487,6 +2503,10 @@ const imageFiles = [
         "category": "logo"
     },
     {
+        "file": "강원승.webp",
+        "category": "person"
+    },
+    {
         "file": "강원특별자치도.svg",
         "category": "logo"
     },
@@ -2767,12 +2787,28 @@ const imageFiles = [
         "category": "merch"
     },
     {
+        "file": "고나미_노트.webp",
+        "category": "character"
+    },
+    {
+        "file": "고나미_볼펜.webp",
+        "category": "character"
+    },
+    {
         "file": "고나미_아빠.webp",
         "category": "person"
     },
     {
         "file": "고나미_엄마.webp",
         "category": "person"
+    },
+    {
+        "file": "고나미_지우개.webp",
+        "category": "character"
+    },
+    {
+        "file": "고나미_키링.webp",
+        "category": "character"
     },
     {
         "file": "고나미_피규어.webp",
@@ -2941,6 +2977,10 @@ const imageFiles = [
     {
         "file": "고송병원.webp",
         "category": "facility_com"
+    },
+    {
+        "file": "고송스퀘어_로고.svg",
+        "category": "logo"
     },
     {
         "file": "고송신도시_전경.webp",
@@ -3655,6 +3695,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "그립톡.webp",
+        "category": "etc"
+    },
+    {
         "file": "극한의 생존왕.webp",
         "category": "etc"
     },
@@ -3887,6 +3931,10 @@ const imageFiles = [
         "category": "merch"
     },
     {
+        "file": "김소빈_노트.webp",
+        "category": "character"
+    },
+    {
         "file": "김소빈_로고.webp",
         "category": "logo"
     },
@@ -3900,6 +3948,10 @@ const imageFiles = [
     },
     {
         "file": "김소빈_밥먹이기.webp",
+        "category": "character"
+    },
+    {
+        "file": "김소빈_볼펜.webp",
         "category": "character"
     },
     {
@@ -3920,6 +3972,10 @@ const imageFiles = [
     },
     {
         "file": "김소빈_졸린표정_투명.webp",
+        "category": "character"
+    },
+    {
+        "file": "김소빈_지우개.webp",
         "category": "character"
     },
     {
@@ -4415,6 +4471,10 @@ const imageFiles = [
         "category": "character"
     },
     {
+        "file": "니지동_효빈콜라보광고.webp",
+        "category": "logo"
+    },
+    {
         "file": "니지스터디홀.webp",
         "category": "facility_com"
     },
@@ -4471,6 +4531,14 @@ const imageFiles = [
         "category": "merch"
     },
     {
+        "file": "다로나_노트.webp",
+        "category": "character"
+    },
+    {
+        "file": "다로나_볼펜.webp",
+        "category": "character"
+    },
+    {
         "file": "다로나_아빠.webp",
         "category": "person"
     },
@@ -4479,8 +4547,16 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "다로나_지우개.webp",
+        "category": "character"
+    },
+    {
         "file": "다로나_피규어.webp",
         "category": "merch"
+    },
+    {
+        "file": "다로나_호루라기.webp",
+        "category": "character"
     },
     {
         "file": "다로나가족.webp",
@@ -4505,6 +4581,10 @@ const imageFiles = [
     {
         "file": "다문화의 명절.webp",
         "category": "etc"
+    },
+    {
+        "file": "다이버시티몰_로고.svg",
+        "category": "logo"
     },
     {
         "file": "다이아.webp",
@@ -5423,12 +5503,28 @@ const imageFiles = [
         "category": "merch"
     },
     {
+        "file": "라세나_노트.webp",
+        "category": "character"
+    },
+    {
+        "file": "라세나_볼펜.webp",
+        "category": "character"
+    },
+    {
         "file": "라세나_아빠.webp",
         "category": "person"
     },
     {
         "file": "라세나_엄마.webp",
         "category": "person"
+    },
+    {
+        "file": "라세나_지우개.webp",
+        "category": "character"
+    },
+    {
+        "file": "라세나_플래너.webp",
+        "category": "character"
     },
     {
         "file": "라세나_피규어.webp",
@@ -5824,6 +5920,10 @@ const imageFiles = [
     },
     {
         "file": "릿꼬..webp",
+        "category": "etc"
+    },
+    {
+        "file": "마그넷.webp",
         "category": "etc"
     },
     {
@@ -6411,6 +6511,18 @@ const imageFiles = [
         "category": "merch"
     },
     {
+        "file": "미소하_노트.webp",
+        "category": "character"
+    },
+    {
+        "file": "미소하_볼펜.webp",
+        "category": "character"
+    },
+    {
+        "file": "미소하_분석노트.webp",
+        "category": "document"
+    },
+    {
         "file": "미소하_아빠.webp",
         "category": "person"
     },
@@ -6420,6 +6532,10 @@ const imageFiles = [
     },
     {
         "file": "미소하_지아센_멘토링.webp",
+        "category": "character"
+    },
+    {
+        "file": "미소하_지우개.webp",
         "category": "character"
     },
     {
@@ -6587,6 +6703,14 @@ const imageFiles = [
         "category": "merch"
     },
     {
+        "file": "박라미_노트.webp",
+        "category": "character"
+    },
+    {
+        "file": "박라미_볼펜.webp",
+        "category": "character"
+    },
+    {
         "file": "박라미_엄마.webp",
         "category": "person"
     },
@@ -6612,6 +6736,14 @@ const imageFiles = [
     },
     {
         "file": "박라미_전신_화난표정_투명.webp",
+        "category": "character"
+    },
+    {
+        "file": "박라미_지우개.webp",
+        "category": "character"
+    },
+    {
+        "file": "박라미_파우치.webp",
         "category": "character"
     },
     {
@@ -6695,6 +6827,10 @@ const imageFiles = [
         "category": "merch"
     },
     {
+        "file": "박빛나_노트.webp",
+        "category": "character"
+    },
+    {
         "file": "박빛나_놀람_수정_투명.webp",
         "category": "character"
     },
@@ -6728,6 +6864,10 @@ const imageFiles = [
     },
     {
         "file": "박빛나_볼에바람넣기_수정_투명.webp",
+        "category": "character"
+    },
+    {
+        "file": "박빛나_볼펜.webp",
         "category": "character"
     },
     {
@@ -6800,6 +6940,10 @@ const imageFiles = [
     },
     {
         "file": "박빛나_전신_화난표정_투명.webp",
+        "category": "character"
+    },
+    {
+        "file": "박빛나_지우개.webp",
         "category": "character"
     },
     {
@@ -7295,6 +7439,10 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "배려석인형.webp",
+        "category": "merch"
+    },
+    {
         "file": "배선 장인.webp",
         "category": "etc"
     },
@@ -7708,6 +7856,10 @@ const imageFiles = [
     },
     {
         "file": "블루버드_멘토단.webp",
+        "category": "etc"
+    },
+    {
+        "file": "블루투스스피커.webp",
         "category": "etc"
     },
     {
@@ -9103,6 +9255,10 @@ const imageFiles = [
         "category": "road"
     },
     {
+        "file": "손수건.webp",
+        "category": "person"
+    },
+    {
         "file": "송덕역_승강장.webp",
         "category": "station"
     },
@@ -9751,6 +9907,10 @@ const imageFiles = [
         "category": "merch"
     },
     {
+        "file": "심세이_노트.webp",
+        "category": "character"
+    },
+    {
         "file": "심세이_놀람_투명.webp",
         "category": "character"
     },
@@ -9764,6 +9924,10 @@ const imageFiles = [
     },
     {
         "file": "심세이_무표정_투명.webp",
+        "category": "character"
+    },
+    {
+        "file": "심세이_볼펜.webp",
         "category": "character"
     },
     {
@@ -9800,6 +9964,10 @@ const imageFiles = [
     },
     {
         "file": "심세이_잠자기_투명.webp",
+        "category": "character"
+    },
+    {
+        "file": "심세이_지우개.webp",
         "category": "character"
     },
     {
@@ -10052,6 +10220,10 @@ const imageFiles = [
     },
     {
         "file": "아쿠아_방문.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "아쿠아몰_로고.svg",
         "category": "facility_com"
     },
     {
@@ -10629,6 +10801,10 @@ const imageFiles = [
     {
         "file": "에스프레소 투 샷.webp",
         "category": "etc"
+    },
+    {
+        "file": "에코백.webp",
+        "category": "merch"
     },
     {
         "file": "엔터식스_로고.svg",
@@ -11695,6 +11871,10 @@ const imageFiles = [
         "category": "merch"
     },
     {
+        "file": "유리아_노트.webp",
+        "category": "character"
+    },
+    {
         "file": "유리아_동물머리띠_투명.webp",
         "category": "merch"
     },
@@ -11708,6 +11888,10 @@ const imageFiles = [
     },
     {
         "file": "유리아_볼바람_투명.webp",
+        "category": "character"
+    },
+    {
+        "file": "유리아_볼펜.webp",
         "category": "character"
     },
     {
@@ -11732,6 +11916,10 @@ const imageFiles = [
     },
     {
         "file": "유리아_입술내밀기_투명.webp",
+        "category": "character"
+    },
+    {
+        "file": "유리아_자.webp",
         "category": "character"
     },
     {
@@ -11760,6 +11948,10 @@ const imageFiles = [
     },
     {
         "file": "유리아_전신_화난표정_투명.webp",
+        "category": "character"
+    },
+    {
+        "file": "유리아_지우개.webp",
         "category": "character"
     },
     {
@@ -11900,6 +12092,10 @@ const imageFiles = [
     },
     {
         "file": "유진태.webp",
+        "category": "person"
+    },
+    {
+        "file": "유채나.webp",
         "category": "person"
     },
     {
@@ -12091,6 +12287,10 @@ const imageFiles = [
         "category": "merch"
     },
     {
+        "file": "이덕희_노트.webp",
+        "category": "character"
+    },
+    {
         "file": "이덕희_놀람_투명.webp",
         "category": "character"
     },
@@ -12104,6 +12304,10 @@ const imageFiles = [
     },
     {
         "file": "이덕희_무표정_투명.webp",
+        "category": "character"
+    },
+    {
+        "file": "이덕희_볼펜.webp",
         "category": "character"
     },
     {
@@ -12129,6 +12333,10 @@ const imageFiles = [
     {
         "file": "이덕희_엄마.webp",
         "category": "person"
+    },
+    {
+        "file": "이덕희_지우개.webp",
+        "category": "character"
     },
     {
         "file": "이덕희_피규어.webp",
@@ -12631,7 +12839,15 @@ const imageFiles = [
         "category": "merch"
     },
     {
+        "file": "임세정_노트.webp",
+        "category": "character"
+    },
+    {
         "file": "임세정_무표정_투명.webp",
+        "category": "character"
+    },
+    {
+        "file": "임세정_볼펜.webp",
         "category": "character"
     },
     {
@@ -12676,6 +12892,10 @@ const imageFiles = [
     },
     {
         "file": "임세정_제복.webp",
+        "category": "character"
+    },
+    {
+        "file": "임세정_지우개.webp",
         "category": "character"
     },
     {
@@ -12823,6 +13043,10 @@ const imageFiles = [
         "category": "merch"
     },
     {
+        "file": "임세하_노트.webp",
+        "category": "character"
+    },
+    {
         "file": "임세하_놀란표정_자연스러운자세_투명.webp",
         "category": "character"
     },
@@ -12876,6 +13100,10 @@ const imageFiles = [
     },
     {
         "file": "임세하_볼바람_투명.webp",
+        "category": "character"
+    },
+    {
+        "file": "임세하_볼펜.webp",
         "category": "character"
     },
     {
@@ -12955,6 +13183,10 @@ const imageFiles = [
         "category": "character"
     },
     {
+        "file": "임세하_인형.webp",
+        "category": "merch"
+    },
+    {
         "file": "임세하_입벌린모습_투명.webp",
         "category": "character"
     },
@@ -13020,6 +13252,10 @@ const imageFiles = [
     },
     {
         "file": "임세하_정장_흥_투명.webp",
+        "category": "character"
+    },
+    {
+        "file": "임세하_지우개.webp",
         "category": "character"
     },
     {
@@ -13283,6 +13519,10 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "장패드.webp",
+        "category": "person"
+    },
+    {
         "file": "장포역_승강장.webp",
         "category": "station"
     },
@@ -13387,8 +13627,20 @@ const imageFiles = [
         "category": "merch"
     },
     {
+        "file": "전노아_네임택.webp",
+        "category": "character"
+    },
+    {
         "file": "전노아_넨도.webp",
         "category": "merch"
+    },
+    {
+        "file": "전노아_노트.webp",
+        "category": "character"
+    },
+    {
+        "file": "전노아_볼펜.webp",
+        "category": "character"
     },
     {
         "file": "전노아_아빠.webp",
@@ -13401,6 +13653,10 @@ const imageFiles = [
     {
         "file": "전노아_열차_내부.webp",
         "category": "train"
+    },
+    {
+        "file": "전노아_지우개.webp",
+        "category": "character"
     },
     {
         "file": "전노아_피규어.webp",
@@ -13441,6 +13697,10 @@ const imageFiles = [
     {
         "file": "전덕역_창전선_승강장.webp",
         "category": "station"
+    },
+    {
+        "file": "전동우산.webp",
+        "category": "etc"
     },
     {
         "file": "전동차 출사의 성지.webp",
@@ -14859,6 +15119,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "최유리.webp",
+        "category": "etc"
+    },
+    {
         "file": "최정아.webp",
         "category": "person"
     },
@@ -15623,6 +15887,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "텀블러.webp",
+        "category": "etc"
+    },
+    {
         "file": "텅장 탈출 기원.webp",
         "category": "etc"
     },
@@ -15975,6 +16243,10 @@ const imageFiles = [
         "category": "train"
     },
     {
+        "file": "폰케이스.webp",
+        "category": "etc"
+    },
+    {
         "file": "폴리텍.svg",
         "category": "logo"
     },
@@ -16127,6 +16399,10 @@ const imageFiles = [
         "category": "merch"
     },
     {
+        "file": "하루빈_노트.webp",
+        "category": "character"
+    },
+    {
         "file": "하루빈_놀람_투명.webp",
         "category": "character"
     },
@@ -16148,6 +16424,10 @@ const imageFiles = [
     },
     {
         "file": "하루빈_무표정_투명.webp",
+        "category": "character"
+    },
+    {
+        "file": "하루빈_볼펜.webp",
         "category": "character"
     },
     {
@@ -16191,6 +16471,10 @@ const imageFiles = [
         "category": "character"
     },
     {
+        "file": "하루빈_지우개.webp",
+        "category": "character"
+    },
+    {
         "file": "하루빈_질투_투명.webp",
         "category": "character"
     },
@@ -16209,6 +16493,10 @@ const imageFiles = [
     {
         "file": "하루빈_행복_투명.webp",
         "category": "character"
+    },
+    {
+        "file": "하루빈_홀더.webp",
+        "category": "facility_com"
     },
     {
         "file": "하루빈_화남_투명.webp",
@@ -16423,6 +16711,10 @@ const imageFiles = [
         "category": "landscape"
     },
     {
+        "file": "한바다_노트.webp",
+        "category": "landscape"
+    },
+    {
         "file": "한바다_대통령상.webp",
         "category": "landscape"
     },
@@ -16440,6 +16732,10 @@ const imageFiles = [
     },
     {
         "file": "한바다_덕질5.webp",
+        "category": "landscape"
+    },
+    {
+        "file": "한바다_볼펜.webp",
         "category": "landscape"
     },
     {
@@ -16464,6 +16760,10 @@ const imageFiles = [
     },
     {
         "file": "한바다_전신.webp",
+        "category": "landscape"
+    },
+    {
+        "file": "한바다_지우개.webp",
         "category": "landscape"
     },
     {
@@ -16973,6 +17273,10 @@ const imageFiles = [
     {
         "file": "효빈_한바다_퍼스널_아이콘.svg",
         "category": "landscape"
+    },
+    {
+        "file": "효빈개찰구광고.webp",
+        "category": "logo"
     },
     {
         "file": "효빈경제진흥원_로고.svg",
@@ -17531,6 +17835,10 @@ const imageFiles = [
         "category": "logo"
     },
     {
+        "file": "효빈면세점_로고.svg",
+        "category": "logo"
+    },
+    {
         "file": "효빈문화공사 본부.webp",
         "category": "facility_gov"
     },
@@ -17933,6 +18241,10 @@ const imageFiles = [
     {
         "file": "효빈평생교육진흥원.webp",
         "category": "facility_gov"
+    },
+    {
+        "file": "효빈프렌즈.webp",
+        "category": "character"
     },
     {
         "file": "효빈항 국제여객터미널.webp",
