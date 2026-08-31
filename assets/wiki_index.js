@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 8. 31. 오전 12:55:10
+ * 업데이트: 2026. 8. 31. 오후 10:55:25
  */
 
 window.HB_WIKI_PAGES = [
@@ -11479,6 +11479,126 @@ window.HB_WIKI_PAGES = [
   {
     "title": "효빈교통공사_굿즈샵",
     "href": "효빈교통공사_굿즈샵.html"
+  },
+  {
+    "title": "임석현",
+    "href": "임석현.html"
+  },
+  {
+    "title": "임진호",
+    "href": "임진호.html"
+  },
+  {
+    "title": "명예원",
+    "href": "명예원.html"
+  },
+  {
+    "title": "임수호",
+    "href": "임수호.html"
+  },
+  {
+    "title": "애니메이트",
+    "href": "애니메이트.html"
+  },
+  {
+    "title": "애니플러스샵",
+    "href": "애니플러스샵.html"
+  },
+  {
+    "title": "당가영",
+    "href": "당가영.html"
+  },
+  {
+    "title": "시화음",
+    "href": "시화음.html"
+  },
+  {
+    "title": "천사도",
+    "href": "천사도.html"
+  },
+  {
+    "title": "명안유",
+    "href": "명안유.html"
+  },
+  {
+    "title": "임신",
+    "href": "임신.html"
+  },
+  {
+    "title": "5yncri5e!",
+    "href": "5yncri5e!.html"
+  },
+  {
+    "title": "AZALEA",
+    "href": "AZALEA.html"
+  },
+  {
+    "title": "A·ZU·NA",
+    "href": "A·ZU·NA.html"
+  },
+  {
+    "title": "BiBi(러브%20라이브!)",
+    "href": "BiBi(러브%20라이브!).html"
+  },
+  {
+    "title": "CatChu!",
+    "href": "CatChu!.html"
+  },
+  {
+    "title": "CYaRon!",
+    "href": "CYaRon!.html"
+  },
+  {
+    "title": "DiverDiva",
+    "href": "DiverDiva.html"
+  },
+  {
+    "title": "Guilty Kiss",
+    "href": "Guilty Kiss.html"
+  },
+  {
+    "title": "KALEIDOSCORE",
+    "href": "KALEIDOSCORE.html"
+  },
+  {
+    "title": "lily white",
+    "href": "lily white.html"
+  },
+  {
+    "title": "QU4RTZ",
+    "href": "QU4RTZ.html"
+  },
+  {
+    "title": "R3BIRTH",
+    "href": "R3BIRTH.html"
+  },
+  {
+    "title": "고토구",
+    "href": "고토구.html"
+  },
+  {
+    "title": "러브 라이브! 선샤인!!",
+    "href": "러브 라이브! 선샤인!!.html"
+  },
+  {
+    "title": "러브 라이브! 슈퍼스타!!",
+    "href": "러브 라이브! 슈퍼스타!!.html"
+  },
+  {
+    "title": "러브 라이브!",
+    "href": "러브 라이브!.html"
+  },
+  {
+    "title": "와이와이와이",
+    "href": "와이와이와이.html"
+  },
+  {
+    "title": "중국",
+    "href": "중국.html"
+  },
+  {
+    "title": "안공주",
+    "href": "안공주.html"
   }
 ];
 
@@ -18253,5 +18373,35 @@ window.HB_WIKI_ALIASES = {
   "고송스퀘어": "고송스퀘어.html",
   "사회복무요원_복무기관_효빈교통공사": "사회복무요원_복무기관_효빈교통공사.html",
   "사회복무요원-복무기관-효빈교통공사": "사회복무요원-복무기관-효빈교통공사.html",
-  "효빈교통공사_굿즈샵": "효빈교통공사_굿즈샵.html"
+  "효빈교통공사_굿즈샵": "효빈교통공사_굿즈샵.html",
+  "임석현": "임석현.html",
+  "임진호": "임진호.html",
+  "명예원": "명예원.html",
+  "임수호": "임수호.html",
+  "애니메이트": "애니메이트.html",
+  "애니플러스샵": "애니플러스샵.html",
+  "당가영": "당가영.html",
+  "시화음": "시화음.html",
+  "천사도": "천사도.html",
+  "명안유": "명안유.html",
+  "임신": "임신.html",
+  "5yncri5e!": "5yncri5e!.html",
+  "AZALEA": "AZALEA.html",
+  "A·ZU·NA": "A·ZU·NA.html",
+  "BiBi(러브%20라이브!)": "BiBi(러브%20라이브!).html",
+  "CatChu!": "CatChu!.html",
+  "CYaRon!": "CYaRon!.html",
+  "DiverDiva": "DiverDiva.html",
+  "Guilty Kiss": "Guilty Kiss.html",
+  "KALEIDOSCORE": "KALEIDOSCORE.html",
+  "lily white": "lily white.html",
+  "QU4RTZ": "QU4RTZ.html",
+  "R3BIRTH": "R3BIRTH.html",
+  "고토구": "고토구.html",
+  "러브 라이브! 선샤인!!": "러브 라이브! 선샤인!!.html",
+  "러브 라이브! 슈퍼스타!!": "러브 라이브! 슈퍼스타!!.html",
+  "러브 라이브!": "러브 라이브!.html",
+  "와이와이와이": "와이와이와이.html",
+  "중국": "중국.html",
+  "안공주": "안공주.html"
 };

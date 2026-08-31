@@ -481,19 +481,19 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300 leading-tight">효빈교통공사<br>굿즈샵</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="효빈교통공사 굿즈샵 창선역점.html" class="text-[#0275d8] hover:underline">창선역점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="효빈교통공사 굿즈샵 창전구청역점.html" class="text-[#0275d8] hover:underline">창전구청역점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="효빈교통공사 굿즈샵 고송교차로역점.html" class="text-[#0275d8] hover:underline">고송교차로역점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="효빈교통공사 굿즈샵 청엽구청역점.html" class="text-[#0275d8] hover:underline">청엽구청역점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="효빈교통공사 굿즈샵 이자공원역점.html" class="text-[#0275d8] hover:underline">이자공원역점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="효빈교통공사 굿즈샵 소조역점.html" class="text-[#0275d8] hover:underline">소조역점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="효빈교통공사 굿즈샵 중수역점.html" class="text-[#0275d8] hover:underline">중수역점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="효빈교통공사 굿즈샵 중앙로1가역점.html" class="text-[#0275d8] hover:underline">중앙로1가역점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="효빈교통공사 굿즈샵 운양중앙역점.html" class="text-[#0275d8] hover:underline">운양중앙역점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="효빈역플래그십.html" class="text-[#0275d8] hover:underline">효빈역플래그십</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="효빈교통공사 직영점.html" class="text-[#0275d8] hover:underline">효빈교통공사 직영점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="효빈교통공사 굿즈샵 과진역점.html" class="text-[#0275d8] hover:underline">과진역점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="효빈교통공사 굿즈샵 도변요우점.html" class="text-[#0275d8] hover:underline">도변요우점</a>
+                            <a href="효빈교통공사_굿즈샵.html" class="text-[#0275d8] hover:underline">창선역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈교통공사_굿즈샵.html" class="text-[#0275d8] hover:underline">창전구청역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈교통공사_굿즈샵.html" class="text-[#0275d8] hover:underline">고송교차로역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈교통공사_굿즈샵.html" class="text-[#0275d8] hover:underline">청엽구청역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈교통공사_굿즈샵.html" class="text-[#0275d8] hover:underline">이자공원역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈교통공사_굿즈샵.html" class="text-[#0275d8] hover:underline">소조역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈교통공사_굿즈샵.html" class="text-[#0275d8] hover:underline">중수역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈교통공사_굿즈샵.html" class="text-[#0275d8] hover:underline">중앙로1가역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈교통공사_굿즈샵.html" class="text-[#0275d8] hover:underline">운양중앙역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈교통공사_굿즈샵.html" class="text-[#0275d8] hover:underline">효빈역플래그십</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈교통공사_굿즈샵.html" class="text-[#0275d8] hover:underline">효빈교통공사 직영점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈교통공사_굿즈샵.html" class="text-[#0275d8] hover:underline">과진역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈교통공사_굿즈샵.html" class="text-[#0275d8] hover:underline">도변요우점</a>
                         </td>
                     </tr>
 
