@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 8. 31. 오후 10:55:25
+ * 업데이트: 2026. 9. 1. 오전 12:45:31
  */
 
 window.HB_WIKI_PAGES = [
@@ -11599,6 +11599,14 @@ window.HB_WIKI_PAGES = [
   {
     "title": "안공주",
     "href": "안공주.html"
+  },
+  {
+    "title": "백모모",
+    "href": "백모모.html"
+  },
+  {
+    "title": "유리내",
+    "href": "유리내.html"
   }
 ];
 
@@ -18403,5 +18411,7 @@ window.HB_WIKI_ALIASES = {
   "러브 라이브!": "러브 라이브!.html",
   "와이와이와이": "와이와이와이.html",
   "중국": "중국.html",
-  "안공주": "안공주.html"
+  "안공주": "안공주.html",
+  "백모모": "백모모.html",
+  "유리내": "유리내.html"
 };

@@ -597,6 +597,7 @@ function loadMember(key) {
     document.getElementById('doc-category').innerHTML = `
         <span class="font-bold text-[#7777AA]">분류:</span> 
         <a href="효빈광역시의원.html" class="wiki-link">효빈광역시의원</a> | 
+        <a href="효빈광역시_인물.html" class="wiki-link">효빈광역시/인물</a> |  
         <a href="${data.district.split(' ')[0]}의 정치.html" class="wiki-link">${data.district.split(' ')[0]}의 정치</a> | 
         <a href="${data.party} 소속.html" class="wiki-link">${data.party} 소속</a> | 
         <a href="${data.birth.substring(0,4)}년 출생.html" class="wiki-link">${data.birth.substring(0,4)}년 출생</a>
