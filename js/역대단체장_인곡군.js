@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <td onclick="location.href='유상산.html'" onmouseout="this.style.backgroundColor='';" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)';" style=" cursor: pointer;"><span class="th-span">제32대</span><span class="name-span">유상산</span></td>
 <td onclick="location.href='인시현.html'" onmouseout="this.style.backgroundColor='';" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)';" style=" cursor: pointer;"><span class="th-span">제33·34대</span><span class="name-span">인시현</span></td>
 <td onclick="location.href='남석흥.html'" onmouseout="this.style.backgroundColor='';" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)';" style=" cursor: pointer;"><span class="th-span">제35대</span><span class="name-span">남석흥</span></td>
-<td onclick="location.href='은성현.html'" onmouseout="this.style.backgroundColor='';" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)';" style=" cursor: pointer;"><span class="th-span">제36·37대</span><span class="name-span">은성현</span></td>
+<td onclick="location.href='석형준.html'" onmouseout="this.style.backgroundColor='';" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)';" style=" cursor: pointer;"><span class="th-span">제36·37대</span><span class="name-span">석형준</span></td>
 </tr>
 <tr>
 <td onclick="location.href='안강훈.html'" onmouseout="this.style.backgroundColor='';" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)';" style=" cursor: pointer;"><span class="th-span">제38대</span><span class="name-span">안강훈</span></td>

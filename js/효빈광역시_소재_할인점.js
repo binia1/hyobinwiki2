@@ -120,8 +120,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #00CCBB !important; color: #ffffff !important;">CY마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="CY마트_청엽메가센터.html" class="text-[#0275d8] hover:underline">청엽메가센터</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="CY마트_북구중수점.html" class="text-[#0275d8] hover:underline">북구중수점</a>
+                            <a href="CY마트.html" class="text-[#0275d8] hover:underline">청엽메가센터</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="CY마트.html" class="text-[#0275d8] hover:underline">북구중수점</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -130,9 +130,9 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #E49DFD !important; color: #000000 !important;">빈스마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="빈스마트_고송본점.html" class="text-[#0275d8] hover:underline">고송본점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="빈스마트_남구청점.html" class="text-[#0275d8] hover:underline">남구청점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="빈스마트_창전구청점.html" class="text-[#0275d8] hover:underline">창전구청점</a>
+                            <a href="빈스마트.html" class="text-[#0275d8] hover:underline">고송본점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="빈스마트.html" class="text-[#0275d8] hover:underline">남구청점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="빈스마트.html" class="text-[#0275d8] hover:underline">창전구청점</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -141,8 +141,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #FFCD00 !important; color: #000000 !important;">마루마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="마루마트_동구본점.html" class="text-[#0275d8] hover:underline">동구본점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="마루마트_탄성군청점.html" class="text-[#0275d8] hover:underline">탄성군청점</a>
+                            <a href="마루마트.html" class="text-[#0275d8] hover:underline">동구본점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="마루마트.html" class="text-[#0275d8] hover:underline">탄성군청점</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -151,9 +151,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #77DD77 !important; color: #000000 !important;">천조마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="천조마트_안천본점.html" class="text-[#0275d8] hover:underline">안천본점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="천조마트_평전공단점.html" class="text-[#0275d8] hover:underline">평전공단점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="천조마트_효빈항물류점.html" class="text-[#0275d8] hover:underline">효빈항물류점</a>
+                            <a href="천조마트.html" class="text-[#0275d8] hover:underline">안천본점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="천조마트.html" class="text-[#0275d8] hover:underline">효빈항물류점</a>
                         </td>
                     </tr>
 
@@ -190,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #00A775 !important; color: #ffffff !important;">롯데마트 맥스</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="롯데마트맥스_창전점.html" class="text-[#0275d8] hover:underline">창전점</a>
+                            <a href="롯데마트_맥스_창전점.html" class="text-[#0275d8] hover:underline">창전점</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -222,7 +221,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #004890 !important; color: #ffffff !important;">월마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="월마트_마잡점.html" class="text-gray-400 line-through hover:underline">마잡점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
+                            <a href="이마트_마잡점.html" class="text-gray-400 line-through hover:underline">마잡점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
                             <span class="text-gray-400 line-through">효빈2호점</span><span class="text-[10px] text-gray-500 ml-0.5">(무산)</span>
                         </td>
                     </tr>
@@ -248,8 +247,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #009999 !important; color: #ffffff !important;">GS마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="GS마트_덕현점.html" class="text-gray-400 line-through hover:underline">덕현점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
-                            <a href="GS마트_과진점.html" class="text-gray-400 line-through hover:underline">과진점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span>
+                            <a href="롯데마트_덕현점.html" class="text-gray-400 line-through hover:underline">덕현점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
+                            <a href="롯데마트_과진점.html" class="text-gray-400 line-through hover:underline">과진점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -258,8 +257,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #A6215D !important; color: #ffffff !important;">LG마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="LG마트_덕현점.html" class="text-gray-400 line-through hover:underline">덕현점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
-                            <a href="LG마트_과진점.html" class="text-gray-400 line-through hover:underline">과진점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span>
+                            <a href="롯데마트_덕현점.html" class="text-gray-400 line-through hover:underline">덕현점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
+                            <a href="롯데마트_과진점.html" class="text-gray-400 line-through hover:underline">과진점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span>
                         </td>
                     </tr>
 
@@ -275,9 +274,9 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #273785 !important; color: #ffffff !important;">까르푸</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="까르푸_청능점.html" class="text-gray-400 line-through hover:underline">청능점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
-                            <a href="까르푸_평당점.html" class="text-gray-400 line-through hover:underline">평당점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
-                            <a href="까르푸_효빈역점.html" class="text-gray-400 line-through hover:underline">효빈역점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span>
+                            <a href="홈플러스_청능점.html" class="text-gray-400 line-through hover:underline">청능점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
+                            <a href="홈플러스_평당점.html" class="text-gray-400 line-through hover:underline">평당점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
+                            <a href="홈플러스_효빈역점.html" class="text-gray-400 line-through hover:underline">효빈역점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -286,9 +285,9 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #B2001A !important; color: #ffffff !important;">홈에버</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="홈에버_청능점.html" class="text-gray-400 line-through hover:underline">청능점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
-                            <a href="홈에버_평당점.html" class="text-gray-400 line-through hover:underline">평당점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
-                            <a href="홈에버_효빈역점.html" class="text-gray-400 line-through hover:underline">효빈역점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span>
+                            <a href="홈플러스_청능점.html" class="text-gray-400 line-through hover:underline">청능점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
+                            <a href="홈플러스_평당점.html" class="text-gray-400 line-through hover:underline">평당점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
+                            <a href="홈플러스_효빈역점.html" class="text-gray-400 line-through hover:underline">효빈역점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span>
                         </td>
                     </tr>
 
@@ -304,8 +303,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #808080 !important; color: #ffffff !important;">우성유통</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="우성유통_우전점.html" class="text-gray-400 line-through hover:underline">우전점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
-                            <a href="우성유통_항동점.html" class="text-gray-400 line-through hover:underline">항동점</a><span class="text-[10px] text-gray-500 ml-0.5">(폐)</span>
+                            <a href="우성유통.html" class="text-gray-400 line-through hover:underline">우전점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
+                            <a href="우성유통.html" class="text-gray-400 line-through hover:underline">항동점</a><span class="text-[10px] text-gray-500 ml-0.5">(폐)</span>
                         </td>
                     </tr>
 

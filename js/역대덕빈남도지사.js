@@ -1,3 +1,6 @@
+/**
+ * 파일명: js/역대덕빈남도지사.js (추정)
+ */
 document.addEventListener("DOMContentLoaded", function() {
     function renderAllDeokbinNamGovernorsNav(containerId) {
         const container = document.getElementById(containerId);
@@ -116,7 +119,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                     </tr>
                                     <tr>
                                         <td colspan="2"><span class="dn-sub-header">제35·36·37대</span><a href="조삼현.html" class="dn-link">조삼현</a></td>
-                                        <td colspan="3"><span class="dn-sub-header">제38·39대</span><a href="김영산.html" class="dn-link font-black text-lg text-blue-600 dark:text-blue-400">김영산</a></td>
+                                        <td><span class="dn-sub-header">제38대</span><a href="석형준.html" class="dn-link">석형준</a></td>
+                                        <td colspan="2"><span class="dn-sub-header">제39대</span><a href="김영산.html" class="dn-link font-black text-lg text-blue-600 dark:text-blue-400">김영산</a></td>
                                     </tr>
                                     <tr>
                                         <td colspan="5" class="dn-nav-footer">

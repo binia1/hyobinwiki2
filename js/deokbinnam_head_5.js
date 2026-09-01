@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="양수한.html" style="color: #0082CD; text-decoration: none;">양수한</a></td>
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="남연석.html" style="color: #C9252B; text-decoration: none;">남연석</a></td>
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="조응현.html" style="color: #0082CD; text-decoration: none;">조응현</a></td>
-                                            <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="은성현.html" style="color: #C9252B; text-decoration: none;">은성현</a></td>
+                                            <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="석형준.html" style="color: #C9252B; text-decoration: none;">석형준</a></td>
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="남기하.html" style="color: #C9252B; text-decoration: none;">남기하</a></td>
                                         </tr>
                                         <tr>

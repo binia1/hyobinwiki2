@@ -97,13 +97,13 @@ document.addEventListener("DOMContentLoaded", function() {
                             <td style="background-color: #004EA2; padding: 6px; border: 1px solid #ddd;">제주</td>
                             <td style="background-color: #004EA2; padding: 6px; border: 1px solid #ddd;">효빈</td>
                             <td style="background-color: #004EA2; padding: 6px; border: 1px solid #ddd;">덕북</td>
-                            <td style="background-color: #004EA2; padding: 6px; border: 1px solid #ddd;">덕남</td>
+                            <td style="background-color: #E61E2B; padding: 6px; border: 1px solid #ddd;">덕남</td>
                         </tr>
                         <tr style="background-color: #fff;">
                             <td style="padding: 10px 5px; border: 1px solid #ddd;"><a href="오영훈.html" style="color: #004EA2; text-decoration: none;">오영훈</a></td>
                             <td style="padding: 10px 5px; border: 1px solid #ddd; "><a href="박효빈.html" style="color: #004EA2; text-decoration: none; font-weight: bold;">박효빈</a></td>
                             <td style="padding: 10px 5px; border: 1px solid #ddd; "><a href="강수성.html" style="color: #004EA2; text-decoration: none; font-weight: bold;">강수성</a></td>
-                            <td style="padding: 10px 5px; border: 1px solid #ddd; "><a href="김영산.html" style="color: #004EA2; text-decoration: none; font-weight: bold;">김영산</a></td>
+                            <td style="padding: 10px 5px; border: 1px solid #ddd; "><a href="석형준.html" style="color: #E61E2B; text-decoration: none; font-weight: bold;">석형준</a></td>
                         </tr>
 
                         <!-- 유고사항 표기 -->
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         <!-- 선거 정보 및 하단 네비게이션 -->
                         <tr style="background-color: #fff; border-top: 1px solid #ddd;">
                             <td colspan="4" style="padding: 15px 10px 10px 10px; font-size: 0.85em; color: #555; text-align: center; line-height: 1.6;">
-                                <a href="제8회_전국동시지방선거_효빈광역시.html" style="color: #0275d8; text-decoration: none;">제8회 전국동시지방선거</a><br/>
+                                <a href="제8회_전국동시지방선거.html" style="color: #0275d8; text-decoration: none;">제8회 전국동시지방선거</a><br/>
                                 임기: 2022년 7월 1일 ~ 2026년 6월 30일
                             </td>
                         </tr>

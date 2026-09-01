@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 9. 1. 오전 12:45:31
+ * 업데이트: 2026. 9. 1. 오후 9:08:47
  */
 
 window.HB_WIKI_PAGES = [
@@ -11607,6 +11607,26 @@ window.HB_WIKI_PAGES = [
   {
     "title": "유리내",
     "href": "유리내.html"
+  },
+  {
+    "title": "석형준",
+    "href": "석형준.html"
+  },
+  {
+    "title": "빈스마트",
+    "href": "빈스마트.html"
+  },
+  {
+    "title": "CY마트",
+    "href": "CY마트.html"
+  },
+  {
+    "title": "마루마트",
+    "href": "마루마트.html"
+  },
+  {
+    "title": "천조마트",
+    "href": "천조마트.html"
   }
 ];
 
@@ -18413,5 +18433,10 @@ window.HB_WIKI_ALIASES = {
   "중국": "중국.html",
   "안공주": "안공주.html",
   "백모모": "백모모.html",
-  "유리내": "유리내.html"
+  "유리내": "유리내.html",
+  "석형준": "석형준.html",
+  "빈스마트": "빈스마트.html",
+  "CY마트": "CY마트.html",
+  "마루마트": "마루마트.html",
+  "천조마트": "천조마트.html"
 };

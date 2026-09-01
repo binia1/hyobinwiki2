@@ -49,9 +49,17 @@ document.addEventListener("DOMContentLoaded", function() {
 </tr>
 <tr>
 <td onclick="location.href='신유현.html'" onmouseout="this.style.backgroundColor='';" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)';" style=" cursor: pointer;"><span class="th-span">제23대</span><span class="name-span">신유현</span></td>
-<td onclick="location.href='오세윤.html'" onmouseout="this.style.backgroundColor='';" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)';" style=" cursor: pointer;"><span class="th-span">제24대</span><span class="name-span text-blue-600 font-bold">오세윤</span></td>
+<td onclick="location.href='오세윤.html'" onmouseout="this.style.backgroundColor='';" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)';" style=" cursor: pointer;"><span class="th-span">제24대</span><span class="name-span">오세윤</span></td>
 <td onclick="location.href='지영훈.html'" onmouseout="this.style.backgroundColor='';" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)';" style=" cursor: pointer;"><span class="th-span">제25대</span><span class="name-span">지영훈</span></td>
-<td class="current-term" colspan="2" onclick="location.href='오세윤.html'" onmouseout="this.style.backgroundColor='';" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)';" style=" cursor: pointer;"><span class="th-span">제26·27·28대</span><span class="name-span">오세윤</span></td>
+<td onclick="location.href='오세윤.html'" onmouseout="this.style.backgroundColor='';" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)';" style=" cursor: pointer;"><span class="th-span">제26·27대</span><span class="name-span">오세윤</span></td>
+<td onclick="location.href='서기평.html'" onmouseout="this.style.backgroundColor='';" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)';" style=" cursor: pointer;"><span class="th-span">제28대</span><span class="name-span">서기평</span></td>
+</tr>
+<tr>
+<td class="current-term" onclick="location.href='오세윤.html'" onmouseout="this.style.backgroundColor='';" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)';" style=" cursor: pointer;"><span class="th-span">제29대</span><span class="name-span text-blue-600 font-bold">오세윤</span></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
