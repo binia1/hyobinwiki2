@@ -10,7 +10,7 @@ from watchdog.events import FileSystemEventHandler
 WIKI_PATH = './'
 RESULT_FILE = '분류.html'
 
-# 🛡️ 기존 150개 동적 리스트 고정
+# 🛡️ 기존 150개 동적 리스트 고정 (이전과 동일)
 DYNAMIC_LIST = [
     ["간호대 - 한의관", "효빈대_A선_역_템플릿.html?id=A03"],
     ["강갑수", "두청운수_빌런_기사_목록.html?villain=강갑수"],
@@ -160,7 +160,6 @@ def get_dynamic_category(url):
     if "효빈대" in url: return "효빈대학교/시설"
     return "기타"
 
-# JS 파일에서 10대 의원 정보 긁어오는 함수
 def get_js_dynamic_categories():
     js_path = os.path.join(WIKI_PATH, 'assets', '10대_효빈시의원_목록.js')
     results = []
@@ -188,10 +187,35 @@ def get_js_dynamic_categories():
     except Exception as e: print(f"⚠️ JS 파일 파싱 오류: {e}")
     return results
 
+def assign_category(cat_full, item_data, category_map, sub_categories):
+    """카테고리를 맵에 할당하고, 슬래시(/) 및 연도별 하위 분류 처리를 수행합니다."""
+    # 1. 슬래시(/) 기반 하위 분류
+    if '/' in cat_full:
+        parent = cat_full.split('/')[0]
+        if parent not in sub_categories: sub_categories[parent] = []
+        if cat_full not in sub_categories[parent]: sub_categories[parent].append(cat_full)
+        if parent not in category_map: category_map[parent] = []
+        
+    # 2. 연도별 하위 분류 (예: "1996년 출생", "2010년대 설립" 등)
+    year_match = re.match(r'^(\d{4}년(?:대)?)\s', cat_full)
+    if year_match:
+        parent = year_match.group(1)
+        if parent not in sub_categories: sub_categories[parent] = []
+        if cat_full not in sub_categories[parent]: sub_categories[parent].append(cat_full)
+        if parent not in category_map: category_map[parent] = []
+
+    # 본 카테고리 할당
+    if cat_full not in category_map: category_map[cat_full] = []
+    if not any(d['url'] == item_data['url'] for d in category_map[cat_full]):
+        category_map[cat_full].append(item_data)
+
 def generate_wiki_index():
     category_map = {}
     sub_categories = {}
     html_files = [f for f in os.listdir(WIKI_PATH) if f.endswith('.html') and f != RESULT_FILE]
+    
+    # 제외할 클래스 (본문 오탐지 방지용)
+    bad_classes = ['wiki-container', 'wiki-content', 'view-section', 'wiki-footer', 'wiki-paragraph', 'wiki-heading', 'quote', 'comment', 'body-text']
     
     for filename in html_files:
         try:
@@ -217,16 +241,27 @@ def generate_wiki_index():
                 for block in target_blocks:
                     final_categories = []
                     
-                    # 기존 방식 유지 (표준 카테고리 박스)
                     cat_boxes = list(block['soup'].find_all('div', class_=re.compile(r'category-box|classification-box|wiki-context-area')))
                     
-                    # 🌟 [노가다 해방 100% 무적 코드] 🌟
-                    # 클래스 이름이 bg-gray-100 이든, 뭐든 상관없이 '분류:' 텍스트를 가진 말단 <p>나 <div>를 무조건 잡아냅니다.
                     for tag in block['soup'].find_all(['div', 'p']):
                         if tag.text and ('분류:' in tag.text or '분류 :' in tag.text):
-                            # 문서 전체를 덮는 껍데기 박스는 패스
-                            is_bad = any(bc in tag.get('class', []) for bc in ['wiki-container', 'wiki-content', 'view-section', 'wiki-footer'])
-                            # 그 태그 안에 또 다른 div나 p가 없어야 진짜 텍스트가 담긴 말단 상자임!
+                            
+                            # 클래스 기반 예외 처리
+                            tag_classes = tag.get('class', [])
+                            if isinstance(tag_classes, str): tag_classes = [tag_classes]
+                            
+                            is_bad = False
+                            parent_node = tag
+                            while parent_node:
+                                p_classes = parent_node.get('class', [])
+                                if isinstance(p_classes, str): p_classes = [p_classes]
+                                if any(bc in p_classes for bc in bad_classes):
+                                    # 명시적인 분류 박스가 아닌 경우 차단
+                                    if not any(good in p_classes for good in ['category-box', 'classification-box']):
+                                        is_bad = True
+                                        break
+                                parent_node = parent_node.parent
+                            
                             if not is_bad and not tag.find(['div', 'p']):
                                 if tag not in cat_boxes:
                                     cat_boxes.append(tag)
@@ -238,28 +273,19 @@ def generate_wiki_index():
                             raw_cat_list = [a.get_text(strip=True) for a in a_tags if '분류' not in a.get_text(strip=True)]
                         else:
                             full_text = cb.get_text(separator=' ')
-                            if '분류:' in full_text:
-                                raw_cat = full_text.split('분류:')[1]
-                            elif '분류 :' in full_text:
-                                raw_cat = full_text.split('분류 :')[1]
-                            else:
-                                raw_cat = full_text
+                            raw_cat = full_text.split('분류:')[1] if '분류:' in full_text else full_text.split('분류 :')[1] if '분류 :' in full_text else full_text
                             raw_cat_list = [c.strip() for c in raw_cat.split('|')]
                             
                         for c in raw_cat_list:
                             clean_c = c.split('\n')[0].strip()
+                            
+                            # 길이 및 문장형 기호, 특수문자 예외 처리
                             if clean_c and len(clean_c) <= 30 and '{' not in clean_c and '}' not in clean_c and 'function' not in clean_c and '=' not in clean_c:
-                                final_categories.append(clean_c)
+                                if not any(end in clean_c for end in ['다.', '요.', '까?', '죠.', '습니다']):
+                                    final_categories.append(clean_c)
                     
-                    # 수집된 카테고리를 맵에 할당
                     for cat_full in list(set(final_categories)):
-                        if '/' in cat_full:
-                            parent = cat_full.split('/')[0]
-                            if parent not in sub_categories: sub_categories[parent] = []
-                            if cat_full not in sub_categories[parent]: sub_categories[parent].append(cat_full)
-                        if cat_full not in category_map: category_map[cat_full] = []
-                        if not any(d['url'] == block['url'] for d in category_map[cat_full]):
-                            category_map[cat_full].append({'title': block['title'], 'url': block['url']})
+                        assign_category(cat_full, {'title': block['title'], 'url': block['url']}, category_map, sub_categories)
 
         except Exception as e:
             print(f"⚠️ 파일 분석 오류 ({filename}): {e}")
@@ -268,24 +294,13 @@ def generate_wiki_index():
     # 동적 리스트 병합
     for title, url in DYNAMIC_LIST:
         cat_full = get_dynamic_category(url)
-        if '/' in cat_full:
-            parent = cat_full.split('/')[0]
-            if parent not in sub_categories: sub_categories[parent] = []
-            if cat_full not in sub_categories[parent]: sub_categories[parent].append(cat_full)
-        if cat_full not in category_map: category_map[cat_full] = []
-        category_map[cat_full].append({'title': title, 'url': url})
+        assign_category(cat_full, {'title': title, 'url': url}, category_map, sub_categories)
 
     # JS 리스트(10대 시의원) 병합
     js_dynamic_list = get_js_dynamic_categories()
     for item in js_dynamic_list:
         for cat_full in item["cats"]:
-            if '/' in cat_full:
-                parent = cat_full.split('/')[0]
-                if parent not in sub_categories: sub_categories[parent] = []
-                if cat_full not in sub_categories[parent]: sub_categories[parent].append(cat_full)
-            if cat_full not in category_map: category_map[cat_full] = []
-            if not any(d['url'] == item['url'] for d in category_map[cat_full]):
-                category_map[cat_full].append({'title': item["title"], 'url': item["url"]})
+            assign_category(cat_full, {'title': item["title"], 'url': item["url"]}, category_map, sub_categories)
 
     json_cat_map = json.dumps(category_map, ensure_ascii=False)
     json_sub_cat = json.dumps(sub_categories, ensure_ascii=False)
@@ -326,6 +341,8 @@ def generate_wiki_index():
 
         .search-bar {{ border: 1px solid #ccc; padding: 4px 8px; font-size: 14px; width: 250px; }}
         .search-btn {{ background-color: #555588; color: white; border: none; padding: 4px 10px; cursor: pointer; font-size: 14px; }}
+        .inner-search {{ width: 100%; border: 1px solid var(--wiki-border); padding: 10px 14px; border-radius: 4px; margin-bottom: 20px; font-size: 15px; outline: none; transition: border 0.2s; }}
+        .inner-search:focus {{ border-color: var(--wiki-main); box-shadow: 0 0 5px rgba(119, 119, 170, 0.3); }}
 
         .cat-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; list-style: none; padding: 0; }}
         .cat-grid li {{ margin-bottom: 5px; }}
@@ -356,6 +373,10 @@ def generate_wiki_index():
             </div>
         </div>
 
+        <div>
+            <input type="text" id="innerSearch" placeholder="현재 화면에서 분류/문서 검색..." class="inner-search" onkeyup="filterItems()">
+        </div>
+
         <div id="app" class="min-h-[500px]"></div>
         
         <div id="footer-container"></div>
@@ -374,6 +395,32 @@ def generate_wiki_index():
             if (query) window.location.href = query + '.html';
         }}
 
+        function filterItems() {{
+            const query = document.getElementById('innerSearch').value.toLowerCase();
+            
+            // 본문 리스트 아이템 필터링
+            document.querySelectorAll('.cat-grid li, .doc-list li').forEach(li => {{
+                const text = li.innerText.toLowerCase();
+                li.style.display = text.includes(query) ? '' : 'none';
+            }});
+
+            // 비어있는 섹션 헤더(초성 H2) 숨김 처리
+            document.querySelectorAll('h2').forEach(h2 => {{
+                const ul = h2.nextElementSibling;
+                if(ul && (ul.classList.contains('doc-list') || ul.classList.contains('cat-grid'))) {{
+                    const visibleItems = Array.from(ul.querySelectorAll('li')).filter(li => li.style.display !== 'none');
+                    h2.style.display = visibleItems.length > 0 ? '' : 'none';
+                }}
+            }});
+            
+            // 상위 하위분류 박스 처리
+            const subBox = document.querySelector('.sub-box');
+            if (subBox) {{
+                const visibleSubs = Array.from(subBox.querySelectorAll('li')).filter(li => li.style.display !== 'none');
+                subBox.style.display = visibleSubs.length > 0 ? '' : 'none';
+            }}
+        }}
+
         const categoryMap = {json_cat_map};
         const subCategories = {json_sub_cat};
 
@@ -390,6 +437,10 @@ def generate_wiki_index():
             const app = document.getElementById('app');
             const pageTitle = document.getElementById('page-title');
             const hash = decodeURIComponent(window.location.hash.substring(1));
+            
+            // 페이지 진입 시 검색창 초기화
+            const searchInput = document.getElementById('innerSearch');
+            if (searchInput) searchInput.value = '';
 
             if (!hash || hash === "전체") {{
                 pageTitle.innerText = "분류: 전체";
@@ -406,7 +457,12 @@ def generate_wiki_index():
                     html += `<h2>${{cho}}</h2>`;
                     html += '<ul class="cat-grid mb-8">';
                     catGrouped[cho].sort().forEach(cat => {{
-                        html += `<li><a href="#${{cat}}" class="wiki-link font-bold text-lg">📁 분류:${{cat}}</a> <span class="text-sm text-gray-500">(${{categoryMap[cat].length}}개)</span></li>`;
+                        const docCnt = categoryMap[cat] ? categoryMap[cat].length : 0;
+                        const subCnt = subCategories[cat] ? subCategories[cat].length : 0;
+                        let countText = `문서 ${{docCnt}}개`;
+                        if(subCnt > 0) countText += `, 하위분류 ${{subCnt}}개`;
+                        
+                        html += `<li><a href="#${{cat}}" class="wiki-link font-bold text-lg">📁 분류:${{cat}}</a> <span class="text-sm text-gray-500">(${{countText}})</span></li>`;
                     }});
                     html += '</ul>';
                 }});
@@ -417,9 +473,14 @@ def generate_wiki_index():
                 let html = '';
 
                 if (subCategories[hash] && subCategories[hash].length > 0) {{
-                    html += `<div class="sub-box"><h3>이 분류의 하위 분류</h3><ul class="cat-grid" style="grid-template-columns: repeat(4, 1fr);">`;
+                    html += `<div class="sub-box"><h3>이 분류의 하위 분류 <span class="text-sm font-normal text-gray-500">(${{subCategories[hash].length}}개)</span></h3><ul class="cat-grid" style="grid-template-columns: repeat(4, 1fr);">`;
                     subCategories[hash].sort().forEach(sub => {{
-                        html += `<li><a href="#${{sub}}" class="wiki-link">📂 ${{sub.split('/').pop()}}</a></li>`;
+                        const subDocCnt = categoryMap[sub] ? categoryMap[sub].length : 0;
+                        const subSubCnt = subCategories[sub] ? subCategories[sub].length : 0;
+                        let subCountText = `문서 ${{subDocCnt}}개`;
+                        if(subSubCnt > 0) subCountText += `, 하위분류 ${{subSubCnt}}개`;
+                        
+                        html += `<li><a href="#${{sub}}" class="wiki-link">📂 ${{sub.split('/').pop()}}</a> <span class="text-xs text-gray-500">(${{subCountText}})</span></li>`;
                     }});
                     html += `</ul></div>`;
                 }}
@@ -446,6 +507,9 @@ def generate_wiki_index():
                 app.innerHTML = `<p class="text-red-500 font-bold">해당 분류가 존재하지 않습니다.</p>`;
             }}
             window.scrollTo(0, 0);
+            
+            // 렌더링 후 초기 필터 상태 적용
+            filterItems();
         }}
 
         window.addEventListener('hashchange', render);

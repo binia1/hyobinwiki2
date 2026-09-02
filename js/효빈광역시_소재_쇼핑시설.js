@@ -510,7 +510,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300 leading-tight">효빈시설공단<br>지하상가</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
                             <a href="중앙로지하상가.html" class="text-[#0275d8] hover:underline">중앙로지하상가</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="오내사거리역 지하상가.html" class="text-[#0275d8] hover:underline">오내사거리역 지하상가</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="안천지하상가.html" class="text-[#0275d8] hover:underline">안천지하상가</a> <span class="text-gray-300 mx-1">·</span>
                             <a href="당선지하상가.html" class="text-[#0275d8] hover:underline">당선지하상가</a> <span class="text-gray-300 mx-1">·</span>
                             <a href="효빈역지하상가.html" class="text-[#0275d8] hover:underline">효빈역지하상가</a> <span class="text-gray-300 mx-1">·</span>
                             <a href="중수지하상가.html" class="text-[#0275d8] hover:underline">중수지하상가</a> <span class="text-gray-300 mx-1">·</span>
