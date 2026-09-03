@@ -19,23 +19,23 @@
                 </tr>
                 <tr style="line-height: 1.8;">
                     <td style="width: 20%; padding: 15px 5px; border: 1px solid #ddd; vertical-align: top;">
-                        <span style="font-size: 0.75rem; color: #777;">초대 (1995)</span><br>
+                        <span style="font-size: 0.75rem; color: #777;">초대</span><br>
                         <a href="윤재형.html" style="color: #0055AA; font-weight: bold; text-decoration: none;">윤재형</a>
                     </td>
                     <td style="width: 20%; padding: 15px 5px; border: 1px solid #ddd; vertical-align: top;">
-                        <span style="font-size: 0.75rem; color: #777;">제2대 (1995~1998)</span><br>
+                        <span style="font-size: 0.75rem; color: #777;">제2대</span><br>
                         <a href="양준범.html" style="color: #0055AA; font-weight: bold; text-decoration: none;">양준범</a>
                     </td>
                     <td style="width: 20%; padding: 15px 5px; border: 1px solid #ddd; vertical-align: top;">
-                        <span style="font-size: 0.75rem; color: #777;">제3·4대 (1998~2003)</span><br>
+                        <span style="font-size: 0.75rem; color: #777;">제3·4대</span><br>
                         <a href="구왕유.html" style="color: #0055AA; font-weight: bold; text-decoration: none;">구왕유</a>
                     </td>
                     <td style="width: 20%; padding: 15px 5px; border: 1px solid #ddd; vertical-align: top;">
-                        <span style="font-size: 0.75rem; color: #777;">제5대 (2003~2006)</span><br>
+                        <span style="font-size: 0.75rem; color: #777;">제5대</span><br>
                         <a href="노완규.html" style="color: #0055AA; font-weight: bold; text-decoration: none;">노완규</a>
                     </td>
                     <td style="width: 20%; padding: 15px 5px; border: 1px solid #ddd; vertical-align: top;">
-                        <span style="font-size: 0.75rem; color: #777;">제6대 (2006~2008)</span><br>
+                        <span style="font-size: 0.75rem; color: #777;">제6대</span><br>
                         <a href="오박명.html" style="color: #0055AA; font-weight: bold; text-decoration: none;">오박명</a>
                     </td>
                 </tr>
@@ -45,23 +45,23 @@
                 </tr>
                 <tr style="line-height: 1.8;">
                     <td style="padding: 15px 5px; border: 1px solid #ddd; vertical-align: top;">
-                        <span style="font-size: 0.75rem; color: #777;">제7대 (2008~2011)</span><br>
+                        <span style="font-size: 0.75rem; color: #777;">제7대</span><br>
                         <a href="주연천.html" style="color: #0055AA; font-weight: bold; text-decoration: none;">주연천</a>
                     </td>
                     <td style="padding: 15px 5px; border: 1px solid #ddd; vertical-align: top;">
-                        <span style="font-size: 0.75rem; color: #777;">제8대 (2011~2014)</span><br>
+                        <span style="font-size: 0.75rem; color: #777;">제8대</span><br>
                         <a href="공석현.html" style="color: #0055AA; font-weight: bold; text-decoration: none;">공석현</a>
                     </td>
                     <td style="padding: 15px 5px; border: 1px solid #ddd; vertical-align: top;">
-                        <span style="font-size: 0.75rem; color: #777;">제9대 (2014~2017)</span><br>
+                        <span style="font-size: 0.75rem; color: #777;">제9대</span><br>
                         <a href="양원준.html" style="color: #0055AA; font-weight: bold; text-decoration: none;">양원준</a>
                     </td>
                     <td style="padding: 15px 5px; border: 1px solid #ddd; vertical-align: top;">
-                        <span style="font-size: 0.75rem; color: #777;">제10대 (2017~2019)</span><br>
+                        <span style="font-size: 0.75rem; color: #777;">제10대</span><br>
                         <a href="추진명.html" style="color: #0055AA; font-weight: bold; text-decoration: none;">추진명</a>
                     </td>
                     <td style="padding: 15px 5px; border: 1px solid #ddd; vertical-align: top;">
-                        <span style="font-size: 0.75rem; color: #777;">제11대 (2019~2021)</span><br>
+                        <span style="font-size: 0.75rem; color: #777;">제11대</span><br>
                         <a href="연숙현.html" style="color: #0055AA; font-weight: bold; text-decoration: none;">연숙현</a>
                     </td>
                 </tr>
@@ -71,13 +71,12 @@
                 </tr>
                 <tr style="line-height: 1.8;">
                     <td style="padding: 15px 5px; border: 1px solid #ddd; vertical-align: top;">
-                        <span style="font-size: 0.75rem; color: #777;">제12대 (2021~2024)</span><br>
+                        <span style="font-size: 0.75rem; color: #777;">제12대</span><br>
                         <a href="조왕석.html" style="color: #0055AA; font-weight: bold; text-decoration: none;">조왕석</a>
                     </td>
-                    <td style="padding: 15px 5px; border: 1px solid #ddd; vertical-align: top; background-color: #f0f8ff;">
-                        <span style="font-size: 0.75rem; color: #777;">제13대 (2024~현재)</span><br>
-                        <strong style="color: #005BAC; font-size: 1.05rem;">최성진</strong>
-                    </td>
+                    <td style="padding: 15px 5px; border: 1px solid #ddd; vertical-align: top; ">
+                        <span style="font-size: 0.75rem; color: #777;">제13대</span><br>
+<a href="최성진.html" style="color: #0055AA; font-weight: bold; text-decoration: none;">최성진</a>                    </td>
                     <td colspan="3" style="padding: 15px 5px; border: 1px solid #ddd; background-color: #f8f9fa;"></td>
                 </tr>
             </table>

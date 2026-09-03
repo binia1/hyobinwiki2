@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         <td class="text-left py-1.5 px-3 leading-loose">
                             <a href="효빈백화점.html" class="text-gray-400 line-through hover:underline">효빈백화점</a><span class="text-[10px] text-gray-500 ml-0.5">(폐)</span> <span class="text-gray-300 mx-1">·</span>
                             <a href="리에라백화점.html" class="text-gray-400 line-through hover:underline">리에라백화점</a><span class="text-[10px] text-gray-500 ml-0.5">(전)</span> <span class="text-gray-300 mx-1">·</span>
-                            <a href="대곡백화점.html" class="text-gray-400 line-through hover:underline">대곡백화점</a><span class="text-[10px] text-gray-500 ml-0.5">(폐)</span> <span class="text-gray-300 mx-1">·</span>
+                            <a href="대곡백화점.html" class="text-gray-400 line-through hover:underline">대곡백화점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
                             <a href="두청백화점.html" class="text-gray-400 line-through hover:underline">두청백화점</a><span class="text-[10px] text-gray-500 ml-0.5">(폐)</span> <span class="text-gray-300 mx-1">·</span>
                             <a href="안석백화점.html" class="text-gray-400 line-through hover:underline">안석백화점</a><span class="text-[10px] text-gray-500 ml-0.5">(폐)</span>
                         </td>
@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">세이브존</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="세이브존 효빈덕현점.html" class="text-[#0275d8] hover:underline">효빈덕현점</a>
+                            <a href="세이브존 효빈사가당점.html" class="text-[#0275d8] hover:underline">효빈사가당점</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -249,7 +249,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">스타필드</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="스타필드 효빈점.html" class="text-[#0275d8] hover:underline">효빈점</a><span class="text-[10px] text-gray-500 ml-0.5">(2028)</span>
+                            <a href="스타필드 효빈.html" class="text-[#0275d8] hover:underline">효빈점</a><span class="text-[10px] text-gray-500 ml-0.5">(2028)</span>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -336,7 +336,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">고송스퀘어</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="고송스퀘어몰.html" class="text-[#0275d8] hover:underline">고송스퀘어몰</a>
+                            <a href="고송스퀘어.html" class="text-[#0275d8] hover:underline">고송스퀘어몰</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">

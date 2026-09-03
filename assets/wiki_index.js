@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 9. 2. 오후 6:58:50
+ * 업데이트: 2026. 9. 4. 오전 1:12:34
  */
 
 window.HB_WIKI_PAGES = [
@@ -11643,6 +11643,234 @@ window.HB_WIKI_PAGES = [
   {
     "title": "가희나",
     "href": "가희나.html"
+  },
+  {
+    "title": "최성진",
+    "href": "최성진.html"
+  },
+  {
+    "title": "완시윤",
+    "href": "완시윤.html"
+  },
+  {
+    "title": "이미녀",
+    "href": "이미녀.html"
+  },
+  {
+    "title": "광역전철",
+    "href": "광역전철.html"
+  },
+  {
+    "title": "세이브존 효빈사가당점",
+    "href": "세이브존 효빈사가당점.html"
+  },
+  {
+    "title": "ITX-마음",
+    "href": "ITX-마음.html"
+  },
+  {
+    "title": "ITX-새마을",
+    "href": "ITX-새마을.html"
+  },
+  {
+    "title": "ITX-청춘",
+    "href": "ITX-청춘.html"
+  },
+  {
+    "title": "KTX-산천",
+    "href": "KTX-산천.html"
+  },
+  {
+    "title": "KTX-이음",
+    "href": "KTX-이음.html"
+  },
+  {
+    "title": "KTX-청룡",
+    "href": "KTX-청룡.html"
+  },
+  {
+    "title": "KTX",
+    "href": "KTX.html"
+  },
+  {
+    "title": "관광호",
+    "href": "관광호.html"
+  },
+  {
+    "title": "누리로",
+    "href": "누리로.html"
+  },
+  {
+    "title": "무궁화호",
+    "href": "무궁화호.html"
+  },
+  {
+    "title": "비둘기호",
+    "href": "비둘기호.html"
+  },
+  {
+    "title": "새마을호",
+    "href": "새마을호.html"
+  },
+  {
+    "title": "통근열차(열차등급)",
+    "href": "통근열차(열차등급).html"
+  },
+  {
+    "title": "통일호",
+    "href": "통일호.html"
+  },
+  {
+    "title": "지하철",
+    "href": "지하철.html"
+  },
+  {
+    "title": "모다아울렛 고해점",
+    "href": "모다아울렛 고해점.html"
+  },
+  {
+    "title": "위성도시",
+    "href": "위성도시.html"
+  },
+  {
+    "title": "통근",
+    "href": "통근.html"
+  },
+  {
+    "title": "군사정권",
+    "href": "군사정권.html"
+  },
+  {
+    "title": "환승",
+    "href": "환승.html"
+  },
+  {
+    "title": "통",
+    "href": "통.html"
+  },
+  {
+    "title": "통(행정구역)",
+    "href": "통(행정구역).html"
+  },
+  {
+    "title": "반",
+    "href": "반.html"
+  },
+  {
+    "title": "반(행정구역)",
+    "href": "반(행정구역).html"
+  },
+  {
+    "title": "특별지방자치단체",
+    "href": "특별지방자치단체.html"
+  },
+  {
+    "title": "특별자치도",
+    "href": "특별자치도.html"
+  },
+  {
+    "title": "특별자치시",
+    "href": "특별자치시.html"
+  },
+  {
+    "title": "통합특별시",
+    "href": "통합특별시.html"
+  },
+  {
+    "title": "대도시 특례",
+    "href": "대도시 특례.html"
+  },
+  {
+    "title": "경전철",
+    "href": "경전철.html"
+  },
+  {
+    "title": "고무차륜열차",
+    "href": "고무차륜열차.html"
+  },
+  {
+    "title": "광역급행철도",
+    "href": "광역급행철도.html"
+  },
+  {
+    "title": "광역철도",
+    "href": "광역철도.html"
+  },
+  {
+    "title": "국민의힘",
+    "href": "국민의힘.html"
+  },
+  {
+    "title": "노면전차",
+    "href": "노면전차.html"
+  },
+  {
+    "title": "모노레일",
+    "href": "모노레일.html"
+  },
+  {
+    "title": "중전철",
+    "href": "중전철.html"
+  },
+  {
+    "title": "특별지방자치단체(행정구역)",
+    "href": "특별지방자치단체(행정구역).html"
+  },
+  {
+    "title": "특례시",
+    "href": "특례시.html"
+  },
+  {
+    "title": "도농복합시",
+    "href": "도농복합시.html"
+  },
+  {
+    "title": "통행방향",
+    "href": "통행방향.html"
+  },
+  {
+    "title": "ATC",
+    "href": "ATC.html"
+  },
+  {
+    "title": "ATO",
+    "href": "ATO.html"
+  },
+  {
+    "title": "누나",
+    "href": "누나.html"
+  },
+  {
+    "title": "언니",
+    "href": "언니.html"
+  },
+  {
+    "title": "부시로드",
+    "href": "부시로드.html"
+  },
+  {
+    "title": "사가라 마유",
+    "href": "사가라 마유.html"
+  },
+  {
+    "title": "유리카모메",
+    "href": "유리카모메.html"
+  },
+  {
+    "title": "츠키네 코나",
+    "href": "츠키네 코나.html"
+  },
+  {
+    "title": "표준궤",
+    "href": "표준궤.html"
+  },
+  {
+    "title": "하야시 코코",
+    "href": "하야시 코코.html"
+  },
+  {
+    "title": "스타필드 효빈",
+    "href": "스타필드 효빈.html"
   }
 ];
 
@@ -18458,5 +18686,62 @@ window.HB_WIKI_ALIASES = {
   "서기평": "서기평.html",
   "마루빈": "마루빈.html",
   "가노은": "가노은.html",
-  "가희나": "가희나.html"
+  "가희나": "가희나.html",
+  "최성진": "최성진.html",
+  "완시윤": "완시윤.html",
+  "이미녀": "이미녀.html",
+  "광역전철": "광역전철.html",
+  "세이브존 효빈사가당점": "세이브존 효빈사가당점.html",
+  "ITX-마음": "ITX-마음.html",
+  "ITX-새마을": "ITX-새마을.html",
+  "ITX-청춘": "ITX-청춘.html",
+  "KTX-산천": "KTX-산천.html",
+  "KTX-이음": "KTX-이음.html",
+  "KTX-청룡": "KTX-청룡.html",
+  "KTX": "KTX.html",
+  "관광호": "관광호.html",
+  "누리로": "누리로.html",
+  "무궁화호": "무궁화호.html",
+  "비둘기호": "비둘기호.html",
+  "새마을호": "새마을호.html",
+  "통근열차(열차등급)": "통근열차(열차등급).html",
+  "통일호": "통일호.html",
+  "지하철": "지하철.html",
+  "모다아울렛 고해점": "모다아울렛 고해점.html",
+  "위성도시": "위성도시.html",
+  "통근": "통근.html",
+  "군사정권": "군사정권.html",
+  "환승": "환승.html",
+  "통": "통.html",
+  "통(행정구역)": "통(행정구역).html",
+  "반": "반.html",
+  "반(행정구역)": "반(행정구역).html",
+  "특별지방자치단체": "특별지방자치단체.html",
+  "특별자치도": "특별자치도.html",
+  "특별자치시": "특별자치시.html",
+  "통합특별시": "통합특별시.html",
+  "대도시 특례": "대도시 특례.html",
+  "경전철": "경전철.html",
+  "고무차륜열차": "고무차륜열차.html",
+  "광역급행철도": "광역급행철도.html",
+  "광역철도": "광역철도.html",
+  "국민의힘": "국민의힘.html",
+  "노면전차": "노면전차.html",
+  "모노레일": "모노레일.html",
+  "중전철": "중전철.html",
+  "특별지방자치단체(행정구역)": "특별지방자치단체(행정구역).html",
+  "특례시": "특례시.html",
+  "도농복합시": "도농복합시.html",
+  "통행방향": "통행방향.html",
+  "ATC": "ATC.html",
+  "ATO": "ATO.html",
+  "누나": "누나.html",
+  "언니": "언니.html",
+  "부시로드": "부시로드.html",
+  "사가라 마유": "사가라 마유.html",
+  "유리카모메": "유리카모메.html",
+  "츠키네 코나": "츠키네 코나.html",
+  "표준궤": "표준궤.html",
+  "하야시 코코": "하야시 코코.html",
+  "스타필드 효빈": "스타필드 효빈.html"
 };

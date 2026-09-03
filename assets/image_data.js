@@ -12423,7 +12423,7 @@ const imageFiles = [
         "category": "person"
     },
     {
-        "file": "이미지_984382.png",
+        "file": "박효빈면상.png",
         "category": "etc"
     },
     {
