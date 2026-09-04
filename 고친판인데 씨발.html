@@ -775,7 +775,7 @@
 </body>
 </html>`;
 
-        const defaultText = `!TITLE:김시연\n!COLOR:#E76092\n\n[cat:효빈광역시의 인물]\n\n== 1. 개요 ==\n본문을 작성하세요...`;
+const defaultText = `!TITLE:김시연\n!COLOR:#E76092\n\n[cat:효빈광역시의 인물]\n\n== 1. 개요 ==\n본문을 작성하세요...`;
 
         function insertSyntax(open, close) {
             const textarea = document.getElementById('editor');
@@ -1058,6 +1058,11 @@
                     let randomId = "nav-container-" + Math.floor(Math.random() * 100000);
                     return `<div class="no-autolink" style="margin-bottom: 20px;">\n    <div id="${randomId}"></div>\n    <script src="${matchFile}"><\/script>\n</div>`;
                 }
+                
+                // 🚨 [수정 4] 꼴보기 싫은 국기, X 로고 틀 찌꺼기를 이미지/텍스트로 즉시 치환
+                if (cleanTarget === '국기') return '<span style="font-size: 1.2em;">🇯🇵</span> <a class="wiki-link" href="일본.html">일본</a>';
+                if (cleanTarget === 'X(SNS) 로고') return `<img onerror="this.style.display='none';" src="이미지/X 아이콘.svg" style="max-width:100%; height:auto; display:inline-block; vertical-align:middle; width: 20px !important;"/>`;
+
                 return `> 틀 포함: ${target}`;
             });
 
@@ -1079,6 +1084,16 @@
                 tocHtml += `    </ul>\n</div>`;
                 return tocHtml;
             });
+
+            // 🚨 [수정 1] 누락되었던 나이(2026년 기준), 루비, 위첨자 정규식 추가
+            html = html.replace(/\[age\(([0-9]{4}-[0-9]{2}-[0-9]{2})\)\]/g, (match, dateStr) => {
+                let [y, m, d] = dateStr.split('-').map(Number);
+                let age = 2026 - y;
+                if (9 < m || (9 === m && 4 < d)) age--; // 2026-09-04 기준
+                return age + '세';
+            });
+            html = html.replace(/\[ruby\(([^,]+),\s*ruby=([^)]+)\)\]/g, '<ruby>$1<rt>$2</rt></ruby>');
+            html = html.replace(/\^\^(.*?)\^\^/g, '<sup style="font-size: 0.8em; color: #555;">$1</sup>');
 
             html = html.replace(/\[clearfix\]/gi, '<div style="clear: both;"></div>');
             html = html.replace(/^>\s+(.*)$/gm, '<blockquote>$1</blockquote>');
@@ -1287,6 +1302,13 @@
                             if(cell.match(/^<:>\s*/)) { cStyle += ` text-align: center;`; cell = cell.replace(/^<:>\s*/, ''); }
                             else if(cell.match(/^<->\s*/)) { cStyle += ` text-align: right;`; cell = cell.replace(/^<->\s*/, ''); }
                             else if(cell.match(/^<>\s*/)) { cStyle += ` text-align: left;`; cell = cell.replace(/^<>\s*/, ''); }
+
+                            // 🚨 [수정 2] 표 셀 안의 #ffc224,#ffc224 색상 찌꺼기를 배경색으로 강제 처리
+                            let hexBgMatch = cell.match(/^\s*#([0-9a-fA-F]{3,6})(?:,#[0-9a-fA-F]{3,6})?\s+/);
+                            if(hexBgMatch) {
+                                cStyle += ` background-color: #${hexBgMatch[1]};`;
+                                cell = cell.replace(/^\s*#[0-9a-fA-F,#]+\s+/, '');
+                            }
                             
                             cell = cell.replace(/^<[^>]+>\s*/g, '');
                             rowHtml += `<td${attrs} style="${cStyle}">${cell.trim()}</td>`;
@@ -1329,7 +1351,8 @@
                     let m = inner.match(/^\-([1-5])\s+([\s\S]*)$/);
                     if(m) macros[id] = `<span style="font-size: ${1 - parseInt(m[1])*0.15}em;">${m[2]}</span>`;
                 } else if (inner.startsWith('#')) {
-                    let m = inner.match(/^#([a-zA-Z0-9,]+)\s+([\s\S]*)$/);
+                    // 🚨 [수정 3] 다크모드 색상(,#000)이 포함되면 파싱이 실패하던 정규식 빵꾸 수정
+                    let m = inner.match(/^#([a-zA-Z0-9,#]+)\s+([\s\S]*)$/);
                     if(m) {
                         let col = m[1].split(',')[0].trim();
                         if(!col.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(col)) col = '#' + col;
@@ -1391,7 +1414,7 @@
                     let rMatch = args.match(/border-radius=([0-9]+)/);
                     if(rMatch) style += ` border-radius: ${rMatch[1]}px;`;
                 }
-                return `<img src="이미지/${filename.trim()}" style="${style}" onerror="this.style.display='none'; this.parentNode.insertAdjacentHTML('afterbegin', '<span style=\\'color:#ffffff; font-weight:bold; font-size:1.5rem;\\'>IMG</span>');">`;
+                return `<img src="이미지/${filename.trim()}" style="${style}" onerror="this.style.display='none';">`;
             });
             
             text = text.replace(/\[\[([^|\]]+)(?:\|([^\]]*))?\]\]/g, (match, doc, label) => {

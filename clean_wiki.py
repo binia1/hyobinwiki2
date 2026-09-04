@@ -22,9 +22,12 @@ def replace_age(match):
 def clean_html_files(directory):
     # 치환 규칙 (찾을 내용 정규식, 바꿀 내용 HTML)
     replacements = [
-        # 1. 흉측한 onerror 이미지 플레이스홀더 날리기
+        # 0. 🚨 [긴급 복구] 이전 스크립트가 잘못 파먹은 역슬래시(\) 찌꺼기 원상복구
+        (r"display=\\'none\\';", r"display='none';"),
+        
+        # 1. 흉측한 onerror 이미지 플레이스홀더 날리기 (오류 원인 제거)
         (r'''onerror="this\.style\.display='none'; this\.parentNode\.insertAdjacentHTML\('afterbegin', '&lt;span style=\\'color:#ffffff; font-weight:bold; font-size:1\.5rem;\\'&gt;IMG&lt;/span&gt;'\);"''', 
-         r'onerror="this.style.display=\'none\';"'),
+         '''onerror="this.style.display='none';"'''),
          
         # 2. [ruby(한자, ruby=요미가나)] 일괄 변환
         (r'\[ruby\(([^,]+),\s*ruby=([^)]+)\)\]', r'<ruby>\1<rt>\2</rt></ruby>'),
@@ -35,8 +38,12 @@ def clean_html_files(directory):
         # 4. 일본 국기 틀 찌꺼기 변환
         (r'&gt;\s*틀\s*포함:\s*틀:국기', r'<span style="font-size: 1.2em;">🇯🇵</span> <a class="wiki-link" href="일본.html">일본</a>'),
         
-        # 5. X(트위터) 로고 틀 찌꺼기 변환
-        (r'&gt;\s*틀\s*포함:\s*틀:X\(SNS\)\s*로고', r'<img onerror="this.style.display=\'none\';" src="이미지/X 아이콘.svg" style="max-width:100%; height:auto; display:inline-block; vertical-align:middle; width: 20px !important;"/>')
+        # 5. X(트위터) 로고 틀 찌꺼기 변환 (오류 원인 제거)
+        (r'&gt;\s*틀\s*포함:\s*틀:X\(SNS\)\s*로고', '''<img onerror="this.style.display='none';" src="이미지/X 아이콘.svg" style="max-width:100%; height:auto; display:inline-block; vertical-align:middle; width: 20px !important;"/>'''),
+
+        # 6. 표 셀 안의 색상 찌꺼기 (#ffc224,#ffc224)를 CSS 배경색으로 강제 삽입
+        (r'(<(?:td|div)[^>]*style=")([^"]*)("?[^>]*>\s*)#([0-9a-fA-F]{3,6})(?:,#[0-9a-fA-F]{3,6})?\s*', 
+         r'\1\2; background-color: #\4;\3')
     ]
 
     count = 0
@@ -62,10 +69,10 @@ def clean_html_files(directory):
                 if content != original_content:
                     with open(filepath, 'w', encoding='utf-8') as f:
                         f.write(content)
-                    print(f"✅ 변환 완료: {file}")
+                    print(f"✅ 변환(및 복구) 완료: {file}")
                     count += 1
 
-    print(f"\n🚀 총 {count}개의 HTML 파일에서 나무위키 찌꺼기 청소를 완료했습니다!")
+    print(f"\n🚀 총 {count}개의 HTML 파일에서 나무위키 찌꺼기 청소 및 에러 복구를 완료했습니다!")
 
 # 실행 (현재 폴더 기준)
 if __name__ == "__main__":

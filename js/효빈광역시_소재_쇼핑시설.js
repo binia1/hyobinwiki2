@@ -110,8 +110,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300 leading-tight">기타 폐점<br>백화점</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
                             <a href="효빈백화점.html" class="text-gray-400 line-through hover:underline">효빈백화점</a><span class="text-[10px] text-gray-500 ml-0.5">(폐)</span> <span class="text-gray-300 mx-1">·</span>
-                            <a href="리에라백화점.html" class="text-gray-400 line-through hover:underline">리에라백화점</a><span class="text-[10px] text-gray-500 ml-0.5">(전)</span> <span class="text-gray-300 mx-1">·</span>
-                            <a href="대곡백화점.html" class="text-gray-400 line-through hover:underline">대곡백화점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
+                            <a href="리에라몰.html" class="text-gray-400 line-through hover:underline">리에라백화점</a><span class="text-[10px] text-gray-500 ml-0.5">(전)</span> <span class="text-gray-300 mx-1">·</span>
+                            <a href="세이브존 효빈사가당점.html" class="text-gray-400 line-through hover:underline">대곡백화점</a><span class="text-[10px] text-gray-500 ml-0.5">(변)</span> <span class="text-gray-300 mx-1">·</span>
                             <a href="두청백화점.html" class="text-gray-400 line-through hover:underline">두청백화점</a><span class="text-[10px] text-gray-500 ml-0.5">(폐)</span> <span class="text-gray-300 mx-1">·</span>
                             <a href="안석백화점.html" class="text-gray-400 line-through hover:underline">안석백화점</a><span class="text-[10px] text-gray-500 ml-0.5">(폐)</span>
                         </td>
@@ -354,7 +354,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">다이버시티몰</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="청덕 다이버시티몰.html" class="text-[#0275d8] hover:underline">청덕 다이버시티몰</a>
+                            <a href="청덕 다이버시티 아파트.html" class="text-[#0275d8] hover:underline">청덕 다이버시티몰</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -451,28 +451,28 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">애니메이트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="애니메이트 고송본점.html" class="text-[#0275d8] hover:underline">고송본점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="애니메이트 탄성점.html" class="text-[#0275d8] hover:underline">탄성점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="애니메이트 효빈역점.html" class="text-[#0275d8] hover:underline">효빈역점</a>
+                            <a href="애니메이트.html#s-11" class="text-[#0275d8] hover:underline">고송본점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="애니메이트.html#s-12" class="text-[#0275d8] hover:underline">탄성점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="애니메이트.html#s-13" class="text-[#0275d8] hover:underline">효빈역점</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
-                        <td class="bg-white border-r border-gray-300 align-middle p-1.5">
-                            <img src="이미지/애니플러스_로고.svg" alt="애니플러스샵" class="h-9 mx-auto object-contain">
-                        </td>
-                        <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">애니플러스샵</th>
-                        <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="애니플러스샵 고송점.html" class="text-[#0275d8] hover:underline">고송점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="애니플러스샵 창전점.html" class="text-[#0275d8] hover:underline">창전점</a>
-                        </td>
-                    </tr>
+    <td class="bg-white border-r border-gray-300 align-middle p-1.5">
+        <img src="이미지/애니플러스_로고.svg" alt="애니플러스샵" class="h-9 mx-auto object-contain">
+    </td>
+    <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">애니플러스샵</th>
+    <td class="text-left py-1.5 px-3 leading-loose">
+        <a href="애니플러스샵.html#s-6" class="text-[#0275d8] hover:underline">고송점</a> <span class="text-gray-300 mx-1">·</span>
+        <a href="애니플러스샵.html#s-10" class="text-[#0275d8] hover:underline">창전점</a>
+    </td>
+</tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1.5">
                             <img src="이미지/멜론북스_로고.svg" alt="멜론북스" class="h-9 mx-auto object-contain">
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">멜론북스</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="멜론북스 고송점.html" class="text-[#0275d8] hover:underline">고송점</a>
+                            <a href="멜론북스.html" class="text-[#0275d8] hover:underline">고송점</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
