@@ -477,6 +477,18 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1.5">
+                            <img src="이미지/모던하우스_로고.svg" alt="모던하우스" class="h-9 mx-auto object-contain">
+                        </td>
+                        <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">모던하우스</th>
+                        <td class="text-left py-1.5 px-3 leading-loose">
+                            <a href="모던하우스 NC효빈점.html" class="text-[#0275d8] hover:underline">NC 효빈점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="모던하우스 뉴코아창전점.html" class="text-[#0275d8] hover:underline">뉴코아 창전점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="모던하우스 롯데아울렛평당점.html" class="text-[#0275d8] hover:underline">롯데아울렛 평당점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="모던하우스 홈플러스효빈점.html" class="text-[#0275d8] hover:underline">홈플러스 효빈점</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <td class="bg-white border-r border-gray-300 align-middle p-1.5">
                             <img src="이미지/효빈메트로_로고.webp" alt="효빈교통공사" class="h-9 mx-auto object-contain">
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300 leading-tight">효빈교통공사<br>굿즈샵</th>
@@ -497,7 +509,66 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                     </tr>
 
-                    <!-- 7. 지하상가 -->
+                    <!-- 7. 대형 서점 -->
+                    <tr>
+                        <td colspan="3" class="bg-[#7777AA] text-white font-bold py-1.5 border border-[#7777AA] shadow-inner text-[14px]">
+                            효빈광역시 소재 서점
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <td class="bg-white border-r border-gray-300 align-middle p-1.5">
+                            <img src="이미지/교보문고_로고.svg" alt="교보문고" class="h-9 mx-auto object-contain">
+                        </td>
+                        <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">교보문고</th>
+                        <td class="text-left py-1.5 px-3 leading-loose">
+                            <a href="교보문고 효빈점.html" class="text-[#0275d8] hover:underline">효빈점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="교보문고 안천팝업스토어.html" class="text-[#0275d8] hover:underline">안천팝업스토어</a><span class="text-[10px] text-gray-500 ml-0.5">(팝업)</span> <span class="text-gray-300 mx-1">·</span>
+                            <a href="교보문고 효빈터미널점.html" class="text-[#0275d8] hover:underline">효빈터미널점</a><span class="text-[10px] text-gray-500 ml-0.5">(교보핫트랙스)</span>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <td class="bg-white border-r border-gray-300 align-middle p-1.5">
+                            <img src="이미지/영풍문고_로고.svg" alt="영풍문고" class="h-9 mx-auto object-contain">
+                        </td>
+                        <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">영풍문고</th>
+                        <td class="text-left py-1.5 px-3 leading-loose">
+                            <a href="영풍문고 효빈대점.html" class="text-[#0275d8] hover:underline">효빈대점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="영풍문고 고송스퀘어점.html" class="text-[#0275d8] hover:underline">고송스퀘어점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="영풍문고 롯데백화점 청엽점.html" class="text-[#0275d8] hover:underline">롯데백화점 청엽점</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <td class="bg-white border-r border-gray-300 align-middle p-1.5">
+                            <img src="이미지/종로서적_로고.svg" alt="종로서적" class="h-9 mx-auto object-contain">
+                        </td>
+                        <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">종로서적</th>
+                        <td class="text-left py-1.5 px-3 leading-loose">
+                            <a href="종로서적 평당센트럴점.html" class="text-[#0275d8] hover:underline">평당센트럴점</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <td class="bg-white border-r border-gray-300 align-middle p-1.5">
+                            <img src="이미지/아크앤북_로고.webp" alt="아크앤북" class="h-9 mx-auto object-contain">
+                        </td>
+                        <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">아크앤북</th>
+                        <td class="text-left py-1.5 px-3 leading-loose">
+                            <a href="아크앤북 창전점.html" class="text-[#0275d8] hover:underline">창전점</a>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200">
+                        <td class="bg-white border-r border-gray-300 align-middle p-1.5">
+                            <img src="이미지/알라딘중고서점_로고.svg" alt="알라딘중고서점" class="h-9 mx-auto object-contain">
+                        </td>
+                        <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300 leading-tight">알라딘<br>중고서점</th>
+                        <td class="text-left py-1.5 px-3 leading-loose">
+                            <a href="알라딘중고서점 효빈역점.html" class="text-[#0275d8] hover:underline">효빈역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="알라딘중고서점 고송교차로역점.html" class="text-[#0275d8] hover:underline">고송교차로역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="알라딘중고서점 청엽구청역점.html" class="text-[#0275d8] hover:underline">청엽구청역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="알라딘중고서점 이자점.html" class="text-[#0275d8] hover:underline">이자점</a>
+                        </td>
+                    </tr>
+
+                    <!-- 8. 지하상가 -->
                     <tr>
                         <td colspan="3" class="bg-[#7777AA] text-white font-bold py-1.5 border border-[#7777AA] shadow-inner text-[14px]">
                             효빈광역시 소재 지하상가
