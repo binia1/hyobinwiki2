@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">신세계백화점</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="신세계백화점 효빈점.html" class="text-[#0275d8] hover:underline">효빈점</a>
+                            <a href="효빈신세계백화점.html" class="text-[#0275d8] hover:underline">효빈점</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">갤러리아백화점</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="갤러리아백화점 효빈점.html" class="text-[#0275d8] hover:underline">효빈점</a>
+                            <a href="갤러리아_효빈점.html" class="text-[#0275d8] hover:underline">효빈점</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -129,8 +129,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">롯데면세점</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="롯데면세점 효빈점.html" class="text-[#0275d8] hover:underline">효빈점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="롯데면세점 효빈공항점.html" class="text-[#0275d8] hover:underline">효빈공항점</a><span class="text-[10px] text-gray-500 ml-0.5">(입국장)(기도)</span>
+                            <a href="롯데백화점_효빈점.html" class="text-[#0275d8] hover:underline">효빈점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈국제공항.html" class="text-[#0275d8] hover:underline">효빈공항점</a><span class="text-[10px] text-gray-500 ml-0.5">(입국장)(기도)</span>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -139,8 +139,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">신세계면세점</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="신세계면세점 효빈점.html" class="text-[#0275d8] hover:underline">효빈점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="신세계면세점 효빈공항점.html" class="text-[#0275d8] hover:underline">효빈공항점</a><span class="text-[10px] text-gray-500 ml-0.5">(출국장)(기도)</span>
+                            <a href="효빈신세계백화점.html" class="text-[#0275d8] hover:underline">효빈점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="효빈국제공항.html" class="text-[#0275d8] hover:underline">효빈공항점</a><span class="text-[10px] text-gray-500 ml-0.5">(출국장)(기도)</span>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -149,8 +149,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">효빈면세점</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="효빈면세점 효빈항점.html" class="text-[#0275d8] hover:underline">효빈항점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="효빈면세점 중보로점.html" class="text-[#0275d8] hover:underline">중보로점</a>
+                            <a href="효빈항국제여객터미널.html" class="text-[#0275d8] hover:underline">효빈항점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="중보로.html" class="text-[#0275d8] hover:underline">중보로점</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">경복궁면세점</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="경복궁면세점 효빈공항점.html" class="text-[#0275d8] hover:underline">효빈공항점</a><span class="text-[10px] text-gray-500 ml-0.5">(입국장)(기도)</span>
+                            <a href="효빈국제공항.html" class="text-[#0275d8] hover:underline">효빈공항점</a><span class="text-[10px] text-gray-500 ml-0.5">(입국장)(기도)</span>
                         </td>
                     </tr>
 
@@ -240,7 +240,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">롯데몰</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
                             <a href="롯데백화점_청엽점.html" class="text-[#0275d8] hover:underline">청엽점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="롯데몰 창전점.html" class="text-[#0275d8] hover:underline">창전점</a>
+                            <a href="롯데몰_창전점.html" class="text-[#0275d8] hover:underline">창전점</a>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
@@ -561,10 +561,10 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300 leading-tight">알라딘<br>중고서점</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="알라딘중고서점 효빈역점.html" class="text-[#0275d8] hover:underline">효빈역점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="알라딘중고서점 고송교차로역점.html" class="text-[#0275d8] hover:underline">고송교차로역점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="알라딘중고서점 청엽구청역점.html" class="text-[#0275d8] hover:underline">청엽구청역점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="알라딘중고서점 이자점.html" class="text-[#0275d8] hover:underline">이자점</a>
+                            <a href="알라딘 중고서점_지점.html#s-83" class="text-[#0275d8] hover:underline">효빈역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="알라딘 중고서점_지점.html#s-84" class="text-[#0275d8] hover:underline">고송교차로역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="알라딘 중고서점_지점.html#s-85" class="text-[#0275d8] hover:underline">청엽구청역점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="알라딘 중고서점_지점.html#s-86" class="text-[#0275d8] hover:underline">이자점</a>
                         </td>
                     </tr>
 
