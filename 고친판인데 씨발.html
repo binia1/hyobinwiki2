@@ -380,7 +380,7 @@
         효빈광역시_공항버스_둘러보기.js	.js	\\hyobinwiki2\\js\\
         효빈광역시_광역버스_둘러보기.js	.js	\\hyobinwiki2\\js\\
         효빈광역시_급행버스_둘러보기.js	.js	\\hyobinwiki2\\js\\
-        효빈광역시_마을버스_둘러보기.js	.js	\\hyobinwiki2\\js\\
+        효빈광역시_마일버스_둘러보기.js	.js	\\hyobinwiki2\\js\\
         효빈광역시_소재_쇼핑시설.js	.js	\\hyobinwiki2\\js\\
         효빈광역시_소재_할인점.js	.js	\\hyobinwiki2\\js\\
         효빈광역시_소재언론사.js	.js	\\hyobinwiki2\\js\\
@@ -888,6 +888,281 @@ const defaultText = `!TITLE:김시연\n!COLOR:#E76092\n\n[cat:효빈광역시의
             showToast("텍스트가 효빈위키 문법으로 마법 변환되었습니다! ✨");
         }
 
+        function parseNamuWikiCode(text, title) {
+            let converted = `!TITLE:${title}\n!COLOR:#003B96\n\n`;
+
+            text = text.replace(/^(\s*)##.*$/gm, '');
+
+            let cats = [];
+            text = text.replace(/\[\[분류:(.*?)\]\]/g, (match, p1) => { cats.push(p1.trim()); return ''; });
+            if (cats.length > 0) converted += `[cat:${cats.join(', ')}]\n\n`;
+
+            text = text.replace(/\[목차\]/g, '[TOC]');
+            text = text.replace(/\[clearfix\]/gi, '');
+            text = text.replace(/\[br\]/gi, '<br>');
+
+            let hCounters = [0, 0, 0, 0, 0, 0, 0];
+            text = text.replace(/^(={2,6})\s+(.*?)\s+\1$/gm, (match, equals, titleText) => {
+                let level = equals.length;
+                hCounters[level]++;
+                for(let i = level + 1; i <= 6; i++) { hCounters[i] = 0; }
+                let numStr = "";
+                for(let i = 2; i <= level; i++) { numStr += hCounters[i] + "."; }
+                return `${equals} ${numStr} ${titleText.trim()} ${equals}`;
+            });
+
+            let macros = {};
+            let mCount = 0;
+            let changed = true;
+            while(changed) {
+                changed = false;
+                text = text.replace(/\{\{\{((?:(?!\{\{\{|\}\}\})[\s\S])*)\}\}\}/g, (match, inner) => {
+                    changed = true;
+                    let id = `__MACRO_${mCount++}__`;
+                    macros[id] = inner;
+                    return id;
+                });
+            }
+
+            function parseNamuTables(str) {
+                let lines = str.split('\n');
+                let out = [];
+                let inTable = false;
+                
+                for(let i=0; i<lines.length; i++) {
+                    let line = lines[i].trim();
+                    if (line.startsWith('||') && !line.endsWith('||') && line.length > 2) { line += '||'; }
+
+                    if(line.startsWith('||') && line.endsWith('||') && line.length >= 4) {
+                        if(!inTable) {
+                            let tableStyle = "width: 100%; border-collapse: collapse; text-align: center; margin: 15px auto;";
+                            
+                            let wMatch = line.match(/<table\s*width=([^>]+)>/i);
+                            if(wMatch) {
+                                let w = wMatch[1];
+                                if(!w.endsWith('%') && !w.endsWith('px')) w += 'px';
+                                tableStyle += ` width: ${w};`;
+                            }
+                            
+                            let aMatch = line.match(/<table\s*align=([^>]+)>/i);
+                            if(aMatch && aMatch[1] === 'center') tableStyle += ` margin: 15px auto;`;
+                            else if(aMatch && aMatch[1] === 'right') tableStyle += ` margin: 15px 0 15px auto; float: right;`;
+                            else if(aMatch && aMatch[1] === 'left') tableStyle += ` margin: 15px auto 15px 0; float: left;`;
+                            
+                            let bgMatch = line.match(/<table\s*bgcolor=([^>]+)>/i);
+                            if(bgMatch) {
+                                let bg = bgMatch[1].split(',')[0].trim();
+                                if(!bg.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(bg)) bg = '#' + bg;
+                                tableStyle += ` background-color: ${bg};`;
+                            }
+                            
+                            let bdMatch = line.match(/<table\s*bordercolor=([^>]+)>/i);
+                            if(bdMatch) {
+                                let bd = bdMatch[1].split(',')[0].trim();
+                                if(!bd.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(bd)) bd = '#' + bd;
+                                tableStyle += ` border: 2px solid ${bd};`;
+                            } else {
+                                tableStyle += ` border: 1px solid #ccc;`;
+                            }
+
+                            let tcMatch = line.match(/<table\s*color=([^>]+)>/i);
+                            if(tcMatch) {
+                                let tc = tcMatch[1].split(',')[0].trim();
+                                if(!tc.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(tc)) tc = '#' + tc;
+                                tableStyle += ` color: ${tc};`;
+                            }
+                            
+                            out.push(`<table style="${tableStyle}">\n    <tbody>`);
+                            inTable = true;
+                        }
+                        
+                        line = line.replace(/<table\s*(?:width|bgcolor|bordercolor|color|align|nopad)=?[^>]*>/gi, '');
+                        
+                        let rowStyle = "";
+                        let rBgMatch = line.match(/^\|\|<(?:row)?bgcolor=([^>]+)>/i);
+                        if(rBgMatch) {
+                            let bg = rBgMatch[1].split(',')[0].trim();
+                            if(!bg.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(bg)) bg = '#' + bg;
+                            rowStyle = ` style="background-color: ${bg};"`;
+                            line = line.replace(/\|\|<(?:row)?bgcolor=[^>]+>/i, '||');
+                        }
+                        
+                        let rowHtml = `        <tr${rowStyle}>`;
+                        let cells = line.split('||');
+                        for(let c=1; c<cells.length-1; c++) {
+                            let cell = cells[c];
+                            let attrs = "";
+                            let cStyle = "padding: 8px 12px; border: 1px solid #ccc; word-break: keep-all;";
+                            
+                            let rsMatch = cell.match(/<\|\s*(\d+)>/);
+                            if(rsMatch) { attrs += ` rowspan="${rsMatch[1]}"`; cell = cell.replace(/<\|\s*\d+>/g, ''); }
+                            
+                            let csMatch = cell.match(/<-\s*(\d+)>/);
+                            if(csMatch) { attrs += ` colspan="${csMatch[1]}"`; cell = cell.replace(/<-\s*\d+>/g, ''); }
+                            
+                            let cBgMatch = cell.match(/<(?:bgcolor|colbgcolor)\s*=\s*([^>]+)>/i);
+                            if(cBgMatch) { 
+                                let bg = cBgMatch[1].split(',')[0].trim();
+                                if(!bg.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(bg)) bg = '#' + bg;
+                                cStyle += ` background-color: ${bg};`; 
+                                cell = cell.replace(/<(?:bgcolor|colbgcolor)\s*=\s*[^>]+>/gi, ''); 
+                            }
+                            
+                            let cColMatch = cell.match(/<(?:color|colcolor)\s*=\s*([^>]+)>/i);
+                            if(cColMatch) { 
+                                let col = cColMatch[1].split(',')[0].trim();
+                                if(!col.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(col)) col = '#' + col;
+                                cStyle += ` color: ${col};`; 
+                                cell = cell.replace(/<(?:color|colcolor)\s*=\s*[^>]+>/gi, ''); 
+                            }
+                            
+                            let wMatch = cell.match(/<width\s*=\s*([^>]+)>/i);
+                            if(wMatch) { 
+                                let w = wMatch[1];
+                                if(!w.endsWith('%') && !w.endsWith('px')) w += 'px';
+                                cStyle += ` width: ${w};`; cell = cell.replace(/<width\s*=\s*[^>]+>/gi, ''); 
+                            }
+
+                            let hMatch = cell.match(/<height\s*=\s*([^>]+)>/i);
+                            if(hMatch) {
+                                let h = hMatch[1];
+                                if(!h.endsWith('%') && !h.endsWith('px')) h += 'px';
+                                cStyle += ` height: ${h};`; cell = cell.replace(/<height\s*=\s*[^>]+>/gi, '');
+                            }
+
+                            if(cell.match(/<:>/)) { cStyle += ` text-align: center;`; cell = cell.replace(/<:>/g, ''); }
+                            else if(cell.match(/<->/)) { cStyle += ` text-align: right;`; cell = cell.replace(/<->/g, ''); }
+                            else if(cell.match(/<>/)) { cStyle += ` text-align: left;`; cell = cell.replace(/<>/g, ''); }
+
+                            let hexBgMatch = cell.match(/<#([0-9a-fA-F]{3,6})(?:,#[0-9a-fA-F]{3,6})?>/);
+                            if(hexBgMatch) {
+                                cStyle += ` background-color: #${hexBgMatch[1]};`;
+                                cell = cell.replace(/<#[0-9a-fA-F]{3,6}(?:,#[0-9a-fA-F]{3,6})?>/g, '');
+                            }
+                            
+                            let oldHexMatch = cell.match(/^\s*#([0-9a-fA-F]{3,6})(?:,#[0-9a-fA-F]{3,6})?\s+/);
+                            if(oldHexMatch) {
+                                cStyle += ` background-color: #${oldHexMatch[1]};`;
+                                cell = cell.replace(/^\s*#[0-9a-fA-F]{3,6}(?:,#[0-9a-fA-F]{3,6})?\s+/, '');
+                            }
+
+                            cell = cell.replace(/<[a-zA-Z]+\s*=[^>]+>/g, '');
+                            cell = cell.replace(/^<[^>]+>\s*/g, '');
+                            rowHtml += `<td${attrs} style="${cStyle}">${cell.trim()}</td>`;
+                        }
+                        rowHtml += `</tr>`;
+                        out.push(rowHtml);
+                    } else {
+                        if(inTable) { out.push('    </tbody>\n</table>'); inTable = false; }
+                        out.push(lines[i]);
+                    }
+                }
+                if(inTable) out.push('    </tbody>\n</table>');
+                return out.join('\n');
+            }
+
+            for(let i=0; i<mCount; i++) {
+                let id = `__MACRO_${i}__`;
+                let inner = macros[id];
+
+                inner = parseNamuTables(inner); 
+
+                if (inner.match(/^#!wiki\s+style=/)) {
+                    let styleMatch = inner.match(/^#!wiki\s+style=(?:"|&quot;|')?(.*?)(?:"|&quot;|')?\s*\n([\s\S]*)$/);
+                    if(styleMatch) {
+                        macros[id] = `<div style="${styleMatch[1].replace(/&quot;/g, '')}">\n${styleMatch[2]}\n</div>`;
+                    } else {
+                        let body = inner.replace(/^#!wiki\s*\n/, '');
+                        macros[id] = `<div>\n${body}\n</div>`;
+                    }
+                } else if (inner.startsWith('#!folding')) {
+                    let foldMatch = inner.match(/^#!folding\s+(?:\[(.*?)\])?\s*\n([\s\S]*)$/);
+                    let title = foldMatch && foldMatch[1] ? foldMatch[1].trim() : "펼치기 · 접기";
+                    let content = foldMatch ? foldMatch[2] : inner.replace(/^#!folding[^\n]*\n/, '');
+                    macros[id] = `<details class="wiki-folding"><summary>[ ${title} ]</summary><div class="folding-content">\n${content}\n</div></details>`;
+                } else if (inner.startsWith('+')) {
+                    let m = inner.match(/^\+([1-5])\s+([\s\S]*)$/);
+                    if(m) macros[id] = `<span style="font-size: ${1 + parseInt(m[1])*0.2}em; font-weight: bold;">${m[2]}</span>`;
+                } else if (inner.startsWith('-')) {
+                    let m = inner.match(/^\-([1-5])\s+([\s\S]*)$/);
+                    if(m) macros[id] = `<span style="font-size: ${1 - parseInt(m[1])*0.15}em;">${m[2]}</span>`;
+                } else if (inner.startsWith('#')) {
+                    let m = inner.match(/^#([a-zA-Z0-9,#]+)\s+([\s\S]*)$/);
+                    if(m) {
+                        let col = m[1].split(',')[0].trim();
+                        if(!col.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(col)) col = '#' + col;
+                        macros[id] = `<span style="color: ${col};">${m[2]}</span>`;
+                    }
+                } else {
+                    macros[id] = inner;
+                }
+            }
+
+            text = parseNamuTables(text);
+
+            let restoring = true;
+            while(restoring) {
+                restoring = false;
+                text = text.replace(/__MACRO_(\d+)__/g, (match) => {
+                    restoring = true;
+                    return macros[match] || "";
+                });
+            }
+
+            text = text.replace(/'''(.*?)'''/g, '<strong>$1</strong>'); 
+            text = text.replace(/~~(.*?)~~/g, '<del>$1</del>'); 
+            text = text.replace(/--(.*?)--/g, '<del>$1</del>'); 
+            
+            let fnIndex = 1;
+            let fnList = [];
+            let outText = "";
+            for(let i = 0; i < text.length; i++) {
+                if(text.substr(i, 2) === '[*') {
+                    let depth = 1; let j = i + 2;
+                    while(j < text.length && depth > 0) {
+                        if(text[j] === '[') depth++;
+                        else if(text[j] === ']') depth--;
+                        j++;
+                    }
+                    if(depth === 0) {
+                        let content = text.substring(i+2, j-1).trim();
+                        fnList.push(`[fn:${fnIndex}] ${content}`);
+                        outText += `[*${fnIndex}]`;
+                        fnIndex++;
+                        i = j - 1; 
+                        continue;
+                    }
+                }
+                outText += text[i];
+            }
+            text = outText;
+
+            text = text.replace(/\[\[파일:([^|\]]+)(?:\|([^\]]*))?\]\]/gi, (match, filename, args) => {
+                let style = "max-width:100%; height:auto; display:inline-block; vertical-align:middle;";
+                if (args) {
+                    let hMatch = args.match(/height=([0-9]+)/);
+                    if(hMatch) style += ` height: ${hMatch[1]}px !important;`;
+                    let wMatch = args.match(/width=([0-9]+)/);
+                    if(wMatch) style += ` width: ${wMatch[1]}px !important;`;
+                    let rMatch = args.match(/border-radius=([0-9]+)/);
+                    if(rMatch) style += ` border-radius: ${rMatch[1]}px;`;
+                }
+                return `<img src="이미지/${filename.trim()}" style="${style}" onerror="this.style.display='none';">`;
+            });
+            
+            text = text.replace(/\[\[([^|\]]+)(?:\|([^\]]*))?\]\]/g, (match, doc, label) => {
+                doc = doc.trim();
+                label = label ? label.trim() : doc;
+                return `<a class="wiki-link" href="${doc.replace(/ /g, '_')}.html">${label}</a>`;
+            });
+
+            converted += text.trim();
+
+            if (fnList.length > 0) converted += `\n\n== 각주 ==\n${fnList.join('\n')}`;
+
+            return converted;
+        }
+
         function parseWikiSyntax(rawText) {
             let html = rawText;
             let pageTitle = "제목 없음";
@@ -907,7 +1182,6 @@ const defaultText = `!TITLE:김시연\n!COLOR:#E76092\n\n[cat:효빈광역시의
                 html = html.replace(/^!COLOR:.*$\n?/m, '');
             }
 
-            // 분류박스 맨 위(제목 바로 아래) 배치를 위해 따로 분리 추출
             let categoryHtml = "";
             html = html.replace(/\[cat:([\s\S]*?)\]/g, (match, items) => {
                 const links = items.split(',').map(c => {
@@ -916,10 +1190,9 @@ const defaultText = `!TITLE:김시연\n!COLOR:#E76092\n\n[cat:효빈광역시의
                 }).join(' | ');
                 
                 categoryHtml += `\n<div class="category-box" style="margin: 0 0 20px 0; padding: 10px 15px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 5px;">\n    <span class="font-bold" style="color: var(--wiki-main);">분류:</span>\n    ${links}\n</div>\n`;
-                return ''; // 본문에서는 제거
+                return '';
             });
 
-            // 멀티라인 인포박스 파싱
             html = html.replace(/\[info:([\s\S]*?)\]/g, (match, data) => {
                 const parts = data.split('|');
                 let infoHtml = `\n<aside class="infobox shrink-0 shadow-sm rounded overflow-hidden lg:float-right lg:ml-5 mb-5">\n`;
@@ -1059,7 +1332,19 @@ const defaultText = `!TITLE:김시연\n!COLOR:#E76092\n\n[cat:효빈광역시의
                 if (cleanTarget === '국기') return '<span style="font-size: 1.2em;">🇯🇵</span> <a class="wiki-link" href="일본.html">일본</a>';
                 if (cleanTarget === 'X(SNS) 로고') return `<img onerror="this.style.display='none';" src="이미지/X 아이콘.svg" style="max-width:100%; height:auto; display:inline-block; vertical-align:middle; width: 20px !important;"/>`;
 
-                return `<blockquote style="border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic;">틀 포함: ${target}</blockquote>`;
+                if (cleanTarget === '국회 의석수' || cleanTarget === '국회의석수') return '300';
+                
+                const partyColors = { '시대전환': '#5A147E', '국민의미래': '#E61E2B', '청년의힘': '#E61E2B', '국제민주연합': '#005BA6', '국민의당': '#EA5504', '미래통합당': '#EF426F', '더불어민주당': '#003B96' };
+                const partySuffixes = ['당', '국민의힘', '무소속', '연합', '연대', '신당', '회의', '국민회', '청년단', '총연맹', '구락부', '전선', '21'];
+                
+                let isParty = Object.keys(partyColors).includes(cleanTarget) || partySuffixes.some(s => cleanTarget.endsWith(s));
+                if (isParty) {
+                    let bg = partyColors[cleanTarget] ? `background-color: ${partyColors[cleanTarget]}; color: #fff;` : ``;
+                    let cls = partyColors[cleanTarget] ? `party-badge` : `party-badge bg-${cleanTarget}`;
+                    return `<span class="${cls}" style="${bg}">${cleanTarget}</span>`;
+                }
+
+                return `<span style="font-size: 0.85em; color: #666; border: 1px solid #ddd; padding: 2px 5px; border-radius: 3px; background-color: #f8f9fa;">[틀: ${target}]</span>`;
             });
 
             html = html.replace(/\[TOC\]/g, () => {
@@ -1084,7 +1369,7 @@ const defaultText = `!TITLE:김시연\n!COLOR:#E76092\n\n[cat:효빈광역시의
             html = html.replace(/\[age\(([0-9]{4}-[0-9]{2}-[0-9]{2})\)\]/g, (match, dateStr) => {
                 let [y, m, d] = dateStr.split('-').map(Number);
                 let age = 2026 - y;
-                if (9 < m || (9 === m && 4 < d)) age--; // 2026-09-04 기준
+                if (9 < m || (9 === m && 4 < d)) age--; 
                 return age + '세';
             });
             html = html.replace(/\[ruby\(([^,]+),\s*ruby=([^)]+)\)\]/g, '<ruby>$1<rt>$2</rt></ruby>');
@@ -1125,8 +1410,6 @@ const defaultText = `!TITLE:김시연\n!COLOR:#E76092\n\n[cat:효빈광역시의
                 html += fnListHtml;
             }
 
-            // 🚨 [수정 2] 기존의 파괴적인 <p> 태그 래핑을 제거하고, 
-            // HTML 블록을 감지해 줄바꿈(<br/>)을 안전하게 삽입하는 로직으로 변경했습니다.
             let lines = html.split('\n');
             let inList = false;
             let newLines = [];
@@ -1135,6 +1418,7 @@ const defaultText = `!TITLE:김시연\n!COLOR:#E76092\n\n[cat:효빈광역시의
             for (let i = 0; i < lines.length; i++) {
                 let line = lines[i].trimRight();
                 let listMatch = line.match(/^(\s*)\*\s+(.*)$/) || line.match(/^(\s*)\-\s+(.*)$/);
+                
                 if (listMatch) {
                     let content = listMatch[2];
                     if (!inList) {
@@ -1143,11 +1427,11 @@ const defaultText = `!TITLE:김시연\n!COLOR:#E76092\n\n[cat:효빈광역시의
                     }
                     newLines.push(`    <li>${content}</li>`);
                 } else {
-                    if (inList) {
+                    if (inList && (line.trim() === '' || line.startsWith('==') || line.startsWith('<table'))) {
                         newLines.push('</ul>');
                         inList = false;
                     }
-                    // HTML 태그거나 빈 줄이면 br 없이 푸시, 아니면 안전하게 br 추가
+                    
                     if (line.match(htmlBlockTags) || line.trim() === '') {
                         newLines.push(line);
                     } else {
@@ -1156,6 +1440,7 @@ const defaultText = `!TITLE:김시연\n!COLOR:#E76092\n\n[cat:효빈광역시의
                 }
             }
             if (inList) newLines.push('</ul>');
+            
             html = newLines.join('\n');
 
             if (categoryHtml) {
@@ -1163,284 +1448,6 @@ const defaultText = `!TITLE:김시연\n!COLOR:#E76092\n\n[cat:효빈광역시의
             }
 
             return { html, pageTitle, themeColor };
-        }
-
-        function parseNamuWikiCode(text, title) {
-            let converted = `!TITLE:${title}\n!COLOR:#003B96\n\n`;
-
-            // 분류 치환
-            let cats = [];
-            text = text.replace(/\[\[분류:(.*?)\]\]/g, (match, p1) => { cats.push(p1.trim()); return ''; });
-            if (cats.length > 0) converted += `[cat:${cats.join(', ')}]\n\n`;
-
-            text = text.replace(/\[목차\]/g, '[TOC]');
-            text = text.replace(/\[clearfix\]/gi, '');
-            text = text.replace(/\[br\]/gi, '<br>');
-
-            let hCounters = [0, 0, 0, 0, 0, 0, 0];
-            text = text.replace(/^(={2,6})\s+(.*?)\s+\1$/gm, (match, equals, titleText) => {
-                let level = equals.length;
-                hCounters[level]++;
-                for(let i = level + 1; i <= 6; i++) { hCounters[i] = 0; }
-                let numStr = "";
-                for(let i = 2; i <= level; i++) { numStr += hCounters[i] + "."; }
-                return `${equals} ${numStr} ${titleText.trim()} ${equals}`;
-            });
-
-            let macros = {};
-            let mCount = 0;
-            let changed = true;
-            while(changed) {
-                changed = false;
-                text = text.replace(/\{\{\{((?:(?!\{\{\{|\}\}\})[\s\S])*)\}\}\}/g, (match, inner) => {
-                    changed = true;
-                    let id = `__MACRO_${mCount++}__`;
-                    macros[id] = inner;
-                    return id;
-                });
-            }
-
-            function parseNamuTables(str) {
-                let lines = str.split('\n');
-                let out = [];
-                let inTable = false;
-                
-                for(let i=0; i<lines.length; i++) {
-                    let line = lines[i].trim();
-                    if (line.startsWith('||') && !line.endsWith('||') && line.length > 2) { line += '||'; }
-
-                    if(line.startsWith('||') && line.endsWith('||') && line.length >= 4) {
-                        if(!inTable) {
-                            let tableStyle = "width: 100%; border-collapse: collapse; text-align: center; margin: 15px auto;";
-                            
-                            // 🚨 [수정 1] 모든 태그 매칭 시 공백(\s*)을 허용하도록 변경
-                            let wMatch = line.match(/<table\s*width=([^>]+)>/i);
-                            if(wMatch) {
-                                let w = wMatch[1];
-                                if(!w.endsWith('%') && !w.endsWith('px')) w += 'px';
-                                tableStyle += ` width: ${w};`;
-                            }
-                            
-                            let aMatch = line.match(/<table\s*align=([^>]+)>/i);
-                            if(aMatch && aMatch[1] === 'center') tableStyle += ` margin: 15px auto;`;
-                            else if(aMatch && aMatch[1] === 'right') tableStyle += ` margin: 15px 0 15px auto; float: right;`;
-                            else if(aMatch && aMatch[1] === 'left') tableStyle += ` margin: 15px auto 15px 0; float: left;`;
-                            
-                            let bgMatch = line.match(/<table\s*bgcolor=([^>]+)>/i);
-                            if(bgMatch) {
-                                let bg = bgMatch[1].split(',')[0].trim();
-                                if(!bg.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(bg)) bg = '#' + bg;
-                                tableStyle += ` background-color: ${bg};`;
-                            }
-                            
-                            let bdMatch = line.match(/<table\s*bordercolor=([^>]+)>/i);
-                            if(bdMatch) {
-                                let bd = bdMatch[1].split(',')[0].trim();
-                                if(!bd.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(bd)) bd = '#' + bd;
-                                tableStyle += ` border: 2px solid ${bd};`;
-                            } else {
-                                tableStyle += ` border: 1px solid #ccc;`;
-                            }
-
-                            let tcMatch = line.match(/<table\s*color=([^>]+)>/i);
-                            if(tcMatch) {
-                                let tc = tcMatch[1].split(',')[0].trim();
-                                if(!tc.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(tc)) tc = '#' + tc;
-                                tableStyle += ` color: ${tc};`;
-                            }
-                            
-                            out.push(`<table style="${tableStyle}">\n    <tbody>`);
-                            inTable = true;
-                        }
-                        
-                        // 공백을 모두 허용하고 tablecolor 도 필터링 목록에 추가
-                        line = line.replace(/<table\s*(?:width|bgcolor|bordercolor|color|align|nopad)=?[^>]*>/gi, '');
-                        
-                        let rowStyle = "";
-                        let rBgMatch = line.match(/^\|\|<(?:row)?bgcolor=([^>]+)>/i);
-                        if(rBgMatch) {
-                            let bg = rBgMatch[1].split(',')[0].trim();
-                            if(!bg.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(bg)) bg = '#' + bg;
-                            rowStyle = ` style="background-color: ${bg};"`;
-                            line = line.replace(/\|\|<(?:row)?bgcolor=[^>]+>/i, '||');
-                        }
-                        
-                        let rowHtml = `        <tr${rowStyle}>`;
-                        let cells = line.split('||');
-                        for(let c=1; c<cells.length-1; c++) {
-                            let cell = cells[c];
-                            let attrs = "";
-                            let cStyle = "padding: 8px 12px; border: 1px solid #ccc; word-break: keep-all;";
-                            
-                            let rsMatch = cell.match(/<\|\s*(\d+)>/);
-                            if(rsMatch) { attrs += ` rowspan="${rsMatch[1]}"`; cell = cell.replace(/<\|\s*\d+>/g, ''); }
-                            
-                            let csMatch = cell.match(/<-\s*(\d+)>/);
-                            if(csMatch) { attrs += ` colspan="${csMatch[1]}"`; cell = cell.replace(/<-\s*\d+>/g, ''); }
-                            
-                            let cBgMatch = cell.match(/<(?:bgcolor|colbgcolor)\s*=\s*([^>]+)>/i);
-                            if(cBgMatch) { 
-                                let bg = cBgMatch[1].split(',')[0].trim();
-                                if(!bg.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(bg)) bg = '#' + bg;
-                                cStyle += ` background-color: ${bg};`; 
-                                cell = cell.replace(/<(?:bgcolor|colbgcolor)\s*=\s*[^>]+>/gi, ''); 
-                            }
-                            
-                            let cColMatch = cell.match(/<(?:color|colcolor)\s*=\s*([^>]+)>/i);
-                            if(cColMatch) { 
-                                let col = cColMatch[1].split(',')[0].trim();
-                                if(!col.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(col)) col = '#' + col;
-                                cStyle += ` color: ${col};`; 
-                                cell = cell.replace(/<(?:color|colcolor)\s*=\s*[^>]+>/gi, ''); 
-                            }
-                            
-                            let wMatch = cell.match(/<width\s*=\s*([^>]+)>/i);
-                            if(wMatch) { 
-                                let w = wMatch[1];
-                                if(!w.endsWith('%') && !w.endsWith('px')) w += 'px';
-                                cStyle += ` width: ${w};`; cell = cell.replace(/<width\s*=\s*[^>]+>/gi, ''); 
-                            }
-
-                            let hMatch = cell.match(/<height\s*=\s*([^>]+)>/i);
-                            if(hMatch) {
-                                let h = hMatch[1];
-                                if(!h.endsWith('%') && !h.endsWith('px')) h += 'px';
-                                cStyle += ` height: ${h};`; cell = cell.replace(/<height\s*=\s*[^>]+>/gi, '');
-                            }
-
-                            if(cell.match(/<:>/)) { cStyle += ` text-align: center;`; cell = cell.replace(/<:>/g, ''); }
-                            else if(cell.match(/<->/)) { cStyle += ` text-align: right;`; cell = cell.replace(/<->/g, ''); }
-                            else if(cell.match(/<>/)) { cStyle += ` text-align: left;`; cell = cell.replace(/<>/g, ''); }
-
-                            let hexBgMatch = cell.match(/<#([0-9a-fA-F]{3,6})(?:,#[0-9a-fA-F]{3,6})?>/);
-                            if(hexBgMatch) {
-                                cStyle += ` background-color: #${hexBgMatch[1]};`;
-                                cell = cell.replace(/<#[0-9a-fA-F]{3,6}(?:,#[0-9a-fA-F]{3,6})?>/g, '');
-                            }
-                            
-                            let oldHexMatch = cell.match(/^\s*#([0-9a-fA-F]{3,6})(?:,#[0-9a-fA-F]{3,6})?\s+/);
-                            if(oldHexMatch) {
-                                cStyle += ` background-color: #${oldHexMatch[1]};`;
-                                cell = cell.replace(/^\s*#[0-9a-fA-F]{3,6}(?:,#[0-9a-fA-F]{3,6})?\s+/, '');
-                            }
-
-                            // 알 수 없는 잔여 매개변수 태그들을 모두 청소합니다
-                            cell = cell.replace(/<[a-zA-Z]+\s*=[^>]+>/g, '');
-                            cell = cell.replace(/^<[^>]+>\s*/g, '');
-                            rowHtml += `<td${attrs} style="${cStyle}">${cell.trim()}</td>`;
-                        }
-                        rowHtml += `</tr>`;
-                        out.push(rowHtml);
-                    } else {
-                        if(inTable) { out.push('    </tbody>\n</table>'); inTable = false; }
-                        out.push(lines[i]);
-                    }
-                }
-                if(inTable) out.push('    </tbody>\n</table>');
-                return out.join('\n');
-            }
-
-            for(let i=0; i<mCount; i++) {
-                let id = `__MACRO_${i}__`;
-                let inner = macros[id];
-
-                inner = parseNamuTables(inner); 
-
-                if (inner.match(/^#!wiki\s+style=/)) {
-                    let styleMatch = inner.match(/^#!wiki\s+style=(?:"|&quot;|')?(.*?)(?:"|&quot;|')?\s*\n([\s\S]*)$/);
-                    if(styleMatch) {
-                        macros[id] = `<div style="${styleMatch[1].replace(/&quot;/g, '')}">\n${styleMatch[2]}\n</div>`;
-                    } else {
-                        let body = inner.replace(/^#!wiki\s*\n/, '');
-                        macros[id] = `<div>\n${body}\n</div>`;
-                    }
-                } else if (inner.startsWith('#!folding')) {
-                    let foldMatch = inner.match(/^#!folding\s+(?:\[(.*?)\])?\s*\n([\s\S]*)$/);
-                    let title = foldMatch && foldMatch[1] ? foldMatch[1].trim() : "펼치기 · 접기";
-                    let content = foldMatch ? foldMatch[2] : inner.replace(/^#!folding[^\n]*\n/, '');
-                    macros[id] = `<details class="wiki-folding"><summary>[ ${title} ]</summary><div class="folding-content">\n${content}\n</div></details>`;
-                } else if (inner.startsWith('+')) {
-                    let m = inner.match(/^\+([1-5])\s+([\s\S]*)$/);
-                    if(m) macros[id] = `<span style="font-size: ${1 + parseInt(m[1])*0.2}em; font-weight: bold;">${m[2]}</span>`;
-                } else if (inner.startsWith('-')) {
-                    let m = inner.match(/^\-([1-5])\s+([\s\S]*)$/);
-                    if(m) macros[id] = `<span style="font-size: ${1 - parseInt(m[1])*0.15}em;">${m[2]}</span>`;
-                } else if (inner.startsWith('#')) {
-                    // 다크모드 색상(,#000) 포함 매칭 완벽 처리
-                    let m = inner.match(/^#([a-zA-Z0-9,#]+)\s+([\s\S]*)$/);
-                    if(m) {
-                        let col = m[1].split(',')[0].trim();
-                        if(!col.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(col)) col = '#' + col;
-                        macros[id] = `<span style="color: ${col};">${m[2]}</span>`;
-                    }
-                } else {
-                    macros[id] = inner;
-                }
-            }
-
-            text = parseNamuTables(text);
-
-            let restoring = true;
-            while(restoring) {
-                restoring = false;
-                text = text.replace(/__MACRO_(\d+)__/g, (match) => {
-                    restoring = true;
-                    return macros[match] || "";
-                });
-            }
-
-            text = text.replace(/'''(.*?)'''/g, '<strong>$1</strong>'); 
-            text = text.replace(/~~(.*?)~~/g, '<del>$1</del>'); 
-            text = text.replace(/--(.*?)--/g, '<del>$1</del>'); 
-            
-            let fnIndex = 1;
-            let fnList = [];
-            let outText = "";
-            for(let i = 0; i < text.length; i++) {
-                if(text.substr(i, 2) === '[*') {
-                    let depth = 1; let j = i + 2;
-                    while(j < text.length && depth > 0) {
-                        if(text[j] === '[') depth++;
-                        else if(text[j] === ']') depth--;
-                        j++;
-                    }
-                    if(depth === 0) {
-                        let content = text.substring(i+2, j-1).trim();
-                        fnList.push(`[fn:${fnIndex}] ${content}`);
-                        outText += `[*${fnIndex}]`;
-                        fnIndex++;
-                        i = j - 1; 
-                        continue;
-                    }
-                }
-                outText += text[i];
-            }
-            text = outText;
-
-            text = text.replace(/\[\[파일:([^|\]]+)(?:\|([^\]]*))?\]\]/gi, (match, filename, args) => {
-                let style = "max-width:100%; height:auto; display:inline-block; vertical-align:middle;";
-                if (args) {
-                    let hMatch = args.match(/height=([0-9]+)/);
-                    if(hMatch) style += ` height: ${hMatch[1]}px !important;`;
-                    let wMatch = args.match(/width=([0-9]+)/);
-                    if(wMatch) style += ` width: ${wMatch[1]}px !important;`;
-                    let rMatch = args.match(/border-radius=([0-9]+)/);
-                    if(rMatch) style += ` border-radius: ${rMatch[1]}px;`;
-                }
-                return `<img src="이미지/${filename.trim()}" style="${style}" onerror="this.style.display='none';">`;
-            });
-            
-            text = text.replace(/\[\[([^|\]]+)(?:\|([^\]]*))?\]\]/g, (match, doc, label) => {
-                doc = doc.trim();
-                label = label ? label.trim() : doc;
-                return `<a class="wiki-link" href="${doc.replace(/ /g, '_')}.html">${label}</a>`;
-            });
-
-            converted += text.trim();
-
-            if (fnList.length > 0) converted += `\n\n== 각주 ==\n${fnList.join('\n')}`;
-
-            return converted;
         }
 
         function executeNamuConvert() {
