@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <tr>
                                 <td style="padding: 10px 8px; border: 1px solid #ddd; background-color: #fff;"><a href="재진숙.html" style="color: #0055AA; text-decoration: none; font-weight: 500;" class="hover:underline">재진숙</a></td>
                                 <td style="padding: 10px 8px; border: 1px solid #ddd; background-color: #fff;"><a href="원춘석.html" style="color: #0055AA; text-decoration: none; font-weight: 500;" class="hover:underline">원춘석</a></td>
-                                <td style="padding: 10px 8px; border: 1px solid #ddd; background-color: #fff;"><a href="김상언.html" style="color: #0055AA; text-decoration: none; font-weight: 500;" class="hover:underline">김상언</a></td>
+                                <td style="padding: 10px 8px; border: 1px solid #ddd; background-color: #fff;"><a href="김상언.html" style="color: #0055AA; text-decoration: none; font-weight: 500;" class="hover:underline">공석</a></td>
                                 <td style="padding: 10px 8px; border: 1px solid #ddd; background-color: #fff;"><a href="윤재훈.html" style="color: #0055AA; text-decoration: none; font-weight: 500;" class="hover:underline">윤재훈</a></td>
                             </tr>
                             <!-- 4열 -->
