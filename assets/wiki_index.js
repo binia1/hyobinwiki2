@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 9. 8. 오전 12:30:11
+ * 업데이트: 2026. 9. 9. 오전 12:48:26
  */
 
 window.HB_WIKI_PAGES = [
@@ -12175,6 +12175,14 @@ window.HB_WIKI_PAGES = [
   {
     "title": "우민지",
     "href": "우민지.html"
+  },
+  {
+    "title": "섹스파트너",
+    "href": "섹스파트너.html"
+  },
+  {
+    "title": "앵판초등학교",
+    "href": "앵판초등학교.html"
   }
 ];
 
@@ -19125,5 +19133,7 @@ window.HB_WIKI_ALIASES = {
   "송채린": "송채린.html",
   "우민지": "우민지.html",
   "효빈광역시_도로목록_효빈위키": "효빈광역시_도로목록_효빈위키.html",
-  "분류완료_도로_둘러보기틀": "분류완료_도로_둘러보기틀.html"
+  "분류완료_도로_둘러보기틀": "분류완료_도로_둘러보기틀.html",
+  "섹스파트너": "섹스파트너.html",
+  "앵판초등학교": "앵판초등학교.html"
 };
