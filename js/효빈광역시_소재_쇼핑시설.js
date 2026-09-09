@@ -207,7 +207,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1.5">
-                            <img src="이미지/현대프리미엄아울렛_로고.wepb" alt="현대프리미엄아울렛" class="h-9 mx-auto object-contain">
+                            <img src="이미지/현대프리미엄아울렛_로고.webp" alt="현대프리미엄아울렛" class="h-9 mx-auto object-contain">
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300 leading-tight">현대프리미엄<br>아울렛</th>
                         <td class="text-left py-1.5 px-3 leading-loose">

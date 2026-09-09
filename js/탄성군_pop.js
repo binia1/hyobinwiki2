@@ -70,7 +70,7 @@ function render_탄성군_PopTable(containerId) {
 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
 <div style="position: absolute; top: 0; left: 0; height: 100%; width: 30.6%; background-color: #BBFF64; z-index: 1;"></div>
 <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; z-index: 2; color: #fff; text-shadow: 1px 1px 3px rgba(0,0,0,0.8), -1px -1px 3px rgba(0,0,0,0.8); font-size: 0.9em; font-weight: bold;">
-                1980년 91,922명
+                1980년 111,922명
             </div>
 </div>
 <div style="padding: 10px; font-size: 0.85em; background-color: #fff; color: #333; border-bottom: 1px solid #fff; line-height: 1.5; text-align: center;">
@@ -79,7 +79,7 @@ function render_탄성군_PopTable(containerId) {
 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
 <div style="position: absolute; top: 0; left: 0; height: 100%; width: 26.8%; background-color: #BBFF64; z-index: 1;"></div>
 <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; z-index: 2; color: #fff; text-shadow: 1px 1px 3px rgba(0,0,0,0.8), -1px -1px 3px rgba(0,0,0,0.8); font-size: 0.9em; font-weight: bold;">
-                1985년 80,300명
+                1985년 99,300명
             </div>
 </div>
 <div style="padding: 10px; font-size: 0.85em; background-color: #fff; color: #333; border-bottom: 1px solid #fff; line-height: 1.5; text-align: center;">
@@ -88,7 +88,7 @@ function render_탄성군_PopTable(containerId) {
 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
 <div style="position: absolute; top: 0; left: 0; height: 100%; width: 37.9%; background-color: #BBFF64; z-index: 1;"></div>
 <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; z-index: 2; color: #fff; text-shadow: 1px 1px 3px rgba(0,0,0,0.8), -1px -1px 3px rgba(0,0,0,0.8); font-size: 0.9em; font-weight: bold;">
-                1990년 113,797명
+                1990년 117,611명
             </div>
 </div>
 <div style="padding: 10px; font-size: 0.85em; background-color: #fff; color: #333; border-bottom: 1px solid #fff; line-height: 1.5; text-align: center;">
@@ -97,7 +97,7 @@ function render_탄성군_PopTable(containerId) {
 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
 <div style="position: absolute; top: 0; left: 0; height: 100%; width: 40.0%; background-color: #BBFF64; z-index: 1;"></div>
 <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; z-index: 2; color: #fff; text-shadow: 1px 1px 3px rgba(0,0,0,0.8), -1px -1px 3px rgba(0,0,0,0.8); font-size: 0.9em; font-weight: bold;">
-                1995년 119,956명
+                1995년 127,322명
             </div>
 </div>
 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
@@ -277,7 +277,7 @@ function render_탄성군_PopTable(containerId) {
                 </thead>
                 <tbody>
                     <tr style="background-color: #f1f3f5; font-weight: bold;"><td style="padding: 6px; border: 1px solid #ccc; text-align: center; color: #555;">효빈광역시 (참고)</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">593816</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">877225</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">1235343</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">1514404</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">1830061</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2046376</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2271111</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2401697</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2466659</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2584443</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2720665</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2832860</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2967406</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">259231</td></tr>
-                    <tr style="background-color: #fdfaf5; font-weight: bold;"><td style="padding: 6px; border: 1px solid #ccc; text-align: center;">탄성군</td><td style="padding: 6px; border: 1px solid #ccc;">123511</td><td style="padding: 6px; border: 1px solid #ccc;">170116</td><td style="padding: 6px; border: 1px solid #ccc;">259915</td><td style="padding: 6px; border: 1px solid #ccc;">91922</td><td style="padding: 6px; border: 1px solid #ccc;">80300</td><td style="padding: 6px; border: 1px solid #ccc;">113797</td><td style="padding: 6px; border: 1px solid #ccc;">119956</td><td style="padding: 6px; border: 1px solid #ccc;">154281</td><td style="padding: 6px; border: 1px solid #ccc;">178353</td><td style="padding: 6px; border: 1px solid #ccc;">188899</td><td style="padding: 6px; border: 1px solid #ccc;">202747</td><td style="padding: 6px; border: 1px solid #ccc;">230339</td><td style="padding: 6px; border: 1px solid #ccc;">255102</td><td style="padding: 6px; border: 1px solid #ccc; color:#d6001c;">259,231</td></tr>
+                    <tr style="background-color: #fdfaf5; font-weight: bold;"><td style="padding: 6px; border: 1px solid #ccc; text-align: center;">탄성군</td><td style="padding: 6px; border: 1px solid #ccc;">123511</td><td style="padding: 6px; border: 1px solid #ccc;">170116</td><td style="padding: 6px; border: 1px solid #ccc;">224621</td><td style="padding: 6px; border: 1px solid #ccc;">119222</td><td style="padding: 6px; border: 1px solid #ccc;">99300</td><td style="padding: 6px; border: 1px solid #ccc;">117611</td><td style="padding: 6px; border: 1px solid #ccc;">127322</td><td style="padding: 6px; border: 1px solid #ccc;">154281</td><td style="padding: 6px; border: 1px solid #ccc;">178353</td><td style="padding: 6px; border: 1px solid #ccc;">188899</td><td style="padding: 6px; border: 1px solid #ccc;">202747</td><td style="padding: 6px; border: 1px solid #ccc;">230339</td><td style="padding: 6px; border: 1px solid #ccc;">255102</td><td style="padding: 6px; border: 1px solid #ccc; color:#d6001c;">259,231</td></tr>
                 </tbody>
             </table>
         </div>

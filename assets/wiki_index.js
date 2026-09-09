@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 9. 9. 오전 12:48:26
+ * 업데이트: 2026. 9. 9. 오후 5:42:49
  */
 
 window.HB_WIKI_PAGES = [
@@ -12183,6 +12183,14 @@ window.HB_WIKI_PAGES = [
   {
     "title": "앵판초등학교",
     "href": "앵판초등학교.html"
+  },
+  {
+    "title": "주민지",
+    "href": "주민지.html"
+  },
+  {
+    "title": "주성우",
+    "href": "주성우.html"
   }
 ];
 
@@ -19135,5 +19143,7 @@ window.HB_WIKI_ALIASES = {
   "효빈광역시_도로목록_효빈위키": "효빈광역시_도로목록_효빈위키.html",
   "분류완료_도로_둘러보기틀": "분류완료_도로_둘러보기틀.html",
   "섹스파트너": "섹스파트너.html",
-  "앵판초등학교": "앵판초등학교.html"
+  "앵판초등학교": "앵판초등학교.html",
+  "주민지": "주민지.html",
+  "주성우": "주성우.html"
 };

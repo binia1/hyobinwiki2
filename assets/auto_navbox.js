@@ -4,12 +4,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==========================================
     // 1. CSS 스타일 자동 삽입 (HTML에 style 안 넣어도 됨)
     // ==========================================
-    const navboxCSS = `
+const navboxCSS = `
         .wiki-navbox { border: 2px solid #ccc; width: 100%; margin: 0 auto; font-size: 0.85rem; background: white; border-radius: 4px; overflow: hidden; }
         [data-theme='dark'] .wiki-navbox { background: #2d2f34; border-color: #555 !important; }
         .wiki-navbox-header { color: white; padding: 10px; }
         .wiki-navbox .header-content { display: flex; align-items: center; justify-content: center; gap: 15px; }
-        .wiki-navbox .header-content img { height: 45px; }
+        
+        /* 이 부분에 필터 추가 */
+        .wiki-navbox .header-content img { height: 45px; filter: brightness(0) invert(1); }
+        
         .wiki-navbox .title-sub { font-size: 0.9rem; font-weight: bold; }
         .wiki-navbox .title-main { font-size: 1.25rem; font-weight: 900; }
         
@@ -30,6 +33,15 @@ document.addEventListener("DOMContentLoaded", () => {
         [data-theme='dark'] .wiki-navbox .red-link { color: #ff6b6b; }
         [data-theme='dark'] .wiki-navbox .blue-link { color: #4dabf7; }
         .wiki-navbox a:hover { text-decoration: underline; }
+        /* 밝은 배경용 검은색 텍스트 & 로고 오버라이드 */
+        .wiki-navbox.dark-text .wiki-navbox-header,
+        .wiki-navbox.dark-text .wiki-navbox-table th,
+        .wiki-navbox.dark-text .wiki-navbox-footer {
+            color: #222 !important;
+        }
+        .wiki-navbox.dark-text .header-content img {
+            filter: brightness(0) !important; /* 로고를 검은색으로 변경 */
+        }
     `;
     
     // 스타일 태그를 생성해서 HTML의 <head>에 추가합니다.
@@ -467,7 +479,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>`,
 
         "군천시": `
-        <div class="wiki-navbox" style="border-color: #E7D600;">
+        <div class="wiki-navbox dark-text" style="border-color: #E7D600;">
             <div class="wiki-navbox-header" style="background-color: #E7D600;">
                 <div class="header-content">
                     <img src="이미지/군천시.webp" alt="로고" onerror="this.style.display='none'">
@@ -1220,7 +1232,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>`,
 
         "방산시": `
-        <div class="wiki-navbox" style="border-color: #FFF442;">
+        <div class="wiki-navbox dark-text" style="border-color: #FFF442;">
             <div class="wiki-navbox-header" style="background-color: #FFF442;">
                 <div class="header-content">
                     <img src="이미지/방산시.webp" alt="로고" onerror="this.style.display='none'">
