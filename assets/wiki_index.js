@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 9. 9. 오후 8:46:20
+ * 업데이트: 2026. 9. 10. 오후 10:54:25
  */
 
 window.HB_WIKI_PAGES = [
@@ -12199,6 +12199,38 @@ window.HB_WIKI_PAGES = [
   {
     "title": "태미아",
     "href": "태미아.html"
+  },
+  {
+    "title": "프로젝트_도시철도",
+    "href": "프로젝트_도시철도.html"
+  },
+  {
+    "title": "무지개_동호회",
+    "href": "무지개_동호회.html"
+  },
+  {
+    "title": "리에하스_연합",
+    "href": "리에하스_연합.html"
+  },
+  {
+    "title": "진선자",
+    "href": "진선자.html"
+  },
+  {
+    "title": "이리자",
+    "href": "이리자.html"
+  },
+  {
+    "title": "도선요",
+    "href": "도선요.html"
+  },
+  {
+    "title": "송과영",
+    "href": "송과영.html"
+  },
+  {
+    "title": "고해영",
+    "href": "고해영.html"
   }
 ];
 
@@ -19158,5 +19190,14 @@ window.HB_WIKI_ALIASES = {
   "주민지": "주민지.html",
   "주성우": "주성우.html",
   "소남주": "소남주.html",
-  "태미아": "태미아.html"
+  "태미아": "태미아.html",
+  "프로젝트_도시철도": "프로젝트_도시철도.html",
+  "무지개_동호회": "무지개_동호회.html",
+  "효빈위키": "index.html",
+  "리에하스_연합": "리에하스_연합.html",
+  "진선자": "진선자.html",
+  "이리자": "이리자.html",
+  "도선요": "도선요.html",
+  "송과영": "송과영.html",
+  "고해영": "고해영.html"
 };
