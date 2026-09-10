@@ -59,9 +59,9 @@ function render_탄성군_PopTable(containerId) {
 <span style="color: #0066cc;">1973년 1월 1일</span> 탄성군 중수면, 흑택면 일부 → <span style="color: #cc0000; font-weight: bold;">효빈시</span>로 편입
         </div>
 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
-<div style="position: absolute; top: 0; left: 0; height: 100%; width: 86.6%; background-color: #BBFF64; z-index: 1;"></div>
+<div style="position: absolute; top: 0; left: 0; height: 100%; width: 75.8%; background-color: #BBFF64; z-index: 1;"></div>
 <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; z-index: 2; color: #fff; text-shadow: 1px 1px 3px rgba(0,0,0,0.8), -1px -1px 3px rgba(0,0,0,0.8); font-size: 0.9em; font-weight: bold;">
-                1975년 259,915명  (정점)
+                1975년 224,621명  
             </div>
 </div>
 <div style="padding: 10px; font-size: 0.85em; background-color: #fff; color: #333; border-bottom: 1px solid #fff; line-height: 1.5; text-align: center;">
@@ -133,7 +133,7 @@ function render_탄성군_PopTable(containerId) {
 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
 <div style="position: absolute; top: 0; left: 0; height: 100%; width: 85.0%; background-color: #BBFF64; z-index: 1;"></div>
 <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; z-index: 2; color: #fff; text-shadow: 1px 1px 3px rgba(0,0,0,0.8), -1px -1px 3px rgba(0,0,0,0.8); font-size: 0.9em; font-weight: bold;">
-                2025년 255,102명
+                2025년 255,102명 (정점)
             </div>
 </div>
 </div>

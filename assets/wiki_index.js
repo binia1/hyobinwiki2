@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 9. 9. 오후 5:42:49
+ * 업데이트: 2026. 9. 9. 오후 8:46:20
  */
 
 window.HB_WIKI_PAGES = [
@@ -12191,6 +12191,14 @@ window.HB_WIKI_PAGES = [
   {
     "title": "주성우",
     "href": "주성우.html"
+  },
+  {
+    "title": "소남주",
+    "href": "소남주.html"
+  },
+  {
+    "title": "태미아",
+    "href": "태미아.html"
   }
 ];
 
@@ -14570,7 +14578,6 @@ window.HB_WIKI_ALIASES = {
   "hyobinwiki대문": "index.html",
   "hyobin city": "index.html",
   "hyobincity": "효빈광역시.html",
-  "효빈위키": "index.html",
   "대문": "index.html",
   "NC백화점 효빈점": "NC백화점_효빈점.html",
   "NC백화점효빈점": "NC백화점_효빈점.html",
@@ -14670,6 +14677,7 @@ window.HB_WIKI_ALIASES = {
   "곽산차량기지": "곽산차량사업소.html",
   "곽산차량사업소": "곽산차량사업소.html",
   "곽암해수욕장역": "곽암해수욕장역.html",
+  "곽암역": "곽암해수욕장역.html",
   "관수군": "관수군.html",
   "광역버스": "광역버스.html",
   "광연대학교": "광연대학교.html",
@@ -14965,6 +14973,7 @@ window.HB_WIKI_ALIASES = {
   "순환버스": "순환버스.html",
   "승남차량사업소": "승남차량사업소.html",
   "승남해수욕장역": "승남해수욕장역.html",
+  "승남역": "승남해수욕장역.html",
   "시곡역": "시곡역.html",
   "시남역": "시남역.html",
   "시로동": "시로동.html",
@@ -15408,6 +15417,8 @@ window.HB_WIKI_ALIASES = {
   "효빈권 광역전철": "효빈권전철.html",
   "효빈권광역전철": "효빈권전철.html",
   "효빈남부시외버스터미널역": "효빈남부시외버스터미널역.html",
+  "남부터미널역": "효빈남부시외버스터미널역.html",
+  "효빈남부터미널역": "효빈남부시외버스터미널역.html",
   "효빈대역": "효빈대역.html",
   "효빈대학교역": "효빈대역.html",
   "효빈대입구역": "효빈대입구역.html",
@@ -19145,5 +19156,7 @@ window.HB_WIKI_ALIASES = {
   "섹스파트너": "섹스파트너.html",
   "앵판초등학교": "앵판초등학교.html",
   "주민지": "주민지.html",
-  "주성우": "주성우.html"
+  "주성우": "주성우.html",
+  "소남주": "소남주.html",
+  "태미아": "태미아.html"
 };

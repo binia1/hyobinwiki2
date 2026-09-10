@@ -79,7 +79,7 @@ function renderHyobinPopulationTable(containerId) {
                     <div style="position: absolute; top: 0; left: 0; height: 100%; width: 41.17%; background-color: #7777AA;"></div>
                     <div style="position: absolute; top: 0; left: 41.17%; height: 100%; width: 8.66%; background-color: #9999CC;"></div>
                     <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; color: #fff; font-size: 0.9em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
-                        1975년 1,495,258명 <span style="font-size: 0.85em; font-weight: normal; margin-left: 5px;">(효빈시 1,235,343명 + 탄성군 259,915명)</span>
+                        1975년 1,459,964명 <span style="font-size: 0.85em; font-weight: normal; margin-left: 5px;">(효빈시 1,235,343명 + 탄성군 224,621명)</span>
                     </div>
                 </div>
 
@@ -90,7 +90,7 @@ function renderHyobinPopulationTable(containerId) {
                     <div style="position: absolute; top: 0; left: 50.48%; height: 100%; width: 3.68%; background-color: #555588;"></div>
                     <div style="position: absolute; top: 0; left: 54.16%; height: 100%; width: 3.06%; background-color: #9999CC;"></div>
                     <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; color: #fff; font-size: 0.9em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
-                        1980년 1,716,874명 <span style="font-size: 0.85em; font-weight: normal; margin-left: 5px;">(효빈시 1,514,404명 + 안천시 110,548명 + 탄성군 91,922명)</span>
+                        1980년 1,744,174명 <span style="font-size: 0.85em; font-weight: normal; margin-left: 5px;">(효빈시 1,514,404명 + 안천시 110,548명 + 탄성군 119,222명)</span>
                     </div>
                 </div>
 
@@ -104,7 +104,7 @@ function renderHyobinPopulationTable(containerId) {
                     <div style="position: absolute; top: 0; left: 0; height: 100%; width: 61.00%; background-color: #7777AA;"></div>
                     <div style="position: absolute; top: 0; left: 61.00%; height: 100%; width: 2.67%; background-color: #9999CC;"></div>
                     <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; color: #fff; font-size: 0.9em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
-                        1985년 1,910,361명 <span style="font-size: 0.85em; font-weight: normal; margin-left: 5px;">(효빈직할시 1,830,061명 + 탄성군 80,300명)</span>
+                        1985년 1,929,361명 <span style="font-size: 0.85em; font-weight: normal; margin-left: 5px;">(효빈직할시 1,830,061명 + 탄성군 99,300명)</span>
                     </div>
                 </div>
 
@@ -114,7 +114,7 @@ function renderHyobinPopulationTable(containerId) {
                     <div style="position: absolute; top: 0; left: 0; height: 100%; width: 68.21%; background-color: #7777AA;"></div>
                     <div style="position: absolute; top: 0; left: 68.21%; height: 100%; width: 3.79%; background-color: #9999CC;"></div>
                     <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; color: #fff; font-size: 0.9em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
-                        1990년 2,160,173명 <span style="font-size: 0.85em; font-weight: normal; margin-left: 5px;">(효빈직할시 2,046,376명 + 탄성군 113,797명)</span>
+                        1990년 2,163,987명 <span style="font-size: 0.85em; font-weight: normal; margin-left: 5px;">(효빈직할시 2,046,376명 + 탄성군 117,611명)</span>
                     </div>
                 </div>
 
@@ -126,7 +126,7 @@ function renderHyobinPopulationTable(containerId) {
                 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
                     <div style="position: absolute; top: 0; left: 0; height: 100%; width: 75.70%; background-color: #7777AA;"></div>
                     <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; color: #fff; font-size: 0.9em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
-                        1995년 2,271,111명 <span style="font-size: 0.85em; font-weight: normal; margin-left: 5px;">(효빈광역시 2,271,111명)</span>
+                        1995년 2,278,477명 <span style="font-size: 0.85em; font-weight: normal; margin-left: 5px;">(효빈광역시 2,278,477명)</span>
                     </div>
                 </div>
                 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
@@ -294,7 +294,7 @@ function renderHyobinPopulationTable(containerId) {
                     <tr style="background-color: #f8f9fa; font-weight: bold;">
                         <td style="padding: 6px; border: 1px solid #ccc; text-align: center;">효빈광역시</td>
                         <td style="padding: 6px; border: 1px solid #ccc;">593,816명</td><td style="padding: 6px; border: 1px solid #ccc;">877,225명</td><td style="padding: 6px; border: 1px solid #ccc;">1,235,343명</td><td style="padding: 6px; border: 1px solid #ccc;">1,514,404명</td>
-                        <td style="padding: 6px; border: 1px solid #ccc;">1,830,061명</td><td style="padding: 6px; border: 1px solid #ccc;">2,046,376명</td><td style="padding: 6px; border: 1px solid #ccc;">2,271,111명</td><td style="padding: 6px; border: 1px solid #ccc;">2,401,697명</td>
+                        <td style="padding: 6px; border: 1px solid #ccc;">1,830,061명</td><td style="padding: 6px; border: 1px solid #ccc;">2,046,376명</td><td style="padding: 6px; border: 1px solid #ccc;">2,278,477명</td><td style="padding: 6px; border: 1px solid #ccc;">2,401,697명</td>
                         <td style="padding: 6px; border: 1px solid #ccc;">2,466,659명</td><td style="padding: 6px; border: 1px solid #ccc;">2,584,443명</td><td style="padding: 6px; border: 1px solid #ccc;">2,720,665명</td><td style="padding: 6px; border: 1px solid #ccc;">2,832,860명</td><td style="padding: 6px; border: 1px solid #ccc; color:#d6001c;">2,967,406명</td>
                     </tr>
                     <tr>
@@ -323,8 +323,8 @@ function renderHyobinPopulationTable(containerId) {
                     </tr>
                     <tr>
                         <td style="padding: 6px; border: 1px solid #ccc; text-align: center; font-weight: bold; background: #fdfdfd;">탄성군</td>
-                        <td style="padding: 6px; border: 1px solid #ccc;">123,511명</td><td style="padding: 6px; border: 1px solid #ccc;">170,116명</td><td style="padding: 6px; border: 1px solid #ccc;">259,915명</td><td style="padding: 6px; border: 1px solid #ccc;">91,922명</td>
-                        <td style="padding: 6px; border: 1px solid #ccc;">80,300명</td><td style="padding: 6px; border: 1px solid #ccc;">113,797명</td><td style="padding: 6px; border: 1px solid #ccc;">119,956명</td><td style="padding: 6px; border: 1px solid #ccc;">154,281명</td>
+                        <td style="padding: 6px; border: 1px solid #ccc;">123,511명</td><td style="padding: 6px; border: 1px solid #ccc;">170,116명</td><td style="padding: 6px; border: 1px solid #ccc;">224,621명</td><td style="padding: 6px; border: 1px solid #ccc;">119,222명</td>
+                        <td style="padding: 6px; border: 1px solid #ccc;">99,300명</td><td style="padding: 6px; border: 1px solid #ccc;">117,611명</td><td style="padding: 6px; border: 1px solid #ccc;">119,956명</td><td style="padding: 6px; border: 1px solid #ccc;">154,281명</td>
                         <td style="padding: 6px; border: 1px solid #ccc;">178,353명</td><td style="padding: 6px; border: 1px solid #ccc;">188,899명</td><td style="padding: 6px; border: 1px solid #ccc;">202,747명</td><td style="padding: 6px; border: 1px solid #ccc;">230,339명</td><td style="padding: 6px; border: 1px solid #ccc;">255,102명</td>
                     </tr>
                     <tr>
