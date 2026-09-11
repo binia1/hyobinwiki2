@@ -1,6 +1,6 @@
 /**
  * HyobinWiki JS Master Index (Auto-Generated & Fixed Aliases)
- * 업데이트: 2026. 9. 11. 오후 9:09:27
+ * 업데이트: 2026. 9. 11. 오후 9:59:10
  */
 
 window.filePaths = {
@@ -13,6 +13,7 @@ window.filePaths = {
     "ancheon_pop": "js/",
     "app": "assets/",
     "assembly22_minjoo_nav": "js/",
+    "assembly22_ppp_nav": "js/",
     "auto_link": "assets/",
     "auto_navbox": "assets/",
     "bangdream-nav": "assets/",
@@ -123,6 +124,7 @@ window.filePaths = {
     "minjoo_factions_nav": "js/",
     "minseon9_gicho_minjoo_nav": "js/",
     "minseon9_minjoo_nav": "js/",
+    "minseon9_ppp_nav": "js/",
     "namgu_pop": "js/",
     "neugumma": "assets/",
     "nimisibal": "assets/",

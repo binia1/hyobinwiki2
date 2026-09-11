@@ -14651,7 +14651,7 @@ const imageFiles = [
         "category": "logo"
     },
     {
-        "file": "창전구_흰색로고.webp",
+        "file": "창전구_흰색_로고.webp",
         "category": "logo"
     },
     {

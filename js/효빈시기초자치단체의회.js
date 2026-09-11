@@ -95,7 +95,7 @@
                 </td>
                 <td class="p-0 border-r border-white/50" style="width: 20%;">
                     <div class="py-3 font-bold text-white flex flex-col items-center justify-center" style="background-color: #33AAFF;">
-                        <img class="h-9 mb-1.5 object-contain" onerror="this.style.display='none'" src="이미지/창전구_흰색로고.webp"/>창전구
+                        <img class="h-9 mb-1.5 object-contain" onerror="this.style.display='none'" src="이미지/창전구_흰색_로고.webp"/>창전구
                     </div>
                     <div class="py-2.5 bg-white border-t border-gray-300">
                         <a class="text-black hover:text-[#33AAFF] font-semibold text-decoration-none block w-full" href="창전구의회.html">창전구의회</a>
