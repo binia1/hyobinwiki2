@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <strong>학부:</strong> 14,500명<br/>
 <strong>대학원:</strong> 2,100명 <span class="text-xs text-gray-500">(2025년)</span>
 </td></tr>
-<tr><th>병원</th><td><a class="wiki-link" onclick="goToLink('삼선의료원.html')">삼선의료원</a><br/><span class="text-xs">(삼선대학교병원)</span></td></tr>
+<tr><th>병원</th><td><a class="wiki-link" onclick="goToLink('삼선대학교병원.html')">삼선대학교병원</a><br/><span class="text-xs">(삼선대학교병원)</span></td></tr>
 <tr><th>웹사이트</th><td><a class="wiki-link" href="https://www.samseon.ac.kr" target="_blank">공식 홈페이지</a></td></tr>
 </table>
 <div class="w-full bg-[#f9f9f9] border-t border-b">

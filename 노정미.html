@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link href="이미지/효빈위키아이콘.webp" rel="icon"/>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>노정미 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        /* 1. 전역 스타일 및 변수 */
+        :root { 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #F9F9FA; 
+            --wiki-link: #0022AA; 
+            --wiki-table-header: #7777AA;
+            --wiki-table-header-text: #ffffff;
+        }
+
+        /* 위키 도구 버튼 스타일 */
+        .wiki-btn-group { display: flex; border-radius: 4px; overflow: hidden; border: 1px solid #ccc; }
+        .wiki-tool-btn { 
+            padding: 4px 12px; background: #fff; font-size: 13px; color: #555; 
+            border-right: 1px solid #ccc; cursor: pointer; text-decoration: none !important; display: flex; align-items: center;
+        }
+        .wiki-tool-btn:last-child { border-right: none; }
+        .wiki-tool-btn:hover { background: #f0f0f0; color: #000; }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            word-break: keep-all; 
+            margin: 0; 
+        }
+
+        /* 헤딩 스타일 */
+        h1 { font-size: 2.5rem !important; font-weight: 900 !important; margin-bottom: 1.5rem; line-height: 1.2; letter-spacing: -1.5px;}
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; color: var(--wiki-link); }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; border-left: 4px solid var(--wiki-main); padding-left: 10px;}
+        h4 { font-size: 1.15rem !important; font-weight: 700 !important; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; }
+
+        .wiki-container { max-width: 1152px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 일반 표 스타일 */
+        table.data-table, table.infobox-table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: auto !important; }
+        .data-table th, .data-table td, .infobox-table th, .infobox-table td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; text-align: center; vertical-align: middle; }
+        .data-table th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; }
+
+        /* 인포박스 레이아웃 */
+        .content-wrapper::after { content: ""; display: table; clear: both; }
+        .infobox { 
+            float: right; border: 2px solid var(--wiki-main); background-color: #fff; 
+            width: 100%; max-width: 340px; font-size: 0.85rem; margin: 0 0 20px 25px; 
+            border-radius: 4px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        @media (max-width: 768px) { .infobox { float: none; max-width: 100%; margin: 0 0 20px 0; } }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.2rem !important; font-weight: bold; line-height:1.3;}
+        .infobox-image { text-align: center; padding: 10px; border-bottom: 1px solid var(--wiki-border); background: white; }
+        .infobox-image img { max-width: 100%; height: auto; border: 1px solid #ddd; display: block; margin: 0 auto; }
+        .infobox th { background-color: var(--wiki-gray-bg); color: var(--wiki-main); width: 90px; text-align: center; padding: 8px; font-weight: bold; border: 1px solid var(--wiki-border) !important; }
+        .infobox td { text-align: left; padding: 8px; border: 1px solid var(--wiki-border) !important; }
+
+        /* 링크 및 뱃지 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.75rem; margin-right: 3px; vertical-align: middle; cursor: pointer; }
+        .badge-minju { background-color: #004ea2; }
+        .badge-gukhim { background-color: #e61e2b; }
+        .badge-jinbo { background-color: #FFED00; color: #000; }
+        .badge-independent { background-color: #999999; }
+
+        .category-box { background: #fff; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.85rem; margin: 15px 0; border-radius: 4px; }
+        
+        .toc { display: table; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 25px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
+        .toc ul li { margin-bottom: 6px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; font-size: 0.9rem; }
+
+        .quote-box { background-color: #f8f9fa; border-left: 4px solid var(--wiki-main); padding: 15px; margin: 15px 0; font-style: italic; }
+        
+        strong { font-weight: 900; color: #000; }
+        del { text-decoration: line-through; color: #aaa; }
+
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }   
+        
+        /* 각주 및 하단 리스트 영역 */
+        .hb-footnote { color: var(--wiki-main); text-decoration: none; font-size: 0.8em; margin-left: 2px; vertical-align: super; font-weight: bold; cursor: pointer; }
+        .hb-footnote:hover { text-decoration: underline; color: #EE0022; }
+        .footnote-area { margin-top: 50px; padding: 20px; border-top: 2px solid var(--wiki-border); background-color: var(--wiki-gray-bg); font-size: 0.9rem; line-height: 1.6; border-radius: 5px; clear: both;}
+        .footnote-area h3 { margin-top: 0; border: none; padding-left: 0; margin-bottom: 15px; font-size: 1.2rem; }
+        .footnote-item { margin-bottom: 10px; display: flex; align-items: flex-start; gap: 8px; }
+        .footnote-item a.fn-back { color: var(--wiki-main); text-decoration: none; font-weight: bold; flex-shrink: 0; }
+        .footnote-item a.fn-back:hover { text-decoration: underline; color: #EE0022; }
+        .footnote-content { color: #444; }
+        
+        /* 🚨 절대 방어막 툴팁 CSS 🚨 */
+        #absolute-hb-tooltip {
+            position: absolute;
+            background: #ffffff;
+            border: 2px solid var(--wiki-main);
+            padding: 12px 16px;
+            border-radius: 6px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 0.85rem;
+            color: #333;
+            z-index: 2147483647; 
+            max-width: 380px;
+            word-break: keep-all;
+            line-height: 1.5;
+            pointer-events: none;
+            display: none;
+        }
+
+        .wiki-image-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .wiki-image-block {
+            width: 350px;
+            max-width: 100%;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .wiki-image-block img { width: 100%; height: auto; display: block; border: 1px solid #ddd; }
+        .wiki-image-caption { margin-top: 8px; color: #555; font-weight: bold; word-break: keep-all; }
+    </style>
+    <script src="ad_logic.js"></script>
+    <link rel="stylesheet" href="wiki_font_standard.css">
+
+    <!-- 🚨 절대 방어막 툴팁 자바스크립트 🚨 -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const tooltip = document.createElement('div');
+        tooltip.id = 'absolute-hb-tooltip';
+        document.body.appendChild(tooltip);
+
+        document.querySelectorAll('.hb-footnote').forEach(fn => {
+            fn.addEventListener('mouseenter', function(e) {
+                const text = this.getAttribute('data-text');
+                if (text) {
+                    tooltip.innerHTML = text;
+                    tooltip.style.display = 'block';
+                    
+                    const rect = this.getBoundingClientRect();
+                    let leftPos = window.scrollX + rect.left + 15;
+                    if (leftPos + 380 > window.innerWidth) leftPos = window.innerWidth - 400; 
+                    
+                    tooltip.style.left = leftPos + 'px';
+                    tooltip.style.top = (window.scrollY + rect.bottom + 10) + 'px';
+                }
+            });
+            fn.addEventListener('mouseleave', function() {
+                tooltip.style.display = 'none';
+            });
+        });
+    });
+    </script>
+</head>        
+
+<body data-theme="light">
+<!-- 상단 내비게이션 바 -->
+<nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <div class="flex items-center gap-2">
+        <div class="nav-logo-box">H</div>
+        <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white">HyobinWiki</a>
+        <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+            <a href="index.html" class="hover:underline font-bold text-white no-underline">대문</a>
+            <a href="최근_변경.html" class="hover:underline text-white no-underline">최근 변경</a>
+            <a href="최근_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
+        </div>
+    </div>
+    <div class="flex flex-col items-end gap-1">
+        <div class="flex items-center gap-2">
+            <div class="hidden lg:flex items-center gap-1 mr-2">
+                <a href="편집요청.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">편집요청</a>
+                <a href="최근_토론.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">토론</a>
+                <a href="역사.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">역사</a>
+                <a href="즐겨찾기.html" class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" title="즐겨찾기">★</a>
+                <a href="더보기.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1">더보기 <span class="text-[9px]">▼</span></a>
+            </div>
+            
+            <input type="text" id="headerSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }">
+            <button onclick="handleSearch('headerSearchInput')" class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
+        </div>
+    </div>
+</nav>
+
+<div class="wiki-container shadow-lg">
+    <div class="flex justify-between items-end mb-4">
+        <h1 class="m-0 border-none p-0">노정미</h1>
+        <div class="wiki-btn-group shadow-sm mb-4">
+            <a class="wiki-tool-btn" href="토론.html">토론</a>
+            <a class="wiki-tool-btn" href="수정.html">편집</a>
+            <a class="wiki-tool-btn" href="역사.html">역사</a>
+        </div>
+    </div>
+
+    <!-- 🚨 광고 -->
+    <div style="border: 1px solid var(--wiki-border, #cccccc); padding: 12px 15px; margin-bottom: 20px; background-color: #f8f9fa; border-left: 5px solid var(--wiki-main); font-size: 0.9rem; text-align: center;">
+        <span style="font-size: 0.75rem; background: #ddd; color: #555; padding: 2px 5px; border-radius: 3px; font-weight: bold; margin-right: 5px;">AD</span>
+        <strong>"스피리추얼 파워, 듬뿍 주입해줄게!" 시의회에 강림한 여신, 노정미!</strong><br>
+        <span style="font-size: 0.8rem; color: #EE0022; display:block; margin-top:5px;">🚨[경보] "오빠... 방금 다른 역무원 뽑은 거야...?" GPS 우정 팔찌 위치 추적 가동! [UR 흑묘 임세하] 픽업</span>
+    </div>
+
+    <div class="category-box">
+        <a class="font-bold text-[#7777AA]">분류:</a>
+        <a class="wiki-link" href="효빈광역시_인물.html">효빈광역시/인물</a> | 
+        <a class="wiki-link" href="대한민국의 기초의회의원.html">대한민국의 광역의회의원</a> | 
+        <a class="wiki-link" href="시의회(효빈).html">효빈광역시의회</a> | 
+        <a class="wiki-link" href="제10대 시의회.html">제10대 시의회</a> | 
+        <a class="wiki-link" href="1996년 출생.html">1996년 출생</a> |
+        <a class="wiki-link" href="더불어민주당 소속 정치인.html">더불어민주당 소속 정치인</a> |
+        <a class="wiki-link" href="효빈대학교_출신.html">효빈대학교/출신</a> | 
+        <a class="wiki-link" href="북구(효빈) 출신.html">북구(효빈) 출신</a> |
+        <a class="wiki-link" href="남전동 출신.html">남전동 출신</a> |
+        <a class="wiki-link" href="심리학과 출신.html">심리학과 출신</a> |
+        <a class="wiki-link" href="족포초등학교 출신.html">족포초등학교 출신</a> |
+        <a class="wiki-link" href="효빈내성중학교 출신.html">효빈내성중학교 출신</a> |
+        <a class="wiki-link" href="남전고등학교 출신.html">남전고등학교 출신</a> |
+        <a class="wiki-link" href="광주 노씨.html">광주 노씨</a> |
+        <a class="wiki-link" href="러브라이버.html">러브라이버</a>
+    </div>
+        <!-- 1. 10대 전체 시의원 네비게이션 표 -->
+        <table class="w-full border-collapse mb-6 text-[0.8rem] text-center shadow-sm border-2 border-[#7777AA] bg-white">
+            <thead>
+                <tr>
+                    <th colspan="5" class="p-2 text-white border-b border-[#7777AA]" style="background-color: #7777AA;">
+                        <div class="flex items-center justify-center gap-2">
+                            <div class="w-5 h-5 bg-white rounded-full flex items-center justify-center text-[#7777AA] font-black text-[11px] border shadow-sm">議</div>
+                            <span class="font-bold text-[1rem]">제10대 효빈광역시의회의원</span>
+                        </div>
+                    </th>
+                </tr>
+                <tr>
+                    <th colspan="5" class="p-1 bg-[#fdfdfd] text-gray-600 text-[11px] cursor-pointer border-b border-[#ccc] hover:bg-gray-100" onclick="toggleBody('all-members-body')">
+                        [ 펼치기 · 접기 ]
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="all-members-body">
+                <!-- 1열 -->
+                <tr class="text-white font-bold text-[11px]">
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2] w-[20%]">남 1</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2] w-[20%]">남 2</td>
+                    <td class="p-1 border border-[#ccc] bg-[#d6001c] w-[20%]">남 3</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2] w-[20%]">남 4</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2] w-[20%]">북 1</td>
+                </tr>
+                <tr>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#강상현" class="wiki-link txt-minju">강상현</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#원상민" class="wiki-link txt-minju">원상민</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#지소현" class="wiki-link txt-jinbo">지소현</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#주방선" class="wiki-link txt-minju">주방선</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#황보람" class="wiki-link txt-minju">황보람</a></td>
+                </tr>
+                <!-- 2열 -->
+                <tr class="text-white font-bold text-[11px]">
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">북 2</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">북 3</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">북 4</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">북 5</td>
+                    <td class="p-1 border border-[#ccc] bg-[#d6001c]">북 6</td>
+                </tr>
+                <tr>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#유시온" class="wiki-link txt-minju">유시온</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="구정원.html" class="wiki-link txt-minju underline">구정원</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#원수현" class="wiki-link txt-minju">원수현</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="지민성.html" class="wiki-link txt-minju underline">지민성</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#박성임" class="wiki-link txt-jinbo">박성임</a></td>
+                </tr>
+                <!-- 3열 -->
+                <tr class="text-white font-bold text-[11px]">
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">북 7</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">서 1</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">서 2</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">서 3</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">안천 1</td>
+                </tr>
+                <tr>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#진유성" class="wiki-link txt-minju">진유성</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#남궁휘" class="wiki-link txt-minju">남궁휘</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#주하석" class="wiki-link txt-minju">주하석</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#상유하" class="wiki-link txt-minju">상유하</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="고현민.html" class="wiki-link txt-minju underline">고현민</a></td>
+                </tr>
+                <!-- 4열 -->
+                <tr class="text-white font-bold text-[11px]">
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">안천 2</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">안천 3</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">안천 4</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">안천 5</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">중구</td>
+                </tr>
+                <tr>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#이수라남" class="wiki-link txt-minju">이수라남</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#강민서" class="wiki-link txt-minju">강민서</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#성지언" class="wiki-link txt-minju">성지언</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#구상민" class="wiki-link txt-minju">구상민</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#도현정" class="wiki-link txt-minju">도현정</a></td>
+                </tr>
+                <!-- 5열 -->
+                <tr class="text-white font-bold text-[11px]">
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">동 1</td>
+                    <td class="p-1 border border-[#ccc] bg-[#0073CF]">동 2</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">창전 1</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">창전 2</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">창전 3</td>
+                </tr>
+                <tr>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#구상원" class="wiki-link txt-minju">구상원</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#지은민" class="wiki-link txt-joguk">지은민</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="고사인.html" class="wiki-link txt-minju underline">고사인</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#유증민" class="wiki-link txt-minju">유증민</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="성선민.html" class="wiki-link txt-minju underline">성선민</a></td>
+                </tr>
+                <!-- 6열 -->
+                <tr class="text-white font-bold text-[11px]">
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">창전 4</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">청엽 1</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">청엽 2</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">청엽 3</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">청엽 4</td>
+                </tr>
+                <tr>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#정진서" class="wiki-link txt-minju">정진서</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#유신민" class="wiki-link txt-minju">유신민</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#오상원" class="wiki-link txt-minju">오상원</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#조성일" class="wiki-link txt-minju">조성일</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#남예서" class="wiki-link txt-minju">남예서</a></td>
+                </tr>
+                <!-- 7열 (문언성 강조) -->
+                <tr class="text-white font-bold text-[11px]">
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">청엽 5</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">비례 1</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">탄성 1</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">탄성 2</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">탄성 3</td>
+                </tr>
+                <tr>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#강예선" class="wiki-link txt-minju">강예선</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#원기덕" class="wiki-link txt-minju">원기덕</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#고상면" class="wiki-link txt-minju">고상면</a></td>
+                    <td class="p-1.5 border border-[#ccc] bg-gray-200"><a href="문언성.html" class="wiki-link txt-minju font-bold underline">문언성</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#주옥현" class="wiki-link txt-minju">주옥현</a></td>
+                </tr>
+                <!-- 8열 -->
+                <tr class="text-white font-bold text-[11px]">
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">비례 2</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">비례 3</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">비례 4</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">비례 5</td>
+                    <td class="p-1 border border-[#ccc] bg-[#004ea2]">비례 6</td>
+                </tr>
+                <tr>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#양지현" class="wiki-link txt-minju">양지현</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#송한유" class="wiki-link txt-minju">송한유</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="노정미.html" class="wiki-link txt-minju">노정미</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#송연우" class="wiki-link txt-minju">송연우</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#양소현" class="wiki-link txt-minju">양소현</a></td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="p-2 border border-[#ccc] bg-white text-left text-[11px] text-gray-700 leading-tight">
+                        * 제9회 전국동시지방선거 결과에 따라 재구성됨.<br>
+                        <div class="mt-2 text-[10px] text-gray-500 font-bold">◀ <a href="제9대.html" class="text-[#7777AA] hover:underline">제9대</a></div>
+                    </td>
+                </tr>
+                <!-- 하단 바 -->
+                <tr>
+                    <td colspan="5" class="p-1.5 bg-[#7777AA] text-white text-[11px] leading-relaxed">
+                        <a href="서울.html" class="text-white hover:underline">서울</a> · <a href="부산.html" class="text-white hover:underline">부산</a> · <a href="대구.html" class="text-white hover:underline">대구</a> · <a href="인천.html" class="text-white hover:underline">인천</a> · <a href="광주.html" class="text-white hover:underline">광주</a> · <a href="대전.html" class="text-white hover:underline">대전</a> · <a href="울산.html" class="text-white hover:underline">울산</a> · <a href="세종.html" class="text-white hover:underline">세종</a><br>
+                        <a href="경기.html" class="text-white hover:underline">경기</a> · <a href="강원.html" class="text-white hover:underline">강원</a> · <a href="충북.html" class="text-white hover:underline">충북</a> · <a href="충남.html" class="text-white hover:underline">충남</a> · <a href="전북.html" class="text-white hover:underline">전북</a> · <a href="전남.html" class="text-white hover:underline">전남</a> · <a href="경북.html" class="text-white hover:underline">경북</a> · <a href="경남.html" class="text-white hover:underline">경남</a> · <a href="제주.html" class="text-white hover:underline">제주</a><br>
+                        <strong>효빈</strong> · <a href="덕북.html" class="text-white hover:underline">덕북</a> · <a href="덕남.html" class="text-white hover:underline">덕남</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 2. 정당별 시의원 네비게이션 표 -->
+        <table class="w-full border-collapse mb-8 text-[0.8rem] text-center shadow-sm border-2 border-[#004ea2] bg-white">
+            <thead>
+                <tr>
+                    <th colspan="5" class="p-2 text-white border-b border-[#004ea2]" style="background-color: #004ea2;">
+                        <span class="font-bold text-[1rem]">더불어민주당 제10대 효빈광역시의회의원</span>
+                    </th>
+                </tr>
+                <tr>
+                    <th colspan="5" class="p-1 bg-[#fdfdfd] text-gray-600 text-[11px] cursor-pointer border-b border-[#ccc] hover:bg-gray-100" onclick="toggleBody('party-members-body')">
+                        [ 펼치기 · 접기 ]
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="party-members-body">
+                <tr>
+                    <td class="w-[20%] p-1.5 border border-[#ccc]"><a href="10대_시의원.html#강상현" class="wiki-link txt-minju">강상현</a></td>
+                    <td class="w-[20%] p-1.5 border border-[#ccc]"><a href="10대_시의원.html#원상민" class="wiki-link txt-minju">원상민</a></td>
+                    <td class="w-[20%] p-1.5 border border-[#ccc]"><a href="10대_시의원.html#주방선" class="wiki-link txt-minju">주방선</a></td>
+                    <td class="w-[20%] p-1.5 border border-[#ccc]"><a href="10대_시의원.html#황보람" class="wiki-link txt-minju">황보람</a></td>
+                    <td class="w-[20%] p-1.5 border border-[#ccc]"><a href="10대_시의원.html#유시온" class="wiki-link txt-minju">유시온</a></td>
+                </tr>
+                <tr>
+                    <td class="p-1.5 border border-[#ccc]"><a href="구정원.html" class="wiki-link txt-minju underline">구정원</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#원수현" class="wiki-link txt-minju">원수현</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="지민성.html" class="wiki-link txt-minju underline">지민성</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#진유성" class="wiki-link txt-minju">진유성</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#남궁휘" class="wiki-link txt-minju">남궁휘</a></td>
+                </tr>
+                <tr>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#주하석" class="wiki-link txt-minju">주하석</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#상유하" class="wiki-link txt-minju">상유하</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="고현민.html" class="wiki-link txt-minju underline">고현민</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#이수라남" class="wiki-link txt-minju">이수라남</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#강민서" class="wiki-link txt-minju">강민서</a></td>
+                </tr>
+                <tr>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#성지언" class="wiki-link txt-minju">성지언</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#구상민" class="wiki-link txt-minju">구상민</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#도현정" class="wiki-link txt-minju">도현정</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#구상원" class="wiki-link txt-minju">구상원</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="고사인.html" class="wiki-link txt-minju underline">고사인</a></td>
+                </tr>
+                <tr>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#유증민" class="wiki-link txt-minju">유증민</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="성선민.html" class="wiki-link txt-minju underline">성선민</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#정진서" class="wiki-link txt-minju">정진서</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#유신민" class="wiki-link txt-minju">유신민</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#오상원" class="wiki-link txt-minju">오상원</a></td>
+                </tr>
+                <tr>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#조성일" class="wiki-link txt-minju">조성일</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#남예서" class="wiki-link txt-minju">남예서</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#강예선" class="wiki-link txt-minju">강예선</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#원기덕" class="wiki-link txt-minju">원기덕</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#고상면" class="wiki-link txt-minju">고상면</a></td>
+                </tr>
+                <tr>
+                    <td class="p-1.5 border border-[#ccc] bg-gray-200 font-bold"><a href="문언성.html" class="wiki-link txt-minju">문언성</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#주옥현" class="wiki-link txt-minju">주옥현</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#양지현" class="wiki-link txt-minju">양지현</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#송한유" class="wiki-link txt-minju">송한유</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="노정미.html" class="wiki-link txt-minju">노정미</a></td>
+                </tr>
+                <tr>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#송연우" class="wiki-link txt-minju">송연우</a></td>
+                    <td class="p-1.5 border border-[#ccc]"><a href="10대_시의원.html#양소현" class="wiki-link txt-minju">양소현</a></td>
+                    <td class="p-1.5 border border-[#ccc]"></td>
+                    <td class="p-1.5 border border-[#ccc]"></td>
+                    <td class="p-1.5 border border-[#ccc]"></td>
+                </tr>
+            </tbody>
+        </table>
+    <div class="content-wrapper mt-6">
+        
+        <aside class="infobox">
+            <div class="infobox-title">
+                <span style="font-size: 0.85rem; font-weight: normal; display: block; margin-bottom: 4px; color: #e2e8f0;">제10대 효빈광역시의회 비례대표 의원</span>
+                노정미<br/>
+                <span class="text-sm font-normal">Noh Jeong-mi</span>
+            </div>
+            <div class="infobox-image">
+                <img alt="노정미" src="이미지/노정미.webp"/>
+            </div>
+            <table class="infobox-table">
+                <tr><th>출생</th><td>1996년 9월 6일 (만 29세)<br/><span class="text-xs"><a class="wiki-link" href="북구.html">효빈광역시 북구</a> 남전동</span></td></tr>
+                <tr><th>현직</th><td><strong><a class="wiki-link" href="효빈광역시의회.html">제10대 효빈광역시의회 의원</a></strong> <span class="text-xs">(비례대표)</span></td></tr>
+                <tr><th>소속 정당</th><td><span class="wiki-badge badge-minju">더불어민주당</span></td></tr>
+                <tr><th>선거구</th><td><a class="wiki-link" href="효빈광역시.html">효빈광역시</a> 비례대표</td></tr>
+                <tr><th>선수</th><td>1 (초선)</td></tr>
+                <tr><th>본관</th><td><a class="wiki-link" href="https://namu.wiki/w/광주%20노씨" target="_blank">광주 노씨</a></td></tr>
+                <tr><th>학력</th><td><a class="wiki-link" href="족포초등학교.html">족포초등학교</a> <span class="text-xs">(졸업)</span><br/><a class="wiki-link" href="내성중학교.html">효빈내성중학교</a> <span class="text-xs">(졸업)</span><br/><a class="wiki-link" href="남전고등학교.html">남전고등학교</a> <span class="text-xs">(졸업)</span><br/><a class="wiki-link" href="효빈대학교.html">효빈대학교</a> 사회과학대학 <span class="text-xs">(심리학 / 학사·석사)</span></td></tr>
+                <tr><th>경력</th><td>임상심리사<br/>효빈 청년심리지원센터 팀장</td></tr>
+                <tr><th>별명</th><td>현실판 <a class="wiki-link" href="토죠 노조미.html">토죠 노조미</a>, 돼조미<del>(과거형)</del>, 스피리추얼 시의원, 시의회의 어머니, <del>와시와시 마스터</del></td></tr>
+            </table>
+        </aside>
+
+        <div class="toc" id="toc-box">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li><a class="wiki-link" href="#s-1">1. 개요</a></li>
+                <li><a class="wiki-link" href="#s-2">2. 토죠 노조미와의 소름 돋는 평행이론</a></li>
+                <li><a class="wiki-link" href="#s-3">3. 생애: 족포초의 지옥부터 임상심리사까지</a>
+                    <ul>
+                        <li><a class="wiki-link" href="#s-3-1">3.1. 족포초의 악몽: '돼조미'와 은인 박효빈</a></li>
+                        <li><a class="wiki-link" href="#s-3-2">3.2. 내성중 시절: 스피리추얼 심리학의 각성과 나이스 바디</a></li>
+                        <li><a class="wiki-link" href="#s-3-3">3.3. 남전고 진학과 진짜 '노조미'화</a></li>
+                        <li><a class="wiki-link" href="#s-3-4">3.4. 효빈대 심리학과 시절: 투잡러 가족돌봄청년과 멘티들</a></li>
+                    </ul>
+                </li>
+                <li><a class="wiki-link" href="#s-4">4. 정치 입문: 혐오를 치유하기 위한 출사표</a>
+                    <ul>
+                        <li><a class="wiki-link" href="#s-4-1">4.1. TV 토론회 파행과 윤재훈의 혐오 조장</a></li>
+                        <li><a class="wiki-link" href="#s-4-2">4.2. 12.3 계엄 사태와 심리지원 예산 삭감의 분노</a></li>
+                        <li><a class="wiki-link" href="#s-4-3">4.3. 2026년 제9회 지선 비례대표 당선</a></li>
+                    </ul>
+                </li>
+                <li><a class="wiki-link" href="#s-5">5. 의정 활동 및 주요 정책 (Hyobin Policy)</a></li>
+                <li><a class="wiki-link" href="#s-6">6. 인간 관계 (현실판 뮤즈 라인업)</a>
+                    <ul>
+                        <li><a class="wiki-link" href="#s-6-1">6.1. 안예리 (영혼의 파트너와 와시와시 희생양)</a></li>
+                        <li><a class="wiki-link" href="#s-6-2">6.2. 박효빈 (평생의 은인이자 정치적 동지)</a></li>
+                        <li><a class="wiki-link" href="#s-6-3">6.3. 강토리 & 원우미 (고등학교/대학교 찐친들)</a></li>
+                        <li><a class="wiki-link" href="#s-6-4">6.4. 성공린 & 양미소 (알바 시절의 멘티들)</a></li>
+                        <li><a class="wiki-link" href="#s-6-5">6.5. 윤재훈 (심리 분석조차 아까운 폐기물)</a></li>
+                    </ul>
+                </li>
+                <li><a class="wiki-link" href="#s-7">7. 사건 사고 및 해프닝</a>
+                    <ul>
+                        <li><a class="wiki-link" href="#s-7-1">7.1. HAF 2025 전설의 '노조에리' 자원봉사</a></li>
+                    </ul>
+                </li>
+                <li><a class="wiki-link" href="#s-8">8. 여담 (스피리추얼 밈의 총본산)</a></li>
+                <li><a class="wiki-link" href="#s-9">9. 선거 이력</a></li>
+            </ul>
+        </div>
+
+        <h2 class="anchor-offset" id="s-1">1. 개요</h2>
+        <div class="quote-box">
+            <strong>"우리가 생각하는 정치는 그런 파워를 갖고 시민 모두에게 보내주는 거라고 생각해. 내 스피리추얼 파워, 듬뿍 받아라!"</strong>
+        </div>
+        <p>
+            대한민국의 정치인이자 제10대 <a class="wiki-link" href="효빈광역시의회.html">효빈광역시의회 의원</a>(더불어민주당, 비례대표 3번).
+        </p>
+        <p>
+            <a class="wiki-link" href="효빈대학교.html">효빈대학교</a> 심리학과(학사·석사) 출신의 임상심리사로, 극우 세력의 혐오 조장과 정신질환자 낙인찍기에 분노하여 2024년 정계에 입문했다. 가족돌봄청년(영 케어러)이자 심리지원계의 대변인으로서 2026년 제9회 전국동시지방선거에서 광역시의회 비례대표로 당선되었다. <a class="wiki-link" href="박효빈.html">박효빈</a> 효빈광역시장과는 족포초, 내성중, 효빈대를 함께 다닌 동갑내기(1996년생) 동창이자 평생의 은인 관계다.
+        </p>
+        <p>
+            특히 서브컬처 팬들과 효빈시청 공무원들 사이에서는 <strong>'현실판 <a class="wiki-link" href="토죠 노조미.html">토죠 노조미</a>'</strong>라는 별명으로 더욱 유명하다. 은은한 보랏빛이 도는 흑발, 나긋나긋한 사투리, 특유의 사람 좋은 눈웃음, 심리학(스피리추얼) 전공, 압도적인 글래머 체형까지 러브 라이브!의 토죠 노조미와 완벽하게 일치하는 기믹을 가지고 있어 화제를 몰고 다닌다. <a class="hb-footnote" data-text="심지어 본인 스스로가 진성 토죠 노조미 팬(오시)이라, 타로 카드를 들고 다니며 진짜 점을 쳐주기도 한다. 혼연일체의 경지다.">[1]</a>
+        </p>
+
+        <h2 class="anchor-offset" id="s-2">2. 토죠 노조미와의 소름 돋는 평행이론</h2>
+        <p>
+            <a class="wiki-link" href="안예리.html">안예리</a> 서구의원이 완벽한 아야세 에리의 강림이라면, 노정미 시의원은 토죠 노조미 그 자체다. 애니메이션 세계관 밖에서 우주가 억지로 짜맞춘 듯한 <strong>영적(스피리추얼) 평행이론</strong>을 자랑한다.
+        </p>
+        <ul class="wiki-list" style="list-style-type: disc;">
+            <li><strong>비주얼과 체형:</strong> 160cm 초반의 키에, 특유의 나른하고 부드러운 인상. 무엇보다 학창 시절의 뼈아픈 콤플렉스였던 통통한 체형을 극복한 후 완성된 <strong>글래머러스한 볼륨감</strong>이 애니메이션 속 노조미의 '뮤즈 내 바스트 1위' 설정과 소름 돋게 일치한다.</li>
+            <li><strong>심리학 = 스피리추얼:</strong> 노조미가 '스피리추얼 파워'와 타로 카드로 멤버들의 심리를 꿰뚫어 본다면, 노정미는 아예 <strong>효빈대 심리학과 석사 출신의 '전문 임상심리사'</strong>다. 팩트와 학문에 기반한 진짜 독심술사(?)인 셈이다.</li>
+            <li><strong>노조에리 커플링의 현실화:</strong> 애니메이션 최고의 콤비인 에리-노조미가, 현실 효빈시 정치판에서는 <strong>안예리(서구의원)-노정미(시의원)</strong>라는 완벽한 영혼의 정치 파트너로 재현되었다. 회의가 끝날 때마다 안예리의 가슴을 향해 기습 <strong>'와시와시'</strong>를 시전하는 것까지 똑같다.</li>
+        </ul>
+
+        <h2 class="anchor-offset" id="s-3">3. 생애: 족포초의 지옥부터 임상심리사까지</h2>
+        
+        <h3 class="anchor-offset" id="s-3-1">3.1. 족포초의 악몽: '돼조미'와 은인 박효빈</h3>
+        <p>
+            효빈광역시 북구 남전동 출신이나, 어릴 적 집안 사정으로 서구 당선동으로 이사 오며 <strong><a class="wiki-link" href="족포초등학교.html">족포초등학교</a></strong>에 입학하게 되었다. (애니메이션의 노조미가 전학을 자주 다닌 것과 달리, 이사는 몇 번 가지 않았다.)
+        </p>
+        <p>
+            초등학교 시절의 노정미는 지금의 나이스 바디와는 거리가 먼, 말 그대로 <strong>진짜 노조미처럼 통통한 체형(일명 '돼조미')</strong>이었다. 성격이 유순하고 착했던 그녀는 당시 소아비만과 지독한 가난으로 겉돌던 <a class="wiki-link" href="박효빈.html">박효빈</a>과 <a class="wiki-link" href="안예리.html">안예리</a>와 친하게 지냈는데, 하필 이 때문에 족포초의 절대권력이자 일진 무리였던 <strong><a class="wiki-link" href="윤재훈.html">윤재훈</a></strong> 일당의 눈에 띄고 만다. <a class="hb-footnote" data-text="당시 윤재훈 무리는 뚱뚱하고 냄새가 난다는 말도 안 되는 허위 사실을 퍼트리며 노정미를 왕따시켰다. 정작 냄새가 난 건 씻지도 않고 나대던 윤재훈 본인이었다.">[2]</a>
+        </p>
+        <p>
+            가장 끔찍했던 사건은 그녀가 초등학교 고학년이 되며 발육이 남다르게 빨랐을 때 발생했다. 미친 남학생 무리가 <strong>"가슴에 지방밖에 없으니 줘도 안 먹는다. 근데 진짜 지방인지 한번 만져보자"</strong>라며 노정미를 구석으로 몰아넣고 끔찍한 성추행을 시도하려 했던 것이다. 
+        </p>
+        <p>
+            절체절명의 순간, <strong>구원자로 등판한 것이 바로 박효빈이었다.</strong> 박효빈은 뚱뚱하고 힘도 약했던 시절임에도 불구하고 미친 듯이 달려와 <strong>"하지 마라! 당장 경찰이랑 어른들 다 부를 테니까 그만해라!!"</strong>며 소리를 지르고, 남학생들에게 우유갑을 집어 던지며 어그로를 완벽하게 자신에게로 돌렸다. 박효빈이 무거운 몸을 이끌고(...) 도망치며 일진들의 시선을 끌어준 덕분에 노정미는 무사히 도망칠 수 있었고, 박효빈 역시 주변 어른들의 도움으로 간신히 폭행을 면했다.
+        </p>
+        <p>
+            이 충격적인 사건 이후, 일진들의 보복이 두려웠던 노정미는 한동안 박효빈이 인사를 해도 무시하고, 심지어 주변 애들 앞에서 박효빈을 나쁘게 말하며 거리를 두는 비겁한 선택을 하기도 했다 (초5~6 당시). "내가 쟤를 멀리하면 나를 덜 괴롭히겠지"라는 얄팍한 생각이었으나, 쓰레기들은 그런 논리가 통하는 자들이 아니었다. 오히려 방어막이 사라진 그녀를 더 지독하게 괴롭혔다.
+        </p>
+        <p>
+            결국 죄책감과 후회에 시달리던 노정미는, 사람 없는 곳에서 박효빈을 찾아가 <strong>"그동안 무시해서 진짜 미안하다. 네가 나 살려줬는데 내가 미쳤었다"</strong>며 펑펑 울며 사과했고, 대인배였던 박효빈은 이를 받아주어 다시 찐친이 되었다. 이후 6학년 때 효빈광역시 초등치유 프로그램에 참여하며 훗날의 찐친 <strong><a class="wiki-link" href="강토리.html">강토리</a></strong>(현 효빈 컬쳐레스풀 기관장)를 만나 상처를 치유하기 시작했다.
+        </p>
+
+        <h3 class="anchor-offset" id="s-3-2">3.2. 내성중 시절: 스피리추얼 심리학의 각성과 나이스 바디</h3>
+        <p>
+            족포초를 간신히 졸업했지만, 근방의 <a class="wiki-link" href="내성중학교.html">내성중학교</a>로 배정받으며 <strong>지옥의 시즌 2</strong>가 열렸다. 내성중은 족포초 출신들이 대거 진학하는 곳이었고, 특히 1~2학년 시절 양예원, 박민지 등 악질 여학생들에게 "뚱뚱하다", "박효빈이랑 친하다"는 이유로 지독한 괴롭힘을 당했다.
+        </p>
+        <p>
+            그러나 3학년이 되며 기적이 일어났다. 박효빈이 피나는 다이어트와 운동으로 환골탈태하여 학교를 평정하자, 괴롭히던 양예원과 박민지 일당이 완벽하게 나락으로 간 것이다. 이때 재미있는 일화가 있는데, 과거 괴롭힘에 동조하던 '김민우'라는 남학생이 갑자기 박효빈에게 친한 척 태세전환을 하자, 노정미는 조용히 그를 응시하며 <strong>"저 새끼는 백퍼 나중에 뒤통수 치고 효빈이 욕한데이"</strong>라며 소름 돋는 예언(스피리추얼?)을 남겼고, 이 예언은 훗날 100% 사실로 밝혀졌다. <a class="hb-footnote" data-text="이 사건을 계기로 노정미는 '인간의 심리와 본성'에 깊은 관심을 가지게 되었고, 심리학과 진학을 결심하게 된다. 떡잎부터 스피리추얼이었다.">[3]</a>
+        </p>
+        <p>
+            박효빈이나 안예리처럼 뼈를 깎는 다이어트를 하지는 않았지만, 일진들이 사라지고 스트레스가 감소하면서 폭식이 줄어 자연스럽게 살이 빠졌다. 그 결과, <strong>통통함이 빠진 자리에 압도적인 볼륨감만 남으며 진짜 토죠 노조미급의 육덕진(...) 나이스 바디</strong>가 완성되었다. 
+        </p>
+
+        <h3 class="anchor-offset" id="s-3-3">3.3. 남전고 진학과 진짜 '노조미'화</h3>
+        <p>
+            고등학교 진학 무렵, 집안 사정으로 고향인 남전동으로 다시 이사하며 <a class="wiki-link" href="남전고등학교.html">남전고등학교</a>에 다녔다. 남전고 시절에는 고송동의 강토리와 고등학교 교류 활동을 하며 더욱 끈끈해졌고, 특유의 느긋하고 사람 좋은 사투리를 장착하며 <strong>점점 더 진짜 노조미와 동기화(?)</strong>되어 갔다. 타로 카드를 들고 다니며 친구들의 연애운을 기가 막히게 맞추는 '남전고의 마녀'로 이름을 날렸다.
+        </p>
+
+        <h3 class="anchor-offset" id="s-3-4">3.4. 효빈대 심리학과 시절: 투잡러 가족돌봄청년과 멘티들</h3>
+        <p>
+            사람의 마음을 꿰뚫어 보는 능력에 흥미를 느껴 2015년 <a class="wiki-link" href="효빈대학교.html">효빈대학교</a> 심리학과(15학번)에 진학했다. 동갑내기인 박효빈(사회복지), 안예리(17학번, 사회복지)와 같은 캠퍼스 필수 교양에서 종종 마주치며 우정을 다졌다. <a class="hb-footnote" data-text="노정미 본인 왈, '내가 심리학을 전공했지만 박효빈 저 미친놈의 멘탈 구조는 도저히 심리적으로 분석이 불가능했다'고 회고한 바 있다.">[4]</a>
+        </p>
+        <p>
+            그러나 그녀의 대학 생활은 낭만과 거리가 멀었다. 부모님의 이혼 후 편찮으신 어머니와 어린 동생을 홀로 돌봐야 했던 <strong>전형적인 가족돌봄청년(영 케어러)</strong>이었기 때문이다. 생활비와 병원비를 벌기 위해 박효빈처럼 쓰리잡까지는 아니더라도, <strong>'지역아동센터 멘토링'과 '맥도날드 알바'라는 혹독한 투잡(2-Jobs)</strong>을 뛰며 학교를 다녔다. <a class="hb-footnote" data-text="흥미롭게도 이 투잡 라인업은 훗날 안예리(17학번)가 대학 시절 뛰었던 투잡 라인업과 100% 동일하다. 선배인 노정미가 안예리에게 알바 자리를 물려주었기 때문이다.">[5]</a>
+        </p>
+        <p>
+            이 시기, 노정미와 안예리가 지역아동센터 멘토링을 하며 가르쳤던 2007년생 초등학생들이 훗날 동구대학교 26학번에 진학하게 되는데, 이들이 바로 <strong><a class="wiki-link" href="성공린.html">성공린</a></strong>(호시조라 린 평행이론)과 <strong><a class="wiki-link" href="양미소.html">양미소</a></strong>(야자와 니코 판박이)다. 스피리추얼한 운명의 수레바퀴는 이때부터 돌고 있었다. 
+        </p>
+        <p>
+            피나는 노력 끝에 성적을 준수하게 유지하며 효빈대학교 학석사 연계과정을 밟았고, 2021년경 심리학 석사까지 취득한 후 현업 <strong>임상심리사</strong>로 일하게 된다.
+        </p>
+
+        <h2 class="anchor-offset" id="s-4">4. 정치 입문: 혐오를 치유하기 위한 출사표</h2>
+
+        <h3 class="anchor-offset" id="s-4-1">4.1. TV 토론회 파행과 윤재훈의 혐오 조장</h3>
+        <p>
+            안정적인 임상심리사로 일하던 그녀를 빡치게 한 것은, 2022년 광역시장 선거 당시 윤재훈이 박효빈의 아픈 가정사와 정신건강을 조롱했던 <strong>TV 토론회 파행 사건</strong>이었다. 
+        </p>
+        <p>
+            박효빈에 대한 커뮤니티의 "정신질환자라 일 제대로 못 할 거다"라는 악플과 일부 언론의 편파 보도, 그리고 심리지원 자체를 낭비로 몰아가는 극우 세력들의 행태를 보며 임상심리사로서 분노가 끓어올랐다. "심리치료 받는 애들은 정신병자니까 세금 지원하면 안 된다"고 떠드는 극단주의자들의 혐오 조장은 선을 한참 넘은 것이었다.
+        </p>
+
+        <h3 class="anchor-offset" id="s-4-2">4.2. 12.3 계엄 사태와 심리지원 예산 삭감의 분노</h3>
+        <p>
+            결정적인 트리거는 2024년 말 <strong>윤석열의 12.3 비상계엄 선포 사태</strong>였다. 계엄 트라우마로 인해 국민들의 정신적 충격이 극에 달했음에도 불구하고, 당시 윤석열 정부는 무지성으로 심리지원 예산을 대폭 삭감하는 개똥 같은 실태(...)를 보여주었다. (효빈시가 대놓고 정부의 탄압에 맞섰다는 보복성 예산 삭감이었다.)
+        </p>
+        <p>
+            이 삭감 폭풍 속에서 박효빈 시장이 홀로 피똥 싸면서(?) 시 예산을 영혼까지 끌어모아 심리지원 사업을 간신히 유지하는 꼬라지를 본 노정미는 결심했다. <strong>"내 스피리추얼 파워로 저 혐오 세력의 대가리를 깨버리고, 제대로 된 심리지원 조례를 만들겠데이."</strong>
+        </p>
+
+        <h3 class="anchor-offset" id="s-4-3">4.3. 2026년 제9회 지선 비례대표 당선</h3>
+        <p>
+            2024년 더불어민주당에 전격 입당한 그녀는, 2026년 제9회 전국동시지방선거에서 <strong>여성, 심리학계(임상심리사), 사회적 약자(가족돌봄청년) 대변 몫</strong>으로 효빈광역시의회 비례대표 공천을 신청했다. 
+        </p>
+        <p>
+            그녀의 탄탄한 전문성과 절절한 스토리(영 케어러)가 당원들의 심금을 울리며 당당히 비례대표 3순번을 배정받았고, 민주당의 압승에 힘입어 제10대 효빈광역시의회 비례대표 의원으로 당선되며 정계에 입성했다. <a class="hb-footnote" data-text="당선 확정 인터뷰에서 타로 카드의 '운명의 수레바퀴' 카드를 꺼내 들며 '효빈시민 여러분, 스피리추얼 파워 듬뿍 주입해 드릴게예!'라고 윙크를 날려 생방송 뉴스 앵커를 당황하게 만들었다.">[6]</a>
+        </p>
+
+        <h2 class="anchor-offset" id="s-5">5. 의정 활동 및 주요 정책 (Hyobin Policy)</h2>
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4" style="border-left: 4px solid var(--wiki-main);">
+            <strong>"우리가 생각하는 정치는, 아픈 마음을 품어 안고 치유의 길을 열어주는 거데이."</strong>
+        </div>
+        <p>
+            비례대표 초선임에도 불구하고 임상심리사 짬바에서 나오는 묵직한 조례안들을 통과시키고 있다.
+        </p>
+        <ul class="wiki-list" style="list-style-type: disc;">
+            <li><strong>효빈광역시 가족돌봄청년(영 케어러) 지원 조례 제정:</strong> 본인이 가족돌봄청년이었던 뼈아픈 경험을 살려, 영 케어러 발굴 및 생계비/심리상담 바우처 지원 조례를 최초로 발의하여 통과시켰다. 이 조례안은 안예리 서구의원의 '클린-핏 바우처'와 연계되어 엄청난 시너지를 냈다.</li>
+            <li><strong>'스피리추얼 마인드 케어' (시민 정신건강 핫라인 구축):</strong> 윤석열 정부가 삭감했던 심리지원 예산을 시비로 전액 복구하고, 청년 고립 은둔자 및 계엄 트라우마 피해자들을 위한 24시간 익명 심리상담 핫라인을 구축했다. <del>이름이 대놓고 스피리추얼이다.</del></li>
+            <li><strong>혐오범죄 피해자 치유 지원:</strong> 윤재훈 류의 극단주의자들에게 사이버 불링이나 혐오 범죄를 당한 피해자들의 소송비용 및 트라우마 치료비를 지원하는 기금을 마련했다.</li>
+        </ul>
+
+        <h2 class="anchor-offset" id="s-6">6. 인간 관계 (현실판 뮤즈 라인업)</h2>
+
+        <h3 class="anchor-offset" id="s-6-1">6.1. 안예리 (영혼의 파트너와 와시와시 희생양)</h3>
+        <p>
+            1998년생. 서구의회 의원이자 <strong>완벽한 현실판 아야세 에리.</strong> 두 사람은 시의회와 구의회의 예산을 연결하는 완벽한 정치 파트너이자 영혼의 단짝(현실판 노조에리)이다. 
+        </p>
+        <p>
+            고집이 세고 원칙주의적인 안예리가 악성 민원이나 꼰대 공무원들 때문에 멘탈이 나갈 때마다, 노정미가 부드러운 카리스마와 타로 카드로 다독여주는 완벽한 상호보완 관계다. 그러나 평화는 오래가지 않고, 노정미가 장난기가 발동할 때면 안예리의 B88 가슴을 향해 기습적인 <strong>"우리 예리치카~ 와시와시(わしわし) 맥스!"</strong>를 시전하곤 한다. 의회 복도나 행사장에서 안예리가 기겁하며 <strong>"아, 정미 언니 미쳤어?! 여기 시의회라고!! CCTV 다 찍혀!!"</strong>라고 비명을 지르는 장면이 동료 의원들에게 자주 목격된다. <a class="hb-footnote" data-text="노정미 의원의 '와시와시' 침투 속도는 타의 추종을 불허하여, 방심한 틈을 타 0.5초 만에 안예리의 방어막을 뚫어버린다. 안예리가 '로시야 파워'로 엎어치기를 시도하려 해도, 웃으면서 그 힘을 흘려보내는 합기도 유단자급의 짬바를 자랑한다.">[7]</a>
+        </p>
+
+        <h3 class="anchor-offset" id="s-6-2">6.2. 박효빈 (평생의 은인이자 정치적 동지)</h3>
+        <p>
+            1996년생. 현 효빈광역시장. 족포초 마굴에서 집단 성추행의 위기에 처했던 자신을 몸을 던져 구해준 <strong>평생의 은인</strong>이다. 당시 자신이 보복이 두려워 그를 배신(무시)했음에도 쿨하게 용서해준 그 대인배적 인성에 평생 충성을 맹세했다.
+        </p>
+        <p>
+            재미있는 점은 <strong>박효빈 시장의 러브라이브 뮤즈 '최애(오시)'가 아야세 에리라면, 두 번째로 아끼는 캐릭터가 바로 토죠 노조미</strong>라는 점이다. 시장실에서 안예리와 노정미가 티격태격하는 모습을 볼 때마다 박효빈은 "내 눈앞에서 현실 노조에리가 꽁트를 찍고 있다니... 시력 5.0 되는 기분이다"라며 행복한 성덕의 미소를 짓는다고 한다. <a class="hb-footnote" data-text="노정미가 시장실 소파에 누워 낮잠을 자고 있으면, 박효빈은 깨우지도 못하고 그 옆에서 조용히 서류 결재를 한다. 무서워서가 아니라 오시 캐릭터의 속성(낮잠)을 존중하는 종교적 행위(?)에 가깝다.">[8]</a>
+        </p>
+
+        <h3 class="anchor-offset" id="s-6-3">6.3. 강토리 & 원우미 (고등학교/대학교 찐친들)</h3>
+        <p>
+            <strong>강토리 (효빈 컬쳐레스풀 초대 센터장):</strong> 초등학교 6학년 치유 프로그램에서 만나 남전고 시절까지 함께한 찐친. 미나미 코토리의 현실 강림 버전이다. 노정미가 '돼조미' 시절 자존감이 바닥일 때, 강토리가 특유의 '츙츙~' 화법과 수제작 양복을 입혀주며 그녀의 여성성을 일깨워주었다.
+        </p>
+        <p>
+            <strong>원우미 (시청 공무원):</strong> 효빈연구원 원유미(소노다 우미 판박이) 원장의 터울 큰 여동생으로, 1996년생 동갑내기 찐친이다. 언니와 똑같이 소노다 우미를 빼다 박은 깐깐한 원칙주의자. 대학 시절 노정미가 늦잠을 자서 스터디를 빼먹으려 하면 <strong>"정미 학생! 나태함은 용납할 수 없습니다! 당장 일어나세요!"</strong>라며 귀에 피가 나도록 잔소리를 퍼붓던 무서운 친구다.
+        </p>
+
+        <h3 class="anchor-offset" id="s-6-4">6.4. 성공린 & 양미소 (알바 시절의 멘티들)</h3>
+        <p>
+            노정미와 안예리가 대학 시절 지역아동센터에서 투잡을 뛰며 멘토링을 했던 2007년생 아이들. 
+        </p>
+        <p>
+            동구대 경영학과 26학번 <strong><a class="wiki-link" href="성공린.html">성공린</a></strong>(호시조라 린 평행이론)은 멘토링 시절부터 체육복을 입고 뛰어다니며 "~냐!"를 연발하던 꼬맹이였고, 동구대 조리학과 <strong><a class="wiki-link" href="양미소.html">양미소</a></strong>(생존형 니코, 야자와 니코 판박이)는 생존 본능이 강해 "니코니코니!"를 외치며 간식을 얻어먹던 아이였다. 노정미는 이 둘을 대학교 멘토링 프로그램 특강에서 10년 만에 대학생으로 재회했을 때, <strong>"타로 카드가 인도하는 운명의 수레바퀴는 진짜로 돈데이..."</strong>라며 진심으로 소름 돋아 했다. <a class="hb-footnote" data-text="특히 성공린이 빈유(...) 콤플렉스로 멘탈이 나갔을 때, 압도적인 글래머인 노정미가 다가가 '공린아, 가슴은 럭키 파워데이~'라고 위로했다가 오히려 공린을 오열하게 만들었다는 슬픈 일화가 있다.">[9]</a>
+        </p>
+
+        <h3 class="anchor-offset" id="s-6-5">6.5. 윤재훈 (심리 분석조차 아까운 폐기물)</h3>
+        <p>
+            족포초 시절 자신을 모욕하고 성추행을 시도했던 <strong>천하의 개쓰레기.</strong> 임상심리사인 노정미는 윤재훈의 멘탈 구조에 대해 <strong>"저 새끼는 분석할 가치도 없는 열등감과 나르시시즘의 혼종 폐기물"</strong>이라는 공식 진단(?)을 내렸다. 윤재훈이 선거에서 9.99%, 4.11%로 몰락하는 과정을 지켜보며 "운명의 여신은 결국 선한 자의 손을 들어준데이"라며 통쾌하게 비웃었다.
+        </p>
+
+        <h2 class="anchor-offset" id="s-7">7. 사건 사고 및 해프닝</h2>
+
+        <h3 class="anchor-offset" id="s-7-1">7.1. HAF 2025 전설의 '노조에리' 자원봉사</h3>
+        <p>
+            두 사람이 시의원, 구의원으로 각각 당선되기 전인 2025년 8월, <strong><a class="wiki-link" href="효빈 애니메이션 페스티벌.html">HAF(효빈 애니메이션 페스티벌)</a></strong>에 일반인 자원봉사 스태프로 참여하며 레전드를 찍은 사건.
+        </p>
+        <p>
+            안예리와 노정미가 나란히 행사 안내 완장을 차고 등장하자, 에리와 노조미가 현실에 강림한 듯한 미친 비주얼과 싱크로율 덕분에 행사장 입구가 마비될 정도로 엄청난 플래시 세례를 받았다. 당시 일본에서 원정을 온 하드코어 성지순례객들은 두 사람을 <strong>'시청에서 고용한 공식 노조에리 코스튬 플레이어'</strong>로 착각하고 사인을 요청하는 촌극이 벌어졌다.
+        </p>
+        <p>
+            이 해프닝의 정점은 휴식 시간에 터졌다. 노정미가 피곤해하는 안예리의 등 뒤로 슬금슬금 다가가 기습적인 <strong>"와시와시!"</strong>를 시전했고, 안예리가 얼굴이 새빨개져서 "아, 언니 진짜 미쳤어?!"라고 소리치는 장면이 유튜버의 브이로그 카메라에 그대로 박제된 것이다. 이 영상은 유튜브 조회수 300만을 찍으며 효빈시를 전 세계 오타쿠들의 성지로 떡상시키는 데 엄청난 기여를 했다. <a class="hb-footnote" data-text="이 영상에 달린 가장 추천 수가 높은 댓글은 '효빈시는 도대체 어떤 곳일까... 천국인가?' 였다.">[10]</a>
+        </p>
+
+        <h2 class="anchor-offset" id="s-8">8. 여담 (스피리추얼 밈의 총본산)</h2>
+        <ul class="wiki-list" style="list-style-type: disc;">
+            <li><strong>본인 등판 찐 오시:</strong> 단순히 닮은 것을 넘어, 본인 스스로가 진성 '토죠 노조미' 팬(오시)이다. 시의회 의원 명패 옆에 노조미 타로 카드 덱을 올려놓고 있으며, 중요한 조례안 표결 전날에는 진짜로 타로점을 쳐본다. <a class="hb-footnote" data-text="한번은 보수당 의원이 발의한 엉터리 예산안을 두고 '데스(Death)' 카드를 뽑아 들며 '이 법안은 죽음이데이~'라고 부결시켜버린 전설이 있다.">[11]</a></li>
+            <li><strong>야키니쿠 킬러:</strong> 고기를 무지막지하게 좋아한다. 족포초 '돼조미' 시절의 식탐이 아직 남아있어, 회식 메뉴가 야키니쿠(소고기 구이)로 정해지면 특유의 나른한 눈빛이 맹수처럼 변하며 고기를 쓸어 담는다. 반면 캐러멜처럼 끈적이는 단맛은 극도로 싫어한다. 애니메이션 고증 완벽</li>
+            <li><strong>낮잠의 달인:</strong> 취미가 낮잠이다. 시의회 휴게실이나 안예리의 서구의원실 소파에 아무렇게나 널브러져 자는 모습이 자주 목격된다. 안예리가 "제발 의원 품위 좀 지켜라"며 담요를 덮어주며 툴툴대는 것이 일상.</li>
+            <li><strong>짝퉁 사투리 논란(?):</strong> 효빈시 출신이라 완벽한 덕빈 방언(덕빈도 사투리)을 구사하지만, 흥분하거나 억지를 부를 때면 묘하게 일본 간사이벤 특유의 억양을 섞어 쓰는 "짝퉁 사투리"를 구사한다. <del>이 역시 노조미의 엉터리 사투리 설정을 완벽하게 현실 고증한 것이다.</del></li>
+            <li>1기 10화 합숙 에피소드처럼, 안예리(에리)와 함께 놀러 간 펜션에서 밤에 갑자기 불이 꺼지자 유령을 무서워하는 안예리가 소스라치게 놀라 원우미(우미)를 껴안는 것을 보고 "새로운 발견이지?"라며 소악마처럼 놀려먹은 적이 있다. <a class="hb-footnote" data-text="이후 빡친 안예리에게 베개를 정통으로 맞고 안경이 날아갔다.">[12]</a></li>
+            <li><strong>남전동(楠田洞)의 성지화:</strong> 그녀의 고향이자 지역구 기반인 북구 '남전동'의 한자가 하필 노조미 성우 쿠스다 아이나의 성씨(楠田)와 똑같다. 노정미 의원이 시의회에 입성한 후 남전전자상가 일대는 명실상부한 '가챠 대박 명당'으로 자리 잡았고, 지역구 골목 상권이 살아나는 기적을 맛보고 있다. <a class="hb-footnote" data-text="상인들은 노정미 의원을 '우리 동네를 살린 스피리추얼 복덩이'라 부르며 떡볶이를 무한 제공한다. 덕분에 그녀는 5kg 요요 현상을 겪기도 했다. 돼조미의 부활?">[13]</a></li>
+            <li>김성민 국회의원(전 17, 18대 시장)의 '와시와시 냉철 예열법'의 존재를 알고 경악한 유일한 후배 정치인이다. 김 의원이 의원실에서 이어폰을 끼고 노조미 짤을 보며 명상을 하고 있을 때, 진짜 노조미 판박이인 노정미 의원이 문을 열고 들어오자 김성민 의원이 마시던 홍차를 뿜었다는 전설이 있다. <a class="hb-footnote" data-text="김성민 의원은 그날 이후 노정미 의원을 볼 때마다 '현실에 강림하신 여신님'이라 부르며 90도로 인사를 한다고 한다. 광기 그 자체다.">[14]</a></li>
+            <li>김소빈(빈주 2호선 마스코트)이 무임승차자를 잡을 때 역무원 단말기를 타로 카드처럼 뽑아 드는 동작을 보고, <strong>"저 후배, 스피리추얼 파워의 계승자 아이가!"</strong>라며 엄청나게 마음에 들어 했다. 조만간 빈주시청으로 쳐들어가 김소빈에게 '와시와시'를 전수해주겠다는 위험한 계획을 세우고 있다. <a class="hb-footnote" data-text="이를 전해 들은 빈주시의 박빛나 역무원은 '소빈이 건드리면 철도안전법으로 고소하겠다'며 철통 방어 태세를 갖추고 있다.">[15]</a></li>
+        </ul>
+
+        <h2 class="anchor-offset" id="s-9">9. 선거 이력</h2>
+        <table class="data-table text-center text-xs w-full mt-2 mb-6">
+            <thead>
+                <tr><th>선거명</th><th>선거구</th><th>기호</th><th>정당</th><th>후보</th><th>득표율</th><th>당락</th><th>비고</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>제9회 전국 동시지방선거</td><td>효빈광역시의회 비례대표</td><td>1</td><td><span class="wiki-badge badge-minju">더불어민주당</span></td><td>노정미</td><td>(비례 3번)</td><td>당선</td><td>초선 (여성/가족돌봄청년/심리학계 몫)</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div> <!-- content-wrapper 끝 -->
+
+    <!-- 🚨 각주 모음 영역 -->
+    <div class="footnote-area shadow-sm wiki-footnote-section" id="footnote-list">
+        <h3>각주</h3>
+        <ul style="list-style: none; padding-left: 0;">
+            <li class="footnote-item" id="fn-1">
+                <a href="#fn-ref-1" class="fn-back">[1]</a>
+                <span class="footnote-content">심지어 본인 스스로가 진성 토죠 노조미 팬(오시)이라, 타로 카드를 들고 다니며 진짜 점을 쳐주기도 한다. 혼연일체의 경지다.</span>
+            </li>
+            <li class="footnote-item" id="fn-2">
+                <a href="#fn-ref-2" class="fn-back">[2]</a>
+                <span class="footnote-content">당시 윤재훈 무리는 뚱뚱하고 냄새가 난다는 말도 안 되는 허위 사실을 퍼트리며 노정미를 왕따시켰다. 정작 냄새가 난 건 씻지도 않고 나대던 윤재훈 본인이었다.</span>
+            </li>
+            <li class="footnote-item" id="fn-3">
+                <a href="#fn-ref-3" class="fn-back">[3]</a>
+                <span class="footnote-content">박효빈은 이 사건으로 윤재훈 일당에게 복도에서 우유갑을 던지며 '인간 과녁 맞추기 놀이'의 표적이 되었다. 다만 윤재훈의 운동신경이 심각하게 구렸기 때문에 던진 우유갑 10개 중 9개는 엉뚱한 창문이나 사물함에 맞고 터졌다고 한다. 본인의 멍청함이 입증된 셈이다.</span>
+            </li>
+            <li class="footnote-item" id="fn-4">
+                <a href="#fn-ref-4" class="fn-back">[4]</a>
+                <span class="footnote-content">이 사건을 계기로 노정미는 '인간의 심리와 본성'에 깊은 관심을 가지게 되었고, 심리학과 진학을 결심하게 된다. 떡잎부터 스피리추얼이었다.</span>
+            </li>
+            <li class="footnote-item" id="fn-5">
+                <a href="#fn-ref-5" class="fn-back">[5]</a>
+                <span class="footnote-content">노정미 본인 왈, '내가 심리학을 전공했지만 박효빈 저 미친놈의 멘탈 구조는 도저히 심리적으로 분석이 불가능했다'고 회고한 바 있다.</span>
+            </li>
+            <li class="footnote-item" id="fn-6">
+                <a href="#fn-ref-6" class="fn-back">[6]</a>
+                <span class="footnote-content">흥미롭게도 이 투잡 라인업은 훗날 안예리(17학번)가 대학 시절 뛰었던 투잡 라인업과 100% 동일하다. 선배인 노정미가 안예리에게 알바 자리를 물려주었기 때문이다.</span>
+            </li>
+            <li class="footnote-item" id="fn-7">
+                <a href="#fn-ref-7" class="fn-back">[7]</a>
+                <span class="footnote-content">당선 확정 인터뷰에서 타로 카드의 '운명의 수레바퀴' 카드를 꺼내 들며 '효빈시민 여러분, 스피리추얼 파워 듬뿍 주입해 드릴게예!'라고 윙크를 날려 생방송 뉴스 앵커를 당황하게 만들었다.</span>
+            </li>
+            <li class="footnote-item" id="fn-8">
+                <a href="#fn-ref-8" class="fn-back">[8]</a>
+                <span class="footnote-content">노정미 의원의 '와시와시' 침투 속도는 타의 추종을 불허하여, 방심한 틈을 타 0.5초 만에 안예리의 방어막을 뚫어버린다. 안예리가 '로시야 파워'로 엎어치기를 시도하려 해도, 웃으면서 그 힘을 흘려보내는 합기도 유단자급의 짬바를 자랑한다.</span>
+            </li>
+            <li class="footnote-item" id="fn-9">
+                <a href="#fn-ref-9" class="fn-back">[9]</a>
+                <span class="footnote-content">노정미가 시장실 소파에 누워 낮잠을 자고 있으면, 박효빈은 깨우지도 못하고 그 옆에서 조용히 서류 결재를 한다. 무서워서가 아니라 오시 캐릭터의 속성(낮잠)을 존중하는 종교적 행위(?)에 가깝다.</span>
+            </li>
+            <li class="footnote-item" id="fn-10">
+                <a href="#fn-ref-10" class="fn-back">[10]</a>
+                <span class="footnote-content">특히 성공린이 빈유(...) 콤플렉스로 멘탈이 나갔을 때, 압도적인 글래머인 노정미가 다가가 '공린아, 가슴은 럭키 파워데이~'라고 위로했다가 오히려 공린을 오열하게 만들었다는 슬픈 일화가 있다.</span>
+            </li>
+            <li class="footnote-item" id="fn-11">
+                <a href="#fn-ref-11" class="fn-back">[11]</a>
+                <span class="footnote-content">이 영상에 달린 가장 추천 수가 높은 댓글은 '효빈시는 도대체 어떤 곳일까... 천국인가?' 였다.</span>
+            </li>
+            <li class="footnote-item" id="fn-12">
+                <a href="#fn-ref-12" class="fn-back">[12]</a>
+                <span class="footnote-content">한번은 보수당 의원이 발의한 엉터리 예산안을 두고 '데스(Death)' 카드를 뽑아 들며 '이 법안은 죽음이데이~'라고 부결시켜버린 전설이 있다.</span>
+            </li>
+            <li class="footnote-item" id="fn-13">
+                <a href="#fn-ref-13" class="fn-back">[13]</a>
+                <span class="footnote-content">이후 빡친 안예리에게 베개를 정통으로 맞고 안경이 날아갔다.</span>
+            </li>
+            <li class="footnote-item" id="fn-14">
+                <a href="#fn-ref-14" class="fn-back">[14]</a>
+                <span class="footnote-content">상인들은 노정미 의원을 '우리 동네를 살린 스피리추얼 복덩이'라 부르며 떡볶이를 무한 제공한다. 덕분에 그녀는 5kg 요요 현상을 겪기도 했다. 돼조미의 부활?</span>
+            </li>
+            <li class="footnote-item" id="fn-15">
+                <a href="#fn-ref-15" class="fn-back">[15]</a>
+                <span class="footnote-content">김성민 의원은 그날 이후 노정미 의원을 볼 때마다 '현실에 강림하신 여신님'이라 부르며 90도로 인사를 한다고 한다. 광기 그 자체다.</span>
+            </li>
+            <li class="footnote-item" id="fn-16">
+                <a href="#fn-ref-16" class="fn-back">[16]</a>
+                <span class="footnote-content">이를 전해 들은 빈주시의 박빛나 역무원은 '소빈이 건드리면 철도안전법으로 고소하겠다'며 철통 방어 태세를 갖추고 있다.</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 푸터 -->
+    <div id="footer-container"></div>
+    <script src="assets/load-footer.js"></script>
+</div>
+<script src="assets/wiki_parktex.js"></script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+</body>
+</html>

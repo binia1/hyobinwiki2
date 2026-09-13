@@ -8507,11 +8507,11 @@ const imageFiles = [
         "category": "school"
     },
     {
-        "file": "삼선의료원_로고.webp",
+        "file": "삼선대학교병원_로고.webp",
         "category": "facility_com"
     },
     {
-        "file": "삼선의료원_전경.webp",
+        "file": "삼선대학교병원_전경.webp",
         "category": "facility_com"
     },
     {

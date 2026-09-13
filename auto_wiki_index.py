@@ -695,6 +695,21 @@ def generate_wiki_index():
                 pageTitle.innerText = `분류: ${{hash}}`;
                 let html = '';
 
+                // [추가된 부분] 상위 분류 찾기
+                let parentCategory = null;
+                for (const parent in subCategories) {{
+                    if (subCategories[parent].includes(hash)) {{
+                        parentCategory = parent;
+                        break;
+                    }}
+                }}
+                
+                if (parentCategory) {{
+                    html += `<div style="margin-bottom: 15px;"><a href="#${{parentCategory}}" class="wiki-tool-btn inline-block font-bold" style="color: #444; border-color: #999;">↖ 상위 분류(${{parentCategory}})로 돌아가기</a></div>`;
+                }} else {{
+                    html += `<div style="margin-bottom: 15px;"><a href="#전체" class="wiki-tool-btn inline-block font-bold" style="color: #444; border-color: #999;">↖ 전체 분류 목록으로 돌아가기</a></div>`;
+                }}
+
                 if (subCategories[hash] && subCategories[hash].length > 0) {{
                     html += `<div class="sub-box"><h3>이 분류의 하위 분류 <span class="text-sm font-normal text-gray-500">(${{subCategories[hash].length}}개)</span></h3><ul class="cat-grid" style="grid-template-columns: repeat(4, 1fr);">`;
                     subCategories[hash].sort().forEach(sub => {{
