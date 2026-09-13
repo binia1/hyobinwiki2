@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link href="이미지/효빈위키아이콘.webp" rel="icon"/>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>서진희 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        /* 1. 전역 스타일 및 변수 */
+        :root { 
+            --wiki-main: #ee2737; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #F9F9FA; 
+            --wiki-link: #0022AA; 
+            --wiki-table-header: #ee2737;
+            --wiki-table-header-text: #ffffff;
+        }
+
+        /* 위키 도구 버튼 스타일 */
+        .wiki-btn-group { display: flex; border-radius: 4px; overflow: hidden; border: 1px solid #ccc; }
+        .wiki-tool-btn { 
+            padding: 4px 12px; background: #fff; font-size: 13px; color: #555; 
+            border-right: 1px solid #ccc; cursor: pointer; text-decoration: none !important; display: flex; align-items: center;
+        }
+        .wiki-tool-btn:last-child { border-right: none; }
+        .wiki-tool-btn:hover { background: #f0f0f0; color: #000; }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            word-break: keep-all; 
+            margin: 0; 
+        }
+
+        /* 헤딩 스타일 */
+        h1 { font-size: 2.5rem !important; font-weight: 900 !important; margin-bottom: 1.5rem; line-height: 1.2; letter-spacing: -1.5px;}
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; color: var(--wiki-link); }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; border-left: 4px solid var(--wiki-main); padding-left: 10px;}
+        h4 { font-size: 1.15rem !important; font-weight: 700 !important; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; }
+
+        .wiki-container { max-width: 1152px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 일반 표 스타일 */
+        table.data-table, table.infobox-table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: auto !important; }
+        .data-table th, .data-table td, .infobox-table th, .infobox-table td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; text-align: center; vertical-align: middle; }
+        .data-table th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; }
+
+        /* 인포박스 레이아웃 */
+        .content-wrapper::after { content: ""; display: table; clear: both; }
+        .infobox { 
+            float: right; border: 2px solid var(--wiki-main); background-color: #fff; 
+            width: 100%; max-width: 340px; font-size: 0.85rem; margin: 0 0 20px 25px; 
+            border-radius: 4px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        @media (max-width: 768px) { .infobox { float: none; max-width: 100%; margin: 0 0 20px 0; } }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.2rem !important; font-weight: bold; line-height:1.3;}
+        .infobox-image { text-align: center; padding: 10px; border-bottom: 1px solid var(--wiki-border); background: white; }
+        .infobox-image img { max-width: 100%; height: auto; border: 1px solid #ddd; display: block; margin: 0 auto; }
+        .infobox th { background-color: var(--wiki-gray-bg); color: var(--wiki-main); width: 90px; text-align: center; padding: 8px; font-weight: bold; border: 1px solid var(--wiki-border) !important; }
+        .infobox td { text-align: left; padding: 8px; border: 1px solid var(--wiki-border) !important; }
+
+        /* 링크 및 뱃지 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.75rem; margin-right: 3px; vertical-align: middle; cursor: pointer; }
+        .badge-minju { background-color: #004ea2; }
+        .badge-gukhim { background-color: #e61e2b; }
+        .badge-jinbo { background-color: #FFED00; color: #000; }
+        .badge-independent { background-color: #999999; }
+
+        .category-box { background: #fff; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.85rem; margin: 15px 0; border-radius: 4px; }
+        
+        .toc { display: table; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 25px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
+        .toc ul li { margin-bottom: 6px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; font-size: 0.9rem; }
+
+        .quote-box { background-color: #f8f9fa; border-left: 4px solid var(--wiki-main); padding: 15px; margin: 15px 0; font-style: italic; }
+        
+        strong { font-weight: 900; color: #000; }
+        del { text-decoration: line-through; color: #aaa; }
+
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }   
+        
+        /* 각주 및 하단 리스트 영역 */
+        .hb-footnote { color: var(--wiki-main); text-decoration: none; font-size: 0.8em; margin-left: 2px; vertical-align: super; font-weight: bold; cursor: pointer; }
+        .hb-footnote:hover { text-decoration: underline; color: #EE0022; }
+        .footnote-area { margin-top: 50px; padding: 20px; border-top: 2px solid var(--wiki-border); background-color: var(--wiki-gray-bg); font-size: 0.9rem; line-height: 1.6; border-radius: 5px; clear: both;}
+        .footnote-area h3 { margin-top: 0; border: none; padding-left: 0; margin-bottom: 15px; font-size: 1.2rem; }
+        .footnote-item { margin-bottom: 10px; display: flex; align-items: flex-start; gap: 8px; }
+        .footnote-item a.fn-back { color: var(--wiki-main); text-decoration: none; font-weight: bold; flex-shrink: 0; }
+        .footnote-item a.fn-back:hover { text-decoration: underline; color: #EE0022; }
+        .footnote-content { color: #444; }
+        
+        /* 🚨 절대 방어막 툴팁 CSS 🚨 */
+        #absolute-hb-tooltip {
+            position: absolute;
+            background: #ffffff;
+            border: 2px solid var(--wiki-main);
+            padding: 12px 16px;
+            border-radius: 6px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 0.85rem;
+            color: #333;
+            z-index: 2147483647; 
+            max-width: 380px;
+            word-break: keep-all;
+            line-height: 1.5;
+            pointer-events: none;
+            display: none;
+        }
+
+        .wiki-image-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .wiki-image-block {
+            width: 350px;
+            max-width: 100%;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .wiki-image-block img { width: 100%; height: auto; display: block; border: 1px solid #ddd; }
+        .wiki-image-caption { margin-top: 8px; color: #555; font-weight: bold; word-break: keep-all; }
+    </style>
+    <script src="ad_logic.js"></script>
+    <link rel="stylesheet" href="wiki_font_standard.css">
+
+    <!-- 🚨 절대 방어막 툴팁 자바스크립트 🚨 -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const tooltip = document.createElement('div');
+        tooltip.id = 'absolute-hb-tooltip';
+        document.body.appendChild(tooltip);
+
+        document.querySelectorAll('.hb-footnote').forEach(fn => {
+            fn.addEventListener('mouseenter', function(e) {
+                const text = this.getAttribute('data-text');
+                if (text) {
+                    tooltip.innerHTML = text;
+                    tooltip.style.display = 'block';
+                    
+                    const rect = this.getBoundingClientRect();
+                    let leftPos = window.scrollX + rect.left + 15;
+                    if (leftPos + 380 > window.innerWidth) leftPos = window.innerWidth - 400; 
+                    
+                    tooltip.style.left = leftPos + 'px';
+                    tooltip.style.top = (window.scrollY + rect.bottom + 10) + 'px';
+                }
+            });
+            fn.addEventListener('mouseleave', function() {
+                tooltip.style.display = 'none';
+            });
+        });
+    });
+    </script>
+</head>        
+
+<body data-theme="light">
+<!-- 상단 내비게이션 바 -->
+<nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <div class="flex items-center gap-2">
+        <div class="nav-logo-box">H</div>
+        <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white">HyobinWiki</a>
+        <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+            <a href="index.html" class="hover:underline font-bold text-white no-underline">대문</a>
+            <a href="최근_변경.html" class="hover:underline text-white no-underline">최근 변경</a>
+            <a href="최근_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
+        </div>
+    </div>
+    <div class="flex flex-col items-end gap-1">
+        <div class="flex items-center gap-2">
+            <div class="hidden lg:flex items-center gap-1 mr-2">
+                <a href="편집요청.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">편집요청</a>
+                <a href="최근_토론.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">토론</a>
+                <a href="역사.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">역사</a>
+                <a href="즐겨찾기.html" class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" title="즐겨찾기">★</a>
+                <a href="더보기.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1">더보기 <span class="text-[9px]">▼</span></a>
+            </div>
+            
+            <input type="text" id="headerSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }">
+            <button onclick="handleSearch('headerSearchInput')" class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
+        </div>
+    </div>
+</nav>
+
+<div class="wiki-container shadow-lg">
+    <div class="flex justify-between items-end mb-4">
+        <h1 class="m-0 border-none p-0">서진희</h1>
+        <div class="wiki-btn-group shadow-sm mb-4">
+            <a class="wiki-tool-btn" href="토론.html">토론</a>
+            <a class="wiki-tool-btn" href="수정.html">편집</a>
+            <a class="wiki-tool-btn" href="역사.html">역사</a>
+        </div>
+    </div>
+
+    <!-- 🚨 광고 -->
+    <div style="border: 1px solid var(--wiki-border, #cccccc); padding: 12px 15px; margin-bottom: 20px; background-color: #f8f9fa; border-left: 5px solid var(--wiki-main); font-size: 0.9rem; text-align: center;">
+        <span style="font-size: 0.75rem; background: #ddd; color: #555; padding: 2px 5px; border-radius: 3px; font-weight: bold; margin-right: 5px;">AD</span>
+        <strong>"바보 아니야? 그런 건 내 알 바 아니잖아." 효빈대병원의 얼음공주, 하지만 환자에겐 따뜻하겠지?</strong><br>
+        <span style="font-size: 0.8rem; color: #ee2737; display:block; margin-top:5px;">정비복 속에 봉인된 B87의 압도적 중장갑! 효빈대 기계공학과 수석의 끈적한(?) 특별 과외가 시작됩니다!</span>
+    </div>
+
+    <div class="category-box">
+        <a class="font-bold text-[#7777AA]">분류:</a>
+        <a class="wiki-link" href="효빈광역시_인물.html">효빈광역시/인물</a> | 
+        <a class="wiki-link" href="효빈대학교병원.html">효빈대학교병원 의사</a> | 
+        <a class="wiki-link" href="1998년 출생.html">1998년 출생</a> |
+        <a class="wiki-link" href="탄성군 출신.html">탄성군 출신</a> |
+        <a class="wiki-link" href="서목읍 출신.html">서목읍 출신</a> |
+        <a class="wiki-link" href="서목리 출신.html">서목리 출신</a> |
+        <a class="wiki-link" href="진희초등학교 출신.html">진희초등학교 출신</a> |
+        <a class="wiki-link" href="내성중학교 출신.html">효빈내성중학교 출신</a> |
+        <a class="wiki-link" href="복지여자고등학교 출신.html">복지여자고등학교 출신</a> |
+        <a class="wiki-link" href="효빈대학교_출신.html">효빈대학교/출신</a> | 
+        <a class="wiki-link" href="의과대학 출신.html">의과대학 출신</a> |
+        <a class="wiki-link" href="달성 서씨.html">달성 서씨</a> |
+        <a class="wiki-link" href="니시키노 마키.html">니시키노 마키(평행이론)</a>
+    </div>
+
+    <div class="content-wrapper mt-6">
+        
+        <aside class="infobox" style="border: 2px solid #ee2737;">
+            <div class="infobox-title" style="background-color: #ee2737;">
+                <span style="font-size: 0.85rem; font-weight: normal; display: block; margin-bottom: 4px; color: #fff;">효빈대학교병원 신경외과 전공의</span>
+                서진희<br/>
+                <span class="text-sm font-normal">Seo Jin-hee / 西眞姫</span>
+            </div>
+            <div class="infobox-image">
+                <img alt="서진희" src="이미지/서진희.webp"/>
+            </div>
+            <table class="infobox-table">
+                <tr><th style="background-color: #fff0f2; color:#ee2737;">출생</th><td>1998년 8월 24일 (만 27세)<br/><span class="text-xs"><a class="wiki-link" href="탄성군.html">효빈광역시 탄성군</a> <a class="wiki-link" href="서목읍.html">서목읍 서목리</a></span></td></tr>
+                <tr><th style="background-color: #fff0f2; color:#ee2737;">현직</th><td><strong><a class="wiki-link" href="효빈대학교병원.html">효빈대학교병원</a> 신경외과 전공의 (레지던트)</strong></td></tr>
+                <tr><th style="background-color: #fff0f2; color:#ee2737;">소속 정당</th><td><span class="wiki-badge badge-independent">무소속</span></td></tr>
+                <tr><th style="background-color: #fff0f2; color:#ee2737;">본관</th><td><a class="wiki-link" href="https://namu.wiki/w/달성%20서씨" target="_blank">달성 서씨</a></td></tr>
+                <tr><th style="background-color: #fff0f2; color:#ee2737;">학력</th><td>진희초등학교 <span class="text-xs">(졸업)</span><br/><a class="wiki-link" href="내성중학교.html">효빈내성중학교</a> <span class="text-xs">(졸업)</span><br/><a class="wiki-link" href="복지여자고등학교.html">복지여자고등학교</a> <span class="text-xs">(졸업)</span><br/><a class="wiki-link" href="효빈대학교.html">효빈대학교</a> 의과대학 <span class="text-xs">(의학 / 학사)</span></td></tr>
+                <tr><th style="background-color: #fff0f2; color:#ee2737;">신체</th><td>161cm, B78 W56 H83, 붉은색이 도는 갈색 머리</td></tr>
+                <tr><th style="background-color: #fff0f2; color:#ee2737;">별명</th><td>현실판 <a class="wiki-link" href="니시키노 마키.html">니시키노 마키</a>, 붸에에, <a class="wiki-link" href="진희동.html">진희동</a> 명예 동장, NS의 붉은 악마, <del>지갑</del></td></tr>
+                <tr><th style="background-color: #fff0f2; color:#ee2737;">상징색</th><td>✦ 빨간색 (#ee2737)</td></tr>
+            </table>
+        </aside>
+
+        <div class="toc" id="toc-box">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li><a class="wiki-link" href="#s-1">1. 개요</a></li>
+                <li><a class="wiki-link" href="#s-2">2. '니시키노 마키' 평행이론의 절정: 이름의 비밀</a>
+                    <ul>
+                        <li><a class="wiki-link" href="#s-2-1">2.1. 서목리(西木里) + 진희(眞姫) = 니시키노 마키(西木野 眞姫)?!</a></li>
+                        <li><a class="wiki-link" href="#s-2-2">2.2. 외모와 성격: 완벽한 츤데레 붉은 머리 아가씨</a></li>
+                        <li><a class="wiki-link" href="#s-2-3">2.3. '나니 소레? 이미 와칸나이'와 '붸에에'</a></li>
+                    </ul>
+                </li>
+                <li><a class="wiki-link" href="#s-3">3. 생애 및 학창 시절</a>
+                    <ul>
+                        <li><a class="wiki-link" href="#s-3-1">3.1. 서목읍 병원장 딸내미의 은밀한 취미</a></li>
+                        <li><a class="wiki-link" href="#s-3-2">3.2. 내성중학교 진학과 98즈의 완성</a></li>
+                        <li><a class="wiki-link" href="#s-3-3">3.3. 복지여고 장기자랑: 본능을 숨기지 못한 START:DASH!!</a></li>
+                        <li><a class="wiki-link" href="#s-3-4">3.4. 효빈대학교 의과대학 (지옥의 6년)</a></li>
+                    </ul>
+                </li>
+                <li><a class="wiki-link" href="#s-4">4. 효빈대학교병원 신경외과 전공의로서의 행적</a>
+                    <ul>
+                        <li><a class="wiki-link" href="#s-4-1">4.1. "뇌는 정직해. 바보인 건 약도 없지만."</a></li>
+                        <li><a class="wiki-link" href="#s-4-2">4.2. 서브컬처 힐링 센터의 은밀한 단골</a></li>
+                    </ul>
+                </li>
+                <li><a class="wiki-link" href="#s-5">5. 인간 관계 (현실판 96/98즈 찐친들)</a>
+                    <ul>
+                        <li><a class="wiki-link" href="#s-5-1">5.1. 안예리 (영혼의 단짝, 에리 모티브)</a></li>
+                        <li><a class="wiki-link" href="#s-5-2">5.2. 호내영 (짜증나지만 내버려둘 수 없는 호노카)</a></li>
+                        <li><a class="wiki-link" href="#s-5-3">5.3. 하나영 (먹보 하나요의 브레이크)</a></li>
+                        <li><a class="wiki-link" href="#s-5-4">5.4. 노정미 (천적, '와시와시'를 피해라)</a></li>
+                    </ul>
+                </li>
+                <li><a class="wiki-link" href="#s-6">6. 사건 사고 및 해프닝</a>
+                    <ul>
+                        <li><a class="wiki-link" href="#s-6-1">6.1. 윤재훈 응급실 난입 사건 (팩트 폭격 진료)</a></li>
+                        <li><a class="wiki-link" href="#s-6-2">6.2. 효빈대 '통곡의 다리' 고성방가 사건</a></li>
+                        <li><a class="wiki-link" href="#s-6-3">6.3. 진희동(眞希洞) 피아노 버스킹 사건</a></li>
+                    </ul>
+                </li>
+                <li><a class="wiki-link" href="#s-7">7. 여담 (마키 밈의 총본산)</a></li>
+            </ul>
+        </div>
+
+        <h2 class="anchor-offset" id="s-1">1. 개요</h2>
+        <div class="quote-box" style="border-left-color: #ee2737;">
+            <strong>"하아? 그게 뭐야, 의미를 모르겠네. (나니 소레? 이미 와칸나이.)"</strong><br>
+            <strong>"바, 바보 아니야?! 내가 널 걱정해서 수액 놔주는 거 아니거든! 그냥... 버려지는 게 아까워서 그래!"</strong>
+        </div>
+        <p>
+            대한민국의 의사이자 현 <strong><a class="wiki-link" href="효빈대학교병원.html">효빈대학교병원</a> 신경외과(NS) 전공의(레지던트)</strong>.
+        </p>
+        <p>
+            <a class="wiki-link" href="안예리.html">안예리</a> 서구의원, <a class="wiki-link" href="노정미.html">노정미</a> 시의원, <a class="wiki-link" href="호내영.html">호내영</a> 카페 매니저, <a class="wiki-link" href="하나영.html">하나영</a> 영양사 등과 함께 학창 시절을 보낸 1998년생 '현실판 뮤즈 98즈'의 핵심 멤버이자 그룹 내 실질적인 자본력(?)을 담당하는 인물이다. 탄성군 서목읍에 위치한 대형 개인병원의 외동딸로 태어났으나, 부모님의 후광에서 벗어나 자신의 실력을 증명하기 위해 피 터지는 <a class="wiki-link" href="효빈대학교.html">효빈대학교 의과대학</a>에 진학해 신경외과의 길을 걷고 있다.
+        </p>
+        <p>
+            서브컬처계에서 그녀는 <strong>'현실판 <a class="wiki-link" href="니시키노 마키.html">니시키노 마키</a>'</strong>로 추앙받는다. 붉은 머리칼, 츤데레 성격, 부잣집 외동딸, 의사라는 직업, 피아노 실력까지 똑같지만 <strong>가장 충격적인 것은 그녀의 '이름과 고향'이 만들어낸 기적의 평행이론</strong>이다. 효빈대병원 환자들과 의대생들 사이에서는 'NS의 붉은 얼음공주'로 불리지만, 친구들 앞에서는 여지없이 "붸에에!" 소리를 내며 무너지는 갭 모에의 소유자다.
+        </p>
+
+        <h2 class="anchor-offset" id="s-2">2. '니시키노 마키' 평행이론의 절정: 이름의 비밀</h2>
+        
+        <h3 class="anchor-offset" id="s-2-1">2.1. 서목리(西木里) + 진희(眞姫) = 니시키노 마키(西木野 眞姫)?!</h3>
+        <p>
+            효빈시 러브라이버들이 서진희를 '현실에 강림한 마키'로 추앙하는 가장 결정적인 이유다. 
+        </p>
+        <p>
+            그녀의 이름은 달성 서(徐)씨에 참 진(眞), 계집 희(姬)를 써서 <strong>서진희(徐眞姬)</strong>다. 그런데 그녀의 출생지는 효빈광역시 <a class="wiki-link" href="탄성군.html">탄성군</a> <a class="wiki-link" href="서목읍.html">서목읍</a> <strong>서목리(西木里)</strong>다. 
+            일본 캐릭터 이름인 <strong>니시키노 마키(西木野 眞姫)</strong>에서 '들 야(野)' 자를 빼고 한자를 조합하면 <strong>서목진희(西木眞姬)</strong>가 된다. 즉, <strong>서목리에서 태어난 서(徐)진희(眞姬)</strong>라는 그녀의 백그라운드 자체가 니시키노 마키의 한자를 완벽하게 꿰맞춘 우주적 기적(?)인 것이다. <a class="hb-footnote" data-text="이 놀라운 사실이 에브리타임(대학 커뮤니티)을 통해 밝혀졌을 때, 효빈대 의대생들은 '부모님이 럽폭도인 게 틀림없다', '이름부터 병원장 딸+아이돌 상이다'라며 경악을 금치 못했다.">[1]</a>
+        </p>
+        
+        <h3 class="anchor-offset" id="s-2-2">2.2. 외모와 성격: 완벽한 츤데레 붉은 머리 아가씨</h3>
+        <p>
+            원작 캐릭터와 마찬가지로, 머리칼이 자연스러운 <strong>붉은빛이 도는 갈색(Red-brown)</strong>이며, 살짝 치켜올라간 고양이 눈매를 가지고 있다. 체형마저 161cm에 B78-W56-H83이라는 슬렌더하면서도 우월한 비율을 완벽하게 재현했다. 
+        </p>
+        <p>
+            무엇보다 성격이 <strong>완벽한 츤데레의 정석</strong>이다. 친구들이 아프거나 힘들 때 겉으로는 "바보 아니야? 지 몸 하나 간수 못 하고!"라며 독설을 쏟아붓지만, 행동으로는 수십만 원짜리 최고급 수액 세트를 들고 오거나 지갑을 열어 최고급 야키니쿠를 사 먹이는 <strong>'입 거친 천사'</strong>다.
+        </p>
+
+        <h3 class="anchor-offset" id="s-2-3">2.3. '나니 소레? 이미 와칸나이'와 '붸에에'</h3>
+        <p>
+            상대방이 억지를 부리거나 납득할 수 없는 말을 할 때 습관적으로 <strong>"하아? 그게 뭐야, 의미를 모르겠네."</strong>라고 받아치는데, 이는 마키의 시그니처 대사(나니 소레? 이미 와칸나이)를 직역한 것과 완전히 똑같다. 
+            또한 당황하거나 치부를 들켰을 때 얼굴이 새빨개지며 <strong>"붸, 붸에에에!!(ゔぇええ)"</strong>라는 정체불명의 이상한 소리를 낸다. <del>이 소리가 너무 찰져서 친구들이 일부러 서진희를 놀린다는 게 학계의 정설이다.</del>
+        </p>
+
+        <h2 class="anchor-offset" id="s-3">3. 생애 및 학창 시절</h2>
+        
+        <h3 class="anchor-offset" id="s-3-1">3.1. 서목읍 병원장 딸내미의 은밀한 취미</h3>
+        <p>
+            효빈광역시 외곽에 위치한 탄성군 서목읍, 그곳에서도 가장 큰 대형 종합병원을 운영하는 집안의 무남독녀 외동딸로 태어났다. 부유한 환경 덕분에 어릴 적부터 피아노, 성악, 승마 등 엘리트 교육을 엘리트 코스를 밟았으나, 그녀의 <strong>은밀한 취미는 만화책과 아이돌 덕질</strong>이었다. <a class="hb-footnote" data-text="특히 밤에 천체 망원경으로 별을 보다가, 부모님 몰래 방구석에서 아이돌 댄스 영상을 따라 추는 것이 유일한 낙이었다.">[2]</a>
+        </p>
+
+        <h3 class="anchor-offset" id="s-3-2">3.2. 내성중학교 진학과 98즈의 완성</h3>
+        <p>
+            의사가 되기를 바라는 부모님의 뜻에 따라 교육열이 높은 지역인 서구의 <a class="wiki-link" href="내성중학교.html">내성중학교</a>로 배정을 받았다. 이곳에서 그녀의 깐깐한 성격의 방어벽을 부수고 들어온 인간들이 있었으니, 바로 인싸 오지라퍼 <strong><a class="wiki-link" href="호내영.html">호내영</a></strong>, 밥보 <strong><a class="wiki-link" href="하나영.html">하나영</a></strong>, 그리고 훗날 영혼의 단짝이 되는 <strong><a class="wiki-link" href="안예리.html">안예리</a></strong>였다.
+        </p>
+        <p>
+            중학교 시절, 호내영이 억지로 서진희를 떡볶이집에 끌고 갔을 때 "이, 이런 불량식품은 안 먹어!"라고 츤츤대면서도, 떡볶이를 한 입 먹고 눈이 동그래져 혼자 2인분을 해치웠다는 전설이 있다. 가난했던 친구 안예리가 문제집을 사지 못해 고민할 때, <strong>"이거 내가 풀려고 샀는데 너무 쉬워서 필요 없어졌거든? 그냥 너 가져. 버리려던 참이니까!"</strong>라며 이름도 안 쓴 새 문제집을 던져준 츤데레 썰은 98즈 사이에서 유명하다.
+        </p>
+
+        <h3 class="anchor-offset" id="s-3-3">3.3. 복지여고 장기자랑: 본능을 숨기지 못한 START:DASH!!</h3>
+        <p>
+            <a class="wiki-link" href="복지여자고등학교.html">복지여자고등학교</a> 2학년 축제 당시, 그녀의 인생 최대의 흑역사이자 빛나는 무대가 탄생했다.
+        </p>
+        <p>
+            호내영의 끈질긴 협박(?)과 애원에 못 이겨 뮤즈의 <strong>'START:DASH!!'</strong> 커버 무대에 합류하게 되었다. "나, 나는 피아노 반주나 할 거니까! 춤 같은 건 절대 안 춘다고!"라고 발악했지만, 어느새 마키 포지션에 서서 완벽한 웨이브와 가창력을 뽐내고 있는 자신을 발견했다. 무대 조명 아래서 머리카락을 배배 꼬며 윙크를 날리던 그녀의 모습에 복지여고 학생들은 열광했고, 무대에서 내려온 서진희는 수치심에 얼굴을 파묻고 <strong>"붸에에에!! 다 잊어! 당장 내 머릿속에서 지워버려!!"</strong>라며 절규했다. <a class="hb-footnote" data-text="하지만 안예리의 휴대폰에는 당시 진희의 윙크 직캠이 아직도 4K 화질로 남아있으며, 진희가 말대꾸를 할 때마다 재생 버튼을 누르는 용도로 쓰인다.">[3]</a> 
+        </p>
+
+        <h3 class="anchor-offset" id="s-3-4">3.4. 효빈대학교 의과대학 (지옥의 6년)</h3>
+        <p>
+            부모님의 기대를 완벽하게 충족시키며 <a class="wiki-link" href="효빈대학교.html">효빈대학교 의과대학</a>에 수석급으로 입학했다. 의대 예과 시절에는 '의대의 붉은 얼음공주'로 불리며 남학생들의 고백을 무수히 받았으나, "네 성적표나 먼저 고치고 와"라며 칼같이 쳐냈다.
+        </p>
+        <p>
+            하지만 의학 공부의 양은 그녀조차 멘탈을 흔들 정도로 방대했다. 본과 시절 밤샘 시험공부에 지쳐, 시청 앞 카페 '호무라'로 도망쳐 호내영에게 <strong>"아메리카노 4샷 추가해서 줘... 당장..."</strong>이라며 좀비처럼 기어간 적이 한두 번이 아니다. 그럼에도 단 한 번도 유급하지 않고 완벽하게 국가고시를 통과하며 진정한 먼치킨임을 증명했다.
+        </p>
+
+        <h2 class="anchor-offset" id="s-4">4. 효빈대학교병원 신경외과 전공의로서의 행적</h2>
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4" style="border-left: 4px solid var(--wiki-main);">
+            <strong>"사람의 뇌는 거짓말을 안 해. 당신이 개소리를 하는 건 뇌가 아니라 인성이 썩어서야."</strong>
+        </div>
+        
+        <h3 class="anchor-offset" id="s-4-1">4.1. "뇌는 정직해. 바보인 건 약도 없지만."</h3>
+        <p>
+            현재 그녀는 극한 직업으로 불리는 <strong>효빈대학교병원 신경외과(NS) 전공의</strong>로 근무 중이다. 매일 쏟아지는 응급 환자와 수술 보조, 끝없는 차트 작성으로 인해 그녀의 눈 밑에는 짙은 다크서클이 자리 잡았지만, 붉은 머리를 질끈 묶고 병동을 뛰어다니는 그녀의 모습은 카리스마 그 자체다.
+        </p>
+        <p>
+            특히 응급실(ER)로 파견 나갈 때 그녀의 '팩트 폭격' 진료는 유명하다. 술에 취해 의사에게 행패를 부리는 진상 환자가 들어오면, 차가운 눈빛으로 뇌 CT 사진을 모니터에 띄우고 <strong>"전두엽 기능이 심각하게 떨어지셨네요. 충동 조절이 안 되시는 걸 보니 알코올성 치매 초기 증상입니다. 당장 술 안 끊으시면 1년 안에 기저귀 차셔야 합니다."</strong>라고 서늘하게 브리핑하여 진상 환자를 한 방에 데꿀멍하게 만든다. <a class="hb-footnote" data-text="이 싸늘한 팩트 폭격을 본 응급의학과 레지던트들은 그녀를 'NS의 붉은 악마'라 부르며 존경심을 표한다.">[4]</a>
+        </p>
+
+        <h3 class="anchor-offset" id="s-4-2">4.2. 서브컬처 힐링 센터의 은밀한 단골</h3>
+        <p>
+            효빈대병원 신관에 위치한 <strong>'서브컬처 힐링 센터'</strong>의 가장 은밀하고 확실한 단골손님이다. 
+            연속 당직으로 멘탈이 바스러질 때면, 백가운 주머니에 삼각김밥 하나를 찔러 넣고 센터 구석의 만화책 코너로 숨어든다. <a class="hb-footnote" data-text="한 번은 소아 병동 환자가 힐링 센터에서 마키 피규어를 만지다 떨어뜨릴 뻔하자, 서진희가 다이빙을 하듯 몸을 날려 피규어를 받아낸 뒤 '휴... 내 최애... 아, 아니! 조심해야지 꼬마야!'라며 당황한 적이 있다. 환자 보호자는 의사 선생님의 헌신에 눈물을 흘렸으나, 진희의 속마음은 달랐다.">[5]</a>
+        </p>
+        <p>
+            가끔 피로에 지쳐 힐링 센터 소파에서 입을 살짝 벌리고 잠들 때가 있는데, 그 모습이 너무 무방비하고 귀여워서 간호사들이 몰래 담요를 덮어주고 간다고 한다. (깨어나면 "누, 누가 덮어준 거야! 안 추웠거든?!"이라며 붸에에 거린다.)
+        </p>
+
+        <h2 class="anchor-offset" id="s-5">5. 인간 관계 (현실판 96/98즈 찐친들)</h2>
+
+        <h3 class="anchor-offset" id="s-5-1">5.1. 안예리 (영혼의 단짝, 에리 모티브)</h3>
+        <p>
+            중학교 시절부터 맺어진 1998년생 영혼의 단짝. 부유한 진희와 가난했던 예리는 서로의 결핍을 채워주는 완벽한 상호보완 관계다. 
+        </p>
+        <p>
+            구의원이 된 안예리가 지역구 민원에 시달리다 코피를 쏟았다는 소식을 들으면, 당직 오프를 반납하고 구의원실 문을 발로 차며 들어간다. <strong>"야! 바보 아니야?! 구의원 뺏지 달더니 자기 몸 하나 간수 못 해?!"</strong>라고 폭언을 쏟아내면서도, 양손 가득 최고급 비타민 수액과 영양제를 들고 와 안예리의 팔에 직접 주삿바늘을 꽂아준다. <a class="hb-footnote" data-text="수액을 놔주면서 '이거 50만 원짜리니까, 나중에 구의회 예산으로 우리 병원에 지원금이나 더 끌어와. 알겠어?'라고 툴툴댔지만, 정작 병원비 청구는 1원도 하지 않았다. 진희의 완벽한 츤데레적 모먼트.">[6]</a>
+        </p>
+
+        <h3 class="anchor-offset" id="s-5-2">5.2. 호내영 (짜증나지만 내버려둘 수 없는 호노카)</h3>
+        <p>
+            시청 카페 '호무라'의 매니저. 진희에게 호내영은 '시끄럽고 귀찮지만 왠지 챙겨줘야 할 것 같은 바보'다. 
+        </p>
+        <p>
+            당직에 찌들어 시청 로비 카페에 아메리카노 4샷을 주문하러 가면, 호내영은 "진희야! 텐션 좀 올려!! 딸기 타르트 새로 나왔어!!"라며 어깨를 주물러댄다. 진희는 "아 진짜 귀찮게 구네! 단 거 안 먹어!"라면서도 <strong>"근데... 한 조각만 줘. 맛없으면 다 네 책임이야."</strong>라며 결국 카드를 긁는다. 내영의 무모한 짓을 항상 뒤에서 툴툴대며 수습해 주는 것은 진희의 몫이다.
+        </p>
+
+        <h3 class="anchor-offset" id="s-5-3">5.3. 하나영 (먹보 하나요의 브레이크)</h3>
+        <p>
+            시청 구내식당의 영양사이자 밥 덕후. 의학적 지식을 총동원하여 하나영의 탄수화물 과다 섭취에 브레이크를 거는 유일한 인물이다.
+        </p>
+        <p>
+            하나영이 산더미 같은 고봉밥을 먹는 것을 보면 <strong>"진짜 바보 아니야? 너 그러다 당뇨 오고 췌장 망가진다니까?! 식단 조절 좀 해!"</strong>라며 잔소리를 퍼붓는다. 하지만 정작 구내식당에 가면 하나영이 몰래 챙겨준 계란말이 특식을 누구보다 맛있게 먹으며 <strong>"흥, 맛은 있네. 네가 영양사니까 이 정도는 당연한 거지."</strong>라며 잔반을 하나도 안 남긴다.
+        </p>
+
+        <h3 class="anchor-offset" id="s-5-4">5.4. 노정미 (천적, '와시와시'를 피해라)</h3>
+        <p>
+            시의회 비례대표 의원이자 '현실판 노조미'. 서진희 인생 최대의 천적이다. 
+        </p>
+        <p>
+            진희가 친구들과 모임에서 츤데레 짓을 하고 있으면, 뒤에서 음흉한 미소를 지으며 나타난 노정미가 <strong>"우리 진희찡~ 츤츤대는 거 귀엽데이~ 와시와시(わしわし) 맥스!"</strong>를 시전한다. 방심하다 가슴을 주물려진 진희는 얼굴이 터질 듯 붉어져 <strong>"붸, 붸에에에!!! 정미 언니 미쳤어?! 성희롱으로 고소할 거야!!"</strong>라며 펄쩍 뛰어오른다. <a class="hb-footnote" data-text="진희는 '내 가슴이 아직 발전 중인 걸 알아서 더 놀리는 거다'라며 분통을 터뜨린다. (실제로 마키의 설정과 동일하다.)">[7]</a>
+        </p>
+
+        <h2 class="anchor-offset" id="s-6">6. 사건 사고 및 해프닝</h2>
+
+        <h3 class="anchor-offset" id="s-6-1">6.1. 윤재훈 응급실 난입 사건 (팩트 폭격 진료)</h3>
+        <p>
+            2024년 5월, 극우 정치 낭인 <strong><a class="wiki-link" href="윤재훈.html">윤재훈</a></strong>이 효빈대 베르데 홀에서 엠마 베르데 등신대를 걷어차려다 빗나가서 대리석 기둥을 걷어차고 복합 골절을 당해 효빈대병원 응급실(ER)로 이송된 대사건.
+        </p>
+        <p>
+            당시 야간 당직이었던 서진희는 응급실 침대에서 "아파 죽겠네! 내가 누군지 알아?! 내가 시장 후보였어! 빨리 수술해!!"라고 발악하는 윤재훈의 차트를 차갑게 내려다보았다.
+        </p>
+        <p>
+            <strong>"환자분. 저는 신경외과(NS) 전공의고, 당신 다리 부러진 건 정형외과(OS) 소관입니다. 근데 제가 뇌 CT를 대충 보니까... 다리보다 뇌쪽 기능이 더 심각하게 고장 난 것 같네요. 분노 조절 장애에 지능 저하 소견이 보입니다만, 안타깝게도 바보를 고치는 수술은 현대 의학에 없습니다. 정형외과 선생님 올 때까지 입 다물고 진통제나 맞으시죠."</strong>
+        </p>
+        <p>
+            이 싸늘하고도 완벽한 팩트 폭격에 응급실 내의 간호사들과 다른 환자들은 속으로 기립 박수를 쳤고, 윤재훈은 벙쪄서 한마디도 반박하지 못했다. 서진희는 쿨하게 차트를 OS(정형외과) 레지던트에게 던져주고 돌아섰다. <a class="hb-footnote" data-text="이 사건은 박효빈 시장의 귀에도 들어가, 시장이 직접 진희에게 '네가 내 평생 체증을 다 내려줬다. 소고기 쏜다'라며 회식을 주최했다는 훈훈한 결말을 맺었다.">[8]</a>
+        </p>
+
+        <h3 class="anchor-offset" id="s-6-2">6.2. 효빈대 '통곡의 다리' 고성방가 사건</h3>
+        <p>
+            본과 3학년 시절, 끝없는 해부학 시험과 실습에 지친 그녀가 새벽 2시에 효빈대병원과 의과대학을 잇는 '통곡의 다리'에서 허공을 향해 소리를 지른 사건.
+        </p>
+        <p>
+            <strong>"아아아악! 나니 소레!! 이미 와칸나이!!(그게 뭐야! 의미를 모르겠어!!) 뇌신경 다 외우는 건 무리라고오오!!"</strong>
+        </p>
+        <p>
+            그녀의 처절한 비명은 칠흑 같은 캠퍼스에 울려 퍼졌고, 하필 야간 순찰을 돌던 경비 아저씨와 마주쳐 얼굴이 토마토처럼 붉어졌다. 진희는 "붸에에..." 소리를 내며 다리를 전력 질주로 도망쳤고, 이 사건은 '통곡의 다리 붉은 귀신' 괴담으로 의대에 전해져 내려오고 있다.
+        </p>
+
+        <h3 class="anchor-offset" id="s-6-3">6.3. 진희동(眞希洞) 피아노 버스킹 사건</h3>
+        <p>
+            북구 진희동(眞希洞) 광장에 설치된 '거리의 피아노(길거리 피아노)'에서 벌어진 감동의 해프닝.
+        </p>
+        <p>
+            비가 부슬부슬 내리던 퇴근길, 병원 스트레스로 우울해하던 서진희는 광장에 덩그러니 놓인 피아노를 보고 홀린 듯 다가가 건반을 눌렀다. 그녀가 연주한 곡은 뮤즈의 명곡 <strong>'사랑해 만세!(愛してるばんざーい!)'</strong>. 어린 시절부터 다져진 엄청난 피아노 실력과 그녀의 청아한 콧노래가 어우러져 지나가던 사람들의 발걸음을 멈추게 했다.
+        </p>
+        <p>
+            연주가 끝난 후 사람들이 박수를 치자, 그녀는 흠칫 놀라며 <strong>"별로... 칭찬해 달라고 친 건 아니니까..."</strong>라며 황급히 짐을 챙겨 빗속으로 뛰어갔다. 이 버스킹 영상은 유튜브에 '진희동의 마키 강림'이라는 제목으로 올라와 조회수 100만을 찍었지만, 그녀는 지금까지도 그 영상 속 인물이 자신임을 결사 부정하고 있다. <a class="hb-footnote" data-text="안예리가 '이거 너 맞잖아. 옷도 똑같네'라고 추궁하자, 진희는 얼굴이 시뻘게져서 '나 아니야! 닮은 사람이야!!'라고 1시간 동안 부정했다.">[9]</a>
+        </p>
+
+        <h2 class="anchor-offset" id="s-7">7. 여담 (마키 밈의 총본산)</h2>
+        <ul class="wiki-list" style="list-style-type: disc;">
+            <li><strong>본인 등판 찐 오시:</strong> 자신과 한자까지 똑같은 '니시키노 마키'를 지독하게 사랑한다. 의사 가운 안쪽 주머니에 마키의 캔뱃지가 항상 꽂혀있으며, 집(오피스텔)에는 마키 알터 피규어가 장식장 정중앙을 차지하고 있다.</li>
+            <li><strong>산타클로스의 비밀:</strong> 충격적이게도 성인이 되고 의사가 된 지금까지 <strong>산타클로스의 존재를 은연중에 믿고 있다.</strong> (어릴 적 병원장 아버지가 철저하게 산타 연기를 해준 덕분이다.) 크리스마스 이브 당직 날, 굴뚝이 없는 병원에 산타가 어떻게 오냐며 진지하게 고민하는 모습을 본 안예리와 노정미는 "저 바보의 동심을 깨뜨리면 안 된다"며 필사적으로 모른 척해주고 있다. <a class="hb-footnote" data-text="박효빈 시장이 눈치 없이 '야, 산타가 어딨냐 부모님이지'라고 말하려다 안예리에게 명치를 맞고 쓰러진 적이 있다.">[10]</a></li>
+            <li><strong>그룹의 자본력(지갑):</strong> 98즈 친구들이 밥을 먹으러 가면, 항상 "아, 진짜 너넨 나 없으면 어쩌려고 그러냐."라고 툴툴대면서 가장 먼저 카운터로 가서 <strong>법인카드가 아닌 개인 카드로</strong> 소고기(야키니쿠) 값을 결제한다. <del>서목읍 병원장 가문의 위엄</del></li>
+            <li><strong>토마토 사랑, 귤 혐오:</strong> 식성마저 마키와 100% 동일하다. 토마토 주스를 물처럼 마시며, 피자를 시켜도 토마토가 듬뿍 들어간 마르게리타만 먹는다. 반면 겨울철 친구들이 귤을 까먹으며 귤껍질 냄새를 풍기면 <strong>"저리 치워! 냄새 배잖아!"</strong>라며 질색을 한다.</li>
+            <li><strong>명예 진희동장:</strong> 북구 진희동(眞希洞) 상인회에서 그녀의 이름을 따 대놓고 '진희동 명예 동장' 직위를 수여하려 했다. 서진희는 "내가 왜 거길 가!"라고 거절했지만, 상인회장이 <strong>"최고급 유기농 토마토 1년 치 제공"</strong>을 조건으로 걸자 "뭐... 굳이 주신다면 받아는 줄게"라며 수락했다. <a class="hb-footnote" data-text="명예 동장 위촉식 날, 그녀는 부끄러움에 붸에에 소리를 내며 도망가고 싶어 했지만, 안예리와 호내영이 양쪽 팔을 잡고 놓아주지 않았다.">[11]</a></li>
+            <li>최근 후배 의사 중에 <a class="wiki-link" href="시부야 카논.html">시부야 카논</a>과 비슷한 은발 머리 후배가 들어와, 그녀에게 "진희 선배님, 사랑해 만세 피아노 좀 가르쳐주세요!"라고 조르고 있어 매일 도망 다니고 있다.</li>
+        </ul>
+
+    </div> <!-- content-wrapper 끝 -->
+
+    <!-- 🚨 각주 모음 영역 -->
+    <div class="footnote-area shadow-sm wiki-footnote-section" id="footnote-list">
+        <h3>각주</h3>
+        <ul style="list-style: none; padding-left: 0;">
+            <li class="footnote-item" id="fn-1">
+                <a href="#fn-ref-1" class="fn-back">[1]</a>
+                <span class="footnote-content">이 놀라운 사실이 에브리타임(대학 커뮤니티)을 통해 밝혀졌을 때, 효빈대 의대생들은 '부모님이 럽폭도인 게 틀림없다', '이름부터 병원장 딸+아이돌 상이다'라며 경악을 금치 못했다.</span>
+            </li>
+            <li class="footnote-item" id="fn-2">
+                <a href="#fn-ref-2" class="fn-back">[2]</a>
+                <span class="footnote-content">특히 밤에 천체 망원경으로 별을 보다가, 부모님 몰래 방구석에서 아이돌 댄스 영상을 따라 추는 것이 유일한 낙이었다.</span>
+            </li>
+            <li class="footnote-item" id="fn-3">
+                <a href="#fn-ref-3" class="fn-back">[3]</a>
+                <span class="footnote-content">하지만 안예리의 휴대폰에는 당시 진희의 윙크 직캠이 아직도 4K 화질로 남아있으며, 진희가 말대꾸를 할 때마다 재생 버튼을 누르는 용도로 쓰인다.</span>
+            </li>
+            <li class="footnote-item" id="fn-4">
+                <a href="#fn-ref-4" class="fn-back">[4]</a>
+                <span class="footnote-content">이 싸늘한 팩트 폭격을 본 응급의학과 레지던트들은 그녀를 'NS의 붉은 악마'라 부르며 존경심을 표한다.</span>
+            </li>
+            <li class="footnote-item" id="fn-5">
+                <a href="#fn-ref-5" class="fn-back">[5]</a>
+                <span class="footnote-content">한 번은 소아 병동 환자가 힐링 센터에서 마키 피규어를 만지다 떨어뜨릴 뻔하자, 서진희가 다이빙을 하듯 몸을 날려 피규어를 받아낸 뒤 '휴... 내 최애... 아, 아니! 조심해야지 꼬마야!'라며 당황한 적이 있다. 환자 보호자는 의사 선생님의 헌신에 눈물을 흘렸으나, 진희의 속마음은 달랐다.</span>
+            </li>
+            <li class="footnote-item" id="fn-6">
+                <a href="#fn-ref-6" class="fn-back">[6]</a>
+                <span class="footnote-content">수액을 놔주면서 '이거 50만 원짜리니까, 나중에 구의회 예산으로 우리 병원에 지원금이나 더 끌어와. 알겠어?'라고 툴툴댔지만, 정작 병원비 청구는 1원도 하지 않았다. 진희의 완벽한 츤데레적 모먼트.</span>
+            </li>
+            <li class="footnote-item" id="fn-7">
+                <a href="#fn-ref-7" class="fn-back">[7]</a>
+                <span class="footnote-content">진희는 '내 가슴이 아직 발전 중인 걸 알아서 더 놀리는 거다'라며 분통을 터뜨린다. (실제로 마키의 설정과 동일하다.)</span>
+            </li>
+            <li class="footnote-item" id="fn-8">
+                <a href="#fn-ref-8" class="fn-back">[8]</a>
+                <span class="footnote-content">이 사건은 박효빈 시장의 귀에도 들어가, 시장이 직접 진희에게 '네가 내 평생 체증을 다 내려줬다. 소고기 쏜다'라며 회식을 주최했다는 훈훈한 결말을 맺었다.</span>
+            </li>
+            <li class="footnote-item" id="fn-9">
+                <a href="#fn-ref-9" class="fn-back">[9]</a>
+                <span class="footnote-content">안예리가 '이거 너 맞잖아. 옷도 똑같네'라고 추궁하자, 진희는 얼굴이 시뻘게져서 '나 아니야! 닮은 사람이야!!'라고 1시간 동안 부정했다.</span>
+            </li>
+            <li class="footnote-item" id="fn-10">
+                <a href="#fn-ref-10" class="fn-back">[10]</a>
+                <span class="footnote-content">박효빈 시장이 눈치 없이 '야, 산타가 어딨냐 부모님이지'라고 말하려다 안예리에게 명치를 맞고 쓰러진 적이 있다.</span>
+            </li>
+            <li class="footnote-item" id="fn-11">
+                <a href="#fn-ref-11" class="fn-back">[11]</a>
+                <span class="footnote-content">명예 동장 위촉식 날, 그녀는 부끄러움에 붸에에 소리를 내며 도망가고 싶어 했지만, 안예리와 호내영이 양쪽 팔을 잡고 놓아주지 않았다.</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 푸터 -->
+    <div id="footer-container"></div>
+    <script src="assets/load-footer.js"></script>
+</div>
+<script src="assets/wiki_parktex.js"></script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+</body>
+</html>

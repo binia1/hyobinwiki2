@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 9. 13. 오후 2:24:20
+ * 업데이트: 2026. 9. 14. 오전 1:29:58
  */
 
 window.HB_WIKI_PAGES = [
@@ -12,7 +12,6 @@ window.HB_WIKI_PAGES = [
     "title": "전체인구",
     "href": "전체인구.html"
   },
-
   {
     "title": "운영_도움말",
     "href": "운영_도움말.html"
@@ -12536,6 +12535,42 @@ window.HB_WIKI_PAGES = [
   {
     "title": "윤대환_효빈광역시정",
     "href": "윤대환_효빈광역시정.html"
+  },
+  {
+    "title": "의원추출기",
+    "href": "의원추출기.html"
+  },
+  {
+    "title": "덕북은행",
+    "href": "덕북은행.html"
+  },
+  {
+    "title": "안예리",
+    "href": "안예리.html"
+  },
+  {
+    "title": "노정미",
+    "href": "노정미.html"
+  },
+  {
+    "title": "원우미",
+    "href": "원우미.html"
+  },
+  {
+    "title": "호내영",
+    "href": "호내영.html"
+  },
+  {
+    "title": "하나영",
+    "href": "하나영.html"
+  },
+  {
+    "title": "서진희",
+    "href": "서진희.html"
+  },
+  {
+    "title": "양미소",
+    "href": "양미소.html"
   }
 ];
 
@@ -19671,5 +19706,14 @@ window.HB_WIKI_ALIASES = {
   "김성민_효빈광역시정": "김성민_효빈광역시정.html",
   "박현만_효빈광역시정": "박현만_효빈광역시정.html",
   "환산채_효빈광역시정": "환산채_효빈광역시정.html",
-  "윤대환_효빈광역시정": "윤대환_효빈광역시정.html"
+  "윤대환_효빈광역시정": "윤대환_효빈광역시정.html",
+  "의원추출기": "의원추출기.html",
+  "덕북은행": "덕북은행.html",
+  "안예리": "안예리.html",
+  "노정미": "노정미.html",
+  "원우미": "원우미.html",
+  "호내영": "호내영.html",
+  "하나영": "하나영.html",
+  "서진희": "서진희.html",
+  "양미소": "양미소.html"
 };
