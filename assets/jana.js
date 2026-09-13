@@ -3448,7 +3448,7 @@
   "이세리": "이세리.html",
   "행정구역별_맞춤형_둘러보기틀": "행정구역별_맞춤형_둘러보기틀.html",
   "효빈광역시_통합도로대장_최종": "효빈광역시_통합도로대장_최종.html",
-  "효빈광역시_행정구역별_도로_둘러보기틀": "효빈광역시_행정구역별_도로_둘러보기틀.html","중앙로(도로)": "중앙로(도로).html",
+  "중앙로(도로)": "중앙로(도로).html",
   "중보로(도로)": "중보로(도로).html",
   "요소로": "요소로.html",
   "요우로": "요우로.html",
@@ -3501,7 +3501,6 @@
   "제미나이": "제미나이.html",
   "제미나이 지랄 모음집": "제미나이 지랄 모음집.html",
   "심세이": "심세이.html",
-  "심세이 지랄 모음집": "심세이 지랄 모음집.html",
   "이덕희": "이덕희.html",
   "효빈일보 철도 흑자 기사": "효빈일보 철도 흑자 기사.html",
   "청엽로": "청엽로.html",
@@ -8039,7 +8038,6 @@
   "이세리": "이세리.html",
   "행정구역별_맞춤형_둘러보기틀": "행정구역별_맞춤형_둘러보기틀.html",
   "효빈광역시_통합도로대장_최종": "효빈광역시_통합도로대장_최종.html",
-  "효빈광역시_행정구역별_도로_둘러보기틀": "효빈광역시_행정구역별_도로_둘러보기틀.html",
   "효빈광역시_통합도로대장_ㄱ": "효빈광역시_통합도로대장_ㄱ.html",
   "효빈광역시_통합도로대장_ㄴ": "효빈광역시_통합도로대장_ㄴ.html",
   "효빈광역시_통합도로대장_ㄷ": "효빈광역시_통합도로대장_ㄷ.html",
@@ -8098,7 +8096,6 @@
   "제미나이": "제미나이.html",
   "제미나이 지랄 모음집": "제미나이 지랄 모음집.html",
   "심세이": "심세이.html",
-  "심세이 지랄 모음집": "심세이 지랄 모음집.html",
   "이덕희": "이덕희.html",
   "교통대학 기지": "효빈대_B선_역_템플릿.html?id=B01",
   "교통대학기지": "효빈대_B선_역_템플릿.html?id=B01",
@@ -10286,7 +10283,26 @@
   "롯데리아": "롯데리아.html",
   "버거킹": "버거킹.html",
   "버거킹_대한민국": "버거킹_대한민국.html",
-  "홋카이도": "홋카이도.html"
+  "홋카이도": "홋카이도.html",
+
+  "거유_캐릭터": "거유_캐릭터.html",
+    "거유_캐릭터_사이즈 미분류": "거유_캐릭터_사이즈 미분류.html",
+  "빈유_목록_캐릭터_사이즈 미분류": "빈유_목록_캐릭터_사이즈 미분류.html",
+  "가슴둘레별_캐릭터": "가슴둘레별 캐릭터.html",
+    "가슴둘레별_캐릭터_70cm_이상": "가슴둘레별_캐릭터_70cm_이상.html",
+  "가슴둘레별_캐릭터_75cm_이상": "가슴둘레별_캐릭터_75cm_이상.html",
+  "가슴둘레별_캐릭터_85cm_이상": "가슴둘레별_캐릭터_85cm_이상.html",
+  "가슴둘레별_캐릭터_95cm_이상": "가슴둘레별_캐릭터_95cm_이상.html",
+  "가슴둘레별_캐릭터_100cm_이상": "가슴둘레별_캐릭터_100cm_이상.html",
+  "가슴둘레별_캐릭터_120cm_이상": "가슴둘레별_캐릭터_120cm_이상.html",
+  "가슴둘레별_캐릭터_70cm_미만": "가슴둘레별_캐릭터_70cm_미만.html",
+  "가슴둘레별_캐릭터_80cm_이상": "가슴둘레별_캐릭터_80cm_이상.html",
+  "거유_캐릭터_사이즈_미분류": "거유_캐릭터_사이즈_미분류.html",
+  "빈유_목록_캐릭터_사이즈_미분류": "빈유_목록_캐릭터_사이즈_미분류.html",
+    "김성민_효빈광역시정": "김성민_효빈광역시정.html",
+  "박현만_효빈광역시정": "박현만_효빈광역시정.html",
+  "환산채_효빈광역시정": "환산채_효빈광역시정.html",
+  "윤대환_효빈광역시정": "윤대환_효빈광역시정.html"
 
 
 
@@ -11904,5 +11920,47 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }
+    });
+});
+
+// ==========================================
+// 💡 인포박스(프로필) 일괄 접기/펼치기 기능
+// ==========================================
+document.addEventListener("DOMContentLoaded", function() {
+    // 모든 인포박스를 찾습니다.
+    const infoboxes = document.querySelectorAll('.infobox');
+    
+    infoboxes.forEach(infobox => {
+        const titleDiv = infobox.querySelector('.infobox-title');
+        if (!titleDiv) return; // 타이틀이 없으면 패스
+
+        // 버튼 위치를 우측 상단에 고정하기 위해 타이틀 박스에 relative 속성 부여
+        titleDiv.style.position = 'relative';
+
+        // [접기] 버튼 생성
+        const toggleBtn = document.createElement('span');
+        toggleBtn.innerText = '[접기]';
+        toggleBtn.style.cssText = 'position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 0.85rem; cursor: pointer; color: #fff; font-weight: normal; opacity: 0.9; background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px; transition: background 0.2s;';
+        
+        // 마우스 올렸을 때 호버 효과
+        toggleBtn.onmouseover = function() { this.style.background = 'rgba(0,0,0,0.4)'; };
+        toggleBtn.onmouseout = function() { this.style.background = 'rgba(0,0,0,0.2)'; };
+
+        // 클릭 이벤트 설정
+        toggleBtn.addEventListener('click', function() {
+            // is-collapsed 클래스를 토글하여 상태 저장
+            const isCollapsed = infobox.classList.toggle('is-collapsed');
+            toggleBtn.innerText = isCollapsed ? '[펼치기]' : '[접기]';
+            
+            // 타이틀 박스를 제외한 인포박스 안의 모든 내용(사진, 표 등)을 숨기거나 보이기
+            Array.from(infobox.children).forEach(child => {
+                if (child !== titleDiv) {
+                    child.style.display = isCollapsed ? 'none' : '';
+                }
+            });
+        });
+
+        // 타이틀 박스에 버튼 추가
+        titleDiv.appendChild(toggleBtn);
     });
 });
