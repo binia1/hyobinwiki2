@@ -97,27 +97,30 @@
         
         .clearfix::after { content: ""; display: table; clear: both; }
 
+        /* 🚨 수정된 툴팁 CSS 🚨 */
         .wiki-tooltip {
             position: absolute;
             background-color: #fff;
-            border: 1px solid #ccc;
-            padding: 10px 14px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
-            border-radius: 4px;
+            border: 1px solid #bbb;
+            padding: 12px 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+            border-radius: 6px;
             font-size: 0.85rem;
             z-index: 999999;
-            max-width: 320px;
+            max-width: 350px;
             display: none;
             color: #333;
-            line-height: 1.5;
+            line-height: 1.6;
             word-break: keep-all;
-            pointer-events: none;
+            pointer-events: none; /* 툴팁 위로 마우스가 올라가서 깜빡이는 현상 방지 */
         }
-        .wiki-fn { font-size: 0.75rem; vertical-align: super; color: var(--wiki-link); cursor: pointer; font-weight: bold; }
+        .wiki-fn { font-size: 0.75rem; vertical-align: super; color: var(--wiki-link); cursor: pointer; font-weight: bold; margin-left: 2px;}
         .wiki-fn a { text-decoration: none; color: inherit; }
+        .wiki-fn a:hover { text-decoration: underline; color: #EE0022; }
+        
         .wiki-footnotes { margin-top: 40px; padding-top: 20px; border-top: 2px solid #eee; font-size: 0.9rem; background: #fafafa; border-radius: 10px; padding: 30px;}
         .wiki-footnotes ol { padding-left: 20px; font-weight: bold;}
-        .wiki-footnotes li { margin-bottom: 5px; color: #555;}
+        .wiki-footnotes li { margin-bottom: 8px; color: #555; font-weight: normal;}
         
         .nav-logo-box {
             width: 30px; height: 30px; background: white; color: var(--wiki-main);
@@ -129,29 +132,43 @@
     <script src="ad_logic.js"></script>
     <link rel="stylesheet" href="wiki_font_standard.css">
 
-    <!-- 🚨 툴팁 자바스크립트 -->
+    <!-- 🚨 완벽하게 수정한 툴팁 이벤트 자바스크립트 🚨 -->
     <script>
     document.addEventListener("DOMContentLoaded", function() {
+        // 툴팁 박스 생성
         const tooltip = document.createElement('div');
-        tooltip.id = 'absolute-hb-tooltip';
+        tooltip.className = 'wiki-tooltip';
         document.body.appendChild(tooltip);
 
-        document.querySelectorAll('.hb-footnote').forEach(fn => {
-            fn.addEventListener('mouseenter', function(e) {
-                const text = this.getAttribute('data-text');
-                if (text) {
-                    tooltip.innerHTML = text;
+        const fnLinks = document.querySelectorAll('.fn-link');
+        
+        fnLinks.forEach(link => {
+            link.addEventListener('mouseenter', function(e) {
+                const href = this.getAttribute('href');
+                if (!href || !href.startsWith('#')) return;
+                
+                const targetId = href.substring(1); // # 제거
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    tooltip.innerHTML = targetElement.innerHTML;
                     tooltip.style.display = 'block';
                     
                     const rect = this.getBoundingClientRect();
-                    let leftPos = window.scrollX + rect.left + 15;
-                    if (leftPos + 380 > window.innerWidth) leftPos = window.innerWidth - 400; 
+                    let leftPos = rect.left + window.scrollX + 15;
+                    let topPos = rect.bottom + window.scrollY + 10;
+                    
+                    // 화면 우측으로 나가는 것 방지
+                    if (leftPos + 350 > window.innerWidth) {
+                        leftPos = window.innerWidth - 370; 
+                    }
                     
                     tooltip.style.left = leftPos + 'px';
-                    tooltip.style.top = (window.scrollY + rect.bottom + 10) + 'px';
+                    tooltip.style.top = topPos + 'px';
                 }
             });
-            fn.addEventListener('mouseleave', function() {
+            
+            link.addEventListener('mouseleave', function() {
                 tooltip.style.display = 'none';
             });
         });
@@ -221,7 +238,7 @@
         <a class="wiki-link" href="효빈광역시 출신.html">효빈광역시 출신</a> 
     </div>
 
-    <!-- 🚨 스크립트 강제 삽입 (가장 중요한 요청) -->
+    <!-- 🚨 스크립트 강제 삽입 구역 -->
     <script src="assets/틀_역대효빈컬처레스풀센터장.js"></script>
 
     <div class="content-wrapper mt-6">
@@ -238,7 +255,7 @@
                 ▲ 센터 라운지에서 치즈케이크를 썰며 특유의 유순한 미소를 짓는 모습
             </div>
             <table>
-                <tr><th>이름</th><td>강토리 (Kang To-ri)<br/>姜토리 <sup class="wiki-fn"><span onmouseout="hideTooltip()" onmouseover="showTooltip(this, 'fn1')">[1]</span></sup></td></tr>
+                <tr><th>이름</th><td>강토리 (Kang To-ri)<br/>姜토리 <sup class="wiki-fn"><a href="#fn1" class="fn-link">[1]</a></sup></td></tr>
                 <tr><th>출생</th><td>1996년 9월 12일 (만 30세)<br/><a class="wiki-link" href="효빈광역시.html">효빈광역시</a> 북구 고송동</td></tr>
                 <tr><th>국적</th><td><a class="wiki-link" href="대한민국.html">대한민국</a></td></tr>
                 <tr><th>가족</th><td>어머니 (효빈예술고등학교 이사장)</td></tr>
@@ -311,7 +328,7 @@
             1996년 9월, <b>효빈직할시</b>가 <b>효빈광역시</b>로 승격된 직후 축제 분위기 속에서 태어난 명실상부한 <b>'광역시 1세대'</b> 리더 중 한 명이다. 어린 시절부터 서브컬처의 핫플레이스인 북구 고송동의 애니메이션 클러스터를 제집 안방처럼 누비며 자랐다. 
         </p>
         <p>
-            놀랍게도 그녀의 어머니는 그녀가 졸업한 명문 예술고인 <b><a class="wiki-link" href="효빈예술고등학교.html">효빈예술고등학교</a>의 재단 이사장</b>이다. <a class="hb-footnote" data-text="원작 코토리의 어머니가 오토노키자카 학원의 이사장인 설정과 소름 돋게 일치한다. 진정한 의미의 금수저이자 이사장 딸내미다.">[2]</a> 어릴 적 부모님이 교육 재단 일로 바빠 혼자 있는 시간이 많았는데, 이때 어머니의 화려한 옷장 속 옷들을 리폼하며 놀았던 것이 패션 디자이너의 길을 걷게 된 계기가 되었다고 한다.
+            놀랍게도 그녀의 어머니는 그녀가 졸업한 명문 예술고인 <b><a class="wiki-link" href="효빈예술고등학교.html">효빈예술고등학교</a>의 재단 이사장</b>이다. <sup class="wiki-fn"><a href="#fn2" class="fn-link">[2]</a></sup> 어릴 적 부모님이 교육 재단 일로 바빠 혼자 있는 시간이 많았는데, 이때 어머니의 화려한 옷장 속 옷들을 리폼하며 놀았던 것이 패션 디자이너의 길을 걷게 된 계기가 되었다고 한다.
         </p>
         <p>
             고송초, 고송중학교 시절부터 바느질과 의상 스케치에 천부적인 재능을 보였다. 동네 코스어들의 찢어진 옷을 수선해 주고 사탕을 받아먹거나, 영혼의 소꿉친구인 <b><a class="wiki-link" href="원우미.html">원우미</a></b>에게 억지로 자신이 만든 옷을 입히며 도망 다니는 것이 일상이었다.
@@ -322,7 +339,7 @@
             <a class="wiki-link" href="박효빈.html">박효빈</a> 시장과는 고등학교 시절 교외 대외활동인 <b>'효빈 청소년 서브컬처 연합'</b> 동아리를 통해 처음 인연을 맺은 15년 지기 찐친이다. (강토리는 효빈예고, 박효빈은 효빈동고 재학 중이었다.)
         </p>
         <p>
-            처음 동아리 연합 회의에서 만난 박효빈이 <b>"나는 나중에 시장이 되어서 우리 도시를 오타쿠들의 낙원으로 만들 거다!"</b>라며 헛소리(?)를 작렬했을 때, 타 학교 학생들은 모두 미친놈 보듯 비웃었다. 그러나 오직 강토리만이 조용히 손을 들며 <b>"( 8 8 ) 저 사람 진심인가 봐... 무리일지도 모르지만... 도와줄게!"</b>라며 그의 첫 번째 서포터가 되어주었다. <a class="hb-footnote" data-text="애니메이션에서 호노카가 처음 아이돌을 하자고 했을 때, 가장 먼저 지지해 준 사람이 코토리였던 것과 똑같은 서사다.">[3]</a>
+            처음 동아리 연합 회의에서 만난 박효빈이 <b>"나는 나중에 시장이 되어서 우리 도시를 오타쿠들의 낙원으로 만들 거다!"</b>라며 헛소리(?)를 작렬했을 때, 타 학교 학생들은 모두 미친놈 보듯 비웃었다. 그러나 오직 강토리만이 조용히 손을 들며 <b>"( 8 8 ) 저 사람 진심인가 봐... 무리일지도 모르지만... 도와줄게!"</b>라며 그의 첫 번째 서포터가 되어주었다. <sup class="wiki-fn"><a href="#fn3" class="fn-link">[3]</a></sup>
         </p>
         <p>
             실제로 박효빈 시장 인생의 첫 코스프레 의상은 강토리가 동아리방에서 밤을 새워 재봉틀을 돌려 만들어준 수제작 의상이었다. 이런 피눈물 나는 서사 덕분인지, 현재 천하의 박효빈 시장도 강토리 센터장 앞에서는 꼼짝을 못 한다.
@@ -343,7 +360,7 @@
             평소의 순둥순둥하고 유유부단한 모습에 속으면 큰코다친다. 그녀가 컬쳐레스풀 내 의상 제작실(Cos-Lab)에 들어가 <b>재봉틀 앞 의자에 앉는 순간, 그야말로 '악마'가 강림한다.</b>
         </p>
         <p>
-            HAF 기간 중 찢어진 코스프레 의상을 들고 울며 찾아온 코스어들을 위해 긴급 수선소에 등판하는데, 이때 <b>'1분당 1,500바느질'</b>이라는 인간의 피지컬을 초월한 재봉 속도를 보여준다. 0.1mm의 오차나 튀어나온 실밥 하나도 용납하지 않는 살벌한 눈빛을 뿜어내며, 이 상태의 강토리에게는 평소 기가 드센 <a class="wiki-link" href="탁민석.html">탁민석</a> 이사장이나 <a class="wiki-link" href="이세희.html">이세희</a> 대표조차 무서워서 말을 걸지 못한다고 한다. <a class="hb-footnote" data-text="공식 기록: HAF 3일 동안 밤을 새워 코스프레 의상 255벌을 완벽하게 수선해 냈다. 인간의 체력이 아니다.">[4]</a>
+            HAF 기간 중 찢어진 코스프레 의상을 들고 울며 찾아온 코스어들을 위해 긴급 수선소에 등판하는데, 이때 <b>'1분당 1,500바느질'</b>이라는 인간의 피지컬을 초월한 재봉 속도를 보여준다. 0.1mm의 오차나 튀어나온 실밥 하나도 용납하지 않는 살벌한 눈빛을 뿜어내며, 이 상태의 강토리에게는 평소 기가 드센 <a class="wiki-link" href="탁민석.html">탁민석</a> 이사장이나 <a class="wiki-link" href="이세희.html">이세희</a> 대표조차 무서워서 말을 걸지 못한다고 한다. <sup class="wiki-fn"><a href="#fn4" class="fn-link">[4]</a></sup>
         </p>
 
         <h3 class="anchor-offset" id="s-3-2">3.2. 전설의 메이드 '미나린스키'</h3>
@@ -360,7 +377,7 @@
             애니메이션의 코토리가 지녔던 <b>'망상력 ★★★★★'</b> 속성도 완벽하게 탑재했다. 
         </p>
         <p>
-            그녀가 항상 들고 다니는 두꺼운 스케치북 안에는 절친인 원우미, 안예리, 노정미 등을 모델로 한 아슬아슬하고 <b>파렴치한(?) 코스프레 의상 디자인</b>이 가득하다. 회의 중에도 갑자기 친구들의 몸매 실루엣을 쳐다보며 헤벌레 웃다가 "앗, 이거 우미 쨩한테 입히면 정말 최고겠다... (망상 폭주) -> 의상을 만들어야지!"라는 프로세스로 빠져든다. <a class="hb-footnote" data-text="이 위험한 스케치북을 우연히 본 원우미는 얼굴이 새빨개져서 '이, 이런 파렴치한 옷은 태워버려야 합니다!'라고 소리쳤으나, 결국 그 옷 중 하나인 네코미미 앞치마를 입게 되었다.">[5]</a>
+            그녀가 항상 들고 다니는 두꺼운 스케치북 안에는 절친인 원우미, 안예리, 노정미 등을 모델로 한 아슬아슬하고 <b>파렴치한(?) 코스프레 의상 디자인</b>이 가득하다. 회의 중에도 갑자기 친구들의 몸매 실루엣을 쳐다보며 헤벌레 웃다가 "앗, 이거 우미 쨩한테 입히면 정말 최고겠다... (망상 폭주) -> 의상을 만들어야지!"라는 프로세스로 빠져든다. <sup class="wiki-fn"><a href="#fn5" class="fn-link">[5]</a></sup>
         </p>
 
         <h2 class="anchor-offset" id="s-4">4. 인간 관계 (현실판 96/98즈 유니버스)</h2>
@@ -379,7 +396,7 @@
             남전고 출신인 <b><a class="wiki-link" href="노정미.html">노정미</a></b>(현 비례대표 시의원, 토죠 노조미 모티브)와는 고등학교 교류 활동 때부터 친해진 1996년생 동갑내기다. 
         </p>
         <p>
-            노정미가 툭하면 특유의 나른한 웃음을 지으며 다가와 "우리 토리쨩~ 와시와시(わしわし) 맥스!"를 시전하려 하지만, 상대는 재봉틀의 악마 강토리다. 강토리는 당황하지 않고 옷 주머니에서 <b>줄자</b>를 꺼내들며 <b>"어머, 정미 쨩, 바스트 사이즈가 저번 달보다 1cm 늘었네? 패턴 다시 떠야겠다. 가만히 있어봐요 (웃음)"</b>라며 등짝부터 흉부까지 정확히 실측해버린다. 자신의 신체 사이즈가 실시간으로 분석당하는 공포에 질린 노정미는 "히익! 살려도!"라며 뒷걸음질을 친다. <a class="hb-footnote" data-text="물리적 타로 카드인 셈이다. 노정미의 영적 스피리추얼 파워조차 강토리의 줄자 앞에서는 무력화된다.">[6]</a>
+            노정미가 툭하면 특유의 나른한 웃음을 지으며 다가와 "우리 토리쨩~ 와시와시(わしわし) 맥스!"를 시전하려 하지만, 상대는 재봉틀의 악마 강토리다. 강토리는 당황하지 않고 옷 주머니에서 <b>줄자</b>를 꺼내들며 <b>"어머, 정미 쨩, 바스트 사이즈가 저번 달보다 1cm 늘었네? 패턴 다시 떠야겠다. 가만히 있어봐요 (웃음)"</b>라며 등짝부터 흉부까지 정확히 실측해버린다. 자신의 신체 사이즈가 실시간으로 분석당하는 공포에 질린 노정미는 "히익! 살려도!"라며 뒷걸음질을 친다. <sup class="wiki-fn"><a href="#fn6" class="fn-link">[6]</a></sup>
         </p>
 
         <h3 class="anchor-offset" id="s-4-3">4.3. 박효빈 (효빈광역시장, 유일한 억제기 겸 호노카 포지션)</h3>
@@ -387,7 +404,7 @@
             <b>'96 라인' 동갑내기 찐친.</b> 공적인 자리에서는 깍듯이 "시장님"이라 부르지만, 둘만 남으면 유일하게 반말과 팩폭을 섞어 쓰는 <b>시장님의 공식 억제기</b>다. 시장이 무리한 탁상행정(ex: "모든 가로등에 고양이 귀를 달자!")을 시전하려 하면 "( 8 8 ) 그건 좀 무리야, 효빈아..." 한마디로 제압해 버린다.
         </p>
         <p>
-            시장이 번아웃이 오거나 서류에 치여 미쳐갈 때면, 강토리가 직접 시청으로 쳐들어가 박효빈의 목덜미를 잡고 센터 사우나에 가둬놓은 뒤 <b>치즈케이크를 입에 물리며 사육(?)</b>한다는 의혹이 있다. <a class="hb-footnote" data-text="한번은 박효빈 시장이 말을 안 듣자, 그의 집무실을 알파카 인형 50개로 꽉 채워버리는 테러를 가해 시장이 싹싹 빌게 만들었다. 알파카 트라우마가 발동한 것이다.">[7]</a> 
+            시장이 번아웃이 오거나 서류에 치여 미쳐갈 때면, 강토리가 직접 시청으로 쳐들어가 박효빈의 목덜미를 잡고 센터 사우나에 가둬놓은 뒤 <b>치즈케이크를 입에 물리며 사육(?)</b>한다는 의혹이 있다. <sup class="wiki-fn"><a href="#fn7" class="fn-link">[7]</a></sup> 
             또한, 애니메이션에서 코토리가 호노카의 직진 본능을 무한정 지지하듯, 강토리 역시 박효빈 시장이 올바른 방향으로 폭주(?)할 때는 가장 든든하게 예산과 인력을 짜내어 서포트해 준다.
         </p>
 
@@ -422,7 +439,7 @@
             시청 직원 단합 워크샵 장기자랑 시간. 안예리 의원과 강토리 센터장이 짜고 원우미의 벌칙 의상으로 <b>'네코미미(고양이 귀)와 메이드 앞치마'</b>를 준비했다.
         </p>
         <p>
-            원우미가 "저, 절대 입지 않을 겁니다! 파렴치합니다!"라고 격렬히 저항했지만, 강토리가 <b>"( 8 8 ) 우미 쨩을 위해 밤새워 만들었는데... 역시 내가 만든 옷은 별로구나... 버려야겠다..."</b>라며 눈물을 글썽이는 신들린 메소드 연기를 시전했다. 이에 멘탈이 나간 원우미가 결국 "아, 아닙니다! 입, 입겠습니다!"라며 항복하고 네코미미를 뒤집어쓰게 된 전설의 사건이다. <a class="hb-footnote" data-text="네코미미를 쓴 원우미가 얼굴이 빨개져서 '냐, 냥...' 하는 순간, 시청 남직원들이 단체로 심장을 부여잡고 쓰러졌다는 후문이 있다. 강토리의 설계는 완벽했다.">[8]</a>
+            원우미가 "저, 절대 입지 않을 겁니다! 파렴치합니다!"라고 격렬히 저항했지만, 강토리가 <b>"( 8 8 ) 우미 쨩을 위해 밤새워 만들었는데... 역시 내가 만든 옷은 별로구나... 버려야겠다..."</b>라며 눈물을 글썽이는 신들린 메소드 연기를 시전했다. 이에 멘탈이 나간 원우미가 결국 "아, 아닙니다! 입, 입겠습니다!"라며 항복하고 네코미미를 뒤집어쓰게 된 전설의 사건이다. <sup class="wiki-fn"><a href="#fn8" class="fn-link">[8]</a></sup>
         </p>
 
         <h3 class="anchor-offset" id="s-5-2">5.2. 98즈 강제 아이돌 데뷔(?) 미수 사건</h3>
@@ -430,7 +447,7 @@
             HAF 2026 전야제 당시, 특별 무대 펑크가 나자 강토리가 독단적으로 98년생 동생들(안예리, 호내영, 하나영, <a class="wiki-link" href="서진희.html">서진희</a>)을 무대에 올리려 한 사건이다. 
         </p>
         <p>
-            미리 신체 사이즈를 완벽히 숙지해 둔 강토리가 단 3시간 만에 멤버별 체형에 맞춘 아이돌 의상 4벌을 찍어내는 <b>재봉틀의 악마</b> 모드를 발동했다. 98즈 동생들이 "미쳤어?! 우리 다 일반인이고 의사고 영양사고 구의원인데!!"라며 도망치려 했지만, 결국 강토리의 압도적인 아우라와 박효빈 시장의 "이것도 시정 업무다"라는 협박에 밀려 무대 위에 올라가 'START:DASH!!'를 추고야 말았다. <a class="hb-footnote" data-text="이때 센터에서 노래를 부른 호내영은 은근히 즐겼지만, 서진희(마키 모티브)는 피아노 반주 대신 춤을 추게 되어 무대가 끝난 뒤 '붸에에에!! 다 지워버려!!'라며 수치심에 절규했다.">[9]</a>
+            미리 신체 사이즈를 완벽히 숙지해 둔 강토리가 단 3시간 만에 멤버별 체형에 맞춘 아이돌 의상 4벌을 찍어내는 <b>재봉틀의 악마</b> 모드를 발동했다. 98즈 동생들이 "미쳤어?! 우리 다 일반인이고 의사고 영양사고 구의원인데!!"라며 도망치려 했지만, 결국 강토리의 압도적인 아우라와 박효빈 시장의 "이것도 시정 업무다"라는 협박에 밀려 무대 위에 올라가 'START:DASH!!'를 추고야 말았다. <sup class="wiki-fn"><a href="#fn9" class="fn-link">[9]</a></sup>
         </p>
 
         <h3 class="anchor-offset" id="s-5-3">5.3. 컬쳐레스풀 알파카 생태공원 조성 미수 사건</h3>
@@ -438,16 +455,16 @@
             동물을 끔찍이 사랑하는 강토리가 <b>"도심 속 힐링을 위해 컬쳐레스풀 정원에 진짜 알파카 2마리를 방목하자"</b>는 기획안을 올린 사건. 
         </p>
         <p>
-            동물농장을 만들겠다는 그녀의 폭주에 직원들은 경악했고, 결국 박효빈 시장이 직접 센터로 달려와 "야! 나 알파카한테 밟히는 악몽 꾸는 거 알면서 무슨 알파카야!! 절대 안 돼!!"라며 결사반대했다. 결국 진짜 알파카 대신 실제 크기의 초정밀 알파카 인형 10마리를 들여놓는 것으로 타협을 보았다. <a class="hb-footnote" data-text="원작 코토리가 이사장실(엄마) 권한으로 알파카를 기르자고 했던 것과 소름 돋게 똑같은 행보다.">[10]</a>
+            동물농장을 만들겠다는 그녀의 폭주에 직원들은 경악했고, 결국 박효빈 시장이 직접 센터로 달려와 "야! 나 알파카한테 밟히는 악몽 꾸는 거 알면서 무슨 알파카야!! 절대 안 돼!!"라며 결사반대했다. 결국 진짜 알파카 대신 실제 크기의 초정밀 알파카 인형 10마리를 들여놓는 것으로 타협을 보았다. <sup class="wiki-fn"><a href="#fn10" class="fn-link">[10]</a></sup>
         </p>
 
         <h2 class="anchor-offset" id="s-6">6. 여담</h2>
         <ul class="wiki-list" style="list-style-type: disc;">
             <li><strong>치즈케이크 광인:</strong> 치즈케이크를 광적으로 좋아한다. "칼로리는 맛의 전투력이에요"라는 기적의 논리를 설파하며 매일같이 고칼로리 치즈케이크를 섭취하지만, 살이 전혀 찌지 않는 사기적인 체질을 가졌다. 센터 1층 카페 '코토리노 오야츠(토리의 간식)'에서 파는 치즈케이크는 그녀의 혹독한 블라인드 테스트를 거쳐야만 정식 메뉴로 등록될 수 있다.</li>
             <li><strong>코토리 베이지 유행의 선구자:</strong> 강토리의 트레이드 마크인 부드러운 회갈색(애쉬브라운) 염색 머리가 효빈시 미용실 사이에서 <b>'토리 베이지'</b> 또는 <b>'코토리 베이지'</b>라는 이름으로 선풍적인 인기를 끌었다. 길거리에 강토리와 똑같은 머리색을 한 여성들이 넘쳐났다고 한다.</li>
-            <li><strong>효빈시 공식 코스프레 유니폼:</strong> 최근 HAF 기간 동안 시청 공무원들이 의무적으로 입어야 하는 <b>'효빈시 공식 하계 코스프레 유니폼'</b> 디자인을 주도하고 있다. "공무원들도 더운 여름에 시원하게 덕질해야 한다"는 명분으로 쿨링 소재를 잔뜩 넣은 세일러복 및 진베이 스타일을 밀고 있어, 뱃살이 나온 중년 공무원들은 두려움에 떨고 있다는 후문. <a class="hb-footnote" data-text="특히 원유미 원장과 원우미 주무관 자매는 이 유니폼 의무 착용 지시가 내려오자 '파, 파렴치한 행정명령입니다!'라며 집단 항명 사태를 일으킬 뻔했다.">[11]</a></li>
-            <li><strong>시선 강탈의 귀재 (포토밤):</strong> 단체 사진이나 셀카를 찍을 때마다 기가 막힌 타이밍에 화면 한구석에 얼굴을 들이미는 <b>포토밤(Photobomb)</b>의 달인이다. 안예리 의원이 진지하게 의정 보고서를 올린 사진 뒤쪽 창문에 '(・8・)' 표정을 지은 강토리가 작게 찍혀 있어 네티즌들을 빵 터뜨린 적이 있다. <a class="hb-footnote" data-text="일본 팬덤에서 유행한 '코토리의 시선 강탈(ことり 카메라도로보)' 밈을 현실에서 구현한 것이다.">[12]</a></li>
-            <li><strong>2대 깡패 철거 전문가:</strong> 과거 윤대환 시절의 잔재인 '두청 팰리스' 밀실들을 허물 때, 조폭들이 찾아와 행패를 부린 적이 있다. 그때 강토리는 눈 하나 깜짝하지 않고 부드러운 미소로 <b>"여긴 이제 우리 공주님(캐릭터)들이 쉴 곳이에요. 경찰 부르기 전에 나가주세요~ ( ^ ^ )"</b>라고 대처했다. 조폭들은 그 알 수 없는 살기(?)와 뒤에 서 있던 트윈 타워의 덩치에 쫄아 도망쳤다. <a class="hb-footnote" data-text="당시 뒤에서 대기하던 컬쳐레스풀 보안 요원(트윈 타워)들이 조폭들을 문자 그대로 종이 구기듯 접어버렸다고 한다.">[13]</a></li>
+            <li><strong>효빈시 공식 코스프레 유니폼:</strong> 최근 HAF 기간 동안 시청 공무원들이 의무적으로 입어야 하는 <b>'효빈시 공식 하계 코스프레 유니폼'</b> 디자인을 주도하고 있다. "공무원들도 더운 여름에 시원하게 덕질해야 한다"는 명분으로 쿨링 소재를 잔뜩 넣은 세일러복 및 진베이 스타일을 밀고 있어, 뱃살이 나온 중년 공무원들은 두려움에 떨고 있다는 후문. <sup class="wiki-fn"><a href="#fn11" class="fn-link">[11]</a></sup></li>
+            <li><strong>시선 강탈의 귀재 (포토밤):</strong> 단체 사진이나 셀카를 찍을 때마다 기가 막힌 타이밍에 화면 한구석에 얼굴을 들이미는 <b>포토밤(Photobomb)</b>의 달인이다. 안예리 의원이 진지하게 의정 보고서를 올린 사진 뒤쪽 창문에 '(・8・)' 표정을 지은 강토리가 작게 찍혀 있어 네티즌들을 빵 터뜨린 적이 있다. <sup class="wiki-fn"><a href="#fn12" class="fn-link">[12]</a></sup></li>
+            <li><strong>2대 깡패 철거 전문가:</strong> 과거 윤대환 시절의 잔재인 '두청 팰리스' 밀실들을 허물 때, 조폭들이 찾아와 행패를 부린 적이 있다. 그때 강토리는 눈 하나 깜짝하지 않고 부드러운 미소로 <b>"여긴 이제 우리 공주님(캐릭터)들이 쉴 곳이에요. 경찰 부르기 전에 나가주세요~ ( ^ ^ )"</b>라고 대처했다. 조폭들은 그 알 수 없는 살기(?)와 뒤에 서 있던 트윈 타워의 덩치에 쫄아 도망쳤다. <sup class="wiki-fn"><a href="#fn13" class="fn-link">[13]</a></sup></li>
             <li><strong>공식 문서의 (・8・) 테러:</strong> 츙츙거리는 작은 새 이모티콘인 <b>(・8・)</b>을 너무 좋아해서, 가끔 공문서 결재란에 서명 대신 저 이모티콘을 그려 넣는 기행을 저지른다. 원우미 주무관이 "결재 서류가 장난입니까?!"라며 다시 반려시키는 것이 일상이다.</li>
         </ul>
 
@@ -475,11 +492,11 @@
     <!-- 푸터 -->
     <div id="footer-container"></div>
     
-    <!-- 🚨 모든 자바스크립트가 안전하게 포함된 영역 -->
+    <!-- 🚨 툴팁 컨테이너 -->
     <div class="wiki-tooltip" id="wiki-tooltip"></div>
     <script>
-        function performSearch() {
-            const input = document.getElementById('wiki-search-input');
+        function handleSearch(inputId) {
+            const input = document.getElementById(inputId);
             const query = input.value.trim();
             if (query) {
                 location.href = query + '.html';
@@ -488,24 +505,45 @@
             }
         }
 
-        function showTooltip(element, fnId) {
+        // 마우스 오버 툴팁 로직
+        document.addEventListener('DOMContentLoaded', function() {
             const tooltip = document.getElementById('wiki-tooltip');
-            const fnContent = document.getElementById(fnId);
-            
-            if (fnContent) {
-                tooltip.innerHTML = fnContent.innerHTML;
-                tooltip.style.display = 'block';
-                
-                const rect = element.getBoundingClientRect();
-                tooltip.style.left = rect.left + window.scrollX + 'px';
-                tooltip.style.top = (rect.bottom + window.scrollY + 5) + 'px';
-            }
-        }
+            if(!tooltip) return;
 
-        function hideTooltip() {
-            const tooltip = document.getElementById('wiki-tooltip');
-            if(tooltip) tooltip.style.display = 'none';
-        }
+            const fnLinks = document.querySelectorAll('.fn-link');
+            
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', function(e) {
+                    const href = this.getAttribute('href');
+                    if (!href || !href.startsWith('#')) return;
+                    
+                    const targetId = href.substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        let text = targetElement.innerHTML;
+                        text = text.replace(/<a class="back-link".*?<\/a>/g, '');
+                        tooltip.innerHTML = text;
+                        tooltip.style.display = 'block';
+                        
+                        const rect = this.getBoundingClientRect();
+                        let leftPos = rect.left + window.scrollX + 15;
+                        let topPos = rect.bottom + window.scrollY + 10;
+                        
+                        if (leftPos + 320 > window.innerWidth) {
+                            leftPos = window.innerWidth - 340; 
+                        }
+                        
+                        tooltip.style.left = leftPos + 'px';
+                        tooltip.style.top = topPos + 'px';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    tooltip.style.display = 'none';
+                });
+            });
+        });
     </script>
     
     <!-- 사용자 필수 요청 스크립트 모음 -->

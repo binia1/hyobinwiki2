@@ -219,6 +219,7 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>청덕동</td><td>서구 청덕1,2동</td><td>서구 5동 증가</td></tr>
         <tr><td>북구 사가당1,2동</td><td>북구 사가당1,2,4,5동</td><td></td></tr>
         <tr><td>덕현1,2동</td><td>덕현1~5동</td><td>북구 5동 증가</td></tr>
+        <tr><td>남구 어간1동</td><td>남구 어간1,3동</td><td></td></tr>
         <tr><td>중구 목동, 오주동</td><td>중구 오주동</td><td></td></tr>
         <tr><td>중구 시북동, 십덕동</td><td>중구 십북동</td><td></td></tr>
         <tr><td>중구 중보동, 완동</td><td>중구 중완동</td><td></td></tr>
@@ -242,7 +243,7 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">109행정동</td><td></td></tr>
         <tr><td>중구</td><td>27행정동</td><td></td></tr>
         <tr><td>서구</td><td>19행정동</td><td></td></tr>
-        <tr><td>남구</td><td>29행정동 2출장소</td><td></td></tr>
+        <tr><td>남구</td><td>30행정동 2출장소</td><td></td></tr>
         <tr><td>북구</td><td>19행정동</td><td></td></tr>
         <tr><td>동구</td><td>15행정동</td><td></td></tr>
 
@@ -252,11 +253,24 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>동리동</td><td>동리1,2동</td><td></td></tr>
         <tr><td>남구 청엽출장소, 창전출장소</td><td><strong>청엽구</strong>, 청엽구 창전출장소</td><td></td></tr>
         <tr><td>평산동</td><td>평당동, 곽산동</td><td></td></tr>
-        <tr><td>어간1동</td><td>어간1,3,4,5동</td><td></td></tr>
-        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">121행정동</td><td></td></tr>
+        <tr><td>어간1동</td><td>어간1,4동</td><td></td></tr>
+        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">114행정동</td><td></td></tr>
         <tr><td>중구</td><td>27행정동</td><td></td></tr>
         <tr><td>서구</td><td>19행정동</td><td></td></tr>
-        <tr><td>남구</td><td>18행정동</td><td></td></tr>
+        <tr><td>남구</td><td>15행정동</td><td></td></tr>
+        <tr><td>북구</td><td>19행정동</td><td></td></tr>
+        <tr><td>동구</td><td>15행정동</td><td></td></tr>
+        <tr><td>청엽구</td><td>19행정동 1출장소</td><td></td></tr>
+
+        <tr class="hb-year-row"><td colspan="3">1981. 5. 1. 남구 행정동 개편</td></tr>
+        <tr><td>서구 사복 1동</td><td>서구 사복1,3동</td><td></td></tr>
+        <tr><td>서구 청덕 1동</td><td>서구 청덕1,3동</td><td></td></tr>
+        <tr><td>평당동</td><td>평당1,2동</td><td></td></tr>
+        <tr><td>어간4동</td><td>어간4,5동</td><td></td></tr>
+        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">118행정동</td><td></td></tr>
+        <tr><td>중구</td><td>27행정동</td><td></td></tr>
+        <tr><td>서구</td><td>21행정동</td><td></td></tr>
+        <tr><td>남구</td><td>17행정동</td><td></td></tr>
         <tr><td>북구</td><td>19행정동</td><td></td></tr>
         <tr><td>동구</td><td>15행정동</td><td></td></tr>
         <tr><td>청엽구</td><td>19행정동 1출장소</td><td></td></tr>
@@ -266,6 +280,7 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>우전동</td><td>우전1~3동</td><td>2동 증가</td></tr>
         <tr><td>칠심동</td><td>칠심1,2동</td><td>1동 증가</td></tr>
         <tr><td>남구 월천동</td><td>월천1,2동</td><td>1동 증가</td></tr>
+        <tr><td>남구 평당2동</td><td>평당2,3동</td><td>1동 증가</td></tr>
         <tr><td>중구 창선동, 중앙동</td><td>중구 중앙동</td><td>1동 감소</td></tr>
         <tr><td>중구 경동, 유내동</td><td>중구 유내동</td><td>1동 감소</td></tr>
         <tr><td>중구 영동, 궁람동</td><td>중구 궁영동</td><td>1동 감소</td></tr>
@@ -274,7 +289,7 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>안천시</td><td><strong>안천구</strong></td><td>21동 증가</td></tr>
         <tr><td>이자읍</td><td>안천구 이자출장소</td><td></td></tr>
         <tr><td>안천시 안천1~8동</td><td>안천구 안천1~8동</td><td></td></tr>
-        <tr><td>안천시 상하월동</td><td>안천구 상하동</td><td></td></tr>
+        <tr><td>안천시 상하월동</td><td>안천구 상하월동</td><td></td></tr>
         <tr><td>악부1,2동</td><td>안천구 악부1,2동</td><td></td></tr>
         <tr><td>창건동</td><td>안천구 창건동</td><td></td></tr>
         <tr><td>안천시 심회동</td><td>안천구 심회동</td><td></td></tr>
@@ -287,10 +302,10 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>신리, 서수리, 영색무리</td><td>서수동</td><td></td></tr>
         <tr><td>리의리</td><td>리의동</td><td></td></tr>
         <tr><td> 이자읍 칠채리, 월삼리, 융문리, 능릉리, 안천구 정남동</td><td>칠채동</td><td></td></tr>
-        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">146행정동</td><td></td></tr>
+        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">147행정동</td><td></td></tr>
         <tr><td>중구</td><td>24행정동</td><td></td></tr>
-        <tr><td>서구</td><td>19행정동</td><td></td></tr>
-        <tr><td>남구</td><td>19행정동</td><td></td></tr>
+        <tr><td>서구</td><td>21행정동</td><td></td></tr>
+        <tr><td>남구</td><td>18행정동</td><td></td></tr>
         <tr><td>북구</td><td>16행정동</td><td></td></tr>
         <tr><td>동구</td><td>19행정동</td><td></td></tr>
         <tr><td>청엽구</td><td>23행정동 1출장소</td><td></td></tr>
@@ -302,13 +317,13 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>중구 명일동, 내항2동</td><td>중구 명일동</td><td></td></tr>
         <tr><td>북구 고송동</td><td>북구 고송1~2동</td><td></td></tr>
         <tr><td>청엽구 창전 1,3동</td><td>청엽구 창전1~5동</td><td></td></tr>
-        <tr><td>남구 평당동</td><td>남구 평당1~3동</td><td></td></tr>
-        <tr><td>남구 곽산동</td><td>남구 곽산1~3동</td><td></td></tr>
+        <tr><td>남구 평당1동</td><td>남구 평당1,4동</td><td></td></tr>
+        <tr><td>남구 곽산1동</td><td>남구 곽산1,2동</td><td></td></tr>
         <tr><td>북구 채산동</td><td>북구 채산동, 남전동</td><td></td></tr>
-        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">155 행정동</td><td></td></tr>
+        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">154 행정동</td><td></td></tr>
         <tr><td>중구</td><td>22행정동</td><td></td></tr>
-        <tr><td>서구</td><td>19행정동</td><td></td></tr>
-        <tr><td>남구</td><td>23행정동</td><td></td></tr>
+        <tr><td>서구</td><td>21행정동</td><td></td></tr>
+        <tr><td>남구</td><td>21행정동</td><td></td></tr>
         <tr><td>북구</td><td>18행정동</td><td></td></tr>
         <tr><td>동구</td><td>19행정동</td><td></td></tr>
         <tr><td>청엽구</td><td>27행정동 1출장소</td><td></td></tr>
@@ -316,15 +331,16 @@ function renderHyobinAdminHistory(containerId) {
 
         <tr class="hb-year-row"><td colspan="3">1989년 행정구역 조정</td></tr>
         <tr><td>북구 고송1~2동</td><td>북구 고송 1~3동</td><td></td></tr>
-        <tr><td>남구 평당1~3동</td><td>남구 평당 1~6동</td><td></td></tr>
+        <tr><td>남구 평당4동</td><td>남구 평당 4,5동</td><td></td></tr>
+        <tr><td>남구 곽산1동</td><td>남구 곽산1,3동</td><td></td></tr>
         <tr><td>청엽구 창전출장소</td><td><strong>창전구</strong> 전환</td><td></td></tr>
         <tr><td>창전구 칠심 1동</td><td>창전구 칠심1,3동</td><td></td></tr>
         <tr><td>유엽동</td><td>유류동, 쌍엽동, 팔조동</td><td></td></tr>
         <tr><td>광정동</td><td>시로동, 광정동</td><td></td></tr>
-        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">164행정동</td><td></td></tr>
+        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">163행정동</td><td></td></tr>
         <tr><td>중구</td><td>22행정동</td><td></td></tr>
-        <tr><td>서구</td><td>19행정동</td><td></td></tr>
-        <tr><td>남구</td><td>26행정동</td><td></td></tr>
+        <tr><td>서구</td><td>21행정동</td><td></td></tr>
+        <tr><td>남구</td><td>25행정동</td><td></td></tr>
         <tr><td>북구</td><td>19행정동</td><td></td></tr>
         <tr><td>동구</td><td>19행정동</td><td></td></tr>
         <tr><td>청엽구</td><td>15행정동</td><td></td></tr>
@@ -332,11 +348,11 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>창전구</td><td>16행정동</td><td>12행정동 -&gt; 16행정동</td></tr>
 
         <tr class="hb-year-row"><td colspan="3">1990년 행정구역 조정</td></tr>
-        <tr><td>남구 평당 6동</td><td>남구 평당6,7동</td><td></td></tr>
-        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">167행정동</td><td></td></tr>
+        <tr><td>남구 평당 5동</td><td>남구 평당5,6동</td><td></td></tr>
+        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">164행정동</td><td></td></tr>
         <tr><td>중구</td><td>22행정동</td><td></td></tr>
-        <tr><td>서구</td><td>19행정동</td><td></td></tr>
-        <tr><td>남구</td><td>27행정동</td><td></td></tr>
+        <tr><td>서구</td><td>21행정동</td><td></td></tr>
+        <tr><td>남구</td><td>26행정동</td><td></td></tr>
         <tr><td>북구</td><td>19행정동</td><td></td></tr>
         <tr><td>동구</td><td>19행정동</td><td></td></tr>
         <tr><td>청엽구</td><td>15행정동</td><td></td></tr>
@@ -344,10 +360,11 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>창전구</td><td>16행정동</td><td></td></tr>
 
         <tr class="hb-year-row"><td colspan="3">1995. 3. 1. 덕빈북도 탄성군 편입</td></tr>
-        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">167행정동</td><td></td></tr>
+        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">166행정동</td><td></td></tr>
         <tr><td>북구 고송 1동</td><td>북구 고송1,4동</td><td></td></tr>
+        <tr><td>남구 평당 1동</td><td>남구 평당1동,고당동</td><td></td></tr>
         <tr><td>중구</td><td>22행정동</td><td></td></tr>
-        <tr><td>서구</td><td>19행정동</td><td></td></tr>
+        <tr><td>서구</td><td>21행정동</td><td></td></tr>
         <tr><td>남구</td><td>27행정동</td><td></td></tr>
         <tr><td>북구</td><td>20행정동</td><td></td></tr>
         <tr><td>동구</td><td>19행정동</td><td></td></tr>
@@ -357,11 +374,12 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>탄성군</td><td>3읍 6면</td><td></td></tr>
 
         <tr class="hb-year-row"><td colspan="3">1996. 3. 1. 도변면 → 도변읍 승격</td></tr>
-        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">167행정동</td><td></td></tr>
+        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">164행정동</td><td></td></tr>
+        <tr><td>북구 입희동</td><td>북구 입희1,2동</td><td></td></tr>
         <tr><td>중구</td><td>22행정동</td><td></td></tr>
-        <tr><td>서구</td><td>19행정동</td><td></td></tr>
+        <tr><td>서구</td><td>21행정동</td><td></td></tr>
         <tr><td>남구</td><td>27행정동</td><td></td></tr>
-        <tr><td>북구</td><td>20행정동</td><td></td></tr>
+        <tr><td>북구</td><td>21행정동</td><td></td></tr>
         <tr><td>동구</td><td>19행정동</td><td></td></tr>
         <tr><td>청엽구</td><td>15행정동</td><td></td></tr>
         <tr><td>안천구</td><td>26행정동 1출장소</td><td></td></tr>
@@ -370,8 +388,6 @@ function renderHyobinAdminHistory(containerId) {
 
         <tr class="hb-year-row"><td colspan="3">1997. 3. 15. 행정동 개편</td></tr>
         <tr><td>북구 고송 4동</td><td>고송4,5동</td><td></td></tr>
-        <tr><td>서구 청덕 1동</td><td>서구 청덕1,3동</td><td></td></tr>
-        <tr><td>북구 입희동</td><td>북구 입희1,2동</td><td></td></tr>
         <tr><td>북구 중수1,2동</td><td>북구 중수1~3동</td><td></td></tr>
         <tr><td>중구 소장1가동, 소장2가동</td><td>중구 소장동</td><td></td></tr>
         <tr><td>북구 천왕사동, 해서동</td><td>북구 천왕사동</td><td></td></tr>
@@ -379,7 +395,7 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>중구 고북동, 시우동</td><td>중구 고도동</td><td></td></tr>
         <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">171행정동</td><td></td></tr>
         <tr><td>중구</td><td>21행정동</td><td></td></tr>
-        <tr><td>서구</td><td>19행정동</td><td></td></tr>
+        <tr><td>서구</td><td>21행정동</td><td></td></tr>
         <tr><td>남구</td><td>27행정동</td><td></td></tr>
         <tr><td>북구</td><td>22행정동</td><td></td></tr>
         <tr><td>동구</td><td>19행정동</td><td></td></tr>
@@ -413,10 +429,10 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>남구 항 1가1,2동, 항2가동, 항 3가1,2동</td><td>항1~4동</td><td></td></tr>
         <tr><td>남구 곽산 1,3동</td><td>남구 곽산1동</td><td></td></tr>
         <tr><td>남구 월천1,2동(법정동 운양동 제외)</td><td>남구 월천동</td><td></td></tr>
-        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">135행정동</td><td></td></tr>
+        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">134행정동</td><td></td></tr>
         <tr><td>중구</td><td>16행정동</td><td></td></tr>
         <tr><td>서구</td><td>18행정동</td><td></td></tr>
-        <tr><td>남구</td><td>17행정동</td><td></td></tr>
+        <tr><td>남구</td><td>16행정동</td><td></td></tr>
         <tr><td>북구</td><td>18행정동</td><td></td></tr>
         <tr><td>동구</td><td>19행정동</td><td></td></tr>
         <tr><td>청엽구</td><td>16행정동</td><td></td></tr>
@@ -425,7 +441,6 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>탄성군</td><td>4읍 5면</td><td></td></tr>
 
         <tr class="hb-year-row"><td colspan="3">1999. 1. 15. 행정동 개편</td></tr>
-        <tr><td>남구 평당7동</td><td>남구 고당동</td><td></td></tr>
         <tr><td>동구 사가당1~5동</td><td>동구 사가당1~4동</td><td></td></tr>
         <tr><td>동구 덕현7,8동</td><td>동구 덕현7동</td><td></td></tr>
         <tr><td>동구 덕현9,10동</td><td>동구 덕현 9동</td><td></td></tr>
@@ -446,8 +461,8 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>북구 중수1동</td><td>북구 중수1,4동</td><td></td></tr>
 
         <tr class="hb-year-row"><td colspan="3">2010. 1. 5. 행정동 개편</td></tr>
+        <tr><td>남구 평당6동</td><td>남구 평당6,7동</td><td></td></tr>
         <tr><td>전천1,2동</td><td>전천동</td><td></td></tr>
-        <tr><td>중구 신곡동, 중앙동</td><td>중앙동</td><td></td></tr>
         <tr><td>조유1,5가동, 조유2,3,4가동</td><td>조유동</td><td></td></tr>
         <tr><td>북구 고송 6동</td><td>고송6,7동</td><td></td></tr>
         <tr><td>안천구 이자2동</td><td>안천구 이자 2,3동</td><td></td></tr>

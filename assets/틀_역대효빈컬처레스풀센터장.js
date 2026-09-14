@@ -9,12 +9,12 @@
         <div style="padding: 0;">
             <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 0.95rem; margin: 0; background-color: #fff; table-layout: fixed;">
                 <tr>
-                    <th colspan="1" style="background-color: #004EA2; color: #fff; padding: 8px; font-weight: bold; border: 1px solid #ddd;">박효빈 시정</th>
-                    <th colspan="4" style="background-color: #f8f9fa; border: 1px solid #ddd;"></th>
+                    <th colspan="5" style="background-color: #004EA2; color: #fff; padding: 8px; font-weight: bold; border: 1px solid #ddd;">박효빈 시정</th>
+                    <th colspan="5" style="background-color: #f8f9fa; border: 1px solid #ddd;"></th>
                 </tr>
                 <tr style="line-height: 1.8;">
-                    <td style="width: 20%; padding: 15px 5px; border: 1px solid #ddd; vertical-align: top; background-color: #f0f8ff;"><span style="font-size: 0.8rem; color: #777;">제1대</span><br><a href="강토리.html" style="color: #0055AA; font-weight: bold; text-decoration: none;">강토리</a></td>
-                    <td colspan="4" style="padding: 15px 5px; border: 1px solid #ddd; background-color: #f8f9fa;"></td>
+                    <td colspan="5" style="width: 20%; padding: 15px 5px; border: 1px solid #ddd; vertical-align: top; background-color: #f0f8ff;"><span style="font-size: 0.8rem; color: #777;">제1대</span><br><a href="강토리.html" style="color: #0055AA; font-weight: bold; text-decoration: none;">강토리</a></td>
+                    <td colspan="5" style="padding: 15px 5px; border: 1px solid #ddd; background-color: #f8f9fa;"></td>
                 </tr>
             </table>
         </div>

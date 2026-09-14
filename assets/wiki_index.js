@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 9. 14. 오전 1:29:58
+ * 업데이트: 2026. 9. 14. 오후 11:42:42
  */
 
 window.HB_WIKI_PAGES = [
@@ -12571,6 +12571,34 @@ window.HB_WIKI_PAGES = [
   {
     "title": "양미소",
     "href": "양미소.html"
+  },
+  {
+    "title": "이주미",
+    "href": "이주미.html"
+  },
+  {
+    "title": "하화연",
+    "href": "하화연.html"
+  },
+  {
+    "title": "유세라",
+    "href": "유세라.html"
+  },
+  {
+    "title": "유초애",
+    "href": "유초애.html"
+  },
+  {
+    "title": "사양화",
+    "href": "사양화.html"
+  },
+  {
+    "title": "도소영",
+    "href": "도소영.html"
+  },
+  {
+    "title": "추주리",
+    "href": "추주리.html"
   }
 ];
 
@@ -19715,5 +19743,12 @@ window.HB_WIKI_ALIASES = {
   "호내영": "호내영.html",
   "하나영": "하나영.html",
   "서진희": "서진희.html",
-  "양미소": "양미소.html"
+  "양미소": "양미소.html",
+  "이주미": "이주미.html",
+  "하화연": "하화연.html",
+  "유세라": "유세라.html",
+  "유초애": "유초애.html",
+  "사양화": "사양화.html",
+  "도소영": "도소영.html",
+  "추주리": "추주리.html"
 };

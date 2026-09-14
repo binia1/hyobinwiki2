@@ -10315,7 +10315,13 @@
       "대한민국신용카드사_틀": "틀_뷰어_SPA.html#대한민국신용카드사_틀",
     "대한민국은행_틀": "틀_뷰어_SPA.html#대한민국은행_틀",
     "대한민국지방은행_틀": "틀_뷰어_SPA.html#대한민국지방은행_틀",
-
+  "이주미": "이주미.html",
+  "하화연": "하화연.html",
+  "유세라": "유세라.html",
+    "유초애": "유초애.html",
+  "사양화": "사양화.html",
+  "도소영": "도소영.html",
+  "추주리": "추주리.html"
 
 
 
@@ -11975,5 +11981,114 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // 타이틀 박스에 버튼 추가
         titleDiv.appendChild(toggleBtn);
+    });
+});
+// ==========================================
+// 💡 카테고리 박스 첫 줄 자동 접기/펼치기 기능 (CSS 높이 제어 방식)
+// ==========================================
+document.addEventListener("DOMContentLoaded", function() {
+    const categoryBoxes = document.querySelectorAll('.category-box');
+    
+    categoryBoxes.forEach(box => {
+        const titleSpan = box.querySelector('.font-bold');
+        if (!titleSpan) return;
+
+        box.style.position = 'relative';
+        box.style.paddingRight = '70px';
+
+        // '분류:'를 제외한 나머지 링크 및 텍스트를 담을 래퍼 생성
+        const contentWrapper = document.createElement('span');
+        contentWrapper.style.cssText = 'display: inline-block; max-height: 1.8em; overflow: hidden; vertical-align: bottom; width: 100%;';
+
+        const nodesToMove = [];
+        box.childNodes.forEach(node => {
+            if (node !== titleSpan) {
+                nodesToMove.push(node);
+            }
+        });
+        nodesToMove.forEach(node => contentWrapper.appendChild(node));
+        box.appendChild(contentWrapper);
+
+        // [펼치기] 버튼 생성
+        const toggleBtn = document.createElement('span');
+        toggleBtn.innerText = '[펼치기]';
+        toggleBtn.style.cssText = 'position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; cursor: pointer; color: #555; font-weight: bold; background: #eaeaea; padding: 2px 6px; border-radius: 4px; transition: background 0.2s;';
+        
+        toggleBtn.onmouseover = function() { this.style.background = '#d4d4d4'; };
+        toggleBtn.onmouseout = function() { this.style.background = '#eaeaea'; };
+
+        box.appendChild(toggleBtn);
+
+        // 초기 상태: 접힘 (첫 줄만 노출)
+        box.classList.add('is-collapsed');
+
+        // 클릭 이벤트 설정 (첫 클릭부터 정확히 작동)
+        toggleBtn.addEventListener('click', function() {
+            const isCollapsed = box.classList.toggle('is-collapsed');
+            toggleBtn.innerText = isCollapsed ? '[펼치기]' : '[접기]';
+            contentWrapper.style.maxHeight = isCollapsed ? '1.8em' : 'none';
+        });
+    });
+});
+
+// ==========================================
+// 💡 나무위키 스타일 섹션 접기/펼치기 (숫자 바로 앞에 버튼 배치)
+// ==========================================
+document.addEventListener("DOMContentLoaded", function() {
+    const headings = document.querySelectorAll('h2, h3');
+
+    headings.forEach(heading => {
+        if (heading.querySelector('.wiki-fold-btn')) return;
+
+        heading.style.position = 'relative';
+
+        const html = heading.innerHTML;
+        // '1.', '2.1.' 같은 번호 패턴을 찾아 그 바로 앞에 버튼 삽입
+        const match = html.match(/^(\s*\d+(?:\.\d+)*\.)/);
+        
+        let toggleBtn;
+        if (match) {
+            const numberPart = match[1];
+            const restPart = html.substring(numberPart.length);
+            heading.innerHTML = '<span class="wiki-fold-btn" style="font-size: 0.65em; cursor: pointer; color: #888; margin-right: 6px; vertical-align: middle; user-select: none; font-weight: normal;">▼</span>' + numberPart + restPart;
+            toggleBtn = heading.querySelector('.wiki-fold-btn');
+        } else {
+            toggleBtn = document.createElement('span');
+            toggleBtn.className = 'wiki-fold-btn';
+            toggleBtn.innerText = '▼ ';
+            toggleBtn.style.cssText = 'font-size: 0.65em; cursor: pointer; color: #888; margin-right: 6px; vertical-align: middle; user-select: none; font-weight: normal;';
+            heading.insertBefore(toggleBtn, heading.firstChild);
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'section-content-wrapper';
+        
+        let curr = heading.nextSibling;
+        const headingLevel = parseInt(heading.tagName.substring(1));
+        const nodesToMove = [];
+
+        while (curr) {
+            if (curr.nodeType === Node.ELEMENT_NODE) {
+                const tag = curr.tagName;
+                if (headingLevel === 2 && tag === 'H2') break;
+                if (headingLevel === 3 && (tag === 'H2' || tag === 'H3')) break;
+            }
+            let nextNode = curr.nextSibling;
+            nodesToMove.push(curr);
+            curr = nextNode;
+        }
+
+        nodesToMove.forEach(node => wrapper.appendChild(node));
+        heading.parentNode.insertBefore(wrapper, heading.nextElementSibling);
+
+        let isCollapsed = false;
+
+        toggleBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            isCollapsed = !isCollapsed;
+            
+            toggleBtn.innerText = isCollapsed ? '▶' : '▼';
+            wrapper.style.display = isCollapsed ? 'none' : '';
+        });
     });
 });
