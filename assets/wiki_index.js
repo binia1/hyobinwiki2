@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 9. 14. 오후 11:42:42
+ * 업데이트: 2026. 9. 15. 오후 1:36:52
  */
 
 window.HB_WIKI_PAGES = [
@@ -12599,6 +12599,14 @@ window.HB_WIKI_PAGES = [
   {
     "title": "추주리",
     "href": "추주리.html"
+  },
+  {
+    "title": "효빈광역시 서구 정신건강증진센터",
+    "href": "효빈광역시 서구 정신건강증진센터.html"
+  },
+  {
+    "title": "뮤즈 스타트",
+    "href": "뮤즈 스타트.html"
   }
 ];
 
@@ -19750,5 +19758,7 @@ window.HB_WIKI_ALIASES = {
   "유초애": "유초애.html",
   "사양화": "사양화.html",
   "도소영": "도소영.html",
-  "추주리": "추주리.html"
+  "추주리": "추주리.html",
+  "효빈광역시 서구 정신건강증진센터": "효빈광역시 서구 정신건강증진센터.html",
+  "뮤즈 스타트": "뮤즈 스타트.html"
 };
