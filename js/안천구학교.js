@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 <table class="school-table">
 <tr>
-<td><a class="wiki-link" href="당가고등학교.html">당가고</a></td><td><a class="wiki-link" href="북택고등학교.html">북택고</a></td><td><a class="wiki-link" href="안천고등학교.html">안천고</a></td><td>▣<a class="wiki-link" href="안천과학고등학교.html">안천과고</a></td><td class="bg-girl"><a class="wiki-link" href="안천여자고등학교.html">안천여고</a></td>
+<td><a class="wiki-link" href="당가고등학교.html">당가고</a></td><td><a class="wiki-link" href="북택고등학교.html">북택고</a></td><td><a class="wiki-link" href="안천고등학교.html">안천고</a></td><td>▣<a class="wiki-link" href="안천과학고등학교.html">안천과학고등학교</a></td><td class="bg-girl"><a class="wiki-link" href="안천여자고등학교.html">안천여고</a></td>
 </tr>
 <tr>
 <td>◈<a class="wiki-link" href="안천정보고등학교.html">안천정보고</a></td><td><a class="wiki-link" href="영색무고등학교.html">영색무고</a></td><td><a class="wiki-link" href="이자고등학교.html">이자고</a></td><td class="bg-girl"><a class="wiki-link" href="이자여자고등학교.html">이자여고</a></td><td><a class="wiki-link" href="제택고등학교.html">제택고</a></td>

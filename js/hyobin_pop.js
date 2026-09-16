@@ -66,7 +66,7 @@ function renderHyobinPopulationTable(containerId) {
                     <div style="position: absolute; top: 0; left: 0; height: 100%; width: 29.24%; background-color: #7777AA;"></div>
                     <div style="position: absolute; top: 0; left: 29.24%; height: 100%; width: 5.67%; background-color: #9999CC;"></div>
                     <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; color: #fff; font-size: 0.9em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
-                        1970년 1,047,341명 <span style="font-size: 0.85em; font-weight: normal; margin-left: 5px;">(효빈시 877,225명 + 탄성군 170,116명)</span>
+                        1970년 1,047,341명 <span style="font-size: 0.85em; font-weight: normal; margin-left: 5px;">(효빈시 867,225명 + 탄성군 170,116명)</span>
                     </div>
                 </div>
 
@@ -79,7 +79,7 @@ function renderHyobinPopulationTable(containerId) {
                     <div style="position: absolute; top: 0; left: 0; height: 100%; width: 41.17%; background-color: #7777AA;"></div>
                     <div style="position: absolute; top: 0; left: 41.17%; height: 100%; width: 8.66%; background-color: #9999CC;"></div>
                     <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; color: #fff; font-size: 0.9em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
-                        1975년 1,459,964명 <span style="font-size: 0.85em; font-weight: normal; margin-left: 5px;">(효빈시 1,235,343명 + 탄성군 224,621명)</span>
+                        1975년 1,459,964명 <span style="font-size: 0.85em; font-weight: normal; margin-left: 5px;">(효빈시 1,265,343명 + 탄성군 224,621명)</span>
                     </div>
                 </div>
 
@@ -287,13 +287,13 @@ function renderHyobinPopulationTable(containerId) {
                 <tbody>
                     <tr style="background-color: #eef2ff; font-weight: bold;">
                         <td style="padding: 6px; border: 1px solid #ccc; text-align: center;">덕빈북도</td>
-                        <td style="padding: 6px; border: 1px solid #ccc;">3,608,524명</td><td style="padding: 6px; border: 1px solid #ccc;">4,021,985명</td><td style="padding: 6px; border: 1px solid #ccc;">4,475,727명</td><td style="padding: 6px; border: 1px solid #ccc;">4,715,950명</td>
+                        <td style="padding: 6px; border: 1px solid #ccc;">3,608,524명</td><td style="padding: 6px; border: 1px solid #ccc;">4,011,985명</td><td style="padding: 6px; border: 1px solid #ccc;">4,505,727명</td><td style="padding: 6px; border: 1px solid #ccc;">4,715,950명</td>
                         <td style="padding: 6px; border: 1px solid #ccc;">3,132,578명</td><td style="padding: 6px; border: 1px solid #ccc;">3,259,806명</td><td style="padding: 6px; border: 1px solid #ccc;">3,160,756명</td><td style="padding: 6px; border: 1px solid #ccc;">3,226,894명</td>
                         <td style="padding: 6px; border: 1px solid #ccc;">3,275,615명</td><td style="padding: 6px; border: 1px solid #ccc;">3,351,587명</td><td style="padding: 6px; border: 1px solid #ccc;">3,390,580명</td><td style="padding: 6px; border: 1px solid #ccc;">3,462,447명</td><td style="padding: 6px; border: 1px solid #ccc;">3,523,123명</td>
                     </tr>
                     <tr style="background-color: #f8f9fa; font-weight: bold;">
                         <td style="padding: 6px; border: 1px solid #ccc; text-align: center;">효빈광역시</td>
-                        <td style="padding: 6px; border: 1px solid #ccc;">593,816명</td><td style="padding: 6px; border: 1px solid #ccc;">877,225명</td><td style="padding: 6px; border: 1px solid #ccc;">1,235,343명</td><td style="padding: 6px; border: 1px solid #ccc;">1,514,404명</td>
+                        <td style="padding: 6px; border: 1px solid #ccc;">593,816명</td><td style="padding: 6px; border: 1px solid #ccc;">867,225명</td><td style="padding: 6px; border: 1px solid #ccc;">1,265,343명</td><td style="padding: 6px; border: 1px solid #ccc;">1,514,404명</td>
                         <td style="padding: 6px; border: 1px solid #ccc;">1,830,061명</td><td style="padding: 6px; border: 1px solid #ccc;">2,046,376명</td><td style="padding: 6px; border: 1px solid #ccc;">2,278,477명</td><td style="padding: 6px; border: 1px solid #ccc;">2,401,697명</td>
                         <td style="padding: 6px; border: 1px solid #ccc;">2,466,659명</td><td style="padding: 6px; border: 1px solid #ccc;">2,584,443명</td><td style="padding: 6px; border: 1px solid #ccc;">2,720,665명</td><td style="padding: 6px; border: 1px solid #ccc;">2,832,860명</td><td style="padding: 6px; border: 1px solid #ccc; color:#d6001c;">2,967,406명</td>
                     </tr>
@@ -311,7 +311,7 @@ function renderHyobinPopulationTable(containerId) {
                     </tr>
                     <tr>
                         <td style="padding: 6px; border: 1px solid #ccc; text-align: center; font-weight: bold; background: #fdfdfd;">서구</td>
-                        <td style="padding: 6px; border: 1px solid #ccc;">170,309명</td><td style="padding: 6px; border: 1px solid #ccc;">298,267명</td><td style="padding: 6px; border: 1px solid #ccc;">170,548명</td><td style="padding: 6px; border: 1px solid #ccc;">227,448명</td>
+                        <td style="padding: 6px; border: 1px solid #ccc;">170,309명</td><td style="padding: 6px; border: 1px solid #ccc;">288,267명</td><td style="padding: 6px; border: 1px solid #ccc;">200,548명</td><td style="padding: 6px; border: 1px solid #ccc;">227,448명</td>
                         <td style="padding: 6px; border: 1px solid #ccc;">241,394명</td><td style="padding: 6px; border: 1px solid #ccc;">287,037명</td><td style="padding: 6px; border: 1px solid #ccc;">279,970명</td><td style="padding: 6px; border: 1px solid #ccc;">260,772명</td>
                         <td style="padding: 6px; border: 1px solid #ccc;">234,260명</td><td style="padding: 6px; border: 1px solid #ccc;">212,197명</td><td style="padding: 6px; border: 1px solid #ccc;">240,852명</td><td style="padding: 6px; border: 1px solid #ccc;">252,632명</td><td style="padding: 6px; border: 1px solid #ccc;">270,388명</td>
                     </tr>

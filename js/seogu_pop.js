@@ -34,7 +34,7 @@ function renderSeoguPopTable(containerId) {
                 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
                     <div style="position: absolute; top: 0; left: 0; height: 100%; width: 85.2%; background-color: #00AABB;"></div>
                     <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; color: #fff; font-size: 0.9em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.6);">
-                        1970년 298,267명 (정점)
+                        1970년 288,267명 (정점)
                     </div>
                 </div>
                 
@@ -45,7 +45,7 @@ function renderSeoguPopTable(containerId) {
                 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
                     <div style="position: absolute; top: 0; left: 0; height: 100%; width: 48.7%; background-color: #00AABB;"></div>
                     <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; color: #fff; font-size: 0.9em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.6);">
-                        1975년 170,548명
+                        1975년 200,548명
                     </div>
                 </div>
                 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
@@ -271,14 +271,14 @@ function renderSeoguPopTable(containerId) {
                 <tbody>
                     <tr style="background-color: #f1f3f5; font-weight: bold;">
                         <td style="padding: 6px; border: 1px solid #ccc; text-align: center; color: #555;">효빈광역시 (참고)</td>
-                        <td style="padding: 6px; border: 1px solid #ccc; color: #555;">593,816명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">877,225명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">1,235,343명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">1,514,404명</td>
+                        <td style="padding: 6px; border: 1px solid #ccc; color: #555;">593,816명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">867,225명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">1,265,343명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">1,514,404명</td>
                         <td style="padding: 6px; border: 1px solid #ccc; color: #555;">1,830,061명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,046,376명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,271,111명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,401,697명</td>
                         <td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,466,659명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,584,443명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,720,665명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,832,860명</td>
                         <td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,967,406명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,999,656명</td>
                     </tr>
                     <tr style="background-color: #f5fcfc; font-weight: bold;">
                         <td style="padding: 6px; border: 1px solid #ccc; text-align: center;">효빈광역시 서구</td>
-                        <td style="padding: 6px; border: 1px solid #ccc;">170,309명</td><td style="padding: 6px; border: 1px solid #ccc;">298,267명</td><td style="padding: 6px; border: 1px solid #ccc;">170,548명</td><td style="padding: 6px; border: 1px solid #ccc;">227,448명</td>
+                        <td style="padding: 6px; border: 1px solid #ccc;">170,309명</td><td style="padding: 6px; border: 1px solid #ccc;">288,267명</td><td style="padding: 6px; border: 1px solid #ccc;">200,548명</td><td style="padding: 6px; border: 1px solid #ccc;">227,448명</td>
                         <td style="padding: 6px; border: 1px solid #ccc;">241,394명</td><td style="padding: 6px; border: 1px solid #ccc;">287,037명</td><td style="padding: 6px; border: 1px solid #ccc;">279,970명</td><td style="padding: 6px; border: 1px solid #ccc;">260,772명</td>
                         <td style="padding: 6px; border: 1px solid #ccc;">234,260명</td><td style="padding: 6px; border: 1px solid #ccc;">212,197명</td><td style="padding: 6px; border: 1px solid #ccc;">240,852명</td><td style="padding: 6px; border: 1px solid #ccc;">252,632명</td>
                         <td style="padding: 6px; border: 1px solid #ccc;">270,388명</td><td style="padding: 6px; border: 1px solid #ccc; color:#d6001c;">279,323명</td>

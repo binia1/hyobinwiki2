@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link href="이미지/효빈위키아이콘.webp" rel="icon"/>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>안예리 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        /* 1. 전역 스타일 및 변수 */
+        :root { 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #F9F9FA; 
+            --wiki-link: #0022AA; 
+            --wiki-table-header: #7777AA;
+            --wiki-table-header-text: #ffffff;
+        }
+
+        /* 위키 도구 버튼 스타일 */
+        .wiki-btn-group { display: flex; border-radius: 4px; overflow: hidden; border: 1px solid #ccc; }
+        .wiki-tool-btn { 
+            padding: 4px 12px; background: #fff; font-size: 13px; color: #555; 
+            border-right: 1px solid #ccc; cursor: pointer; text-decoration: none !important; display: flex; align-items: center;
+        }
+        .wiki-tool-btn:last-child { border-right: none; }
+        .wiki-tool-btn:hover { background: #f0f0f0; color: #000; }
+
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--wiki-bg); 
+            color: var(--wiki-text); 
+            line-height: 1.6; 
+            word-break: keep-all; 
+            margin: 0; 
+        }
+
+        /* 헤딩 스타일 */
+        h1 { font-size: 2.5rem !important; font-weight: 900 !important; margin-bottom: 1.5rem; line-height: 1.2; letter-spacing: -1.5px;}
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; color: var(--wiki-link); }
+        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; border-left: 4px solid var(--wiki-main); padding-left: 10px;}
+        h4 { font-size: 1.15rem !important; font-weight: 700 !important; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; }
+
+        .wiki-container { max-width: 1152px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        /* 일반 표 스타일 */
+        table.data-table, table.infobox-table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: auto !important; }
+        .data-table th, .data-table td, .infobox-table th, .infobox-table td { border: 1px solid var(--wiki-border) !important; padding: 8px 12px; text-align: center; vertical-align: middle; }
+        .data-table th { background-color: var(--wiki-table-header); color: var(--wiki-table-header-text); font-weight: bold; }
+
+        /* 인포박스 레이아웃 */
+        .content-wrapper::after { content: ""; display: table; clear: both; }
+        .infobox { 
+            float: right; border: 2px solid var(--wiki-main); background-color: #fff; 
+            width: 100%; max-width: 340px; font-size: 0.85rem; margin: 0 0 20px 25px; 
+            border-radius: 4px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        @media (max-width: 768px) { .infobox { float: none; max-width: 100%; margin: 0 0 20px 0; } }
+        .infobox-title { background-color: var(--wiki-main); color: white; padding: 10px; text-align: center; font-size: 1.2rem !important; font-weight: bold; line-height:1.3;}
+        .infobox-image { text-align: center; padding: 10px; border-bottom: 1px solid var(--wiki-border); background: white; }
+        .infobox-image img { max-width: 100%; height: auto; border: 1px solid #ddd; display: block; margin: 0 auto; }
+        .infobox th { background-color: var(--wiki-gray-bg); color: var(--wiki-main); width: 90px; text-align: center; padding: 8px; font-weight: bold; border: 1px solid var(--wiki-border) !important; }
+        .infobox td { text-align: left; padding: 8px; border: 1px solid var(--wiki-border) !important; }
+
+        /* 링크 및 뱃지 */
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .wiki-link:hover { text-decoration: underline; }
+        .wiki-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.75rem; margin-right: 3px; vertical-align: middle; cursor: pointer; }
+        .badge-minju { background-color: #004ea2; }
+        .badge-gukhim { background-color: #e61e2b; }
+        .badge-jinbo { background-color: #FFED00; color: #000; }
+        .badge-independent { background-color: #999999; }
+
+        .category-box { background: #fff; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.85rem; margin: 15px 0; border-radius: 4px; }
+        
+        .toc { display: table; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 25px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
+        .toc ul li { margin-bottom: 6px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; font-size: 0.9rem; }
+
+        .quote-box { background-color: #f8f9fa; border-left: 4px solid var(--wiki-main); padding: 15px; margin: 15px 0; font-style: italic; }
+        
+        strong { font-weight: 900; color: #000; }
+        del { text-decoration: line-through; color: #aaa; }
+
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }   
+        
+        /* 각주 및 하단 리스트 영역 */
+        .hb-footnote { color: var(--wiki-main); text-decoration: none; font-size: 0.8em; margin-left: 2px; vertical-align: super; font-weight: bold; cursor: pointer; }
+        .hb-footnote:hover { text-decoration: underline; color: #EE0022; }
+        .footnote-area { margin-top: 50px; padding: 20px; border-top: 2px solid var(--wiki-border); background-color: var(--wiki-gray-bg); font-size: 0.9rem; line-height: 1.6; border-radius: 5px; clear: both;}
+        .footnote-area h3 { margin-top: 0; border: none; padding-left: 0; margin-bottom: 15px; font-size: 1.2rem; }
+        .footnote-item { margin-bottom: 10px; display: flex; align-items: flex-start; gap: 8px; }
+        .footnote-item a.fn-back { color: var(--wiki-main); text-decoration: none; font-weight: bold; flex-shrink: 0; }
+        .footnote-item a.fn-back:hover { text-decoration: underline; color: #EE0022; }
+        .footnote-content { color: #444; }
+        
+        /* 🚨 절대 방어막 툴팁 CSS 🚨 */
+        #absolute-hb-tooltip {
+            position: absolute;
+            background: #ffffff;
+            border: 2px solid var(--wiki-main);
+            padding: 12px 16px;
+            border-radius: 6px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 0.85rem;
+            color: #333;
+            z-index: 2147483647; 
+            max-width: 380px;
+            word-break: keep-all;
+            line-height: 1.5;
+            pointer-events: none;
+            display: none;
+        }
+
+        .wiki-image-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .wiki-image-block {
+            width: 350px;
+            max-width: 100%;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .wiki-image-block img { width: 100%; height: auto; display: block; border: 1px solid #ddd; }
+        .wiki-image-caption { margin-top: 8px; color: #555; font-weight: bold; word-break: keep-all; }
+    </style>
+    <script src="ad_logic.js"></script>
+    <link rel="stylesheet" href="wiki_font_standard.css">
+
+    <!-- 🚨 절대 방어막 툴팁 자바스크립트 🚨 -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const tooltip = document.createElement('div');
+        tooltip.id = 'absolute-hb-tooltip';
+        document.body.appendChild(tooltip);
+
+        document.querySelectorAll('.hb-footnote').forEach(fn => {
+            fn.addEventListener('mouseenter', function(e) {
+                const text = this.getAttribute('data-text');
+                if (text) {
+                    tooltip.innerHTML = text;
+                    tooltip.style.display = 'block';
+                    
+                    const rect = this.getBoundingClientRect();
+                    let leftPos = window.scrollX + rect.left + 15;
+                    if (leftPos + 380 > window.innerWidth) leftPos = window.innerWidth - 400; 
+                    
+                    tooltip.style.left = leftPos + 'px';
+                    tooltip.style.top = (window.scrollY + rect.bottom + 10) + 'px';
+                }
+            });
+            fn.addEventListener('mouseleave', function() {
+                tooltip.style.display = 'none';
+            });
+        });
+    });
+    </script>
+</head>        
+
+<body data-theme="light">
+<!-- 상단 내비게이션 바 -->
+<nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <div class="flex items-center gap-2">
+        <div class="nav-logo-box">H</div>
+        <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white">HyobinWiki</a>
+        <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+            <a href="index.html" class="hover:underline font-bold text-white no-underline">대문</a>
+            <a href="최근_변경.html" class="hover:underline text-white no-underline">최근 변경</a>
+            <a href="최근_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
+        </div>
+    </div>
+    <div class="flex flex-col items-end gap-1">
+        <div class="flex items-center gap-2">
+            <div class="hidden lg:flex items-center gap-1 mr-2">
+                <a href="편집요청.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">편집요청</a>
+                <a href="최근_토론.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">토론</a>
+                <a href="역사.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">역사</a>
+                <a href="즐겨찾기.html" class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" title="즐겨찾기">★</a>
+                <a href="더보기.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1">더보기 <span class="text-[9px]">▼</span></a>
+            </div>
+            
+            <input type="text" id="headerSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }">
+            <button onclick="handleSearch('headerSearchInput')" class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
+        </div>
+    </div>
+</nav>
+
+<div class="wiki-container shadow-lg">
+    <div class="flex justify-between items-end mb-4">
+        <h1 class="m-0 border-none p-0">안예리</h1>
+        <div class="wiki-btn-group shadow-sm mb-4">
+            <a class="wiki-tool-btn" href="토론.html">토론</a>
+            <a class="wiki-tool-btn" href="수정.html">편집</a>
+            <a class="wiki-tool-btn" href="역사.html">역사</a>
+        </div>
+    </div>
+
+    <!-- 🚨 광고 -->
+    <div style="border: 1px solid var(--wiki-border, #cccccc); padding: 12px 15px; margin-bottom: 20px; background-color: #f8f9fa; border-left: 5px solid var(--wiki-main); font-size: 0.9rem; text-align: center;">
+        <span style="font-size: 0.75rem; background: #ddd; color: #555; padding: 2px 5px; border-radius: 3px; font-weight: bold; margin-right: 5px;">AD</span>
+        <strong>현실판 카시코이 카와이 예리치카! 서구의회에 강림하다!</strong><br>
+        <span style="font-size: 0.8rem; color: #EE0022; display:block; margin-top:5px;">🚨[경보] "오빠... 방금 다른 역무원 뽑은 거야...?" GPS 우정 팔찌 위치 추적 가동! [UR 흑묘 임세하] 픽업</span>
+    </div>
+
+    <div class="category-box">
+        <a class="font-bold text-[#7777AA]">분류:</a>
+        <a class="wiki-link" href="효빈광역시_인물.html">효빈광역시/인물</a> | 
+        <a class="wiki-link" href="대한민국의 기초의회의원.html">대한민국의 기초의회의원</a> | 
+        <a class="wiki-link" href="서구의회(효빈).html">서구의회(효빈)</a> | 
+        <a class="wiki-link" href="제10대 기초의회.html">제10대 기초의회</a> | 
+        <a class="wiki-link" href="1998년 출생.html">1998년 출생</a> |
+        <a class="wiki-link" href="더불어민주당 소속 정치인.html">더불어민주당 소속 정치인</a> |
+        <a class="wiki-link" href="효빈대학교_출신.html">효빈대학교/출신</a> | 
+        <a class="wiki-link" href="서구(효빈) 출신.html">서구(효빈) 출신</a> |
+        <a class="wiki-link" href="사복동 출신.html">사복동 출신</a> |
+        <a class="wiki-link" href="사회복지학대학 출신.html">사회복지학대학 출신</a> |
+        <a class="wiki-link" href="사복초등학교 출신.html">사복초등학교 출신</a> |
+        <a class="wiki-link" href="효빈내성중학교 출신.html">효빈내성중학교 출신</a> |
+        <a class="wiki-link" href="복지여자고등학교 출신.html">복지여자고등학교 출신</a> |
+        <a class="wiki-link" href="순흥 안씨.html">순흥 안씨</a> |
+        <a class="wiki-link" href="러브라이버.html">러브라이버</a>
+    </div>
+
+    <div class="content-wrapper mt-6">
+        
+        <aside class="infobox">
+            <div class="infobox-title">
+                <span style="font-size: 0.85rem; font-weight: normal; display: block; margin-bottom: 4px; color: #e2e8f0;">제10대 효빈광역시 서구의회 의원</span>
+                안예리<br/>
+                <span class="text-sm font-normal">Ahn Ye-ri</span>
+            </div>
+            <div class="infobox-image">
+                <img alt="안예리" src="이미지/안예리.webp"/>
+            </div>
+            <table class="infobox-table">
+                <tr><th>출생</th><td>1998년 10월 21일 (만 27세)<br/><span class="text-xs"><a class="wiki-link" href="서구.html">효빈광역시 서구</a> 사복동</span></td></tr>
+                <tr><th>현직</th><td><strong><a class="wiki-link" href="서구의회(효빈).html">제10대 효빈광역시 서구의회 의원</a></strong> <span class="text-xs">(마선거구)</span></td></tr>
+                <tr><th>소속 정당</th><td><span class="wiki-badge badge-minju">더불어민주당</span></td></tr>
+                <tr><th>선거구</th><td><a class="wiki-link" href="서구(효빈).html">효빈광역시 서구</a> 마선거구 <span class="text-xs">(청덕1·2·3동)</span></td></tr>
+                <tr><th>선수</th><td>1 (초선)</td></tr>
+                <tr><th>본관</th><td><a class="wiki-link" href="https://namu.wiki/w/순흥%20안씨" target="_blank">순흥 안씨</a></td></tr>
+                <tr><th>혈통</th><td>한국계 러시아인 쿼터 (1/8, 외증조부 러시아인)</td></tr>
+                <tr><th>학력</th><td><a class="wiki-link" href="족포초등학교.html">족포초등학교</a> <span class="text-xs">(전학)</span><br/><a class="wiki-link" href="사복초등학교.html">사복초등학교</a> <span class="text-xs">(졸업)</span><br/><a class="wiki-link" href="내성중학교.html">효빈내성중학교</a> <span class="text-xs">(졸업)</span><br/><a class="wiki-link" href="복지여자고등학교.html">복지여자고등학교</a> <span class="text-xs">(졸업)</span><br/><a class="wiki-link" href="효빈대학교.html">효빈대학교</a> 사회복지학대학 <span class="text-xs">(사회복지정책학 / 학사)</span></td></tr>
+                <tr><th>경력</th><td><a class="wiki-link" href="복지여자고등학교.html">복지여자고등학교</a> 학생회장<br/>청덕동 지역 사회복지사 <span class="text-xs">(계약직)</span></td></tr>
+                <tr><th>별명</th><td>현실판 <a class="wiki-link" href="아야세 에리.html">아야세 에리</a>, 예리치카, 로시야 파워, 서구의 센터, <del>서구의 금빛 섬광</del>, <del>투잡 마스터</del></td></tr>
+            </table>
+        </aside>
+
+        <div class="toc" id="toc-box">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li><a class="wiki-link" href="#s-1">1. 개요</a></li>
+                <li><a class="wiki-link" href="#s-2">2. 생애 (시련의 역사)</a>
+                    <ul>
+                        <li><a class="wiki-link" href="#s-2-1">2.1. 족포초의 악몽: 끝없는 폭력과 노정미, 그리고 윤재훈</a></li>
+                        <li><a class="wiki-link" href="#s-2-2">2.2. 내성중 시절: 예리치카의 각성과 고백거절남 참교육</a></li>
+                        <li><a class="wiki-link" href="#s-2-3">2.3. 복지여고 진학과 이석우 교사 팩트폭행</a></li>
+                        <li><a class="wiki-link" href="#s-2-4">2.4. 효빈대학교 시절: 생계형 투잡(2-Jobs)의 전설과 멘티들</a></li>
+                    </ul>
+                </li>
+                <li><a class="wiki-link" href="#s-3">3. 의정 활동 및 주요 정책 (Top-Tier 공약)</a>
+                    <ul>
+                        <li><a class="wiki-link" href="#s-3-1">3.1. KKE 에듀센터 청덕분소 유치</a></li>
+                        <li><a class="wiki-link" href="#s-3-2">3.2. '클린-핏' 청년 자립 바우처 개정안</a></li>
+                        <li><a class="wiki-link" href="#s-3-3">3.3. 1인 가구 청년 안심 귀가 스카우트 개편 ('뮤즈 가드')</a></li>
+                        <li><a class="wiki-link" href="#s-3-4">3.4. 서구 골목상권 르네상스 '오토노키 야시장'</a></li>
+                    </ul>
+                </li>
+                <li><a class="wiki-link" href="#s-4">4. 인간 관계 (현실판 뮤즈 라인업)</a>
+                    <ul>
+                        <li><a class="wiki-link" href="#s-4-1">4.1. 노정미 (비례대표 시의원, 영혼의 파트너와 '와시와시')</a></li>
+                        <li><a class="wiki-link" href="#s-4-2">4.2. 박효빈 (효빈광역시장, 영원한 멘토이자 에리 오시)</a></li>
+                        <li><a class="wiki-link" href="#s-4-3">4.3. 1998년생 동갑내기 찐친들 (호내영, 하나영, 서진희)</a></li>
+                        <li><a class="wiki-link" href="#s-4-4">4.4. 효빈대 알바 시절의 멘티들 (성공린, 양미소, 원우미)</a></li>
+                        <li><a class="wiki-link" href="#s-4-5">4.5. 윤재훈 (철천지원수이자 인간 폐기물)</a></li>
+                    </ul>
+                </li>
+                <li><a class="wiki-link" href="#s-5">5. 사건 사고</a>
+                    <ul>
+                        <li><a class="wiki-link" href="#s-5-1">5.1. 서구의회 본회의장 '예리치카' 호명 사건</a></li>
+                        <li><a class="wiki-link" href="#s-5-2">5.2. 악성 민원인 낫 난동 물리적 제압 사건 (로시야 파워)</a></li>
+                        <li><a class="wiki-link" href="#s-5-3">5.3. 이석우 교사 지역행사 컷오프 사건</a></li>
+                    </ul>
+                </li>
+                <li><a class="wiki-link" href="#s-6">6. 여담 (예리치카 밈의 총본산)</a></li>
+                <li><a class="wiki-link" href="#s-7">7. 선거 이력</a></li>
+            </ul>
+        </div>
+
+        <h2 class="anchor-offset" id="s-1">1. 개요</h2>
+        <div class="quote-box">
+            <strong>"카시코이 카와이 예리치카! 서구의 복지를 책임지겠습니다!"</strong>
+        </div>
+        <p>
+            대한민국의 정치인이자 제10대 <a class="wiki-link" href="서구의회(효빈).html">효빈광역시 서구의회 의원</a>(더불어민주당, 마선거구).
+        </p>
+        <p>
+            <a class="wiki-link" href="효빈대학교.html">효빈대학교</a> 사회복지정책학과 출신으로, 학창 시절부터 겪은 지독한 학교폭력과 가난을 이겨내고 사회복지사로 일하다가 2026년 제9회 전국동시지방선거에서 역대급 득표율(58.42%)로 서구의회 의원으로 당선되었다. 특히 서구 내에서 가장 민원 해결률이 높고 정책 조례 발의 건수 1위를 달리는 <strong>기초의원 상위 1%의 에이스 의원</strong>이다. <a class="wiki-link" href="박효빈.html">박효빈</a> 효빈광역시장의 직속 후배(17학번)이자, 시장님이 끔찍하게 아끼는 멘티이기도 하다. 
+        </p>
+        <p>
+            특히 서브컬처 팬들과 효빈시청 공무원들 사이에서는 <strong>'현실판 <a class="wiki-link" href="아야세 에리.html">아야세 에리</a>'</strong>라는 별명으로 더욱 유명하다. 생일(10월 21일), 완벽한 신체 비율, 1/8 러시아 혼혈이라는 핏줄, 학생회장 출신이라는 스펙까지 러브 라이브!의 아야세 에리와 소름 돋게 일치하는 기믹을 가지고 있어 가는 곳마다 화제를 몰고 다니는 인물이다. <a class="hb-footnote" data-text="본인도 이 기믹을 꽤 즐기는 눈치다. 선거 유세 때 아예 에리 이미지 컬러인 수색(하늘색) 점퍼를 입고 다녔다.">[1]</a>
+        </p>
+
+        <h2 class="anchor-offset" id="s-2">2. 생애 (시련의 역사)</h2>
+        
+        <h3 class="anchor-offset" id="s-2-1">2.1. 족포초의 악몽: 끝없는 폭력과 노정미, 그리고 윤재훈</h3>
+        <p>
+            효빈시 서구 사복동에서 태어났으나, 초등학교는 효빈시 최악의 학교로 꼽히는 <strong><a class="wiki-link" href="족포초등학교.html">족포초등학교</a></strong>에 입학했다. 어릴 적 마음씨가 착했던 안예리는 당시 소아비만과 지독한 가난으로 겉돌던 2년 선배 <a class="wiki-link" href="박효빈.html">박효빈</a>과 친하게 지냈는데, 하필 이 때문에 족포초의 절대권력이자 일진 무리였던 <strong><a class="wiki-link" href="윤재훈.html">윤재훈</a></strong> 일당의 눈에 띄고 만다.
+        </p>
+        <p>
+            당시 약간 통통했던 안예리를 향해 윤재훈 일당은 <strong>"통통한 새끼들끼리 끼리끼리 논다", "러시아 빨갱이 혼혈 새끼", "기초수급자 세금 돼지"</strong> 등 초등학생이라고는 믿기 힘든 패륜적인 폭언을 일삼았다. <a class="hb-footnote" data-text="과거 족포초 쓰레기 일당들은 그녀의 이국적인 외모를 두고 '소련 사람처럼 생겼다, 빨갱이 새끼'라며 괴롭힌 적이 있는데, 안예리가 태어난 1998년은 이미 소련이 해체된 지 7년이나 지난 시점이었다. 가해자들의 무식함을 엿볼 수 있는 대목이다.">[2]</a> 
+        </p>
+        <p>
+            이 지옥 같은 족포초에는 훗날 안예리의 영혼의 파트너가 되는 동창 <strong><a class="wiki-link" href="노정미.html">노정미</a></strong>(현 비례대표 시의원)도 함께 있었다. 북구 남전동 출신인 노정미는 어릴 적 집안 사정으로 서구 당선동으로 이사 오며 족포초에 입학했는데, 당시 그녀의 체형은 '돼조미(...)'에 가까울 정도로 통통했다. 윤재훈 일당은 노정미에게도 "돼지 같다", "냄새나니까 꺼져라"며 모욕을 줬고, 심지어 발육이 남달랐던 노정미를 향해 미친 남학생들이 <strong>"가슴에 지방밖에 없으니 줘도 안 먹는다, 한번 만져보자"</strong>며 성추행을 시도하려 했던 끔찍한 사건도 있었다.
+        </p>
+        <p>
+            이때 구원자로 등판한 것이 바로 2년 선배 <strong>박효빈</strong>이었다. 박효빈은 뚱뚱하고 힘도 약했던 시절임에도 불구하고 미친 듯이 달려와 <strong>"하지 마라! 당장 경찰이랑 어른들 다 부를 테니까 그만해라!!"</strong>며 소리를 지르고, 남학생들에게 우유갑을 집어 던지며 어그로를 완벽하게 자신에게로 돌렸다. 박효빈이 무거운 몸을 이끌고(...) 도망치며 시선을 끌어준 덕분에 노정미와 안예리는 무사히 도망칠 수 있었다. <a class="hb-footnote" data-text="박효빈은 이 사건으로 윤재훈 일당에게 복도에서 우유갑을 던지며 '인간 과녁 맞추기 놀이'의 표적이 되었다. 다만 윤재훈의 운동신경이 심각하게 구렸기 때문에 던진 우유갑 10개 중 9개는 엉뚱한 창문이나 사물함에 맞고 터졌다고 한다. 본인의 멍청함이 입증된 셈이다.">[3]</a> 
+        </p>
+        <p>
+            하지만 문제는 <strong>당시 윤재훈의 아버지가 권력자 윤대환(훗날의 4대 시장)</strong>이었다는 점이다. 윤대환은 학교에 압력을 넣어 오히려 피해자를 돕던 박효빈에게만 강제 징계를 내리는 만행을 저질렀다. 이 끔찍한 사태 속에서 노정미는 한동안 보복이 두려워 박효빈의 인사를 무시하고 나쁘게 말하며 거리를 두기도 했다(초5~6 당시). 그러나 결국 죄책감을 이기지 못한 노정미는 나중에 박효빈을 찾아가 눈물로 사과하며 평생의 은인으로 섬기게 된다.
+        </p>
+        <p>
+            결국 안예리는 4학년 때 이 지옥을 견디지 못하고 부모님께 모든 사실을 오열하며 털어놓았고, 곧바로 사복초등학교로 전학을 가면서 족포초 마굴을 간신히 탈출했다. 
+        </p>
+
+        <h3 class="anchor-offset" id="s-2-2">2.2. 내성중 시절: 예리치카의 각성과 고백거절남 참교육</h3>
+        <p>
+            사복초를 무사히 졸업하고 근방의 <a class="wiki-link" href="내성중학교.html">내성중학교</a>로 배정받았으나, 내성중은 족포초 출신들이 대거 진학하는 곳이었기에 입학 전부터 엄청난 두려움에 시달렸다. (실제로 노정미는 내성중 1~2학년 내내 양예원, 박민지 등 족포초 출신 일진들에게 "뚱뚱하다, 냄새난다, 박효빈이랑 친하다"는 이유로 지옥의 시즌 2를 겪어야만 했다.) 다행히 당시 중학교 3학년에는 '환골탈태'하여 학교를 평정하고 있던 선배 박효빈이 있었고, 윤재훈 일당도 박효빈의 눈치를 보며 찌그러져 있던 시기라 끔찍한 집단 괴롭힘은 면할 수 있었다.
+        </p>
+        <p>
+            초등학교 2학년 때부터 중학교 초반까지 통통한 체형을 유지했던 그녀는, 중학교 2학년 시절 평소 짝사랑하던 남학생에게 고백했다가 <strong>"살찐 애는 내 취향 아니야. 뚱뚱해서 냄새날 것 같아"</strong>라는 모욕적인 말을 들으며 거하게 차이는 수모를 겪는다. <del>이때부터 복수의 톱니바퀴가 돌아가기 시작했다.</del>
+        </p>
+        <p>
+            독이 바짝 오른 안예리는 미친 듯이 독종처럼 다이어트에 돌입했다. 살이 쏙 빠지자 그녀의 숨겨져 있던 유전자가 폭발했다. 외증조할아버지가 러시아인이었던 덕분에(1/8 혼혈) 뚜렷한 이목구비와 은근한 러시아인의 특징이 발현된 것이다. 심지어 체형마저 아야세 에리와 거의 완벽하게 일치하는 B88급의 글래머러스한 나이스 바디로 변모했다. 
+        </p>
+        <p>
+            환골탈태한 예리의 모습을 본 그 <strong>고백거절남</strong>은 태세를 180도 전환하여 음흉한 흑심을 품고 추근덕대기 시작했다. 안예리가 "사람 외모 변한 거 하나 보고 이러는 거 역겹다. 벌레 같으니 저리 가라"며 단칼에 쳐내자, 앙심을 품은 남학생은 찌질함의 극치를 보여주며 <strong>"안예리가 일진이랑 잤다", "남자 꼬시려고 몸 굴려서 살 뺀 거다"</strong>라는 악질적인 헛소문을 학교에 퍼트렸다. 심지어 불량배들과 어울리며 "안예리 몸매 몰래 찍어오면 만 원 준다"는 미친 소리까지 지껄였다. <a class="hb-footnote" data-text="해당 남학생 김 모 군은 훗날 이 발언이 문제가 되어 학교폭력위원회에 회부되었고, 사이버 명예훼손으로 경찰 조사까지 받으며 철저히 몰락했다.">[4]</a> 
+        </p>
+        <p>
+            그러나 <strong>안예리는 생각보다 너무 똑똑했다.</strong> <del>카시코이 카와이 예리치카!</del> 이미 남학생의 비열한 술수를 간파한 안예리는 녹음기를 품고 다니며 증거를 수집했고 철저히 그를 쓰레기 취급했다. 초조해진 고백거절남은 하교 시간 후미진 골목에서 힘을 써서 억지로 안예리에게 몹쓸 짓을 시도했으나... <strong>분노한 안예리가 숨겨진 '로시야 파워(러시아 불곰의 피)'를 발휘해 남학생의 팔을 비틀고 완벽한 엎어치기로 바닥에 꽂아버렸다.</strong> <del>에리치카 펀치!</del> 
+        </p>
+        <p>
+            이 참교육 엎어치기는 내성중 전설로 남았는데, 당시 목격자들에 따르면 남학생이 공중에서 3미터를 날아가 재활용 쓰레기통에 거꾸로 꽂혔다고 한다. <a class="hb-footnote" data-text="쓰레기통에 처박힌 남학생은 기절했다 깨어나서 '살려주세요 러시아 누나'라고 헛소리를 했다는 전설이 있다.">[5]</a> <del>이때부터 서구의 전투종족 전설이 시작되었다.</del> 결국 이 사건이 공론화되며 가해 남학생은 대안학교로 쫓겨나는 완벽한 사필귀정 엔딩을 맞이했다.
+        </p>
+
+        <h3 class="anchor-offset" id="s-2-3">2.3. 복지여고 진학과 이석우 교사 팩트폭행</h3>
+        <p>
+            이후 <a class="wiki-link" href="복지여자고등학교.html">복지여자고등학교</a>에 진학하며 지성과 미모를 겸비한 완벽한 '학생회장'으로 거듭났다. 다만, 복지여고 시절 그 악명 높은 진로진학상담교사 <strong><a class="wiki-link" href="이석우.html">이석우</a></strong>와 엮인 적이 있다. 
+        </p>
+        <p>
+            어려운 사람들을 위한 정책을 만들겠다며 효빈대 사회복지정책학과 진학을 희망하는 안예리에게, 이석우는 "네 성적으로는 거길 못 간다", "너 같은 애는 그런 데 가면 또 멘탈 나가서 견디지도 못한다. 그냥 전문대나 가라"며 어설픈 가스라이팅과 조롱을 퍼부었다. 하지만 두뇌 회전이 빠르고 멘탈이 다이아몬드 급이었던 안예리는 이석우의 꼰대질을 <strong>"아, 선생님 말씀은 참고만 할게요~"</strong> 한마디로 가볍게 씹어버리고 진로 시간에 귀마개를 꽂은 채 수능 수학 문제를 풀었다. <a class="hb-footnote" data-text="이석우가 화를 내며 귀마개를 빼려 하자, 안예리는 눈 하나 깜짝하지 않고 '선생님, 지금 학생의 학습권을 부당하게 침해하시는 겁니다. 교육청에 민원 넣어도 될까요?'라고 받아쳐 이석우를 데꿀멍하게 만들었다.">[6]</a> 
+        </p>
+        <p>
+            실제로 안예리의 성적은 효빈대에 가고도 남을 최상위 1%였으며, 다른 교사들의 전폭적인 지지와 학생들의 압도적인 신임 속에 당당히 학생회장직을 역임하고 목표하던 효빈대 사회복지정책학과에 4년 전액 장학생으로 가볍게 합격했다. 
+        </p>
+
+<h3 class="anchor-offset" id="s-2-4">2.4. 효빈대학교 시절: 생계형 투잡(2-Jobs)의 전설과 멘티들</h3>
+<p>
+    2017년, 효빈대학교 사회복지학대학(사회복지정책학)에 17학번으로 입학했다. 당시 집안 형편이 여전히 좋지 않아 숨만 쉬어도 돈이 나가는 대학 생활을 버티기 위해 수많은 알바를 병행해야 했다. <del>이때부터 안예리의 몸속에는 피 대신 카페인이 흐르기 시작했다(...).</del>
+</p>
+<p>
+    특히 중학교 직속 선배였던 <strong>박효빈</strong>(15학번)과 대학에서 재회하며 전설의 <strong>'생계형 알바 듀오'</strong>를 결성했다. 박효빈이 사회복무요원 복무로 인해 휴학을 거쳐 복학하면서 두 사람은 2021년에 <strong>동시 졸업</strong>을 하게 되었는데, 이 시절 둘의 고생담은 눈물 없이 들을 수 없는 무용담으로 불린다. 
+</p>
+<p>
+    다만 여기서 명확히 짚고 넘어가야 할 점은, <strong>박효빈</strong>은 뇌전증을 앓는 아버지와 고등학생 여동생(1999년생)을 책임지는 <strong>'가족돌봄청년(영 케어러)'</strong>이었기에 상상을 초월하는 괴물 같은 쓰리잡(3 jobs)을 소화했지만, <strong>안예리</strong>는 인간의 체력 한계상 <strong>'지역아동센터 멘토링'과 '맥도날드 야간 카운터 알바'</strong>라는 <strong>투잡(2 jobs)</strong>만 뛰었다는 것이다. 
+</p>
+<p>
+    안예리 역시 쉴 틈 없이 뼈 빠지게 일했지만, 박효빈은 <strong>'지역아동센터 멘토링'</strong>을 기본으로 깔고 <strong>'새벽 6시 교내 편의점 알바(오픈조)'</strong>에 더해, 펄펄 끓는 물에 계란 도구를 닦는 극한직업인 <strong>'맥도날드 나이트 워시 & 메인터넌스'</strong>까지 주 3개의 알바를 굴리는 기염을 토했다. 
+    <a class="hb-footnote" data-text="심지어 박효빈은 이 지옥 같은 스케줄 속에서도 버스의 덜컹거림 속에서 전공 서적과 법제론 인강을 들으며 학점 4.0 폭격기가 되었고, 예산안을 10원 단위로 쪼갠 130페이지 분량의 실습 제본록 제출에 '키타 이쿠요'를 가출 청소년으로 로컬라이징한 사례 발표로 교수 극찬까지 받았다. 안예리는 '저 인간은 분명 밤에 잠 대신 광합성을 하는 게 틀림없다. 사람이 아니다'라고 진지하게 경악했다.">[7]</a> 
+</p>
+<p>
+    재미있는 점은 두 사람 모두 같은 종류의 <strong>지역아동센터(일명 지아센) 국가근로장학 멘토링</strong>을 했음에도 불구하고, <strong>서로 배정받은 센터가 아예 달랐다는 것</strong>이다. 근무지가 달랐던 탓에 직장에서 서로의 고통을 실시간으로 직관하지는 못했지만, 알바가 끝난 후 대학로에서 만나 각자 맡은 센터의 '진상 잼민이' 썰을 풀며 피로를 달래는 것이 이들의 유일한 낙이었다. <del>참고로 박효빈은 편의점에서 남의 민증을 도용해 담배를 뚫으려는 잼민이를 상대로 바코드 스캐너 각도를 비틀어 카카오페이 결제 오류를 내는 고도의 회피 기동으로 참교육을 시전하기도 했다(...).</del>
+</p>
+<p>
+    <strong>놀랍게도 안예리와 박효빈이 각자의 지역아동센터에서 멘토링을 하던 시절 가르치고 돌봤던 멘티들은 훗날 효빈시를 뒤흔든 전설의 기수들로 성장하게 된다.</strong> 
+    이들은 성장하면서 러브 라이브! 시리즈의 주역 캐릭터들과 소름 돋을 정도로 닮은 외모와 정체성을 띠게 되었는데, 훗날 안예리가 구의원이 되고 이들이 훌쩍 커서 재회했을 때 안예리는 <strong>"이 효빈시는 도대체 럽라 세계관이랑 무슨 인력이 작용하는 거냐 냐..."</strong>라며 깊은 탄식을 내뱉었다고 한다. 
+</p>
+
+<h4>[안예리 전담 마크 멘티 (일명 전설의 4인방)]</h4>
+<ul>
+    <li><strong><a class="wiki-link" href="양미소.html">양미소</a> (동구대 조리학과 26학번, 2007년생):</strong> 야자와 니코의 완벽한 판박이이자 일명 생존형 니코. 안예리가 맥도날드 야간 알바를 할 때도 매장을 찾아와 햄버거를 시켜 먹으며 끈질긴 인연을 이어갔다. 어엿한 대학생이 되어서도 입버릇처럼 "니코니코니!"를 외치고 다니는 통에 안예리의 뒷목을 잡게 만드는 주범 중 하나다. <del>다행히 요리 실력만큼은 니코처럼 훌륭한지 조리학과에 진학했다.</del></li>
+    <li><strong><a class="wiki-link" href="성공린.html">성공린</a> (동구대 경영학과 26학번, 2007년생):</strong> 호시조라 린 평행이론의 산증인. 숏컷 헤어스타일에 말끝마다 "~냐"를 붙이는 습관까지 완벽하게 장착했다. 초등학생 시절 안예리가 일하던 맥도날드에 찾아와 당당하게 "멘토 쌤! 빅맥 세트 하나 냐!"라고 외치던 흑역사 사진을 안예리가 아직도 인질(?)로 굳건히 보관하고 있다.</li>
+    <li><strong>사양화 (동구대 사회체육학과 26학번, 2007.03.11.생):</strong> 효빈시 안천구 당가동 출신(안천초-당가중-당가고)으로, 무라노 사야카를 쏙 빼닮은 체육계 멘티다. 청주 사씨 본관을 쓰며, 사야카가 어릴 적부터 피겨스케이팅을 해온 타고난 체육인이듯, 사양화 역시 압도적인 운동 신경을 바탕으로 동구대 사회체육학과에 진학했다. 특유의 꼿꼿하고 성실한 성격마저 똑같아, <del>어디서 이상한 야채 그려진 옷만 주워 입지 않는다면</del> 사야카 본인이라 해도 믿을 수준이다.</li>
+    <li><strong>추주리 (안천과학고등학교 2학년, 2009.11.17.생):</strong> 유기리 츠즈리와 완벽하게 닮은 4인방의 막내이자 최연소 멤버. 출신지부터가 전설 그 자체인데, 하스노소라 오타쿠들의 궁극적 성지로 불리며 츠즈리의 한자 이름과 100% 일치하는 <strong>덕빈북도 군천시 조빈면 무철리(霧綴里)</strong> 출신(추계 추씨)이다. (이후 조빈초에서 당가초로 전학) 츠즈리가 작중 '천재'라 불릴 정도의 압도적인 퍼포먼스를 가졌듯, 추주리 역시 <strong>안천과학고등학교</strong>에 당당히 조기 진학한 두뇌파 천재다. <del>이쯤 되면 그냥 군천시 조빈면 명예주민 유기리 츠즈리가 효빈시에 21세기 이세계 전생을 한 수준이다. 심지어 멘티들 중 제일 어린 막내인데 최장신 타이틀과 천재 기믹까지 싹 다 가져간 고증이 무서울 정도다(...).</del></li>
+</ul>
+
+<h4>[박효빈 전담 마크 멘티 (일명 리에하스연합 - 하스노소라 분파)]</h4>
+<p>
+    한편, 박효빈이 맡았던 센터의 라인업도 예사롭지 않았다. 박효빈은 주로 통제 불능의 혈기왕성한 남중생들을 전담 마크하는 극한 보직이었지만, 그 와중에도 아래 여학생들의 멘토링을 전담하며 <strong>'리에하스연합(하스노소라 분파)'</strong>이라 불리는 거대한 스쿨 아이돌 평행우주 세계관을 잉태하고 말았다(...). 
+</p>
+<ul>
+    <li><strong>유초애 (효빈대 음악학과, 2006.05.16.생):</strong> 오토무네 코즈에 판박이. (기계 유씨 / 족포초→안천초→당가중→당가고) 박효빈이 초등학교 3학년부터 5학년까지 멘토링을 담당했다. 코즈에와 똑같이 음악에 두각을 나타내어 현재 효빈대 음악학과에 재학 중이다. <del>어릴 적부터 떡잎이 남달랐던 하스노소라의 대삼각.</del></li>
+    <li><strong>도소영 (동구대 산업디자인학과 26학번, 2007.08.22.생):</strong> 카치마치 코스즈 평행이론. (성주 도씨 / 족포초→당가중→당가고) 박효빈이 초2 후반부터 초4까지 가르쳤다. 훗날 안예리 측 멘티인 추주리(츠즈리), 사양화(사야카)와 맞물리며 효빈시 돌케스트라(DOLLCHESTRA) 유니버스를 기어코 완성시켰다.</li>
+    <li><strong>하화연 (당가고 3학년, 2008.02.25.생):</strong> 히노시타 카호의 현실 강림 버전. (진주 하씨 / 청덕초→화범초→당가중→당가고) 박효빈이 초2 후반부터 초4까지 멘토링했다. 카호처럼 넘치는 에너지와 특유의 발랄함으로 지아센 분위기 메이커 역할을 톡톡히 했을 것으로 추정된다.</li>
+    <li><strong>유세라 (안천과학고 2학년, 2008.06.26.생):</strong> 세라스 야나기다 릴리엔펠트 판박이. (기계 유씨 / 청덕초→청덕중→안천과학고등학교) 외국에서 살다 와서 적응하느라 1년 유급했지만 안천과학고등학교에 진학할 정도로 두뇌가 뛰어나다. 박효빈이 초1 후반부터 초3까지 맡았다. 애니메이션 속 설정처럼 날 때부터 부잣집 영애였던 것은 아니고, <strong>어릴 적엔 아버지의 사업 실패로 지아센에 올 만큼 가난했으나 이후 청덕동 재개발 보상금으로 집안이 떡상(...)하면서 진짜로 부잣집 영애가 되어버린</strong> 기적적인 인생 역전 서사를 자랑한다.</li>
+    <li><strong>이주미 (안천과학고 2학년, 2009.01.12.생):</strong> 카츠라기 이즈미 판박이. (전주 이씨 / 천동초→족포초→계성초→계성중→당가중→안천과학고등학교) 이사를 워낙 많이 다녀 초등학교만 3곳을 거친 프로 전학러다. 박효빈이 족포초 재학 시절이던 초1 후반부터 초2까지 짧고 굵게 멘토링을 담당했다. <del>유세라, 추주리와 나란히 안천과학고등학교에 재학 중인 걸 보면 지아센 시절 박효빈의 이과 교육 능력이 새삼 공포스러워질 지경이다.</del></li>
+</ul>
+
+<p>
+    또한 대학 시절 스터디를 함께 하던 지인 중에 효빈연구원 원장인 원유미의 여동생이자, 시청 공무원으로 일하는 <strong>원우미</strong>(1996년생, 소노다 우미 판박이)도 있었다. 평소 원리원칙을 중시하는 우미와 다혈질 행동파인 예리가 스터디 마감을 어긴 불성실한 학생들에게 쌍으로 정색을 하며 <del>명치에 바람 구멍을 내는</del> 팩트폭행을 날리던 시절의 일화는 효빈대 사회과학대 내에서 아직도 전설처럼 내려온다. 
+</p>
+        <h2 class="anchor-offset" id="s-3">3. 의정 활동 및 주요 정책 (Top-Tier 공약)</h2>
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4" style="border-left: 4px solid var(--wiki-main);">
+            <strong>"탁상행정은 가라! 내 복지는 맥도날드 포스기와 아동센터 짬바에서 나온다!"</strong>
+        </div>
+        <p>
+            단순히 예쁘고 스펙 좋은 의원이 아니다. 2026년 당선 직후부터 <strong>서구의회 조례 발의 건수 압도적 1위</strong>를 달리고 있으며, 다른 기초의원들이 혀를 내두를 정도로 디테일하고 실현 가능한 공약들을 쏟아내고 있다. (실제 우수 기초의원 조례안 평가에서 3관왕을 휩쓸었다.)
+        </p>
+
+        <h3 class="anchor-offset" id="s-3-1">3.1. KKE 에듀센터 청덕분소 유치</h3>
+        <p>
+            안예리 의원의 1호 공약이자, 박효빈 시장과의 끔찍한 덕업일치가 만들어낸 최고의 아웃풋. 
+        </p>
+        <p>
+            박효빈 시장이 사심을 2000% 담아 당선동에 설립했던 'KKE 에듀센터(Korea Kids Education Center)'의 제2분소를 자신의 지역구인 청덕동에 유치하는 데 성공했다. 청덕동은 서구 내에서도 저소득층 다문화 가정이 많아 복지 사각지대가 존재했는데, 안예리는 <strong>"가난하다고 해서 문화와 재능 탐구의 기회마저 가난해져선 안 된다"</strong>며 시청에 집요하게 예산을 요구했다.
+        </p>
+        <p>
+            이 예산을 통과시키는 과정에서 보수 진영 구의원들이 "무슨 구립 시설에서 러시아어랑 발레냐, 쓸데없는 예산 낭비다!"라고 반대하자, 안예리는 엄청난 양의 해외 복지/문화 융합 성공 사례 데이터를 책상에 던지며 <strong>"문화적 빈곤이 곧 세습되는 가난의 시작입니다. 반대하시려면 이 데이터부터 논리적으로 반박해 보시죠"</strong>라고 팩트로 완벽하게 짓눌러버렸다. 결국 반대파 의원들은 데꿀멍하며 예산안 통과에 찬성표를 던질 수밖에 없었다. <a class="hb-footnote" data-text="이때 안예리의 논리적이고 싸늘한 팩트 폭격을 본 동료 의원들은 '마치 얼음의 마녀가 강림한 줄 알았다'며 식은땀을 흘렸다. 완벽한 에리치카의 학생회장 모드였다.">[9]</a>
+        </p>
+        <p>
+            표면적인 명분은 '취약계층 아동을 위한 글로벌 교육 인프라 확충'이었으나, 실상은 <strong>청덕동 한복판에 러시아어 기초 교실, 유소년 발레 아카데미, 그리고 서브컬처 일러스트 교실이 무료로 운영되는</strong> 기염을 토했다(...). <del>완벽한 에리치카 양성소 분점</del> 심지어 센터 급식으로는 주기적으로 보르시와 초콜릿 퐁듀가 제공된다. 
+        </p>
+
+        <h3 class="anchor-offset" id="s-3-2">3.2. '클린-핏' 청년 자립 바우처 개정안</h3>
+        <p>
+            계약직 사회복지사 시절의 경험을 살려, 보육원 시설 퇴소 청년 및 <a class="wiki-link" href="영 케어러.html">영 케어러</a>(가족돌봄청년)들이 단순히 '면접 정장'만 빌려 입는 것이 아니라, <strong>'퍼스널 컬러 진단', '헤어/메이크업 컨설팅', '기초 체력 단련(구립 헬스장 6개월 무료권)'</strong>까지 원스톱으로 지원받을 수 있도록 바우처 범위를 대폭 확대했다. "청년의 자존감은 외면의 깔끔함과 체력에서부터 시작된다"는 그녀의 철학이 담긴 히트 공약이다.
+        </p>
+
+        <h3 class="anchor-offset" id="s-3-3">3.3. 1인 가구 청년 안심 귀가 스카우트 개편 ('뮤즈 가드')</h3>
+        <p>
+            여성 1인 가구와 야간 알바를 하는 청년들이 많은 서구의 특성을 반영하여, 기존의 형식적이었던 안심 귀가 스카우트 제도를 전면 개편했다. 이른바 <strong>'안전 에스코트 엠가드(M-Guard)'</strong> 제도다. <del>이름에서 뮤즈(Muse)의 향기가 강하게 난다.</del> 동네 지리에 밝고 무도 단증이 있는 퇴직 경찰관 및 청년 체육인들을 대거 채용하여, 심야 시간에 골목길 구석구석까지 동행하는 실질적인 치안 정책을 마련해 엄청난 호평을 받았다.
+        </p>
+
+        <h3 class="anchor-offset" id="s-3-4">3.4. 서구 골목상권 르네상스 '오토노키 야시장'</h3>
+        <p>
+            상권이 죽어가던 청덕동 구시장 골목을 살리기 위해 기획한 프로젝트. 지역 청년 창업가들에게 저렴하게 매대를 임대해 주고, 주말마다 코스프레 행사와 길거리 버스킹을 융합한 <strong>'청덕 오토노키(音ノ木) 야시장'</strong>을 개최했다. <del>이름이 대놓고 오토노키자카 학원에서 따왔다.</del> 타 지역의 서브컬처 팬들까지 몰려들어 골목 상권 매출이 300% 이상 폭등하는 기적을 만들어냈다. <a class="hb-footnote" data-text="이 야시장에서 가장 잘 팔리는 메뉴는 박효빈 시장이 아이디어를 낸 '시즈쿠 핫도그'와 '카스미 탕후루'라고 한다. 안예리 의원은 '에리치카 초코바나나'를 팔고 있다.">[10]</a>
+        </p>
+
+        <h2 class="anchor-offset" id="s-4">4. 인간 관계 (현실판 뮤즈 라인업)</h2>
+        <div class="bg-gray-50 border border-gray-300 p-4 rounded mb-4" style="border-left: 4px solid var(--wiki-main);">
+            <strong>"행정은 진지하게, 덕질은 화끈하게!"</strong>
+        </div>
+        <p>
+            재미있게도 안예리의 절친 및 정치적 동지 라인업은 애니메이션 《러브 라이브!》의 뮤즈(μ's) 등장인물들과 소름 돋게 똑 닮아 있다. 애니메이션에서 에리가 3학년 선배인 것과 달리, 현실의 절친들은 <strong>전원 동갑내기 찐친들</strong>이거나 직속 선후배라는 것이 차이점이다. 
+        </p>
+
+        <h3 class="anchor-offset" id="s-4-1">4.1. 노정미 (비례대표 시의원, 영혼의 파트너와 '와시와시')</h3>
+        <p>
+            효빈광역시 시의회 비례대표 의원(더불어민주당, 1996년생). 완벽한 <strong>현실판 토죠 노조미 빙의체</strong>다. 은은한 보랏빛 도는 흑발, 나긋나긋한 사투리, 특유의 눈웃음, 압도적인 글래머 체형까지 모두 갖췄다. 안예리가 정치판에 들어오면서 가장 의지하는 든든한 언니다. 애니메이션의 에리-노조미 관계처럼, 고집이 세고 완벽주의 성향인 안예리가 멘탈이 나갈 때마다 노정미가 부드러운 카리스마로 다독여주는 <strong>완벽한 상호보완 관계</strong>다. 
+        </p>
+        <p>
+            특히 두 사람은 선거에서 당선되기 전인 <strong>HAF 2025 당시 일반인 자원봉사 스태프 자격으로 함께 활약하며 레전드를 찍었다.</strong> 행사장 안전 관리와 길 안내를 맡았는데, 관람객들에게 <strong>"미쳤다, 효빈시에 현실판 노조에리가 강림했다"</strong>라고 불리며 엄청난 플래시 세례를 받았다. 심지어 일본에서 온 성지순례객들이 두 사람을 공식 코스어 스태프로 착각하고 사인 요청을 하기도 했다.
+        </p>
+        <p>
+            물론 감동적인 순간은 오래가지 않고, 노정미가 장난기가 발동할 때면 안예리의 B88 가슴을 향해 기습적인 <strong>"우리 예리치카~ 와시와시(わしわし - 주물주물) 맥스!"</strong>를 시전하곤 한다. 의회 복도나 시청 구내식당에서 안예리가 기겁하며 <strong>"아, 정미 언니 미쳤어?! 여기 시의회라고!! CCTV 다 찍혀!!"</strong>라고 비명을 지르는 장면이 동료 의원들에게 자주 목격된다. <a class="hb-footnote" data-text="노정미 의원의 '와시와시' 침투 속도는 타의 추종을 불허하여, 방심한 틈을 타 0.5초 만에 옆구리와 가슴을 파고든다고 한다. 하지만 예리의 무자비한 로시야 파워 앞에서는 결국 손목이 꺾인 채 질질 끌려가는 엔딩을 맞는다.">[11]</a> <del>이게 대한민국 광역시 의회가 맞나</del>
+        </p>
+
+        <h3 class="anchor-offset" id="s-4-2">4.2. 박효빈 (효빈광역시장, 영원한 멘토이자 에리 오시)</h3>
+        <p>
+            안예리가 족포초 마굴에서 겉돌 때부터 몸을 던져 방패막이가 되어준 동네 오빠이자 멘토. 그리고 <strong>안예리를 모티브가 된 '아야세 에리'의 지독한 진성 팬(오시)</strong>이기도 하다. 
+        </p>
+        <p>
+            시장실 한가운데 1/7 스케일 알터 에리 피규어를 모셔두고 매일 먼지를 닦는 박효빈은, 사석에서 안예리를 빤히 쳐다보며 <strong>"아... 난 현실 3D 인간에게는 관심이 없는데, 스펙이랑 비주얼 싱크로율이 너무 쓸데없이 높잖아..."</strong>라며 한숨을 쉰 적이 있다. <del>성덕의 고뇌</del> <a class="hb-footnote" data-text="박효빈 시장이 가장 아끼는 에리 피규어는 '스쿠페스 할로윈 버전'과 '알터 스쿠페스 테마'라고 한다. 안예리가 실수로 피규어 베이스를 건드렸을 때, 평소 온화한 박효빈 시장의 눈빛이 0.1초 서늘해진 것을 보고 안예리는 식은땀을 흘리며 뒷걸음질을 쳤다.">[12]</a> 
+        </p>
+        <p>
+            시장과 구의원이라는 직함이 생겼음에도 사석에서는 "선배, 진짜 굿즈 적당히 좀 해요. 해외 사절단 오면 어쩌려고 그래요?"라고 잔소리하면서도, 일본 지방의회 연수를 다녀올 때마다 시장실에 뇌물(?)로 바칠 한정판 점보 네소베리를 캐리어에 욱여넣어 오는(...) 전형적인 츤데레 멘티다. 
+        </p>
+
+        <h3 class="anchor-offset" id="s-4-3">4.3. 1998년생 동갑내기 찐친들 (호내영, 하나영, 서진희)</h3>
+        <ul class="wiki-list" style="list-style-type: disc;">
+            <li>
+                <strong>호내영 (효빈광역시청 카페 직원, 코사카 호노카 닮은꼴):</strong><br>
+                초·중·고 동창. 주황색 머리칼에 성격마저 활기차고 긍정적인 초긍정 직진형. 안예리가 구의원 선거에 출마한다고 했을 때 "우리 예리가 드디어 정치를 한다!!"라며 길거리로 뛰쳐나가 가장 먼저 선거 캠프 자원봉사자로 등록했다. 빵을 엄청나게 좋아해서, 회의로 지쳐있는 안예리의 구의원실에 매번 빵을 한 보따리 사 들고 쳐들어와 입에 강제로 밀어 넣는다. 가끔 내영이 무모한 사고(예: 준비도 없이 즉흥적인 동네 골목 상권 살리기 댄스 버스킹 기획 등)를 쳐서 판을 벌려 놓으면, 예리가 행정적/법률적으로 완벽하게 수습해주는 환상의 듀오다.
+            </li>
+            <li>
+                <strong>하나영 (효빈광역시청 구내식당 영양사, 코이즈미 하나요 닮은꼴):</strong><br>
+                사복초 시절부터 함께한 친구. 순둥순둥한 성격에 안경, 그리고 <strong>흰쌀밥에 대한 광기 어린 집착</strong>이 엄청나다. 안예리가 중학교 시절 독하게 다이어트를 할 때마다 그 앞에서 주먹만 한 삼각김밥 3개를 연달아 와구와구 까먹어서 예리의 혈압을 끝까지 올리곤 했다. 한번은 안예리 선거 유세 캠프 저녁 회식 자리에서 고깃집 공깃밥을 혼자서 5그릇을 비우는 기염을 토해 선거 참모들을 경악하게 했다. 지금도 예리가 밤샘 의정 활동으로 밥을 거르고 살이 빠지면 "예리야, 제발 이것 좀 먹고 해!"라며 거대한 3단 보온 도시락을 들이밀어 예리를 당황하게 만든다.
+            </li>
+            <li>
+                <strong>서진희 (효빈대병원 신경외과 전공의, 니시키노 마키 닮은꼴):</strong><br>
+                내성중학교 시절부터 함께한 친구. 붉은빛이 감도는 머리칼, 쿨한 성격, 그리고 남에게 지기 싫어하는 성향까지 완벽한 마키 빙의 스펙을 자랑한다. 성격마저 <strong>완벽한 츤데레</strong>라서, 예리가 야근하다 무리해서 코피를 쏟았다는 소식을 들으면 "진짜 바보 아니야? 구의원 뺏지 달더니 자기 몸 하나 관리 못해서 쓰러지냐?"라고 폭언을 쏟아내면서도, 양손 가득 최고급 영양제와 50만 원짜리 비타민 수액 세트를 들고 의원실 문을 걷어차며 들어온다. <a class="hb-footnote" data-text="수액을 놔주면서도 '이거 엄청 비싼 거니까, 나중에 구의회 예산으로 내 병원에 지원금이나 더 끌어와. 알겠어?'라고 툴툴댔지만, 정작 병원비 청구는 1원도 하지 않았다고 한다. 진희의 완벽한 츤데레적 모먼트다.">[13]</a> 친구들끼리 밥을 먹으면 항상 "아, 진짜 비효율적이네"라고 툴툴대면서 카운터로 가서 지갑을 제일 먼저 여는 것도 진희다.
+            </li>
+        </ul>
+        <div style="background-color: #f8f9fa; border-left: 4px solid var(--wiki-main); padding: 15px; border-radius: 5px; margin-top: 15px;">
+            <strong>※ 덧붙임 (복지여고 장기자랑 전설):</strong> 고등학교 2학년 축제 당시, 내영, 나영, 진희 그리고 예리까지 네 명이서 팀을 짜서 무려 뮤즈의 명곡 <strong>'START:DASH!!'</strong> 춤을 췄다는 흑역사(?)가 전해진다. 호내영이 센터, 하나영과 진희가 양옆을 맡고 안예리가 코치를 담당했는데, 세 명의 춤 호응이 너무 좋아서 관중석에서 "안예리 올라와라!"라는 연호가 쏟아졌고, 결국 앵콜곡(No brand girls)으로 학생회장이었던 안예리까지 교복 치마를 입고 무대에 올라가 미친 듯이 춤을 췄다고 한다. 이 영상은 지금도 박효빈 시장의 휴대폰에 영구 보존되어 있으며, 예리가 말대꾸를 할 때마다 재생 버튼을 누르는 협박용으로 쓰인다.
+        </div>
+
+        <h3 class="anchor-offset" id="s-4-4">4.4. 효빈대 알바 시절의 멘티들 (성공린, 양미소, 원우미)</h3>
+        <p>
+            효빈대 재학 시절, 지역아동센터 멘토링에서 가르쳤던 2007년생 아이들이 훗날 동구대학교에 진학하며 인연이 이어졌다. 
+        </p>
+        <p>
+            동구대 경영학과 26학번 <strong><a class="wiki-link" href="성공린.html">성공린</a></strong>(호시조라 린 평행이론)은 멘토링 시절부터 체육복을 입고 뛰어다니며 "~냐!"를 연발하던 명랑한 꼬맹이였고, 동구대 조리학과 <strong><a class="wiki-link" href="양미소.html">양미소</a></strong>(야자와 니코 판박이, 생존형 니코)는 그 시절부터 생존 본능이 강해 "니코니코니!"를 외치며 간식을 얻어먹던 아이였다. 예리가 구의원이 된 후 이들을 대학생으로 다시 만났을 때 <strong>"이 효빈시는 럽라 세계관이랑 무슨 인력이 작용하는 거냐 냐..."</strong>라며 이마를 짚었다고 한다. <a class="hb-footnote" data-text="안예리가 맥도날드 알바를 할 때 성공린이 찾아와 햄버거 세트를 시키며 '멘토 쌤! 빅맥 세트 하나 냐!'라고 외치던 시절의 흑역사 사진을 안예리가 아직도 의원실에 보관 중이다.">[14]</a>
+        </p>
+        <p>
+            또한, 효빈대 스터디 그룹을 함께했던 <strong><a class="wiki-link" href="원우미.html">원우미</a></strong>(1996년생, 소노다 우미 판박이, 효빈연구원 원유미 원장의 동생)는 현재 효빈시청 공무원으로 재직 중이다. 안예리와 원우미가 스터디 마감을 어긴 학생들에게 쌍으로 정색을 하며 팩트폭행을 날리던 시절의 일화는 효빈대 사회과학대 내에서 공포의 전설로 내려온다. 
+        </p>
+
+        <h3 class="anchor-offset" id="s-4-5">4.5. 윤재훈 (철천지원수이자 인간 폐기물)</h3>
+        <p>
+            족포초 시절부터 박효빈과 안예리를 끔찍하게 괴롭혔고, 노정미에게 성희롱을 시도했던 <strong>인생 최대의 빌런.</strong> 윤재훈 일당은 안예리의 가난과 외모를 조롱하며 씻을 수 없는 상처를 주었다. 
+        </p>
+        <p>
+            안예리가 성인이 되어 서구의회 의원이 되고, 박효빈이 시장이 되면서 상황은 완벽하게 역전되었다. 윤재훈이 2022년 지방선거에서 9.99%를 받고 폭망한 데 이어 2026년 지선에서 4.11%라는 경이로운 득표율로 멸망하자, 안예리는 구의회 사무실에서 박효빈과 통화하며 <strong>"선배, 4.11%면 우리 집 강아지가 출마해도 그것보단 잘 나오겠어요. 쓰레기는 역시 소각장으로 가야죠"</strong>라며 통쾌한 사이다 발언을 날렸다고 한다. <a class="hb-footnote" data-text="실제로 안예리의 반려견인 리트리버가 서구의회 출마를 선언한다면 4.11%보다는 높은 표를 받을 것이라는 게 효빈시 정치 평론가들의 정론이다.">[15]</a>
+        </p>
+        <p>
+            현재 신용불량자가 되어 올림픽공원에서 부정선거 시위를 하고 있는 윤재훈을 볼 때마다 "제발 내 시야에서 치워버리고 싶다"며 극도의 혐오감을 드러낸다.
+        </p>
+
+        <h2 class="anchor-offset" id="s-5">5. 사건 사고</h2>
+
+        <h3 class="anchor-offset" id="s-5-1">5.1. 서구의회 본회의장 '예리치카' 호명 사건</h3>
+        <p>
+            2026년 하반기 서구의회 본회의에서 구정 질문이 이어지던 중, 방청석에 격려차 방문했던 박효빈 시장이 안예리 의원의 날카로운 복지 예산 지적에 감탄한 나머지, 자신의 오시(최애) 뽕이 과하게 차올라 마이크가 켜진 줄도 모르고 <strong>"역시 우리 예리치카, 하라쇼!"</strong>라고 중얼거린 것이 의회 스피커를 타고 전체에 쩌렁쩌렁 울려 퍼진 대참사 사건. 
+        </p>
+        <p>
+            엄숙하던 본회의장은 순간 정적에 휩싸였고, 다른 의원들이 웅성거리는 가운데 안예리는 얼굴이 토마토처럼 새빨갛게 달아오른 채 애써 서류로 얼굴을 가려야 했다. 이 사건 이후 안예리는 일주일 동안 박효빈 시장의 카톡을 읽씹하고, 시장실에 있던 에리 네소베리를 압수하는 극형을 내렸다. <a class="hb-footnote" data-text="박효빈 시장은 네소베리를 인질로 잡힌 후, '예리야 제발 돌려줘... 형이 잘못했다'며 구의원실 문 앞에서 애걸복걸했다는 후문이 있다.">[16]</a> 다음 날 지역 신문 1면에 <code>[박효빈 시장, 서구의회에서 덕밍아웃... 안예리 의원은 '예리치카'?]</code>라는 헤드라인이 대문짝만하게 실리며 전국구 단위로 박제당했다.
+        </p>
+
+        <h3 class="anchor-offset" id="s-5-2">5.2. 악성 민원인 낫 난동 물리적 제압 사건 (로시야 파워)</h3>
+        <p>
+            청덕동 행정복지센터에서 안예리 의원이 일일 민원 봉사를 하던 중, 복지 급여가 삭감되었다며 술에 취해 농사용 낫을 들고 난동을 부리는 악성 민원인이 난입했다. 건장한 청원경찰들조차 흉기에 당황하여 접근하지 못하고 대치하고 있을 때, 
+        </p>
+        <p>
+            안예리 의원이 결재 서류 뭉치를 든 채로 뒤에서 조용히 다가가, <strong>눈 깜짝할 새에 민원인의 흉기 든 손목을 꺾어 낫을 떨어뜨리고 완벽한 엎어치기(메치기)로 대리석 바닥에 꽂아버렸다.</strong> <del>에리치카 펀치, 아니 메치기!</del>
+        </p>
+        <p>
+            중학교 시절 자신을 덮치려던 '고백거절남'을 박살 냈던 그 전설의 '로시야 파워'가 공공기관 한복판에서 화려하게 부활한 것. 민원인이 기절한 후 안예리는 아무 일도 없었다는 듯이 구겨진 치마를 툭툭 털며 "경찰 부르세요. 업무 방해 및 특수협박죄로 고소 들어갑니다"라고 차갑게 말했다. 이 장면이 CCTV를 통해 지역 방송에 보도되면서, 서구 주민들 사이에서는 <strong>"우리 구의원님 건드리면 뼈도 못 추린다", "서구의 금빛 섬광이다"</strong>라는 흉흉한(?) 소문이 돌며 악성 민원이 절반으로 줄어드는 기적(...)이 일어났다.
+        </p>
+
+        <h3 class="anchor-offset" id="s-5-3">5.3. 이석우 교사 지역행사 컷오프 사건</h3>
+        <p>
+            안예리가 구의원에 당선된 직후, 서구에서 열린 '청소년 진로 멘토링 축제'에 학창 시절 자신에게 "전문대나 가라"며 가스라이팅을 했던 복지여고 진로교사 <strong><a class="wiki-link" href="이석우.html">이석우</a></strong>가 강사로 초빙될 뻔한 사건. 
+        </p>
+        <p>
+            행사 기획안에서 이석우의 이름을 발견한 안예리 의원은 당장 주최 측 공무원들을 호출했다. 그리고 <strong>"학생의 꿈을 짓밟고 폭언을 일삼는 교사가 진로 멘토링 강사로 서는 것은 구의원 직을 걸고 좌시할 수 없다"</strong>며, 당시 이석우가 학생들에게 뱉었던 폭언 녹취록과 진정서 데이터를 들이밀며 강사 명단에서 즉각 컷오프시켜버렸다. 뒤늦게 컷오프 소식을 듣고 따지러 온 이석우에게 안예리는 <strong>"선생님, 제가 예전에 말씀드렸죠. 팩트 없이 나대는 건 안 좋다고요. 안녕히 가세요"</strong>라며 완벽한 사이다 복수를 날렸다.
+        </p>
+
+        <h2 class="anchor-offset" id="s-6">6. 여담 (예리치카 밈의 총본산)</h2>
+        <ul class="wiki-list" style="list-style-type: disc;">
+            <li><strong>완벽한 빙의 스펙:</strong> 10월 21일이라는 생일, 학생회장 출신, 1/8 러시아 혈통(외증조부), 금발은 아니지만 이국적인 푸른빛이 도는 눈동자, 키만 살짝 작을 뿐 사실상 동일한 쓰리사이즈(B88)까지. 서브컬처 팬들 사이에서는 "신이 효빈시청에 에리치카를 드랍했다"며 경악을 금치 못하고 있다.</li>
+            <li>구의회 선거 유세 당시, 서구 청년 유권자들이 장난 삼아 유세차량 앞에서 "카시코이 카와이!"를 외치면 쑥스러워하면서도 "예리치카!"라고 받아주는 갓벽한 팬서비스를 선보여 2030 득표율을 쓸어 담았다는 전설이 있다.</li>
+            <li><strong>초콜릿 러버 & 우메보시 혐오:</strong> 식성마저 에리치카와 똑같다. 초콜릿이라면 사족을 못 쓰며, 스트레스를 받을 때마다 가방에서 고급 러시아산 초콜릿을 꺼내 먹는다. <a class="hb-footnote" data-text="주로 먹는 초콜릿은 러시아 국민 초콜릿인 '알룐카(Алёнка)' 초콜릿이다. 구의원실 책상 서랍 2번째 칸을 열면 알룐카 초콜릿이 산더미처럼 쌓여있다.">[17]</a> 반면 신맛이 강한 우메보시(매실장아찌)나 김은 절대 입에 대지 않으며, 구내식당에 미역국이 나오면 미역만 쏙 빼놓고 국물만 먹는다.</li>
+            <li><strong>의도치 않은 하라쇼:</strong> 의회에서 자신이 발의한 복지 조례안이 만장일치로 통과되거나, 꼬여있던 지역 민원이 깔끔하게 해결될 때 자신도 모르게 책상을 치며 <strong>"하라쇼!"</strong>라고 외치는 버릇이 있다. 본인은 무의식적으로 튀어나온다고 주장하지만, 옆에서 지켜보는 보좌진들은 "의원님, 제발 국회를 가세요"라며 이마를 짚는다. <a class="hb-footnote" data-text="최근에는 기분이 너무 좋을 때 '다스비다니야(До свидания)'라는 러시아어 작별 인사까지 무의식적으로 쓴다고 한다. 진성 오타쿠 시장 박효빈의 영향이 크다.">[18]</a></li>
+            <li><strong>압도적인 피지컬:</strong> 160cm 초반의 키임에도 불구하고 다리 길이가 믿기지 않을 정도로 길며, B88 사이즈의 글래머러스한 체형 덕분에 핏이 딱 떨어지는 바지 정장을 입으면 그야말로 '모델이 걸어 다니는 것 같다'는 평을 듣는다. 서구청 공무원들 사이에서는 '서구청의 런웨이 지배자'로 불린다.</li>
+            <li><strong>반전 운전 실력:</strong> 빈틈없는 완벽주의적인 성격과 다르게, 운전대만 잡으면 성격이 돌변하여 미친 듯이 엑셀을 밟는 '스피드광'이다. 호내영이 안예리의 차 조수석에 탔다가 코너링에서 손잡이를 부수기 직전까지 갔다는 괴담이 전해진다. <del>레이서치카</del></li>
+            <li><strong>유령을 무서워함:</strong> 의외로 귀신이나 유령, 어두운 것을 극도로 무서워한다. 밤 10시 넘어서 야근을 할 때 서구청 복도 불이 꺼져있으면 절대 화장실을 혼자 가지 못하고 보좌진이나 당직자를 대동하고 간다. 애니메이션의 에리가 어두운 곳을 무서워하는 속성까지 소름 돋게 똑같다.</li>
+            <li>초등학교 시절 소아비만을 겪은 탓에 현재도 식단 관리를 철저히 하지만, 본인의 절친인 '하나영'과 맛집 탐방을 갈 때면 입 터짐을 주체하지 못하고 먹방을 찍는 반전 매력이 있다.</li>
+            <li>족포초 일진(윤재훈 등)들이나 이석우 교사 등 자신을 깎아내리려는 악질들에게 단 한 번도 기죽지 않고 팩트와 물리력(?)으로 짓밟아버리는 강철 멘탈의 소유자다. 본인 피셜, <strong>"불쌍한 사람을 돕는 게 복지지만, 쓰레기들을 치우는 것도 사회복지의 연장선"</strong>이라는 확고하고도 무시무시한 철학을 가지고 있다.</li>
+            <li>시의회 회의에서 예산 결재를 두고 고민할 때, 노정미 의원이 슬며시 다가와 <strong>"우리 예리치카, 타로 카드 한 장 뽑아볼래?"</strong>라고 말하면 칼같이 "비과학적인 건 사양할게 언니"라고 철벽을 치는 콤비 플레이가 유명하다. <a class="hb-footnote" data-text="하지만 정작 진짜 중요한 선거 개표일 전날에는 노정미에게 타로점을 봐달라고 먼저 부탁했다는 사실이 밝혀져 동료들에게 놀림을 받았다.">[19]</a></li>
+            <li>효빈연구원 원장인 원유미(소노다 우미 판박이)의 여동생 원우미와 스터디 시절 하도 팩트 폭행을 쌍으로 날려대서, 당시 스터디원들은 두 사람을 '냉기의 쌍벽'이라고 불렀다고 한다. <a class="hb-footnote" data-text="원우미 역시 언니 못지않은 원칙주의자라, 스터디 벌금을 1분이라도 늦게 내면 칼같이 연체료를 물렸다.">[20]</a></li>
+        </ul>
+
+        <h2 class="anchor-offset" id="s-7">7. 선거 이력</h2>
+        <table class="data-table text-center text-xs w-full mt-2 mb-6">
+            <thead>
+                <tr><th>선거명</th><th>선거구</th><th>기호</th><th>정당</th><th>후보</th><th>득표율</th><th>당락</th><th>비고</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>제9회 전국 동시지방선거</td><td>효빈광역시 서구 마선거구</td><td>1</td><td><span class="wiki-badge badge-minju">더불어민주당</span></td><td>안예리</td><td>58.42% (1위)</td><td>당선 (1위)</td><td>초선 (역대 서구의회 최고 득표율)</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div> <!-- content-wrapper 끝 -->
+
+    <!-- 🚨 각주 모음 영역 -->
+    <div class="footnote-area shadow-sm wiki-footnote-section" id="footnote-list">
+        <h3>각주</h3>
+        <ul style="list-style: none; padding-left: 0;">
+            <li class="footnote-item" id="fn-1">
+                <a href="#fn-ref-1" class="fn-back">[1]</a>
+                <span class="footnote-content">본인도 이 기믹을 꽤 즐기는 눈치다. 선거 유세 때 아예 에리 이미지 컬러인 수색(하늘색) 점퍼를 입고 다녔다.</span>
+            </li>
+            <li class="footnote-item" id="fn-2">
+                <a href="#fn-ref-2" class="fn-back">[2]</a>
+                <span class="footnote-content">과거 족포초 쓰레기 일당들은 그녀의 이국적인 외모를 두고 '소련 사람처럼 생겼다, 빨갱이 새끼'라며 괴롭힌 적이 있는데, 안예리가 태어난 1998년은 이미 소련이 해체된 지 7년이나 지난 시점이었다. 가해자들의 무식함을 엿볼 수 있는 대목이다.</span>
+            </li>
+            <li class="footnote-item" id="fn-3">
+                <a href="#fn-ref-3" class="fn-back">[3]</a>
+                <span class="footnote-content">다만 윤재훈의 운동신경이 심각하게 구렸기 때문에 던진 우유갑 10개 중 9개는 엉뚱한 창문이나 사물함에 맞고 터졌다고 한다. 본인의 멍청함이 입증된 셈이다.</span>
+            </li>
+            <li class="footnote-item" id="fn-4">
+                <a href="#fn-ref-4" class="fn-back">[4]</a>
+                <span class="footnote-content">해당 남학생 김 모 군은 훗날 이 발언이 문제가 되어 학교폭력위원회에 회부되었고, 사이버 명예훼손으로 경찰 조사까지 받으며 철저히 몰락했다.</span>
+            </li>
+            <li class="footnote-item" id="fn-5">
+                <a href="#fn-ref-5" class="fn-back">[5]</a>
+                <span class="footnote-content">쓰레기통에 처박힌 남학생은 기절했다 깨어나서 '살려주세요 러시아 누나'라고 헛소리를 했다는 전설이 있다.</span>
+            </li>
+            <li class="footnote-item" id="fn-6">
+                <a href="#fn-ref-6" class="fn-back">[6]</a>
+                <span class="footnote-content">이석우가 화를 내며 귀마개를 빼려 하자, 안예리는 눈 하나 깜짝하지 않고 '선생님, 지금 학생의 학습권을 부당하게 침해하시는 겁니다. 교육청에 민원 넣어도 될까요?'라고 받아쳐 이석우를 데꿀멍하게 만들었다.</span>
+            </li>
+            <li class="footnote-item" id="fn-7">
+                <a href="#fn-ref-7" class="fn-back">[7]</a>
+                <span class="footnote-content">실제로 박효빈은 3잡을 뛰면서도 4.5 만점에 4.4를 맞으며 전액 장학금을 놓치지 않는 광기를 보였고, 안예리는 '저 선배는 분명 밤에 잠 대신 광합성을 하는 게 틀림없다. 인간이 아니다'라고 진지하게 의심했다.</span>
+            </li>
+            <li class="footnote-item" id="fn-8">
+                <a href="#fn-ref-8" class="fn-back">[8]</a>
+                <span class="footnote-content">안예리가 맥도날드 알바를 할 때 성공린이 찾아와 햄버거 세트를 시키며 '멘토 쌤! 빅맥 세트 하나 냐!'라고 외치던 시절의 흑역사 사진을 안예리가 아직도 의원실에 보관 중이다.</span>
+            </li>
+            <li class="footnote-item" id="fn-9">
+                <a href="#fn-ref-9" class="fn-back">[9]</a>
+                <span class="footnote-content">이때 안예리의 논리적이고 싸늘한 팩트 폭격을 본 동료 의원들은 '마치 얼음의 마녀가 강림한 줄 알았다'며 식은땀을 흘렸다. 완벽한 에리치카의 학생회장 모드였다.</span>
+            </li>
+            <li class="footnote-item" id="fn-10">
+                <a href="#fn-ref-10" class="fn-back">[10]</a>
+                <span class="footnote-content">이 야시장에서 가장 잘 팔리는 메뉴는 박효빈 시장이 아이디어를 낸 '시즈쿠 핫도그'와 '카스미 탕후루'라고 한다. 안예리 의원은 '에리치카 초코바나나'를 팔고 있다.</span>
+            </li>
+            <li class="footnote-item" id="fn-11">
+                <a href="#fn-ref-11" class="fn-back">[11]</a>
+                <span class="footnote-content">노정미 의원의 '와시와시' 침투 속도는 타의 추종을 불허하여, 방심한 틈을 타 0.5초 만에 옆구리와 가슴을 파고든다고 한다. 하지만 예리의 무자비한 로시야 파워 앞에서는 결국 손목이 꺾인 채 질질 끌려가는 엔딩을 맞는다.</span>
+            </li>
+            <li class="footnote-item" id="fn-12">
+                <a href="#fn-ref-12" class="fn-back">[12]</a>
+                <span class="footnote-content">박효빈 시장이 가장 아끼는 에리 피규어는 '스쿠페스 할로윈 버전'과 '알터 스쿠페스 테마'라고 한다. 안예리가 실수로 피규어 베이스를 건드렸을 때, 평소 온화한 박효빈 시장의 눈빛이 0.1초 서늘해진 것을 보고 안예리는 식은땀을 흘리며 뒷걸음질을 쳤다.</span>
+            </li>
+            <li class="footnote-item" id="fn-13">
+                <a href="#fn-ref-13" class="fn-back">[13]</a>
+                <span class="footnote-content">수액을 놔주면서도 '이거 엄청 비싼 거니까, 나중에 구의회 예산으로 내 병원에 지원금이나 더 끌어와. 알겠어?'라고 툴툴댔지만, 정작 병원비 청구는 1원도 하지 않았다고 한다. 진희의 완벽한 츤데레적 모먼트다.</span>
+            </li>
+            <li class="footnote-item" id="fn-14">
+                <a href="#fn-ref-14" class="fn-back">[14]</a>
+                <span class="footnote-content">당시 성공린은 초등학생임에도 체육복을 입고 온 동네를 뛰어다니며 엄청난 식성을 자랑했다. 안예리는 '얘는 커서 뭐가 되려고 맨날 라멘만 찾냐'며 걱정했다고 한다.</span>
+            </li>
+            <li class="footnote-item" id="fn-15">
+                <a href="#fn-ref-15" class="fn-back">[15]</a>
+                <span class="footnote-content">실제로 안예리의 반려견인 리트리버가 서구의회 출마를 선언한다면 4.11%보다는 높은 표를 받을 것이라는 게 효빈시 정치 평론가들의 정론이다.</span>
+            </li>
+            <li class="footnote-item" id="fn-16">
+                <a href="#fn-ref-16" class="fn-back">[16]</a>
+                <span class="footnote-content">박효빈 시장은 네소베리를 인질로 잡힌 후, '예리야 제발 돌려줘... 형이 잘못했다'며 구의원실 문 앞에서 애걸복걸했다는 후문이 있다.</span>
+            </li>
+            <li class="footnote-item" id="fn-17">
+                <a href="#fn-ref-17" class="fn-back">[17]</a>
+                <span class="footnote-content">주로 먹는 초콜릿은 러시아 국민 초콜릿인 '알룐카(Алёнка)' 초콜릿이다. 구의원실 책상 서랍 2번째 칸을 열면 알룐카 초콜릿이 산더미처럼 쌓여있다.</span>
+            </li>
+            <li class="footnote-item" id="fn-18">
+                <a href="#fn-ref-18" class="fn-back">[18]</a>
+                <span class="footnote-content">최근에는 기분이 너무 좋을 때 '다스비다니야(До свидания)'라는 러시아어 작별 인사까지 무의식적으로 쓴다고 한다. 진성 오타쿠 시장 박효빈의 영향이 크다.</span>
+            </li>
+            <li class="footnote-item" id="fn-19">
+                <a href="#fn-ref-19" class="fn-back">[19]</a>
+                <span class="footnote-content">하지만 정작 진짜 중요한 선거 개표일 전날에는 노정미에게 타로점을 봐달라고 먼저 부탁했다는 사실이 밝혀져 동료들에게 놀림을 받았다.</span>
+            </li>
+            <li class="footnote-item" id="fn-20">
+                <a href="#fn-ref-20" class="fn-back">[20]</a>
+                <span class="footnote-content">원우미 역시 언니 못지않은 원칙주의자라, 스터디 벌금을 1분이라도 늦게 내면 칼같이 연체료를 물렸다.</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 푸터 -->
+    <div id="footer-container"></div>
+    <script src="assets/load-footer.js"></script>
+</div>
+<script src="assets/wiki_parktex.js"></script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+</body>
+</html>

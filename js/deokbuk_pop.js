@@ -48,13 +48,13 @@ function renderDeokbukPopTable(containerId) {
                 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
                     <div style="position: absolute; top: 0; left: 0; height: 100%; width: 80.4%; background-color: #4AD898; z-index: 1;"></div>
                     <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; z-index: 2; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.6), -1px -1px 2px rgba(0,0,0,0.6); font-size: 0.9em; font-weight: bold;">
-                        1970년 4,021,985명
+                        1970년 4,011,985명
                     </div>
                 </div>
                 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
                     <div style="position: absolute; top: 0; left: 0; height: 100%; width: 89.5%; background-color: #4AD898; z-index: 1;"></div>
                     <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; z-index: 2; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.6), -1px -1px 2px rgba(0,0,0,0.6); font-size: 0.9em; font-weight: bold;">
-                        1975년 4,475,727명
+                        1975년 4,505,727명
                     </div>
                 </div>
                 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
@@ -286,7 +286,7 @@ function renderDeokbukPopTable(containerId) {
                 <tbody>
                     <tr style="background-color: #eafbf2; font-weight: bold;">
                         <td style="padding: 6px; border: 1px solid #ccc; text-align: center;">덕빈북도</td>
-                        <td style="padding: 6px; border: 1px solid #ccc;">3,608,524명</td><td style="padding: 6px; border: 1px solid #ccc;">4,021,985명</td><td style="padding: 6px; border: 1px solid #ccc;">4,475,727명</td><td style="padding: 6px; border: 1px solid #ccc;">4,715,950명</td>
+                        <td style="padding: 6px; border: 1px solid #ccc;">3,608,524명</td><td style="padding: 6px; border: 1px solid #ccc;">4,011,985명</td><td style="padding: 6px; border: 1px solid #ccc;">4,505,727명</td><td style="padding: 6px; border: 1px solid #ccc;">4,715,950명</td>
                         <td style="padding: 6px; border: 1px solid #ccc;">3,132,578명</td><td style="padding: 6px; border: 1px solid #ccc;">3,259,806명</td><td style="padding: 6px; border: 1px solid #ccc;">3,160,756명</td><td style="padding: 6px; border: 1px solid #ccc;">3,226,894명</td>
                         <td style="padding: 6px; border: 1px solid #ccc;">3,275,615명</td><td style="padding: 6px; border: 1px solid #ccc;">3,351,587명</td><td style="padding: 6px; border: 1px solid #ccc;">3,390,580명</td><td style="padding: 6px; border: 1px solid #ccc;">3,462,447명</td><td style="padding: 6px; border: 1px solid #ccc; color:#d6001c;">3,523,123명</td>
                     </tr>

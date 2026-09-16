@@ -159,7 +159,7 @@ function renderHyobinAdminHistory(containerId) {
     `;
     // 본문 (연도별 데이터 완벽 복구)
     const table2Body = `
-        <tr class="hb-year-row"><td colspan="3">1963. 4. 2. 구(區)제 시행 및 고송면 일부 편입</td></tr>
+        <tr class="hb-year-row"><td colspan="3">1963. 4. 2. 구(區)제 시행 및 고송면 일부, 창전면 전역 편입</td></tr>
         <tr><td>북부출장소 및 편입지역</td><td><strong>서구</strong></td><td></td></tr>
         <tr><td>본청관할지역 및 동부·중부(일부) 출장소</td><td><strong>중구</strong></td><td></td></tr>
         <tr><td>중부(일부)·남부·청엽 출장소</td><td><strong>남구</strong> 및 남구 청엽출장소</td><td></td></tr>
@@ -180,6 +180,13 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>중구</td><td>27행정동</td><td></td></tr>
         <tr><td>서구</td><td>15행정동</td><td></td></tr>
         <tr><td>남구</td><td>26행정동 2출장소</td><td></td></tr>
+
+        <tr class="hb-year-row"><td colspan="3">1969. 4. 2. 남구, 중구 경계 조정</td></tr>
+        <tr><td>남구 내항1,2동, 목동, 명일동, 시북동, 십덕동</td><td>중구 편입</td><td>구(區)간 조정</td></tr>
+        <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">68 행정동</td><td></td></tr>
+        <tr><td>중구</td><td>33행정동</td><td></td></tr>
+        <tr><td>서구</td><td>15행정동</td><td></td></tr>
+        <tr><td>남구</td><td>20행정동 2출장소</td><td></td></tr>
 
         <tr class="hb-year-row"><td colspan="3">1971. 3. 2. 고송면·당가면 전역 편입 및 북구 신설</td></tr>
         <tr><td>탄성군 고송면 고송리</td><td><strong>북구</strong> 고송동</td><td></td></tr>
@@ -204,7 +211,6 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>항3가동</td><td>항3가1동, 항3가2동</td><td></td></tr>
         <tr><td>마잡동</td><td>마잡동, 등동</td><td></td></tr>
         <tr><td>기존행정동 분동</td><td>7행정동 신설</td><td>총 91행정동 체제</td></tr>
-        <tr><td>남구 내항1,2동, 목동, 명일동, 시북동, 십덕동</td><td>중구 편입</td><td>구(區)간 조정</td></tr>
         <tr><td>중구 사가당1,2,3동</td><td>북구 편입</td><td></td></tr>
         <tr><td>서구 사능동, 사능2가1,2동, 치곡동, 해서동, 소조동</td><td>북구 편입</td><td></td></tr>
         <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">91행정동</td><td>4구 2출장소</td></tr>
@@ -220,14 +226,15 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>북구 사가당1,2동</td><td>북구 사가당1,2,4,5동</td><td></td></tr>
         <tr><td>덕현1,2동</td><td>덕현1~5동</td><td>북구 5동 증가</td></tr>
         <tr><td>남구 어간1동</td><td>남구 어간1,3동</td><td></td></tr>
+        <tr><td>남구 우전동</td><td>남구 우전1,2동</td><td></td></tr>
         <tr><td>중구 목동, 오주동</td><td>중구 오주동</td><td></td></tr>
         <tr><td>중구 시북동, 십덕동</td><td>중구 십북동</td><td></td></tr>
-        <tr><td>중구 중보동, 완동</td><td>중구 중완동</td><td></td></tr>
+        <tr><td>중구 중보동, 완동</td><td>중구 중보동</td><td></td></tr>
         <tr><td>중구 중앙로5,6가동, 중동</td><td>중구 중동</td><td>중구 4동 감소</td></tr>
         <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">97행정동</td><td>4구 2출장소</td></tr>
         <tr><td>중구</td><td>27행정동</td><td></td></tr>
         <tr><td>서구</td><td>17행정동</td><td></td></tr>
-        <tr><td>남구</td><td>28행정동 2출장소</td><td></td></tr>
+        <tr><td>남구</td><td>29행정동 2출장소</td><td></td></tr>
         <tr><td>북구</td><td>25행정동</td><td></td></tr>
 
         <tr class="hb-year-row"><td colspan="3">1973. 1. 2. 동구 신설 및 중수면·흑택면 일부 편입</td></tr>
@@ -243,14 +250,15 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td class="hb-font-bold">총 행정동수</td><td class="hb-font-bold">109행정동</td><td></td></tr>
         <tr><td>중구</td><td>27행정동</td><td></td></tr>
         <tr><td>서구</td><td>19행정동</td><td></td></tr>
-        <tr><td>남구</td><td>30행정동 2출장소</td><td></td></tr>
+        <tr><td>남구</td><td>31행정동 2출장소</td><td></td></tr>
         <tr><td>북구</td><td>19행정동</td><td></td></tr>
         <tr><td>동구</td><td>15행정동</td><td></td></tr>
 
         <tr class="hb-year-row"><td colspan="3">1979. 5. 1. 청엽구 신설</td></tr>
         <tr><td>청엽1,2동</td><td>청엽1,2,3,4동</td><td></td></tr>
         <tr><td>마잡동</td><td>마잡1,2동</td><td></td></tr>
-        <tr><td>동리동</td><td>동리1,2동</td><td></td></tr>
+        <tr><td>동리동</td><td>동리1,2동,언동</td><td></td></tr>
+        <tr><td>창전동</td><td>창전1,2동</td><td></td></tr>
         <tr><td>남구 청엽출장소, 창전출장소</td><td><strong>청엽구</strong>, 청엽구 창전출장소</td><td></td></tr>
         <tr><td>평산동</td><td>평당동, 곽산동</td><td></td></tr>
         <tr><td>어간1동</td><td>어간1,4동</td><td></td></tr>
@@ -260,7 +268,7 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>남구</td><td>15행정동</td><td></td></tr>
         <tr><td>북구</td><td>19행정동</td><td></td></tr>
         <tr><td>동구</td><td>15행정동</td><td></td></tr>
-        <tr><td>청엽구</td><td>19행정동 1출장소</td><td></td></tr>
+        <tr><td>청엽구</td><td>22행정동 1출장소</td><td></td></tr>
 
         <tr class="hb-year-row"><td colspan="3">1981. 5. 1. 남구 행정동 개편</td></tr>
         <tr><td>서구 사복 1동</td><td>서구 사복1,3동</td><td></td></tr>
@@ -273,11 +281,11 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>남구</td><td>17행정동</td><td></td></tr>
         <tr><td>북구</td><td>19행정동</td><td></td></tr>
         <tr><td>동구</td><td>15행정동</td><td></td></tr>
-        <tr><td>청엽구</td><td>19행정동 1출장소</td><td></td></tr>
+        <tr><td>청엽구</td><td>22행정동 1출장소</td><td></td></tr>
 
         <tr class="hb-year-row"><td colspan="3">1983. 5. 1. 안천시 편입 및 안천구 신설, 이자읍 편입</td></tr>
         <tr><td>청엽구 창전1동</td><td>창전1,3동</td><td>1동 증가</td></tr>
-        <tr><td>우전동</td><td>우전1~3동</td><td>2동 증가</td></tr>
+        <tr><td>우전1동</td><td>우전1,3동</td><td>2동 증가</td></tr>
         <tr><td>칠심동</td><td>칠심1,2동</td><td>1동 증가</td></tr>
         <tr><td>남구 월천동</td><td>월천1,2동</td><td>1동 증가</td></tr>
         <tr><td>남구 평당2동</td><td>평당2,3동</td><td>1동 증가</td></tr>
@@ -308,7 +316,7 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>남구</td><td>18행정동</td><td></td></tr>
         <tr><td>북구</td><td>16행정동</td><td></td></tr>
         <tr><td>동구</td><td>19행정동</td><td></td></tr>
-        <tr><td>청엽구</td><td>23행정동 1출장소</td><td></td></tr>
+        <tr><td>청엽구</td><td>24행정동 1출장소</td><td></td></tr>
         <tr><td>안천구</td><td>26행정동 1출장소</td><td></td></tr>
 
         <tr class="hb-year-row"><td colspan="3">1988년 행정구역 조정</td></tr>
@@ -326,7 +334,7 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>남구</td><td>21행정동</td><td></td></tr>
         <tr><td>북구</td><td>18행정동</td><td></td></tr>
         <tr><td>동구</td><td>19행정동</td><td></td></tr>
-        <tr><td>청엽구</td><td>27행정동 1출장소</td><td></td></tr>
+        <tr><td>청엽구</td><td>28행정동 1출장소</td><td></td></tr>
         <tr><td>안천구</td><td>26행정동 1출장소</td><td></td></tr>
 
         <tr class="hb-year-row"><td colspan="3">1989년 행정구역 조정</td></tr>
@@ -405,8 +413,8 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>탄성군</td><td>4읍 5면</td><td></td></tr>
 
         <tr class="hb-year-row"><td colspan="3">1998. 1. 15. 행정동 개편</td></tr>
-        <tr><td>중구 중앙동, 중동, 중완동, 오석동, 원동</td><td>중구 중앙동, 중정동</td><td></td></tr>
-        <tr><td>중구 약맥동, 오주동</td><td>중구 약맥동</td><td></td></tr>
+        <tr><td>중구 중앙동, 중동, 중보동, 오석동, 원동</td><td>중구 중앙동, 중정동</td><td></td></tr>
+        <tr><td>중구 약맥동, 오주동, 일향동</td><td>중구 약맥동</td><td></td></tr>
         <tr><td>중구 내조1,2,3동</td><td>중구 내조 1~2동</td><td></td></tr>
         <tr><td>서구 내성동(칠천동 제외), 북문동</td><td>서구 북성동</td><td></td></tr>
         <tr><td>서구 당선4동, 법정동 칠천동</td><td>당선4동</td><td></td></tr>

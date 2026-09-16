@@ -295,7 +295,7 @@ function renderBukguPopTable(containerId) {
                 <tbody>
                     <tr style="background-color: #f1f3f5; font-weight: bold;">
                         <td style="padding: 6px; border: 1px solid #ccc; text-align: center; color: #555;">효빈광역시 (참고)</td>
-                        <td style="padding: 6px; border: 1px solid #ccc; color: #555;">1,235,343명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">1,514,404명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">1,830,061명</td>
+                        <td style="padding: 6px; border: 1px solid #ccc; color: #555;">1,265,343명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">1,514,404명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">1,830,061명</td>
                         <td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,046,376명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,271,111명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,401,697명</td>
                         <td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,466,659명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,584,443명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,720,665명</td>
                         <td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,832,860명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,967,406명</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">2,999,656명</td>
