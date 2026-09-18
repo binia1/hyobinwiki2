@@ -421,33 +421,7 @@ details.nw-details > summary::after {
 <div class="hb-univ-nav"></div>
 <script src="js/효빈대학.js"></script>
 
-            <div class="gradient-box">
-                <!-- 학교 로고/심볼 이미지 -->
-                <img src="이미지/HIST_UI.webp" alt="HIST 로고" style="width: 200px; display: inline-block;">
-            </div>
-            
-            <details>
-                <summary></summary>
-                <div class="p-2 border border-t-0 bg-white">
-                    <table class="wiki-table" style="margin: 0; width: 100%;">
-                        <tr>
-                            <td colspan="4" class="text-center font-bold text-white" style="background-color: #004488;">대학 정보</td>
-                        </tr>
-                        <tr>
-                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_역사.html')" class="wiki-link text-[#004488]">역사</a></td>
-                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_상징.html')" class="wiki-link text-[#004488]">상징</a></td>
-                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_학부.html')" class="wiki-link text-[#004488]">학부</a></td>
-                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_대학원.html')" class="wiki-link text-[#004488]">대학원</a></td>
-                        </tr>
-                        <tr>
-                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_캠퍼스.html')" class="wiki-link text-[#004488]">캠퍼스</a></td>
-                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_총학생회.html')" class="wiki-link text-[#004488]">총학생회</a></td>
-                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_연구소.html')" class="wiki-link text-[#004488]">부설 연구소</a></td>
-                            <td class="wiki-table-center"><a onclick="goToLink('효빈과학기술원_입시.html')" class="wiki-link text-[#004488]">입시</a></td>
-                        </tr>
-                    </table>
-                </div>
-            </details>
+            <script src="js/효빈과학기술원.js"></script>
         </div>
 
         <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
@@ -847,7 +821,7 @@ details.nw-details > summary::after {
     <script>
         // 검색 기능 핸들러
         function handleSearch() {
-            const query = document.getElementById('searchInput').value;
+            const query = document.getElementById('searchInput')?.value || document.getElementById('headerSearchInput')?.value;
             if (query) {
                 window.open(`https://namu.wiki/w/${encodeURIComponent(query)}`, '_blank');
             } else {
@@ -858,20 +832,32 @@ details.nw-details > summary::after {
         // 메시지 박스 표시 함수
         function showMsg(text) {
             const box = document.getElementById('wiki-msg-box');
+            if(!box) return;
             box.innerText = text; 
             box.style.display = 'block';
             setTimeout(() => { box.style.display = 'none'; }, 2000);
         }
 
-        // 링크 이동 핸들러
-        async function goToLink(filename) {
+        // 링크 이동 핸들러 (동음이의어 및 마우스 휠 지원)
+        function goToLink(filename, event) {
+            // 마우스 휠 클릭(가운데 클릭)이나 Ctrl+클릭 시 브라우저 기본 새 탭 열기 허용
+            if (event && (event.button === 1 || event.ctrlKey || event.metaKey)) return;
+            if (event) event.preventDefault();
+
             if (filename.startsWith('#')) return;
 
             const namuKeywords = ['대한민국', '국립대학', '사립대학'];
-            const pureName = filename.replace('.html', '').replace(/_/g, ' ');
+            const pureName = filename.replace('.html', '');
+            const searchName = pureName.replace(/_/g, ' ');
             
-            if (namuKeywords.includes(pureName) || filename.includes('namu.wiki')) {
-                window.open(`https://namu.wiki/w/${encodeURIComponent(pureName)}`, '_blank');
+            if (namuKeywords.includes(searchName) || filename.includes('namu.wiki')) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(searchName)}`, '_blank');
+                return;
+            }
+
+            // 핵심: 동음이의어(HB_WIKI_ALIASES) 매칭 확인
+            if (window.HB_WIKI_ALIASES && window.HB_WIKI_ALIASES[pureName]) {
+                location.href = window.HB_WIKI_ALIASES[pureName]; 
                 return;
             }
 
@@ -882,6 +868,18 @@ details.nw-details > summary::after {
             }
         }
         
+        // 문서 내 모든 링크에 진짜 href를 심어서 마우스 휠(새 탭) 가능하게 만듦
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll('a[onclick^="goToLink"]').forEach(a => {
+                const match = a.getAttribute('onclick').match(/goToLink\('([^']+)'\)/);
+                if (match && match[1]) {
+                    const url = match[1];
+                    a.setAttribute('href', url); 
+                    a.setAttribute('onclick', `goToLink('${url}', event)`); 
+                }
+            });
+        });
+
         // 목차 및 내부 링크 스무스 스크롤
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -905,45 +903,38 @@ details.nw-details > summary::after {
         });
 
         // --- 각주 툴팁 호버보드 로직 ---
-        const tooltip = document.getElementById('wiki-fn-tooltip');
-        const footnotes = document.querySelectorAll('.wiki-fn');
+        document.addEventListener('DOMContentLoaded', () => {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'wiki-footnote-tooltip';
+            document.body.appendChild(tooltip);
 
-        footnotes.forEach(fn => {
-            fn.addEventListener('mouseenter', (e) => {
-                const targetId = fn.getAttribute('href').substring(1); 
-                const contentEl = document.getElementById(targetId);
-                
-                if (contentEl) {
-                    tooltip.innerHTML = contentEl.innerHTML;
-                    const backLink = tooltip.querySelector('.wiki-fn-back');
-                    if(backLink) {
-                        backLink.style.display = 'none'; 
+            const fnLinks = document.querySelectorAll('sup a');
+
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', (e) => {
+                    const href = link.getAttribute('href');
+                    if (!href.startsWith('#')) return;
+                    
+                    const targetId = href.substring(1);
+                    const targetEl = document.getElementById(targetId);
+
+                    if (targetEl) {
+                        let content = targetEl.innerText;
+                        tooltip.innerText = content;
+                        tooltip.style.display = 'block';
+                        
+                        const rect = link.getBoundingClientRect();
+                        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                        tooltip.style.left = (rect.left + scrollLeft) + 'px';
+                        tooltip.style.top = (rect.bottom + scrollTop + 5) + 'px';
                     }
-                    tooltip.style.display = 'block';
-                }
-            });
+                });
 
-            fn.addEventListener('mousemove', (e) => {
-                const x = e.clientX + 15;
-                const y = e.clientY + 15;
-                
-                const tooltipRect = tooltip.getBoundingClientRect();
-                let finalX = x;
-                let finalY = y;
-
-                if (x + tooltipRect.width > window.innerWidth) {
-                    finalX = e.clientX - tooltipRect.width - 10;
-                }
-                if (y + tooltipRect.height > window.innerHeight) {
-                    finalY = e.clientY - tooltipRect.height - 10;
-                }
-
-                tooltip.style.left = finalX + 'px';
-                tooltip.style.top = finalY + 'px';
-            });
-
-            fn.addEventListener('mouseleave', () => {
-                tooltip.style.display = 'none';
+                link.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
             });
         });
     </script>

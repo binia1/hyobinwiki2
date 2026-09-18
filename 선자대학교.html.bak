@@ -1,0 +1,580 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link href="이미지/효빈위키아이콘.webp" rel="icon"/>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>선자대학교 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root { 
+            /* 문서 테마 컬러: 요하네 그레이 (Yohane Gray) */
+            --wiki-main: #4F4F4F; 
+            --wiki-sub: #333333;
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #F9F9FA; 
+            --wiki-link: #0022AA;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 3.1rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-main); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.15rem !important; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; color: #555; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        .wiki-table { border-collapse: collapse; width: 100%; margin: 10px 0; border: 1px solid #ccc; }
+        .wiki-table th { background-color: var(--wiki-main); color: white; padding: 8px; border: 1px solid #ccc; text-align: center; font-weight: bold; }
+        .wiki-table td { padding: 8px; border: 1px solid #ccc; background: white; }
+        .wiki-table-center { text-align: center; }
+        .wiki-table-sub { background-color: #f5f9fa; font-weight: bold; text-align: center; color: #555; width: 60px; }
+
+        .toc { display: inline-block; min-width: 350px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
+        .toc ul li { margin-bottom: 6px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; font-size: 0.9rem; }
+        
+        blockquote { border-left: 4px solid var(--wiki-main); padding-left: 15px; margin: 15px 0; color: #555; background-color: #f8f9fa; padding: 10px; font-style: italic; }
+        del { color: #aaa; text-decoration: line-through; }
+
+        /* 폴딩(접기/펼치기) 구현 */
+        details.folding-nav { margin: 0 0 30px 0; border: 1px solid #ccc; border-top: none; border-radius: 0 0 4px 4px; background: white; width: 100%; }
+        details.folding-nav summary { font-weight: bold; padding: 10px; cursor: pointer; background-color: #f9f9f9; display: flex; justify-content: center; align-items: center; list-style: none; color: #555; font-size: 0.9rem; }
+        details.folding-nav[open] summary { border-bottom: 1px solid #ccc; background-color: #eee; }
+
+        .nav-box { border: 2px solid var(--wiki-main); margin-top: 40px; font-size: 0.85rem; border-radius: 4px; overflow: hidden; }
+        .nav-box-header { background-color: var(--wiki-main); color: white; padding: 8px; font-weight: bold; text-align: center; }
+        .nav-box-content { padding: 10px; text-align: center; background: white; line-height: 2; }
+        
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 70px; }
+        
+        /* 상단 그라데이션 박스 (전체 너비) */
+        .gradient-box { background-image: linear-gradient(to right, #333333, #4F4F4F, #4F4F4F, #333333); color: white; padding: 40px; text-align: center; border-radius: 4px 4px 0 0; margin-bottom: 0; }
+
+        /* 지하철 노선 아이콘 스타일 */
+        .subway-icon { display: inline-flex; justify-content: center; align-items: center; width: 20px; height: 20px; border-radius: 50%; color: white; font-weight: bold; font-size: 0.75rem; margin-right: 4px; }
+        .subway-line-1 { background-color: #0077DD; color: white; }
+        .subway-line-5 { background-color: #EE0022; color: white; }
+
+        /* 각주 스타일 */
+        .wiki-fn { font-size: 0.8em; vertical-align: super; color: var(--wiki-link); text-decoration: none; font-weight: bold; cursor: help; margin-left: 1px; }
+        .wiki-fn:hover { text-decoration: underline; }
+        .wiki-fn-content-box { border-top: 1px solid #ccc; margin-top: 40px; padding-top: 10px; font-size: 0.9rem; }
+        .wiki-fn-item { margin-bottom: 6px; }
+        .wiki-fn-back { color: var(--wiki-link); text-decoration: none; margin-right: 5px; font-weight: bold; }
+        
+        #wiki-fn-tooltip { position: fixed; display: none; background: #fff; border: 1px solid var(--wiki-main); padding: 8px 12px; font-size: 0.85rem; max-width: 350px; z-index: 100000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-radius: 6px; pointer-events: none; color: #333; line-height: 1.5; }
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }   
+    </style>
+</head>
+<body>
+<div id="wiki-msg-box"></div>
+<div id="wiki-fn-tooltip"></div>
+<nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <div class="flex items-center gap-2">
+        <div class="nav-logo-box">H</div>
+        <a class="font-bold text-xl cursor-pointer no-underline text-white" onclick="goToLink('index.html')">HyobinWiki</a>
+        <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+            <a class="hover:underline font-bold text-white no-underline" onclick="goToLink('index.html')">대문</a>
+            <a class="hover:underline text-white no-underline" onclick="goToLink('최근_변경.html')">최근 변경</a>
+            <a class="hover:underline text-white no-underline" onclick="goToLink('최근_토론.html')">최근 토론</a>
+        </div>
+    </div>
+    <div class="flex flex-col items-end gap-1">
+        <div class="flex items-center gap-2">
+            <div class="hidden lg:flex items-center gap-1 mr-2">
+                <a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" onclick="goToLink('편집요청.html')">편집요청</a>
+                <a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" onclick="goToLink('최근_토론.html')">토론</a>
+                <a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" onclick="goToLink('역사.html')">역사</a>
+            </div>
+            <input class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" id="headerSearchInput" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }" placeholder="문서 검색" type="text"/>
+            <button class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold" onclick="handleSearch('headerSearchInput')">🔍</button>
+        </div>
+    </div>
+</nav>
+
+<div class="wiki-container shadow-lg">
+    <div class="title-area">
+        <div class="txt-lvl-1">선자대학교</div>
+        <div class="flex gap-2 mb-1">
+            <a class="wiki-btn" onclick="goToLink('선자대학교.html')">문서</a>
+            <a class="wiki-btn" onclick="goToLink('토론.html')">토론</a>
+            <a class="wiki-btn" onclick="goToLink('수정.html')">편집</a>
+            <a class="wiki-btn" onclick="goToLink('역사.html')">역사</a>
+        </div>
+    </div>
+    <div class="category-box">
+        <span class="font-bold" style="color: var(--wiki-main);">분류:</span>
+        <a class="wiki-link" onclick="goToLink('효빈시의_대학교.html')">효빈광역시의 대학교</a> | 
+        <a class="wiki-link" onclick="goToLink('전문대학.html')">전문대학</a> |
+        <a class="wiki-link" onclick="goToLink('선자대학교.html')">선자대학교</a> |
+        <a class="wiki-link" onclick="goToLink('효빈광역시_대학_D등급.html')">효빈광역시 대학/D등급</a>
+        <span style="color: var(--wiki-border);">|</span> 
+        <a class="wiki-link" onclick="goToLink('1983년_설립.html')">1983년 설립</a> 
+    </div>
+
+    <!-- 상단 관련 학교/협의회 템플릿 -->
+<div class="mb-5 no-autolink">
+    <div class="no-autolink" id="univ-zone">
+        <!-- JS로 렌더링될 전문대학 둘러보기 틀 영역 -->
+        <div class="hb-college-nav"></div>
+    </div>
+</div>
+<!-- 전문대학 틀 전용 스크립트 로드 -->
+<script src="js/효빈전문대학교.js"></script>
+
+    <!-- ========================================== -->
+    <!-- 1. 전체 너비 상단 배너 -->
+    <!-- ========================================== -->
+    <div class="gradient-box">
+        <div style="background-color: white; display: inline-block; padding: 20px; border-radius: 50%; width: 120px; height: 120px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+            <div style="width: 100%; height: 100%; border: 4px dashed var(--wiki-main); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                <span style="font-size: 1.8rem; font-weight: 900; color: var(--wiki-main); line-height: 1;">SJU</span>
+            </div>
+        </div>
+        <h1 class="text-white font-black text-2xl tracking-wider drop-shadow-md mt-4" style="margin: 0; color: white;">SEONJA UNIVERSITY</h1>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. 전체 너비 둘러보기 폴딩 메뉴 -->
+    <!-- ========================================== -->
+    <details class="folding-nav">
+        <summary>[ 펼치기 · 접기 ]</summary>
+        <div class="p-0 border-t border-gray-200 bg-white">
+            <table class="wiki-table" style="margin: 0; width: 100%; border: none;">
+                <tr><td class="text-center font-bold text-white" colspan="4" style="background-color: var(--wiki-main); padding: 8px;">대학 정보</td></tr>
+                <tr>
+                    <td class="wiki-table-center" style="border: 1px solid #e0f2f1;"><a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('선자대학교_역사.html')">역사</a></td>
+                    <td class="wiki-table-center" style="border: 1px solid #e0f2f1;"><a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('선자대학교_상징.html')">상징</a></td>
+                    <td class="wiki-table-center" style="border: 1px solid #e0f2f1;"><a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('선자대학교_학과.html')">학과</a></td>
+                    <td class="wiki-table-center" style="border: 1px solid #e0f2f1;"><a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('선자대학교_전공심화과정.html')">전공심화과정</a></td>
+                </tr>
+                <tr>
+                    <td class="wiki-table-center" style="border: 1px solid #e0f2f1;"><a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('선자대학교_캠퍼스.html')">캠퍼스</a></td>
+                    <td class="wiki-table-center" style="border: 1px solid #e0f2f1;"><a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('선자대학교_총학생회.html')">총학생회</a></td>
+                    <td class="wiki-table-center" style="border: 1px solid #e0f2f1;"><a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('선자대학교_언론.html')">학내 언론</a></td>
+                    <td class="wiki-table-center" style="border: 1px solid #e0f2f1;"><a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('선자대학교_교류대학.html')">교류 대학</a></td>
+                </tr>
+                <tr><td class="text-center font-bold text-white" colspan="4" style="background-color: var(--wiki-main); padding: 8px;">기타 정보</td></tr>
+                <tr>
+                    <td class="wiki-table-center" style="border: 1px solid #e0f2f1;"><a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('선자대학교_출신인물.html')">출신 인물</a></td>
+                    <td class="wiki-table-center" style="border: 1px solid #e0f2f1;"><a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('선자대학교_주변상권.html')">주변 상권</a></td>
+                    <td class="wiki-table-center" style="border: 1px solid #e0f2f1;"><a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('선자대학교_입시.html')">입시</a></td>
+                    <td class="wiki-table-center" style="border: 1px solid #e0f2f1;"><a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('선자대학교_사건사고.html')">사건 사고</a></td>
+                </tr>
+            </table>
+        </div>
+    </details>
+
+    <!-- ========================================== -->
+    <!-- 본문 레이아웃: 좌측 목차 / 우측 인포박스 -->
+    <!-- ========================================== -->
+    <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+        
+        <!-- 좌측 목차 -->
+        <div class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1 w-full lg:w-auto" id="toc-box">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a class="wiki-link" href="#s-1">개요</a>
+                    <ul><li>1.1. <a class="wiki-link" href="#s-1-1">상징 (요하네의 색)</a></li></ul>
+                </li>
+                <li>2. <a class="wiki-link" href="#s-2">캠퍼스 특징 및 교통</a>
+                    <ul>
+                        <li>2.1. <a class="wiki-link" href="#s-2-1">마계의 통학로: 전천역</a></li>
+                        <li>2.2. <a class="wiki-link" href="#s-2-2">건물 풍 및 분위기</a></li>
+                        <li>2.3. <a class="wiki-link" href="#s-2-3">주요 시설 (심연의 실습장)</a></li>
+                    </ul>
+                </li>
+                <li>3. <a class="wiki-link" href="#s-3">주요 학과</a></li>
+                <li>4. <a class="wiki-link" href="#s-4">계열 (단과대학 구성)</a></li>
+                <li>5. <a class="wiki-link" href="#s-5">전공심화과정</a></li>
+                <li>6. <a class="wiki-link" href="#s-6">학내 문화</a>
+                    <ul><li>6.1. <a class="wiki-link" href="#s-6-1">리틀 데몬의 환영식</a></li></ul>
+                </li>
+                <li>7. <a class="wiki-link" href="#s-7">사건 및 사고</a>
+                    <ul>
+                        <li>7.1. <a class="wiki-link" href="#s-7-1">전천역 블랙 페더(Black Feather) 살포 사건</a></li>
+                        <li>7.2. <a class="wiki-link" href="#s-7-2">해총대학교와의 용접 스파크 대첩</a></li>
+                    </ul>
+                </li>
+                <li>8. <a class="wiki-link" href="#s-8">대학평가</a></li>
+                <li>9. <a class="wiki-link" href="#s-9">서브컬처 밈 및 여담</a>
+                    <ul>
+                        <li>9.1. <a class="wiki-link" href="#s-9-1">"요하네 대학" 성지화 현상</a></li>
+                        <li>9.2. <a class="wiki-link" href="#s-9-2">총장님의 훈시 밈</a></li>
+                        <li>9.3. <a class="wiki-link" href="#s-9-3">기타 아웃풋</a></li>
+                    </ul>
+                </li>
+                <li>10. <a class="wiki-link" href="#s-10">관련 문서</a></li>
+                <li>11. <a class="wiki-link" href="#s-11">둘러보기</a></li>
+                <li>12. <a class="wiki-link" href="#s-12">각주</a></li>
+            </ul>
+        </div>
+
+        <!-- 우측 인포박스 -->
+        <div class="infobox-container order-1 lg:order-2 w-full lg:w-[380px] shrink-0">
+            <aside class="infobox shadow-sm" style="border: 2px solid var(--wiki-main); border-radius: 4px; overflow: hidden; background: white; margin: 0; width: 100%;">
+                <div style="background-color: var(--wiki-main); color: white; padding: 15px; text-align: center; font-size: 1.4rem; font-weight: bold; line-height: 1.3;">
+                    선자대학교<br>
+                    <span style="font-size: 0.9rem; font-weight: normal; color: rgba(255,255,255,0.8);">Seonja University</span>
+                </div>
+                
+                <div style="padding: 30px 0; text-align: center; border-bottom: 1px solid #ccc; background-color: #f5f9fa;">
+                    <img src="이미지/선자대학교_UI.webp" alt="로고" style="width: 140px; margin: 0 auto; display: block;" onerror="this.style.display='none'">
+                    <div style="width: 130px; height: 130px; border-radius: 50%; background-color: var(--wiki-main); margin: 0 auto; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                        <div style="width: 80%; height: 80%; border: 3px dashed white; border-radius: 50%;"></div>
+                    </div>
+                </div>
+
+                <table class="w-full text-sm border-collapse" style="margin: 0; border: none; background: white;">
+                    <tr><th style="background-color: #f0f4f8; color: var(--wiki-main); width: 110px; padding: 8px; border: 1px solid #ccc; text-align: center;">교훈</th><td style="padding: 8px; border: 1px solid #ccc;">진실, 창의, 봉사 <br><span style="color:#aaa; font-size:0.8em;">(학생회 공식: 타천, 강림, 계약)</span></td></tr>
+                    <tr><th style="background-color: #f0f4f8; color: var(--wiki-main); padding: 8px; border: 1px solid #ccc; text-align: center;">슬로건</th><td style="padding: 8px; border: 1px solid #ccc;">어둠을 밝히는 기술의 빛, 선자대학교</td></tr>
+                    <tr><th style="background-color: #f0f4f8; color: var(--wiki-main); padding: 8px; border: 1px solid #ccc; text-align: center;">교색</th><td style="padding: 8px; border: 1px solid #ccc;">요하네 그레이 (#4F4F4F)</td></tr>
+                    <tr><th style="background-color: #f0f4f8; color: var(--wiki-main); padding: 8px; border: 1px solid #ccc; text-align: center;">국가</th><td style="padding: 8px; border: 1px solid #ccc;">대한민국</td></tr>
+                    <tr><th style="background-color: #f0f4f8; color: var(--wiki-main); padding: 8px; border: 1px solid #ccc; text-align: center;">분류</th><td style="padding: 8px; border: 1px solid #ccc;">전문대학 (2/3/4년제)</td></tr>
+                    <tr><th style="background-color: #f0f4f8; color: var(--wiki-main); padding: 8px; border: 1px solid #ccc; text-align: center;">법인</th><td style="padding: 8px; border: 1px solid #ccc;">학교법인 선자학원</td></tr>
+                    <tr><th style="background-color: #f0f4f8; color: var(--wiki-main); padding: 8px; border: 1px solid #ccc; text-align: center;">설립</th><td style="padding: 8px; border: 1px solid #ccc;">1983년 3월 1일</td></tr>
+                    <tr><th style="background-color: #f0f4f8; color: var(--wiki-main); padding: 8px; border: 1px solid #ccc; text-align: center;">총장</th><td style="padding: 8px; border: 1px solid #ccc;">제6대 유서강</td></tr>
+                    <tr><th style="background-color: #f0f4f8; color: var(--wiki-main); padding: 8px; border: 1px solid #ccc; text-align: center;">주소</th><td style="padding: 8px; border: 1px solid #ccc;">효빈광역시 동구 전천로 23 (전천동)</td></tr>
+                    <tr><th style="background-color: #f0f4f8; color: var(--wiki-main); padding: 8px; border: 1px solid #ccc; text-align: center;">재적생</th><td style="padding: 8px; border: 1px solid #ccc;">3,300명 (2025년 기준)</td></tr>
+                    <tr><th style="background-color: #f0f4f8; color: var(--wiki-main); padding: 8px; border: 1px solid #ccc; text-align: center;">웹사이트</th><td style="padding: 8px; border: 1px solid #ccc;"><a class="wiki-link text-[var(--wiki-main)]" href="#">공식 홈페이지</a></td></tr>
+                </table>
+            </aside>
+        </div>
+    </div>
+
+    <!-- 1. 개요 -->
+    <h2 class="anchor-offset" id="s-1">1. 개요</h2>
+    <blockquote>
+        <strong>"그 이름(선자)으로 부르지 마! 요하네 대학이다!"</strong><br>
+        <span style="font-size: 0.9em;">-- 학교 대나무숲 단골 멘트</span>
+    </blockquote>
+    <p><strong>선자대학교(善子大學校)</strong>는 <a class="wiki-link" onclick="goToLink('효빈광역시.html')">효빈광역시</a> <a class="wiki-link" onclick="goToLink('동구(효빈).html')">동구</a> 전천동에 위치한 사립 <a class="wiki-link" onclick="goToLink('전문대학.html')">전문대학</a>이다.</p>
+    <p>서구에 <a class="wiki-link" onclick="goToLink('해총대학교.html')">해총대학교</a>가 있다면 동구에는 <strong>선자대학교</strong>가 있다. 주로 중공업, 국방, 특수 기술 인력을 양성하는 거칠고 투박한 실무 중심의 기술 대학이다.</p>
+    <p>교명인 <strong>선자(善子)</strong>의 한자가 《<a class="wiki-link" onclick="goToLink('러브_라이브!_선샤인!!.html')">러브 라이브! 선샤인!!</a>》의 등장인물 <strong><a class="wiki-link" onclick="goToLink('츠시마 요시코.html')">츠시마 요시코</a></strong>의 본명 한자와 100% 똑같다. 덕분에 서브컬처 팬들 사이에서는 <strong>"타천사(요하네) 대학"</strong>으로 불리며, 효빈시가 '요하네 유니버스'로 불리게 만든 일등 공신이기도 하다. 학교 측에서도 이를 은근히 즐기는지 대놓고 서브컬처 밈을 활용하는 행보를 보이고 있다.</p>
+
+    <h3 class="anchor-offset" id="s-1-1">1.1. 상징 (요하네의 색)</h3>
+    <ul class="list-disc pl-5 space-y-2">
+        <li><strong>교색:</strong> <strong>요하네 그레이 (#4F4F4F)</strong>. 우연의 일치인지 학교 공식 지정 색상이 요시코의 상징색인 '회색'이다. 학교 홈페이지부터 과잠까지 칙칙한 무채색으로 도배되어 있어 학생들은 농담 삼아 "심연의 색"이라고 부른다.</li>
+        <li><strong>상징물:</strong> 본래는 평범한 톱니바퀴와 비둘기였으나, 총학생회 굿즈 등에서는 비둘기가 점점 <strong>까마귀나 검은 깃털(Black Feather)</strong>을 연상시키는 형태로 은근슬쩍 왜곡(?)되어 소비되고 있다.</li>
+    </ul>
+
+    <!-- 2. 캠퍼스 특징 및 교통 -->
+    <h2 class="anchor-offset" id="s-2">2. 캠퍼스 특징 및 교통</h2>
+    <h3 class="anchor-offset" id="s-2-1">2.1. 마계의 통학로: 전천역</h3>
+    <ul class="list-disc pl-5 space-y-2">
+        <li><strong>더블 역세권:</strong> <span class="subway-icon subway-line-1">1</span> <a class="wiki-link" onclick="goToLink('1호선.html')">효빈 도시철도 1호선</a>과 <span class="subway-icon subway-line-5">5</span> <a class="wiki-link" onclick="goToLink('5호선.html')">5호선</a>이 만나는 환승역인 <strong><a class="wiki-link" onclick="goToLink('전천역.html')">전천역</a> 4번 출구</strong>와 바로 연결된다. 효빈시 동쪽 끝에 위치하지만 지하철 인프라 덕분에 접근성은 최상이다.</li>
+        <li><strong>지옥(마계)의 통학길:</strong> <a class="wiki-link" onclick="goToLink('전천역.html')">전천역</a> 자체가 1호선과 5호선의 환승 인파로 어마어마하게 붐빈다. 등교 시간만 되면 선자대의 작업복/제복을 입은 학생들과 인근 동구 공단 출근자들이 뒤섞여 승강장이 그야말로 <strong>'마계(Hell)'</strong>로 변한다. 특히 1호선(파란색)과 5호선(빨간색, 요시코와 같은 1학년 멤버인 루비의 색)이 만나는 지점이라는 점도 덕후들에게는 성지순례 포인트로 작용한다.
+        <li><strong>전천역의 명물:</strong> 4번 출구 앞 편의점은 선자대 학생들의 구내식당이나 다름없다. 아침마다 기름때 묻은 작업복을 입은 학생들이 컵라면을 들이켜며 "오늘 실습 빡세네"라고 한탄하는 모습이 일상이다.</li>
+    </ul>
+
+    <h3 class="anchor-offset" id="s-2-2">2.2. 건물 풍 및 분위기</h3>
+    <p>오래된 회색빛 콘크리트 외벽이 그대로 노출된 80년대 스타일의 공장형 건물이 주를 이룬다. 교색인 '그레이'와 맞물려 날씨가 우중충한 날에는 <strong>"마왕성(고딕 다크 캐슬)"</strong> 같은 스산한 분위기를 풍긴다. 덕분에 타천사 컨셉 놀이를 하기에 더없이 좋은 환경이라는 평가(?)를 받는다.</p>
+
+    <h3 class="anchor-offset" id="s-2-3">2.3. 주요 시설 (심연의 실습장)</h3>
+    <p>가장 유명한 시설은 산업잠수안전과 학생들이 사용하는 <strong>'심해 잠수풀'</strong>이다. 무려 15m 깊이의 어두컴컴한 수조 속으로 뛰어드는 훈련을 하는데, 학과 슬로건이 <strong>"어둠 속으로(심연으로) 들어간다"</strong>이다. 요하네의 타천사 컨셉과 너무나 완벽하게 부합하여 타 학과 학생들도 구경하러 오는 명소다.</p>
+
+    <!-- 3. 주요 학과 -->
+    <h2 class="anchor-offset" id="s-3">3. 주요 학과</h2>
+    <ul class="list-disc pl-5 space-y-2">
+        <li><strong>조선해양플랜트과:</strong> 선자대의 근본이자 간판 학과. 용접 마스크를 쓰고 하루 종일 불꽃을 튀기는 학생들로 가득하다. 효빈시 동구 일대의 대형 조선소 취업률이 어마어마하다.</li>
+        <li><strong>산업잠수안전과:</strong> 심해 잠수사 양성. <strong>[희소]</strong>성이 높아 전국에서 상남자들이 몰려든다.</li>
+        <li><strong>간호학과 (4년제):</strong> 선자대의 <strong>유일한 4년제 학과이자 입결 1위</strong>. 우중충한 공대 분위기 속에서 학교 재정을 책임지는 빛과 소금 같은 존재다. 대학병원 취업률도 매우 높다.</li>
+    </ul>
+
+    <!-- 4. 계열 (단과대학 구성) -->
+    <h2 class="anchor-offset" id="s-4">4. 계열 (단과대학 구성)</h2>
+    <p>거칠고 투박하지만 취업 하나는 확실한 학과들로 구성되어 있다. 서구의 <a class="wiki-link" onclick="goToLink('해총대학교.html')">해총대학교</a>와 학과 라인업이 거의 판박이다.</p>
+    <table class="wiki-table" style="margin-bottom: 20px;">
+        <tr><th colspan="3" style="background-color: var(--wiki-main); color: white; font-size: 1.2rem;">선자대학교 학과 구성</th></tr>
+        <tr style="background-color: #f0f0f0;">
+            <td class="wiki-table-center font-bold" width="20%">계열</td><td class="wiki-table-center font-bold" width="25%">학과</td><td class="wiki-table-center font-bold" width="55%">세부전공 및 비고</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center font-bold bg-[#e0e0e0]" rowspan="9">스마트공학계열</td>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('조선해양플랜트과.html')">조선해양플랜트과</a></td>
+            <td><strong>[간판]</strong> 선박 용접 및 배관. 동구 지역 조선소 취업 깡패.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('특수건설기계과.html')">특수건설기계과</a></td>
+            <td>굴착기, 크레인 면허 취득. 실습장에 가면 땅 파는 소리가 요란하다.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('산업잠수안전과.html')">산업잠수안전과</a></td>
+            <td><strong>[희소]</strong> 심해잠수사 양성. "어둠 속으로 들어간다"는 타천사풍 슬로건.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('자동차튜닝과.html')">자동차튜닝과</a></td>
+            <td>자동차 튜닝 및 디테일링. 학생들 차가 몹시 요란하다.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('미래모빌리티정비과.html')">미래모빌리티정비과</a></td>
+            <td>전기차 정비 및 자동차 검사원.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('전기설비과.html')">전기설비과</a></td>
+            <td>전기기능사 취득 및 공단 시설 관리.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('스마트팩토리기계과.html')">스마트팩토리기계과</a></td>
+            <td>기계 조립 및 공장 자동화 생산직.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('화학공업과.html')">화학공업과</a></td>
+            <td>위험물 관리 자격증 취득.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('소방방재과.html')">소방방재과</a></td>
+            <td>소방 설비 시공 및 관리자 양성.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center font-bold bg-gray-50" rowspan="5">국방·경찰계열</td>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('특수전부사관과.html')">특수전부사관과</a></td>
+            <td>특전사/UDT 준비. "타천 강림!"을 외치며 낙하 훈련을 하진 않는다.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('해군기술부사관과.html')">해군기술부사관과</a></td>
+            <td>해군 부사관 임관. 동구가 바다와 가까워 해양 훈련에 유리하다.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('국방탄약관리과.html')">국방탄약관리과</a></td>
+            <td>육군 탄약 관리관. 폭발물을 다루는 흉악한 학과.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('해양경찰과.html')">해양경찰과</a></td>
+            <td>해경 공채 및 특채 준비.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('경호보안과.html')">경호보안과</a></td>
+            <td>신변 보호 및 무도 단증 취득.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center font-bold bg-[#e0e0e0]" rowspan="3">해양·스포츠계열</td>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('해양레저스포츠과.html')">해양레저스포츠과</a></td>
+            <td>요트 면허 및 스킨스쿠버. 동구 앞바다를 제집처럼 쓴다.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('축구융합과.html')">축구융합과</a></td>
+            <td>축구 심판 및 유소년 코치 양성.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('스포츠재활트레이닝과.html')">스포츠재활트레이닝과</a></td>
+            <td>헬스 트레이너 및 노인 체육.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center font-bold bg-gray-50" rowspan="5">보건·복지계열</td>
+            <td class="wiki-table-center"><a class="wiki-link text-[var(--wiki-main)] font-bold" onclick="goToLink('간호학과.html')">간호학과</a></td>
+            <td><strong>[유일 4년제] 선자대 입결 탑.</strong> 학교 재정의 핵심.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('응급구조과.html')">응급구조과</a></td>
+            <td>119 구급대원 및 병원 이송 요원.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('치위생과.html')">치위생과</a></td>
+            <td>여학생 다수. 지역 치과 의원 취업.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('사회복지과.html')">사회복지과</a></td>
+            <td>(야간) 만학도 중심의 복지사 양성.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('아동보육과.html')">아동보육과</a></td>
+            <td>어린이집 교사 양성.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center font-bold bg-[#e0e0e0]" rowspan="4">서비스·조리·글로벌</td>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('호텔조리제빵과.html')">호텔조리제빵과</a></td>
+            <td>암흑 요리(타천사의 눈물)를 만들진 않는다. 리조트 및 단체 급식 특화.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('반려동물케어과.html')">반려동물케어과</a></td>
+            <td>펫 미용 및 동물 병원 보조.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('호텔관광과.html')">호텔관광과</a></td>
+            <td>카지노 딜러 기초 및 여행사.</td>
+        </tr>
+        <tr>
+            <td class="wiki-table-center"><a class="wiki-link" onclick="goToLink('글로벌기계과.html')">글로벌기계과</a> 등</td>
+            <td>외국인 유학생 전용 트랙. 베트남, 우즈벡 학생들이 많다.</td>
+        </tr>
+    </table>
+
+    <!-- 5. 전공심화과정 -->
+    <h2 class="anchor-offset" id="s-5">5. 전공심화과정</h2>
+    <p>일반 대학원은 없으나, 3년제 공학 계열을 졸업한 학생들이 현장에서 1~2년 일하다가 야간반으로 복귀해 4년제 학사 학위를 따는 <strong>학사학위 전공심화과정</strong>이 활성화되어 있다. 야간에 학교에 가보면 이미 반장 직급을 단 40대 아저씨들이 용접 마스크를 벗고 책을 펴는 짠한 광경이 펼쳐진다.</p>
+
+    <!-- 6. 학내 문화 -->
+    <h2 class="anchor-offset" id="s-6">6. 학내 문화</h2>
+    <h3 class="anchor-offset" id="s-6-1">6.1. 리틀 데몬의 환영식</h3>
+    <p>학교의 1학년 신입생들은 선배들로부터 자연스럽게 <strong>'리틀 데몬(Little Demon)'</strong>이라 불린다. 본래 요하네가 자신의 팬들을 부르는 애칭이지만, 선자대에서는 실습 현장의 막내들을 부르는 친근한(?) 멸칭으로 쓰인다. "어이, 리틀 데몬! 거기 용접봉 좀 가져와라!" 하는 식이다.</p>
+    <p>신입생 환영회(OT) 때 총장님이 연단에 올라 <strong>"여러분, 선한 아이(善子)가 되십시오"</strong>라고 엄숙하게 훈시하면, 객석의 총학생회장이 벌떡 일어나 확성기로 <strong>"요하네입니다!(ヨハネよ!)"</strong>라고 받아치는 것이 10년째 이어져 내려오는 선자대학교만의 핵심 전통이다. 이 광경을 처음 본 타 대학교 학생들은 경악을 금치 못한다.</p>
+
+    <!-- 7. 사건 및 사고 -->
+    <h2 class="anchor-offset" id="s-7">7. 사건 및 사고</h2>
+    <h3 class="anchor-offset" id="s-7-1">7.1. 전천역 블랙 페더(Black Feather) 살포 사건</h3>
+    <p>7월 13일, 요시코(요하네)의 생일날 벌어진 대형 해프닝. 타 지역에서 선자대학교로 이른바 '성지순례'를 온 극성 서브컬처 팬덤이 전천역 4번 출구와 학교 정문 앞 광장에 요하네의 상징인 <strong>까만 깃털 수백 장</strong>을 공중에 살포하고 도망간 사건이다. 출근길에 나섰던 선자대 청소 노동자들과 전천역 역무원들은 바닥에 들러붙은 까만 깃털을 치우느라 그야말로 생고생을 해야 했다. 이후 총학생회 차원에서 "타천 의식은 지정된 구역에서만 해주세요"라는 웃픈 공문이 내려왔다.</p>
+
+    <h3 class="anchor-offset" id="s-7-2">7.2. 해총대학교와의 용접 스파크 대첩</h3>
+    <p>효빈시 서구를 주름잡는 <strong><a class="wiki-link" onclick="goToLink('해총대학교.html')">해총대학교</a></strong>와 학과 구성이 거의 판박이라 라이벌 의식이 매우 심하다. 해총대 학생들이 "우린 공단(서구)이 바로 옆이라 취업이 더 낫다"고 도발하면, 선자대 학생들은 "우린 지하철 더블 역세권(전천역)이라 도망치기 더 좋다"며 맞불을 놓는다. 한 번은 양 학교 기계과 학생들이 친선 체육대회에서 만나 줄다리기 대신 <strong>제한 시간 내 알루미늄 비드 용접 배틀</strong>을 벌여 산학협력단 교수들을 기절초풍하게 만들었다.</p>
+
+    <!-- 8. 대학평가 -->
+    <h2 class="anchor-offset" id="s-8">8. 대학평가</h2>
+    <p>명목상 교육부 대학 평가에서는 <strong>D등급(하위권)</strong>을 면치 못하고 있다. 하지만 지역 내 중소/중견기업 및 동구 해양 플랜트 하청 업체들 사이에서는 "선자대 애들은 현장에 던져 놓으면 알아서 굴러간다"는 막강한 신뢰를 얻고 있어 <strong>실질 취업률은 최상위권</strong>을 달리는 기형적인 스펙을 자랑한다.</p>
+
+    <!-- 9. 서브컬처 밈 및 여담 -->
+    <h2 class="anchor-offset" id="s-9">9. 서브컬처 밈 및 여담</h2>
+    <h3 class="anchor-offset" id="s-9-1">9.1. "요하네 대학" 성지화 현상</h3>
+    <ul class="list-disc pl-5 space-y-2">
+        <li>이 학교가 효빈위키와 인터넷 커뮤니티에서 유명해진 결정적인 이유. <strong>선자(善子)</strong>라는 교명이 《러브 라이브! 선샤인!!》의 중2병 타천사 아이돌 <strong>츠시마 요시코(요하네)</strong>의 한자와 완전히 동일하다.</li>
+        <li>이 때문에 전국 각지의 럽라이버들이 "어둠을 밝히는 요하네 대학"이라 부르며 성지순례 코스에 포함시켰다. 이들은 학교 정문에서 검은 옷을 입고 "타천!" 포즈를 취하고 사진을 찍고 돌아간다.</li>
+    </ul>
+
+    <h3 class="anchor-offset" id="s-9-2">9.2. 효빈광역시 타천 유니버스의 한 축</h3>
+    <p>효빈광역시에는 유독 요하네와 관련된 지명이 많다. 동구의 <strong>선자대학교</strong>뿐만 아니라, 안천구에는 아예 대놓고 <strong>타천역(墮天驛)</strong>과 <strong>성택대학교(마계관)</strong>가 있으며, 중구에는 <strong>창선역(蒼善驛)</strong>이 있다. 팬들은 이 지역들을 묶어 <strong>'효빈시 요하네 교(敎) 3대 성지'</strong>라고 부른다.</p>
+
+    <h3 class="anchor-offset" id="s-9-3">9.3. 기타 아웃풋</h3>
+    <p>정계나 고위 공무원 진출은 사실상 전무하다. 다만 한국산업인력공단이나 지역 안전보건공단 실무직으로 진출하는 동문들은 꽤 있는 편이며, 무엇보다 효빈시 인근 공단 공무팀 반장/기장 라인에 수많은 동문들이 끈끈한 네트워크를 형성하고 있다.</p>
+
+    <!-- 10. 관련 문서 -->
+    <h2 class="anchor-offset" id="s-10">10. 관련 문서</h2>
+    <ul class="list-disc pl-5">
+        <li><a class="wiki-link" onclick="goToLink('효빈광역시.html')">효빈광역시</a></li>
+        <li><a class="wiki-link" onclick="goToLink('전문대학.html')">전문대학</a></li>
+        <li><a class="wiki-link" onclick="goToLink('동구(효빈).html')">동구(효빈)</a></li>
+        <li><a class="wiki-link" onclick="goToLink('전천역.html')">전천역</a> (가장 가까운 더블 역세권 환승역)</li>
+        <li><a class="wiki-link" onclick="goToLink('해총대학교.html')">해총대학교</a> (영원한 라이벌)</li>
+        <li><strong><a class="wiki-link" onclick="goToLink('츠시마 요시코.html')">츠시마 요시코</a></strong> (본교의 비공식 수호신이자 타천사)</li>
+    </ul>
+
+    <!-- 11. 둘러보기 -->
+    <h2 class="anchor-offset" id="s-11">11. 둘러보기</h2>
+    <div class="nav-box shadow-sm mt-5">
+        <div class="nav-box-header">선자대학교 관련 문서</div>
+        <div class="nav-box-content leading-loose text-sm">
+            <a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('선자대학교.html')">선자대학교</a> · 
+            <a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('선자대학교_전공심화과정.html')">전공심화과정</a> · 
+            <a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('선자대학교_총학생회.html')">총학생회</a> · 
+            <a class="wiki-link text-[var(--wiki-main)]" onclick="goToLink('학교법인_선자학원.html')">선자학원</a>
+        </div>
+    </div>
+
+    <!-- 12. 각주 -->
+    <h2 class="anchor-offset" id="s-12">12. 각주</h2>
+    <div class="wiki-fn-content-box">
+        <div class="wiki-fn-item" id="fn-1">
+            <a class="wiki-fn-back" href="#rfn-1">[1]</a> <a class="wiki-link" onclick="goToLink('1호선.html')">효빈 도시철도 1호선</a>·<a class="wiki-link" onclick="goToLink('5호선.html')">5호선</a> <a class="wiki-link" onclick="goToLink('전천역.html')">전천역</a> 4번 출구 인근. <span class="subway-icon subway-line-1">1</span> <span class="subway-icon subway-line-5">5</span>
+        </div>
+    </div>
+
+    <div id="footer-container"></div>
+    <script src="assets/load-footer.js"></script>
+</div>
+
+<!-- ================= [오류 완전히 수정된 무결점 JS 스크립트] ================= -->
+<script>
+    function handleSearch() {
+        const query = document.getElementById('headerSearchInput').value;
+        if (query) {
+            window.open(`https://namu.wiki/w/${encodeURIComponent(query)}`, '_blank');
+        } else {
+            showMsg('검색어를 입력해주세요.');
+        }
+    }
+
+    function showMsg(text) {
+        const box = document.getElementById('wiki-msg-box');
+        box.innerText = text; 
+        box.style.display = 'block';
+        setTimeout(() => { box.style.display = 'none'; }, 2000);
+    }
+
+    async function goToLink(filename) {
+        if (filename.startsWith('#')) return;
+        
+        const pureName = filename.replace('.html', '').replace(/_/g, ' ');
+        const namuKeywords = ['대한민국', '전문대학', '츠시마 요시코', '러브 라이브! 선샤인!!'];
+        
+        // 정상적인 나무위키 외부 링크로 열기
+        if (filename.includes('namu.wiki') || namuKeywords.includes(pureName)) {
+            window.open(`https://namu.wiki/w/${encodeURIComponent(pureName)}`, '_blank');
+            return;
+        }
+        
+        // 내부 페이지 이동
+        try {
+            location.href = filename;
+        } catch (e) {
+            showMsg('문서를 찾을 수 없습니다.');
+        }
+    }
+    
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const targetId = this.getAttribute('href');
+            if (!targetId || targetId === '#') return;
+            e.preventDefault();
+            const targetElement = document.querySelector(targetId);
+            if(targetElement){
+                window.scrollTo({ top: targetElement.offsetTop - 80, behavior: 'smooth' });
+                targetElement.style.transition = 'background 0.5s';
+                targetElement.style.backgroundColor = '#e0e0e0'; 
+                setTimeout(() => { targetElement.style.backgroundColor = 'transparent'; }, 1500);
+            }
+        });
+    });
+
+    const tooltip = document.getElementById('wiki-fn-tooltip');
+    const footnotes = document.querySelectorAll('.wiki-fn');
+    
+    footnotes.forEach(fn => {
+        fn.addEventListener('mouseenter', (e) => {
+            const targetId = fn.getAttribute('href').substring(1); 
+            const contentEl = document.getElementById(targetId);
+            if (contentEl) {
+                tooltip.innerHTML = contentEl.innerHTML;
+                const backLink = tooltip.querySelector('.wiki-fn-back');
+                if(backLink) backLink.style.display = 'none'; 
+                tooltip.style.display = 'block';
+            }
+        });
+        fn.addEventListener('mousemove', (e) => {
+            const x = e.clientX + 15;
+            const y = e.clientY + 15;
+            const tooltipRect = tooltip.getBoundingClientRect();
+            let finalX = x;
+            let finalY = y;
+            if (x + tooltipRect.width > window.innerWidth) finalX = e.clientX - tooltipRect.width - 10;
+            if (y + tooltipRect.height > window.innerHeight) finalY = e.clientY - tooltipRect.height - 10;
+            tooltip.style.left = finalX + 'px';
+            tooltip.style.top = finalY + 'px';
+        });
+        fn.addEventListener('mouseleave', () => {
+            tooltip.style.display = 'none';
+        });
+    });
+</script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+</body>
+</html>

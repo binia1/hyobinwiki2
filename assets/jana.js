@@ -153,7 +153,7 @@
         "청엽 브레드 뮤지엄": "청엽 브레드 뮤지엄.html",
         "누마즈 교류기념관": "누마즈 교류기념관.html",
         "니지스터디홀": "니지스터디홀.html",
-        "베르데홀": "효빈대_B선_역_템플릿.html?id=B09",
+        "베르데홀": "베르데홀.html",
         "만화애니메이션의전당": "만화애니메이션의전당.html",
         "십덕아트파크": "십덕아트파크.html",
         "우이문화촌": "우이문화촌.html",
@@ -2234,7 +2234,6 @@
         "전천동": "전천동.html",
         "조유동": "조유동.html",
         "중수동": "중수동.html",
-        "중앙동": "중앙동.html",
         "중앙로1가": "중앙로1가.html",
         "중앙로2가": "중앙로2가.html",
         "중앙로3가": "중앙로3가.html",
@@ -3752,7 +3751,7 @@
   "자과대역": "효빈대_B선_역_템플릿.html?id=B08",
   "B08": "효빈대_B선_역_템플릿.html?id=B08",
 
-  "베르데홀": "효빈대_B선_역_템플릿.html?id=B09",
+  "베르데홀": "베르데홀.html",
   "베르데홀역": "효빈대_B선_역_템플릿.html?id=B09",
   "베르데 홀역": "효빈대_B선_역_템플릿.html?id=B09",
   "베르데역": "효빈대_B선_역_템플릿.html?id=B09",
@@ -4067,7 +4066,7 @@
 "석서면": "강주시.html#석서면",
 "풍영면": "강주시.html#풍영면",
 "풍원면": "강주시.html#풍원면",
-"중앙동": "강주시.html#중앙동",
+"중앙동(중앙동)": "강주시.html#중앙동",
 "신흥동": "강주시.html#신흥동",
 "광릉동": "강주시.html#광릉동",
 "심전1동": "강주시.html#심전1동",
@@ -4104,7 +4103,7 @@
     "정중면": "덕산구.html#정중면",
 
     // 13.2. 구 덕주읍 관할 행정동
-    "중앙동": "덕산구.html#중앙동",
+    "중앙동(덕주)": "덕산구.html#중앙동",
     "주기동": "덕산구.html#주기동",
     "무원동": "덕산구.html#무원동",
     "상미동": "덕산구.html#상미동",
@@ -4182,7 +4181,7 @@
 "청전2동": "방산시.html#청전2동",
 "주강1동": "방산시.html#주강1동",
 "주강2동": "방산시.html#주강2동",
-"중앙동": "방산시.html#중앙동",
+"중앙동(방산)": "방산시.html#중앙동",
 "율목동": "방산시.html#율목동",
 "탕천동": "방산시.html#탕천동",
 "북산동": "방산시.html#북산동",
@@ -6193,7 +6192,6 @@
   "중수면": "중수면.html",
   "중수역": "중수역.html",
   "중앙고등학교역": "중앙고등학교역.html",
-  "중앙동": "중앙동.html",
   "중앙로1가역": "중앙로1가역.html",
   "중앙로1가": "중앙로1가.html",
   "중앙로3가역": "중앙로3가역.html",
@@ -7196,20 +7194,20 @@
   "경동": "유내동.html",
   "리사동": "유내동.html",
   "정동": "유내동.html",
-  "심동1가": "중앙동.html",
-  "심동2가": "중앙동.html",
-  "창선동1가": "중앙동.html",
-  "창선동2가": "중앙동.html",
-  "창선동3가": "중앙동.html",
-  "원동1가": "중앙동.html",
-  "원동2가": "중앙동.html",
-  "원동3가": "중앙동.html",
-  "원동4가": "중앙동.html",
-  "소장동1가": "중앙동.html",
-  "소장동2가": "중앙동.html",
-  "지유동1가": "중앙동.html",
-  "지유동2가": "중앙동.html",
-  "훈동": "중앙동.html",
+  "심동1가": "중앙동(효빈).html",
+  "심동2가": "중앙동(효빈).html",
+  "창선동1가": "중앙동(효빈).html",
+  "창선동2가": "중앙동(효빈).html",
+  "창선동3가": "중앙동(효빈).html",
+  "원동1가": "중앙동(효빈).html",
+  "원동2가": "중앙동(효빈).html",
+  "원동3가": "중앙동(효빈).html",
+  "원동4가": "중앙동(효빈).html",
+  "소장동1가": "중앙동(효빈).html",
+  "소장동2가": "중앙동(효빈).html",
+  "지유동1가": "중앙동(효빈).html",
+  "지유동2가": "중앙동(효빈).html",
+  "훈동": "중앙동(효빈).html",
   "완동1가": "중정동.html",
   "완동2가": "중정동.html",
   "완동3가": "중정동.html",
@@ -10329,7 +10327,13 @@
   "당가중학교": "당가중학교.html",
   "안천과학고등학교": "안천과학고등학교.html",
   "창건고등학교": "창건고등학교.html",
-    "워터드롭 호텔": "워터드롭 호텔.html"
+    "워터드롭 호텔": "워터드롭 호텔.html",
+      "중앙동(효빈)": "중앙동(효빈).html",
+  "카즈노 세이라": "카즈노 세이라.html",
+  "카즈노 리아": "카즈노 리아.html",
+  "패드립": "패드립.html"
+
+
 
 
 
@@ -12100,4 +12104,59 @@ document.addEventListener("DOMContentLoaded", function() {
             wrapper.style.display = isCollapsed ? 'none' : '';
         });
     });
+});
+
+// 1. 전역 최상위 goToLink 함수 (동음이의어 사전 매칭 + 새 탭 허용)
+window.goToLink = function(filename, event) {
+    // 마우스 휠 클릭(가운데 클릭)이나 Ctrl+클릭 시 브라우저 기본 새 탭 열기 허용
+    if (event && (event.button === 1 || event.ctrlKey || event.metaKey)) return;
+    if (event) event.preventDefault();
+
+    if (!filename || filename.startsWith('#')) return;
+
+    const namuKeywords = ['대한민국', '국립대학', '사립대학', '박효빈'];
+    const pureName = filename.replace('.html', '');
+    const searchName = pureName.replace(/_/g, ' '); 
+
+    // ① 나무위키 예외 키워드 처리
+    if (namuKeywords.includes(searchName) || filename.includes('namu.wiki')) {
+        window.open(`https://namu.wiki/w/${encodeURIComponent(searchName)}`, '_blank');
+        return;
+    }
+
+    // ② 핵심! 동음이의어(HB_WIKI_ALIASES) 매칭 확인
+    if (window.HB_WIKI_ALIASES && window.HB_WIKI_ALIASES[pureName]) {
+        location.href = window.HB_WIKI_ALIASES[pureName]; 
+        return;
+    }
+
+    // ③ 일반 이동
+    location.href = filename;
+};
+
+// 2. 뷰포트에 새로 생기는 동적 요소(인포박스, JS 로드 템플릿 등)까지 실시간 추적하여 링크와 마우스 휠 살리기
+function autoPatchWikiLinks() {
+    document.querySelectorAll('a[onclick*="goToLink"], a.wiki-link, a.hb-link').forEach(a => {
+        let onclickAttr = a.getAttribute('onclick');
+        
+        if (onclickAttr) {
+            const match = onclickAttr.match(/goToLink\s*\(\s*'([^']+)'/);
+            if (match && match[1]) {
+                const url = match[1];
+                a.setAttribute('href', url); // 브라우저가 진짜 링크로 인식하게 만들어 휠 클릭(새 탭) 활성화
+                a.setAttribute('onclick', `goToLink('${url}', event); return false;`);
+            }
+        }
+    });
+}
+
+// 페이지가 처음 열릴 때 및 인포박스 등 자바스크립트로 내용이 나중에 채워질 때 자동 실행
+document.addEventListener("DOMContentLoaded", () => {
+    autoPatchWikiLinks();
+    
+    // 동적으로 생성되는 HTML(대찬대학교 인포박스 등)을 실시간 감시하여 링크 자동 보정
+    const observer = new MutationObserver(() => {
+        autoPatchWikiLinks();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
 });

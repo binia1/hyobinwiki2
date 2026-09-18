@@ -371,41 +371,7 @@ details.nw-details > summary::after {
 <div class="no-autolink" id="univ-zone">
 <div class="hb-univ-nav"></div>
 <script src="js/효빈대학.js"></script>
-<div class="gradient-box">
-<!-- 학교 로고/심볼 이미지 -->
-<img alt="성택대학교 로고" src="이미지/성택대학교_UI.svg" style="width: 200px; display: inline-block;"/>
-</div>
-<details>
-<summary></summary>
-<div class="p-2 border border-t-0 bg-white">
-<table class="wiki-table" style="margin: 0; width: 100%;">
-<tr>
-<td class="text-center font-bold text-white" colspan="4" style="background-color: #4B0082;">대학 정보</td>
-</tr>
-<tr>
-<td class="wiki-table-center"><a class="wiki-link text-[#4B0082]" onclick="goToLink('성택대학교_역사.html')">역사</a></td>
-<td class="wiki-table-center"><a class="wiki-link text-[#4B0082]" onclick="goToLink('성택대학교_상징.html')">상징</a></td>
-<td class="wiki-table-center"><a class="wiki-link text-[#4B0082]" onclick="goToLink('성택대학교_학부.html')">학부</a></td>
-<td class="wiki-table-center"><a class="wiki-link text-[#4B0082]" onclick="goToLink('성택대학교_대학원.html')">대학원</a></td>
-</tr>
-<tr>
-<td class="wiki-table-center"><a class="wiki-link text-[#4B0082]" onclick="goToLink('성택대학교_캠퍼스.html')">캠퍼스</a></td>
-<td class="wiki-table-center"><a class="wiki-link text-[#4B0082]" onclick="goToLink('성택대학교_총학생회.html')">총학생회</a></td>
-<td class="wiki-table-center"><a class="wiki-link text-[#4B0082]" onclick="goToLink('성택대학교_언론.html')">학내 언론</a></td>
-<td class="wiki-table-center"><a class="wiki-link text-[#4B0082]" onclick="goToLink('성택대학교_교류대학.html')">교류 대학</a></td>
-</tr>
-<tr>
-<td class="text-center font-bold text-white" colspan="4" style="background-color: #4B0082;">기타 정보</td>
-</tr>
-<tr>
-<td class="wiki-table-center"><a class="wiki-link text-[#4B0082]" onclick="goToLink('성택대학교_출신인물.html')">출신 인물</a></td>
-<td class="wiki-table-center"><a class="wiki-link text-[#4B0082]" onclick="goToLink('성택대학교_주변상권.html')">주변 상권</a></td>
-<td class="wiki-table-center"><a class="wiki-link text-[#4B0082]" onclick="goToLink('성택대학교_입시.html')">입시</a></td>
-<td class="wiki-table-center"><a class="wiki-link text-[#4B0082]" onclick="goToLink('성택대학교_사건사고.html')">사건 사고</a></td>
-</tr>
-</table>
-</div>
-</details>
+<script src="js/성택대학교.js"></script>
 </div>
 <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
 <!-- 인포박스 -->
@@ -798,7 +764,7 @@ details.nw-details > summary::after {
 <script>
         // 검색 기능 핸들러
         function handleSearch() {
-            const query = document.getElementById('searchInput').value;
+            const query = document.getElementById('searchInput')?.value || document.getElementById('headerSearchInput')?.value;
             if (query) {
                 window.open(`https://namu.wiki/w/${encodeURIComponent(query)}`, '_blank');
             } else {
@@ -809,20 +775,32 @@ details.nw-details > summary::after {
         // 메시지 박스 표시 함수
         function showMsg(text) {
             const box = document.getElementById('wiki-msg-box');
+            if(!box) return;
             box.innerText = text; 
             box.style.display = 'block';
             setTimeout(() => { box.style.display = 'none'; }, 2000);
         }
 
-        // 링크 이동 핸들러
-        async function goToLink(filename) {
+        // 링크 이동 핸들러 (동음이의어 및 마우스 휠 지원)
+        function goToLink(filename, event) {
+            // 마우스 휠 클릭(가운데 클릭)이나 Ctrl+클릭 시 브라우저 기본 새 탭 열기 허용
+            if (event && (event.button === 1 || event.ctrlKey || event.metaKey)) return;
+            if (event) event.preventDefault();
+
             if (filename.startsWith('#')) return;
 
             const namuKeywords = ['대한민국', '국립대학', '사립대학'];
-            const pureName = filename.replace('.html', '').replace(/_/g, ' ');
+            const pureName = filename.replace('.html', '');
+            const searchName = pureName.replace(/_/g, ' ');
             
-            if (namuKeywords.includes(pureName) || filename.includes('namu.wiki')) {
-                window.open(`https://namu.wiki/w/${encodeURIComponent(pureName)}`, '_blank');
+            if (namuKeywords.includes(searchName) || filename.includes('namu.wiki')) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(searchName)}`, '_blank');
+                return;
+            }
+
+            // 핵심: 동음이의어(HB_WIKI_ALIASES) 매칭 확인
+            if (window.HB_WIKI_ALIASES && window.HB_WIKI_ALIASES[pureName]) {
+                location.href = window.HB_WIKI_ALIASES[pureName]; 
                 return;
             }
 
@@ -833,6 +811,18 @@ details.nw-details > summary::after {
             }
         }
         
+        // 문서 내 모든 링크에 진짜 href를 심어서 마우스 휠(새 탭) 가능하게 만듦
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll('a[onclick^="goToLink"]').forEach(a => {
+                const match = a.getAttribute('onclick').match(/goToLink\('([^']+)'\)/);
+                if (match && match[1]) {
+                    const url = match[1];
+                    a.setAttribute('href', url); 
+                    a.setAttribute('onclick', `goToLink('${url}', event)`); 
+                }
+            });
+        });
+
         // 목차 및 내부 링크 스무스 스크롤
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -856,45 +846,38 @@ details.nw-details > summary::after {
         });
 
         // --- 각주 툴팁 호버보드 로직 ---
-        const tooltip = document.getElementById('wiki-fn-tooltip');
-        const footnotes = document.querySelectorAll('.wiki-fn');
+        document.addEventListener('DOMContentLoaded', () => {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'wiki-footnote-tooltip';
+            document.body.appendChild(tooltip);
 
-        footnotes.forEach(fn => {
-            fn.addEventListener('mouseenter', (e) => {
-                const targetId = fn.getAttribute('href').substring(1); 
-                const contentEl = document.getElementById(targetId);
-                
-                if (contentEl) {
-                    tooltip.innerHTML = contentEl.innerHTML;
-                    const backLink = tooltip.querySelector('.wiki-fn-back');
-                    if(backLink) {
-                        backLink.style.display = 'none'; 
+            const fnLinks = document.querySelectorAll('sup a');
+
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', (e) => {
+                    const href = link.getAttribute('href');
+                    if (!href.startsWith('#')) return;
+                    
+                    const targetId = href.substring(1);
+                    const targetEl = document.getElementById(targetId);
+
+                    if (targetEl) {
+                        let content = targetEl.innerText;
+                        tooltip.innerText = content;
+                        tooltip.style.display = 'block';
+                        
+                        const rect = link.getBoundingClientRect();
+                        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                        tooltip.style.left = (rect.left + scrollLeft) + 'px';
+                        tooltip.style.top = (rect.bottom + scrollTop + 5) + 'px';
                     }
-                    tooltip.style.display = 'block';
-                }
-            });
+                });
 
-            fn.addEventListener('mousemove', (e) => {
-                const x = e.clientX + 15;
-                const y = e.clientY + 15;
-                
-                const tooltipRect = tooltip.getBoundingClientRect();
-                let finalX = x;
-                let finalY = y;
-
-                if (x + tooltipRect.width > window.innerWidth) {
-                    finalX = e.clientX - tooltipRect.width - 10;
-                }
-                if (y + tooltipRect.height > window.innerHeight) {
-                    finalY = e.clientY - tooltipRect.height - 10;
-                }
-
-                tooltip.style.left = finalX + 'px';
-                tooltip.style.top = finalY + 'px';
-            });
-
-            fn.addEventListener('mouseleave', () => {
-                tooltip.style.display = 'none';
+                link.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
             });
         });
     </script>

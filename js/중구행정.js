@@ -172,7 +172,7 @@
                         
                         <!-- 중앙동 구역 -->
                         <tr>
-                            <td class="hb-admin-bg" rowspan="5"><a href="중앙동.html">중앙동</a></td>
+                            <td class="hb-admin-bg" rowspan="5"><a href="중앙동(효빈).html">중앙동</a></td>
                             <td class="hb-legal-bg"><a href="심동1가.html">심동1가</a></td>
                             <td class="hb-legal-bg"><a href="심동2가.html">심동2가</a></td>
                             <td class="hb-legal-bg"><a href="중앙로1가.html">중앙로1가</a></td>

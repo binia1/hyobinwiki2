@@ -1,6 +1,8 @@
-        (function() {
-            // 1. 대한민국의 광역자치단체 (광주광역시 삭제 및 SVG 매핑 완전 이식)
-            const nationalHTML = `
+document.addEventListener("DOMContentLoaded", function() {
+    const container = document.getElementById('national-zone');
+    if (!container) return;
+
+    const nationalHTML = `
 <div style="border: 1px solid #335566; width: 100%; box-sizing: border-box; font-family: sans-serif; background: white; margin-bottom: 25px; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                 <div style="display: flex; justify-content: space-between; align-items: stretch; border-bottom: 1px solid #335566; background: white; height: 50px;">
                     <div style="width: 15%; background: linear-gradient(115deg, #000 25%, transparent 25%, transparent 35%, #000 35%, #000 55%, transparent 55%, transparent 65%, #000 65%, #000 85%, transparent 85%);"></div>
@@ -176,7 +178,22 @@
                         * 대한민국이 실효 지배하지 않는 미수복지역은 자치 기능이 없는 명목상 행정구역이므로 실질적인 광역자치단체는 아니다.
                     </div>
                 </div>
-            </div>`;
-    // 현재 스크립트 태그가 위치한 곳에 HTML 코드를 렌더링합니다.
-    document.currentScript.insertAdjacentHTML('beforebegin', template);
-})();
+            </div>
+    `;
+    container.innerHTML = nationalHTML;
+});
+
+// 전역 함수로 toggleNav 추가 (접기/펼치기 기능 활성화)
+window.toggleNav = function(navId, labelId) {
+    const nav = document.getElementById(navId);
+    const label = document.getElementById(labelId);
+    
+    // CSS transition 효과 적용
+    if (!nav.style.maxHeight || nav.style.maxHeight === '2000px') {
+        nav.style.maxHeight = '0px';
+        label.innerText = '[ 펼치기 ]';
+    } else {
+        nav.style.maxHeight = '2000px';
+        label.innerText = '[ 접기 ]';
+    }
+};

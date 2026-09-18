@@ -19,12 +19,12 @@ document.addEventListener("DOMContentLoaded", function() {
 <tr><th>교색</th><td>
 <span style="display:inline-block; width:15px; height:15px; background:#8B4513; border:1px solid #ccc; vertical-align:middle;"></span> 대찬 브라운 (#8B4513)
                     </td></tr>
-<tr><th>국가</th><td><a class="wiki-link" onclick="goToLink('대한민국.html')">대한민국</a></td></tr>
-<tr><th>분류</th><td><a class="wiki-link" onclick="goToLink('사립대학.html')">사립대학</a> (종합대학)</td></tr>
+<tr><th>국가</th><td><a class="wiki-link" href="대한민국.html" onclick="goToLink('대한민국.html', event); return false;">대한민국</a></td></tr>
+<tr><th>분류</th><td><a class="wiki-link" href="사립대학.html" onclick="goToLink('사립대학.html', event); return false;">사립대학</a> (종합대학)</td></tr>
 <tr><th>법인</th><td>학교법인 대찬학원</td></tr>
 <tr><th>설립</th><td>1989년 3월 10일</td></tr>
-<tr><th>총장</th><td>제4대 <a class="wiki-link" onclick="goToLink('노서랑.html')">노서랑</a></td></tr>
-<tr><th>주소</th><td><a class="wiki-link" onclick="goToLink('효빈광역시.html')">효빈광역시</a> <a class="wiki-link" onclick="goToLink('탄성군.html')">탄성군</a> <a class="wiki-link" onclick="goToLink('도향면.html')">도향면</a> 춘일경로 55 (<a class="wiki-link" onclick="goToLink('춘일경리.html')">춘일경리</a>)<a class="wiki-fn" href="#fn-1" id="rfn-1">[1]</a></td></tr>
+<tr><th>총장</th><td>제4대 <a class="wiki-link" href="노서랑.html" onclick="goToLink('노서랑.html', event); return false;">노서랑</a></td></tr>
+<tr><th>주소</th><td><a class="wiki-link" href="효빈광역시.html" onclick="goToLink('효빈광역시.html', event); return false;">효빈광역시</a> <a class="wiki-link" href="탄성군.html" onclick="goToLink('탄성군.html', event); return false;">탄성군</a> <a class="wiki-link" href="도향면.html" onclick="goToLink('도향면.html', event); return false;">도향면</a> 춘일경로 55 (<a class="wiki-link" href="춘일경리.html" onclick="goToLink('춘일경리.html', event); return false;">춘일경리</a>)<a class="wiki-fn" href="#fn-1" id="rfn-1">[1]</a></td></tr>
 <tr><th>재적생</th><td>1,500명 <span class="text-xs text-gray-500">(2025년)</span></td></tr>
 <tr><th>웹사이트</th><td><a class="wiki-link" href="https://www.daechan.ac.kr" target="_blank">공식 홈페이지</a></td></tr>
 </table>

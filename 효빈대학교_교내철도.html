@@ -494,30 +494,62 @@
 <script src="assets/load-footer.js"></script>
     </div>
 
-    <script>
-        function goToLink(filename) {
+<script>
+        // 1. 완벽하게 개선된 goToLink 함수 (마우스 휠 & 동음이의어 해결)
+        function goToLink(filename, event) {
+            // 마우스 휠 클릭(1)이나 컨트롤+클릭 시 브라우저 기본 새 탭 열기 허용 (JS가 막지 않음)
+            if (event && (event.button === 1 || event.ctrlKey || event.metaKey)) return;
+            if (event) event.preventDefault();
+
             const namuKeywords = ['대한민국', '국립대학', '박효빈'];
-            const pureName = filename.replace('.html', '').replace(/_/g, ' ');
-            if (namuKeywords.includes(pureName) || filename.includes('namu.wiki')) {
-                window.open(`https://namu.wiki/w/${encodeURIComponent(pureName)}`, '_blank');
+            const pureName = filename.replace('.html', '');
+            const searchName = pureName.replace(/_/g, ' '); 
+
+            // ① 나무위키 예외 키워드 처리
+            if (namuKeywords.includes(searchName) || filename.includes('namu.wiki')) {
+                window.open(`https://namu.wiki/w/${encodeURIComponent(searchName)}`, '_blank');
                 return;
             }
+
+            // ② 핵심! 동음이의어(HB_WIKI_ALIASES) 매칭 확인
+            if (window.HB_WIKI_ALIASES && window.HB_WIKI_ALIASES[pureName]) {
+                location.href = window.HB_WIKI_ALIASES[pureName]; 
+                return;
+            }
+
+            // ③ 별도 매칭 없으면 원래 이름대로 이동
             location.href = filename;
         }
 
-        // 검색 기능 핸들러
+        // 2. 마우스 휠 클릭(새 탭 열기) 심폐소생술 (기존 링크들에 href 강제 주입)
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll('a[onclick^="goToLink"]').forEach(a => {
+                const match = a.getAttribute('onclick').match(/goToLink\('([^']+)'\)/);
+                if (match && match[1]) {
+                    const url = match[1];
+                    a.setAttribute('href', url); // 브라우저가 진짜 링크로 인식하게 함
+                    a.setAttribute('onclick', `goToLink('${url}', event)`); // event 객체 전달
+                }
+            });
+        });
+
+        // 3. 검색 기능 핸들러 (기존 코드 유지)
         function handleSearch() {
-            const query = document.getElementById('searchInput').value;
+            // searchInput 또는 headerSearchInput 모두 호환되도록 처리
+            const query = document.getElementById('searchInput')?.value || document.getElementById('headerSearchInput')?.value;
             if (query) {
                 window.open(`https://namu.wiki/w/${encodeURIComponent(query)}`, '_blank');
             } else {
                 const box = document.getElementById('wiki-msg-box');
-                box.innerText = '검색어를 입력해주세요.';
-                box.style.display = 'block';
-                setTimeout(() => { box.style.display = 'none'; }, 2000);
+                if(box) {
+                    box.innerText = '검색어를 입력해주세요.';
+                    box.style.display = 'block';
+                    setTimeout(() => { box.style.display = 'none'; }, 2000);
+                }
             }
         }
 
+        // 4. 목차 스무스 스크롤 (기존 코드 유지)
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();

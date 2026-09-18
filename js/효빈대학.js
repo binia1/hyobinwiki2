@@ -52,11 +52,14 @@ document.addEventListener("DOMContentLoaded", function() {
         document.head.appendChild(style);
     }
 
-    // 링크 및 로고 생성 헬퍼 함수 (에러 방지용 안전 장치 포함)
+// 링크 및 로고 생성 헬퍼 함수 (마우스 휠/새 탭 열기 완벽 지원)
     const mkLink = (name, logoFile, linkName = null) => {
         const target = linkName || name.split('(')[0] + '.html'; 
         const logoHtml = logoFile ? `<img src="이미지/${logoFile}" class="hb-item-logo" alt="${name} 로고" onerror="this.style.display='none'">` : '';
-        return `<a href="javascript:void(0);" onclick="if(typeof window.goToLink === 'function'){ window.goToLink('${target}'); } else { location.href='${target}'; } return false;" class="hb-link">${logoHtml}${name}</a>`;
+        
+        // ① href에 진짜 target 주소를 박아줍니다.
+        // ② onclick에서 event를 넘겨주어 goToLink가 새 탭 열기를 방해하지 않게 합니다.
+        return `<a href="${target}" onclick="if(typeof window.goToLink === 'function'){ window.goToLink('${target}', event); return false; } else { location.href='${target}'; return false; }" class="hb-link">${logoHtml}${name}</a>`;
     };
 
     // 효빈광역시 대학 데이터 (알려주신 로고 파일명 정밀 반영)
