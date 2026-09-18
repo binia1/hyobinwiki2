@@ -924,3 +924,117 @@ document.addEventListener("DOMContentLoaded", function() {
         categoryBox.parentNode.insertBefore(script, categoryBox.nextSibling);
     }
 });
+document.addEventListener('DOMContentLoaded', () => {
+
+    // 1. 검색창 엔터 및 버튼 클릭 이벤트 강제 바인딩
+    const searchInput = document.getElementById('headerSearchInput') || document.getElementById('searchInput');
+    
+    if (searchInput) {
+        const executeSearch = () => {
+            const query = searchInput.value.trim();
+            if (!query) {
+                alert('검색어를 입력해주세요.');
+                return;
+            }
+
+            // [안전장치 1] HB_WIKI_ALIASES가 존재하는지 안전하게 체크 후 별칭 검사
+            if (typeof window.HB_WIKI_ALIASES !== 'undefined' && window.HB_WIKI_ALIASES && window.HB_WIKI_ALIASES[query]) {
+                const targetUrl = window.HB_WIKI_ALIASES[query];
+                
+                // URL에서 경로와 해시(#)를 분리
+                const [urlPath, hash] = targetUrl.split('#');
+                
+                // 파라미터는 무조건 해시보다 앞쪽(urlPath)에 결합
+                const separator = urlPath.includes('?') ? '&' : '?';
+                let finalUrl = `${urlPath}${separator}from=${encodeURIComponent(query)}`;
+                
+                // 원래 해시가 존재했다면 맨 마지막에 다시 부착
+                if (hash) {
+                    finalUrl += `#${hash}`;
+                }
+                
+                window.location.href = finalUrl;
+                return;
+            }
+
+            // [안전장치 2] 정식 문서 목록(HB_WIKI_PAGES) 확인
+            if (typeof window.HB_WIKI_PAGES !== 'undefined' && window.HB_WIKI_PAGES) {
+                const matched = window.HB_WIKI_PAGES.find(p => p.title === query);
+                if (matched) {
+                    window.location.href = matched.href;
+                    return;
+                }
+            }
+
+            // 둘 다 없으면 기본 검색 페이지로
+            window.location.href = `효빈위키 검색.html?q=${encodeURIComponent(query)}`;
+        };
+
+        // 기존 이벤트 중복 방지 후 새로 등록
+        searchInput.removeEventListener('keydown', searchInput._wikiKeyDownHandler);
+        searchInput._wikiKeyDownHandler = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                executeSearch();
+            }
+        };
+        searchInput.addEventListener('keydown', searchInput._wikiKeyDownHandler);
+
+        const searchBtn = searchInput.nextElementSibling;
+        if (searchBtn && searchBtn.tagName === 'BUTTON') {
+            searchBtn.removeEventListener('click', searchBtn._wikiClickHandler);
+            searchBtn._wikiClickHandler = (e) => {
+                e.preventDefault();
+                executeSearch();
+            };
+            searchBtn.addEventListener('click', searchBtn._wikiClickHandler);
+        }
+    }
+
+    // 2. 파란 박스(넘어옴 배너) 생성 로직
+    const allBanners = document.querySelectorAll('#wiki-redirect-banner, .wiki-redirect-banner');
+    allBanners.forEach(banner => banner.remove());
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromAlias = urlParams.get('from');
+
+    if (fromAlias) {
+        const titleEl = document.querySelector('.txt-lvl-1') || document.querySelector('h1') || document.querySelector('.wiki-title');
+        let actualTitle = document.title.replace(' - 효빈위키', '').trim();
+        if (titleEl) {
+            actualTitle = titleEl.textContent.trim();
+        }
+
+        if (fromAlias !== actualTitle) {
+            const bannerDiv = document.createElement('div');
+            bannerDiv.id = 'wiki-redirect-banner';
+            bannerDiv.className = 'wiki-redirect-banner';
+            bannerDiv.style.cssText = `
+                border: 1px solid #b8d4e9;
+                background-color: #e5f0fa;
+                color: #222;
+                padding: 10px 15px;
+                margin: 0 0 15px 0;
+                border-radius: 4px;
+                font-size: 0.95rem;
+                display: block !important;
+            `;
+            bannerDiv.innerHTML = `<a href="javascript:void(0)" style="color: #0275d8; text-decoration: none; font-weight: bold;">${fromAlias}</a>(으)로부터 넘어옴`;
+
+            const adBox = document.getElementById('wiki-inserted-ad');
+            const categoryBox = document.querySelector('.category-box');
+            const titleArea = document.querySelector('.title-area');
+
+            if (adBox) {
+                adBox.parentNode.insertBefore(bannerDiv, adBox);
+            } else if (categoryBox) {
+                categoryBox.parentNode.insertBefore(bannerDiv, categoryBox);
+            } else if (titleArea) {
+                titleArea.parentNode.insertBefore(bannerDiv, titleArea.nextSibling);
+            } else {
+                const container = document.querySelector('.wiki-container');
+                if (container) container.prepend(bannerDiv);
+            }
+        }
+    }
+});
