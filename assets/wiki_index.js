@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 9. 17. 오후 7:11:04
+ * 업데이트: 2026. 9. 18. 오후 7:48:16
  */
 
 window.HB_WIKI_PAGES = [
@@ -4215,6 +4215,22 @@ window.HB_WIKI_PAGES = [
   {
     "title": "빈주시",
     "href": "빈주시.html"
+  },
+  {
+    "title": "빈주부",
+    "href": "빈주시.html"
+  },
+  {
+    "title": "천주부",
+    "href": "천주시.html"
+  },
+  {
+    "title": "효빈부",
+    "href": "효빈시.html"
+  },
+  {
+    "title": "강주부",
+    "href": "강주시.html"
   },
   {
     "title": "빈주시_갑",
@@ -12648,7 +12664,10 @@ window.HB_WIKI_PAGES = [
     "title": "중앙동",
     "href": "중앙동.html"
   },
-
+  {
+    "title": "비마리유적지구",
+    "href": "비마리유적지구.html"
+  }
 ];
 
 window.HB_WIKI_ALIASES = {
@@ -19812,5 +19831,10 @@ window.HB_WIKI_ALIASES = {
   "카즈노 리아": "카즈노 리아.html",
   "패드립": "패드립.html",
   "베르데홀": "베르데홀.html",
-  "중앙동": "중앙동.html"
+  "중앙동": "중앙동(효빈).html",
+  "빈주부": "빈주시.html",
+  "천주부": "천주시.html",
+  "강주부": "강주시.html",
+  "효빈부": "효빈시.html",
+  "비마리유적지구": "비마리유적지구.html"
 };
