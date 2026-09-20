@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 9. 20. 오후 5:43:18
+ * 업데이트: 2026. 9. 20. 오후 9:24:39
  */
 
 window.HB_WIKI_PAGES = [
@@ -12755,6 +12755,14 @@ window.HB_WIKI_PAGES = [
   {
     "title": "은권규",
     "href": "은권규.html"
+  },
+  {
+    "title": "부리도",
+    "href": "부리도.html"
+  },
+  {
+    "title": "은현성",
+    "href": "은현성.html"
   }
 ];
 
@@ -20027,5 +20035,7 @@ window.HB_WIKI_ALIASES = {
   "전개욱": "전개욱.html",
   "이송윤": "이송윤.html",
   "안농운": "안농운.html",
-  "은권규": "은권규.html"
+  "은권규": "은권규.html",
+  "부리도": "부리도.html",
+  "은현성": "은현성.html"
 };

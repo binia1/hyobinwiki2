@@ -1,6 +1,6 @@
 /**
  * HyobinWiki JS Master Index (Auto-Generated & Fixed Aliases)
- * 업데이트: 2026. 09. 20. 오전 01:18:21
+ * 업데이트: 2026. 09. 20. 오후 06:16:08
  */
 
 window.filePaths = {
