@@ -3,7 +3,7 @@ const path = require('path');
 
 const imageFolder = './이미지'; 
 const outputJsFile = './assets/image_data.js';
-const allowedExtensions = ['.webp', '.png', '.jpeg', '.jpg', '.gif', '.svg'];
+const allowedExtensions = ['.webp', '.webp', '.jpeg', '.webp', '.gif', '.svg'];
 
 async function updateArchive() {
     try {

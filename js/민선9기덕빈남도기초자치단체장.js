@@ -31,12 +31,12 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <td style="width: 16.6%; background-color: var(--party-indep); border: 1px solid #e2e8f0; padding: 5px;"><a href="분주군.html" class="nav-th" style="color: white; font-weight: bold;">분주군</a></td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="오세윤.html" class="nav-link minju">오세윤</a> (4선)</td>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="전지호.html" class="nav-link minju">전지호</a> (초선)</td>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="고정화.html" class="nav-link ppp">고정화</a> (4선)</td>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="최민규.html" class="nav-link minju">최민규</a> (재선)</td>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="이재원.html" class="nav-link minju">이재원</a> (3선)</td>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="김태수.html" class="nav-link indep">김태수</a> (재선)</td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="오세윤.html" class="nav-link minju">오세윤</a> </td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="전지호.html" class="nav-link minju">전지호</a> </td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="고정화.html" class="nav-link ppp">고정화</a> </td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="최민규.html" class="nav-link minju">최민규</a> </td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="이재원.html" class="nav-link minju">이재원</a> </td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="김태수.html" class="nav-link indep">김태수</a> </td>
                                 </tr>
                                 <!-- 2열 -->
                                 <tr style="color: white;">
@@ -48,12 +48,12 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <td style="background-color: var(--party-minju); border: 1px solid #e2e8f0; padding: 5px;"><a href="두원군.html" class="nav-th" style="color: white; font-weight: bold;">두원군</a></td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="문석준.html" class="nav-link ppp">문석준</a> (3선)</td>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="주언일.html" class="nav-link minju">주언일</a> (초선)</td>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="강준영.html" class="nav-link indep">강준영</a> (재선)</td>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="서윤수.html" class="nav-link minju">서윤수</a> (재선)</td>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="김도연.html" class="nav-link minju">김도연</a> (3선)</td>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="이영진.html" class="nav-link minju">이영진</a> (재선)</td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="문석준.html" class="nav-link ppp">문석준</a> </td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="주언일.html" class="nav-link minju">주언일</a> </td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="강준영.html" class="nav-link indep">강준영</a> </td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="서윤수.html" class="nav-link minju">서윤수</a> </td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="김도연.html" class="nav-link minju">김도연</a> </td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="이영진.html" class="nav-link minju">이영진</a> </td>
                                 </tr>
                                 <!-- 3열 -->
                                 <tr style="color: white;">
@@ -65,11 +65,11 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <td style="background-color: #f9f9f9; border: 1px solid #e2e8f0;"></td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="문양인.html" class="nav-link ppp">문양인</a> (초선)</td>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="정동혁.html" class="nav-link minju">정동혁</a> (3선)</td>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="신태양.html" class="nav-link ppp">신태양</a> (3선)</td>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="윤재민.html" class="nav-link indep">윤재민</a> (재선)</td>
-                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="최현수.html" class="nav-link minju">최현수</a> (재선)</td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="문양인.html" class="nav-link ppp">문양인</a> </td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="정동혁.html" class="nav-link minju">정동혁</a> </td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="신태양.html" class="nav-link ppp">신태양</a> </td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="윤재민.html" class="nav-link indep">윤재민</a> </td>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0;"><a href="최현수.html" class="nav-link minju">최현수</a> </td>
                                     <td style="background-color: #f9f9f9; border: 1px solid #e2e8f0;"></td>
                                 </tr>
                              </table>

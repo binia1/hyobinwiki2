@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="mega-nav-frame">
         <div class="mega-nav-header">
             <div class="flex items-center justify-center gap-2">
-                <img onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Megabox_logo.svg/300px-Megabox_logo.svg.webp'" src="이미지/메가박스_로고.webp" style="height: 30px;"/>
+                <img onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Megabox_logo.svg/300px-Megabox_logo.svg'" src="이미지/메가박스_로고.webp" style="height: 30px;"/>
                 <span class="font-bold text-lg">전국 지점 현황</span>
             </div>
             <div class="text-xs text-gray-500 mt-1">

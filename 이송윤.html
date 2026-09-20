@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이송윤 - 효빈위키</title>
+    <!-- 외부 스타일시트 및 스크립트 완벽 복원 -->
+    <link rel="stylesheet" href="wiki_font_standard.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="ad_logic.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+
+        :root { 
+            /* [테마 컬러 설정] 범죄자 경고성 짙은 회색 및 피의 스칼렛 레드 포인트 */
+            --wiki-main: #333333; 
+            --wiki-accent: #D81C2F;
+            
+            /* [고정] 상단 내비게이션 바 색상 */
+            --wiki-nav-bg: #7777AA;
+
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #222222; 
+            --wiki-gray-bg: #F8F9FA; 
+            --wiki-link: #005BAC;
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+        }
+
+        body { font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif; background-color: var(--wiki-gray-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 30px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+
+        .txt-lvl-1 { font-size: 2.5rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #aaa; margin-bottom: 15px; padding-bottom: 10px; }
+
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-main); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-accent); }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 4px solid var(--wiki-accent); padding-left: 12px; color: var(--wiki-main); }
+        h4 { font-size: 1.15rem !important; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; border-left: 3px solid #ccc; padding-left: 8px; }
+
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; color: #555; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        
+        /* 유실되었던 카테고리 박스 복구 */
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 10px 15px; font-size: 0.85rem; margin-bottom: 25px; border-radius: 4px; line-height: 1.8;}
+        
+        .infobox { border: 1px solid #a2a9b1; background-color: var(--wiki-gray-bg); width: 100%; max-width: 380px; font-size: 0.9rem; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; border-collapse: collapse; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden;}
+        .infobox th { background-color: var(--wiki-main); color: var(--wiki-table-header-text); padding: 12px; text-align: center; font-size: 1.3rem !important; font-weight: bold; }
+        .infobox td { padding: 10px; border-bottom: 1px solid #e2e2e2; vertical-align: middle; }
+        .infobox td.label { font-weight: bold; background-color: #e9ecef; width: 32%; text-align: center; }
+
+        .toc { display: inline-block; min-width: 350px; border: 1px solid #a2a9b1; background: var(--wiki-gray-bg); padding: 20px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; font-size: 1.2rem; border-bottom: 1px solid var(--wiki-border); margin-bottom: 15px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
+        .toc ul li { margin-bottom: 6px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        blockquote, .quote { border-left: 5px solid var(--wiki-accent); padding: 15px 20px; margin: 20px 0; color: #333; background-color: #f1f1f1; font-style: italic; font-weight: bold; word-break: keep-all; }
+        del { color: #888; text-decoration: line-through; } 
+        .wiki-gray { color: #888; font-size: 0.9em; } 
+        
+        .fn-sup { cursor: help; color: var(--wiki-accent); font-size: 0.8em; vertical-align: super; text-decoration: none; font-weight: bold; margin-left: 2px; }
+        .fn-sup:hover { text-decoration: underline; }
+        
+        #wiki-tooltip { display: none; position: absolute; background: white; border: 1px solid #005BAC; padding: 12px 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); max-width: 350px; z-index: 9999; font-size: 0.85rem; border-radius: 4px; line-height: 1.5; color: #333; pointer-events: none; word-break: keep-all; }
+
+        .footnote-section { margin-top: 60px; border-top: 2px solid #ccc; padding-top: 20px; font-size: 0.9em; background-color: #fafafa; padding: 15px; border-radius: 4px; }
+        .footnote-section h3 { margin-top: 0; border-left: none; padding-left: 0; font-size: 1.5rem !important; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; color: #333; }
+        .footnote-list { list-style: none; padding: 0; margin: 0; line-height: 1.6; color: #444; }
+        .footnote-list li { margin-bottom: 8px; display: flex; align-items: flex-start; gap: 10px; }
+        .footnote-list li span.fn-num { color: var(--wiki-accent); font-weight: bold; min-width: 25px; }
+
+        .warning-box { border: 2px solid var(--wiki-accent); background-color: #ffe6e6; padding: 15px; text-align: center; font-weight: bold; margin-bottom: 25px; color: var(--wiki-accent); font-size: 1.1em; border-radius: 4px; }
+
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-nav-bg); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }   
+        #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
+        .anchor-offset { scroll-margin-top: 80px; }
+    </style>
+</head>
+<body>
+
+    <!-- 툴팁 및 알림 박스 -->
+    <div id="wiki-tooltip"></div>
+    <div id="wiki-msg-box"></div>
+    
+    <!-- 상단 내비게이션 바 및 검색창 -->
+    <nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <div class="nav-logo-box">H</div>
+            <a class="font-bold text-xl cursor-pointer no-underline text-white" href="index.html">HyobinWiki</a>
+            <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+                <a class="hover:underline font-bold text-white no-underline" href="index.html">대문</a>
+                <a class="hover:underline text-white no-underline" href="최근_변경.html">최근 변경</a>
+                <a class="hover:underline text-white no-underline" href="최근_토론.html">최근 토론</a>
+            </div>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+            <div class="flex items-center gap-2">
+                <div class="hidden lg:flex items-center gap-1 mr-2">
+                    <a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="편집요청.html">편집요청</a>
+                    <a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="최근_토론.html">토론</a>
+                    <a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="역사.html">역사</a>
+                    <a class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="즐겨찾기.html" title="즐겨찾기">★</a>
+                    <a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1" href="더보기.html">더보기 <span class="text-[9px]">▼</span></a>
+                </div>
+                <!-- 검색창 완벽 복구 -->
+                <input class="p-1 px-3 rounded text-black text-sm w-32 md:w-48 focus:outline-none border-none shadow-inner" id="headerSearchInput" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }" placeholder="문서 검색" type="text"/>
+                <button class="bg-[#555588] p-1 px-3 rounded text-xs font-bold transition-colors shadow-inner" onclick="handleSearch('headerSearchInput')">🔍</button>
+            </div>
+            <div class="flex gap-1" id="auth-buttons">
+                <button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" id="btn-login" onclick="toggleModal('loginModal')">로그인</button>
+                <button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" onclick="toggleModal('settingsModal')">설정</button>
+            </div>
+        </div>
+    </nav>
+
+<div class="wiki-container mt-8">
+    <div class="warning-box">
+        경고: 이 문서는 효빈광역시 및 삼선대학교 역사상 최악의 범죄자이자 인간 조무사 패거리 중 하나인 <b>이송윤</b>에 대해 다룹니다.<br>
+        혈압 상승 및 안구 테러에 극도로 주의하시기 바랍니다.
+    </div>
+
+    <!-- 유실되었던 타이틀 영역 및 버튼 완벽 복구 -->
+    <div class="title-area">
+        <div class="txt-lvl-1">이송윤</div>
+        <div class="flex gap-2 mb-1">
+            <a class="wiki-btn" href="토론.html">토론</a>
+            <a class="wiki-btn" href="수정.html">편집</a>
+            <a class="wiki-btn" href="역사.html">역사</a>
+            <button class="wiki-btn" onclick="showMsg('즐겨찾기에 추가되었습니다.')">☆ 즐겨찾기</button>
+        </div>
+    </div>
+
+    <!-- 유실되었던 카테고리 박스 완벽 복구 -->
+    <div class="category-box">
+        <span class="font-bold" style="color: var(--wiki-main);">분류:</span>
+        <a class="wiki-link" href="효빈광역시_인물.html">효빈광역시/인물</a> | 
+        <a class="wiki-link" href="2004년_출생.html">2004년 출생</a> | 
+        <a class="wiki-link" href="대한민국의_범죄자.html">대한민국의 범죄자</a> | 
+        <a class="wiki-link" href="권력형_성범죄.html">권력형 성범죄 가해자</a> |
+        <a class="wiki-link" href="영구제적.html">영구 출교(퇴학)</a> |
+        <a class="wiki-link" href="사이비_종교.html">사이비 종교 신도</a>
+        <span style="color: var(--wiki-border);">|</span> 
+        <a class="wiki-link" href="동구 출신.html">동구 출신</a> 
+        <span style="color: var(--wiki-border);">|</span> 
+        <a class="wiki-link" href="덕현동 출신.html">덕현동 출신</a> 
+        <span style="color: var(--wiki-border);">|</span> 
+        <a class="wiki-link" href="족포초등학교 출신.html">족포초등학교 출신</a> 
+        <span style="color: var(--wiki-border);">|</span> 
+        <a class="wiki-link" href="내성중학교 출신.html">내성중학교 출신</a> 
+        <span style="color: var(--wiki-border);">|</span> 
+        <a class="wiki-link" href="덕현고등학교 출신.html">덕현고등학교 출신</a> 
+        <span style="color: var(--wiki-border);">|</span> 
+        <a class="wiki-link" href="삼선대학교 출신.html">삼선대학교 출신</a> 
+    </div>
+    
+    <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12 mt-4">
+        <!-- 목차 (Flex 레이아웃 구조 완벽 복구) -->
+        <div class="toc shrink-0 shadow-sm h-fit order-2 lg:order-1" id="toc-box">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li>1. <a class="wiki-link" href="#s-1">개요</a></li>
+                <li>2. <a class="wiki-link" href="#s-2">생애 및 구제불능 과거 행적 (자폭맨의 전조)</a>
+                    <ul>
+                        <li>2.1. <a class="wiki-link" href="#s-2-1">부활제일교회와 현역 3급 판정의 맹점</a></li>
+                        <li>2.2. <a class="wiki-link" href="#s-2-2">삼선대 사학과 입학과 김성민 의원의 극대노</a></li>
+                        <li>2.3. <a class="wiki-link" href="#s-2-3">★ 전설의 4대 과거 악행 (노애와의 악연)</a></li>
+                    </ul>
+                </li>
+                <li>3. <a class="wiki-link" href="#s-3">추가 악행 및 사건사고 (5대 패악질)</a></li>
+                <li>4. <a class="wiki-link" href="#s-4">고노애 권력형 성범죄 사태 참전기 (지옥으로의 다이빙)</a>
+                    <ul>
+                        <li>4.1. <a class="wiki-link" href="#s-4-1">역겨운 재회와 집단 성희롱</a></li>
+                        <li>4.2. <a class="wiki-link" href="#s-4-2">얄팍한 언론 빽 허세와 처참한 몰락</a></li>
+                        <li>4.3. <a class="wiki-link" href="#s-4-3">끝없는 뇌내망상과 기레기 아빠 소환</a></li>
+                        <li>4.4. <a class="wiki-link" href="#s-4-4">유유상종 부자의 발악과 구속</a></li>
+                    </ul>
+                </li>
+                <li>5. <a class="wiki-link" href="#s-5">이송윤 아버지(기자)의 완벽한 멸망기</a>
+                    <ul>
+                        <li>5.1. <a class="wiki-link" href="#s-5-1">거침없는 뇌내망상과 조작 기사 작성</a></li>
+                        <li>5.2. <a class="wiki-link" href="#s-5-2">데스크의 1초 킬과 조선일보의 사자후</a></li>
+                        <li>5.3. <a class="wiki-link" href="#s-5-3">3류 찌라시 발행과 50억 소송, 체포</a></li>
+                        <li>5.4. <a class="wiki-link" href="#s-5-4">유치장 부자 상봉과 무너진 빽</a></li>
+                    </ul>
+                </li>
+                <li>6. <a class="wiki-link" href="#s-6">재판과 완벽한 파멸: 사법부 모독의 대가</a>
+                    <ul>
+                        <li>6.1. <a class="wiki-link" href="#s-6-1">1심 법정의 역대급 자폭과 12년 선고</a></li>
+                        <li>6.2. <a class="wiki-link" href="#s-6-2">항소심의 궤변과 형량 가중 (15년 확정)</a></li>
+                        <li>6.3. <a class="wiki-link" href="#s-6-3">대법원 기각과 뇌내망상의 박살</a></li>
+                        <li>6.4. <a class="wiki-link" href="#s-6-4">19년 형 확정과 밑바닥으로의 전락</a></li>
+                    </ul>
+                </li>
+                <li>7. <a class="wiki-link" href="#s-7">여담</a></li>
+                <li>8. <a class="wiki-link" href="#s-footnote">각주</a></li>
+            </ul>
+        </div>
+
+        <!-- 인포박스 -->
+        <table class="infobox shrink-0 order-1 lg:order-2">
+            <tr><th colspan="2">이송윤 (李松潤)<br><span style="font-size: 0.8em; font-weight: normal; color:#ddd;">Lee Song-yun</span></th></tr>
+            <tr><td colspan="2" style="text-align: center; padding: 15px; background-color: white;"><img src="이미지/이송윤.webp" alt="이송윤 머그샷" style="max-width: 100%; border: 1px solid #ccc;"></td></tr>
+            <tr><td class="label">출생</td><td>2004년 6월 4일 (만 22세)<br><a class="wiki-link" href="효빈광역시.html">효빈광역시</a> 동구 덕현동</td></tr>
+            <tr><td class="label">거주지</td><td><del>검거 당시 기준 효빈광역시 동구 덕현동</del></td></tr>
+            <tr><td class="label">현재지</td><td>효빈광역시 안천구 융문동 203 (<a class="wiki-link" href="효빈교도소.html">효빈교도소</a><span class="footnote-ref"><a href="#fn-1">[1]</a></span>)</td></tr>
+            <tr><td class="label">국적</td><td>대한민국 <del>(대한민국의 수치)</del></td></tr>
+            <tr><td class="label">신체</td><td>171cm<span class="footnote-ref"><a href="#fn-2">[2]</a></span>, 60~65kg 추정<span class="footnote-ref"><a href="#fn-3">[3]</a></span></td></tr>
+            <tr><td class="label">가족</td><td>
+                부모, 여동생(2005년생)<br>
+                <span class="wiki-gray">(※ 아버지 전직 기자, 조작 기사로 파면 및 파산. 여동생은 이들의 개지랄을 공론화하며 더불어민주당 입당 및 영구 의절)</span>
+            </td></tr>
+            <tr><td class="label">학력</td><td>
+                족포초등학교 (졸업)<br>
+                내성중학교 (졸업)<br>
+                덕현고등학교 (졸업)<br>
+                <a class="wiki-link" href="삼선대학교.html">삼선대학교</a> (사학 / <b>영구 퇴학(출교)</b>)<span class="footnote-ref"><a href="#fn-4">[4]</a></span>
+            </td></tr>
+            <tr><td class="label">병역</td><td>현역병 소집 대상자 (3급)<span class="footnote-ref"><a href="#fn-5">[5]</a></span> → <b>병역면제(제적)</b><span class="footnote-ref"><a href="#fn-6">[6]</a></span></td></tr>
+            <tr><td class="label">종교</td><td>기독교 (<a class="wiki-link" href="부활제일교회.html">부활제일교회</a>(...) 신자)</td></tr>
+            <tr><td class="label">별명(멸칭)</td><td><b>기레기 주니어, 망상병 환자, 아빠 빽 호소인, 언론 장악 조무사, 벌레</b></td></tr>
+            <tr><td class="label">범죄 및 형량</td><td>
+                <b style="color:#D81C2F;">징역 19년 + 위치추적 전자장치 10년 부착</b><br>
+                <span style="font-size: 0.85em; color: #555;">
+                (15년: 통신매체이용음란, 협박, 강요미수, 상해(과실치상), 강제추행 미수, 접근금지 명령 위반, 법정모독, 모욕, 명예훼손 및 무고, 특수공용물건 손상 미수, 아동복지법 위반<br>
+                + 4년: 법정모독 및 공직자 명예훼손 별건 기소)
+                </span>
+            </td></tr>
+            <tr><td class="label">출소일</td><td>2043년 1월 4일 (<span id="d-day" style="color: red; font-weight: bold; font-size: 1.1em;"></span>)<span class="footnote-ref"><a href="#fn-7">[7]</a></span></td></tr>
+        </table>
+    </div>
+
+    <h2 class="anchor-offset" id="s-1">1. 개요</h2>
+    <p><b>조창렬, 전개욱과 함께 효빈시 역사상 최악의 흑역사를 장식한 앰생 트리오의 일원이자, 기자 아빠 빽만 믿고 깝치다 가문 전체를 멸문지화로 몰아넣은 전설의 어그로꾼.</b></p>
+    <p>고노애의 초등학교·중학교 동창으로, 어린 시절 노애에게 인간에 대한 환멸을 심어준 최악의 학폭 가해자다. 삼선대학교 사학과에 재학하며 평범한 대학생 행세를 했으나, 실상은 조창렬 못지않은 극우 혐오 성향과 반사회적 인격장애를 가진 구제 불능의 쓰레기다. 고노애 권력형 성범죄 사태 당시 조창렬, 전개욱과 함께 집단 성희롱과 2차 가해에 앞장섰다.</p>
+    <p>특히 식당 화장실 앞에서 기자 아빠의 빽을 믿고 언론 장악을 운운하며 허세를 부리다, 공공학과 브레인 <a class="wiki-link" href="유채나.html">유채나</a>가 폰 녹음기를 켜둔 것도 모른 채 <b>아빠의 더러운 언론계 은폐 비리와 룸살롱 로비 의혹을 실시간으로 자백</b>해버리는 경이로운 능지처참을 보여주었다. 결국 이 자폭 한 방으로 기레기 아빠는 메이저 언론사에서 파면당해 파산했고 집안은 풍비박산 났으며, 자신 역시 징역 19년을 선고받고 청춘을 통째로 압수당했다.</p>
+
+    <h2 class="anchor-offset" id="s-2">2. 생애 및 구제불능 과거 행적 (자폭맨의 전조)</h2>
+    <p>171cm로 대한민국 남성 평균에는 약간 못 미치지만, 조창렬 패거리(159cm, 168cm) 중에서는 그나마 가장 크다는 이유 하나만으로 쓰레기 같은 우월감을 느끼던 인간 조무사다. 3류 찌라시에서 메이저 언론으로 세탁해 들어간 기자 아빠의 빽을 믿고, 학창 시절 온갖 양아치 짓을 저지르고도 언론의 힘으로 무마되어 법을 우습게 아는 썩어빠진 사고방식을 갖게 되었다.</p>
+
+    <h3 class="anchor-offset" id="s-2-1">2.1. 부활제일교회와 현역 3급 판정의 맹점</h3>
+    <p>그 역시 패거리들과 마찬가지로 효빈시 외곽에 위치한 이단 시비가 끊이지 않는 <b>'<a class="wiki-link" href="부활제일교회.html">부활제일교회</a>'</b>의 신자다. 예배 시간에 특정 정당 지지를 강요하고 반대 세력을 '빨갱이 사탄'으로 규정하는 광신도 집단으로, 이송윤은 어릴 적부터 세뇌당하며 여성과 사회적 약자에 대한 극도의 혐오를 키웠다.</p>
+    <p>그는 병무청 신체검사에서 <b>현역병 소집 대상자 (3급)</b> 판정을 받았다.<span class="footnote-ref"><a href="#fn-5">[5]</a></span> 겉보기엔 멀쩡하게 군대를 갈 것 같지만, 실상은 아빠의 기레기 인맥을 동원해 온갖 정신병자 코스프레를 시도하다 병무청 의사에게 간파당해 현역으로 억지 배정된 찌질한 꼼수의 결과물이다. 훗날 19년형 확정으로 <b>병역 면제 및 영구 제적</b> 처분을 받아 결국 그토록 원하던 군 면제를 '합법적'으로 쟁취(?)하게 된다.<span class="footnote-ref"><a href="#fn-6">[6]</a></span></p>
+
+    <h3 class="anchor-offset" id="s-2-2">2.2. 삼선대 사학과 입학과 김성민 의원의 극대노</h3>
+    <p>이송윤은 공부는 못했지만, 기자 아빠의 인맥을 동원한 요상한 포트폴리오 조작 덕분에 <b><a class="wiki-link" href="삼선대학교.html">삼선대학교</a> 사학과</b>에 합격했다. 그러나 이 사실은 훗날 이송윤이 고노애 사태에 연루되었을 때 최악의 역풍으로 돌아온다.</p>
+    <p>효빈시의 절대 권력자이자 김시연의 아버지인 <b><a class="wiki-link" href="김성민.html">김성민</a> 국회의원이 다름 아닌 삼선대 출신</b>이었던 것이다. 이 쓰레기가 모교의 후배라는 사실을 알게 된 김성민 의원은 <b>"감히 삼선대의 숭고한 결의와 명예를 말아먹을 짐승 새끼가 학교에 있느냐"</b>라며 극대노했다. 결국 김 의원의 팩트 폭격과 공론화에 삼선대학교 본부마저 격노하여, 사립대학임에도 불구하고 극히 이례적이고 신속한 행정 절차를 밟아 그를 <b>'영구 퇴학(출교)'</b> 시켜버렸다.<span class="footnote-ref"><a href="#fn-4">[4]</a></span></p>
+
+    <h3 class="anchor-offset" id="s-2-3">2.3. ★ 전설의 4대 과거 악행 (노애와의 악연)</h3>
+    <p>이송윤은 고노애에게 인간에 대한 환멸을 처음 심어준 만악의 근원이다.</p>
+    <ul class="list-disc pl-5 space-y-3">
+        <li><b>① 초등학교 시절 고백 기만 사건:</b> 족포초등학교 시절, 순진했던 노애가 그에게 호감을 표하며 고백했다. 이송윤은 당시 반짝 인기 있던 외모를 무기로 "난 여자랑 사귈 마음이 없어. 미안해."라며 착한 척 거절해 놓고는, <b>불과 며칠 뒤에 보란 듯이 다른 여자애와 사귀며 노애를 처참하게 기만하고 조롱</b>했다.<span class="footnote-ref"><a href="#fn-10">[10]</a></span></li>
+        <li><b>② 중학교 시절 외모 비하 및 교묘한 괴롭힘:</b> 내성중학교에 올라가서는 가난 때문에 인스턴트로 배를 채워 뚱뚱했던 노애의 체중을 약점 잡아, <b>일진 무리와 함께 "냄새나는 돼지새끼"라며 교묘하고 끈질기게 괴롭힘을 주도</b>했다.<span class="footnote-ref"><a href="#fn-11">[11]</a></span></li>
+        <li><b>③ 여친을 동원한 협박 사태:</b> 노애가 참다못해 "조용히 좀 해달라"고 쪽지를 남기자, 이송윤은 당시 여자친구(일진)를 시켜 노애를 화장실로 끌고 가 <b>"야, 너 송윤이 건드리면 뒤진다. 뚱뚱한 돼지년이 어디서 꼬리를 쳐?"</b>라며 집단 폭언과 협박을 가했다. 이로 인해 노애는 한동안 학교에 가는 것조차 무서워하는 공황 상태에 빠졌다.</li>
+        <li><b>④ 중학교 후배 자전거 절도 및 중고거래 사기:</b> 중학생 시절, 만만해 보이는 후배의 비싼 자전거를 대놓고 훔친 뒤 당근마켓에 버젓이 올려 팔아먹었다. 피해 학부모가 경찰에 신고했으나, <b>기자였던 아빠가 "학교에 기자를 풀어서 취재하겠다"며 교장과 피해 학부모를 협박</b>하여 사건을 덮어버린 치졸한 전과가 있다.</li>
+    </ul>
+
+    <h2 class="anchor-offset" id="s-3">3. 추가 악행 및 사건사고 (5대 패악질)</h2>
+    <p>이 중심 사건 외에도 이송윤의 악랄하고 비열한 면모를 여실히 드러내는 5가지 추가 패악질이 존재한다.</p>
+    <ul class="list-disc pl-5 space-y-3">
+        <li><b>① 배달 알바 중 손님 음식 빼먹기 및 적반하장 리뷰 테러:</b> 배달대행 알바 중 손님이 시킨 치킨과 피자를 상습적으로 빼먹다 사장에게 해고당하자, 앙심을 품고 배달앱에 가계정 10개를 만들어 <b>"바퀴벌레 나옴", "사장 쓰레기"라는 허위 리뷰 테러</b>를 가했다. 영업방해로 고소당했으나 또 아빠의 언론 빽으로 무마했다.</li>
+        <li><b>② 동네 길고양이 학대 미수 및 캣맘 폭행 시도:</b> 골목에서 새끼 길고양이에게 돌을 던지려던 것을 캣맘이 제지하자, 주먹을 치켜들고 폭행을 시도했다. 그러나 <b>문신을 한 건장한 남성이 다가오자 1초 만에 꼬리를 말고 도망</b>쳤다.</li>
+        <li><b>③ 삼선대 사학과 학회비 횡령 및 아빠 찬스:</b> 사학과 집행부로 활동하며 학회비 수백만 원을 빼돌려 여자친구와 풀빌라를 놀러 갔다. 동기들에게 횡령 사실이 걸리자, <b>아빠가 '삼선대 교수 비리' 기사를 쓰겠다며 학교 측을 협박해 유야무야 넘어가게 만든</b> 최악의 권력 남용 사건이다.<span class="footnote-ref"><a href="#fn-12">[12]</a></span></li>
+        <li><b>④ 편의점 알바 갑질 및 폭행 미수:</b> 미성년자 시절 편의점에서 담배를 뚫으려다 알바생에게 제지당하자, <b>계산대의 물건을 다 집어 던지며 폭행을 시도</b>했다. 출동한 경찰에게 "우리 아빠가 누군지 아냐"며 패악질을 부리다 유치장에 갇힌 전적이 있다.</li>
+        <li><b>⑤ 불법 사이버 렉카 활동 및 수익 창출 정지:</b> 기레기 아빠의 피를 이어받아 익명으로 자극적인 가짜뉴스와 연예인 루머를 퍼뜨리는 '사이버 렉카' 유튜브 채널을 운영했다. <b>"모 걸그룹 멤버 학폭 논란" 등 악의적 주작 영상을 올리다 소속사에게 고소를 당하고 채널 수익 창출이 영구 정지</b>당했다.<span class="footnote-ref"><a href="#fn-13">[13]</a></span></li>
+    </ul>
+
+    <h2 class="anchor-offset" id="s-4">4. 고노애 권력형 성범죄 사태 참전기 (지옥으로의 다이빙)</h2>
+    <p>이송윤은 고노애 사태 초기에는 직접 등장하지 않는다. 그러나 식당 화장실 앞 복도 사건부터 등장하여 본인 스스로 지옥으로 다이빙하는 완벽한 자폭을 시전한다.</p>
+
+    <h3 class="anchor-offset" id="s-4-1">4.1. 역겨운 재회와 집단 성희롱</h3>
+    <p>식당 화장실 앞 복도에서 고노애와 강하애가 안고 우는 모습을 전개욱과 함께 발견한 이송윤. 어린 시절의 반짝이던 외모는 온데간데없이 역변하여 흔남이 된 상태였다. 그는 화장실 벽에 기대어 노애의 몸을 역겹게 위아래로 훑어보았다.</p>
+    <blockquote class="quote">
+        "오~ 여기서 질질 짜고 있었네? ㅋㅋㅋ 지랄들을 한다, 못생긴 년들이."<br><br>
+        "야, 고노애. 너 어릴 땐 진짜 보기 싫은 뚱땡이더니 살 빼니까 몸매 좀 많이 좋아졌다? (...) 피 토할 정도로 먹고 토하면서까지 네 그 몸매를 아등바등 유지하려고 하는 꼴을 보니까 묘하게 좀 꼴리는데? 야, 내 마음이 좀 바뀌었어. (...) 너, 나랑 한 번 사귀자."
+    </blockquote>
+    <p>분노한 오이슬이 소주병을 들고 나타나자, 그는 오히려 관종이라 비웃으며 5명 단체 성관계를 제안하는 짐승만도 못한 망발을 내뱉었다.</p>
+    <blockquote class="quote">
+        "이 미친년은 또 뭐야? 나잇값 못하게 애새끼처럼 왜 대가리에 리본을 쳐 묶고 지랄이야? (...) 야, 너도 따라와. 우리 3명에서 하자. 아니지, 저기 뒤에 금발(하애), 너도 와라. 4명, 아니 노애까지 5명에서 단체로 아주 질펀하게 놀자."<br><br>
+        "이 씨발년이, 어디 한 번 쳐볼 테면 쳐봐 ㅋㅋㅋ 이 년들이 몸매는 봐줄 만해서 내가 특별히 이 잘생긴 얼굴 좀 맛보게 해준다니까 비싼 척을 하네. 아주 가소로운 년들. 그럼 억지로 끌고 가서 데리고 노는 수밖에."
+    </blockquote>
+    <p>주성우가 튀어나와 앞을 가로막자 1년 꿇은 형님이라 비아냥거리며 성우의 어깨를 밀쳤다.</p>
+    <blockquote class="quote">
+        "아이고~ 우리 1년 꿇은 형님 아니신가 ㅋㅋㅋ 여자들 치마폭에 싸여서 노니까 아주 살맛 나지? 야, 나 하나만 좀 줘라. 아니, 어차피 내가 힘으로 데려갈 테니까 넌 신경 끄고 저리 꺼져, 이 꿇은 새끼야 ㅋㅋㅋ"<br><br>
+        "씨발, 한 번 해봐 병신아 ㅋㅋㅋ 머리 나빠서 1년이나 꿇은 주제에 어디서 가오를 잡아. 왜, 너 혼자 저 년들 6명 다 따먹고 하렘 차리려고? 너 같은 병신이? ㅋㅋㅋ"
+    </blockquote>
+    <p>김시연이 서늘하게 얀데레 모드로 경고했음에도, 눈치 없이 아빠가 기자라며 가짜 뉴스로 집안을 조져버리겠다고 발악했다.</p>
+    <blockquote class="quote">"미친년이 돌았나! 야, 내가 내일 언론에 다 제보할 거야 씨발련들아! 너희들 다구리 깠다고! 야, 우리 아빠 기자야 이 씨발련들아!! 김시연, 니 애비 김성민? 내가 우리 아빠한테 말해서 있지도 않은 스캔들 만들어서 니 집안 다 조져버릴 수 있다고!!!!!!!!!!!!!! 어차피 요즘 개돼지 같은 사람들은 자극적인 가짜뉴스 뿌리면 다 욕하고 까기 마련이라고 이 병신들아 ㅋㅋㅋㅋㅋ!!"</blockquote>
+    <p>결국 노애는 사색이 되어 비틀거리고, 이슬/성우/하애/시연 등 친구들이 완벽한 방어벽을 구축하며 극대노하는 가운데 식당 사장님이 경찰을 불렀다.</p>
+
+    <h3 class="anchor-offset" id="s-4-2">4.2. 얄팍한 언론 빽 허세와 처참한 몰락</h3>
+    <p>전개욱의 아빠(경찰 간부)가 김시연 앞에서 무릎을 꿇고 벌벌 떠는 식당 복도 상황. 경찰 간부조차 무너지는 마당에, 이송윤은 눈치 없이 비릿한 웃음을 흘렸다. 자신의 아빠(기자) 빽을 맹신하며 짝다리를 짚고 오만방자하게 턱을 치켜들었다.</p>
+    <blockquote class="quote">
+        "야, 전개욱! 쫄지 마 병신아. 저년들이 여기서 아무리 아가리를 털고 법 들먹이며 지랄해봤자, 결국 언론에서 안 써주면 그만이야!"<br><br>
+        "야, 김시연. 니 애비가 국회의원이면 뭐 해? 우리 아빠가 기자라니까? 내가 우리 아빠한테 말해서 기사 싹 다 덮어버리고, 역으로 '국회의원 딸내미가 동기들 다구리 까고 갑질했다'고 프레임 짜서 기사 내보내면 니들이 어쩔 건데? 어차피 요즘 개돼지들은 진실이 뭔지 관심 없어! 기자가 펜대 굴려서 자극적으로 써주면 다 믿는다고! 언론에서 안 다뤄주면 니들이 짖어댄 증거고 나발이고 다 묻히는 거야 ㅋㅋㅋㅋ 해볼 테면 해봐 씨발련들아!"
+    </blockquote>
+    <p>그러나 이 비열한 언론 장악 발언에 분노한 주성우에게 멱살이 잡혀 발이 반 뼘이나 허공에 들린 채 켁켁거리며 버둥거렸다. 이어 김시연이 아빠의 실체가 그저 '지역 찌라시 신문사 데스크'임을 팩트로 폭로하고, "조중동 국장들을 움직여 네 아빠 신문사를 압수수색하게 만들겠다"고 선언하자, 그제야 자신이 건드린 권력의 크기를 깨닫고 시체처럼 새하얗게 질려버렸다. 다리가 풀려 오줌을 지릴 듯 사시나무 떨듯 떨기 시작했다.</p>
+    <blockquote class="quote">"(아빠에게 잡혀가며) 이거 놔!! 우리 아빠한테 전화할 거라고!! 놔아아악!!"</blockquote>
+
+    <h3 class="anchor-offset" id="s-4-3">4.3. 끝없는 뇌내망상과 기레기 아빠 소환</h3>
+    <p>수갑이 채워지기 전, 극한의 위기 상황에서도 굴하지 않고 궤변을 늘어놓는 이송윤의 눈치와 주제 파악 능력은 인간의 궤도를 벗어났다. 꼿꼿하게 고개를 쳐들고 미친 듯이 낄낄거리며 김시연의 말을 '언정 유착'으로 몰아갔다.</p>
+    <blockquote class="quote">
+        "하하하! 아, 존나 웃기네. 야, 김시연. 네가 지금 메이저 언론사 국장들 들먹였냐? 응~ 그것도 결국 '언정 유착'이잖아 ㅋㅋㅋㅋ 네 애비랑 조중동 국장들이랑 호형호제한다고? 그럼 뻔하지 ㅆㅂ, 또 어디 룸살롱이나 기어들어가서 여자 끼고 술 쳐먹다가 알게 된 썩은 인맥이겠지 ㅋㅋㅋㅋ!"<br><br>
+        "우리 아빠가 누군 줄 알아? (...) 지금은 이 지역 메인 언론인 '효빈일보'에 정식으로 들어간 핵심 기자야 ㅋㅋㅋㅋ! 어디서 찌라시 데스크라고 날조를 쳐?"<br><br>
+        "그리고 조선일보? (...) 너네 같은 좌파 새끼들은 답이 없다는 거야 ㅋㅋㅋㅋ 에휴 ㅋㅋㅋㅋ 그래, 어디 한 번 언론사랑 대놓고 유착됐다고 기사 내보내 보든가 ㅋㅋㅋㅋ 못 할 거면 아가리 닫고 나랑 자자고."
+    </blockquote>
+    <p>바닥에 엎드린 동네 형 전개욱과 그의 아빠를 향해 경멸의 시선을 던지고 패륜적인 반말을 쏟아냈다.</p>
+    <blockquote class="quote">"야, 전개욱. 형 같지도 않은 병신 새끼야. 느그 아빠도 참 개병신이다 ㅋㅋㅋ 고작 국회의원 이름 하나 들었다고 쫄아서 아들한테 수갑을 채워? 에휴, 찌질한 새끼. 넌 앞으로 나한테 형 대접받을 생각 말고 반말 까지 마라, 씨발련아."</blockquote>
+    <p>시연에게 '우파라면서 좌파 언론사에 들어간 논리적 오류'로 조롱당하고 불법 녹음 경고를 받자, 분노로 얼굴이 시뻘게졌다. 거칠게 욕을 내뱉으며 폰을 꺼내 시연에게 성희롱성 폭언을 날리고 아빠에게 전화를 걸었다.</p>
+    <blockquote class="quote">"이 씨발년이 진짜 끝까지 주둥이를 놀리네... 좋아, 넌 내가 어떻게든 무릎 꿇려서 먹어줄게 ㅋㅋㅋ 이런 귀한 집 오만한 딸내미는 어떻게 울면서 깔릴지 존나 탐이 난단 말이지..."</blockquote>
+
+    <h3 class="anchor-offset" id="s-4-4">4.4. 유유상종 부자의 발악과 구속</h3>
+    <p>전화를 받고 만취한 아빠가 식당에 난입해 특종 운운하며 허세와 날조를 쏟아내자, 이송윤은 아빠의 기레기다운 패악질과 뇌내망상(자신이 좌파 언론을 내부 폭파시킬 보수 요원이라는 등)을 굳게 믿고 끝까지 실실 쪼개며 거들먹거렸다. 그러나 결국 인내심이 바닥난 경찰 간부(전개욱의 아빠)에 의해 두 팔이 뒤로 꺾이고 수갑이 채워져 억지로 순찰차에 욱여넣어졌다.</p>
+
+    <h2 class="anchor-offset" id="s-5">5. 이송윤 아버지(기자)의 완벽한 멸망기</h2>
+    <p>이송윤이 경찰서 유치장으로 끌려간 사이, 아들의 호출을 받고 달려온 기레기 아버지의 뇌내망상과 파멸 과정이다.</p>
+
+    <h3 class="anchor-offset" id="s-5-1">5.1. 거침없는 뇌내망상과 조작 기사 작성</h3>
+    <p>만취 상태로 식당에 난입한 이송윤의 아버지는 낡은 효빈일보 기자증을 들이밀며 천박한 망발을 쏟아냈다. 고노애를 향해 삿대질을 하고 주성우를 조롱하며 "초식동물 같은 새끼"라 욕했다. 아들이 연행되는 것도 아랑곳 않고 효빈일보 사옥으로 돌아가 키보드를 부서져라 두드리며 <b>[단독: 국회의원 딸의 갑질 폭행과 박효빈 시장의 은밀한 멘토단 스캔들]</b>이라는 조작 기사를 썼다.</p>
+    <blockquote class="quote">
+        '(독백) 그래! 드디어 개돼지 같은 대중들이 내 명문을 읽고 진실에 눈을 뜰 거다! 수십만의 애국 보수 유튜버들이 내 기사를 퍼 나르고, 난 일약 좌파 카르텔의 언론 탄압을 이겨낸 순교자이자 자유투사로 등극하는 거야! 조선일보, 똑똑히 보고 있나? 너희들이 주워 먹을 특종을 내가 터뜨렸다!'
+    </blockquote>
+
+    <h3 class="anchor-offset" id="s-5-2">5.2. 데스크의 1초 킬과 조선일보의 사자후</h3>
+    <p>뇌내망상에 취해 '송고' 버튼을 내리찍었으나, 기사를 확인한 효빈일보 사회부장은 경악하며 즉각 기사를 '반려(Kill)' 처리했다. 편집국장실에 불려간 그는 짐짓 비장한 표정으로 진실 운운했으나, 국장의 크리스털 재떨이가 날아오며 팩트 폭격을 맞았다.</p>
+    <blockquote class="quote">
+        "국장님. 부장님. 진실을 덮으려 하지 마십시오! 저는 이 땅의 깨어있는 언론인으로서..."<br><br>
+        "그, 그건... 제 아들이 직접 현장에서 겪은 팩트고! 제보를 바탕으로 시민들의 여론이..."
+    </blockquote>
+    <p>새벽 1시 징계위에서 즉각 해고(파면)되고 길바닥으로 내쫓긴 그는, 덜덜 떨리는 손으로 조선일보 데스크에 전화를 걸었다.</p>
+    <blockquote class="quote">
+        "(통화) 선배님! 제가 방금 효빈일보에서 부당하게 짤린 투사인데, 김성민 의원 딸과 박효빈 시장의 은밀한 스캔들 특종을 하나 쥐고..."<br><br>
+        "아, 아니 선배님! 제 말을 좀 들어보십..."
+    </blockquote>
+    <p>그러나 돌아온 것은 <b>과거 효빈시에 당했던 PTSD를 앓고 있던 조선일보 국장의 극대노 사자후와 쌍욕</b>이었다. 거대한 권력의 역린을 건드렸음을 뼈저리게 깨달은 그는 사옥 앞 아스팔트 바닥에 주저앉았다.</p>
+
+    <h3 class="anchor-offset" id="s-5-3">5.3. 3류 찌라시 발행과 50억 소송, 체포</h3>
+    <p>결국 본래 몸담았던 3류 찌라시 '파이낸스 투데이'로 복직하여 조작 기사를 기어이 송출했다. 종이컵 믹스커피를 들이켜며 또다시 망상에 빠졌으나, 단 2시간 만에 국회/시청/대학에서 <b>50억 원대 내용증명과 소송장</b>이 쏟아졌다. 사색이 된 회사 대표에게 멱살이 잡혀 패대기쳐지고 포털 영구 퇴출을 통보받았다. 다음 날 아침 낡은 빌라로 도망치려다 문 앞의 지능범죄수사대 형사들에게 체포되었다.</p>
+
+    <h3 class="anchor-offset" id="s-5-4">5.4. 유치장 부자 상봉과 무너진 빽</h3>
+    <p>효빈경찰서 유치장에 갇힌 아버지는 철창 안쪽 구석에 웅크리고 있던 아들 이송윤을 만났다. 이송윤은 언론 권력으로 사건을 덮어주겠다던 아버지가 자신을 꺼내주러 온 줄 착각하며 멍청한 질문을 던졌다.</p>
+    <blockquote class="quote">"어...? 아, 아빠...? 아빠 왜 여깄어?! 빽 써서 나 꺼내주러 온 거 아니었어?! 아빠가 언론 힘으로 덮는다며!!"</blockquote>
+    <p>아버지는 허탈하게 헛웃음을 터뜨리며 쇠창살에 머리를 쾅쾅 박고 오열했다.</p>
+    <blockquote class="quote">"꺼내주긴 개뿔... 씨발... 그 년들 건드렸다가 네 애비 인생 50억짜리 빚더미 안고 끝났다... 다 끝났어, 이 병신아..."</blockquote>
+
+    <h2 class="anchor-offset" id="s-6">6. 재판과 완벽한 파멸: 사법부 모독의 대가</h2>
+
+    <h3 class="anchor-offset" id="s-6-1">6.1. 1심 법정의 역대급 자폭과 12년 선고</h3>
+    <p>효빈지방법원 1심 형사 재판. 푸른 수의를 입고 조창렬, 전개욱과 나란히 앉은 이송윤은 반성의 기미 없이 방청석의 피해자들을 힐끔거리며 킥킥대고 쪼갰다. 집행유예나 3~5년 형을 받고 나가면 양아치 훈장이라는 뇌내망상에 빠져 있었다. 피고인 심문이 시작되자 기자 아빠 빽을 믿고 득의양양하게 짖어댔다.</p>
+    <blockquote class="quote">"판사님! 저깟 년들이 아무리 여기서 떠들어봤자, 우리 아빠가 언론사 기자입니다! 우리 아빠가 기사 하나 쓰면 쟤네 다 매장당하고 진실은 우리가 원하는 대로 덮을 수 있다고요! 쟤네가 언론 무서운 줄 모르고 나대는 겁니다!"</blockquote>
+    <p>그러나 하성휘 판사(<a class="wiki-link" href="히카와_사요.html">히카와 사요</a> 오시)가 과거 기소유예 전력을 박살 내고 <b>징역 12년과 전자발찌 10년</b>을 선고하자, 그제야 오줌을 지리며 바닥에 털썩 주저앉았다. '초범'이라는 단어를 동아줄처럼 부르짖으며 발악했다.</p>
+    <blockquote class="quote">
+        "판, 판사님!! 이건 무효입니다!! 저희 진짜 억울합니다! 저희 셋 다 태어나서 감빵 한 번 안 갔다 온 '초범'이라고요!! 아무리 그래도 초범한테 징역 12년이 말이 됩니까?! 이거 항소할 겁니다!!"<br><br>
+        "아, 안 돼... 이럴 순 없어!! 우리 아빠가...!!"
+    </blockquote>
+
+    <h3 class="anchor-offset" id="s-6-2">6.2. 항소심의 궤변과 형량 가중 (15년 확정)</h3>
+    <p>12년 선고에 이성의 퓨즈가 끊어져 피고인석 난간을 붙잡고 쌍욕을 퍼부었다.</p>
+    <blockquote class="quote">"야, 이 씨발 좆같은 걸레 년들아!!!!!!!!!! 내가 여기서 나가면 니들 싹 다 뒤졌어, 알아?!!!!!!"</blockquote>
+    <p>항소하면 감형될 거라는 멍청한 기대감으로 항소장에 사인하고 2심 법정에 선 이송윤은, 마이크를 잡고 '물리적 삽입이 없었으니 무죄'라는 해괴망측한 궤변을 늘어놓으며 침을 튀겼다.</p>
+    <blockquote class="quote">"존경하는 항소심 재판장님! 1심 판결은 완전히 편파적인 정치 재판이었습니다! 저희는 절대로 성범죄를 저지른 적이 없습니다! 씨발 솔직히 까놓고 말해서, 저희가 저 년들 몸속에 성기를 '직접 삽입'했습니까?! 옷 위로 스치거나 손이 닿은 게 고작인데, 삽입도 안 한 걸 가지고 무슨 특수강간 수준의 12년을 때립니까?! 법적으로 물리적 삽입이 없으면 성폭행이 성립 안 되는 게 상식 아닙니까?!"</blockquote>
+    <p>하지만 2심 판사(<a class="wiki-link" href="이치가야_아리사.html">이치가야 아리사</a> 오시)가 검찰의 쌍방 항소를 인용해 형량을 <b>징역 15년</b>으로 가중 선고하자, 바닥에 털썩 무릎을 꿇고 거품을 물며 발작했다.</p>
+    <blockquote class="quote">"판사님!! 저희 초범이고 반성문도 냈잖아요!! 12년도 많아서 깎아달라니까 왜 15년입니까?! 우리 아빠가...!!"</blockquote>
+    <p>형량이 늘어났을 뿐만 아니라, 법정 구속(감치 20일)과 공직자 명예훼손에 대한 별건 기소 처분이 즉각 떨어졌다.</p>
+
+    <h3 class="anchor-offset" id="s-6-3">6.3. 대법원 기각과 뇌내망상의 박살</h3>
+    <p>대법원 최종 선고가 내려진 구치소 독방. 보수 인사인 대법원장이 '좌파 카르텔'로부터 자신들을 구해 무죄나 집행유예를 줄 것이라 굳게 믿으며 크리스마스 출소를 망상했다.</p>
+    <blockquote class="quote">
+        "야, 쫄지 마. 원래 2심 판사 그 새끼가 좌파 씹덕이라서 우리한테 감정적으로 15년이나 때린 거야. 대법원 가면 무조건 깎여."<br><br>
+        "대법원장이 조희대잖아? 윤석열 대통령이 임명한 보수 인사라고! (...) 어차피 좌파들이 난리 치는 사건은 대법원에서 적당히 집행유예로 빼주는 게 국룰이야 ㅋㅋㅋ"
+    </blockquote>
+    <p>그러나 대법원이 1초의 망설임 없이 절차적 심리로만 기각 판결을 내리자, 판결문을 구겨 쥐며 비명을 지르고 완벽한 절망에 빠져 통곡했다.</p>
+    <blockquote class="quote">"기... 기각? 기각이라고...?! 깎아주는 게 아니라 그냥 기각이라고?! 이럴 리가 없어!! 윤석열 정부인데 대법원이 왜 우리를 안 구해줘!! 이거 무효야!! 다시 재판해 달라고 해!! 아빠!!! 아빠아아아!!!"</blockquote>
+
+    <h3 class="anchor-offset" id="s-6-4">6.4. 19년 형 확정과 밑바닥으로의 전락</h3>
+    <p>2026년 8월, 악명 높은 효빈교도소 수감 생활. 별건 재판(명예훼손 및 모욕) 대법원 선고에서 징역 4년이 추가되어 <b>도합 19년 형</b>을 확정받았다. 박효빈 시장 등이 제기한 수십억 대의 민사 배상금으로 아빠가 타던 차와 집안 재산이 모두 공중분해 되고 가족과 연이 끊겼다. <span class="footnote-ref"><a href="#fn-15">[15]</a></span></p>
+    <p>교도소 노역 영치금의 90%가 강제 압류되어 컵라면 하나 못 사 먹고, 흉악범들의 멸시 속에 변기 청소와 걸레질을 도맡아 하는 먹이사슬 최하층으로 굴러떨어졌다. TV를 통해 빛나는 성공을 거둔 피해자들의 모습을 강제로 시청하며, 19년 청춘이 날아간 것에 절망의 눈물을 쏟고 있다.</p>
+    <blockquote class="quote">"내가 뱉은 그 몇 마디가... 내 청춘 19년을 날리고, 우리 집안을 이렇게 거지로 만들 줄은 몰랐어..."</blockquote>
+    <p>감형 없이 2043년 1월 40대를 바라보는 빈털터리 전과자로 출소할 예정이다.</p>
+
+    <h2 class="anchor-offset" id="s-7">7. 여담</h2>
+    <ul class="list-disc pl-5 space-y-2">
+        <li>여동생(2005년생)은 이 끔찍한 가문에서 유일한 정상인이다. 오빠와 아빠가 미친 짓을 저지르자 극대노하여 집을 나갔고, 아예 더불어민주당에 입당해 이들의 개지랄을 공론화하며 영구 의절한 '미친 정의감'의 소유자다.</li>
+        <li>이송윤이 경찰서 유치장에서 아빠를 기다리다 만난 장면은, 쓰레기 부자가 쌍으로 몰락하는 카르마(업보)의 완벽한 묘사로 효빈위키 유저들에게 통쾌함을 선사한다.</li>
+        <li>현재 교도소 독방에서 텔레비전 뉴스를 통해 박효빈 시장의 압도적 지지율 고공행진, 민부선 총장의 성공적인 대학 운영, 은권규 교수의 전국구 스타덤, 그리고 고노애와 시연 사단 친구들의 눈부신 비상을 매일 강제로 시청 중이다. 자신의 세 치 혀와 더러운 욕망이 부른 참혹한 대가에 매일 밤 뼈가 으스러지도록 피눈물을 흘리며 절망하고 있다고 한다.</li>
+        <li>조창렬의 부모가 시청 광장에서 난동을 부리다 아동학대 및 특수공용물건손상 미수로 연행되며 일가족 몰락의 길을 걷는 동안, 이송윤은 구치소에 있었으나 그의 일당이 저지른 이 사건들은 파멸의 연합군의 끔찍한 실체를 잘 보여준다.</li>
+    </ul>
+
+    <div class="footnote-section" id="s-footnote">
+        <h3 class="anchor-offset">8. 각주</h3>
+        <ul class="footnote-list">
+            <li id="fn-1"><span class="fn-num">[1]</span> <span class="footnote-content">동료 재소자들에게 하도 구타를 당해 생명 보존을 위해 스스로 독방(징벌방)을 자처했다.</span></li>
+            <li id="fn-2"><span class="fn-num">[2]</span> <span class="footnote-content">대한민국 남성 평균에는 약간 못 미치지만 조창렬 패거리 중에서는 가장 크다.</span></li>
+            <li id="fn-3"><span class="fn-num">[3]</span> <span class="footnote-content">현재 수감되면서 심적 스트레스와 노역으로 살이 쭉 빠졌을 것으로 추정.</span></li>
+            <li id="fn-4"><span class="fn-num">[4]</span> <span class="footnote-content">김성민 의원이 삼선대 출신임을 알고 학교 명예를 말아먹을 놈이라며 극대노하여 영구 퇴학시켰다.</span></li>
+            <li id="fn-5"><span class="fn-num">[5]</span> <span class="footnote-content">기자 아빠 빽으로 정신병자 코스프레를 하다 의사에게 간파당해 현역 3급으로 억지 배정된 결과다.</span></li>
+            <li id="fn-6"><span class="fn-num">[6]</span> <span class="footnote-content">대한민국 병역법 제3조 4항에 의거, 6년 이상의 징역형을 받아 남아있는 병역이 모두 강제로 면제되는 동시에 병적에서 영구 제적되었다.</span></li>
+            <li id="fn-7"><span class="fn-num">[7]</span> <span class="footnote-content">구속 자체가 조창렬보다 늦게 되었기 때문에 형량이 19년으로 같아도 약간 늦게 출소한다.</span></li>
+            <li id="fn-8"><span class="fn-num">[8]</span> <span class="footnote-content">내신 7.4라는 숫자가 하필 겹쳐서 학교의 명예를 떨어뜨린다는 비판이 많다.</span></li>
+            <li id="fn-9"><span class="fn-num">[9]</span> <span class="footnote-content">전개욱 아버지의 직위를 이용한 학폭 은폐는 결국 공수처의 표적이 되는 자충수였다.</span></li>
+            <li id="fn-10"><span class="fn-num">[10]</span> <span class="footnote-content">초등학교 시절 노애의 순수한 고백을 차갑게 기만하며 씻을 수 없는 상처를 주었다.</span></li>
+            <li id="fn-11"><span class="fn-num">[11]</span> <span class="footnote-content">노애의 외모와 섭식장애를 조롱하며 인간 이하의 취급을 주도한 만악의 근원이다.</span></li>
+            <li id="fn-12"><span class="fn-num">[12]</span> <span class="footnote-content">삼선대 사학과 집행부로 활동하며 학회비 수백만 원을 횡령해 풀빌라를 간 치졸한 사건이다.</span></li>
+            <li id="fn-13"><span class="fn-num">[13]</span> <span class="footnote-content">사학과 여학생 단톡방 성희롱 유출 사건에서 조창렬과 함께 딥페이크 합성을 주도했다.</span></li>
+            <li id="fn-14"><span class="fn-num">[14]</span> <span class="footnote-content">클럽 마약 투약 의혹 사건에서 출동한 경찰이 아버지의 후배여서 검사를 무마시켰으나, 훗날 재조사로 아버지가 구속되는 스모킹 건이 되었다.</span></li>
+            <li id="fn-15"><span class="fn-num">[15]</span> <span class="footnote-content">아빠는 파산하고, 정상인 여동생마저 이들을 고발하고 영구 의절하며 완벽하게 멸문지화 당했다.</span></li>
+        </ul>
+    </div>
+
+
+<script>
+    // 검색창 엔터키 및 클릭 이벤트 핸들러 완벽 복구
+    function handleSearch(inputId) {
+        const query = document.getElementById(inputId).value;
+        if (query) {
+            location.href = `효빈위키 검색.html?q=${encodeURIComponent(query)}`;
+        } else {
+            showMsg('검색어를 입력해주세요.');
+        }
+    }
+
+    // 알림 메시지 띄우기 기능
+    function showMsg(text) {
+        const box = document.getElementById('wiki-msg-box');
+        box.innerText = text; 
+        box.style.display = 'block';
+        setTimeout(() => { box.style.display = 'none'; }, 2000);
+    }
+    
+    // 각주 툴팁 (Hover) 자바스크립트 로직 완벽 복구
+    document.addEventListener('DOMContentLoaded', () => {
+        const tooltip = document.getElementById('wiki-tooltip');
+        document.querySelectorAll('.footnote-ref a').forEach(ref => {
+            ref.addEventListener('mouseenter', function(e) {
+                const targetId = this.getAttribute('href').replace('#', '');
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    const contentSpan = targetEl.querySelector('.footnote-content');
+                    if(contentSpan) {
+                        tooltip.innerHTML = contentSpan.innerHTML;
+                        tooltip.style.display = 'block';
+                        tooltip.style.left = (e.pageX + 15) + 'px';
+                        tooltip.style.top = (e.pageY + 15) + 'px';
+                    }
+                }
+            });
+            ref.addEventListener('mousemove', function(e) {
+                tooltip.style.left = (e.pageX + 15) + 'px';
+                tooltip.style.top = (e.pageY + 15) + 'px';
+            });
+            ref.addEventListener('mouseleave', function() {
+                tooltip.style.display = 'none';
+            });
+        });
+
+        // 앵커 부드러운 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                if(this.classList.contains('wiki-fn-link') || this.parentElement.classList.contains('footnote-ref')) return;
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if(targetElement){
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // D-Day 계산 스크립트 (출소일까지 남은 끔찍한 시간)
+        const targetDate = new Date("2043-01-04T00:00:00");
+        const today = new Date(); 
+        const diffTime = targetDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+        const dDayElement = document.getElementById("d-day");
+        if(dDayElement) dDayElement.innerText = "D-" + diffDays;
+    });
+</script>
+
+<!-- 외부 스크립트 5종 완벽 복원 (절대 누락 방지) -->
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+<div id="footer-container"></div>
+<script src="assets/load-footer.js"></script>
+
+</body>
+</html>

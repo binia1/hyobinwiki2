@@ -103,7 +103,7 @@ export async function seedInitialData(db) {
               <tr>
                   <td colspan="2" style="width: 100%; padding: 5px 10px; border-bottom: 1px solid #ddd; text-align: right; font-weight: bold; color: #373a3c; background-color: #f8f8f8;">
                       <span style="display: inline-flex; align-items: center; gap: 5px;">
-                          <img src="이미지/https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_South_Korea.svg/30px-Flag_of_South_Korea.svg.webp" alt="대한민국 국기" style="height: 16px; width: auto;">
+                          <img src="이미지/https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_South_Korea.svg/30px-Flag_of_South_Korea.svg" alt="대한민국 국기" style="height: 16px; width: auto;">
                           대한민국의 광역시
                       </span>
                   </td>

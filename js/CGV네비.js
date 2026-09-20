@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="cgv-nav-frame">
         <div class="cgv-nav-header">
             <div class="flex items-center justify-center gap-2">
-                <img onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/CGV_logo.svg/300px-CGV_logo.svg.webp'" src="이미지/CGV_로고_화이트.svg" style="height: 20px;"/>
+                <img onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/CGV_logo.svg/300px-CGV_logo.svg'" src="이미지/CGV_로고_화이트.svg" style="height: 20px;"/>
                 <span class="font-bold text-lg">전국 지점 현황</span>
             </div>
         </div>

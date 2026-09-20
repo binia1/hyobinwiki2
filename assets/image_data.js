@@ -1715,7 +1715,7 @@ const imageFiles = [
         "category": "etc"
     },
     {
-        "file": "Poppin_party_logo.pngParty_성우진.webp",
+        "file": "Poppin_party_logo.webpParty_성우진.webp",
         "category": "logo"
     },
     {
@@ -4899,7 +4899,7 @@ const imageFiles = [
         "category": "station"
     },
     {
-        "file": "덕남도립대학_UI.png",
+        "file": "덕남도립대학_UI.webp",
         "category": "school"
     },
     {
@@ -7115,7 +7115,7 @@ const imageFiles = [
         "category": "person"
     },
     {
-        "file": "박효빈 굿즈.png.webp",
+        "file": "박효빈 굿즈.webp",
         "category": "merch"
     },
     {
@@ -7343,7 +7343,7 @@ const imageFiles = [
         "category": "food"
     },
     {
-        "file": "박효빈몸.png.webp",
+        "file": "박효빈몸.webp",
         "category": "person"
     },
     {
@@ -12423,7 +12423,7 @@ const imageFiles = [
         "category": "person"
     },
     {
-        "file": "박효빈면상.png",
+        "file": "박효빈면상.webp",
         "category": "etc"
     },
     {
@@ -17767,7 +17767,7 @@ const imageFiles = [
         "category": "map"
     },
     {
-        "file": "효빈도시철도 5호선 노선도.png1.png 연장예정포함.webp",
+        "file": "효빈도시철도 5호선 노선도.webp1.webp 연장예정포함.webp",
         "category": "map"
     },
     {

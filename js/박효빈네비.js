@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", function() {
             
             <!-- 원본 사진을 CSS로 스텐실 처리 -->
             <div style="width: 50px; height: 50px; background-color: #004EA2; border: 1px solid rgba(255,255,255,0.3); display: flex; justify-content: center; align-items: center; overflow: hidden; border-radius: 2px;">
-                <!-- src 경로에 실제 가지고 계신 사진 파일명(예: 이미지/박효빈.png)을 넣어주세요 -->
-                <img src="이미지/박효빈면상.png" style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) contrast(500%) brightness(1.2); mix-blend-mode: multiply;" alt="박효빈">
+                <!-- src 경로에 실제 가지고 계신 사진 파일명(예: 이미지/박효빈.webp)을 넣어주세요 -->
+                <img src="이미지/박효빈면상.webp" style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) contrast(500%) brightness(1.2); mix-blend-mode: multiply;" alt="박효빈">
             </div>
             
             <!-- 중앙 구분선 -->

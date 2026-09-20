@@ -9558,6 +9558,9 @@
   "김시연": "김시연.html",
     "리(행정구역)": "리(행정구역).html",
   "섹스": "섹스.html",
+  "sex": "섹스.html",
+  "ㅅㅅ": "섹스.html",
+  "떡치는 행위": "섹스.html",
   "성관계": "성관계.html",
   "자지": "자지.html",
   "좆": "좆.html",
@@ -9578,6 +9581,8 @@
     "법정동_목록": "법정동_목록.html",
   "지랄": "지랄.html",
   "병신": "병신.html",
+  "ㅄ": "병신.html",
+  "ㅂㅅ": "병신.html",
     "엠마_체레스떼": "엠마_체레스떼.html",
     "엠마 체레스떼": "엠마_체레스떼.html",
   "천리내": "천리내.html",
@@ -9649,9 +9654,13 @@
   "막대기": "음경.html",
     "씨": "씨.html",
   "자위": "자위.html",
+  "딸딸이": "자위.html",
   "파이즈리": "파이즈리.html",
   "유두": "유두.html",
   "유방": "유방.html",
+  "슴가": "유방.html",
+  "가슴": "유방.html",
+  "찌찌": "유방.html",
   "음경": "음경.html",
   "젖": "젖.html",
     "사회복지학과": "사회복지학과.html",
@@ -9672,6 +9681,7 @@
   "박": "박.html",
   "선수(정치)": "선수(정치).html",
   "BanG Dream!": "BanG Dream!.html",
+  "뱅드림": "BanG Dream!.html",
   "필리핀": "필리핀.html",
   "일본": "일본.html",
   "대한민국": "대한민국.html",
@@ -9706,7 +9716,9 @@
   "오빠": "오빠.html",
   "여동생": "여동생.html",
   "엄마": "엄마.html",
+  "어머니": "엄마.html",
   "아빠": "아빠.html",
+  "아버지": "아빠.html",
   "형": "형.html",
     "연월엽": "연월엽.html",
   "임세혁": "임세혁.html",
@@ -10344,7 +10356,20 @@
   "앵내초등학교": "앵내초등학교.html",
   "앵내중학교": "앵내중학교.html",
   "도변여자고등학교": "도변여자고등학교.html",
-    "최후영": "최후영.html"
+    "최후영": "최후영.html",
+      "오동령": "오동령.html",
+  "고희연": "고희연.html",
+  "팔망성고_3인방": "팔망성고_3인방.html",
+    "좆병신": "윤석열.html",
+  "윤두창": "윤석열.html",
+  "윤항문씨발련": "윤석열.html",
+  "런닝구 각하": "윤석열.html",
+  "율산": "윤석열.html",
+  "김시연_주요일화및사건사고": "김시연_주요일화및사건사고.html",
+  "조창렬": "조창렬.html",
+    "전개욱": "전개욱.html",
+      "안농운": "안농운.html",
+        "은권규": "은권규.html",
 
 
 
@@ -12059,34 +12084,103 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 // ==========================================
-// 💡 나무위키 스타일 섹션 접기/펼치기 (숫자 바로 앞에 버튼 배치)
+// 💡 나무위키 스타일 섹션 접기/펼치기 + 우측 [편집] 버튼 (안정성 개선 버전)
 // ==========================================
 document.addEventListener("DOMContentLoaded", function() {
+    // 레이아웃 충돌 방지를 위한 스타일 시트 동적 주입
+    if (!document.getElementById('wiki-fold-edit-style')) {
+        const style = document.createElement('style');
+        style.id = 'wiki-fold-edit-style';
+        style.innerHTML = `
+            h2, h3 {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                position: relative !important;
+            }
+            .wiki-heading-left {
+                display: flex;
+                align-items: center;
+                flex-grow: 1;
+                overflow: hidden;
+            }
+            .wiki-fold-btn {
+                font-size: 0.65em;
+                cursor: pointer;
+                color: #888;
+                margin-right: 6px;
+                user-select: none;
+                font-weight: normal;
+                flex-shrink: 0;
+            }
+            .wiki-edit-btn {
+                font-size: 0.55em;
+                font-weight: normal;
+                color: #0056b3;
+                text-decoration: none;
+                cursor: pointer;
+                margin-left: 10px;
+                user-select: none;
+                flex-shrink: 0;
+            }
+            .wiki-edit-btn:hover {
+                text-decoration: underline;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
     const headings = document.querySelectorAll('h2, h3');
 
-    headings.forEach(heading => {
+    headings.forEach((heading, index) => {
         if (heading.querySelector('.wiki-fold-btn')) return;
 
-        heading.style.position = 'relative';
+        // 기존 제목 내부의 HTML 보존
+        const originalHTML = heading.innerHTML;
+        const match = originalHTML.match(/^(\s*\d+(?:\.\d+)*\.)/);
 
-        const html = heading.innerHTML;
-        // '1.', '2.1.' 같은 번호 패턴을 찾아 그 바로 앞에 버튼 삽입
-        const match = html.match(/^(\s*\d+(?:\.\d+)*\.)/);
-        
-        let toggleBtn;
+        const leftContainer = document.createElement('span');
+        leftContainer.className = 'wiki-heading-left';
+
+        const toggleBtn = document.createElement('span');
+        toggleBtn.className = 'wiki-fold-btn';
+        toggleBtn.innerText = '▼';
+
+        const textSpan = document.createElement('span');
+
         if (match) {
             const numberPart = match[1];
-            const restPart = html.substring(numberPart.length);
-            heading.innerHTML = '<span class="wiki-fold-btn" style="font-size: 0.65em; cursor: pointer; color: #888; margin-right: 6px; vertical-align: middle; user-select: none; font-weight: normal;">▼</span>' + numberPart + restPart;
-            toggleBtn = heading.querySelector('.wiki-fold-btn');
+            const restPart = originalHTML.substring(numberPart.length);
+            textSpan.innerHTML = numberPart + restPart;
+            leftContainer.appendChild(toggleBtn);
+            leftContainer.appendChild(textSpan);
         } else {
-            toggleBtn = document.createElement('span');
-            toggleBtn.className = 'wiki-fold-btn';
-            toggleBtn.innerText = '▼ ';
-            toggleBtn.style.cssText = 'font-size: 0.65em; cursor: pointer; color: #888; margin-right: 6px; vertical-align: middle; user-select: none; font-weight: normal;';
-            heading.insertBefore(toggleBtn, heading.firstChild);
+            leftContainer.appendChild(toggleBtn);
+            const textNode = document.createElement('span');
+            textNode.innerHTML = originalHTML;
+            leftContainer.appendChild(textNode);
         }
 
+        // 우측 끝 [편집] 버튼 생성
+        const editBtn = document.createElement('a');
+        editBtn.className = 'wiki-edit-btn';
+        editBtn.innerText = '[편집]';
+        
+        const sectionId = heading.id || `s-${index + 1}`;
+        heading.id = sectionId;
+        editBtn.href = `edit.html?section=${sectionId}`;
+        
+        // 편집 버튼 클릭 시 접기/펼치기 토글 충돌 방지
+        editBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // 헤더 초기화 후 좌측(토글+제목)과 우측(편집) 배치
+        heading.innerHTML = '';
+        heading.appendChild(leftContainer);
+        heading.appendChild(editBtn);
+
+        // 섹션 내용 래퍼(Wrapper) 생성 및 이동 로직
         const wrapper = document.createElement('div');
         wrapper.className = 'section-content-wrapper';
         
@@ -12110,16 +12204,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
         let isCollapsed = false;
 
+        // 접기/펼치기 토글 이벤트
         toggleBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             isCollapsed = !isCollapsed;
-            
             toggleBtn.innerText = isCollapsed ? '▶' : '▼';
             wrapper.style.display = isCollapsed ? 'none' : '';
         });
     });
 });
-
 // 1. 전역 최상위 goToLink 함수 (동음이의어 사전 매칭 + 새 탭 허용)
 window.goToLink = function(filename, event) {
     // 마우스 휠 클릭(가운데 클릭)이나 Ctrl+클릭 시 브라우저 기본 새 탭 열기 허용

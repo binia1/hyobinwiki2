@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const minseon9NavHTML = `
     <div style="border: 1px solid #ccc; border-radius: 2px; margin-bottom: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); background-color: #fff; overflow: hidden;">
         <div style="padding: 15px; text-align: center; border-bottom: 1px solid #ccc;">
-            <img alt="대한민국 국장" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Emblem_of_South_Korea.svg/100px-Emblem_of_South_Korea.svg.webp'" src="이미지/대한민국_국장.svg" style="width: 45px; vertical-align: middle; margin-right: 15px; display: inline-block;"/>
+            <img alt="대한민국 국장" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Emblem_of_South_Korea.svg/100px-Emblem_of_South_Korea.svg'" src="이미지/대한민국_국장.svg" style="width: 45px; vertical-align: middle; margin-right: 15px; display: inline-block;"/>
             <div style="display: inline-block; vertical-align: middle; text-align: left; line-height: 1.2;">
                 <div style="font-size: 0.85em; font-weight: bold; color: #333;">대한민국 민선 9기</div>
                 <div style="font-size: 1.3em; font-weight: 900; letter-spacing: -1px; color: #000;">광역자치단체장</div>
