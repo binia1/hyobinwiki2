@@ -131,11 +131,11 @@ const imageFiles = [
         "category": "bus"
     },
     {
-        "file": "123.webp",
-        "category": "bus"
+        "file": "120127_09_2_1.webp",
+        "category": "etc"
     },
     {
-        "file": "12번버스.webp",
+        "file": "123.webp",
         "category": "bus"
     },
     {
@@ -305,6 +305,10 @@ const imageFiles = [
     {
         "file": "2005트리오_호텔1.webp",
         "category": "facility_com"
+    },
+    {
+        "file": "200808071410460982952A_1.webp",
+        "category": "etc"
     },
     {
         "file": "201701182323442345..webp",
@@ -1211,6 +1215,10 @@ const imageFiles = [
         "category": "logo"
     },
     {
+        "file": "brea93.webp",
+        "category": "etc"
+    },
+    {
         "file": "BRO.svg",
         "category": "logo"
     },
@@ -1279,6 +1287,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "CY마트_로고.svg",
+        "category": "facility_com"
+    },
+    {
         "file": "dangseon_platform_2.webp",
         "category": "etc"
     },
@@ -1309,6 +1321,10 @@ const imageFiles = [
     {
         "file": "D_주무관.webp",
         "category": "person"
+    },
+    {
+        "file": "Edel_Note.webp",
+        "category": "etc"
     },
     {
         "file": "express_bus_terminal_platform_3.webp",
@@ -1351,6 +1367,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "Gangwon.webp",
+        "category": "etc"
+    },
+    {
         "file": "GE.webp",
         "category": "etc"
     },
@@ -1363,12 +1383,28 @@ const imageFiles = [
         "category": "logo"
     },
     {
+        "file": "GJLine_icon.svg",
+        "category": "road"
+    },
+    {
         "file": "GS마트_로고.svg",
         "category": "facility_com"
     },
     {
         "file": "Guilty Kiss.webp",
         "category": "logo"
+    },
+    {
+        "file": "GyeongchunLine_icon.svg",
+        "category": "road"
+    },
+    {
+        "file": "GyeonggangLine_icon.svg",
+        "category": "road"
+    },
+    {
+        "file": "Gyeongsangnam.webp",
+        "category": "etc"
     },
     {
         "file": "gyeseong_station.webp",
@@ -1527,11 +1563,39 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "IMG-6343.webp",
+        "category": "etc"
+    },
+    {
         "file": "IMG_5182.webp",
         "category": "etc"
     },
     {
         "file": "IMG_5183.webp",
+        "category": "etc"
+    },
+    {
+        "file": "ITX-마음 BI.svg",
+        "category": "logo"
+    },
+    {
+        "file": "ITX-새마을 BI.svg",
+        "category": "logo"
+    },
+    {
+        "file": "ITX-청춘 BI.svg",
+        "category": "logo"
+    },
+    {
+        "file": "ITX_마음.webp",
+        "category": "etc"
+    },
+    {
+        "file": "Jeju.webp",
+        "category": "etc"
+    },
+    {
+        "file": "Jeollabuk.webp",
         "category": "etc"
     },
     {
@@ -1588,6 +1652,10 @@ const imageFiles = [
     },
     {
         "file": "KT.svg",
+        "category": "logo"
+    },
+    {
+        "file": "KTX BI.svg",
         "category": "logo"
     },
     {
@@ -1707,6 +1775,10 @@ const imageFiles = [
         "category": "logo"
     },
     {
+        "file": "paizuriexample.webp",
+        "category": "etc"
+    },
+    {
         "file": "Pastel Palettes 10th.webp",
         "category": "etc"
     },
@@ -1715,7 +1787,7 @@ const imageFiles = [
         "category": "etc"
     },
     {
-        "file": "Poppin_party_logo.webpParty_성우진.webp",
+        "file": "Poppin_party_logo.pngParty_성우진.webp",
         "category": "logo"
     },
     {
@@ -1771,12 +1843,28 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "SBLine_icon.svg",
+        "category": "road"
+    },
+    {
         "file": "sd.webp",
         "category": "character"
     },
     {
         "file": "seogu_logo_old.webp",
         "category": "logo"
+    },
+    {
+        "file": "SeohaeLine_icon.svg",
+        "category": "road"
+    },
+    {
+        "file": "Seoulmetro1_icon.svg",
+        "category": "road"
+    },
+    {
+        "file": "Seoulmetro4_icon.svg",
+        "category": "road"
     },
     {
         "file": "SK_나이츠_로고.svg",
@@ -1823,6 +1911,10 @@ const imageFiles = [
         "category": "logo"
     },
     {
+        "file": "Threads 아이콘.svg",
+        "category": "logo"
+    },
+    {
         "file": "TLN.svg",
         "category": "logo"
     },
@@ -1857,6 +1949,10 @@ const imageFiles = [
     {
         "file": "vr_Harbor.webp",
         "category": "etc"
+    },
+    {
+        "file": "X 아이콘.svg",
+        "category": "logo"
     },
     {
         "file": "Y2K 밀레니엄 고글.webp",
@@ -2279,6 +2375,14 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "가노은.webp",
+        "category": "etc"
+    },
+    {
+        "file": "가노은_카논_코스.webp",
+        "category": "character"
+    },
+    {
         "file": "가동사거리역_4호선_승강장.webp",
         "category": "station"
     },
@@ -2321,6 +2425,14 @@ const imageFiles = [
     {
         "file": "가족을 향한 츤데레.webp",
         "category": "person"
+    },
+    {
+        "file": "가희나.webp",
+        "category": "etc"
+    },
+    {
+        "file": "가희나_키나코_코스.webp",
+        "category": "character"
     },
     {
         "file": "각 잡힌 스케줄.webp",
@@ -2583,12 +2695,20 @@ const imageFiles = [
         "category": "person"
     },
     {
-        "file": "강하애_평소모습.webp",
-        "category": "etc"
+        "file": "강하애_아이_코스.webp",
+        "category": "character"
+    },
+    {
+        "file": "강해나.webp",
+        "category": "person"
     },
     {
         "file": "강휴석.webp",
         "category": "person"
+    },
+    {
+        "file": "개기원.webp",
+        "category": "etc"
     },
     {
         "file": "개념체계.webp",
@@ -2647,6 +2767,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "경기도 읍 지도(2022).webp",
+        "category": "map"
+    },
+    {
         "file": "경기도.svg",
         "category": "logo"
     },
@@ -2675,12 +2799,20 @@ const imageFiles = [
         "category": "logo"
     },
     {
+        "file": "경상북도 읍 목록 (2022).webp",
+        "category": "etc"
+    },
+    {
         "file": "경상북도.svg",
         "category": "logo"
     },
     {
         "file": "경성대학교.svg",
         "category": "school"
+    },
+    {
+        "file": "경철래.webp",
+        "category": "etc"
     },
     {
         "file": "계성문화대학.svg",
@@ -2855,8 +2987,8 @@ const imageFiles = [
         "category": "person"
     },
     {
-        "file": "고노애_평소모습.webp",
-        "category": "etc"
+        "file": "고노애_카나타_코스.webp",
+        "category": "person"
     },
     {
         "file": "고당역_승강장.webp",
@@ -2909,6 +3041,10 @@ const imageFiles = [
     {
         "file": "고소유.webp",
         "category": "person"
+    },
+    {
+        "file": "고소유_유우_코스.webp",
+        "category": "character"
     },
     {
         "file": "고속철도공원.webp",
@@ -3017,6 +3153,10 @@ const imageFiles = [
     {
         "file": "고암로.webp",
         "category": "road"
+    },
+    {
+        "file": "고양시.svg",
+        "category": "logo"
     },
     {
         "file": "고유현.webp",
@@ -3151,6 +3291,14 @@ const imageFiles = [
         "category": "landmark"
     },
     {
+        "file": "고해영.webp",
+        "category": "person"
+    },
+    {
+        "file": "고해영_치카_코스.webp",
+        "category": "character"
+    },
+    {
         "file": "고해차량사업소_지도.webp",
         "category": "map"
     },
@@ -3160,6 +3308,10 @@ const imageFiles = [
     },
     {
         "file": "고화산.webp",
+        "category": "person"
+    },
+    {
+        "file": "고희연.webp",
         "category": "person"
     },
     {
@@ -3220,6 +3372,14 @@ const imageFiles = [
     },
     {
         "file": "공식_생일_굿즈_안요지_히메_2025.webp",
+        "category": "merch"
+    },
+    {
+        "file": "공식_생일_굿즈_오사와_루리노_2024.webp",
+        "category": "merch"
+    },
+    {
+        "file": "공식_생일_굿즈_오사와_루리노_2025.webp",
         "category": "merch"
     },
     {
@@ -3421,6 +3581,10 @@ const imageFiles = [
     {
         "file": "괴성로.webp",
         "category": "road"
+    },
+    {
+        "file": "교보문고_로고.svg",
+        "category": "logo"
     },
     {
         "file": "교육청_로고.webp",
@@ -3903,6 +4067,10 @@ const imageFiles = [
         "category": "event"
     },
     {
+        "file": "김성민_취임식.webp",
+        "category": "event"
+    },
+    {
         "file": "김성빈.webp",
         "category": "person"
     },
@@ -4019,16 +4187,16 @@ const imageFiles = [
         "category": "person"
     },
     {
-        "file": "김시안_평소모습.webp",
-        "category": "etc"
+        "file": "김시안_시오리코_코스.webp",
+        "category": "character"
     },
     {
         "file": "김시연.webp",
         "category": "person"
     },
     {
-        "file": "김시연_평소모습.webp",
-        "category": "etc"
+        "file": "김시연_아유무_코스.webp",
+        "category": "character"
     },
     {
         "file": "김시율.webp",
@@ -4041,6 +4209,10 @@ const imageFiles = [
     {
         "file": "김영산.webp",
         "category": "person"
+    },
+    {
+        "file": "김재욱_머그샷.webp",
+        "category": "etc"
     },
     {
         "file": "김지언.webp",
@@ -4069,6 +4241,14 @@ const imageFiles = [
     {
         "file": "김판석.webp",
         "category": "person"
+    },
+    {
+        "file": "김포시.svg",
+        "category": "logo"
+    },
+    {
+        "file": "김해시.svg",
+        "category": "logo"
     },
     {
         "file": "깁슨 레스폴 커스텀.webp",
@@ -4101,6 +4281,10 @@ const imageFiles = [
     {
         "file": "나수미.webp",
         "category": "etc"
+    },
+    {
+        "file": "나수미_카스미_코스.webp",
+        "category": "character"
     },
     {
         "file": "나수미_평소모습.webp",
@@ -4251,6 +4435,10 @@ const imageFiles = [
         "category": "road"
     },
     {
+        "file": "남양주시.svg",
+        "category": "logo"
+    },
+    {
         "file": "남예서.webp",
         "category": "person"
     },
@@ -4375,6 +4563,10 @@ const imageFiles = [
         "category": "character"
     },
     {
+        "file": "네이버 블로그 아이콘.svg",
+        "category": "logo"
+    },
+    {
         "file": "노동법과 엑셀 매크로.webp",
         "category": "road"
     },
@@ -4393,6 +4585,14 @@ const imageFiles = [
     {
         "file": "노이즈 캔슬링.webp",
         "category": "etc"
+    },
+    {
+        "file": "노정미.webp",
+        "category": "person"
+    },
+    {
+        "file": "노정미_노조미_코스.webp",
+        "category": "character"
     },
     {
         "file": "노준석.webp",
@@ -4417,6 +4617,10 @@ const imageFiles = [
     {
         "file": "뇌전역_승강장.webp",
         "category": "station"
+    },
+    {
+        "file": "누리로 BI.svg",
+        "category": "logo"
     },
     {
         "file": "누마즈.webp",
@@ -4481,6 +4685,10 @@ const imageFiles = [
     {
         "file": "니코 제미나이 참교육.webp",
         "category": "character"
+    },
+    {
+        "file": "니코니코 동화 아이콘.svg",
+        "category": "logo"
     },
     {
         "file": "다꾸의 달인.webp",
@@ -4691,6 +4899,22 @@ const imageFiles = [
         "category": "food"
     },
     {
+        "file": "당가영.webp",
+        "category": "etc"
+    },
+    {
+        "file": "당가영_작은딸.webp",
+        "category": "etc"
+    },
+    {
+        "file": "당가영_쿠쿠_코스.webp",
+        "category": "character"
+    },
+    {
+        "file": "당가영_큰딸.webp",
+        "category": "etc"
+    },
+    {
         "file": "당근마켓.webp",
         "category": "etc"
     },
@@ -4733,6 +4957,14 @@ const imageFiles = [
     {
         "file": "당찬로.webp",
         "category": "road"
+    },
+    {
+        "file": "대결사진.webp",
+        "category": "etc"
+    },
+    {
+        "file": "대경선-로고-simple-2.svg",
+        "category": "logo"
     },
     {
         "file": "대광원로.webp",
@@ -4867,6 +5099,10 @@ const imageFiles = [
         "category": "facility_gov"
     },
     {
+        "file": "대한민국_정부.svg",
+        "category": "logo"
+    },
+    {
         "file": "대한민국_정부_로고.svg",
         "category": "logo"
     },
@@ -4897,10 +5133,6 @@ const imageFiles = [
     {
         "file": "덕남대역_전경.webp",
         "category": "station"
-    },
-    {
-        "file": "덕남도립대학_UI.webp",
-        "category": "school"
     },
     {
         "file": "덕남도청.webp",
@@ -4971,6 +5203,10 @@ const imageFiles = [
         "category": "bus"
     },
     {
+        "file": "덕빈남도_교육청_로고.svg",
+        "category": "logo"
+    },
+    {
         "file": "덕빈남도_도정슬로건.webp",
         "category": "logo"
     },
@@ -4993,6 +5229,10 @@ const imageFiles = [
     {
         "file": "덕빈북도-효빈광역시 지도.webp",
         "category": "map"
+    },
+    {
+        "file": "덕빈북도_교육청_로고.svg",
+        "category": "logo"
     },
     {
         "file": "덕빈북도_도정슬로건.webp",
@@ -5187,8 +5427,20 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "도선요.webp",
+        "category": "etc"
+    },
+    {
+        "file": "도선요_요우_코스.webp",
+        "category": "character"
+    },
+    {
         "file": "도성로.webp",
         "category": "road"
+    },
+    {
+        "file": "도소영.webp",
+        "category": "etc"
     },
     {
         "file": "도시의 맥박.webp",
@@ -5357,6 +5609,14 @@ const imageFiles = [
     {
         "file": "동태역(현재).webp",
         "category": "etc"
+    },
+    {
+        "file": "동해산타열차BI.webp",
+        "category": "train"
+    },
+    {
+        "file": "동해선 광역전철 로고.svg",
+        "category": "logo"
     },
     {
         "file": "동효빈세무서.webp",
@@ -5549,6 +5809,10 @@ const imageFiles = [
     {
         "file": "라세하.webp",
         "category": "person"
+    },
+    {
+        "file": "라인 아이콘.svg",
+        "category": "logo"
     },
     {
         "file": "라준혁.webp",
@@ -5747,6 +6011,10 @@ const imageFiles = [
         "category": "logo"
     },
     {
+        "file": "롯데몰창전점.webp",
+        "category": "etc"
+    },
+    {
         "file": "롯데백화점_로고.svg",
         "category": "facility_com"
     },
@@ -5803,6 +6071,42 @@ const imageFiles = [
         "category": "logo"
     },
     {
+        "file": "루리노_Colorfulness+.webp",
+        "category": "character"
+    },
+    {
+        "file": "루리노_Echoes_Beyond+.webp",
+        "category": "character"
+    },
+    {
+        "file": "루리노_냐오_시그냘+.webp",
+        "category": "character"
+    },
+    {
+        "file": "루리노_아이_두_미!.webp",
+        "category": "character"
+    },
+    {
+        "file": "루리노_조망의_지평에서+.webp",
+        "category": "character"
+    },
+    {
+        "file": "루리노_직녀_이야기.webp",
+        "category": "character"
+    },
+    {
+        "file": "루리노_한낮_아라모드+.webp",
+        "category": "character"
+    },
+    {
+        "file": "루리루리루리.webp",
+        "category": "etc"
+    },
+    {
+        "file": "루리루리사인.webp",
+        "category": "logo"
+    },
+    {
         "file": "루비.webp",
         "category": "character"
     },
@@ -5847,6 +6151,14 @@ const imageFiles = [
         "category": "station"
     },
     {
+        "file": "리아리아리아.webp",
+        "category": "character"
+    },
+    {
+        "file": "리아리아사인.webp",
+        "category": "logo"
+    },
+    {
         "file": "리에라.webp",
         "category": "character"
     },
@@ -5857,6 +6169,10 @@ const imageFiles = [
     {
         "file": "리에라몰.webp",
         "category": "character"
+    },
+    {
+        "file": "리에하스연합.webp",
+        "category": "etc"
     },
     {
         "file": "리엘라스테이.webp",
@@ -5961,6 +6277,18 @@ const imageFiles = [
     {
         "file": "마루마루사인.webp",
         "category": "logo"
+    },
+    {
+        "file": "마루마트_로고.svg",
+        "category": "facility_com"
+    },
+    {
+        "file": "마루빈.webp",
+        "category": "etc"
+    },
+    {
+        "file": "마루빈_마르가레테_코스.webp",
+        "category": "character"
     },
     {
         "file": "마루야마 아야.webp",
@@ -6203,6 +6531,10 @@ const imageFiles = [
         "category": "bus"
     },
     {
+        "file": "메구미_아이덴티티+.webp",
+        "category": "character"
+    },
+    {
         "file": "메뉴 선택 장애.webp",
         "category": "etc"
     },
@@ -6227,6 +6559,14 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "명안유.webp",
+        "category": "person"
+    },
+    {
+        "file": "명안유_스미레_코스.webp",
+        "category": "character"
+    },
+    {
         "file": "명일역_승강장.webp",
         "category": "station"
     },
@@ -6248,6 +6588,10 @@ const imageFiles = [
     },
     {
         "file": "모다아울렛_로고.svg",
+        "category": "logo"
+    },
+    {
+        "file": "모던하우스_로고.svg",
         "category": "logo"
     },
     {
@@ -6363,6 +6707,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "무지개동호회.webp",
+        "category": "etc"
+    },
+    {
         "file": "무한루프증거.webp",
         "category": "etc"
     },
@@ -6384,6 +6732,10 @@ const imageFiles = [
     },
     {
         "file": "문수연.webp",
+        "category": "person"
+    },
+    {
+        "file": "문수하.webp",
         "category": "person"
     },
     {
@@ -6457,6 +6809,10 @@ const imageFiles = [
     {
         "file": "미네츠키 리츠.webp",
         "category": "character"
+    },
+    {
+        "file": "미라쿠라파크!.webp",
+        "category": "etc"
     },
     {
         "file": "미소율.webp",
@@ -7091,7 +7447,19 @@ const imageFiles = [
         "category": "event"
     },
     {
+        "file": "박현만_취임식1.webp",
+        "category": "event"
+    },
+    {
+        "file": "박현만_취임식2.webp",
+        "category": "event"
+    },
+    {
         "file": "박현만_침통.webp",
+        "category": "etc"
+    },
+    {
+        "file": "박현만면상.webp",
         "category": "etc"
     },
     {
@@ -7115,7 +7483,7 @@ const imageFiles = [
         "category": "person"
     },
     {
-        "file": "박효빈 굿즈.webp",
+        "file": "박효빈 굿즈.png.webp",
         "category": "merch"
     },
     {
@@ -7343,7 +7711,7 @@ const imageFiles = [
         "category": "food"
     },
     {
-        "file": "박효빈몸.webp",
+        "file": "박효빈몸.png.webp",
         "category": "person"
     },
     {
@@ -7435,6 +7803,10 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "방하대로.webp",
+        "category": "road"
+    },
+    {
         "file": "배도환.webp",
         "category": "person"
     },
@@ -7463,6 +7835,14 @@ const imageFiles = [
         "category": "station"
     },
     {
+        "file": "백모모.webp",
+        "category": "person"
+    },
+    {
+        "file": "백모모_긴코_코스.webp",
+        "category": "etc"
+    },
+    {
         "file": "백민우.webp",
         "category": "person"
     },
@@ -7473,6 +7853,10 @@ const imageFiles = [
     {
         "file": "백우진_연구원.webp",
         "category": "facility_gov"
+    },
+    {
+        "file": "백지원.webp",
+        "category": "person"
     },
     {
         "file": "백천역_승강장.webp",
@@ -7727,6 +8111,10 @@ const imageFiles = [
         "category": "logo"
     },
     {
+        "file": "부천시.svg",
+        "category": "logo"
+    },
+    {
         "file": "부한역_승강장.webp",
         "category": "station"
     },
@@ -7961,6 +8349,10 @@ const imageFiles = [
     {
         "file": "빈성구청.webp",
         "category": "facility_gov"
+    },
+    {
+        "file": "빈스마트_로고.svg",
+        "category": "facility_com"
     },
     {
         "file": "빈전역_승강장.webp",
@@ -8351,6 +8743,10 @@ const imageFiles = [
         "category": "train"
     },
     {
+        "file": "사야루리.webp",
+        "category": "etc"
+    },
+    {
         "file": "사야리미.webp",
         "category": "character"
     },
@@ -8361,6 +8757,10 @@ const imageFiles = [
     {
         "file": "사야역_승강장.webp",
         "category": "station"
+    },
+    {
+        "file": "사양화.webp",
+        "category": "etc"
     },
     {
         "file": "사연역_승강장.webp",
@@ -8507,11 +8907,11 @@ const imageFiles = [
         "category": "school"
     },
     {
-        "file": "삼선대학교병원_로고.webp",
+        "file": "삼선의료원_로고.webp",
         "category": "facility_com"
     },
     {
-        "file": "삼선대학교병원_전경.webp",
+        "file": "삼선의료원_전경.webp",
         "category": "facility_com"
     },
     {
@@ -8601,6 +9001,10 @@ const imageFiles = [
     {
         "file": "상서로.webp",
         "category": "road"
+    },
+    {
+        "file": "상세 내용 아이콘.svg",
+        "category": "logo"
     },
     {
         "file": "상술현.webp",
@@ -8721,6 +9125,10 @@ const imageFiles = [
     {
         "file": "서구청.webp",
         "category": "facility_gov"
+    },
+    {
+        "file": "서기평.webp",
+        "category": "person"
     },
     {
         "file": "서나역.webp",
@@ -8903,6 +9311,10 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "서진희.webp",
+        "category": "person"
+    },
+    {
         "file": "서팔역_승강장.webp",
         "category": "station"
     },
@@ -8951,6 +9363,22 @@ const imageFiles = [
         "category": "school"
     },
     {
+        "file": "석다연.webp",
+        "category": "etc"
+    },
+    {
+        "file": "석다연_다이아_코스.webp",
+        "category": "character"
+    },
+    {
+        "file": "석루비.webp",
+        "category": "character"
+    },
+    {
+        "file": "석루비_루비_코스.webp",
+        "category": "character"
+    },
+    {
         "file": "석서역.webp",
         "category": "station"
     },
@@ -8977,6 +9405,10 @@ const imageFiles = [
     {
         "file": "석창역_승강장.webp",
         "category": "station"
+    },
+    {
+        "file": "석형준.webp",
+        "category": "etc"
     },
     {
         "file": "석화 상태.webp",
@@ -9013,6 +9445,18 @@ const imageFiles = [
     {
         "file": "선행 데뷔의 여유.webp",
         "category": "etc"
+    },
+    {
+        "file": "성공린.webp",
+        "category": "person"
+    },
+    {
+        "file": "성공린_린_코스.webp",
+        "category": "character"
+    },
+    {
+        "file": "성남시.svg",
+        "category": "logo"
     },
     {
         "file": "성덕과 숨덕의 조우.webp",
@@ -9075,6 +9519,14 @@ const imageFiles = [
         "category": "school"
     },
     {
+        "file": "세가_누이_루리노.webp",
+        "category": "character"
+    },
+    {
+        "file": "세가_누이_루리노_힙힙후레이.webp",
+        "category": "character"
+    },
+    {
         "file": "세금.webp",
         "category": "etc"
     },
@@ -9105,6 +9557,14 @@ const imageFiles = [
     {
         "file": "세이브존_로고.svg",
         "category": "logo"
+    },
+    {
+        "file": "세이세이사인.webp",
+        "category": "logo"
+    },
+    {
+        "file": "세이세이세이.webp",
+        "category": "etc"
     },
     {
         "file": "세종특별자치시.svg",
@@ -9144,6 +9604,10 @@ const imageFiles = [
     },
     {
         "file": "소금하우스.webp",
+        "category": "etc"
+    },
+    {
+        "file": "소남주.webp",
         "category": "etc"
     },
     {
@@ -9259,6 +9723,14 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "송과영.webp",
+        "category": "person"
+    },
+    {
+        "file": "송과영_카난_코스.webp",
+        "category": "character"
+    },
+    {
         "file": "송덕역_승강장.webp",
         "category": "station"
     },
@@ -9296,6 +9768,10 @@ const imageFiles = [
     },
     {
         "file": "송지훈.webp",
+        "category": "person"
+    },
+    {
+        "file": "송채린.webp",
         "category": "person"
     },
     {
@@ -9345,6 +9821,10 @@ const imageFiles = [
     {
         "file": "수옥역_전경.webp",
         "category": "station"
+    },
+    {
+        "file": "수원시.svg",
+        "category": "logo"
     },
     {
         "file": "수의대·동물병원역_승강장.webp",
@@ -9515,6 +9995,10 @@ const imageFiles = [
         "category": "station"
     },
     {
+        "file": "시나 웨이보 아이콘.svg",
+        "category": "logo"
+    },
+    {
         "file": "시남역_승강장.webp",
         "category": "station"
     },
@@ -9677,6 +10161,18 @@ const imageFiles = [
     {
         "file": "시티투어버스.webp",
         "category": "bus"
+    },
+    {
+        "file": "시화음.webp",
+        "category": "etc"
+    },
+    {
+        "file": "시화음_카논_코스.webp",
+        "category": "character"
+    },
+    {
+        "file": "시흥시.svg",
+        "category": "logo"
     },
     {
         "file": "신거역_1호선_승강장.webp",
@@ -10231,12 +10727,24 @@ const imageFiles = [
         "category": "facility_com"
     },
     {
+        "file": "아크앤북_로고.webp",
+        "category": "logo"
+    },
+    {
         "file": "아키야마 미오.webp",
         "category": "character"
     },
     {
         "file": "악부01.webp",
         "category": "bus"
+    },
+    {
+        "file": "안공주.webp",
+        "category": "person"
+    },
+    {
+        "file": "안공주_히메_코스.webp",
+        "category": "character"
     },
     {
         "file": "안내데스크의 두 얼굴.webp",
@@ -10251,6 +10759,10 @@ const imageFiles = [
         "category": "facility_com"
     },
     {
+        "file": "안농운.webp",
+        "category": "person"
+    },
+    {
         "file": "안덕경.webp",
         "category": "person"
     },
@@ -10259,12 +10771,28 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "안산시.svg",
+        "category": "logo"
+    },
+    {
         "file": "안세영.webp",
         "category": "person"
     },
     {
         "file": "안신대학교_UI.svg",
         "category": "school"
+    },
+    {
+        "file": "안양시.svg",
+        "category": "logo"
+    },
+    {
+        "file": "안예리.webp",
+        "category": "etc"
+    },
+    {
+        "file": "안예리_에리_코스.webp",
+        "category": "character"
     },
     {
         "file": "안요지 히메.webp",
@@ -10395,6 +10923,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "알라딘중고서점_로고.svg",
+        "category": "logo"
+    },
+    {
         "file": "알바.webp",
         "category": "person"
     },
@@ -10425,6 +10957,10 @@ const imageFiles = [
     {
         "file": "압일역.webp",
         "category": "station"
+    },
+    {
+        "file": "애니메이트 아이콘.svg",
+        "category": "logo"
     },
     {
         "file": "애니메이트_로고.svg",
@@ -10647,6 +11183,10 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "양미소.webp",
+        "category": "person"
+    },
+    {
         "file": "양소현.webp",
         "category": "person"
     },
@@ -10823,6 +11363,10 @@ const imageFiles = [
         "category": "character"
     },
     {
+        "file": "엠마_체레스떼_엠마_코스.webp",
+        "category": "character"
+    },
+    {
         "file": "엠마공항버스.webp",
         "category": "bus"
     },
@@ -10909,6 +11453,10 @@ const imageFiles = [
     {
         "file": "연월엽.webp",
         "category": "etc"
+    },
+    {
+        "file": "연월엽_렌_코스.webp",
+        "category": "character"
     },
     {
         "file": "염곡역_3호선_승강장.webp",
@@ -11019,6 +11567,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "영풍문고_로고.svg",
+        "category": "logo"
+    },
+    {
         "file": "영혼의 파트너.webp",
         "category": "etc"
     },
@@ -11045,6 +11597,14 @@ const imageFiles = [
     {
         "file": "오갈매.webp",
         "category": "person"
+    },
+    {
+        "file": "오낙희.webp",
+        "category": "person"
+    },
+    {
+        "file": "오낙희_나츠미_코스.webp",
+        "category": "character"
     },
     {
         "file": "오내사거리역_승강장.webp",
@@ -11079,6 +11639,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "오동령.webp",
+        "category": "person"
+    },
+    {
         "file": "오라버니..!.webp",
         "category": "etc"
     },
@@ -11088,6 +11652,14 @@ const imageFiles = [
     },
     {
         "file": "오렌지빛 궤도의 여신.webp",
+        "category": "character"
+    },
+    {
+        "file": "오마리.webp",
+        "category": "character"
+    },
+    {
+        "file": "오마리_토마리_코스.webp",
         "category": "character"
     },
     {
@@ -11171,6 +11743,18 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "오오사와_루리노.webp",
+        "category": "character"
+    },
+    {
+        "file": "오오사와_루리노_104.webp",
+        "category": "character"
+    },
+    {
+        "file": "오오사와_루리노_105.webp",
+        "category": "character"
+    },
+    {
         "file": "오오사와_루리노_극장판.webp",
         "category": "character"
     },
@@ -11181,6 +11765,10 @@ const imageFiles = [
     {
         "file": "오이슬.webp",
         "category": "person"
+    },
+    {
+        "file": "오이슬_시즈쿠_코스.webp",
+        "category": "character"
     },
     {
         "file": "오전희.webp",
@@ -11232,6 +11820,14 @@ const imageFiles = [
     },
     {
         "file": "오하라 마리.webp",
+        "category": "character"
+    },
+    {
+        "file": "오하리.webp",
+        "category": "etc"
+    },
+    {
+        "file": "오하리_마리_코스.webp",
         "category": "character"
     },
     {
@@ -11343,6 +11939,18 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "완숙아보카도.webp",
+        "category": "etc"
+    },
+    {
+        "file": "완시윤.webp",
+        "category": "etc"
+    },
+    {
+        "file": "완시윤_시키_코스.webp",
+        "category": "character"
+    },
+    {
         "file": "왓슨.webp",
         "category": "etc"
     },
@@ -11407,6 +12015,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "용인시.svg",
+        "category": "logo"
+    },
+    {
         "file": "우격역_전경.webp",
         "category": "station"
     },
@@ -11440,6 +12052,10 @@ const imageFiles = [
     },
     {
         "file": "우미현.webp",
+        "category": "person"
+    },
+    {
+        "file": "우민지.webp",
         "category": "person"
     },
     {
@@ -11513,6 +12129,10 @@ const imageFiles = [
     {
         "file": "우정사업본부_로고.svg",
         "category": "facility_gov"
+    },
+    {
+        "file": "우중호.webp",
+        "category": "etc"
     },
     {
         "file": "우지남.webp",
@@ -11627,6 +12247,10 @@ const imageFiles = [
         "category": "station"
     },
     {
+        "file": "워터드롭호텔.webp",
+        "category": "facility_com"
+    },
+    {
         "file": "원개현.webp",
         "category": "person"
     },
@@ -11673,6 +12297,10 @@ const imageFiles = [
     {
         "file": "원안군청.webp",
         "category": "facility_gov"
+    },
+    {
+        "file": "원우미.webp",
+        "category": "person"
     },
     {
         "file": "원유미.webp",
@@ -11797,6 +12425,14 @@ const imageFiles = [
     {
         "file": "유류역_승강장.webp",
         "category": "station"
+    },
+    {
+        "file": "유리내.webp",
+        "category": "person"
+    },
+    {
+        "file": "유리내_루리노_코스.webp",
+        "category": "character"
     },
     {
         "file": "유리아 1차 방어선.webp",
@@ -11979,6 +12615,10 @@ const imageFiles = [
         "category": "merch"
     },
     {
+        "file": "유리아라세나임세하.webp",
+        "category": "character"
+    },
+    {
         "file": "유리아로.webp",
         "category": "road"
     },
@@ -12033,6 +12673,14 @@ const imageFiles = [
     {
         "file": "유성태.webp",
         "category": "person"
+    },
+    {
+        "file": "유세라.webp",
+        "category": "event"
+    },
+    {
+        "file": "유세라_세라스_코스.webp",
+        "category": "event"
     },
     {
         "file": "유소현.webp",
@@ -12099,6 +12747,14 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "유채나_세츠나_코스.webp",
+        "category": "character"
+    },
+    {
+        "file": "유초애.webp",
+        "category": "person"
+    },
+    {
         "file": "유키 세츠나.webp",
         "category": "character"
     },
@@ -12111,8 +12767,16 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "유튜브 아이콘.svg",
+        "category": "logo"
+    },
+    {
         "file": "유형별 포괄주의.webp",
         "category": "etc"
+    },
+    {
+        "file": "유혜경.webp",
+        "category": "person"
     },
     {
         "file": "육각로.webp",
@@ -12155,6 +12819,10 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "윤대환_지랄면상.webp",
+        "category": "person"
+    },
+    {
         "file": "윤서진.webp",
         "category": "person"
     },
@@ -12172,6 +12840,10 @@ const imageFiles = [
     },
     {
         "file": "윤월선.webp",
+        "category": "etc"
+    },
+    {
+        "file": "윤재룬개지랄.webp",
         "category": "etc"
     },
     {
@@ -12199,6 +12871,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "윤재훈체포용.webp",
+        "category": "etc"
+    },
+    {
         "file": "윤항문.webp",
         "category": "person"
     },
@@ -12207,12 +12883,20 @@ const imageFiles = [
         "category": "station"
     },
     {
+        "file": "은권규.webp",
+        "category": "person"
+    },
+    {
         "file": "은밀하고 따뜻한 미소.webp",
         "category": "etc"
     },
     {
         "file": "은은한 광기.webp",
         "category": "etc"
+    },
+    {
+        "file": "은현성.webp",
+        "category": "person"
     },
     {
         "file": "의료기기 착용.webp",
@@ -12371,8 +13055,44 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "이리자.webp",
+        "category": "person"
+    },
+    {
+        "file": "이리자_리코_코스.webp",
+        "category": "character"
+    },
+    {
         "file": "이마이 리사.webp",
         "category": "character"
+    },
+    {
+        "file": "이마트_강주점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_계성점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_군천점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_궁하점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_낙주점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_대뢰점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_덕산점_전경.webp",
+        "category": "facility_com"
     },
     {
         "file": "이마트_로고.svg",
@@ -12387,7 +13107,35 @@ const imageFiles = [
         "category": "facility_com"
     },
     {
+        "file": "이마트_마진점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_방산점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_비천점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_빈성점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_빈주가원점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_빈주점_전경.webp",
+        "category": "facility_com"
+    },
+    {
         "file": "이마트_사복점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_서해점_전경.webp",
         "category": "facility_com"
     },
     {
@@ -12395,7 +13143,23 @@ const imageFiles = [
         "category": "facility_com"
     },
     {
+        "file": "이마트_약산점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_우전점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_운진점_전경.webp",
+        "category": "facility_com"
+    },
+    {
         "file": "이마트_월천점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_조전점_전경.webp",
         "category": "facility_com"
     },
     {
@@ -12404,6 +13168,14 @@ const imageFiles = [
     },
     {
         "file": "이마트_창전점.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_천주점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "이마트_하정점_전경.webp",
         "category": "facility_com"
     },
     {
@@ -12419,12 +13191,16 @@ const imageFiles = [
         "category": "etc"
     },
     {
-        "file": "이미사.webp",
+        "file": "이미녀.webp",
         "category": "person"
     },
     {
-        "file": "박효빈면상.webp",
-        "category": "etc"
+        "file": "이미녀_메이_코스.webp",
+        "category": "character"
+    },
+    {
+        "file": "이미사.webp",
+        "category": "person"
     },
     {
         "file": "이벤트시티투어버스.webp",
@@ -12444,6 +13220,10 @@ const imageFiles = [
     },
     {
         "file": "이상휴.webp",
+        "category": "person"
+    },
+    {
+        "file": "이석우.webp",
         "category": "person"
     },
     {
@@ -12472,6 +13252,10 @@ const imageFiles = [
     },
     {
         "file": "이세희.webp",
+        "category": "person"
+    },
+    {
+        "file": "이송윤.webp",
         "category": "person"
     },
     {
@@ -12603,6 +13387,26 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "이주미.webp",
+        "category": "person"
+    },
+    {
+        "file": "이즈미_꽃이_피면_꿈이_달린다+.webp",
+        "category": "character"
+    },
+    {
+        "file": "이즈미_사련금지룡+.webp",
+        "category": "character"
+    },
+    {
+        "file": "이즈이즈사인.webp",
+        "category": "logo"
+    },
+    {
+        "file": "이즈이즈이즈.webp",
+        "category": "etc"
+    },
+    {
         "file": "이지치 니지카.webp",
         "category": "etc"
     },
@@ -12620,6 +13424,10 @@ const imageFiles = [
     },
     {
         "file": "이차원_사쿠라우치리코..webp",
+        "category": "character"
+    },
+    {
+        "file": "이차원_오사와루리노.webp",
         "category": "character"
     },
     {
@@ -12651,8 +13459,12 @@ const imageFiles = [
         "category": "etc"
     },
     {
-        "file": "이한선_평소모습.webp",
-        "category": "etc"
+        "file": "이한선_시오리코_코스.webp",
+        "category": "character"
+    },
+    {
+        "file": "이희명.webp",
+        "category": "person"
     },
     {
         "file": "익명 기부 추적자.webp",
@@ -12780,6 +13592,10 @@ const imageFiles = [
     },
     {
         "file": "임대석.webp",
+        "category": "person"
+    },
+    {
+        "file": "임석현.webp",
         "category": "person"
     },
     {
@@ -13335,12 +14151,76 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "임승민.webp",
+        "category": "person"
+    },
+    {
+        "file": "임승민_임은혜.webp",
+        "category": "etc"
+    },
+    {
         "file": "임승현.webp",
+        "category": "person"
+    },
+    {
+        "file": "임시연.webp",
+        "category": "person"
+    },
+    {
+        "file": "임시연_임승민_큥.webp",
+        "category": "etc"
+    },
+    {
+        "file": "임씨가족.webp",
+        "category": "person"
+    },
+    {
+        "file": "임은연.webp",
         "category": "person"
     },
     {
         "file": "임은혜.webp",
         "category": "person"
+    },
+    {
+        "file": "임은혜_메구미_코스.webp",
+        "category": "character"
+    },
+    {
+        "file": "임은혜_메구미패널 (2).webp",
+        "category": "character"
+    },
+    {
+        "file": "임은혜_메구미패널 (3).webp",
+        "category": "character"
+    },
+    {
+        "file": "임은혜_메구미패널 (4).webp",
+        "category": "character"
+    },
+    {
+        "file": "임은혜_메구미패널 (5).webp",
+        "category": "character"
+    },
+    {
+        "file": "임은혜_메구미패널 (6).webp",
+        "category": "character"
+    },
+    {
+        "file": "임은혜_메구미패널 (7).webp",
+        "category": "character"
+    },
+    {
+        "file": "임은혜_메구미패널.webp",
+        "category": "character"
+    },
+    {
+        "file": "임은혜_반팔.webp",
+        "category": "etc"
+    },
+    {
+        "file": "임은혜_시연이_큥.webp",
+        "category": "etc"
     },
     {
         "file": "임천여객.webp",
@@ -13575,6 +14455,10 @@ const imageFiles = [
         "category": "facility_gov"
     },
     {
+        "file": "전개욱.webp",
+        "category": "person"
+    },
+    {
         "file": "전남광주통합특별시.svg",
         "category": "logo"
     },
@@ -13711,6 +14595,10 @@ const imageFiles = [
         "category": "logo"
     },
     {
+        "file": "전라남도.webp",
+        "category": "etc"
+    },
+    {
         "file": "전례가 없습니다.webp",
         "category": "etc"
     },
@@ -13775,6 +14663,10 @@ const imageFiles = [
         "category": "school"
     },
     {
+        "file": "전주시.svg",
+        "category": "logo"
+    },
+    {
         "file": "전지호.webp",
         "category": "etc"
     },
@@ -13832,6 +14724,10 @@ const imageFiles = [
     },
     {
         "file": "절대영역 사수.webp",
+        "category": "etc"
+    },
+    {
+        "file": "점보루엥.webp",
         "category": "etc"
     },
     {
@@ -14083,6 +14979,10 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "조용철.webp",
+        "category": "person"
+    },
+    {
         "file": "조우영.webp",
         "category": "person"
     },
@@ -14119,6 +15019,10 @@ const imageFiles = [
         "category": "station"
     },
     {
+        "file": "조창렬.webp",
+        "category": "person"
+    },
+    {
         "file": "조천산역_전경.webp",
         "category": "station"
     },
@@ -14131,12 +15035,20 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "조향림_카린_코스.webp",
+        "category": "character"
+    },
+    {
         "file": "족포초등학교로고.webp",
         "category": "school"
     },
     {
         "file": "졸리비.webp",
         "category": "etc"
+    },
+    {
+        "file": "종로서적_로고.svg",
+        "category": "logo"
     },
     {
         "file": "종성여객.webp",
@@ -14187,12 +15099,20 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "주민지.webp",
+        "category": "person"
+    },
+    {
         "file": "주방선.webp",
         "category": "illustration"
     },
     {
         "file": "주성역_전경.webp",
         "category": "station"
+    },
+    {
+        "file": "주성우.webp",
+        "category": "person"
     },
     {
         "file": "주식.webp",
@@ -14531,6 +15451,14 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "진선자.webp",
+        "category": "etc"
+    },
+    {
+        "file": "진선자_요시코_코스.webp",
+        "category": "character"
+    },
+    {
         "file": "진수혁.webp",
         "category": "etc"
     },
@@ -14635,6 +15563,10 @@ const imageFiles = [
         "category": "station"
     },
     {
+        "file": "창원시.svg",
+        "category": "logo"
+    },
+    {
         "file": "창율로.webp",
         "category": "road"
     },
@@ -14645,10 +15577,6 @@ const imageFiles = [
     {
         "file": "창전구.webp",
         "category": "etc"
-    },
-    {
-        "file": "창전구_흰색_로고.webp",
-        "category": "logo"
     },
     {
         "file": "창전구_흰색_로고.webp",
@@ -14767,6 +15695,14 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "천사도.webp",
+        "category": "etc"
+    },
+    {
+        "file": "천사도_치사토_코스.webp",
+        "category": "character"
+    },
+    {
         "file": "천석동2가역_승강장.webp",
         "category": "station"
     },
@@ -14783,12 +15719,20 @@ const imageFiles = [
         "category": "facility_gov"
     },
     {
+        "file": "천안시.svg",
+        "category": "logo"
+    },
+    {
         "file": "천왕사로.webp",
         "category": "road"
     },
     {
         "file": "천왕사역_승강장.webp",
         "category": "station"
+    },
+    {
+        "file": "천조마트_로고.svg",
+        "category": "facility_com"
     },
     {
         "file": "천조역.webp",
@@ -14857,6 +15801,10 @@ const imageFiles = [
     {
         "file": "철덕일기_포스터.webp",
         "category": "logo"
+    },
+    {
+        "file": "철도기관공동사옥_HQ.webp",
+        "category": "facility_com"
     },
     {
         "file": "철도박물관_전경.webp",
@@ -14940,6 +15888,10 @@ const imageFiles = [
     },
     {
         "file": "청덕레인보우타운아파트.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "청덕세라스아파트.webp",
         "category": "facility_com"
     },
     {
@@ -15047,6 +15999,10 @@ const imageFiles = [
         "category": "facility_com"
     },
     {
+        "file": "청주시.svg",
+        "category": "logo"
+    },
+    {
         "file": "청해역.webp",
         "category": "station"
     },
@@ -15115,6 +16071,10 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "최성진.webp",
+        "category": "person"
+    },
+    {
         "file": "최수아_직원_인터뷰.webp",
         "category": "etc"
     },
@@ -15147,6 +16107,14 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "최후영.webp",
+        "category": "person"
+    },
+    {
+        "file": "최후영_노리코_코스.webp",
+        "category": "character"
+    },
+    {
         "file": "쵸후 노리코.webp",
         "category": "character"
     },
@@ -15171,6 +16139,10 @@ const imageFiles = [
         "category": "station"
     },
     {
+        "file": "추주리.webp",
+        "category": "etc"
+    },
+    {
         "file": "추하다.webp",
         "category": "etc"
     },
@@ -15188,6 +16160,10 @@ const imageFiles = [
     },
     {
         "file": "출사 배틀.webp",
+        "category": "etc"
+    },
+    {
+        "file": "충남.webp",
         "category": "etc"
     },
     {
@@ -15209,6 +16185,10 @@ const imageFiles = [
     {
         "file": "충청남도.svg",
         "category": "logo"
+    },
+    {
+        "file": "충청북도 읍 목록(2022).webp",
+        "category": "etc"
     },
     {
         "file": "충청북도.svg",
@@ -15305,6 +16285,10 @@ const imageFiles = [
     {
         "file": "치카치카치카.webp",
         "category": "character"
+    },
+    {
+        "file": "치포치포.webp",
+        "category": "etc"
     },
     {
         "file": "치하야 아논.webp",
@@ -15431,11 +16415,27 @@ const imageFiles = [
         "category": "character"
     },
     {
+        "file": "카즈노 리아.gif",
+        "category": "character"
+    },
+    {
         "file": "카즈노 리아.webp",
         "category": "character"
     },
     {
+        "file": "카즈노 세이라.gif",
+        "category": "character"
+    },
+    {
         "file": "카즈노 세이라.webp",
+        "category": "character"
+    },
+    {
+        "file": "카즈노리아전신.webp",
+        "category": "character"
+    },
+    {
+        "file": "카즈노세이라전신.webp",
         "category": "character"
     },
     {
@@ -15455,8 +16455,24 @@ const imageFiles = [
         "category": "character"
     },
     {
+        "file": "카카오스토리 아이콘.svg",
+        "category": "logo"
+    },
+    {
+        "file": "카카오톡.svg",
+        "category": "logo"
+    },
+    {
+        "file": "카카오톡채널 아이콘.svg",
+        "category": "logo"
+    },
+    {
         "file": "카페의 기안서.webp",
         "category": "document"
+    },
+    {
+        "file": "카호루리.webp",
+        "category": "character"
     },
     {
         "file": "카호카호사인.webp",
@@ -15543,6 +16559,10 @@ const imageFiles = [
         "category": "facility_gov"
     },
     {
+        "file": "코레일_기관차.webp",
+        "category": "train"
+    },
+    {
         "file": "코레일_로고.svg",
         "category": "logo"
     },
@@ -15599,11 +16619,19 @@ const imageFiles = [
         "category": "character"
     },
     {
+        "file": "코즈루리.webp",
+        "category": "etc"
+    },
+    {
         "file": "코즈코즈사인.webp",
         "category": "logo"
     },
     {
         "file": "코즈코즈코즈.webp",
+        "category": "etc"
+    },
+    {
+        "file": "코코 니지동 식스.webp",
         "category": "etc"
     },
     {
@@ -15651,7 +16679,15 @@ const imageFiles = [
         "category": "character"
     },
     {
+        "file": "쿠리팡_루리노.webp",
+        "category": "character"
+    },
+    {
         "file": "쿠쿠카논2.webp",
+        "category": "character"
+    },
+    {
+        "file": "큐루마루_하스노소라_츠즈루리메구.webp",
         "category": "character"
     },
     {
@@ -15871,6 +16907,10 @@ const imageFiles = [
         "category": "character"
     },
     {
+        "file": "태미아.webp",
+        "category": "etc"
+    },
+    {
         "file": "태상훈.webp",
         "category": "etc"
     },
@@ -15931,11 +16971,19 @@ const imageFiles = [
         "category": "landmark"
     },
     {
+        "file": "토모리해수욕장역_승강장.webp",
+        "category": "station"
+    },
+    {
         "file": "토목대 복지관역_승강장.webp",
         "category": "station"
     },
     {
         "file": "토야마 카스미.webp",
+        "category": "character"
+    },
+    {
+        "file": "토오토이_러브_루리노.webp",
         "category": "character"
     },
     {
@@ -16035,6 +17083,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "틱톡 아이콘.svg",
+        "category": "logo"
+    },
+    {
         "file": "파괴적인 장갑 연합.webp",
         "category": "etc"
     },
@@ -16065,6 +17117,10 @@ const imageFiles = [
     {
         "file": "파일명.webp",
         "category": "etc"
+    },
+    {
+        "file": "파주시.svg",
+        "category": "logo"
     },
     {
         "file": "판주여객.webp",
@@ -16109,6 +17165,10 @@ const imageFiles = [
     {
         "file": "팩트체크 봇.webp",
         "category": "etc"
+    },
+    {
+        "file": "페이스북 아이콘.svg",
+        "category": "logo"
     },
     {
         "file": "페이튼 나오미.webp",
@@ -16207,6 +17267,10 @@ const imageFiles = [
         "category": "school"
     },
     {
+        "file": "평택시.svg",
+        "category": "bus"
+    },
+    {
         "file": "폐쇄공포증 발작.webp",
         "category": "etc"
     },
@@ -16236,6 +17300,10 @@ const imageFiles = [
     },
     {
         "file": "포항스틸러스_로고.svg",
+        "category": "logo"
+    },
+    {
+        "file": "포항시.svg",
         "category": "logo"
     },
     {
@@ -16299,12 +17367,28 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "필리핀 국기.svg",
+        "category": "logo"
+    },
+    {
+        "file": "필리핀 국장.svg",
+        "category": "logo"
+    },
+    {
+        "file": "필리핀 전시 국기.svg",
+        "category": "logo"
+    },
+    {
         "file": "필리핀식 스파게티.webp",
         "category": "etc"
     },
     {
         "file": "필리핀어학과 과잠.webp",
         "category": "illustration"
+    },
+    {
+        "file": "필리핀의 위치.svg",
+        "category": "logo"
     },
     {
         "file": "필리핀의 추억.webp",
@@ -16333,6 +17417,10 @@ const imageFiles = [
     {
         "file": "하나마루.webp",
         "category": "character"
+    },
+    {
+        "file": "하나영.webp",
+        "category": "person"
     },
     {
         "file": "하나자와 카나.webp",
@@ -16539,6 +17627,14 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "하마루.webp",
+        "category": "person"
+    },
+    {
+        "file": "하마루_하나마루_코스.webp",
+        "category": "character"
+    },
+    {
         "file": "하미역_조감도.webp",
         "category": "map"
     },
@@ -16607,6 +17703,10 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "하화연.webp",
+        "category": "person"
+    },
+    {
         "file": "학사경고의 요정.webp",
         "category": "etc"
     },
@@ -16635,11 +17735,19 @@ const imageFiles = [
         "category": "station"
     },
     {
+        "file": "한광수.webp",
+        "category": "person"
+    },
+    {
         "file": "한광호.webp",
         "category": "etc"
     },
     {
         "file": "한국가스공사_페가수스_로고.svg",
+        "category": "facility_gov"
+    },
+    {
+        "file": "한국데이터산업진흥원 로고.svg",
         "category": "facility_gov"
     },
     {
@@ -16995,6 +18103,10 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "현대프리미엄아울렛_로고.webp",
+        "category": "logo"
+    },
+    {
         "file": "현장 대장의 여유.webp",
         "category": "etc"
     },
@@ -17004,6 +18116,10 @@ const imageFiles = [
     },
     {
         "file": "호구 잡힌 애프터눈 티.webp",
+        "category": "etc"
+    },
+    {
+        "file": "호내영.webp",
         "category": "etc"
     },
     {
@@ -17039,6 +18155,10 @@ const imageFiles = [
         "category": "logo"
     },
     {
+        "file": "홈페이지 아이콘.svg",
+        "category": "logo"
+    },
+    {
         "file": "홈페이지_아이콘.svg",
         "category": "logo"
     },
@@ -17067,11 +18187,63 @@ const imageFiles = [
         "category": "station"
     },
     {
+        "file": "홈플러스_계성점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "홈플러스_낙주점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "홈플러스_덕주조전점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "홈플러스_덕주중앙점_전경.webp",
+        "category": "facility_com"
+    },
+    {
         "file": "홈플러스_로고.svg",
         "category": "facility_com"
     },
     {
         "file": "홈플러스_로고.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "홈플러스_마진점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "홈플러스_상만점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "홈플러스_서진점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "홈플러스_서해점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "홈플러스_서해천로점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "홈플러스_약산점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "홈플러스_장기점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "홈플러스_천성점_전경.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "홈플러스_평당점_전경.webp",
         "category": "facility_com"
     },
     {
@@ -17081,6 +18253,10 @@ const imageFiles = [
     {
         "file": "홍보영상_썸네일5.webp",
         "category": "etc"
+    },
+    {
+        "file": "홍수빈.webp",
+        "category": "person"
     },
     {
         "file": "홍콩네온.webp",
@@ -17109,6 +18285,10 @@ const imageFiles = [
     {
         "file": "화면역_전경.webp",
         "category": "station"
+    },
+    {
+        "file": "화성시.svg",
+        "category": "logo"
     },
     {
         "file": "화소역_1Line_승강장.webp",
@@ -17159,7 +18339,23 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "환산채_관선취임식.webp",
+        "category": "event"
+    },
+    {
+        "file": "환산채_민선취임식.webp",
+        "category": "event"
+    },
+    {
+        "file": "환산채얼굴.webp",
+        "category": "etc"
+    },
+    {
         "file": "황보람.webp",
+        "category": "person"
+    },
+    {
+        "file": "황세철.webp",
         "category": "person"
     },
     {
@@ -17273,6 +18469,10 @@ const imageFiles = [
     {
         "file": "효빈_한바다_퍼스널_아이콘.svg",
         "category": "landscape"
+    },
+    {
+        "file": "효빈_효빈시청_한바다_퍼스널_아이콘.svg",
+        "category": "facility_gov"
     },
     {
         "file": "효빈개찰구광고.webp",
@@ -17691,6 +18891,10 @@ const imageFiles = [
         "category": "facility_com"
     },
     {
+        "file": "효빈대병원_로고.svg",
+        "category": "facility_com"
+    },
+    {
         "file": "효빈대병원_전경.webp",
         "category": "facility_com"
     },
@@ -17767,7 +18971,7 @@ const imageFiles = [
         "category": "map"
     },
     {
-        "file": "효빈도시철도 5호선 노선도.webp1.webp 연장예정포함.webp",
+        "file": "효빈도시철도 5호선 노선도.png1.png 연장예정포함.webp",
         "category": "map"
     },
     {
@@ -17884,6 +19088,10 @@ const imageFiles = [
     },
     {
         "file": "효빈방송_본사.webp",
+        "category": "facility_com"
+    },
+    {
+        "file": "효빈백화점.svg",
         "category": "facility_com"
     },
     {
@@ -18451,7 +19659,19 @@ const imageFiles = [
         "category": "character"
     },
     {
+        "file": "히라사와_우이.webp",
+        "category": "etc"
+    },
+    {
         "file": "히로마치 나나미.webp",
+        "category": "character"
+    },
+    {
+        "file": "히메_아이덴티티.webp",
+        "category": "character"
+    },
+    {
+        "file": "히메_청람의_코이나가시.webp",
         "category": "character"
     },
     {
@@ -18473,5 +19693,9 @@ const imageFiles = [
     {
         "file": "히카와 히나.webp",
         "category": "character"
+    },
+    {
+        "file": "히카하나_루리노_피규어.webp",
+        "category": "merch"
     }
 ];

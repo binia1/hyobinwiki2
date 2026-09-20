@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>효빈위키 국회의원 역임표 & 각주 자동 생성기</title>
+<style>
+    body { font-family: 'Noto Sans KR', sans-serif; background-color: #f4f6f9; padding: 20px; color: #333; }
+    .container { max-width: 850px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    h2 { color: #003B96; border-bottom: 2px solid #003B96; padding-bottom: 10px; margin-top: 0; }
+    .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 600px) { .grid-container { grid-template-columns: 1fr; } }
+    .form-group { display: flex; flex-direction: column; margin-bottom: 12px; }
+    .form-group label { font-weight: bold; font-size: 0.85em; margin-bottom: 5px; color: #555; }
+    .form-group input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95em; }
+    .section-title { margin-top: 25px; margin-bottom: 15px; font-weight: bold; color: #333; background: #eaf0fa; padding: 8px 12px; border-left: 4px solid #003B96; border-radius: 0 4px 4px 0; }
+    button { background-color: #003B96; color: white; border: none; padding: 12px 20px; font-size: 1em; font-weight: bold; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 15px; transition: background 0.2s; }
+    button:hover { background-color: #0022AA; }
+    textarea { width: 100%; height: 160px; margin-top: 10px; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; font-size: 0.85em; box-sizing: border-box; resize: vertical; background-color: #fdfdfd; }
+    .preview-box { margin-top: 10px; border: 1px dashed #ccc; padding: 15px; background: #fafafa; overflow-x: auto; }
+    .wiki-link { color: #0022AA; text-decoration: none; font-weight: bold; }
+    .wiki-fn-link { color: #0022AA; font-size: 0.8em; vertical-align: super; text-decoration: none; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>국회의원 역임표 & 각주 자동 생성기</h2>
+    
+    <div class="section-title">1. 선거구 기본 정보</div>
+    <div class="grid-container">
+        <div class="form-group">
+            <label>시/도 (예: 경기, 효빈, 강원)</label>
+            <input type="text" id="region" value="경기">
+        </div>
+        <div class="form-group">
+            <label>선거구명 (예: 하남시 갑, 중구·동구)</label>
+            <input type="text" id="district" value="하남시 갑">
+        </div>
+    </div>
+
+    <div class="section-title">2. 인물 정보 입력</div>
+    <div class="grid-container">
+        <!-- 전임자 -->
+        <div style="background: #fdfdfd; padding: 15px; border: 1px solid #eee; border-radius: 4px;">
+            <strong style="display:block; margin-bottom:10px; color:#D81C2F;">[전임자]</strong>
+            <div class="form-group"><label>대수 (예: 제22대)</label><input type="text" id="prevTerm" value="제22대"></div>
+            <div class="form-group"><label>이름 (예: 추미애)</label><input type="text" id="prevName" value="추미애"></div>
+            <div class="form-group"><label>각주 번호 (숫자만, 없으면 빈칸)</label><input type="number" id="prevFnNum" value="1"></div>
+            <div class="form-group"><label>각주 내용 (문서 하단 추가용)</label><input type="text" id="prevFnText" value="경기도지사 출마로 인한 사퇴."></div>
+        </div>
+
+        <!-- 현임자/후임자 -->
+        <div>
+            <div style="background: #fdfdfd; padding: 15px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 15px;">
+                <strong style="display:block; margin-bottom:10px; color:#003B96;">[현임자 (주인공)]</strong>
+                <div class="form-group"><label>대수 (예: 제22대)</label><input type="text" id="currTerm" value="제22대"></div>
+                <div class="form-group"><label>이름 (예: 이광재)</label><input type="text" id="currName" value="이광재"></div>
+            </div>
+
+            <div style="background: #fdfdfd; padding: 15px; border: 1px solid #eee; border-radius: 4px;">
+                <strong style="display:block; margin-bottom:10px; color:#444;">[후임자]</strong>
+                <div class="form-group"><label>대수 (현직일 경우 빈칸)</label><input type="text" id="nextTerm" placeholder="예: 제23대"></div>
+                <div class="form-group"><label>이름 ('현직' 입력 시 이탤릭체 자동적용)</label><input type="text" id="nextName" value="현직"></div>
+                <div class="form-group"><label>각주 번호 (숫자만, 없으면 빈칸)</label><input type="number" id="nextFnNum" placeholder="예: 2"></div>
+                <div class="form-group"><label>각주 내용 (문서 하단 추가용)</label><input type="text" id="nextFnText" placeholder="예: 재보궐선거 당선."></div>
+            </div>
+        </div>
+    </div>
+
+    <button onclick="generateCode()">⚡ HTML 코드 생성하기</button>
+
+    <div class="section-title">출력 1. 본문 삽입용 (역임표 표 코드)</div>
+    <p style="font-size: 0.85em; color: #555; margin-bottom: 5px;">개요나 프로필 표 주변에 삽입할 HTML 코드입니다.</p>
+    <textarea id="outputTableCode" onclick="this.select()" readonly></textarea>
+    <div class="preview-box" id="previewTableArea">미리보기 영역</div>
+
+    <div class="section-title">출력 2. 하단 삽입용 (각주 리스트 코드)</div>
+    <p style="font-size: 0.85em; color: #555; margin-bottom: 5px;">문서 맨 밑의 <b>&lt;h2 id="s-9"&gt;각주&lt;/h2&gt;</b> 아래의 <b>&lt;ul&gt;</b> 태그 안에 이 코드를 복사해 넣으세요.</p>
+    <textarea id="outputFootnoteCode" onclick="this.select()" readonly></textarea>
+    <div class="preview-box">
+        <ul style="list-style: none; padding-left: 0; line-height: 1.8; color: #555; margin:0;" id="previewFootnoteArea">
+            미리보기 영역
+        </ul>
+    </div>
+</div>
+
+<script>
+function generateCode() {
+    // 1. 입력값 가져오기
+    const region = document.getElementById('region').value.trim();
+    const district = document.getElementById('district').value.trim();
+
+    const prevTerm = document.getElementById('prevTerm').value.trim();
+    const prevName = document.getElementById('prevName').value.trim();
+    const prevFnNum = document.getElementById('prevFnNum').value.trim();
+    const prevFnText = document.getElementById('prevFnText').value.trim();
+
+    const currTerm = document.getElementById('currTerm').value.trim();
+    const currName = document.getElementById('currName').value.trim();
+
+    const nextTerm = document.getElementById('nextTerm').value.trim();
+    const nextNameRaw = document.getElementById('nextName').value.trim();
+    const nextFnNum = document.getElementById('nextFnNum').value.trim();
+    const nextFnText = document.getElementById('nextFnText').value.trim();
+
+    // 2. 이탤릭체 및 후임자 이름 처리 (따옴표 제거 후 검사)
+    let nextHtml = "";
+    let cleanNextName = nextNameRaw.replace(/['"]/g, ''); // ''현직'' 등 입력 방지
+    let isCurrent = (cleanNextName === "현직");
+    
+    if (isCurrent) {
+        nextHtml = `<span style="font-style: italic;">현직</span>`;
+    } else {
+        nextHtml = `${nextTerm}<br/><a class="wiki-link" href="${cleanNextName}.html">${cleanNextName}</a>`;
+    }
+
+    // 3. 각주 처리 로직
+    let prevNoteLinkHtml = "";
+    let nextNoteLinkHtml = "";
+    let footnotesListCode = "";
+
+    // 전임자 각주가 있을 경우
+    if (prevFnNum) {
+        prevNoteLinkHtml = `<a class="wiki-fn-link" href="#fn-${prevFnNum}" id="rfn-${prevFnNum}">[${prevFnNum}]</a>`;
+        if (prevFnText) {
+            footnotesListCode += `<li id="fn-${prevFnNum}" style="margin-bottom: 4px;"><a href="#rfn-${prevFnNum}" style="color: var(--wiki-link); font-weight: bold; text-decoration: none;">[${prevFnNum}]</a> ${prevFnText} <a class="wiki-link" href="#rfn-${prevFnNum}">↑</a></li>\n`;
+        }
+    }
+
+    // 후임자 각주가 있을 경우
+    if (nextFnNum) {
+        nextNoteLinkHtml = `<a class="wiki-fn-link" href="#fn-${nextFnNum}" id="rfn-${nextFnNum}">[${nextFnNum}]</a>`;
+        if (nextFnText) {
+            footnotesListCode += `<li id="fn-${nextFnNum}" style="margin-bottom: 4px;"><a href="#rfn-${nextFnNum}" style="color: var(--wiki-link); font-weight: bold; text-decoration: none;">[${nextFnNum}]</a> ${nextFnText} <a class="wiki-link" href="#rfn-${nextFnNum}">↑</a></li>\n`;
+        }
+    }
+
+    // 후임자 이름 뒤에 각주 링크 붙이기
+    nextHtml += nextNoteLinkHtml;
+
+    // 4. 역임표 테이블 HTML 템플릿
+    const tableTemplate = `<table style="width: 100%; border-collapse: collapse; text-align: center; border: 2px solid #580009; margin-bottom: 15px;">
+<tbody>
+<tr><td colspan="5" style="padding: 8px 12px; border: 1px solid #580009; word-break: keep-all; background-color: #580009;">
+<a class="wiki-link" href="대한민국_국회.html"><img onerror="this.style.display='none';" src="이미지/국회휘장.svg" style="max-width:100%; height:auto; display:inline-block; vertical-align:middle; width: 30px !important;"/></a> 
+<strong><a class="wiki-link" href="대한민국.html" style="color: #cfa547;">대한민국</a> <a class="wiki-link" href="대한민국_국회의원.html" style="color: #cfa547;">국회의원</a> <span style="color: #cfa547;">(</span><a class="wiki-link" href="${region}.html" style="color: #cfa547;">${region}</a> <a class="wiki-link" href="${district}.html" style="color: #cfa547;">${district}</a><span style="color: #cfa547;">)</span></strong>
+</td></tr>
+<tr>
+<td style="padding: 8px 12px; border: 1px solid #444; word-break: keep-all; width: 30%;">${prevTerm}<br/><a class="wiki-link" href="${prevName}.html">${prevName}</a>${prevNoteLinkHtml}</td>
+<td style="padding: 8px 12px; border: 1px solid #444; word-break: keep-all; width: 5%;">→</td>
+<td style="padding: 8px 12px; border: 1px solid #444; word-break: keep-all; background-color: rgba(100, 110, 130, 0.3); width: 30%;"><strong>${currTerm}<br/>${currName}</strong></td>
+<td style="padding: 8px 12px; border: 1px solid #444; word-break: keep-all; width: 5%;">→</td>
+<td style="padding: 8px 12px; border: 1px solid #444; word-break: keep-all; width: 30%;">${nextHtml}</td>
+</tr>
+</tbody>
+</table>`;
+
+    // 5. 화면 출력
+    document.getElementById('outputTableCode').value = tableTemplate;
+    document.getElementById('previewTableArea').innerHTML = tableTemplate;
+
+    const outputFootnoteBox = document.getElementById('outputFootnoteCode');
+    const previewFootnoteArea = document.getElementById('previewFootnoteArea');
+
+    if(footnotesListCode.trim() !== "") {
+        outputFootnoteBox.value = footnotesListCode.trim();
+        previewFootnoteArea.innerHTML = footnotesListCode;
+    } else {
+        outputFootnoteBox.value = "<!-- 입력된 각주가 없습니다. -->";
+        previewFootnoteArea.innerHTML = "<li style='color:#999;'>입력된 각주가 없습니다.</li>";
+    }
+}
+
+// 페이지 로드 시 한 번 실행
+window.onload = generateCode;
+</script>
+</body>
+</html>

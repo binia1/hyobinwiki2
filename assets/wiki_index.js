@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 9. 20. 오후 9:24:39
+ * 업데이트: 2026. 9. 21. 오전 12:20:51
  */
 
 window.HB_WIKI_PAGES = [
