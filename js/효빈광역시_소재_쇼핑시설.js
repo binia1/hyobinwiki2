@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1.5">
-                            <img src="이미지/경복궁면세점_로고.wepb" alt="경복궁면세점" class="h-9 mx-auto object-contain">
+                            <img src="이미지/경복궁면세점_로고.webp" alt="경복궁면세점" class="h-9 mx-auto object-contain">
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">경복궁면세점</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -272,7 +272,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1.5">
-                            <img src="이미지/더플러스몰_로고.wepb" alt="더플러스몰" class="h-9 mx-auto object-contain">
+                            <img src="이미지/더플러스몰_로고.webp" alt="더플러스몰" class="h-9 mx-auto object-contain">
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">더플러스몰</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -341,7 +341,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1.5">
-                            <img src="이미지/W스퀘어_로고.wepb" alt="W스퀘어" class="h-9 mx-auto object-contain">
+                            <img src="이미지/W스퀘어_로고.webp" alt="W스퀘어" class="h-9 mx-auto object-contain">
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">W스퀘어</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -359,7 +359,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1.5">
-                            <img src="이미지/더샵센트럴스퀘어_로고.wepb" alt="더샵 센트럴스퀘어" class="h-9 mx-auto object-contain">
+                            <img src="이미지/더샵센트럴스퀘어_로고.webp" alt="더샵 센트럴스퀘어" class="h-9 mx-auto object-contain">
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300 leading-tight">더샵 센트럴<br>스퀘어</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -424,7 +424,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1.5">
-                            <img src="이미지/올랜드_로고.wepb" alt="올랜드" class="h-9 mx-auto object-contain">
+                            <img src="이미지/올랜드_로고.webp" alt="올랜드" class="h-9 mx-auto object-contain">
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">올랜드</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
