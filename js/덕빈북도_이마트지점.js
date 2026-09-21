@@ -56,8 +56,8 @@
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">천주시 궁하구 궁하동</span>
                                         </td>
                                         <td style="padding: 8px; border: none;">
-                                            <a href="이마트_대뢰점.html" class="wiki-link">대뢰점</a><br>
-                                            <span class="small-text" style="font-size: 0.8em; color: #666;">천주시 천성구 대뢰동</span>
+                                            <a href="이마트_천주점.html" class="wiki-link">천주점</a><br>
+                                            <span class="small-text" style="font-size: 0.8em; color: #666;">천주시 천성구 천성동</span>
                                         </td>
                                         <td style="padding: 8px; border: none;">
                                             <a href="이마트_강주점.html" class="wiki-link">강주점</a><br>
