@@ -91,7 +91,7 @@
                     </svg>
                 </div>
                 <div class="hw-special-800k-title">
-                    <img src="이미지/대한민국_정부.svg" alt="대한민국 정부">
+                    <img src="이미지/svg/대한민국_정부.svg" alt="대한민국 정부">
                     대한민국의 특례시
                 </div>
                 <div class="hw-special-800k-right-svg">
@@ -114,31 +114,31 @@
                     <tr>
                         <td>
                             <div class="hw-special-800k-cell">
-                                <img src="이미지/수원시.svg" alt="수원시">
+                                <img src="이미지/svg/수원시.svg" alt="수원시">
                                 <span><a href="수원시.html">수원시</a></span>
                             </div>
                         </td>
                         <td>
                             <div class="hw-special-800k-cell">
-                                <img src="이미지/용인시.svg" alt="용인시">
+                                <img src="이미지/svg/용인시.svg" alt="용인시">
                                 <span><a href="용인시.html">용인시</a><a href="#fn-1" class="hw-special-800k-fn-link">[1]</a></span>
                             </div>
                         </td>
                         <td>
                             <div class="hw-special-800k-cell">
-                                <img src="이미지/고양시.svg" alt="고양시">
+                                <img src="이미지/svg/고양시.svg" alt="고양시">
                                 <span><a href="고양시.html">고양시</a></span>
                             </div>
                         </td>
                         <td>
                             <div class="hw-special-800k-cell">
-                                <img src="이미지/청주시.svg" alt="청주시">
+                                <img src="이미지/svg/청주시.svg" alt="청주시">
                                 <span><a href="청주시.html">청주시</a><a href="#fn-1" class="hw-special-800k-fn-link">[1]</a></span>
                             </div>
                         </td>
                         <td>
                             <div class="hw-special-800k-cell">
-                                <img src="이미지/창원시.svg" alt="창원시">
+                                <img src="이미지/svg/창원시.svg" alt="창원시">
                                 <span><a href="창원시.html">창원시</a><a href="#fn-1" class="hw-special-800k-fn-link">[1]</a></span>
                             </div>
                         </td>

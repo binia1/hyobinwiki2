@@ -38,7 +38,7 @@
 </td>
 <td class="border border-gray-300 p-2 align-middle">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" src="이미지/의회_로고.svg"/>
+<img class="w-4 h-4 object-contain" src="이미지/svg/의회_로고.svg"/>
 <a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="안천구의회.html">안천구의회</a>
 </div>
 </td>
@@ -53,25 +53,25 @@
 </th>
 <td class="border border-gray-300 p-2 align-middle">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" src="이미지/대한민국_경찰청_로고.svg"/>
+<img class="w-4 h-4 object-contain" src="이미지/svg/대한민국_경찰청_로고.svg"/>
 <a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈광역시_경찰청.html">효빈광역시경찰청</a>
 </div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" src="이미지/대한민국_경찰청_로고.svg"/>
+<img class="w-4 h-4 object-contain" src="이미지/svg/대한민국_경찰청_로고.svg"/>
 <a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈안천경찰서.html">효빈안천경찰서</a>
 </div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" src="이미지/대한민국_경찰청_로고.svg"/>
+<img class="w-4 h-4 object-contain" src="이미지/svg/대한민국_경찰청_로고.svg"/>
 <a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈이자경찰서.html">효빈이자경찰서</a>
 </div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" src="이미지/대한민국_소방청_로고.svg"/>
+<img class="w-4 h-4 object-contain" src="이미지/svg/대한민국_소방청_로고.svg"/>
 <a class="text-red-600 hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈안천소방서.html">효빈안천소방서</a>
 </div>
 </td>
@@ -87,13 +87,13 @@
 </td>
 <td class="border border-gray-300 p-2 align-middle">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/보건소.svg"/>
+<img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/svg/보건소.svg"/>
 <a class="text-green-600 hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈안천구보건소.html">효빈안천구보건소</a>
 </div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/안천병원.svg"/>
+<img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/svg/안천병원.svg"/>
 <a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="안천병원.html">안천병원</a>
 </div>
 </td>
@@ -108,25 +108,25 @@
 </th>
 <td class="border border-gray-300 p-2 align-middle">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" src="이미지/우정사업본부_로고.svg"/>
+<img class="w-4 h-4 object-contain" src="이미지/svg/우정사업본부_로고.svg"/>
 <a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="안천우체국.html">안천우체국</a>
 </div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" src="이미지/대한민국_정부_로고.svg"/>
+<img class="w-4 h-4 object-contain" src="이미지/svg/대한민국_정부_로고.svg"/>
 <a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="동효빈세무서.html">동효빈세무서</a>
 </div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" src="이미지/대한민국_정부_로고.svg"/>
+<img class="w-4 h-4 object-contain" src="이미지/svg/대한민국_정부_로고.svg"/>
 <a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방국세청.html">효빈지방국세청</a>
 </div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" src="이미지/대한민국_법무부_로고.svg"/>
+<img class="w-4 h-4 object-contain" src="이미지/svg/대한민국_법무부_로고.svg"/>
 <a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈교도소.html">효빈교도소</a>
 </div>
 </td>

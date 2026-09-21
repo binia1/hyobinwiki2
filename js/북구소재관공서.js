@@ -30,28 +30,28 @@
 <div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/logo.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈광역시청.html">효빈광역시청</a></div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/의회_로고.svg'" src="이미지/의회_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈광역시의회.html">효빈광역시의회</a></div>
+<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/의회_로고.svg'" src="이미지/svg/의회_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈광역시의회.html">효빈광역시의회</a></div>
 </td>
 <td class="border border-gray-300 p-2 align-middle"> <!-- 북구청 강조 (#7799CC 톤) -->
 <div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/북구.webp"/><a class="text-[#7799CC] hover:underline font-bold tracking-tighter break-keep leading-tight" href="북구청(효빈).html">북구청</a></div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/의회_로고.svg'" src="이미지/의회_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="북구의회.html">북구의회</a></div>
+<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/의회_로고.svg'" src="이미지/svg/의회_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="북구의회.html">북구의회</a></div>
 </td>
 </tr>
 <tr>
 <th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle">법조</th>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_법원_로고.svg'" src="이미지/대한민국_법원_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈고등법원.html">효빈고등법원</a></div>
+<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_법원_로고.svg'" src="이미지/svg/대한민국_법원_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈고등법원.html">효빈고등법원</a></div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_법원_로고.svg'" src="이미지/대한민국_법원_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방법원.html">효빈지방법원</a></div>
+<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_법원_로고.svg'" src="이미지/svg/대한민국_법원_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방법원.html">효빈지방법원</a></div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5 flex-wrap"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_검찰청_로고.svg'" src="이미지/대한민국_검찰청_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈고등검찰청.html">효빈고등검찰청</a> <span class="text-[10px] text-gray-500 font-bold break-keep"><del>(변경예정)</del></span></div>
+<div class="flex items-center justify-center gap-1.5 flex-wrap"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_검찰청_로고.svg'" src="이미지/svg/대한민국_검찰청_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈고등검찰청.html">효빈고등검찰청</a> <span class="text-[10px] text-gray-500 font-bold break-keep"><del>(변경예정)</del></span></div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5 flex-wrap"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_검찰청_로고.svg'" src="이미지/대한민국_검찰청_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방검찰청.html">효빈지방검찰청</a> <span class="text-[10px] text-gray-500 font-bold break-keep"><del>(변경예정)</del></span></div>
+<div class="flex items-center justify-center gap-1.5 flex-wrap"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_검찰청_로고.svg'" src="이미지/svg/대한민국_검찰청_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방검찰청.html">효빈지방검찰청</a> <span class="text-[10px] text-gray-500 font-bold break-keep"><del>(변경예정)</del></span></div>
 </td>
 </tr>
 <tr>
@@ -69,13 +69,13 @@
 <div class="text-red-600">소방</div>
 </th>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_경찰청_로고.svg'" src="이미지/대한민국_경찰청_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈북부경찰서.html">효빈북부경찰서</a></div>
+<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_경찰청_로고.svg'" src="이미지/svg/대한민국_경찰청_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈북부경찰서.html">효빈북부경찰서</a></div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_경찰청_로고.svg'" src="이미지/대한민국_경찰청_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈고송경찰서.html">효빈고송경찰서</a></div>
+<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_경찰청_로고.svg'" src="이미지/svg/대한민국_경찰청_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈고송경찰서.html">효빈고송경찰서</a></div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_소방청_로고.svg'" src="이미지/대한민국_소방청_로고.svg"/><a class="text-red-600 hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈북부소방서.html">효빈북부소방서</a></div>
+<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_소방청_로고.svg'" src="이미지/svg/대한민국_소방청_로고.svg"/><a class="text-red-600 hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈북부소방서.html">효빈북부소방서</a></div>
 </td>
 <td class="border border-gray-300 p-2"></td>
 </tr>
@@ -86,16 +86,16 @@
 <div>세무</div>
 </th>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/보건소.svg"/><a class="text-green-600 hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈북구보건소.html">효빈북구보건소</a></div>
+<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/svg/보건소.svg"/><a class="text-green-600 hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈북구보건소.html">효빈북구보건소</a></div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/우정사업본부_로고.svg'" src="이미지/우정사업본부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈덕북지방우정청.html">효빈덕북지방우정청</a></div>
+<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/우정사업본부_로고.svg'" src="이미지/svg/우정사업본부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈덕북지방우정청.html">효빈덕북지방우정청</a></div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/우정사업본부_로고.svg'" src="이미지/우정사업본부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="북효빈우체국.html">북효빈우체국</a></div>
+<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/우정사업본부_로고.svg'" src="이미지/svg/우정사업본부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="북효빈우체국.html">북효빈우체국</a></div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'" src="이미지/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="북효빈세무서.html">북효빈세무서</a></div>
+<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_정부_로고.svg'" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="북효빈세무서.html">북효빈세무서</a></div>
 </td>
 </tr>
 <tr>
@@ -112,26 +112,26 @@
 </tr>
 <tr>
 <th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle" rowspan="4">기타 국가기관</th>
-<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'" src="이미지/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방고용노동청.html">효빈지방고용노동청</a></div></td>
-<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'" src="이미지/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방보훈청.html">효빈지방보훈청</a></div></td>
-<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'" src="이미지/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방교정청.html">효빈지방교정청</a></div></td>
-<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'" src="이미지/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방조달청.html">효빈지방조달청</a></div></td>
+<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_정부_로고.svg'" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방고용노동청.html">효빈지방고용노동청</a></div></td>
+<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_정부_로고.svg'" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방보훈청.html">효빈지방보훈청</a></div></td>
+<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_정부_로고.svg'" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방교정청.html">효빈지방교정청</a></div></td>
+<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_정부_로고.svg'" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방조달청.html">효빈지방조달청</a></div></td>
 </tr>
 <tr>
-<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'" src="이미지/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈덕북지방노동위원회.html">효빈덕북지방노동위원회</a></div></td>
-<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/대한민국_경찰청_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="저작권특별사법경찰대 효빈사무소.html">저작권특별사법경찰대 효빈사무소</a></div></td>
-<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'" src="이미지/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="국가기록원 효빈기록정보센터.html">국가기록원 효빈기록정보센터</a></div></td>
-<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'" src="이미지/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="정부청사관리본부 효빈청사관리소.html">정부청사관리본부 효빈청사관리소</a></div></td>
+<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_정부_로고.svg'" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈덕북지방노동위원회.html">효빈덕북지방노동위원회</a></div></td>
+<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/svg/대한민국_경찰청_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="저작권특별사법경찰대 효빈사무소.html">저작권특별사법경찰대 효빈사무소</a></div></td>
+<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_정부_로고.svg'" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="국가기록원 효빈기록정보센터.html">국가기록원 효빈기록정보센터</a></div></td>
+<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_정부_로고.svg'" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="정부청사관리본부 효빈청사관리소.html">정부청사관리본부 효빈청사관리소</a></div></td>
 </tr>
 <tr>
-<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'" src="이미지/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방식품의약품안전청.html">효빈지방식품의약품안전청</a></div></td>
-<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'" src="이미지/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕빈지방데이터청.html">덕빈지방데이터청</a></div></td>
-<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_정부_로고.svg'" src="이미지/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방기상청.html">효빈지방기상청</a></div></td>
-<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/감사원_로고.svg'" src="이미지/감사원_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="감사원 효빈사무소.html">감사원 효빈사무소</a></div></td>
+<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_정부_로고.svg'" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방식품의약품안전청.html">효빈지방식품의약품안전청</a></div></td>
+<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_정부_로고.svg'" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕빈지방데이터청.html">덕빈지방데이터청</a></div></td>
+<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_정부_로고.svg'" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방기상청.html">효빈지방기상청</a></div></td>
+<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/감사원_로고.svg'" src="이미지/svg/감사원_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="감사원 효빈사무소.html">감사원 효빈사무소</a></div></td>
 </tr>
 <tr>
-<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_선거관리위원회_로고.svg'" src="이미지/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방국토관리청.html">효빈지방국토관리청</a></div></td>
-<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/대한민국_선거관리위원회_로고.svg'" src="이미지/대한민국_선거관리위원회_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈광역시선거관리위원회.html">효빈광역시선거관리위원회</a></div></td>
+<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_선거관리위원회_로고.svg'" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방국토관리청.html">효빈지방국토관리청</a></div></td>
+<td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_선거관리위원회_로고.svg'" src="이미지/svg/대한민국_선거관리위원회_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈광역시선거관리위원회.html">효빈광역시선거관리위원회</a></div></td>
 <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/효빈대_로고.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈대학교.html">효빈대학교</a></div></td>
 <td class="border border-gray-300 p-2 align-middle"><div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/효빈대_로고.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈대학교병원.html">효빈대학교병원</a></div></td>
 </tr>

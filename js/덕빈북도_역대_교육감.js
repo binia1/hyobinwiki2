@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
         
         <!-- 상단 헤더 영역 -->
         <div style="background-color: #79d2cc; padding: 15px; text-align: center;">
-            <img src="이미지/덕빈북도_교육청_로고.svg" alt="덕빈북도 교육청 로고" onerror="this.style.display='none'" style="width: 45px; height: auto; margin: 0 auto 8px auto; display: block; filter: brightness(0) invert(1);">
+            <img src="이미지/svg/덕빈북도_교육청_로고.svg" alt="덕빈북도 교육청 로고" onerror="this.style.display='none'" style="width: 45px; height: auto; margin: 0 auto 8px auto; display: block; filter: brightness(0) invert(1);">
             <div style="color: white; font-weight: 900; font-size: 1.15rem; letter-spacing: -0.5px;">덕빈북도교육감</div>
         </div>
         

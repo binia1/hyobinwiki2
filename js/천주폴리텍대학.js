@@ -1,7 +1,7 @@
 document.currentScript.insertAdjacentHTML('beforebegin', `
 <div class="gradient-box">
 <!-- 학교 로고/심볼 이미지 -->
-<img alt="천주폴리텍대학 로고" src="이미지/폴리텍.svg" style="width: 250px; display: inline-block;"/>
+<img alt="천주폴리텍대학 로고" src="이미지/svg/폴리텍.svg" style="width: 250px; display: inline-block;"/>
 </div>
 <details>
 <summary></summary>

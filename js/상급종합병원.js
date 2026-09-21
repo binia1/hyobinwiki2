@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="s-hospital-wrapper">
         <div class="s-hospital-header">
             <div class="s-header-top">
-                <img src="이미지/대한민국_정부_로고.svg" alt="보건복지부 마크">
+                <img src="이미지/svg/대한민국_정부_로고.svg" alt="보건복지부 마크">
                 <span>보건복지부</span>
             </div>
             <div>제5기 (’24~’26년) 상급종합병원</div>
@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             <div class="s-sub-region">서울권</div>
             <div class="s-city-bar bg-seoul">
-                <img src="이미지/서울특별시.svg" alt="서울특별시"> 서울특별시 소재 상급종합병원
+                <img src="이미지/svg/서울특별시.svg" alt="서울특별시"> 서울특별시 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>
@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             <div class="s-sub-region">경기서북부권</div>
             <div class="s-city-bar bg-incheon">
-                <img src="이미지/인천광역시.svg" alt="인천광역시"> 인천광역시 소재 상급종합병원
+                <img src="이미지/svg/인천광역시.svg" alt="인천광역시"> 인천광역시 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>
@@ -182,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </table>
             
             <div class="s-city-bar bg-gyeonggi">
-                <img src="이미지/경기도.svg" alt="경기도"> 경기도 소재 상급종합병원
+                <img src="이미지/svg/경기도.svg" alt="경기도"> 경기도 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>
@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             <div class="s-sub-region">경기남부권</div>
             <div class="s-city-bar bg-gyeonggi">
-                <img src="이미지/경기도.svg" alt="경기도"> 경기도 소재 상급종합병원
+                <img src="이미지/svg/경기도.svg" alt="경기도"> 경기도 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>
@@ -217,7 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             <div class="s-sub-region">강원권</div>
             <div class="s-city-bar bg-gangwon">
-                <img src="이미지/강원특별자치도.svg" alt="강원특별자치도"> 강원특별자치도 소재 상급종합병원
+                <img src="이미지/svg/강원특별자치도.svg" alt="강원특별자치도"> 강원특별자치도 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>
@@ -233,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             <div class="s-sub-region">충청권</div>
             <div class="s-city-bar bg-chungbuk">
-                <img src="이미지/충청북도.svg" alt="충청북도"> 충청북도 소재 상급종합병원
+                <img src="이미지/svg/충청북도.svg" alt="충청북도"> 충청북도 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>
@@ -243,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </table>
 
             <div class="s-city-bar bg-daejeon">
-                <img src="이미지/대전광역시.svg" alt="대전광역시"> 대전광역시 소재 상급종합병원
+                <img src="이미지/svg/대전광역시.svg" alt="대전광역시"> 대전광역시 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>
@@ -253,7 +253,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </table>
 
             <div class="s-city-bar bg-chungnam">
-                <img src="이미지/충청남도.svg" alt="충청남도"> 충청남도 소재 상급종합병원
+                <img src="이미지/svg/충청남도.svg" alt="충청남도"> 충청남도 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>
@@ -269,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             <div class="s-sub-region">전북권</div>
             <div class="s-city-bar bg-jeonbuk">
-                <img src="이미지/전북특별자치도.svg" alt="전북특별자치도"> 전북특별자치도 소재 상급종합병원
+                <img src="이미지/svg/전북특별자치도.svg" alt="전북특별자치도"> 전북특별자치도 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>
@@ -280,7 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             <div class="s-sub-region">전남권</div>
             <div class="s-city-bar bg-jeonnam">
-                <img src="이미지/전남광주통합특별시.svg" alt="전남광주통합특별시"> 전남광주통합특별시 소재 상급종합병원
+                <img src="이미지/svg/전남광주통합특별시.svg" alt="전남광주통합특별시"> 전남광주통합특별시 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>
@@ -300,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             <div class="s-sub-region">경북권</div>
             <div class="s-city-bar bg-daegu">
-                <img src="이미지/대구광역시.svg" alt="대구광역시"> 대구광역시 소재 상급종합병원
+                <img src="이미지/svg/대구광역시.svg" alt="대구광역시"> 대구광역시 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>
@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             <div class="s-sub-region">경남동부권</div>
             <div class="s-city-bar bg-busan">
-                <img src="이미지/부산광역시.svg" alt="부산광역시"> 부산광역시 소재 상급종합병원
+                <img src="이미지/svg/부산광역시.svg" alt="부산광역시"> 부산광역시 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>
@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </table>
             
             <div class="s-city-bar bg-ulsan">
-                <img src="이미지/울산광역시.svg" alt="울산광역시"> 울산광역시 소재 상급종합병원
+                <img src="이미지/svg/울산광역시.svg" alt="울산광역시"> 울산광역시 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>
@@ -344,7 +344,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             <div class="s-sub-region">경남서부권</div>
             <div class="s-city-bar bg-gyeongnam">
-                <img src="이미지/경상남도.svg" alt="경상남도"> 경상남도 소재 상급종합병원
+                <img src="이미지/svg/경상남도.svg" alt="경상남도"> 경상남도 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>

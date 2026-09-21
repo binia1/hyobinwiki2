@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="p-4 bg-white text-center border-b">
 <!-- 엠블럼 이미지 -->
 <div class="w-full flex justify-center py-4">
-<img alt="국립서해대학교 UI" class="w-48" src="이미지/국립서해대학교.svg"/>
+<img alt="국립서해대학교 UI" class="w-48" src="이미지/svg/국립서해대학교.svg"/>
 </div>
 </div>
 <table>

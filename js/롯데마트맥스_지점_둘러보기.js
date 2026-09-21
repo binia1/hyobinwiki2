@@ -10,7 +10,7 @@
                     <td style="background-color: var(--maxx-text-dark, #222222); text-align: center; padding: 15px; border-bottom: none !important;">
                         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;">
                             <a class="wiki-link" href="#">
-                                <img alt="롯데마트 맥스 로고" onerror="this.style.display='none'; this.parentNode.insertAdjacentHTML('afterbegin', '<span style=\\'color:#00A775; font-weight:900; font-size:2rem;\\'>LOTTE Mart MAXX</span>');" src="이미지/롯데마트맥스.svg" style="height: 40px;"/>
+                                <img alt="롯데마트 맥스 로고" onerror="this.style.display='none'; this.parentNode.insertAdjacentHTML('afterbegin', '<span style=\\'color:#00A775; font-weight:900; font-size:2rem;\\'>LOTTE Mart MAXX</span>');" src="이미지/svg/롯데마트맥스.svg" style="height: 40px;"/>
                             </a>
                             <span style="font-size: 1.1rem !important; font-weight: bold; color: #fff;">
                                 롯데마트 맥스 지점

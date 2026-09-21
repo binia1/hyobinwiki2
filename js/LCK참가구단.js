@@ -79,52 +79,52 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="lck-grid">
                 <!-- 1. Gen.G -->
                 <div class="lck-item">
-                    <div class="lck-item-logo"><img alt="Gen.G" onerror="this.style.display='none'" src="이미지/GenG.svg"/></div>
+                    <div class="lck-item-logo"><img alt="Gen.G" onerror="this.style.display='none'" src="이미지/svg/GenG.svg"/></div>
                     <div class="lck-item-name" style="background-color: #000000; color:#AA8A00;">Gen.G</div>
                 </div>
                 <!-- 2. T1 -->
                 <div class="lck-item">
-                    <div class="lck-item-logo"><img alt="T1" onerror="this.style.display='none'" src="이미지/T1.svg"/></div>
+                    <div class="lck-item-logo"><img alt="T1" onerror="this.style.display='none'" src="이미지/svg/T1.svg"/></div>
                     <div class="lck-item-name" style="background-color: #E2012D;">T1</div>
                 </div>
                 <!-- 3. HLE -->
                 <div class="lck-item">
-                    <div class="lck-item-logo"><img alt="Hanwha Life Esports" onerror="this.style.display='none'" src="이미지/HLE.svg"/></div>
+                    <div class="lck-item-logo"><img alt="Hanwha Life Esports" onerror="this.style.display='none'" src="이미지/svg/HLE.svg"/></div>
                     <div class="lck-item-name" style="background-color: #FF6600;">Hanwha Life Esports</div>
                 </div>
                 <!-- 4. DK -->
                 <div class="lck-item">
-                    <div class="lck-item-logo"><img alt="Dplus KIA" onerror="this.style.display='none'" src="이미지/DK.svg"/></div>
+                    <div class="lck-item-logo"><img alt="Dplus KIA" onerror="this.style.display='none'" src="이미지/svg/DK.svg"/></div>
                     <div class="lck-item-name" style="background-color: #000000;">Dplus KIA</div>
                 </div>
                 <!-- 5. KT -->
                 <div class="lck-item">
-                    <div class="lck-item-logo"><img alt="KT Rolster" onerror="this.style.display='none'" src="이미지/KT.svg"/></div>
+                    <div class="lck-item-logo"><img alt="KT Rolster" onerror="this.style.display='none'" src="이미지/svg/KT.svg"/></div>
                     <div class="lck-item-name" style="background-color: #FF0000;">KT Rolster</div>
                 </div>
                 <!-- 6. FOX -->
                 <div class="lck-item">
-                    <div class="lck-item-logo"><img alt="FearX" onerror="this.style.display='none'" src="이미지/FOX.svg"/></div>
+                    <div class="lck-item-logo"><img alt="FearX" onerror="this.style.display='none'" src="이미지/svg/FOX.svg"/></div>
                     <div class="lck-item-name" style="background-color: #222222; color:#FFD700;">FearX</div>
                 </div>
                 <!-- 7. KDF -->
                 <div class="lck-item">
-                    <div class="lck-item-logo"><img alt="Kwangdong Freecs" onerror="this.style.display='none'" src="이미지/KDF.svg"/></div>
+                    <div class="lck-item-logo"><img alt="Kwangdong Freecs" onerror="this.style.display='none'" src="이미지/svg/KDF.svg"/></div>
                     <div class="lck-item-name" style="background-color: #C41E3A;">Kwangdong Freecs</div>
                 </div>
                 <!-- 8. NS -->
                 <div class="lck-item">
-                    <div class="lck-item-logo"><img alt="Nongshim RedForce" onerror="this.style.display='none'" src="이미지/NS.svg"/></div>
+                    <div class="lck-item-logo"><img alt="Nongshim RedForce" onerror="this.style.display='none'" src="이미지/svg/NS.svg"/></div>
                     <div class="lck-item-name" style="background-color: #E3000F;">Nongshim RedForce</div>
                 </div>
                 <!-- 9. DRX -->
                 <div class="lck-item">
-                    <div class="lck-item-logo"><img alt="DRX" onerror="this.style.display='none'" src="이미지/DRX.svg"/></div>
+                    <div class="lck-item-logo"><img alt="DRX" onerror="this.style.display='none'" src="이미지/svg/DRX.svg"/></div>
                     <div class="lck-item-name" style="background-color: #5A8DF3;">DRX</div>
                 </div>
                 <!-- 10. BRO -->
                 <div class="lck-item">
-                    <div class="lck-item-logo"><img alt="OKSavingsBank BRION" onerror="this.style.display='none'" src="이미지/BRO.svg"/></div>
+                    <div class="lck-item-logo"><img alt="OKSavingsBank BRION" onerror="this.style.display='none'" src="이미지/svg/BRO.svg"/></div>
                     <div class="lck-item-name" style="background-color: #005A32;">OKSavingsBank BRION</div>
                 </div>
                 <!-- 11. 효빈 AQUORS (3번째 줄 첫 칸에 자연스럽게 안착) -->

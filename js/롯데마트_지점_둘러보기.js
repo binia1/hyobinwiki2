@@ -9,7 +9,7 @@
                 <tr>
                     <td style="background-color: #fff; text-align: center; padding: 15px; border-bottom: none !important;">
                         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;">
-                            <img alt="롯데마트 로고" onerror="this.style.display='none'; this.parentNode.insertAdjacentHTML('afterbegin', '<span style=\\'color:#E60012; font-weight:900; font-size:2rem;\\'>LOTTE Mart</span>');" src="이미지/롯데마트_로고.svg" style="height: 40px;"/>
+                            <img alt="롯데마트 로고" onerror="this.style.display='none'; this.parentNode.insertAdjacentHTML('afterbegin', '<span style=\\'color:#E60012; font-weight:900; font-size:2rem;\\'>LOTTE Mart</span>');" src="이미지/svg/롯데마트_로고.svg" style="height: 40px;"/>
                             <span style="font-size: 1.1rem !important; font-weight: bold; color: #000;">
                                 롯데마트 효빈광역시 지점
                             </span>

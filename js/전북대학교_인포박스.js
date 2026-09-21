@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="text-sm font-normal">Jeonbuk National University</span>
 </div>
 <div class="p-4 bg-white text-center border-b">
-<img alt="전북대학교 엠블럼" class="w-48 mx-auto" onerror="this.src='이미지/대체로고.webp';" src="이미지/전북대_로고.svg"/>
+<img alt="전북대학교 엠블럼" class="w-48 mx-auto" onerror="this.src='이미지/대체로고.webp';" src="이미지/svg/전북대_로고.svg"/>
 </div>
 <table>
 <tr><th>교시</th><td>자유(自由) · 정의(正義) · 창조(創造)</td></tr>

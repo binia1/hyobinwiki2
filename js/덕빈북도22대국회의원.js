@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <tr>
                 <td class="nav-header" style="background-color: #2ECC71; padding: 8px; text-align: center;">
                     <a class="wiki-link white" href="제22대_국회의원.html" style="display:inline-flex; align-items:center; gap:4px; color: white; font-weight: bold; text-decoration: none;">
-                        <img alt="국회 휘장" src="이미지/국회휘장.svg" style="display:block;" width="20" onerror="this.style.display='none'"/>
+                        <img alt="국회 휘장" src="이미지/svg/국회휘장.svg" style="display:block;" width="20" onerror="this.style.display='none'"/>
                         <span>덕빈북도 제22대 국회의원</span>
                     </a>
                 </td>

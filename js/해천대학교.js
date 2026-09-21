@@ -1,7 +1,7 @@
 document.currentScript.insertAdjacentHTML('beforebegin', `
 <div class="gradient-box">
                 <!-- 내비게이션 박스 로고는 반드시 해천대.svg로 유지 -->
-                <img alt="해천대학교 로고" src="이미지/해천대.svg" style="width: 200px; display: inline-block;"/>
+                <img alt="해천대학교 로고" src="이미지/svg/해천대.svg" style="width: 200px; display: inline-block;"/>
             </div>
             <details>
                 <summary></summary>

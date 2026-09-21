@@ -8,7 +8,7 @@
                 <tr>
                     <td style="background-color: var(--traders-green, #a0d170); text-align: center; padding: 12px; border: none;">
                         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;">
-                            <img alt="트레이더스 홀세일 클럽 로고" onerror="this.style.display='none'; this.parentNode.insertAdjacentHTML('afterbegin', '<span style=\\'color:#231815; font-weight:900; font-size:1.5rem;\\'>TRADERS<br>WHOLESALE CLUB</span>');" src="이미지/트레이더스_홀세일_클럽_로고.svg" style="height: 40px;"/>
+                            <img alt="트레이더스 홀세일 클럽 로고" onerror="this.style.display='none'; this.parentNode.insertAdjacentHTML('afterbegin', '<span style=\\'color:#231815; font-weight:900; font-size:1.5rem;\\'>TRADERS<br>WHOLESALE CLUB</span>');" src="이미지/svg/트레이더스_홀세일_클럽_로고.svg" style="height: 40px;"/>
                             <span style="font-size: 1.1rem !important; font-weight: bold; color: var(--traders-text, #231815);">
                                 트레이더스 홀세일 클럽 지점
                             </span>

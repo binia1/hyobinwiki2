@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/이마트_로고.svg" alt="이마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/이마트_로고.svg" alt="이마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #FFB81C !important; color: #000000 !important;">이마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/롯데마트_로고.svg" alt="롯데마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/롯데마트_로고.svg" alt="롯데마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #E60012 !important; color: #ffffff !important;">롯데마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/홈플러스_로고.svg" alt="홈플러스" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/홈플러스_로고.svg" alt="홈플러스" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #E60013 !important; color: #ffffff !important;">홈플러스</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/하나로마트_로고.svg" alt="하나로마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/하나로마트_로고.svg" alt="하나로마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #00B140 !important; color: #ffffff !important;">하나로마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/CY마트_로고.svg" alt="CY마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/CY마트_로고.svg" alt="CY마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #00CCBB !important; color: #ffffff !important;">CY마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/빈스마트_로고.svg" alt="빈스마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/빈스마트_로고.svg" alt="빈스마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #E49DFD !important; color: #000000 !important;">빈스마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/마루마트_로고.svg" alt="마루마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/마루마트_로고.svg" alt="마루마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #FFCD00 !important; color: #000000 !important;">마루마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/천조마트_로고.svg" alt="천조마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/천조마트_로고.svg" alt="천조마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #77DD77 !important; color: #000000 !important;">천조마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/코스트코_로고.svg" alt="코스트코" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/코스트코_로고.svg" alt="코스트코" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #E31837 !important; color: #ffffff !important;">코스트코</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -174,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/트레이더스_로고.svg" alt="트레이더스 홀세일 클럽" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/트레이더스_로고.svg" alt="트레이더스 홀세일 클럽" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300 leading-tight" style="background-color: #231815 !important; color: #ffffff !important;">트레이더스<br>홀세일 클럽</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/롯데마트맥스_로고.svg" alt="롯데마트 맥스" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/롯데마트맥스_로고.svg" alt="롯데마트 맥스" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #00A775 !important; color: #ffffff !important;">롯데마트 맥스</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -194,7 +194,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/홈플러스스페셜_로고.svg" alt="홈플러스 스페셜" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/홈플러스스페셜_로고.svg" alt="홈플러스 스페셜" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300 leading-tight" style="background-color: #E60013 !important; color: #ffffff !important;">홈플러스<br>스페셜</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -217,7 +217,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/월마트_로고.svg" alt="월마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/월마트_로고.svg" alt="월마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #004890 !important; color: #ffffff !important;">월마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/마크로_로고.svg" alt="마크로" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/마크로_로고.svg" alt="마크로" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #D9272E !important; color: #ffffff !important;">마크로</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -243,7 +243,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/GS마트_로고.svg" alt="GS마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/GS마트_로고.svg" alt="GS마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #009999 !important; color: #ffffff !important;">GS마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -253,7 +253,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/LG마트_로고.svg" alt="LG마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/LG마트_로고.svg" alt="LG마트" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #A6215D !important; color: #ffffff !important;">LG마트</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -270,7 +270,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/까르푸_로고.svg" alt="까르푸" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/까르푸_로고.svg" alt="까르푸" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #273785 !important; color: #ffffff !important;">까르푸</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -281,7 +281,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/홈에버_로고.svg" alt="홈에버" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
+                            <img src="이미지/svg/홈에버_로고.svg" alt="홈에버" class="max-h-5 mx-auto object-contain" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #B2001A !important; color: #ffffff !important;">홈에버</th>
                         <td class="text-left py-1.5 px-3 leading-loose">

@@ -2,7 +2,7 @@
     const template = `
 <div style="border: 1px solid #ccc; font-family: 'Noto Sans KR', sans-serif; background-color: #fff; max-width: 100%; box-sizing: border-box; clear: both; margin: 30px 0;">
     <div style="background-image: linear-gradient(120deg, #fff 5%, #000 5.1% 9%, #fff 9.1% 10%, #000 10.1% 14%, #fff 14.1% 15%, #000 15.1% 19%, #fff 19.1% 81%, #cd313a 81.1% 90%, #0047a0 90.1%); padding: 20px 0; text-align: center; border-bottom: 1px solid #ccc;">
-        <img src="이미지/대한민국_국장.svg" alt="대한민국 국장" onerror="this.outerHTML='<span style=\\'font-size:30px;\\'>🇰🇷</span>'" style="height: 50px; display: inline-block; vertical-align: middle; margin-right: 15px;">
+        <img src="이미지/svg/대한민국_국장.svg" alt="대한민국 국장" onerror="this.outerHTML='<span style=\\'font-size:30px;\\'>🇰🇷</span>'" style="height: 50px; display: inline-block; vertical-align: middle; margin-right: 15px;">
         <div style="display: inline-block; vertical-align: middle; text-align: left; line-height: 1.2;">
             <div style="font-size: 0.9em; font-weight: bold; color: #000;">대한민국</div>
             <div style="font-size: 1.4em; font-weight: 900; letter-spacing: -1px; color: #000;">광역자치단체 부단체장</div>

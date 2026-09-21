@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="lotte-nav-frame">
         <div class="lotte-nav-header">
             <div class="flex items-center justify-center gap-2">
-                <img onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Lotte_Cinema_logo.svg/300px-Lotte_Cinema_logo.svg'" src="이미지/롯데시네마_로고_영문_백색.svg" style="height: 20px;"/>
+                <img onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Lotte_Cinema_logo.svg/300px-Lotte_Cinema_logo.svg'" src="이미지/svg/롯데시네마_로고_영문_백색.svg" style="height: 20px;"/>
                 <span class="font-bold text-lg">전국 지점 현황</span>
             </div>
         </div>

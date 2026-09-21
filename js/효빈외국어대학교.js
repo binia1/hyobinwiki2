@@ -1,6 +1,6 @@
 document.currentScript.insertAdjacentHTML('beforebegin', `
 <div class="gradient-box">
-                <img alt="효빈외국어대학교 로고" src="이미지/효빈외대.svg" style="width: 200px; display: inline-block;"/>
+                <img alt="효빈외국어대학교 로고" src="이미지/svg/효빈외대.svg" style="width: 200px; display: inline-block;"/>
             </div>
             <details>
                 <summary></summary>

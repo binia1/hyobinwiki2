@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="flex-1"></div>
                 <div class="flex flex-col items-center gap-1">
                     <div class="bg-white px-2 py-0.5 rounded inline-block">
-                        <img src="이미지/코레일_로고.svg" alt="코레일 로고" style="height:20px; object-fit: contain;">
+                        <img src="이미지/svg/코레일_로고.svg" alt="코레일 로고" style="height:20px; object-fit: contain;">
                     </div>
                     <a href="한국철도공사_전동차.html" class="text-[#005bac] font-bold text-lg bg-white px-2 py-0.5 rounded no-underline hover:underline">한국철도공사의 전동차</a>
                 </div>

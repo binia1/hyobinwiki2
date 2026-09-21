@@ -10,7 +10,7 @@
             <tr>
                 <td class="py-2.5 cursor-pointer select-none" colspan="5" onclick="toggleTable('hyobin-council-offices-top', 'hyobinCouncilToggleBtnTop')" style="background-color: var(--wiki-city-color); border-bottom: 1px solid rgba(255,255,255,0.4);">
                     <div class="flex items-center justify-center gap-3">
-                        <img alt="지방의회 로고" class="h-10 object-contain drop-shadow-md" onerror="this.outerHTML='<div class=\\'text-white font-bold text-[14px]\\'>COUNCIL</div>';" src="이미지/의회_로고.svg"/>
+                        <img alt="지방의회 로고" class="h-10 object-contain drop-shadow-md" onerror="this.outerHTML='<div class=\\'text-white font-bold text-[14px]\\'>COUNCIL</div>';" src="이미지/svg/의회_로고.svg"/>
                         <div class="text-white text-left leading-tight">
                             <div class="text-[13px] font-bold tracking-wide">효빈광역시</div>
                             <div class="text-[20px] font-extrabold tracking-widest drop-shadow-sm">기초자치단체 의회</div>

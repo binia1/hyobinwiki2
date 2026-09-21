@@ -90,7 +90,7 @@
                     </svg>
                 </div>
                 <div class="hw-spec-city-title">
-                    <img src="이미지/대한민국_정부.svg" alt="대한민국 정부">
+                    <img src="이미지/svg/대한민국_정부.svg" alt="대한민국 정부">
                     대한민국의 대도시 특례(특정시)
                 </div>
                 <div class="hw-header-right-svg">
@@ -111,31 +111,31 @@
                     <tr>
                         <td>
                             <div class="hw-city-cell">
-                                <img src="이미지/부천시.svg" alt="부천시">
+                                <img src="이미지/svg/부천시.svg" alt="부천시">
                                 <span><a href="부천시.html">부천시</a></span>
                             </div>
                         </td>
                         <td>
                             <div class="hw-city-cell">
-                                <img src="이미지/안산시.svg" alt="안산시">
+                                <img src="이미지/svg/안산시.svg" alt="안산시">
                                 <span><a href="안산시.html">안산시</a><a href="#fn-2" class="hw-fn-link">[2]</a></span>
                             </div>
                         </td>
                         <td>
                             <div class="hw-city-cell">
-                                <img src="이미지/안양시.svg" alt="안양시">
+                                <img src="이미지/svg/안양시.svg" alt="안양시">
                                 <span><a href="안양시.html">안양시</a></span>
                             </div>
                         </td>
                         <td>
                             <div class="hw-city-cell">
-                                <img src="이미지/평택시.svg" alt="평택시">
+                                <img src="이미지/svg/평택시.svg" alt="평택시">
                                 <span><a href="평택시.html">평택시</a><a href="#fn-1" class="hw-fn-link">[1]</a><a href="#fn-2" class="hw-fn-link">[2]</a></span>
                             </div>
                         </td>
                         <td>
                             <div class="hw-city-cell">
-                                <img src="이미지/성남시.svg" alt="성남시">
+                                <img src="이미지/svg/성남시.svg" alt="성남시">
                                 <span><a href="성남시.html">성남시</a></span>
                             </div>
                         </td>
@@ -143,13 +143,13 @@
                     <tr>
                         <td>
                             <div class="hw-city-cell">
-                                <img src="이미지/남양주시.svg" alt="남양주시">
+                                <img src="이미지/svg/남양주시.svg" alt="남양주시">
                                 <span><a href="남양주시.html">남양주시</a><a href="#fn-1" class="hw-fn-link">[1]</a><a href="#fn-2" class="hw-fn-link">[2]</a></span>
                             </div>
                         </td>
                         <td>
                             <div class="hw-city-cell">
-                                <img src="이미지/화성시.svg" alt="화성시">
+                                <img src="이미지/svg/화성시.svg" alt="화성시">
                                 <span><a href="화성시.html">화성시</a><a href="#fn-2" class="hw-fn-link">[2]</a></span>
                             </div>
                         </td>
@@ -169,25 +169,25 @@
                     <tr>
                         <td>
                             <div class="hw-city-cell">
-                                <img src="이미지/천안시.svg" alt="천안시">
+                                <img src="이미지/svg/천안시.svg" alt="천안시">
                                 <span><a href="천안시.html">천안시</a><a href="#fn-2" class="hw-fn-link">[2]</a></span>
                             </div>
                         </td>
                         <td>
                             <div class="hw-city-cell">
-                                <img src="이미지/전주시.svg" alt="전주시">
+                                <img src="이미지/svg/전주시.svg" alt="전주시">
                                 <span><a href="전주시.html">전주시</a></span>
                             </div>
                         </td>
                         <td>
                             <div class="hw-city-cell">
-                                <img src="이미지/포항시.svg" alt="포항시">
+                                <img src="이미지/svg/포항시.svg" alt="포항시">
                                 <span><a href="포항시.html">포항시</a><a href="#fn-2" class="hw-fn-link">[2]</a></span>
                             </div>
                         </td>
                         <td>
                             <div class="hw-city-cell">
-                                <img src="이미지/김해시.svg" alt="김해시">
+                                <img src="이미지/svg/김해시.svg" alt="김해시">
                                 <span><a href="김해시.html">김해시</a><a href="#fn-1" class="hw-fn-link">[1]</a><a href="#fn-2" class="hw-fn-link">[2]</a></span>
                             </div>
                         </td>

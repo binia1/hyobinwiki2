@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="p-4 bg-white text-center border-b">
 <!-- 로고 -->
 <div class="w-full flex justify-center py-4">
-<img alt="고판대학교 로고" src="이미지/고판대학교_로고_폐교.svg" style="width: 150px; display: inline-block; filter: grayscale(100%); opacity: 0.7;"/>
+<img alt="고판대학교 로고" src="이미지/svg/고판대학교_로고_폐교.svg" style="width: 150px; display: inline-block; filter: grayscale(100%); opacity: 0.7;"/>
 </div>
 </div>
 <table>

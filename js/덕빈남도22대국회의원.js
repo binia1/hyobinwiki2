@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <tr>
                 <td class="nav-header" style="background-color: #335566; padding: 8px; text-align: center;">
                     <a href="제22대_국회의원.html" class="wiki-link white" style="display:inline-flex; align-items:center; gap:4px; color: white; font-weight: bold; text-decoration: none;">
-                        <img src="이미지/국회휘장.svg" width="20" alt="국회 휘장" style="display:block;" onerror="this.style.display='none'">
+                        <img src="이미지/svg/국회휘장.svg" width="20" alt="국회 휘장" style="display:block;" onerror="this.style.display='none'">
                         <span>덕빈남도 제22대 국회의원</span>
                     </a>
                 </td>
