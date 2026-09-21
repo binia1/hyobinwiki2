@@ -242,8 +242,8 @@ document.addEventListener("DOMContentLoaded", () => {
         allBandsHtml += `
             <div class="bd-band-row" style="background-color: ${bInfo.bg}; color: #fff; text-shadow: ${bInfo.textShadow || 'none'};">
                 <div class="bd-band-logos">
-                    <a href="${bName}.html" class="nw-link"><img src="이미지/${bInfo.logo}" class="bd-band-logo-img" onerror="this.style.display='none';"></a>
-                    <a href="${bName}.html" class="nw-link w-full"><img src="이미지/${bInfo.image10th}" class="bd-band-10th-img" onerror="this.style.display='none';"></a>
+                    <a href="${bName}.html" class="nw-link"><img src="이미지/${bInfo.logo}" class="bd-band-logo-img" ></a>
+                    <a href="${bName}.html" class="nw-link w-full"><img src="이미지/${bInfo.image10th}" class="bd-band-10th-img" ></a>
                 </div>
                 <div class="bd-band-members" style="background-color: ${bInfo.color}; color: #fff; text-shadow: none;">
                     ${membersHtml}
@@ -277,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="bd-main-frame">
             <div class="bd-main-header">
                 <a href="BanG Dream!.html" class="nw-link">
-                    <img src="이미지/BanG Dream! 가로 로고.svg" alt="BanG Dream!" style="width: 200px;" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none; color:#e5004f; font-weight:bold; font-size:1.5rem;">BanG Dream!</span>
+                    <img src="이미지/svg/BanG Dream! 가로 로고.svg" alt="BanG Dream!" style="width: 200px;" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none; color:#e5004f; font-weight:bold; font-size:1.5rem;">BanG Dream!</span>
                 </a>
                 <div class="bd-main-title-sub">차세대 걸즈 밴드 프로젝트</div>
                 <div class="bd-main-title">BanG Dream!</div>
@@ -376,7 +376,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         <div class="bd-dynamic-frame">
             <div class="bd-dynamic-header">
-                <a href="${targetBand}.html" class="nw-link"><img src="이미지/${currentBandInfo.logo}" style="width: 25%; min-width: 150px;" onerror="this.style.display='none';"></a>
+                <a href="${targetBand}.html" class="nw-link"><img src="이미지/${currentBandInfo.logo}" style="width: 25%; min-width: 150px;" ></a>
             </div>
             <div class="bd-dynamic-list bg-white dark:bg-[#2d2f34]">
                 ${dynamicMembersHtml}

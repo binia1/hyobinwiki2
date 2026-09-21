@@ -4319,7 +4319,7 @@ const imageFiles = [
         "category": "character"
     },
     {
-        "file": "나카스카스미.webp",
+        "file": "나카스 카스미.webp",
         "category": "character"
     },
     {
@@ -8599,7 +8599,7 @@ const imageFiles = [
         "category": "etc"
     },
     {
-        "file": "쁘띠레일루미네_키비주얼.webp",
+        "file": "쁘띠레일루미네.webp",
         "category": "etc"
     },
     {
@@ -16211,7 +16211,7 @@ const imageFiles = [
         "category": "etc"
     },
     {
-        "file": "츠치노코봇치.webp",
+        "file": "츠치노코고토 히토리 애니 설정화.webp",
         "category": "character"
     },
     {

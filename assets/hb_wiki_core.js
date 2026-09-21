@@ -194,7 +194,6 @@ function autoLinkBusNumbers() {
           }
       }
       
-/* ... 기존 로직 생략 ... */
 
 saveRecent(originalQuery);
       
