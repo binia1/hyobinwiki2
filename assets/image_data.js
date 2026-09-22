@@ -1655,7 +1655,7 @@ const imageFiles = [
         "category": "etc"
     },
     {
-        "file": "Poppin_party_logo.webpParty_성우진.webp",
+        "file": "Poppin_Party_성우진.webp",
         "category": "logo"
     },
     {
@@ -9691,19 +9691,19 @@ const imageFiles = [
         "category": "food"
     },
     {
-        "file": "아워노츠 나카마치_아라레.webp",
+        "file": "아워노츠_나카마치_아라레.webp",
         "category": "etc"
     },
     {
-        "file": "아워노츠 미네츠키_리츠.webp",
+        "file": "아워노츠_미네츠키_리츠.webp",
         "category": "character"
     },
     {
-        "file": "아워노츠 미야나가_노노카.webp",
+        "file": "아워노츠_미야나가_노노카.webp",
         "category": "etc"
     },
     {
-        "file": "아워노츠 센고쿠_유노.webp",
+        "file": "아워노츠_센고쿠_유노.webp",
         "category": "etc"
     },
     {
@@ -12291,7 +12291,7 @@ const imageFiles = [
         "category": "station"
     },
     {
-        "file": "이재명 대통령 프로필.webp",
+        "file": "이재명_대통령_프로필.webp",
         "category": "etc"
     },
     {
@@ -12639,7 +12639,7 @@ const imageFiles = [
         "category": "character"
     },
     {
-        "file": "임세하_네소베리_신형.webp",
+        "file": "임세하_네소베리.webp",
         "category": "merch"
     },
     {
@@ -13075,7 +13075,7 @@ const imageFiles = [
         "category": "character"
     },
     {
-        "file": "전노아_네소베리_신형.webp",
+        "file": "전노아_네소베리.webp",
         "category": "merch"
     },
     {

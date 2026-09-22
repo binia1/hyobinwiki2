@@ -39,7 +39,7 @@ def clean_html_files(directory):
         (r'&gt;\s*틀\s*포함:\s*틀:국기', r'<span style="font-size: 1.2em;">🇯🇵</span> <a class="wiki-link" href="일본.html">일본</a>'),
         
         # 5. X(트위터) 로고 틀 찌꺼기 변환 (오류 원인 제거)
-        (r'&gt;\s*틀\s*포함:\s*틀:X\(SNS\)\s*로고', '''<img  src="이미지/X 아이콘.svg" style="max-width:100%; height:auto; display:inline-block; vertical-align:middle; width: 20px !important;"/>'''),
+        (r'&gt;\s*틀\s*포함:\s*틀:X\(SNS\)\s*로고', '''<img  src="이미지/X_아이콘.svg" style="max-width:100%; height:auto; display:inline-block; vertical-align:middle; width: 20px !important;"/>'''),
 
         # 6. 표 셀 안의 색상 찌꺼기 (#ffc224,#ffc224)를 CSS 배경색으로 강제 삽입
         (r'(<(?:td|div)[^>]*style=")([^"]*)("?[^>]*>\s*)#([0-9a-fA-F]{3,6})(?:,#[0-9a-fA-F]{3,6})?\s*', 
