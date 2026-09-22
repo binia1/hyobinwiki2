@@ -83,7 +83,7 @@
       }
       // 3) 빈효선: 지정 이미지
       else if(/\(\s*빈효선\s*\)/.test(shopText)){
-        photoTd.appendChild(createImg('이미지/빈효선 굿즈샵.webp', '빈효선 굿즈샵'));
+        photoTd.appendChild(createImg('이미지/빈효선_굿즈샵.webp', '빈효선 굿즈샵'));
       }
       // 4) 노선별: n호선 굿즈샵
       else {

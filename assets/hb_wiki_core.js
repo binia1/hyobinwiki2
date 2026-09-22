@@ -1071,3 +1071,66 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 });
+// 효빈위키 [dday(YYYY-MM-DD)] 자동 변환 스크립트 (중복 텍스트 제거 패치)
+function parseDdayTags() {
+    // 태그 뒤에 붙어 있는 기존 잔여 텍스트까지 통째로 매칭하여 제거
+    const ddayRegex = /\[dday\((\d{4}-\d{2}-\d{2})\)\][^\)]*/g;
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    let node;
+    const nodesToProcess = [];
+
+    while (node = walker.nextNode()) {
+        if (ddayRegex.test(node.nodeValue)) {
+            nodesToProcess.push(node);
+        }
+    }
+
+    nodesToProcess.forEach(node => {
+        node.nodeValue = node.nodeValue.replace(/\[dday\((\d{4}-\d{2}-\d{2})\)\][^\)]*/g, (match, dateStr) => {
+            const targetDate = new Date(dateStr);
+            const today = new Date();
+            
+            const diffTime = today - targetDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            let years = today.getFullYear() - targetDate.getFullYear();
+            const m = today.getMonth() - targetDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < targetDate.getDate())) {
+                years--;
+            }
+            
+            return `${diffDays.toLocaleString()}일, ${years}주년`;
+        });
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', parseDdayTags);
+} else {
+    parseDdayTags();
+}
+
+// 기존 문서들의 [youtube(아이디)] 텍스트를 유튜브 플레이어로 자동 치환하는 구조대 코드
+function convertYoutubeLinks() {
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    const textNodes = [];
+    let node;
+    while (node = walker.nextNode()) {
+        if (node.nodeValue.includes('[youtube(')) {
+            textNodes.push(node);
+        }
+    }
+    textNodes.forEach(n => {
+        const tempSpan = document.createElement('span');
+        tempSpan.innerHTML = n.nodeValue.replace(/\[youtube\(([a-zA-Z0-9_\-]+)[^\]]*\)\]/gi, (match, videoId) => {
+            return `<iframe width="100%" style="max-width: 560px; aspect-ratio: 16/9; border-radius: 8px; margin: 10px auto; display: inline-block;" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+        });
+        n.parentNode.replaceChild(tempSpan, n);
+    });
+}
+// 페이지 로딩 완료 즉시 실행
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', convertYoutubeLinks);
+} else {
+    convertYoutubeLinks();
+}

@@ -1401,25 +1401,36 @@ wiki_parktex.js .js \hyobinwiki2\assets\
             showToast("텍스트가 효빈위키 문법으로 마법 변환되었습니다! ✨");
         }
 
-        function mergeMultilineTableRows(txt) {
+function mergeMultilineTableRows(txt) {
             let arr = txt.split('\n');
             let out = [];
             for(let i=0; i<arr.length; i++) {
                 let l = arr[i].trimRight();
+                // 🚨 수정 1: 줄이 || 로 시작하지만 정상적으로 끝나지 않은 경우만 병합
                 if(l.trim().startsWith('||') && !l.trim().endsWith('||') && l.trim().length > 2) {
                     let j = i + 1;
-                    while(j < arr.length && !arr[j].trimRight().endsWith('||')) {
-                        l += "<br/>" + arr[j].trimRight();
+                    let merged = l;
+                    while(j < arr.length) {
+                        let nextLine = arr[j].trimRight();
+                        // 🚨 수정 2: 빈 줄, 새로운 표의 시작(||), 또는 문단 제목(==)을 만나면 즉시 병합 중단! (폭주 방지)
+                        if (nextLine.trim() === '' || nextLine.trim().startsWith('||') || nextLine.trim().startsWith('==')) {
+                            break; 
+                        }
+                        merged += "<br/>" + nextLine;
+                        if (nextLine.trim().endsWith('||')) {
+                            j++;
+                            break;
+                        }
                         j++;
                     }
-                    if(j < arr.length) {
-                        l += "<br/>" + arr[j].trimRight();
-                        i = j;
-                    } else {
-                        l += "||";
+                    if (!merged.trim().endsWith('||')) {
+                        merged += "||"; // 닫히지 않고 끝난 표 강제 닫기
                     }
+                    out.push(merged);
+                    i = j - 1;
+                } else {
+                    out.push(l);
                 }
-                out.push(l);
             }
             return out.join('\n');
         }
@@ -1437,8 +1448,9 @@ wiki_parktex.js .js \hyobinwiki2\assets\
             text = text.replace(/\[clearfix\]/gi, '');
             text = text.replace(/\[br\]/gi, '<br>');
 
-            let hCounters = [0, 0, 0, 0, 0, 0, 0];
-            text = text.replace(/^(={2,6})\s+(.*?)\s+\1$/gm, (match, equals, titleText) => {
+        let hCounters = [0, 0, 0, 0, 0, 0, 0];
+            // 🚨 수정: ===# 처럼 사이에 #이 있거나 띄어쓰기가 없어도 완벽하게 H2~H6 제목으로 인식
+            text = text.replace(/^(={2,6})\s*#?\s*(.*?)\s*#?\s*\1$/gm, (match, equals, titleText) => {
                 let level = equals.length;
                 hCounters[level]++;
                 for(let i = level + 1; i <= 6; i++) { hCounters[i] = 0; }
@@ -1447,8 +1459,7 @@ wiki_parktex.js .js \hyobinwiki2\assets\
                 return `${equals} ${numStr} ${titleText.trim()} ${equals}`;
             });
 
-            text = mergeMultilineTableRows(text);
-
+            // 🚨 수정 3: 매크로 추출을 표 병합보다 무조건 먼저 실행해서 중첩 표 데이터 보호
             let macros = {};
             let mCount = 0;
             let changed = true;
@@ -1462,10 +1473,12 @@ wiki_parktex.js .js \hyobinwiki2\assets\
                 });
             }
 
-            function parseNamuTables(str) {
+            // 기존 파싱 로직 (내부 로직은 건드리지 않음)
+function parseNamuTables(str) {
                 let lines = str.split('\n');
                 let out = [];
                 let inTable = false;
+                let colStyles = []; // 열(Column) 전체의 배경색/글자색 기억
                 
                 for(let i=0; i<lines.length; i++) {
                     let line = lines[i].trim();
@@ -1473,19 +1486,28 @@ wiki_parktex.js .js \hyobinwiki2\assets\
 
                     if(line.startsWith('||') && line.endsWith('||') && line.length >= 4) {
                         if(!inTable) {
-                            let tableStyle = "width: 100%; border-collapse: collapse; text-align: center; margin: 15px auto;";
+                            // 🚨 파이썬 스크립트 대체: width:100% 기본 적용, margin/float 반응형 처리
+                            let tableStyle = "width: 100%; border-collapse: collapse; text-align: center;";
+                            colStyles = []; 
                             
                             let wMatch = line.match(/<table\s*width=([^>]+)>/i);
                             if(wMatch) {
                                 let w = wMatch[1];
                                 if(!w.endsWith('%') && !w.endsWith('px')) w += 'px';
-                                tableStyle += ` width: ${w};`;
+                                tableStyle += ` max-width: ${w};`; // 고정 width 대신 max-width로 덮어쓰기
                             }
                             
                             let aMatch = line.match(/<table\s*align=([^>]+)>/i);
-                            if(aMatch && aMatch[1] === 'center') tableStyle += ` margin: 15px auto;`;
-                            else if(aMatch && aMatch[1] === 'right') tableStyle += ` margin: 15px 0 15px auto; float: right;`;
-                            else if(aMatch && aMatch[1] === 'left') tableStyle += ` margin: 15px auto 15px 0; float: left;`;
+                            if(aMatch && aMatch[1] === 'center') {
+                                tableStyle += ` margin: 15px auto;`;
+                            } else if(aMatch && aMatch[1] === 'right') {
+                                // 🚨 파이썬 스크립트 역할: 인포박스 우측 배치 및 텍스트 겹침 방지 완벽 적용
+                                tableStyle += ` margin: 0 0 20px 20px; float: right;`;
+                            } else if(aMatch && aMatch[1] === 'left') {
+                                tableStyle += ` margin: 0 20px 20px 0; float: left;`;
+                            } else {
+                                tableStyle += ` margin: 15px auto;`;
+                            }
                             
                             let bgMatch = line.match(/<table\s*bgcolor=([^>]+)>/i);
                             if(bgMatch) {
@@ -1494,6 +1516,7 @@ wiki_parktex.js .js \hyobinwiki2\assets\
                                 tableStyle += ` background-color: ${bg};`;
                             }
                             
+                            // 여기서 에러 났던 bdMatch 정상 선언
                             let bdMatch = line.match(/<table\s*bordercolor=([^>]+)>/i);
                             if(bdMatch) {
                                 let bd = bdMatch[1].split(',')[0].trim();
@@ -1527,31 +1550,64 @@ wiki_parktex.js .js \hyobinwiki2\assets\
                         
                         let rowHtml = `        <tr${rowStyle}>`;
                         let cells = line.split('||');
+                        let actualColIdx = 0;
+                        
                         for(let c=1; c<cells.length-1; c++) {
                             let cell = cells[c];
                             let attrs = "";
                             let cStyle = "padding: 8px 12px; border: 1px solid #ccc; word-break: keep-all;";
+                            let colspan = 1;
+                            
+                            // 🚨 열 배경색(colbgcolor) 추출 및 기억
+                            let colBgMatch = cell.match(/<colbgcolor\s*=\s*([^>]+)>/i);
+                            if(colBgMatch) {
+                                let bg = colBgMatch[1].split(',')[0].trim();
+                                if(!bg.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(bg)) bg = '#' + bg;
+                                if(!colStyles[actualColIdx]) colStyles[actualColIdx] = {};
+                                colStyles[actualColIdx].bg = bg;
+                                cell = cell.replace(/<colbgcolor\s*=\s*[^>]+>/gi, '');
+                            }
+                            
+                            // 🚨 열 글자색(colcolor) 추출 및 기억
+                            let colColorMatch = cell.match(/<colcolor\s*=\s*([^>]+)>/i);
+                            if(colColorMatch) {
+                                let col = colColorMatch[1].split(',')[0].trim();
+                                if(!col.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(col)) col = '#' + col;
+                                if(!colStyles[actualColIdx]) colStyles[actualColIdx] = {};
+                                colStyles[actualColIdx].color = col;
+                                cell = cell.replace(/<colcolor\s*=\s*[^>]+>/gi, '');
+                            }
+                            
+                            // 기억해둔 열(Column) 스타일이 있으면 칠해줌
+                            if (colStyles[actualColIdx]) {
+                                if (colStyles[actualColIdx].bg) cStyle += ` background-color: ${colStyles[actualColIdx].bg};`;
+                                if (colStyles[actualColIdx].color) cStyle += ` color: ${colStyles[actualColIdx].color};`;
+                            }
                             
                             let rsMatch = cell.match(/<\|\s*(\d+)>/);
                             if(rsMatch) { attrs += ` rowspan="${rsMatch[1]}"`; cell = cell.replace(/<\|\s*\d+>/g, ''); }
                             
                             let csMatch = cell.match(/<-\s*(\d+)>/);
-                            if(csMatch) { attrs += ` colspan="${csMatch[1]}"`; cell = cell.replace(/<-\s*\d+>/g, ''); }
+                            if(csMatch) { 
+                                colspan = parseInt(csMatch[1]);
+                                attrs += ` colspan="${colspan}"`; 
+                                cell = cell.replace(/<-\s*\d+>/g, ''); 
+                            }
                             
-                            let cBgMatch = cell.match(/<(?:bgcolor|colbgcolor)\s*=\s*([^>]+)>/i);
+                            let cBgMatch = cell.match(/<bgcolor\s*=\s*([^>]+)>/i);
                             if(cBgMatch) { 
                                 let bg = cBgMatch[1].split(',')[0].trim();
                                 if(!bg.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(bg)) bg = '#' + bg;
                                 cStyle += ` background-color: ${bg};`; 
-                                cell = cell.replace(/<(?:bgcolor|colbgcolor)\s*=\s*[^>]+>/gi, ''); 
+                                cell = cell.replace(/<bgcolor\s*=\s*[^>]+>/gi, ''); 
                             }
                             
-                            let cColMatch = cell.match(/<(?:color|colcolor)\s*=\s*([^>]+)>/i);
+                            let cColMatch = cell.match(/<color\s*=\s*([^>]+)>/i);
                             if(cColMatch) { 
                                 let col = cColMatch[1].split(',')[0].trim();
                                 if(!col.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(col)) col = '#' + col;
                                 cStyle += ` color: ${col};`; 
-                                cell = cell.replace(/<(?:color|colcolor)\s*=\s*[^>]+>/gi, ''); 
+                                cell = cell.replace(/<color\s*=\s*[^>]+>/gi, ''); 
                             }
                             
                             let wMatch = cell.match(/<width\s*=\s*([^>]+)>/i);
@@ -1587,6 +1643,8 @@ wiki_parktex.js .js \hyobinwiki2\assets\
                             cell = cell.replace(/<[a-zA-Z]+\s*=[^>]+>/g, '');
                             cell = cell.replace(/^<[^>]+>\s*/g, '');
                             rowHtml += `<td${attrs} style="${cStyle}">${cell.trim()}</td>`;
+                            
+                            actualColIdx += colspan; // 가로 병합된 칸 수만큼 열 위치 건너뛰기
                         }
                         rowHtml += `</tr>`;
                         out.push(rowHtml);
@@ -1598,15 +1656,15 @@ wiki_parktex.js .js \hyobinwiki2\assets\
                 if(inTable) out.push('    </tbody>\n</table>');
                 return out.join('\n');
             }
-
+            
+            // 🚨 수정 4: 매크로 내부의 표 줄바꿈도 안전하게 병합!
             for(let i=0; i<mCount; i++) {
                 let id = `__MACRO_${i}__`;
                 let inner = macros[id];
 
+                inner = mergeMultilineTableRows(inner); // 매크로 안에서만 따로 줄바꿈 병합
                 inner = parseNamuTables(inner); 
 
-                // 🚨 [핵심 수정 부분] <br/> 이나 \n 등 모든 형태의 줄바꿈을 유연하게 매칭하여,
-                // #!wiki 와 #!folding 텍스트가 화면에 노출되지 않고 정상적으로 div나 details 태그로 변환되게 합니다.
                 if (inner.match(/^#!wiki/)) {
                     let styleMatch = inner.match(/^#!wiki\s+style=(?:"|&quot;|')?(.*?)(?:"|&quot;|')?\s*(?:\n|<br\s*\/?>)([\s\S]*)$/);
                     if(styleMatch) {
@@ -1633,13 +1691,15 @@ wiki_parktex.js .js \hyobinwiki2\assets\
                         if(!col.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(col)) col = '#' + col;
                         macros[id] = `<span style="color: ${col};">${m[2]}</span>`;
                     }
-                } else if (inner.startsWith('#!html')) {
-                    macros[id] = inner.replace(/^#!html\s*/, '');
+                } else if (inner.startsWith('')) {
+                    macros[id] = inner.replace(/^\s*/, '');
                 } else {
                     macros[id] = inner;
                 }
             }
 
+            // 🚨 수정 5: 메인 텍스트도 매크로 추출이 끝난 뒤에 표 병합 및 파싱
+            text = mergeMultilineTableRows(text);
             text = parseNamuTables(text);
 
             let restoring = true;
@@ -1679,26 +1739,55 @@ wiki_parktex.js .js \hyobinwiki2\assets\
             }
             text = outText;
 
-            text = text.replace(/\[\[파일:([^|\]]+)(?:\|([^\]]*))?\]\]/gi, (match, filename, args) => {
+text = text.replace(/\[\[파일:([^|\]]+)(?:\|([^\]]*))?\]\]/gi, (match, filename, args) => {
+                let cleanFile = filename.trim().replace(/ /g, '_');
                 let style = "max-width:100%; height:auto; display:inline-block; vertical-align:middle;";
+                
                 if (args) {
+                    let wMatch = args.match(/width=([0-9%]+)/);
+                    if (wMatch) {
+                        let w = wMatch[1];
+                        style = w.endsWith('%') ? `width: ${w}; height: auto; display:inline-block; vertical-align:middle;` : `max-width: ${w}px; height: auto; display:inline-block; vertical-align:middle;`;
+                    }
                     let hMatch = args.match(/height=([0-9]+)/);
-                    if(hMatch) style += ` height: ${hMatch[1]}px !important;`;
-                    let wMatch = args.match(/width=([0-9]+)/);
-                    if(wMatch) style += ` width: ${wMatch[1]}px !important;`;
-                    let rMatch = args.match(/border-radius=([0-9]+)/);
-                    if(rMatch) style += ` border-radius: ${rMatch[1]}px;`;
+                    if (hMatch) {
+                        style += ` height: ${hMatch[1]}px !important;`;
+                    }
                 }
-                return `<img src="이미지/${filename.trim()}.webp" style="${style}" >`;
+                
+                let ext = cleanFile.split('.').pop().toLowerCase();
+                let imgSrc = (ext === 'svg' || ext === 'png' || ext === 'jpg') ? `이미지/${cleanFile}` : `이미지/${cleanFile}.webp`;
+                return `<img src="${imgSrc}" style="${style}">`;
             });
             
-            text = text.replace(/\[\[([^|\]]+)(?:\|([^\]]*))?\]\]/g, (match, doc, label) => {
-                doc = doc.trim();
-                label = label ? label.trim() : doc;
-                return `<a class="wiki-link" href="${doc.replace(/ /g, '_')}.html">${label}</a>`;
+// 🚨 [수정 4] 나무위키 문법을 변환할 때도 샵(#) 링크 URL 조합 오류 해결
+// 🚨 나무위키 파서 링크 완벽 변환기
+            text = text.replace(/\[\[([^\]]+)\]\]/g, (match, inner) => {
+                let doc = inner, label = inner;
+                let pipeIdx = inner.indexOf('|');
+                if (pipeIdx !== -1) {
+                    doc = inner.substring(0, pipeIdx).trim();
+                    label = inner.substring(pipeIdx + 1).trim();
+                } else {
+                    doc = inner.trim();
+                    label = doc;
+                }
+                
+                let href = "";
+                let hashIdx = doc.indexOf('#');
+                if (hashIdx === 0) {
+                    // #으로만 시작하면 문서 이름과 .html을 붙이지 않음 (현재 페이지 이동)
+                    href = doc; 
+                } else if (hashIdx !== -1) {
+                    let base = doc.substring(0, hashIdx).replace(/ /g, '_');
+                    let hash = doc.substring(hashIdx);
+                    href = base + '.html' + hash;
+                } else {
+                    href = doc.replace(/ /g, '_') + '.html';
+                }
+                return `<a class="wiki-link" href="${href}">${label}</a>`;
             });
 
-            // 🚨 [수리 4] 표 안에서 줄바꿈된 리스트(*, -)가 다음 단계 파서에서 정상 인식되도록 \n으로 환원합니다.
             text = text.replace(/<br\s*\/?>\s*([\*\-])\s+/g, '\n$1 ');
 
             converted += text.trim();
@@ -1765,7 +1854,8 @@ wiki_parktex.js .js \hyobinwiki2\assets\
                 return infoHtml;
             });
 
-            html = html.replace(/^(={2,5})\s+(.*?)\s+\1$/gm, (match, equals, titleText) => {
+// 🚨 수정: HTML로 변환할 때도 ===# 형태의 제목을 무조건 안전하게 캐치
+            html = html.replace(/^(={2,5})\s*#?\s*(.*?)\s*#?\s*\1$/gm, (match, equals, titleText) => {
                 hCount++;
                 let level = equals.length; 
                 let id = `s-${hCount}`;
@@ -1775,87 +1865,86 @@ wiki_parktex.js .js \hyobinwiki2\assets\
 
             const jsMap = {}; // (상단에 정의된 jsMap 객체 참고)
             
-            html = html.replace(/\[include\((.*?)\)\]/gi, (match, content) => {
-                let args = content.split(',');
-                let target = args[0].trim(); 
-                let cleanTarget = target.replace(/^틀\s*:\s*/, '').trim();
+html = html.replace(/\[include\((.*?)\)\]/gi, (match, content) => {
+    
+                let cleanTarget = "";
+                let params = {}; // 🚨 에러 원인 해결: params 변수를 최상단에서 무조건 생성!
+                
+                // 파라미터 안전하게 분리 (쉼표 버그 해결)
+                let firstCommaIdx = content.indexOf(',');
+                if (firstCommaIdx === -1) {
+                    cleanTarget = content.replace(/^틀\s*:\s*/, '').trim();
+                } else {
+                    cleanTarget = content.substring(0, firstCommaIdx).replace(/^틀\s*:\s*/, '').trim();
+                    let paramStr = content.substring(firstCommaIdx + 1);
+                    let paramMatches = [...paramStr.matchAll(/([^=,\s]+)\s*=\s*(.*?)(?=(?:,\s*[^=,\s]+=|$))/g)];
+                    paramMatches.forEach(m => {
+                        params[m[1].trim()] = m[2].trim();
+                    });
+                }
+if (cleanTarget.includes('아이콘') || cleanTarget.includes('로고')) {
+        let tName = cleanTarget.replace(/^틀\s*:\s*/, '').trim();
+        let sz = params['크기'] || params['width'] || '20';
+        let iconFile = '';
+        
+        if (tName.includes('페이스북')) iconFile = '페이스북_아이콘.svg';
+        else if (tName.includes('인스타그램')) iconFile = '인스타그램.svg';
+        else if (tName.includes('유튜브')) iconFile = '유튜브_아이콘.svg';
+        else if (tName.includes('틱톡')) iconFile = '틱톡_아이콘.svg';
+        else if (tName.includes('네이버TV')) iconFile = '네이버TV_아이콘.svg';
+        else if (tName.includes('네이버 블로그') || tName.includes('네이버 블로그')) iconFile = '네이버_블로그_아이콘.svg';
+        else if (tName.includes('카카오톡')) iconFile = '카카오톡_채널_로고.svg';
+        else if (tName.includes('X(SNS)')) iconFile = 'X_아이콘.svg';
+        else iconFile = tName + '.svg';
 
+        return `<img src="이미지/svg/${iconFile}" style="width: ${sz}px !important; height: auto; display: inline-block; vertical-align: middle;" alt="${tName}"/>`;
+    }
+                // 1. [다른 뜻] 틀 (주어/목적어 오류 해결 및 레이아웃 깨짐 방지)
                 if (cleanTarget.includes('다른 뜻')) {
-                    let params = {};
-                    for (let k = 1; k < args.length; k++) {
-                        let kv = args[k].split('=');
-                        if (kv.length >= 2) params[kv[0].trim()] = kv.slice(1).join('=').trim();
-                    }
                     let desc = params['설명1'] || '';
                     let docName = params['문서1'] || params['문서명1'] || '';
                     let encodedDocName = docName.replace(/ /g, '_');
                     let customSvgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7777AA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block; margin-right: 6px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
 
-                    return `<div style="border: 1px solid #dcdce6; background-color: #f8f8fc; padding: 10px 15px; margin-bottom: 15px; border-radius: 4px; font-size: 0.9rem; color: #373a3c; display: flex; align-items: center;">
-                        <span>${customSvgIcon}이 문서는 <b>${desc}</b>에 대한 내용을 다루고 있습니다. <b>${docName}</b>에 대한 내용은 <a class="wiki-link" href="${encodedDocName}.html">${docName}</a> 문서를 참조하세요.</span>
-                    </div>`;
+                    let prefix = pageTitle && pageTitle !== "제목 없음" ? `이 문서는 <b>${pageTitle}</b>에 대해 다룹니다. ` : ``;
+                    let targetDesc = desc ? `<b>${desc}</b>에 대한 내용은 ` : `다른 뜻에 대한 내용은 `;
+
+                    return `<div style="border: 1px solid #dcdce6; background-color: #f8f8fc; padding: 10px 15px; margin-bottom: 15px; border-radius: 4px; font-size: 0.9rem; color: #373a3c; display: flex; align-items: center;"><span>${customSvgIcon}${prefix}${targetDesc}<a class="wiki-link" href="${encodedDocName}.html">${docName}</a> 문서를 참조하세요.</span></div>`;
                 }
                 
+                // 2. [상위 문서] 틀
                 if (cleanTarget.includes('상위 문서') || cleanTarget.includes('상위문서')) {
-                    let params = {};
-                    for (let k = 1; k < args.length; k++) {
-                        let kv = args[k].split('=');
-                        if (kv.length >= 2) params[kv[0].trim()] = kv.slice(1).join('=').trim();
-                    }
                     let docName = params['문서명'] || params['문서'] || '';
-                    if (!docName && args.length > 1) {
-                        let val = args[1].includes('=') ? args[1].split('=')[1] : args[1];
-                        if (val) docName = val.trim();
-                    }
                     let encodedDocName = docName.replace(/ /g, '_');
                     let upperSvgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7777AA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block; margin-right: 6px;"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>`;
                     let displayDocHtml = docName ? `<a class="wiki-link" href="${encodedDocName}.html">${docName}</a>` : `상위 문서`;
 
-                    return `<div style="border: 1px solid #dcdce6; background-color: #f8f8fc; padding: 10px 15px; margin-bottom: 15px; border-radius: 4px; font-size: 0.9rem; color: #373a3c; display: flex; align-items: center;">
-                        <span>${upperSvgIcon}상위 문서: ${displayDocHtml}</span>
-                    </div>`;
+                    return `<div style="border: 1px solid #dcdce6; background-color: #f8f8fc; padding: 10px 15px; margin-bottom: 15px; border-radius: 4px; font-size: 0.9rem; color: #373a3c; display: flex; align-items: center;"><span>${upperSvgIcon}상위 문서: ${displayDocHtml}</span></div>`;
                 }
 
+                // 3. [상세 내용] 틀
                 if (cleanTarget.includes('상세 내용') || cleanTarget.includes('상세내용')) {
-                    let params = {};
-                    for (let k = 1; k < args.length; k++) {
-                        let kv = args[k].split('=');
-                        if (kv.length >= 2) params[kv[0].trim()] = kv.slice(1).join('=').trim();
-                    }
                     let docName = params['문서명'] || params['문서'] || '';
                     let encodedDocName = docName.replace(/ /g, '_');
                     let detailSvgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" style="vertical-align: middle; display: inline-block; margin-right: 6px;"><circle cx="12" cy="12" r="12" fill="#7777AA"/><rect x="7" y="7" width="10" height="10" rx="1.5" fill="none" stroke="white" stroke-width="2"/><line x1="10" y1="11" x2="14" y2="11" stroke="white" stroke-width="2" stroke-linecap="round"/><line x1="10" y1="14" x2="13" y2="14" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>`;
 
-                    return `<div style="border: 1px solid #dcdce6; background-color: #f8f8fc; padding: 10px 15px; margin-bottom: 15px; border-radius: 4px; font-size: 0.9rem; color: #373a3c; display: flex; align-items: center;">
-                        <span>${detailSvgIcon}자세한 내용은 <a class="wiki-link" href="${encodedDocName}.html">${docName}</a> 문서를 참고하십시오.</span>
-                    </div>`;
+                    return `<div style="border: 1px solid #dcdce6; background-color: #f8f8fc; padding: 10px 15px; margin-bottom: 15px; border-radius: 4px; font-size: 0.9rem; color: #373a3c; display: flex; align-items: center;"><span>${detailSvgIcon}자세한 내용은 <a class="wiki-link" href="${encodedDocName}.html">${docName}</a> 문서를 참고하십시오.</span></div>`;
                 }
 
+                // 4. [관련 문서] 틀
                 if (cleanTarget.includes('관련 문서') || cleanTarget.includes('연관문서') || cleanTarget.includes('관련문서')) {
-                    let params = {};
-                    for (let k = 1; k < args.length; k++) {
-                        let kv = args[k].split('=');
-                        if (kv.length >= 2) params[kv[0].trim()] = kv.slice(1).join('=').trim();
-                    }
                     let docs = [];
                     for (let key in params) if (key.includes('문서')) docs.push(params[key]);
-                    if (docs.length === 0 && args.length > 1) {
-                        for (let k = 1; k < args.length; k++) {
-                            let val = args[k].includes('=') ? args[k].split('=')[1] : args[k];
-                            if (val) docs.push(val.trim());
-                        }
-                    }
                     let docLinks = docs.map(doc => {
                         let cleanDoc = doc.trim();
                         return `<a class="wiki-link" href="${cleanDoc.replace(/ /g, '_')}.html">${cleanDoc}</a>`;
                     }).join(', ');
                     let relatedSvgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7777AA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block; margin-right: 6px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`;
 
-                    return `<div style="border: 1px solid #dcdce6; background-color: #f8f8fc; padding: 10px 15px; margin-bottom: 15px; border-radius: 4px; font-size: 0.9rem; color: #373a3c; display: flex; align-items: center;">
-                        <span>${relatedSvgIcon}관련 문서: ${docLinks}</span>
-                    </div>`;
+                    return `<div style="border: 1px solid #dcdce6; background-color: #f8f8fc; padding: 10px 15px; margin-bottom: 15px; border-radius: 4px; font-size: 0.9rem; color: #373a3c; display: flex; align-items: center;"><span>${relatedSvgIcon}관련 문서: ${docLinks}</span></div>`;
                 }
                 
+                // 5. 기타 스크립트 연결 로직
                 let searchName = cleanTarget.replace(/:/g, '_').replace(/ /g, '_');
                 let matchFile = null;
                 const manualAliasMap = { "대한민국의 행정구역": "assets/korea_admini_class.js" };
@@ -1873,49 +1962,71 @@ wiki_parktex.js .js \hyobinwiki2\assets\
 
                 if(matchFile) {
                     let randomId = "nav-container-" + Math.floor(Math.random() * 100000);
-                    return `<div class="no-autolink" style="margin-bottom: 20px;">\n    <div id="${randomId}"></div>\n    <script src="${matchFile}"><\/script>\n</div>`;
+                    return `<div class="no-autolink" style="margin-bottom: 20px;"><div id="${randomId}"></div><script src="${matchFile}"><\\/script></div>`;
                 }
                 
-if (cleanTarget === '국기') {
-    let params = {};
-    for (let k = 1; k < args.length; k++) {
-        let kv = args[k].split('=');
-        if (kv.length >= 2) params[kv[0].trim()] = kv.slice(1).join('=').trim();
-    }
-    let country = params['국명'] || '대한민국';
-    let outputType = params['출력'] || '';
-    if (outputType.trim() === '') {
-        // 출력= 이 공백이거나 빈 경우 텍스트 없이 처리할 수 있도록 분기
-    }
-    
-    const flagMap = {
-        '대한민국': '🇰🇷',
-        '일본': '🇯🇵',
-        '베트남': '🇻🇳',
-        '대만': '🇹🇼',
-        '미얀마': '🇲🇲',
-        '미국': '🇺🇸',
-        '라오스': '🇱🇦'
-    };
-    let flagEmoji = flagMap[country] || '🏳️';
-    return `<span style="font-size: 1.2em;">${flagEmoji}</span> <a class="wiki-link" href="${country.replace(/ /g, '_')}.html">${country}</a>`;
-}                if (cleanTarget === 'X(SNS) 로고') return `<img  src="이미지/svg/X 아이콘.svg" style="max-width:100%; height:auto; display:inline-block; vertical-align:middle; width: 20px !important;"/>`;
+                // 6. 특수 포맷: 국기
+                if (cleanTarget === '국기') {
+                    let country = params['국명'] || '대한민국';
+                    const flagMap = {
+                        '대한민국': '🇰🇷', '일본': '🇯🇵', '베트남': '🇻🇳', '대만': '🇹🇼', '미얀마': '🇲🇲', '미국': '🇺🇸', '라오스': '🇱🇦'
+                    };
+                    let flagEmoji = flagMap[country] || '🏳️';
+                    return `<span style="font-size: 1.2em;">${flagEmoji}</span> <a class="wiki-link" href="${country.replace(/ /g, '_')}.html">${country}</a>`;
+                }
+                
+                // 7. 특수 포맷: X 로고
+                if (cleanTarget === 'X(SNS) 로고') return `<img src="이미지/svg/X_아이콘.svg" style="max-width:100%; height:auto; display:inline-block; vertical-align:middle; width: 20px !important;"/>`;
 
+                // 8. 특수 포맷: 국회의석수
                 if (cleanTarget === '국회 의석수' || cleanTarget === '국회의석수') return '300';
                 
-                const partyColors = { '시대전환': '#5A147E', '국민의미래': '#E61E2B', '청년의힘': '#E61E2B', '국제민주연합': '#005BA6', '국민의당': '#EA5504', '미래통합당': '#EF426F', '더불어민주당': '#003B96' };
+                // 9. 정당 뱃지
+// 🚨 괄호와 연도(예: 통합민주당(2008년))가 붙어있어도 깨지지 않는 완벽한 뱃지 처리 로직
+// 1. 기존 구조 그대로 유지한 정당 색상 맵 (2008년 통합민주당/민주당 초록색 고증 반영)
+                const partyColors = {
+                    '열린우리당': '#FFD700',
+                    '대통합민주신당': '#FF7F00',
+                    '통합민주당': '#04972D', // 2008년 고증 초록색
+                    '민주당': '#04972D',     // 2008~2011년 고증 초록색
+                    '민주통합당': '#FFD400',
+                    '새정치민주연합': '#0082CD',
+                    '더불어민주당': '#003B96',
+                    '국민의힘': '#E61E2B',
+                    '새누리당': '#C9252B',
+                    '자유한국당': '#C9151E',
+                    '바른정당': '#00B1EB',
+                    '미래통합당': '#EF426F',
+                    '정의당': '#FFED00',
+                    '진보당': '#D6001C',
+                    '무소속': '#808080',
+                    '시대전환': '#5A147E',
+                    '국민의미래': '#E61E2B',
+                    '청년의힘': '#E61E2B',
+                    '국제민주연합': '#005BA6',
+                    '국민의당': '#EA5504'
+                };
+
                 const partySuffixes = ['당', '국민의힘', '무소속', '연합', '연대', '신당', '회의', '국민회', '청년단', '총연맹', '구락부', '전선', '21'];
                 
-                let isParty = Object.keys(partyColors).includes(cleanTarget) || partySuffixes.some(s => cleanTarget.endsWith(s));
+                // 괄호(예: (2008년))가 붙어있어도 키값 매칭이 가능하도록 정제
+                let rawPartyName = cleanTarget.replace(/^틀\s*:\s*/, '').replace(/\(.*?\)/g, '').trim();
+                
+                let isParty = partyColors[rawPartyName] !== undefined || partySuffixes.some(s => rawPartyName.endsWith(s));
                 if (isParty) {
-                    let bg = partyColors[cleanTarget] ? `background-color: ${partyColors[cleanTarget]}; color: #fff;` : ``;
-                    let cls = partyColors[cleanTarget] ? `party-badge` : `party-badge bg-${cleanTarget}`;
-                    return `<span class="${cls}" style="${bg}">${cleanTarget}</span>`;
+                    let hexColor = partyColors[rawPartyName] || '#003B96'; // 등록된 색이 없으면 기본 블루
+                    // 노란색 계열 배경일 때는 글씨를 검정색, 나머지는 흰색으로 자동 보정
+                    let textColor = (hexColor === '#FFD700' || hexColor === '#FFED00' || hexColor === '#FFD400') ? '#000' : '#fff';
+                    let displayName = cleanTarget.replace(/^틀\s*:\s*/, '').trim();
+                    
+                    return `<span class="party-badge" style="background-color: ${hexColor}; color: ${textColor};">${displayName}</span>`;
                 }
 
-                return `<span style="font-size: 0.85em; color: #666; border: 1px solid #ddd; padding: 2px 5px; border-radius: 3px; background-color: #f8f9fa;">[틀: ${target}]</span>`;
+                // 10. 매칭 안 된 틀
+                return `<span style="font-size: 0.85em; color: #666; border: 1px solid #ddd; padding: 2px 5px; border-radius: 3px; background-color: #f8f9fa;">[틀: ${cleanTarget}]</span>`;
             });
 
+// 🚨 [수정 3] 목차 생성 시 제목에 섞여 들어간 앵커나 링크 찌꺼기 완벽 제거
             html = html.replace(/\[TOC\]/g, () => {
                 if (tocData.length === 0) return '';
                 let tocHtml = `<div class="toc shrink-0 shadow-sm" id="toc-box">\n    <div class="toc-title">목차</div>\n    <ul>\n`;
@@ -1926,7 +2037,14 @@ if (cleanTarget === '국기') {
                     else if (item.level < currentLevel) { tocHtml += '        </ul>\n'.repeat(currentLevel - item.level); }
                     
                     const indent = "        ".repeat(item.level - 1);
-                    tocHtml += `${indent}<li><a href="#${item.id}">${item.title}</a></li>\n`;
+                    
+                    // 목차 제목에서 HTML 태그, 앵커 문자열, 괄호 등을 깨끗하게 청소
+                    let safeTitle = item.title.replace(/<[^>]+>/g, '') 
+                                              .replace(/\[anchor\((.*?)\)\]/gi, '') 
+                                              .replace(/\[\[([^|\]]+)(?:\|([^\]]*))?\]\]/g, (m, d, l) => l ? l.trim() : d.trim())
+                                              .trim();
+                    
+                    tocHtml += `${indent}<li><a href="#${item.id}">${safeTitle}</a></li>\n`;
                     currentLevel = item.level;
                 });
                 
@@ -1934,7 +2052,7 @@ if (cleanTarget === '국기') {
                 tocHtml += `    </ul>\n</div>`;
                 return tocHtml;
             });
-
+            
             html = html.replace(/\[age\(([0-9]{4}-[0-9]{2}-[0-9]{2})\)\]/g, (match, dateStr) => {
                 let [y, m, d] = dateStr.split('-').map(Number);
                 let age = 2026 - y;
@@ -1949,17 +2067,102 @@ if (cleanTarget === '국기') {
             html = html.replace(/\~\~(.*?)\~\~/g, '<del>$1</del>');
             html = html.replace(/\[c:(.*?)\](.*?)\[\/c\]/g, '<span style="color:$1;">$2</span>');
             
-            html = html.replace(/\[badge:([a-zA-Z0-9_-]+)\|(.*?)\]/g, '<span class="party-badge $1">$2</span>');
-            html = html.replace(/\[\[파일:([^|\].]+)(?:\.[a-zA-Z0-9]+)?(?:\|[^\]]*)?\]\]/gi, (match, filename) => {
+            html = html.replace(/\[badge:([a-zA-Z0-9_-]+)\|([^\]]+)\]/g, '<span class="party-badge $1">$2</span>');
+            html = html.replace(/\[\[파일:([^|\]\.]+)(?:\.[a-zA-Z0-9]+)?(?:\|[^\]]*)?\]\]/gi, (match, filename) => {
                 return `<img src="이미지/${filename.trim()}.webp" style="max-width:100%; height:auto; display:block; margin: 0 auto;">`;
             });
-            html = html.replace(/\[\[([^\]]+)\]\]/g, (match, inner) => {
-                let link = inner, text = inner;
-                if (inner.includes('|')) { const parts = inner.split('|'); link = parts[0]; text = parts[1]; }
-                const href = link.replace(/ /g, '_') + '.html';
-                return `<a class="wiki-link" href="${href}">${text}</a>`;
+            
+            // 🚨 [추가된 부분] 유튜브 매크로를 영상 플레이어로 완벽하게 변환!
+            html = html.replace(/\[youtube\(([a-zA-Z0-9_\-]+)[^\]]*\)\]/gi, (match, videoId) => {
+                return `<iframe width="100%" style="max-width: 560px; aspect-ratio: 16/9; border-radius: 8px; margin: 10px auto; display: block;" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+            });            
+// 🚨 [수정 1] 앵커 태그 완벽 변환 (화면에서 절대 노출 안 됨)
+            html = html.replace(/\[anchor\((.*?)\)\]/gi, '<a id="$1"></a>');
+
+// 🚨 파일 이름과 옵션(width, height 등)을 정확히 분리하여 이미지와 스타일로 완벽 렌더링
+// 🚨 찌꺼기 없이 파이프(|)를 정상 인식하는 완벽한 이미지 파서
+            html = html.replace(/\[\[파일:([^|\]]+)(?:\|([^\]]*))?\]\]/gi, (match, filename, args) => {
+                let cleanFile = filename.trim().replace(/ /g, '_');
+                let style = "max-width:100%; height:auto; display:inline-block; vertical-align:middle;";
+                
+                if (args) {
+                    let wMatch = args.match(/width=([0-9%]+)/);
+                    if (wMatch) {
+                        let w = wMatch[1];
+                        style = w.endsWith('%') ? `width: ${w}; height: auto; display:inline-block; vertical-align:middle;` : `max-width: ${w}px; height: auto; display:inline-block; vertical-align:middle;`;
+                    }
+                    let hMatch = args.match(/height=([0-9]+)/);
+                    if (hMatch) {
+                        style += ` height: ${hMatch[1]}px !important;`;
+                    }
+                }
+                
+                let ext = cleanFile.split('.').pop().toLowerCase();
+                let imgSrc = (ext === 'svg' || ext === 'png' || ext === 'jpg') ? `이미지/${cleanFile}` : `이미지/${cleanFile}.webp`;
+                return `<img src="${imgSrc}" style="${style}">`;
+            });
+            
+            // 🚨 [추가된 부분] 유튜브 영상 플레이어 변환
+            html = html.replace(/\[youtube\(([a-zA-Z0-9_\-]+)[^\]]*\)\]/gi, (match, videoId) => {
+                return `<iframe width="100%" style="max-width: 560px; aspect-ratio: 16/9; border-radius: 8px; margin: 10px auto; display: block;" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+            });
+            
+            html = html.replace(/\[틀:\s*([^\]]+)\]/g, (match, tName) => {
+                tName = tName.trim();
+                if (tName.includes('아이콘') || tName.includes('로고')) {
+                    return `<span style="font-size: 0.85em; color: #666; border: 1px solid #ddd; padding: 2px 5px; border-radius: 3px; background-color: #f8f9fa;">[${tName}]</span>`;
+                }
+                return `<span style="font-size: 0.85em; color: #888; background: #eee; padding: 2px 6px; border-radius: 3px;">[틀: ${tName}]</span>`;
+            });
+            // 🚨 [수정 2] 링크 내 샵(#) 기호 완벽 처리 및 파이프(|) 분리
+// 🚨 에디터 파서 링크 완벽 변환기
+// 🚨 1. 일반 링크로 새어나가기 전에 파일/이미지 문법을 먼저 완벽하게 가로채서 이미지로 변환
+            html = html.replace(/\[\[파일:([^|\]]+)(?:\|([^\]]*))?\]\]/gi, (match, filename, args) => {
+                let cleanFile = filename.trim().replace(/ /g, '_');
+                let style = "max-width:100%; height:auto; display:inline-block; vertical-align:middle;";
+                
+                if (args) {
+                    let wMatch = args.match(/width=([0-9%]+)/);
+                    if (wMatch) {
+                        let w = wMatch[1];
+                        style = w.endsWith('%') ? `width: ${w}; height: auto; display:block; margin: 0 auto;` : `max-width: ${w}px; height: auto; display:block; margin: 0 auto;`;
+                    }
+                    let hMatch = args.match(/height=([0-9]+)/);
+                    if (hMatch) {
+                        style += ` height: ${hMatch[1]}px !important;`;
+                    }
+                }
+                
+                let ext = cleanFile.split('.').pop().toLowerCase();
+                let imgSrc = (ext === 'svg' || ext === 'png' || ext === 'jpg') ? `이미지/${cleanFile}` : `이미지/${cleanFile}.webp`;
+                return `<img src="${imgSrc}" style="${style}">`;
             });
 
+            // 🚨 2. 그 다음에 일반 문서 링크 처리 (파일: 문법은 위에서 다 처리되었으므로 안전함)
+            html = html.replace(/\[\[([^\]]+)\]\]/g, (match, inner) => {
+                let link = inner, text = inner;
+                let pipeIdx = inner.indexOf('|');
+                if (pipeIdx !== -1) {
+                    link = inner.substring(0, pipeIdx).trim();
+                    text = inner.substring(pipeIdx + 1).trim();
+                } else {
+                    link = inner.trim();
+                    text = link;
+                }
+                
+                let href = "";
+                let hashIdx = link.indexOf('#');
+                if (hashIdx === 0) {
+                    href = link; 
+                } else if (hashIdx !== -1) {
+                    let base = link.substring(0, hashIdx).replace(/ /g, '_');
+                    let hash = link.substring(hashIdx);
+                    href = base + '.html' + hash;
+                } else {
+                    href = link.replace(/ /g, '_') + '.html';
+                }
+                return `<a class="wiki-link" href="${href}">${text}</a>`;
+            });        
             html = html.replace(/\[\*(\d+)\]/g, '<a class="wiki-fn-link" href="#fn-$1" id="rfn-$1">[$1]</a>');
             
             let footnotes = [];

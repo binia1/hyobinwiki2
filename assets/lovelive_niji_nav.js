@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <!-- [니지동 멤버 목록 표 박스] -->
         <div class="w-full max-w-[600px] mx-auto border-[1.5px] border-[#fab920] rounded-[10px] bg-[#fab920] text-center overflow-hidden mb-6 shadow-sm">
             <div class="w-11/12 mx-auto py-3 border-b border-white font-bold text-xl text-black">
-                <a href="니지가사키 학원 스쿨 아이돌 동호회.html" class="nw-link"><img src="이미지/러브 라이브! 니지가사키 학원 스쿨 아이돌 동호회.webp" alt="니지가사키 학원 스쿨 아이돌 동호회" class="h-10 mx-auto" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none; color:white;">니지가사키 학원 스쿨 아이돌 동호회</span></a>
+                <a href="니지가사키 학원 스쿨 아이돌 동호회.html" class="nw-link"><img src="이미지/러브_라이브!_니지가사키_학원_스쿨_아이돌_동호회.webp" alt="니지가사키 학원 스쿨 아이돌 동호회" class="h-10 mx-auto" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none; color:white;">니지가사키 학원 스쿨 아이돌 동호회</span></a>
             </div>
             
             <!-- 멤버 (펼치기/접기) -->
@@ -34,51 +34,51 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 <div class="flex justify-evenly flex-wrap gap-2 text-[11px] font-bold">
                     <a href="우에하라 아유무.html" class="w-[22%] sm:w-[18%] flex flex-col items-center wiki-link hover:no-underline mb-2">
-                        <img src="이미지/우에하라 아유무.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
+                        <img src="이미지/우에하라_아유무.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
                         <span class="mt-1 px-1 py-[2px] rounded text-white bg-[#ED7D95] w-full text-center">아유무</span>
                     </a>
                     <a href="나카스 카스미.html" class="w-[22%] sm:w-[18%] flex flex-col items-center wiki-link hover:no-underline mb-2">
-                        <img src="이미지/나카스 카스미.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
+                        <img src="이미지/나카스_카스미.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
                         <span class="mt-1 px-1 py-[2px] rounded text-black bg-[#E7D600] w-full text-center">카스미</span>
                     </a>
                     <a href="오사카 시즈쿠.html" class="w-[22%] sm:w-[18%] flex flex-col items-center wiki-link hover:no-underline mb-2">
-                        <img src="이미지/오사카 시즈쿠.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
+                        <img src="이미지/오사카_시즈쿠.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
                         <span class="mt-1 px-1 py-[2px] rounded text-white bg-[#01B7ED] w-full text-center">시즈쿠</span>
                     </a>
                     <a href="아사카 카린.html" class="w-[22%] sm:w-[18%] flex flex-col items-center wiki-link hover:no-underline mb-2">
-                        <img src="이미지/아사카 카린.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
+                        <img src="이미지/아사카_카린.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
                         <span class="mt-1 px-1 py-[2px] rounded text-white bg-[#485EC6] w-full text-center">카린</span>
                     </a>
                     <a href="미야시타 아이.html" class="w-[22%] sm:w-[18%] flex flex-col items-center wiki-link hover:no-underline mb-2">
-                        <img src="이미지/미야시타 아이.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
+                        <img src="이미지/미야시타_아이.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
                         <span class="mt-1 px-1 py-[2px] rounded text-white bg-[#FF5800] w-full text-center">아이</span>
                     </a>
                     <a href="코노에 카나타.html" class="w-[22%] sm:w-[18%] flex flex-col items-center wiki-link hover:no-underline mb-2">
-                        <img src="이미지/코노에 카나타.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
+                        <img src="이미지/코노에_카나타.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
                         <span class="mt-1 px-1 py-[2px] rounded text-white bg-[#A664A0] w-full text-center">카나타</span>
                     </a>
                     <a href="유키 세츠나.html" class="w-[22%] sm:w-[18%] flex flex-col items-center wiki-link hover:no-underline mb-2">
-                        <img src="이미지/유키 세츠나.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
+                        <img src="이미지/유키_세츠나.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
                         <span class="mt-1 px-1 py-[2px] rounded text-white bg-[#D81C2F] w-full text-center">세츠나</span>
                     </a>
                     <a href="엠마 베르데.html" class="w-[22%] sm:w-[18%] flex flex-col items-center wiki-link hover:no-underline mb-2">
-                        <img src="이미지/엠마 베르데.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
+                        <img src="이미지/엠마_베르데.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
                         <span class="mt-1 px-1 py-[2px] rounded text-white bg-[#84C36E] w-full text-center">엠마</span>
                     </a>
                     <a href="텐노지 리나.html" class="w-[22%] sm:w-[18%] flex flex-col items-center wiki-link hover:no-underline mb-2">
-                        <img src="이미지/텐노지 리나.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
+                        <img src="이미지/텐노지_리나.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
                         <span class="mt-1 px-1 py-[2px] rounded text-white bg-[#9CA5B9] w-full text-center">리나</span>
                     </a>
                     <a href="미후네 시오리코.html" class="w-[22%] sm:w-[18%] flex flex-col items-center wiki-link hover:no-underline mb-2">
-                        <img src="이미지/미후네 시오리코.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
+                        <img src="이미지/미후네_시오리코.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
                         <span class="mt-1 px-1 py-[2px] rounded text-white bg-[#37B484] w-full text-center">시오리코</span>
                     </a>
                     <a href="미아 테일러.html" class="w-[22%] sm:w-[18%] flex flex-col items-center wiki-link hover:no-underline mb-2">
-                        <img src="이미지/미아 테일러.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
+                        <img src="이미지/미아_테일러.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
                         <span class="mt-1 px-1 py-[2px] rounded text-black bg-[#D6D5CA] w-full text-center">미아</span>
                     </a>
                     <a href="쇼우 란쥬.html" class="w-[22%] sm:w-[18%] flex flex-col items-center wiki-link hover:no-underline mb-2">
-                        <img src="이미지/쇼우 란쥬.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
+                        <img src="이미지/쇼우_란쥬.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
                         <span class="mt-1 px-1 py-[2px] rounded text-black bg-[#F8C8C4] w-full text-center">란쥬</span>
                     </a>
                 </div>
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <summary class="cursor-pointer text-xs text-gray-500 mb-2 list-none outline-none text-center">[ 매니저 ]</summary>
                 <div class="flex justify-evenly flex-wrap gap-2 text-[11px] font-bold">
                     <a href="타카사키 유우.html" class="w-[22%] sm:w-[18%] flex flex-col items-center wiki-link hover:no-underline">
-                        <img src="이미지/타카사키 유우.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
+                        <img src="이미지/타카사키_유우.webp" class="w-4/5 object-contain" onerror="this.style.display='none'">
                         <span class="mt-1 px-1 py-[2px] rounded text-white bg-[#1D1D1D] w-full text-center">유우</span>
                     </a>
                 </div>
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <!-- [러브라이브 전체 멤버 목록 둘러보기 틀] -->
         <div class="nw-frame shadow-sm">
             <div class="nw-title">
-                <a href="러브 라이브! School idol project series.html" class="nw-link font-bold text-lg text-[#e4007f]"><img src="이미지/logo_lovelive_ko.svg" alt="러브 라이브! School idol project series" class="h-10 mx-auto" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none;">러브 라이브! School idol project series</span></a>
+                <a href="러브 라이브! School idol project series.html" class="nw-link font-bold text-lg text-[#e4007f]"><img src="이미지/svg/logo_lovelive_ko.svg" alt="러브 라이브! School idol project series" class="h-10 mx-auto" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none;">러브 라이브! School idol project series</span></a>
             </div>
             
             <details class="mb-1">
@@ -125,22 +125,22 @@ document.addEventListener("DOMContentLoaded", () => {
                         </tr>
                         <tr>
                             <th rowspan="3" class="nw-th-col text-[#E50080]">멤버</th>
-                            <td><a href="코사카 호노카.html" class="nw-link"><img src="이미지/코사카 호노카.webp" class="nw-img" onerror="this.style.display='none'">코사카 호노카</a></td>
-                            <td><a href="아야세 에리.html" class="nw-link"><img src="이미지/아야세 에리.webp" class="nw-img" onerror="this.style.display='none'">아야세 에리</a></td>
-                            <td><a href="소노다 우미.html" class="nw-link"><img src="이미지/소노다 우미.webp" class="nw-img" onerror="this.style.display='none'">소노다 우미</a></td>
-                            <td><a href="키라 츠바사.html" class="nw-link"><img src="이미지/키라 츠바사.webp" class="nw-img" onerror="this.style.display='none'">키라 츠바사</a></td>
+                            <td><a href="코사카 호노카.html" class="nw-link"><img src="이미지/코사카_호노카.webp" class="nw-img" onerror="this.style.display='none'">코사카 호노카</a></td>
+                            <td><a href="아야세 에리.html" class="nw-link"><img src="이미지/아야세_에리.webp" class="nw-img" onerror="this.style.display='none'">아야세 에리</a></td>
+                            <td><a href="소노다 우미.html" class="nw-link"><img src="이미지/소노다_우미.webp" class="nw-img" onerror="this.style.display='none'">소노다 우미</a></td>
+                            <td><a href="키라 츠바사.html" class="nw-link"><img src="이미지/키라_츠바사.webp" class="nw-img" onerror="this.style.display='none'">키라 츠바사</a></td>
                         </tr>
                         <tr>
-                            <td><a href="미나미 코토리.html" class="nw-link"><img src="이미지/미나미 코토리.webp" class="nw-img" onerror="this.style.display='none'">미나미 코토리</a></td>
-                            <td><a href="니시키노 마키.html" class="nw-link"><img src="이미지/니시키노 마키.webp" class="nw-img" onerror="this.style.display='none'">니시키노 마키</a></td>
-                            <td><a href="호시조라 린.html" class="nw-link"><img src="이미지/호시조라 린.webp" class="nw-img" onerror="this.style.display='none'">호시조라 린</a></td>
-                            <td><a href="유우키 안쥬.html" class="nw-link"><img src="이미지/유우키 안쥬.webp" class="nw-img" onerror="this.style.display='none'">유우키 안쥬</a></td>
+                            <td><a href="미나미 코토리.html" class="nw-link"><img src="이미지/미나미_코토리.webp" class="nw-img" onerror="this.style.display='none'">미나미 코토리</a></td>
+                            <td><a href="니시키노 마키.html" class="nw-link"><img src="이미지/니시키노_마키.webp" class="nw-img" onerror="this.style.display='none'">니시키노 마키</a></td>
+                            <td><a href="호시조라 린.html" class="nw-link"><img src="이미지/호시조라_린.webp" class="nw-img" onerror="this.style.display='none'">호시조라 린</a></td>
+                            <td><a href="유우키 안쥬.html" class="nw-link"><img src="이미지/유우키_안쥬.webp" class="nw-img" onerror="this.style.display='none'">유우키 안쥬</a></td>
                         </tr>
                         <tr>
-                            <td><a href="코이즈미 하나요.html" class="nw-link"><img src="이미지/코이즈미 하나요.webp" class="nw-img" onerror="this.style.display='none'">코이즈미 하나요</a></td>
-                            <td><a href="야자와 니코.html" class="nw-link"><img src="이미지/야자와 니코.webp" class="nw-img" onerror="this.style.display='none'">야자와 니코</a></td>
-                            <td><a href="토죠 노조미.html" class="nw-link"><img src="이미지/토죠 노조미.webp" class="nw-img" onerror="this.style.display='none'">토죠 노조미</a></td>
-                            <td><a href="토도 에레나.html" class="nw-link"><img src="이미지/토도 에레나.webp" class="nw-img" onerror="this.style.display='none'">토도 에레나</a></td>
+                            <td><a href="코이즈미 하나요.html" class="nw-link"><img src="이미지/코이즈미_하나요.webp" class="nw-img" onerror="this.style.display='none'">코이즈미 하나요</a></td>
+                            <td><a href="야자와 니코.html" class="nw-link"><img src="이미지/야자와_니코.webp" class="nw-img" onerror="this.style.display='none'">야자와 니코</a></td>
+                            <td><a href="토죠 노조미.html" class="nw-link"><img src="이미지/토죠_노조미.webp" class="nw-img" onerror="this.style.display='none'">토죠 노조미</a></td>
+                            <td><a href="토도 에레나.html" class="nw-link"><img src="이미지/토도_에레나.webp" class="nw-img" onerror="this.style.display='none'">토도 에레나</a></td>
                         </tr>
                         <tr>
                             <th colspan="2" class="nw-th-col text-[#E50080]"><a href="러브 라이브!/음반.html" class="nw-link">음반</a></th>
@@ -211,23 +211,23 @@ document.addEventListener("DOMContentLoaded", () => {
                         </tr>
                         <tr>
                             <th rowspan="4" class="bg-[#D1F4FA] text-[#06272D] dark:bg-[#06272D] dark:text-[#D1F4FA]">멤버</th>
-                            <td><a href="타카미 치카.html" class="nw-link"><img src="이미지/타카미 치카.webp" class="nw-img" onerror="this.style.display='none'">타카미 치카</a></td>
-                            <td><a href="마츠우라 카난.html" class="nw-link"><img src="이미지/마츠우라 카난.webp" class="nw-img" onerror="this.style.display='none'">마츠우라 카난</a></td>
-                            <td><a href="사쿠라우치 리코.html" class="nw-link"><img src="이미지/사쿠라우치 리코.webp" class="nw-img" onerror="this.style.display='none'">사쿠라우치 리코</a></td>
-                            <td rowspan="2"><a href="카즈노 세이라.html" class="nw-link"><img src="이미지/카즈노 세이라.webp" class="nw-img" onerror="this.style.display='none'">카즈노 세이라</a></td>
+                            <td><a href="타카미 치카.html" class="nw-link"><img src="이미지/타카미_치카.webp" class="nw-img" onerror="this.style.display='none'">타카미 치카</a></td>
+                            <td><a href="마츠우라 카난.html" class="nw-link"><img src="이미지/마츠우라_카난.webp" class="nw-img" onerror="this.style.display='none'">마츠우라 카난</a></td>
+                            <td><a href="사쿠라우치 리코.html" class="nw-link"><img src="이미지/사쿠라우치_리코.webp" class="nw-img" onerror="this.style.display='none'">사쿠라우치 리코</a></td>
+                            <td rowspan="2"><a href="카즈노 세이라.html" class="nw-link"><img src="이미지/카즈노_세이라.webp" class="nw-img" onerror="this.style.display='none'">카즈노 세이라</a></td>
                         </tr>
                         <tr>
-                            <td rowspan="2"><a href="와타나베 요우.html" class="nw-link"><img src="이미지/와타나베 요우.webp" class="nw-img" onerror="this.style.display='none'">와타나베 요우</a> <a href="와이와이와이.html" class="nw-link text-[#19B1F6]">*</a></td>
-                            <td rowspan="2"><a href="쿠로사와 다이아.html" class="nw-link"><img src="이미지/쿠로사와 다이아.webp" class="nw-img" onerror="this.style.display='none'">쿠로사와 다이아</a></td>
-                            <td rowspan="2"><a href="츠시마 요시코.html" class="nw-link"><img src="이미지/츠시마 요시코.webp" class="nw-img" onerror="this.style.display='none'">츠시마 요시코</a> <a href="와이와이와이.html" class="nw-link text-[#19B1F6]">*</a></td>
+                            <td rowspan="2"><a href="와타나베 요우.html" class="nw-link"><img src="이미지/와타나베_요우.webp" class="nw-img" onerror="this.style.display='none'">와타나베 요우</a> <a href="와이와이와이.html" class="nw-link text-[#19B1F6]">*</a></td>
+                            <td rowspan="2"><a href="쿠로사와 다이아.html" class="nw-link"><img src="이미지/쿠로사와_다이아.webp" class="nw-img" onerror="this.style.display='none'">쿠로사와 다이아</a></td>
+                            <td rowspan="2"><a href="츠시마 요시코.html" class="nw-link"><img src="이미지/츠시마_요시코.webp" class="nw-img" onerror="this.style.display='none'">츠시마 요시코</a> <a href="와이와이와이.html" class="nw-link text-[#19B1F6]">*</a></td>
                         </tr>
                         <tr>
-                            <td rowspan="2"><a href="카즈노 리아.html" class="nw-link"><img src="이미지/카즈노 리아.webp" class="nw-img" onerror="this.style.display='none'">카즈노 리아</a></td>
+                            <td rowspan="2"><a href="카즈노 리아.html" class="nw-link"><img src="이미지/카즈노_리아.webp" class="nw-img" onerror="this.style.display='none'">카즈노 리아</a></td>
                         </tr>
                         <tr>
-                            <td><a href="쿠로사와 루비.html" class="nw-link"><img src="이미지/쿠로사와 루비.webp" class="nw-img" onerror="this.style.display='none'">쿠로사와 루비</a> <a href="와이와이와이.html" class="nw-link text-[#19B1F6]">*</a></td>
-                            <td><a href="쿠니키다 하나마루.html" class="nw-link"><img src="이미지/쿠니키다 하나마루.webp" class="nw-img" onerror="this.style.display='none'">쿠니키다 하나마루</a></td>
-                            <td><a href="오하라 마리.html" class="nw-link"><img src="이미지/오하라 마리.webp" class="nw-img" onerror="this.style.display='none'">오하라 마리</a></td>
+                            <td><a href="쿠로사와 루비.html" class="nw-link"><img src="이미지/쿠로사와_루비.webp" class="nw-img" onerror="this.style.display='none'">쿠로사와 루비</a> <a href="와이와이와이.html" class="nw-link text-[#19B1F6]">*</a></td>
+                            <td><a href="쿠니키다 하나마루.html" class="nw-link"><img src="이미지/쿠니키다_하나마루.webp" class="nw-img" onerror="this.style.display='none'">쿠니키다 하나마루</a></td>
+                            <td><a href="오하라 마리.html" class="nw-link"><img src="이미지/오하라_마리.webp" class="nw-img" onerror="this.style.display='none'">오하라 마리</a></td>
                         </tr>
                         <tr>
                             <th colspan="2" rowspan="2" class="bg-[#D1F4FA] text-[#06272D] dark:bg-[#06272D] dark:text-[#D1F4FA]"><a href="러브 라이브! 선샤인!!/음반.html" class="nw-link">음반</a></th>
@@ -315,25 +315,25 @@ document.addEventListener("DOMContentLoaded", () => {
                         </tr>
                         <tr>
                             <th rowspan="4" class="bg-[#feeecd] text-[#322201] dark:bg-[#322201] dark:text-[#feeecd]">멤버</th>
-                            <td rowspan="2"><a href="아사카 카린.html" class="nw-link"><img src="이미지/아사카 카린.webp" class="nw-img" onerror="this.style.display='none'">아사카 카린</a></td>
-                            <td><a href="우에하라 아유무.html" class="nw-link"><img src="이미지/우에하라 아유무.webp" class="nw-img" onerror="this.style.display='none'">우에하라 아유무</a></td>
-                            <td><a href="나카스 카스미.html" class="nw-link"><img src="이미지/나카스 카스미.webp" class="nw-img" onerror="this.style.display='none'">나카스 카스미</a></td>
-                            <td><a href="미후네 시오리코.html" class="nw-link"><img src="이미지/미후네 시오리코.webp" class="nw-img" onerror="this.style.display='none'">미후네 시오리코</a></td>
-                            <td rowspan="4"><a href="타카사키 유우.html" class="nw-link"><img src="이미지/타카사키 유우.webp" class="nw-img" onerror="this.style.display='none'">타카사키 유우</a></td>
+                            <td rowspan="2"><a href="아사카 카린.html" class="nw-link"><img src="이미지/아사카_카린.webp" class="nw-img" onerror="this.style.display='none'">아사카 카린</a></td>
+                            <td><a href="우에하라 아유무.html" class="nw-link"><img src="이미지/우에하라_아유무.webp" class="nw-img" onerror="this.style.display='none'">우에하라 아유무</a></td>
+                            <td><a href="나카스 카스미.html" class="nw-link"><img src="이미지/나카스_카스미.webp" class="nw-img" onerror="this.style.display='none'">나카스 카스미</a></td>
+                            <td><a href="미후네 시오리코.html" class="nw-link"><img src="이미지/미후네_시오리코.webp" class="nw-img" onerror="this.style.display='none'">미후네 시오리코</a></td>
+                            <td rowspan="4"><a href="타카사키 유우.html" class="nw-link"><img src="이미지/타카사키_유우.webp" class="nw-img" onerror="this.style.display='none'">타카사키 유우</a></td>
                         </tr>
                         <tr>
-                            <td rowspan="2"><a href="오사카 시즈쿠.html" class="nw-link"><img src="이미지/오사카 시즈쿠.webp" class="nw-img" onerror="this.style.display='none'">오사카 시즈쿠</a></td>
-                            <td><a href="코노에 카나타.html" class="nw-link"><img src="이미지/코노에 카나타.webp" class="nw-img" onerror="this.style.display='none'">코노에 카나타</a></td>
-                            <td rowspan="2"><a href="미아 테일러.html" class="nw-link"><img src="이미지/미아 테일러.webp" class="nw-img" onerror="this.style.display='none'">미아 테일러</a></td>
+                            <td rowspan="2"><a href="오사카 시즈쿠.html" class="nw-link"><img src="이미지/오사카_시즈쿠.webp" class="nw-img" onerror="this.style.display='none'">오사카 시즈쿠</a></td>
+                            <td><a href="코노에 카나타.html" class="nw-link"><img src="이미지/코노에_카나타.webp" class="nw-img" onerror="this.style.display='none'">코노에 카나타</a></td>
+                            <td rowspan="2"><a href="미아 테일러.html" class="nw-link"><img src="이미지/미아_테일러.webp" class="nw-img" onerror="this.style.display='none'">미아 테일러</a></td>
                         </tr>
                         <tr>
-                            <td rowspan="2"><a href="미야시타 아이.html" class="nw-link"><img src="이미지/미야시타 아이.webp" class="nw-img" onerror="this.style.display='none'">미야시타 아이</a></td>
-                            <td><a href="엠마 베르데.html" class="nw-link"><img src="이미지/엠마 베르데.webp" class="nw-img" onerror="this.style.display='none'">엠마 베르데</a></td>
+                            <td rowspan="2"><a href="미야시타 아이.html" class="nw-link"><img src="이미지/미야시타_아이.webp" class="nw-img" onerror="this.style.display='none'">미야시타 아이</a></td>
+                            <td><a href="엠마 베르데.html" class="nw-link"><img src="이미지/엠마_베르데.webp" class="nw-img" onerror="this.style.display='none'">엠마 베르데</a></td>
                         </tr>
                         <tr>
-                            <td><a href="유키 세츠나.html" class="nw-link"><img src="이미지/유키 세츠나.webp" class="nw-img" onerror="this.style.display='none'">유키 세츠나</a></td>
-                            <td><a href="텐노지 리나.html" class="nw-link"><img src="이미지/텐노지 리나.webp" class="nw-img" onerror="this.style.display='none'">텐노지 리나</a></td>
-                            <td><a href="쇼우 란쥬.html" class="nw-link"><img src="이미지/쇼우 란쥬.webp" class="nw-img" onerror="this.style.display='none'">쇼우 란쥬</a></td>
+                            <td><a href="유키 세츠나.html" class="nw-link"><img src="이미지/유키_세츠나.webp" class="nw-img" onerror="this.style.display='none'">유키 세츠나</a></td>
+                            <td><a href="텐노지 리나.html" class="nw-link"><img src="이미지/텐노지_리나.webp" class="nw-img" onerror="this.style.display='none'">텐노지 리나</a></td>
+                            <td><a href="쇼우 란쥬.html" class="nw-link"><img src="이미지/쇼우_란쥬.webp" class="nw-img" onerror="this.style.display='none'">쇼우 란쥬</a></td>
                         </tr>
                         <tr>
                             <th colspan="2" class="bg-[#feeecd] text-[#322201] dark:bg-[#322201] dark:text-[#feeecd]"><a href="러브 라이브! 니지가사키 학원 스쿨 아이돌 동호회/음반.html" class="nw-link">음반</a></th>
@@ -399,25 +399,25 @@ document.addEventListener("DOMContentLoaded", () => {
                         </tr>
                         <tr>
                             <th rowspan="4" class="bg-[#F2E0F7] text-[#2C0038] dark:bg-[#2C0038] dark:text-[#F2E0F7]">멤버</th>
-                            <td><a href="시부야 카논.html" class="nw-link"><img src="이미지/시부야 카논.webp" class="nw-img" onerror="this.style.display='none'">시부야 카논</a></td>
-                            <td><a href="탕 쿠쿠.html" class="nw-link"><img src="이미지/탕 쿠쿠.webp" class="nw-img" onerror="this.style.display='none'">탕 쿠쿠</a></td>
-                            <td><a href="아라시 치사토.html" class="nw-link"><img src="이미지/아라시 치사토.webp" class="nw-img" onerror="this.style.display='none'">아라시 치사토</a></td>
-                            <td rowspan="2"><a href="오니츠 나츠미.html" class="nw-link"><img src="이미지/오니츠카 나츠미.webp" class="nw-img" onerror="this.style.display='none'">오니츠카 나츠미</a></td>
-                            <td rowspan="2"><a href="히이라기 마오.html" class="nw-link"><img src="이미지/히이라기 마오.webp" class="nw-img" onerror="this.style.display='none'">히이라기 마오</a></td>
+                            <td><a href="시부야 카논.html" class="nw-link"><img src="이미지/시부야_카논.webp" class="nw-img" onerror="this.style.display='none'">시부야 카논</a></td>
+                            <td><a href="탕 쿠쿠.html" class="nw-link"><img src="이미지/탕_쿠쿠.webp" class="nw-img" onerror="this.style.display='none'">탕 쿠쿠</a></td>
+                            <td><a href="아라시 치사토.html" class="nw-link"><img src="이미지/아라시_치사토.webp" class="nw-img" onerror="this.style.display='none'">아라시 치사토</a></td>
+                            <td rowspan="2"><a href="오니츠 나츠미.html" class="nw-link"><img src="이미지/오니츠카_나츠미.webp" class="nw-img" onerror="this.style.display='none'">오니츠카 나츠미</a></td>
+                            <td rowspan="2"><a href="히이라기 마오.html" class="nw-link"><img src="이미지/히이라기_마오.webp" class="nw-img" onerror="this.style.display='none'">히이라기 마오</a></td>
                         </tr>
                         <tr>
-                            <td rowspan="2"><a href="헤안나 스미레.html" class="nw-link"><img src="이미지/헤안나 스미레.webp" class="nw-img" onerror="this.style.display='none'">헤안나 스미레</a></td>
-                            <td rowspan="2"><a href="하즈키 렌.html" class="nw-link"><img src="이미지/하즈키 렌.webp" class="nw-img" onerror="this.style.display='none'">하즈키 렌</a></td>
-                            <td rowspan="2"><a href="사쿠라코지 키나코.html" class="nw-link"><img src="이미지/사쿠라코지 키나코.webp" class="nw-img" onerror="this.style.display='none'">사쿠라코지 키나코</a></td>
+                            <td rowspan="2"><a href="헤안나 스미레.html" class="nw-link"><img src="이미지/헤안나_스미레.webp" class="nw-img" onerror="this.style.display='none'">헤안나 스미레</a></td>
+                            <td rowspan="2"><a href="하즈키 렌.html" class="nw-link"><img src="이미지/하즈키_렌.webp" class="nw-img" onerror="this.style.display='none'">하즈키 렌</a></td>
+                            <td rowspan="2"><a href="사쿠라코지 키나코.html" class="nw-link"><img src="이미지/사쿠라코지_키나코.webp" class="nw-img" onerror="this.style.display='none'">사쿠라코지 키나코</a></td>
                         </tr>
                         <tr>
-                            <td rowspan="2"><a href="오니츠카 토마리.html" class="nw-link"><img src="이미지/오니츠카 토마리.webp" class="nw-img" onerror="this.style.display='none'">오니츠카 토마리</a></td>
-                            <td rowspan="2"><a href="히지리사와 유우나.html" class="nw-link"><img src="이미지/히지리사와 유우나.webp" class="nw-img" onerror="this.style.display='none'">히지리사와 유우나</a></td>
+                            <td rowspan="2"><a href="오니츠카 토마리.html" class="nw-link"><img src="이미지/오니츠카_토마리.webp" class="nw-img" onerror="this.style.display='none'">오니츠카 토마리</a></td>
+                            <td rowspan="2"><a href="히지리사와 유우나.html" class="nw-link"><img src="이미지/히지리사와_유우나.webp" class="nw-img" onerror="this.style.display='none'">히지리사와 유우나</a></td>
                         </tr>
                         <tr>
-                            <td><a href="요네메 메이.html" class="nw-link"><img src="이미지/요네메 메이.webp" class="nw-img" onerror="this.style.display='none'">요네메 메이</a></td>
-                            <td><a href="빈 마르가레테.html" class="nw-link"><img src="이미지/빈 마르가레테.webp" class="nw-img" onerror="this.style.display='none'">빈 마르가레테</a></td>
-                            <td><a href="와카나 시키.html" class="nw-link"><img src="이미지/와카나 시키.webp" class="nw-img" onerror="this.style.display='none'">와카나 시키</a></td>
+                            <td><a href="요네메 메이.html" class="nw-link"><img src="이미지/요네메_메이.webp" class="nw-img" onerror="this.style.display='none'">요네메 메이</a></td>
+                            <td><a href="빈 마르가레테.html" class="nw-link"><img src="이미지/빈_마르가레테.webp" class="nw-img" onerror="this.style.display='none'">빈 마르가레테</a></td>
+                            <td><a href="와카나 시키.html" class="nw-link"><img src="이미지/와카나_시키.webp" class="nw-img" onerror="this.style.display='none'">와카나 시키</a></td>
                         </tr>
                         <tr>
                             <th colspan="2" class="bg-[#F2E0F7] text-[#2C0038] dark:bg-[#2C0038] dark:text-[#F2E0F7]"><a href="러브 라이브! 슈퍼스타!!/음반.html" class="nw-link">음반</a></th>
@@ -475,22 +475,22 @@ document.addEventListener("DOMContentLoaded", () => {
                         </tr>
                         <tr>
                             <th rowspan="2" class="bg-[#F7B6C0] text-[#362023] dark:bg-[#362023] dark:text-[#F7B6C0]">현<br>역<br>멤<br>버</th>
-                            <td><a href="히노시타 카호.html" class="nw-link"><img src="이미지/히노시타 카호.webp" class="nw-img" onerror="this.style.display='none'">히노시타 카호</a></td>
+                            <td><a href="히노시타 카호.html" class="nw-link"><img src="이미지/히노시타_카호.webp" class="nw-img" onerror="this.style.display='none'">히노시타 카호</a></td>
                             <td><a href="무라노 사야카.html" class="nw-link"><img src="이미지/무라노 사야카.webp" class="nw-img" onerror="this.style.display='none'">무라노 사야카</a></td>
-                            <td><a href="오사와 루리노.html" class="nw-link"><img src="이미지/오사와 루리노.webp" class="nw-img" onerror="this.style.display='none'">오사와 루리노</a></td>
-                            <td><a href="세라스 야나기다 릴리엔펠트.html" class="nw-link"><img src="이미지/세라스 야나기다 릴리엔펠트.webp" class="nw-img" onerror="this.style.display='none'">세라스 야나기다<br>릴리엔펠트</a></td>
+                            <td><a href="오사와 루리노.html" class="nw-link"><img src="이미지/오사와_루리노.webp" class="nw-img" onerror="this.style.display='none'">오사와 루리노</a></td>
+                            <td><a href="세라스 야나기다 릴리엔펠트.html" class="nw-link"><img src="이미지/세라스_야나기다_릴리엔펠트.webp" class="nw-img" onerror="this.style.display='none'">세라스 야나기다<br>릴리엔펠트</a></td>
                         </tr>
                         <tr>
-                            <td><a href="모모세 긴코.html" class="nw-link"><img src="이미지/모모세 긴코.webp" class="nw-img" onerror="this.style.display='none'">모모세 긴코</a></td>
-                            <td><a href="카치마치 코스즈.html" class="nw-link"><img src="이미지/카치마치 코스즈.webp" class="nw-img" onerror="this.style.display='none'">카치마치 코스즈</a></td>
+                            <td><a href="모모세 긴코.html" class="nw-link"><img src="이미지/모모세_긴코.webp" class="nw-img" onerror="this.style.display='none'">모모세 긴코</a></td>
+                            <td><a href="카치마치 코스즈.html" class="nw-link"><img src="이미지/카치마치_코스즈.webp" class="nw-img" onerror="this.style.display='none'">카치마치 코스즈</a></td>
                             <td><a href="안요지 히메.html" class="nw-link"><img src="이미지/안요지 히메.webp" class="nw-img" onerror="this.style.display='none'">안요지 히메</a></td>
-                            <td><a href="카츠라기 이즈미.html" class="nw-link"><img src="이미지/카츠라기 이즈미.webp" class="nw-img" onerror="this.style.display='none'">카츠라기 이즈미</a></td>
+                            <td><a href="카츠라기 이즈미.html" class="nw-link"><img src="이미지/카츠라기_이즈미.webp" class="nw-img" onerror="this.style.display='none'">카츠라기 이즈미</a></td>
                         </tr>
                         <tr>
                             <th class="bg-[#F7B6C0] text-[#362023] dark:bg-[#362023] dark:text-[#F7B6C0]">졸<br>업<br>생</th>
-                            <td><a href="오토무네 코즈에.html" class="nw-link"><img src="이미지/오토무네 코즈에.webp" class="nw-img" onerror="this.style.display='none'">오토무네 코즈에</a></td>
-                            <td><a href="유기리 츠즈리.html" class="nw-link"><img src="이미지/유기리 츠즈리.webp" class="nw-img" onerror="this.style.display='none'">유기리 츠즈리</a></td>
-                            <td><a href="후지시마 메구미.html" class="nw-link"><img src="이미지/후지시마 메구미.webp" class="nw-img" onerror="this.style.display='none'">후지시마 메구미</a></td>
+                            <td><a href="오토무네 코즈에.html" class="nw-link"><img src="이미지/오토무네_코즈에.webp" class="nw-img" onerror="this.style.display='none'">오토무네 코즈에</a></td>
+                            <td><a href="유기리 츠즈리.html" class="nw-link"><img src="이미지/유기리_츠즈리.webp" class="nw-img" onerror="this.style.display='none'">유기리 츠즈리</a></td>
+                            <td><a href="후지시마 메구미.html" class="nw-link"><img src="이미지/후지시마_메구미.webp" class="nw-img" onerror="this.style.display='none'">후지시마 메구미</a></td>
                             <td></td>
                         </tr>
                         <tr>
@@ -550,21 +550,21 @@ document.addEventListener("DOMContentLoaded", () => {
                         <tr>
                             <th rowspan="4" class="bg-[#80c5e1] text-[#375561] dark:bg-[#375561] dark:text-[#80c5e1]">멤버</th>
                             <td><a href="타카하시 폴카.html" class="nw-link"><img src="이미지/타카하시 폴카.webp" class="nw-img" onerror="this.style.display='none'">타카하시 폴카</a></td>
-                            <td rowspan="2"><a href="카나자와 미라클.html" class="nw-link"><img src="이미지/카나자와 미라클.webp" class="nw-img" onerror="this.style.display='none'">카나자와 미라클</a></td>
-                            <td><a href="하루미야 유쿠리.html" class="nw-link"><img src="이미지/하루미야 유쿠리.webp" class="nw-img" onerror="this.style.display='none'">하루미야 유쿠리</a></td>
-                            <td rowspan="4"><a href="사사키 시온.html" class="nw-link"><img src="이미지/사사키 시온.webp" class="nw-img" onerror="this.style.display='none'">사사키 시온</a></td>
+                            <td rowspan="2"><a href="카나자와 미라클.html" class="nw-link"><img src="이미지/카나자와_미라클.webp" class="nw-img" onerror="this.style.display='none'">카나자와 미라클</a></td>
+                            <td><a href="하루미야 유쿠리.html" class="nw-link"><img src="이미지/하루미야_유쿠리.webp" class="nw-img" onerror="this.style.display='none'">하루미야 유쿠리</a></td>
+                            <td rowspan="4"><a href="사사키 시온.html" class="nw-link"><img src="이미지/사사키_시온.webp" class="nw-img" onerror="this.style.display='none'">사사키 시온</a></td>
                         </tr>
                         <tr>
-                            <td><a href="아자부 마이.html" class="nw-link"><img src="이미지/아자부 마이.webp" class="nw-img" onerror="this.style.display='none'">아자부 마이</a></td>
-                            <td><a href="코노하나 오로라.html" class="nw-link"><img src="이미지/코노하나 오로라.webp" class="nw-img" onerror="this.style.display='none'">코노하나 오로라</a></td>
+                            <td><a href="아자부 마이.html" class="nw-link"><img src="이미지/아자부_마이.webp" class="nw-img" onerror="this.style.display='none'">아자부 마이</a></td>
+                            <td><a href="코노하나 오로라.html" class="nw-link"><img src="이미지/코노하나_오로라.webp" class="nw-img" onerror="this.style.display='none'">코노하나 오로라</a></td>
                         </tr>
                         <tr>
                             <td><a href="고토 아키라(러브 라이브!).html" class="nw-link"><img src="이미지/고토 아키라.webp" class="nw-img" onerror="this.style.display='none'">고토 아키라</a></td>
                             <td rowspan="2"><a href="쵸후 노리코.html" class="nw-link"><img src="이미지/쵸후 노리코.webp" class="nw-img" onerror="this.style.display='none'">쵸후 노리코</a></td>
-                            <td><a href="야마다 미도리.html" class="nw-link"><img src="이미지/야마다 미도리.webp" class="nw-img" onerror="this.style.display='none'">야마다 미도리</a></td>
+                            <td><a href="야마다 미도리.html" class="nw-link"><img src="이미지/야마다_미도리.webp" class="nw-img" onerror="this.style.display='none'">야마다 미도리</a></td>
                         </tr>
                         <tr>
-                            <td><a href="코마가타 하나비.html" class="nw-link"><img src="이미지/코마가타 하나비.webp" class="nw-img" onerror="this.style.display='none'">코마가타 하나비</a></td>
+                            <td><a href="코마가타 하나비.html" class="nw-link"><img src="이미지/코마가타_하나비.webp" class="nw-img" onerror="this.style.display='none'">코마가타 하나비</a></td>
                             <td></td>
                         </tr>
                         <tr>
@@ -679,7 +679,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <!-- Series Common -->
                 <details class="nw-box mb-2" style="border-color:#ccc;">
                     <summary class="!bg-white dark:!bg-[#1f2023] !text-black dark:!text-white outline-none flex gap-2 justify-center items-center py-2">
-                        <img src="이미지/러브 라이브! School idol project series 로고.webp" alt="시리즈 로고" class="h-6" onerror="this.style.display='none'">
+                        <img src="이미지/러브_라이브!_School_idol_project_series_로고.webp" alt="시리즈 로고" class="h-6" onerror="this.style.display='none'">
                         <span class="font-bold text-lg !text-black dark:!text-white">시리즈 공통</span>
                         <span class="text-xs font-normal text-gray-500">[ 펼치기 · 접기 ]</span>
                     </summary>

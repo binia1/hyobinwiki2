@@ -29,7 +29,7 @@ async function fixHighways() {
         let modifiedFiles = 0;
 
         // 찾을 문자열 정규식: 
-        // 1. 이미지/고속국도_숫자호선.svg
+        // 1. 이미지/svg/고속국도_숫자호선.svg
         // 2. 이미지/대한민국_고속국도_제숫자호선.webp
         const regex = /이미지\/(고속국도_\d+호선\.svg|대한민국_고속국도_제\d+호선\.webp)/g;
 

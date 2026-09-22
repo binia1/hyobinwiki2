@@ -43,11 +43,11 @@ document.addEventListener("DOMContentLoaded", function() {
                         <td style="background-color: #33AAFF; width: 15.3%; font-weight: bold;"><a href="창전선.html" style="color: white; text-decoration: none;">창전선</a></td>
                     </tr>
                     <tr>
-                        <td><a href="고나미.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/고나미 로고.webp"/>고나미</a></td>
-                        <td><a href="하루빈.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/하루빈 로고.webp"/>하루빈</a></td>
-                        <td><a href="박라미.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/박라미 로고.webp"/>박라미</a></td>
-                        <td><a href="다로나.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/다로나 로고.webp"/>다로나</a></td>
-                        <td><a href="미소하.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/미소하 로고.webp"/>미소하</a></td>
+                        <td><a href="고나미.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/고나미_로고.webp"/>고나미</a></td>
+                        <td><a href="하루빈.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/하루빈_로고.webp"/>하루빈</a></td>
+                        <td><a href="박라미.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/박라미_로고.webp"/>박라미</a></td>
+                        <td><a href="다로나.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/다로나_로고.webp"/>다로나</a></td>
+                        <td><a href="미소하.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/미소하_로고.webp"/>미소하</a></td>
                         <td><a href="심세이.html" class="cu-link"><img class="cu-img" src="이미지/심세이_로고.webp"/>심세이</a></td>
                     </tr>
                     <tr>
@@ -57,11 +57,11 @@ document.addEventListener("DOMContentLoaded", function() {
                         <td colspan="2" style="background-color: #6677CC; font-weight: bold;"><a href="빈효광역선.html" style="color: white; text-decoration: none;">빈효선*</a></td>
                     </tr>
                     <tr>
-                        <td><a href="라세나.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/라세나 로고.webp"/>라세나</a></td>
-                        <td><a href="임세정.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/임세정 로고.webp"/>임세정</a></td>
-                        <td><a href="임세하.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/임세하 로고.webp"/>임세하</a></td>
-                        <td><a href="유리아.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/유리아 로고.webp"/>유리아</a></td>
-                        <td colspan="2"><a href="전노아.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/전노아 로고.webp"/>전노아</a></td>
+                        <td><a href="라세나.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/라세나_로고.webp"/>라세나</a></td>
+                        <td><a href="임세정.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/임세정_로고.webp"/>임세정</a></td>
+                        <td><a href="임세하.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/임세하_로고.webp"/>임세하</a></td>
+                        <td><a href="유리아.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/유리아_로고.webp"/>유리아</a></td>
+                        <td colspan="2"><a href="전노아.html" class="cu-link"><img class="cu-img" onerror="this.style.display='none'" src="이미지/전노아_로고.webp"/>전노아</a></td>
                     </tr>
                     <tr>
                         <th class="cu-th-col" rowspan="2" style="color: #000;">빈주<br/>&amp;<br/>덕주</th>

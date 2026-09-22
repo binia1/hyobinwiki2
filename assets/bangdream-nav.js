@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const bandData = {
         "Poppin'Party": {
             bg: "#FF3377", color: "#FF3377",
-            logo: "Poppin_party_logo.webp", image10th: "Poppin Party 10th.webp",
+            logo: "Poppin_party_logo.webp", image10th: "Poppin_Party_10th.webp",
             members: [
                 { name: "토야마 카스미", role: "기타 & 보컬", color: "#FF5522", textColor: "#FFF", hasCard: true },
                 { name: "하나조노 타에", role: "기타", color: "#0077DD", textColor: "#FFF", hasCard: true },
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         "Afterglow": {
             bg: "#EE3344", color: "#EE3344",
-            logo: "Afterglow(BanG Dream!) 로고.svg", image10th: "Afterglow 10th.webp",
+            logo: "Afterglow(BanG_Dream!)_로고.svg", image10th: "Afterglow_10th.webp",
             members: [
                 { name: "미타케 란", role: "기타 & 보컬", color: "#EE0022", textColor: "#FFF", hasCard: true },
                 { name: "아오바 모카", role: "기타", color: "#00CCAA", textColor: "#000", hasCard: true },
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         "Pastel*Palettes": {
             bg: "#33DDAA", color: "#33DDAA",
-            logo: "파스파레로고.svg", image10th: "Pastel Palettes 10th.webp",
+            logo: "파스파레로고.svg", image10th: "Pastel_Palettes_10th.webp",
             members: [
                 { name: "마루야마 아야", role: "보컬", color: "#FF88BB", textColor: "#000", hasCard: true },
                 { name: "히카와 히나", role: "기타", color: "#55DDEE", textColor: "#000", hasCard: true },
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         "Roselia": {
             bg: "#3344AA", color: "#3344AA",
-            logo: "Roselia_logo.webp", image10th: "Roselia 10th.webp",
+            logo: "Roselia_logo.webp", image10th: "Roselia_10th.webp",
             members: [
                 { name: "미나토 유키나", role: "보컬", color: "#881188", textColor: "#FFF", hasCard: true },
                 { name: "히카와 사요", role: "기타", color: "#00AABB", textColor: "#FFF", hasCard: true },
@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         "헬로, 해피 월드!": {
             bg: "#FFDD00", color: "#FFDD00", textShadow: "1px 1px 2px rgba(0,0,0,0.4)",
-            logo: "Hello_happy_world_logo.webp", image10th: "Hello Happy World 10th.webp",
+            logo: "Hello_happy_world_logo.webp", image10th: "Hello_Happy_World_10th.webp",
             members: [
                 { name: "키타자와 하구미", role: "베이스", color: "#FF9922", textColor: "#000", hasCard: true },
                 { name: "오쿠사와 미사키", displayName: "미셸", role: "DJ", color: "#DD33CC", textColor: "#FFF", hasCard: true },
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         "Morfonica": {
             bg: "#33AAFF", color: "#33AAFF",
-            logo: "morfonica_logo.webp", image10th: "Morfonica 10th.webp",
+            logo: "morfonica_logo.webp", image10th: "Morfonica_10th.webp",
             members: [
                 { name: "야시오 루이", role: "바이올린", color: "#669988", textColor: "#FFF", hasCard: true },
                 { name: "히로마치 나나미", role: "베이스", color: "#EE7744", textColor: "#FFF", hasCard: true },
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         "RAISE A SUILEN": {
             bg: "#33CCCC", color: "#33CCCC",
-            logo: "RAISE_A_SUILEN_logo.webp", image10th: "RAISE A SUILEN 10th.webp",
+            logo: "RAISE_A_SUILEN_logo.webp", image10th: "RAISE_A_SUILEN_10th.webp",
             members: [
                 { name: "파레오(BanG Dream!)", displayName: "파레오", role: "키보드", color: "#FF99BB", textColor: "#000", hasCard: true },
                 { name: "마스킹(BanG Dream!)", displayName: "마스킹", role: "드럼", color: "#EEBB44", textColor: "#000", hasCard: true },
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         "MyGO!!!!!": {
             bg: "#00a3de", color: "#00a3de",
-            logo: "마이고.webp", image10th: "MyGO 10th.webp",
+            logo: "마이고.webp", image10th: "MyGO_10th.webp",
             members: [
                 { name: "치하야 아논", role: "기타", color: "#FF8899", textColor: "#000", hasCard: true, hasArea: true },
                 { name: "나가사키 소요", role: "베이스", color: "#FFDD88", textColor: "#000", hasCard: true, hasArea: true },
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         "Ave Mujica": {
             bg: "#881144", color: "#881144",
-            logo: "Ave_Mujica_logo.webp", image10th: "Ave Mujica 10th.webp",
+            logo: "Ave_Mujica_logo.webp", image10th: "Ave_Mujica_10th.webp",
             members: [
                 { name: "토가와 사키코", displayName: "오블리비오니스", role: "키보드", color: "#7799CC", textColor: "#000", hasCard: false },
                 { name: "야하타 우미리", displayName: "티모리스", role: "베이스", color: "#335566", textColor: "#FFF", hasCard: false },
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         "무겐다이 뮤타입": {
             bg: "#FF7788", color: "#FF7788",
-            logo: "yumemita_logo.webp", image10th: "Yumemita 10th.webp",
+            logo: "yumemita_logo.webp", image10th: "Yumemita_10th.webp",
             members: [
                 { name: "미네츠키 리츠", role: "멤버", color: "#5588DD", textColor: "#FFF", hasCard: false },
                 { name: "센고쿠 유노", role: "멤버", color: "#FF6688", textColor: "#FFF", hasCard: false },
@@ -277,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="bd-main-frame">
             <div class="bd-main-header">
                 <a href="BanG Dream!.html" class="nw-link">
-                    <img src="이미지/svg/BanG Dream! 가로 로고.svg" alt="BanG Dream!" style="width: 200px;" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none; color:#e5004f; font-weight:bold; font-size:1.5rem;">BanG Dream!</span>
+                    <img src="이미지/svg/BanG_Dream!_가로_로고.svg" alt="BanG Dream!" style="width: 200px;" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none; color:#e5004f; font-weight:bold; font-size:1.5rem;">BanG Dream!</span>
                 </a>
                 <div class="bd-main-title-sub">차세대 걸즈 밴드 프로젝트</div>
                 <div class="bd-main-title">BanG Dream!</div>
