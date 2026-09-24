@@ -1,4 +1,4 @@
-// [ad_logic.js]
+// [assets/ad_logic.js]
 const checkSidebarAndInitAd = setInterval(() => {
     const adContainer = document.getElementById("ad-container"); // 사이드바 코드에 넣은 ID
     

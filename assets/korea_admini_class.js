@@ -107,7 +107,7 @@
             text-decoration: underline;
         }
         
-        /* 나무위키 그라데이션 */
+        /* 효빈위키 그라데이션 */
         .hw-row-1 th { background-color: #384ab0; }
         .hw-row-2 th { background-color: #485EC6; }
         .hw-row-3 th { background-color: #6073ce; }

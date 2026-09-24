@@ -370,7 +370,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </table>
             </details>
             <div style="background-color: #ff3b72; padding: 10px; text-align: center;">
-                <a href="나무위키:프로젝트/뱅드림!.html" style="color: #fff; text-decoration: none; font-weight: bold; font-size: 0.9rem;">나무위키 프로젝트</a>
+                <a href="효빈위키:프로젝트/뱅드림!.html" style="color: #fff; text-decoration: none; font-weight: bold; font-size: 0.9rem;">효빈위키 프로젝트</a>
             </div>
         </div>
 

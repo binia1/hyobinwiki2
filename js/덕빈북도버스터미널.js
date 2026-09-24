@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <a href="해진정류장.html" class="db-bus-link">해진</a>
                             </td>
                             <td>
-                                <a href="낭원터미널.html" class="db-bus-link">낭원</a> · 
+                                <a href="낭원시외버스터미널.html" class="db-bus-link">낭원</a> · 
                                 <a href="판주터미널.html" class="db-bus-link">판주</a> · 
                                 <a href="전포터미널.html" class="db-bus-link">전포</a>
                             </td>

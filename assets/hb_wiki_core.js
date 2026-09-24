@@ -445,7 +445,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const y = toc.getBoundingClientRect().top + window.scrollY - 80;
             window.scrollTo({top: y, behavior: 'smooth'});
         } else {
-            // 나무위키 감성을 살려 목차가 없을 때는 위키 메시지 박스에 살짝 띄우거나 콘솔에 기록합니다.
+            // 효빈위키 감성을 살려 목차가 없을 때는 위키 메시지 박스에 살짝 띄우거나 콘솔에 기록합니다.
             const msgBox = document.getElementById('wiki-msg-box');
             if (msgBox) {
                 // 필요하다면 이곳에 "이 문서에는 목차가 없습니다" 등의 안내 문구를 넣을 수 있습니다.

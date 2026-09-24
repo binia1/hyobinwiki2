@@ -118,7 +118,7 @@ function render_낭원군_PopTable(containerId) {
         1949-1990: 통계청 인구총조사, 1995-현재: 행정안전부 주민등록인구통계 (외국인 미포함)
     </div>
 </div>
-<p>총 인구 149,863명 중 읍 지역 인구가 109,211명(72.8%)에 달한다. 덕빈북도 내 군 단위 지역 중 인구 밀도가 가장 높으며 성장세가 매우 뚜렷하다.</p>
+<p>총 인구 149,864명 중 읍 지역 인구가 109,211명(72.8%)에 달한다. 덕빈북도 내 군 단위 지역 중 인구 밀도가 가장 높으며 성장세가 매우 뚜렷하다.</p>
 <table class="data-table text-center text-xs">
 <thead>
 <tr style="background-color: var(--wiki-main); color: #fff;"><th>행정구역</th><th>인구(명)</th><th>비율(%)</th><th>특징</th></tr>
@@ -130,13 +130,13 @@ function render_낭원군_PopTable(containerId) {
 <tr><td>토진읍</td><td>10,221</td><td>6.82%</td><td>시 승격 대비 읍 승격</td></tr>
 <tr><td>백성면</td><td>9,014</td><td>6.01%</td><td>농축산업 발달</td></tr>
 <tr><td>내덕면</td><td>5,062</td><td>3.38%</td><td>자연 휴양지</td></tr>
-<tr><td>명향면</td><td>3,212</td><td>2.14%</td><td>전통 마을</td></tr>
-<tr><td>빙천면</td><td>2,421</td><td>1.62%</td><td>농업 지역</td></tr>
-<tr><td>풍성면</td><td>2,411</td><td>1.61%</td><td>농업 지역</td></tr>
-<tr><td>미전면</td><td>2,321</td><td>1.55%</td><td>농업 지역</td></tr>
-<tr><td>상곡면</td><td>1,911</td><td>1.27%</td><td>농업 지역</td></tr>
-<tr><td>초건면</td><td>1,422</td><td>0.95%</td><td>농업 지역</td></tr>
-<tr><td>우입면</td><td>1,203</td><td>0.80%</td><td>농업 지역</td></tr>
+<tr><td>초건면</td><td>3,392</td><td>2.26%</td><td>농업 지역</td></tr>
+<tr><td>우입면</td><td>2,754</td><td>1.84%</td><td>농업 지역</td></tr>
+<tr><td>빙천면</td><td>2,482</td><td>1.66%</td><td>농업 지역</td></tr>
+<tr><td>풍성면</td><td>2,245</td><td>1.50%</td><td>농업 지역</td></tr>
+<tr><td>상곡면</td><td>1,461</td><td>0.97%</td><td>농업 지역</td></tr>
+<tr><td>미전면</td><td>1,299</td><td>0.87%</td><td>농업 지역</td></tr>
+<tr><td>명향면</td><td>1,269</td><td>0.85%</td><td>전통 마을 (꼴찌)</td></tr>
 <tr class="font-bold"><td>낭원군 합계</td><td>149,864</td><td>100.00%</td><td></td></tr>
 </tbody>
 </table>
@@ -315,7 +315,7 @@ function render_낭원군_PopTable(containerId) {
                 </thead>
                 <tbody>
                     <tr style="background-color: #f1f3f5; font-weight: bold;"><td style="padding: 6px; border: 1px solid #ccc; text-align: center; color: #555;">덕빈북도 (참고)</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">3608524</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">4011985</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">4505727</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">4715950</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">3132578</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">3259806</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">3160756</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">3226894</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">3275615</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">3351587</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">3390580</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">3462447</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">3523123</td><td style="padding: 6px; border: 1px solid #ccc; color: #555;">3535361</td></tr>
-                    <tr style="background-color: #fdfaf5; font-weight: bold;"><td style="padding: 6px; border: 1px solid #ccc; text-align: center;">낭원군</td><td style="padding: 6px; border: 1px solid #ccc;">114521</td><td style="padding: 6px; border: 1px solid #ccc;">112031</td><td style="padding: 6px; border: 1px solid #ccc;">101231</td><td style="padding: 6px; border: 1px solid #ccc;">91402</td><td style="padding: 6px; border: 1px solid #ccc;">104921</td><td style="padding: 6px; border: 1px solid #ccc;">114921</td><td style="padding: 6px; border: 1px solid #ccc;">123949</td><td style="padding: 6px; border: 1px solid #ccc;">130212</td><td style="padding: 6px; border: 1px solid #ccc;">135503</td><td style="padding: 6px; border: 1px solid #ccc;">140321</td><td style="padding: 6px; border: 1px solid #ccc;">145212</td><td style="padding: 6px; border: 1px solid #ccc;">149202</td><td style="padding: 6px; border: 1px solid #ccc;">149864</td><td style="padding: 6px; border: 1px solid #ccc; color:#d6001c;">149,917</td></tr>
+                    <tr style="background-color: #fdfaf5; font-weight: bold;"><td style="padding: 6px; border: 1px solid #ccc; text-align: center;">낭원군</td><td style="padding: 6px; border: 1px실; border: 1px solid #ccc;">114521</td><td style="padding: 6px; border: 1px solid #ccc;">112031</td><td style="padding: 6px; border: 1px solid #ccc;">101231</td><td style="padding: 6px; border: 1px solid #ccc;">91402</td><td style="padding: 6px; border: 1px solid #ccc;">104921</td><td style="padding: 6px; border: 1px solid #ccc;">114921</td><td style="padding: 6px; border: 1px solid #ccc;">123949</td><td style="padding: 6px; border: 1px solid #ccc;">130212</td><td style="padding: 6px; border: 1px solid #ccc;">135503</td><td style="padding: 6px; border: 1px solid #ccc;">140321</td><td style="padding: 6px; border: 1px solid #ccc;">145212</td><td style="padding: 6px; border: 1px solid #ccc;">149202</td><td style="padding: 6px; border: 1px solid #ccc;">149864</td><td style="padding: 6px; border: 1px solid #ccc; color:#d6001c;">149,917</td></tr>
                 </tbody>
             </table>
         </div>

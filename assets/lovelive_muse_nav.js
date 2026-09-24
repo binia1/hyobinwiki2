@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 1. 네비게이션 전용 디자인(CSS) 주입
     const navStyle = `
     <style>
-        /* 나무위키 틀 스타일 (JS에서 동적 주입) */
+        /* 효빈위키 틀 스타일 (JS에서 동적 주입) */
         .nw-frame { border: 2px solid #e4007f; background-color: #e4007f; border-radius: 8px; padding: 10px; margin: 0 auto 20px; text-align: center; }
         .nw-title { background: white; margin: -5px -10px 10px; padding: 5px; }
         .nw-box { border: 2px solid; margin-bottom: 10px; background: #fff; border-radius: 4px; overflow: hidden; }
@@ -715,7 +715,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <a href="러브 라이브! School idol project series/등장인물.html" class="text-white hover:underline">등장인물</a> ·
                 <a href="러브 라이브! School idol project series/역대 출연진.html" class="text-white hover:underline">출연진</a> ·
                 <a href="러브 라이브! School idol project series/논란 및 사건 사고.html" class="text-white hover:underline">사건 사고</a> ·
-                <a href="나무위키:프로젝트/러브 라이브!.html" class="text-white hover:underline">나무위키 프로젝트</a>
+                <a href="효빈위키:프로젝트/러브 라이브!.html" class="text-white hover:underline">효빈위키 프로젝트</a>
             </div>
         </div>
         `;

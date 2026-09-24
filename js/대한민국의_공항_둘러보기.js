@@ -99,6 +99,7 @@
                                 현리(인제)<span class="sq-army">■</span> · 
                                 용인<span class="sq-army">■</span> · 
                                 <strong><a href="효빈공군기지.html" class="wiki-link">안천</a></strong><span class="sq-af">■</span> · 
+                                <strong><a href="매성비행장.html" class="wiki-link">매성</a></strong><span class="sq-af">■</span> · 
                                 <strong><a href="방산비행장.html" class="wiki-link">방산</a></strong><span class="sq-navy">■</span>
                             </td>
                         </tr>

@@ -1,6 +1,6 @@
 /**
  * HyobinWiki JS Master Index (Auto-Generated & Fixed Aliases)
- * 업데이트: 2026. 09. 21. 오전 12:21:01
+ * 업데이트: 2026. 09. 23. 오후 10:38:46
  */
 
 window.filePaths = {
@@ -17,7 +17,6 @@ window.filePaths = {
     "assembly22_joguk_nav": "js/",
     "assembly22_minjoo_nav": "js/",
     "assembly22_ppp_nav": "js/",
-    "auto_link": "assets/",
     "auto_navbox": "assets/",
     "bangdream-nav": "assets/",
     "blind_board_core": "assets/",
@@ -249,6 +248,7 @@ window.filePaths = {
     "덕북도립대학_인포박스": "js/",
     "덕북예술대학": "js/",
     "덕북예술대학_인포박스": "js/",
+    "덕북행정구역전체": "js/",
     "덕빈남도22대국회의원": "js/",
     "덕빈남도_고포군_관내_로": "js/",
     "덕빈남도_곡천군_관내_로": "js/",
@@ -273,6 +273,7 @@ window.filePaths = {
     "덕빈남도_이마트지점": "js/",
     "덕빈남도_인곡군_관내_로": "js/",
     "덕빈남도_하정시_관내_로": "js/",
+    "덕빈남도_행정구역": "js/",
     "덕빈남도_홈플러스지점": "js/",
     "덕빈남도고포군행정": "js/",
     "덕빈남도곡천군행정": "js/",
@@ -416,7 +417,6 @@ window.filePaths = {
     "비천시_시내버스_노선틀": "js/",
     "비천시학교": "js/",
     "비천시행정": "js/",
-    "빅분기_문서목록": "js/",
     "빈성구_pop": "js/",
     "빈성구학교": "js/",
     "빈성구행정": "js/",
@@ -687,6 +687,8 @@ window.filePaths = {
     "틀_폐선": "assets/",
     "틀_폐쇄": "assets/",
     "틀_한국의_성씨": "js/",
+    "틀_한국철도공사의_여객열차_등급": "assets/",
+    "틀_한국철도공사의_연도별_여객열차_목록": "assets/",
     "틀_현대백화점": "js/",
     "틀_효빈광역시의_교통": "assets/",
     "틀_효빈광역시전철노선": "assets/",
@@ -812,6 +814,7 @@ window.filePaths = {
     "효빈특수시설": "js/",
     "효빈행정": "js/",
     "효빈행정구역변천": "js/",
+    "효빈행정구역전체": "js/",
     "효빈회주학원_역대이사장": "js/"
 };
 window.aliasMap = {

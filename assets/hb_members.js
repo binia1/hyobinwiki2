@@ -665,7 +665,7 @@ function loadMember(key) {
         </tr>
     `).join('');
 
-    // 5. 전체 본문 렌더링
+// 5. 전체 본문 렌더링 (응급처치 적용 버전)
     let contentHtml = `
         <aside class="infobox fade-in">${infoHtml}</aside>
         <div class="wiki-content fade-in">
@@ -681,18 +681,18 @@ function loadMember(key) {
                 </ul>
             </div>
             
-            <h2 id="s-1" class="anchor-offset">1. 개요</h2>
+            <h2 id="s-1" class="anchor-offset text-left w-full" style="text-align: left !important; justify-content: flex-start !important; display: block !important;">1. 개요</h2>
             <p>${data.overview}</p>
 
-            <h2 id="s-2" class="anchor-offset">2. 생애 및 정치 활동</h2>
+            <h2 id="s-2" class="anchor-offset text-left w-full" style="text-align: left !important; justify-content: flex-start !important; display: block !important;">2. 생애 및 정치 활동</h2>
             <p>${data.life}</p>
             
-            <h2 id="s-3" class="anchor-offset">3. 의정 활동 및 여담</h2>
+            <h2 id="s-3" class="anchor-offset text-left w-full" style="text-align: left !important; justify-content: flex-start !important; display: block !important;">3. 의정 활동 및 여담</h2>
             <div class="bg-[#f8f9fa] border-l-4 border-[${data.partyClass.includes('minju') ? '#004ea2' : data.partyClass.includes('ppp') ? '#E61E2B' : data.partyClass.includes('jinbo') ? '#d6001c' : data.partyClass.includes('indep') ? '#808080' : '#7777AA'}] p-4 my-4 text-sm text-gray-700 shadow-sm leading-relaxed">
                 ${data.activities}
             </div>
 
-            <h2 id="s-4" class="anchor-offset">4. 선거 이력</h2>
+            <h2 id="s-4" class="anchor-offset text-left w-full" style="text-align: left !important; justify-content: flex-start !important; display: block !important;">4. 선거 이력</h2>
             <table class="data-table text-sm text-center">
                 <tr class="bg-gray-100">
                     <th>연도</th><th>선거</th><th>지역구</th><th>소속 정당</th><th>득표수</th><th>득표율</th><th>당락</th><th>비고</th>
@@ -700,7 +700,7 @@ function loadMember(key) {
                 ${electionsHtml}
             </table>
 
-            <h2 id="s-5" class="anchor-offset">5. 소속 정당</h2>
+            <h2 id="s-5" class="anchor-offset text-left w-full" style="text-align: left !important; justify-content: flex-start !important; display: block !important;">5. 소속 정당</h2>
             <table class="data-table text-sm text-center">
                 <tr class="bg-gray-100">
                     <th class="w-1/4">소속 기간</th><th>소속 정당</th><th class="w-1/3">비고</th>
@@ -708,7 +708,7 @@ function loadMember(key) {
                 ${partyHistoryHtml}
             </table>
 
-            <h2 id="s-6" class="anchor-offset mt-8">6. 둘러보기</h2>
+            <h2 id="s-6" class="anchor-offset text-left w-full mt-8" style="text-align: left !important; justify-content: flex-start !important; display: block !important;">6. 둘러보기</h2>
             <div class="border-2 border-[#7777AA] mt-4 rounded overflow-hidden text-sm">
                 <div class="bg-[#7777AA] text-white p-2 font-bold text-center">효빈광역시의 정치 둘러보기</div>
                 <div class="bg-white p-3 text-center leading-loose">
@@ -721,7 +721,6 @@ function loadMember(key) {
             </div>
         </div>
     `;
-
     document.getElementById('dynamic-view-area').innerHTML = contentHtml;
 
     // 추가된 부분: 소속 정당에 맞는 네비게이션 표만 노출 및 하이라이트 처리

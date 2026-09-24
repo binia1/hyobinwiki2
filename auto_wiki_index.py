@@ -537,7 +537,7 @@ def generate_wiki_index():
     json_cat_map = json.dumps(category_map, ensure_ascii=False)
     json_sub_cat = json.dumps(sub_categories, ensure_ascii=False)
 
-    # 🔥 ad_logic.js 추가 적용된 HTML 템플릿
+    # 🔥 assets/ad_logic.js 추가 적용된 HTML 템플릿
     html_content = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -621,7 +621,7 @@ def generate_wiki_index():
     <script src="assets/hb_index_scripts.js"></script>
     <script src="assets/jana.js"></script>
     <script src="assets/load-footer.js"></script>
-    <script src="ad_logic.js"></script>
+    <script src="assets/ad_logic.js"></script>
 
     <script>
         function handleSearch() {{

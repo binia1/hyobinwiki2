@@ -28,9 +28,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <td style="width: 33.3%; padding: 5px;"><a class="nav-th" href="서구.html" style="color: white; font-weight: bold;">서구</a></td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 5px;"><a class="nav-link minju" href="구성연.html">구성연</a> (재선)</td>
-                                    <td style="padding: 5px;"><a class="nav-link joguk" href="조우영.html">조우영</a> (재선)</td>
-                                    <td style="padding: 5px;"><a class="nav-link minju" href="부서원.html">부서원</a> (초선)</td>
+                                    <td style="padding: 5px;"><a class="nav-link minju" href="구성연.html">구성연</a> </td>
+                                    <td style="padding: 5px;"><a class="nav-link joguk" href="조우영.html">조우영</a> </td>
+                                    <td style="padding: 5px;"><a class="nav-link minju" href="부서원.html">부서원</a> </td>
                                 </tr>
                                 <!-- 2열 -->
                                 <tr style="background-color: #003B96; color: white;">
@@ -39,9 +39,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <td style="padding: 5px;"><a class="nav-th" href="청엽구.html" style="color: white; font-weight: bold;">청엽구</a></td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 5px;"><a class="nav-link minju" href="오전희.html">오전희</a> (3선)</td>
-                                    <td style="padding: 5px;"><a class="nav-link minju" href="김지언.html">김지언</a> (재선)</td>
-                                    <td style="padding: 5px;"><a class="nav-link minju" href="권상남.html">권상남</a> (3선)</td>
+                                    <td style="padding: 5px;"><a class="nav-link minju" href="오전희.html">오전희</a> </td>
+                                    <td style="padding: 5px;"><a class="nav-link minju" href="김지언.html">김지언</a> </td>
+                                    <td style="padding: 5px;"><a class="nav-link minju" href="권상남.html">권상남</a> </td>
                                 </tr>
                                 <!-- 3열 -->
                                 <tr style="background-color: #003B96; color: white;">
@@ -50,9 +50,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <td style="padding: 5px;"><a class="nav-th" href="탄성군.html" style="color: white; font-weight: bold;">탄성군</a></td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 5px;"><a class="nav-link minju" href="이규희.html">이규희</a> (초선)</td>
-                                    <td style="padding: 5px;"><a class="nav-link minju" href="전역헌.html">전역헌</a> (3선)</td>
-                                    <td style="padding: 5px;"><a class="nav-link minju" href="성선설.html">성선설</a> (재선)</td>
+                                    <td style="padding: 5px;"><a class="nav-link minju" href="이규희.html">이규희</a> </td>
+                                    <td style="padding: 5px;"><a class="nav-link minju" href="전역헌.html">전역헌</a> </td>
+                                    <td style="padding: 5px;"><a class="nav-link minju" href="성선설.html">성선설</a> </td>
                                 </tr>
                                 <tr>
                                     <td colspan="3" style="background-color: #f9f9f9; font-size: 0.9em; padding: 10px;">

@@ -61,7 +61,7 @@ def clean_html_files(directory):
                 # 나이 계산 매크로 치환 적용
                 content = re.sub(r'\[age\(([0-9]{4}-[0-9]{2}-[0-9]{2})\)\]', replace_age, content)
                 
-                # 나머지 나무위키 찌꺼기 규칙 순차 적용
+                # 나머지 효빈위키 찌꺼기 규칙 순차 적용
                 for pattern, repl in replacements:
                     content = re.sub(pattern, repl, content)
                     
@@ -72,7 +72,7 @@ def clean_html_files(directory):
                     print(f"✅ 변환(및 복구) 완료: {file}")
                     count += 1
 
-    print(f"\n🚀 총 {count}개의 HTML 파일에서 나무위키 찌꺼기 청소 및 에러 복구를 완료했습니다!")
+    print(f"\n🚀 총 {count}개의 HTML 파일에서 효빈위키 찌꺼기 청소 및 에러 복구를 완료했습니다!")
 
 # 실행 (현재 폴더 기준)
 if __name__ == "__main__":
