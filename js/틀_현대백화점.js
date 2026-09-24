@@ -35,23 +35,23 @@ document.addEventListener("DOMContentLoaded", function() {
                         </tr>
                         <tr style="background-color: #fff; border-bottom: 1px solid #eee;">
                             <td style="padding: 10px; border: 1px solid #ccc; text-align: center; word-break: keep-all; line-height: 1.8;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">더현대 서울</a>
+                                <a href="더현대 서울.html" style="color: #0066cc; text-decoration: none;">더현대 서울</a>
                             </td>
                             <td style="padding: 10px; border: 1px solid #ccc; text-align: center; word-break: keep-all; line-height: 1.8;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">더현대 대구</a>
+                                <a href="더현대 대구.html" style="color: #0066cc; text-decoration: none;">더현대 대구</a>
                             </td>
                             <td style="padding: 10px; border: 1px solid #ccc; text-align: center; word-break: keep-all; line-height: 1.8;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">더현대 부산</a>
+                                <a href="더현대 부산.html" style="color: #0066cc; text-decoration: none;">더현대 부산</a>
                                 <span style="display:inline-block; background:${darkGreyTag}; color:#fff; font-size:0.7em; padding:1px 4px; border-radius:2px; margin-left:2px; font-weight:bold; letter-spacing:-0.5px;">건설 중</span>
                             </td>
                             <td style="padding: 10px; border: 1px solid #ccc; text-align: center; word-break: keep-all; line-height: 1.8;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">더현대 광주</a>
+                                <a href="더현대 광주.html" style="color: #0066cc; text-decoration: none;">더현대 광주</a>
                                 <span style="display:inline-block; background:${darkGreyTag}; color:#fff; font-size:0.7em; padding:1px 4px; border-radius:2px; margin-left:2px; font-weight:bold; letter-spacing:-0.5px;">건설 중</span>
                             </td>
                         </tr>
                         <tr style="background-color: #fff;">
                             <td colspan="4" style="padding: 10px; border: 1px solid #ccc; text-align: center; word-break: keep-all; line-height: 1.8; background-color: #fcfcfc;">
-                                <a href="#" style="color: #0066cc; text-decoration: none; font-weight: bold;">더현대 창전</a>
+                                <a href="더현대 창전.html" style="color: #0066cc; text-decoration: none; font-weight: bold;">더현대 창전</a>
                                 <span style="display:inline-block; background:${darkGreyTag}; color:#fff; font-size:0.7em; padding:1px 4px; border-radius:2px; margin-left:2px; font-weight:bold; letter-spacing:-0.5px;">건설 중</span>
                             </td>
                         </tr>
@@ -63,37 +63,37 @@ document.addEventListener("DOMContentLoaded", function() {
                         
                         <tr style="background-color: #fff;">
                             <td style="padding: 10px 5px; border: 1px solid #ccc; text-align: center; word-break: keep-all;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">압구정본점</a>
+                                <a href="압구정본점.html" style="color: #0066cc; text-decoration: none;">압구정본점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid #ccc; text-align: center; word-break: keep-all;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">무역센터점</a>
+                                <a href="무역센터점.html" style="color: #0066cc; text-decoration: none;">무역센터점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid #ccc; text-align: center; word-break: keep-all;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">천호점</a>
+                                <a href="천호점.html" style="color: #0066cc; text-decoration: none;">천호점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid #ccc; text-align: center; word-break: keep-all;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">신촌점</a>
+                                <a href="신촌점.html" style="color: #0066cc; text-decoration: none;">신촌점</a>
                                 <span style="display:inline-block; background:${uplexPink}; color:#fff; font-size:0.75em; padding:1px 4px; border-radius:2px; margin-left:2px; font-weight:bold; letter-spacing:-0.5px;">U-PLEX</span>
                             </td>
                         </tr>
                         <tr style="background-color: #fff;">
                             <td style="padding: 10px 5px; border: 1px solid #ccc; text-align: center; word-break: keep-all;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">미아점</a>
+                                <a href="미아점.html" style="color: #0066cc; text-decoration: none;">미아점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid #ccc; text-align: center; word-break: keep-all;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">목동점</a>
+                                <a href="목동점.html" style="color: #0066cc; text-decoration: none;">목동점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid #ccc; text-align: center; word-break: keep-all;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">중동점</a>
+                                <a href="중동점.html" style="color: #0066cc; text-decoration: none;">중동점</a>
                                 <span style="display:inline-block; background:${uplexPink}; color:#fff; font-size:0.75em; padding:1px 4px; border-radius:2px; margin-left:2px; font-weight:bold; letter-spacing:-0.5px;">U-PLEX</span>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid #ccc; text-align: center; word-break: keep-all;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">킨텍스점</a>
+                                <a href="킨텍스점.html" style="color: #0066cc; text-decoration: none;">킨텍스점</a>
                             </td>
                         </tr>
                         <tr style="background-color: #fff;">
                             <td style="padding: 10px 5px; border: 1px solid #ccc; text-align: center; word-break: keep-all;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">판교점</a>
+                                <a href="판교점.html" style="color: #0066cc; text-decoration: none;">판교점</a>
                                 <span style="display:inline-block; background:${uplexPink}; color:#fff; font-size:0.75em; padding:1px 4px; border-radius:2px; margin-left:2px; font-weight:bold; letter-spacing:-0.5px;">U-PLEX</span>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid #ccc; text-align: center; word-break: keep-all; background-color: #f4f8ff;">
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <a href="#" style="color: #0066cc; text-decoration: none;">울산점 <span style="color:#666; font-size:0.9em;">(울산점 동구)</span></a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid #ccc; text-align: center; word-break: keep-all;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">충청점</a>
+                                <a href="충청점.html" style="color: #0066cc; text-decoration: none;">충청점</a>
                             </td>
                         </tr>
 
@@ -118,13 +118,13 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <span style="display:inline-block; width:16px; height:11px; background:#fff; border:1px solid #aaa; border-radius:1px; vertical-align:middle; position:relative; margin-right:5px; margin-bottom: 2px;">
                                     <span style="display:block; width:6px; height:6px; background:#bc002d; border-radius:50%; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);"></span>
                                 </span>
-                                <a href="#" style="color: #0066cc; text-decoration: none;">더현대 오모테산도</a>
+                                <a href="더현대 오모테산도.html" style="color: #0066cc; text-decoration: none;">더현대 오모테산도</a>
                             </td>
                             <td style="padding: 10px; border: 1px solid #ccc; text-align: center; word-break: keep-all;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">커넥트현대 부산</a>
+                                <a href="커넥트현대 부산.html" style="color: #0066cc; text-decoration: none;">커넥트현대 부산</a>
                             </td>
                             <td style="padding: 10px; border: 1px solid #ccc; text-align: center; word-break: keep-all;">
-                                <a href="#" style="color: #0066cc; text-decoration: none;">커넥트현대 청주</a>
+                                <a href="커넥트현대 청주.html" style="color: #0066cc; text-decoration: none;">커넥트현대 청주</a>
                             </td>
                         </tr>
 

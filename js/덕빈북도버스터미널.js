@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <a href="부진역환승센터.html" class="db-bus-link-bold">부진역환승센터</a>
                             </td>
                             <td>
-                                <a href="반양종합터미널.html" class="db-bus-link">반양종합</a> · 
+                                <a href="반양종합버스터미널.html" class="db-bus-link">반양종합</a> · 
                                 <a href="삽곡터미널.html" class="db-bus-link">삽곡</a> · 
                                 <a href="하원정류장.html" class="db-bus-link">하원</a>
                             </td>
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <a href="약궁정류장.html" class="db-bus-link">약궁</a>
                             </td>
                             <td>
-                                <a href="상안버스터미널.html" class="db-bus-link">상안</a> · 
+                                <a href="상안터미널.html" class="db-bus-link">상안</a> · 
                                 <a href="이부정류장.html" class="db-bus-link">이부</a>
                             </td>
                             <td colspan="2" style="background-color: #f3f4f6; border-top: none;"></td>

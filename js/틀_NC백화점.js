@@ -40,27 +40,27 @@ document.addEventListener("DOMContentLoaded", function() {
                         </tr>
                         <tr style="background-color: #fff;">
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor}; width: 25%;">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">강서점</a>
+                                <a href="강서점.html" style="color: ${linkColor}; text-decoration: none;">강서점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor}; width: 25%;">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">신구로점</a>
+                                <a href="신구로점.html" style="color: ${linkColor}; text-decoration: none;">신구로점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor}; width: 25%;">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">불광점</a>
+                                <a href="불광점.html" style="color: ${linkColor}; text-decoration: none;">불광점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor}; width: 25%;">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">송파점</a>
+                                <a href="송파점.html" style="color: ${linkColor}; text-decoration: none;">송파점</a>
                             </td>
                         </tr>
                         <tr style="background-color: #fff;">
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor};">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">야탑점</a>
+                                <a href="야탑점.html" style="color: ${linkColor}; text-decoration: none;">야탑점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor};">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">고잔점</a>
+                                <a href="고잔점.html" style="color: ${linkColor}; text-decoration: none;">고잔점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor};">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">수원터미널점</a>
+                                <a href="수원터미널점.html" style="color: ${linkColor}; text-decoration: none;">수원터미널점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor}; line-height: 1.4;">
                                 <a href="#" style="color: ${linkColor}; text-decoration: none;">구의점<br><span style="font-size: 0.85em;">(이스트폴)</span></a>
@@ -73,42 +73,42 @@ document.addEventListener("DOMContentLoaded", function() {
                         </tr>
                         <tr style="background-color: #fff;">
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor};">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">유성점</a>
+                                <a href="유성점.html" style="color: ${linkColor}; text-decoration: none;">유성점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor};">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">중앙로역점</a>
+                                <a href="중앙로역점.html" style="color: ${linkColor}; text-decoration: none;">중앙로역점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor};">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">청주점</a>
+                                <a href="청주점.html" style="color: ${linkColor}; text-decoration: none;">청주점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor};">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">광주역점</a>
+                                <a href="광주역점.html" style="color: ${linkColor}; text-decoration: none;">광주역점</a>
                             </td>
                         </tr>
                         <tr style="background-color: #fff;">
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor};">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">웨이브 충장점</a>
+                                <a href="웨이브 충장점.html" style="color: ${linkColor}; text-decoration: none;">웨이브 충장점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor};">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">웨이브 전주점</a>
+                                <a href="웨이브 전주점.html" style="color: ${linkColor}; text-decoration: none;">웨이브 전주점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor};">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">순천점</a>
+                                <a href="순천점.html" style="color: ${linkColor}; text-decoration: none;">순천점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor};">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">아울렛 엑스코점</a>
+                                <a href="아울렛 엑스코점.html" style="color: ${linkColor}; text-decoration: none;">아울렛 엑스코점</a>
                             </td>
                         </tr>
                         
                         <tr style="background-color: #fff;">
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor};">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">경산점</a>
+                                <a href="경산점.html" style="color: ${linkColor}; text-decoration: none;">경산점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor};">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">부산대점</a>
+                                <a href="부산대점.html" style="color: ${linkColor}; text-decoration: none;">부산대점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor};">
-                                <a href="#" style="color: ${linkColor}; text-decoration: none;">해운대점</a>
+                                <a href="해운대점.html" style="color: ${linkColor}; text-decoration: none;">해운대점</a>
                             </td>
                             <td style="padding: 10px 5px; border: 1px solid ${borderColor}; background-color: #fcfcfc;">
                                 <a href="효빈점.html" style="color: ${linkColor}; text-decoration: none; font-weight: bold;">효빈점</a>

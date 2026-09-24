@@ -73,6 +73,7 @@
 
     <!-- 효빈위키 폰트 CSS -->
     <link rel="stylesheet" href="wiki_font_standard.css">
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
 </head>        
 
 <body data-theme="light">
@@ -281,7 +282,151 @@ window.doSearch = function(inputId) {
             resultsContainer.innerHTML = html;
         }
 
+// =====================================================================
+// 🚀 [효빈위키 오탐지 제로 엄격 매칭 패치] : 엉뚱한 문서로 튀는 현상 원천 차단
+// =====================================================================
+(function() {
+    'use strict';
 
+    // --- [1파트] 넘어옴 배너 (?from=...) 렌더링 로직 ---
+    function initRedirectBanner() {
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromAlias = urlParams.get('from');
+            if (!fromAlias) return;
+
+            document.querySelectorAll('#wiki-redirect-banner, .wiki-redirect-banner').forEach(b => b.remove());
+
+            const bannerDiv = document.createElement('div');
+            bannerDiv.id = 'wiki-redirect-banner';
+            bannerDiv.className = 'wiki-redirect-banner';
+            bannerDiv.style.cssText = `
+                border: 1px solid #b8d4e9 !important;
+                background-color: #e5f0fa !important;
+                color: #222 !important;
+                padding: 10px 15px !important;
+                margin: 10px 0 15px 0 !important;
+                border-radius: 4px !important;
+                font-size: 0.95rem !important;
+                display: block !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                z-index: 9999 !important;
+            `;
+            bannerDiv.innerHTML = `<a href="javascript:void(0)" style="color: #0275d8; text-decoration: none; font-weight: bold;">${fromAlias}</a>(으)로부터 넘어옴`;
+
+            const adBox = document.getElementById('wiki-inserted-ad');
+            const categoryBox = document.querySelector('.category-box');
+            const titleEl = document.querySelector('.txt-lvl-1') || document.querySelector('h1') || document.querySelector('.wiki-title');
+            const container = document.querySelector('.wiki-container');
+
+            if (adBox && adBox.parentNode) {
+                adBox.parentNode.insertBefore(bannerDiv, adBox);
+            } else if (categoryBox && categoryBox.parentNode) {
+                categoryBox.parentNode.insertBefore(bannerDiv, categoryBox);
+            } else if (titleEl && titleEl.parentNode) {
+                titleEl.parentNode.insertBefore(bannerDiv, titleEl.nextSibling);
+            } else if (container) {
+                container.prepend(bannerDiv);
+            } else {
+                document.body.prepend(bannerDiv);
+            }
+        } catch (err) {
+            console.error("[RedirectBanner Error]", err);
+        }
+    }
+
+    // --- [2파트] 안전한 이동 헬퍼 ---
+    function redirectToWithFrom(baseUrl, query) {
+        var sep = baseUrl.indexOf('?') > -1 ? '&' : '?';
+        location.href = baseUrl + sep + 'from=' + encodeURIComponent(query);
+    }
+
+    // --- [3파트] 엄격한 검색 및 직행 매칭 엔진 ---
+    function executeSearch(query) {
+        if (!query) return;
+
+        // 0순위: 버스 번호 쾌속 이동
+        if (/^\d+$/.test(query)) {
+            var n = parseInt(query, 10);
+            var id = (n >= 1 && n <= 9) ? "0" + n : "" + n;
+            redirectToWithFrom("bus_" + id + ".html", query);
+            return;
+        }
+
+        // 1순위: 별칭(Aliases) 완벽 일치 체크
+        if (window.HB_WIKI_ALIASES) {
+            if (window.HB_WIKI_ALIASES[query]) {
+                redirectToWithFrom(window.HB_WIKI_ALIASES[query], query);
+                return;
+            }
+            var cleanQ = query.replace(/역$/, '');
+            if (window.HB_WIKI_ALIASES[cleanQ]) {
+                redirectToWithFrom(window.HB_WIKI_ALIASES[cleanQ], query);
+                return;
+            }
+        }
+
+        // 2순위: 정식 문서 목록에서 '완전 일치'하는 문서만 정밀 탐색 (위험한 부분 일치 전면 배제)
+        if (window.HB_WIKI_PAGES && window.HB_WIKI_PAGES.length > 0) {
+            var exactMatch = window.HB_WIKI_PAGES.find(function(p) {
+                var title = typeof p === 'string' ? p : (p.title || '');
+                return title === query || title === query + '역';
+            });
+            if (exactMatch) {
+                var href = typeof exactMatch === 'string' ? exactMatch + '.html' : (exactMatch.href || exactMatch.title + '.html');
+                redirectToWithFrom(href, query);
+                return;
+            }
+        }
+
+        // 3순위: 정확히 일치하는 문서가 없으면 엉뚱한 곳으로 튀지 않고 안전하게 검색 결과 페이지로 이동
+        location.href = "효빈위키 검색.html?q=" + encodeURIComponent(query);
+    }
+
+    window.handleSearch = function(inputId) {
+        try {
+            var input = document.getElementById(inputId) || 
+                        document.getElementById('searchInput') || 
+                        document.getElementById('headerSearchInput') || 
+                        document.querySelector('input[name="q"]') ||
+                        document.querySelector('.search-input') ||
+                        document.querySelector('input[type="text"]');
+            if (!input) return;
+            var query = input.value.trim();
+            executeSearch(query);
+        } catch (err) {
+            console.error("[HandleSearch Error]", err);
+        }
+    };
+
+    // --- [4파트] 이벤트 바인딩 ---
+    document.addEventListener('submit', function(e) {
+        var form = e.target;
+        var input = form.querySelector('input[type="text"], input[name="q"], input#searchInput, input#headerSearchInput');
+        if (input) {
+            e.preventDefault();
+            executeSearch(input.value.trim());
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            var activeEl = document.activeElement;
+            if (activeEl && activeEl.tagName === 'INPUT' && (activeEl.id.includes('Search') || activeEl.name === 'q' || activeEl.classList.contains('search') || activeEl.type === 'text')) {
+                e.preventDefault();
+                executeSearch(activeEl.value.trim());
+            }
+        }
+    });
+
+    // --- [5파트] 실행 진입점 ---
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initRedirectBanner);
+    } else {
+        initRedirectBanner();
+    }
+})();
 // 페이지가 이미 로드되었다면 즉시 실행, 아니면 이벤트 대기
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
     renderSearchResults();

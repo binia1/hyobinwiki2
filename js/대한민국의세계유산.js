@@ -85,31 +85,31 @@ document.addEventListener("DOMContentLoaded", function() {
         
         <div class="heritage-category">문화유산</div>
         <div class="heritage-grid">
-            <div class="heritage-item"><span class="heritage-year">1995년</span><br><a href="#" class="heritage-name">석굴암과 불국사</a></div>
-            <div class="heritage-item"><span class="heritage-year">1995년</span><br><a href="#" class="heritage-name">해인사 장경판전</a></div>
-            <div class="heritage-item"><span class="heritage-year">1995년</span><br><a href="#" class="heritage-name">종묘</a></div>
+            <div class="heritage-item"><span class="heritage-year">1995년</span><br><a href="석굴암과 불국사.html" class="heritage-name">석굴암과 불국사</a></div>
+            <div class="heritage-item"><span class="heritage-year">1995년</span><br><a href="해인사 장경판전.html" class="heritage-name">해인사 장경판전</a></div>
+            <div class="heritage-item"><span class="heritage-year">1995년</span><br><a href="종묘.html" class="heritage-name">종묘</a></div>
             
-            <div class="heritage-item"><span class="heritage-year">1997년</span><br><a href="#" class="heritage-name">창덕궁</a></div>
-            <div class="heritage-item"><span class="heritage-year">1997년</span><br><a href="#" class="heritage-name">수원화성</a></div>
-            <div class="heritage-item"><span class="heritage-year">2000년</span><br><a href="#" class="heritage-name">경주역사유적지구</a></div>
+            <div class="heritage-item"><span class="heritage-year">1997년</span><br><a href="창덕궁.html" class="heritage-name">창덕궁</a></div>
+            <div class="heritage-item"><span class="heritage-year">1997년</span><br><a href="수원화성.html" class="heritage-name">수원화성</a></div>
+            <div class="heritage-item"><span class="heritage-year">2000년</span><br><a href="경주역사유적지구.html" class="heritage-name">경주역사유적지구</a></div>
             
             <div class="heritage-item"><span class="heritage-year">2000년</span><br><a href="#" class="heritage-name">고창, 화순, 강화의<br>고인돌 유적</a></div>
-            <div class="heritage-item"><span class="heritage-year">2009년</span><br><a href="#" class="heritage-name">조선왕릉</a></div>
+            <div class="heritage-item"><span class="heritage-year">2009년</span><br><a href="조선왕릉.html" class="heritage-name">조선왕릉</a></div>
             <div class="heritage-item"><span class="heritage-year">2010년</span><br><a href="#" class="heritage-name">한국의 역사마을<br><span style="font-size:0.75rem; color:#555;">: 하회와 양동</span></a></div>
             
-            <div class="heritage-item"><span class="heritage-year">2014년</span><br><a href="#" class="heritage-name">남한산성</a></div>
-            <div class="heritage-item"><span class="heritage-year">2015년</span><br><a href="#" class="heritage-name">백제역사유적지구</a></div>
-            <div class="heritage-item"><span class="heritage-year">2018년</span><br><a href="#" class="heritage-name">산사, 한국의 산지승원</a></div>
+            <div class="heritage-item"><span class="heritage-year">2014년</span><br><a href="남한산성.html" class="heritage-name">남한산성</a></div>
+            <div class="heritage-item"><span class="heritage-year">2015년</span><br><a href="백제역사유적지구.html" class="heritage-name">백제역사유적지구</a></div>
+            <div class="heritage-item"><span class="heritage-year">2018년</span><br><a href="산사, 한국의 산지승원.html" class="heritage-name">산사, 한국의 산지승원</a></div>
             
-            <div class="heritage-item"><span class="heritage-year">2019년</span><br><a href="#" class="heritage-name">한국의 서원</a></div>
-            <div class="heritage-item"><span class="heritage-year">2023년</span><br><a href="#" class="heritage-name">가야고분군</a><a href="비마리유적지구.html" class="heritage-name h-highlight">비마리 유적지구</a></div>
-            <div class="heritage-item"><span class="heritage-year">2025년</span><br><a href="#" class="heritage-name">반구천의 암각화</a></div>
+            <div class="heritage-item"><span class="heritage-year">2019년</span><br><a href="한국의 서원.html" class="heritage-name">한국의 서원</a></div>
+            <div class="heritage-item"><span class="heritage-year">2023년</span><br><a href="가야고분군.html" class="heritage-name">가야고분군</a><a href="비마리유적지구.html" class="heritage-name h-highlight">비마리 유적지구</a></div>
+            <div class="heritage-item"><span class="heritage-year">2025년</span><br><a href="반구천의 암각화.html" class="heritage-name">반구천의 암각화</a></div>
         </div>
 
         <div class="heritage-category">자연유산</div>
         <div class="heritage-grid" style="grid-template-columns: repeat(2, 1fr);">
-            <div class="heritage-item"><span class="heritage-year">2007년</span><br><a href="#" class="heritage-name">제주 화산섬과 용암동굴</a></div>
-            <div class="heritage-item"><span class="heritage-year">2021년</span><br><a href="#" class="heritage-name">한국의 갯벌</a></div>
+            <div class="heritage-item"><span class="heritage-year">2007년</span><br><a href="제주 화산섬과 용암동굴.html" class="heritage-name">제주 화산섬과 용암동굴</a></div>
+            <div class="heritage-item"><span class="heritage-year">2021년</span><br><a href="한국의 갯벌.html" class="heritage-name">한국의 갯벌</a></div>
         </div>
         
         <div class="heritage-footer">

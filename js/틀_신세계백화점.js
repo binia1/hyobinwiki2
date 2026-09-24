@@ -60,8 +60,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         </tr>
                         <tr style="background-color: #fff;">
                             <td colspan="2" style="padding: 10px; border: 1px solid #ccc; text-align: center; word-break: keep-all; line-height: 1.6;">
-                                <a href="#" style="color: #333; text-decoration: none;">수서점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">송도점</a>
+                                <a href="수서점.html" style="color: #333; text-decoration: none;">수서점</a> · 
+                                <a href="송도점.html" style="color: #333; text-decoration: none;">송도점</a>
                             </td>
                         </tr>
 
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </tr>
                         <tr style="background-color: #fff;">
                             <td colspan="2" style="padding: 10px; border: 1px solid #ccc; text-align: center; word-break: keep-all; line-height: 1.6;">
-                                <a href="#" style="color: #333; text-decoration: none;">대전점</a>
+                                <a href="대전점.html" style="color: #333; text-decoration: none;">대전점</a>
                             </td>
                         </tr>
 
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </tr>
                         <tr style="background-color: #fff;">
                             <td colspan="2" style="padding: 10px; border: 1px solid #ccc; text-align: center; word-break: keep-all; line-height: 1.6;">
-                                <a href="#" style="color: #333; text-decoration: none;">도곡점</a>
+                                <a href="도곡점.html" style="color: #333; text-decoration: none;">도곡점</a>
                             </td>
                         </tr>
 
@@ -91,26 +91,26 @@ document.addEventListener("DOMContentLoaded", function() {
                         </tr>
                         <tr style="background-color: #fff;">
                             <td colspan="2" style="padding: 12px 10px; border: 1px solid #ccc; text-align: center; word-break: keep-all; line-height: 2.0;">
-                                <a href="#" style="color: #333; text-decoration: none;">가산점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">강남점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">고양점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">기장점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">광양점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">대구점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">대전점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">센텀점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">수원점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">시흥점</a><br/>
-                                <a href="#" style="color: #333; text-decoration: none;">스타필드마켓 경산점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">스타필드마켓 죽전점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">스타필드마켓 일산점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">안성점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">여주점</a><br/>
-                                <a href="#" style="color: #333; text-decoration: none;">여주 프리미엄빌리지점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">천안아산점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">천안터미널점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">타임스퀘어점</a> · 
-                                <a href="#" style="color: #333; text-decoration: none;">파주점</a>
+                                <a href="가산점.html" style="color: #333; text-decoration: none;">가산점</a> · 
+                                <a href="강남점.html" style="color: #333; text-decoration: none;">강남점</a> · 
+                                <a href="고양점.html" style="color: #333; text-decoration: none;">고양점</a> · 
+                                <a href="기장점.html" style="color: #333; text-decoration: none;">기장점</a> · 
+                                <a href="광양점.html" style="color: #333; text-decoration: none;">광양점</a> · 
+                                <a href="대구점.html" style="color: #333; text-decoration: none;">대구점</a> · 
+                                <a href="대전점.html" style="color: #333; text-decoration: none;">대전점</a> · 
+                                <a href="센텀점.html" style="color: #333; text-decoration: none;">센텀점</a> · 
+                                <a href="수원점.html" style="color: #333; text-decoration: none;">수원점</a> · 
+                                <a href="시흥점.html" style="color: #333; text-decoration: none;">시흥점</a><br/>
+                                <a href="스타필드마켓 경산점.html" style="color: #333; text-decoration: none;">스타필드마켓 경산점</a> · 
+                                <a href="스타필드마켓 죽전점.html" style="color: #333; text-decoration: none;">스타필드마켓 죽전점</a> · 
+                                <a href="스타필드마켓 일산점.html" style="color: #333; text-decoration: none;">스타필드마켓 일산점</a> · 
+                                <a href="안성점.html" style="color: #333; text-decoration: none;">안성점</a> · 
+                                <a href="여주점.html" style="color: #333; text-decoration: none;">여주점</a><br/>
+                                <a href="여주 프리미엄빌리지점.html" style="color: #333; text-decoration: none;">여주 프리미엄빌리지점</a> · 
+                                <a href="천안아산점.html" style="color: #333; text-decoration: none;">천안아산점</a> · 
+                                <a href="천안터미널점.html" style="color: #333; text-decoration: none;">천안터미널점</a> · 
+                                <a href="타임스퀘어점.html" style="color: #333; text-decoration: none;">타임스퀘어점</a> · 
+                                <a href="파주점.html" style="color: #333; text-decoration: none;">파주점</a>
                             </td>
                         </tr>
 
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         </tr>
                         <tr style="background-color: #fff;">
                             <td colspan="2" style="padding: 10px; border: 1px solid #ccc; text-align: center; word-break: keep-all; line-height: 1.6;">
-                                <a href="#" style="color: #333; text-decoration: none;">청담</a>
+                                <a href="청담.html" style="color: #333; text-decoration: none;">청담</a>
                             </td>
                         </tr>
                         
