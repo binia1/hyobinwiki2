@@ -1188,10 +1188,23 @@ if (document.readyState === 'loading') {
         }
     }
 
-    // --- [2파트] 안전한 이동 헬퍼 ---
+// --- [2파트] 안전한 이동 헬퍼 ---
     function redirectToWithFrom(baseUrl, query) {
-        var sep = baseUrl.indexOf('?') > -1 ? '&' : '?';
-        location.href = baseUrl + sep + 'from=' + encodeURIComponent(query);
+        var urlPart = baseUrl;
+        var hashPart = "";
+
+        // 1. URL에 해시(#)가 있는지 확인하고 분리
+        var hashIndex = baseUrl.indexOf('#');
+        if (hashIndex > -1) {
+            urlPart = baseUrl.substring(0, hashIndex);
+            hashPart = baseUrl.substring(hashIndex); // ex) "#경영면"
+        }
+
+        // 2. 파라미터 조합 (? 또는 &)
+        var sep = urlPart.indexOf('?') > -1 ? '&' : '?';
+        
+        // 3. 올바른 순서로 재조립: URL + 쿼리 + 해시
+        location.href = urlPart + sep + 'from=' + encodeURIComponent(query) + hashPart;
     }
 
     // --- [3파트] 스마트 포함 매칭 엔진 (긴 제목 우선순위 정렬 적용) ---

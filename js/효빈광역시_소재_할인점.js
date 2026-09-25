@@ -178,9 +178,9 @@ document.addEventListener("DOMContentLoaded", function() {
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300 leading-tight" style="background-color: #231815 !important; color: #ffffff !important;">트레이더스<br>홀세일 클럽</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
-                            <a href="트레이더스_효빈점.html" class="text-[#0275d8] hover:underline">효빈점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="트레이더스_평당점.html" class="text-[#0275d8] hover:underline">평당점</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="트레이더스_흑택점.html" class="text-[#0275d8] hover:underline">흑택점</a><span class="text-[10px] text-gray-500 ml-0.5">(예정)</span>
+                            <a href="트레이더스_홀세일_클럽_효빈점.html" class="text-[#0275d8] hover:underline">효빈점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="트레이더스_홀세일_클럽_평당점.html" class="text-[#0275d8] hover:underline">평당점</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="트레이더스_홀세일_클럽_흑택점.html" class="text-[#0275d8] hover:underline">흑택점</a><span class="text-[10px] text-gray-500 ml-0.5">(예정)</span>
                         </td>
                     </tr>
                     <tr class="border-b border-gray-200">
