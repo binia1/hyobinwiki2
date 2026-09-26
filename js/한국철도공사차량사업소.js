@@ -271,7 +271,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <a href="풍영차량사업소.html" style="text-decoration: none; color: inherit;">풍영</a> | 
                 <a href="서해차량사업소.html" style="text-decoration: none; color: inherit;">서해</a> | 
                 <a href="운진역.html" style="text-decoration: none; color: inherit;">운진</a> | 
-                <a href="비천역.html" style="text-decoration: none; color: inherit;">비천</a> | 
+                <a href="매성역.html" style="text-decoration: none; color: inherit;">매성</a> | 
                 <a href="천주역.html" style="text-decoration: none; color: inherit;">천주</a> | 
                 <a href="군천역.html" style="text-decoration: none; color: inherit;">군천</a> | 
                 <a href="효빈차량사업소.html" style="text-decoration: none; color: inherit;">효빈</a>

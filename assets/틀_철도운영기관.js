@@ -19,13 +19,11 @@ document.write(`
 <tr><th colspan="4">공기업</th></tr>
 <tr>
 <td colspan="4">
-<div class="kr-rail-logo-cell flex-row gap-6">
+<div class="kr-rail-logo-cell">
 <span class="font-black italic text-[#0054A6] text-2xl tracking-tighter">KORAIL</span>
-<div><span class="font-black italic text-[#5A1A28] text-xl">SRT</span> <span class="font-bold text-[#5A1A28] text-lg">에스알</span></div>
 </div>
-<div class="kr-rail-name-cell" style="background-color: #333333;">
-<a href="https://namu.wiki/w/한국철도공사" target="_blank">한국철도공사</a> / <a href="https://namu.wiki/w/에스알" target="_blank">주식회사 에스알</a><br/>
-<span style="font-size:0.65rem; font-weight:normal; text-shadow:none;">2026년 12월 한국철도공사로 합병예정</span>
+<div class="kr-rail-name-cell" style="background-color: #0054A6;">
+<a href="https://namu.wiki/w/한국철도공사" target="_blank">한국철도공사</a>
 </div>
 </td>
 </tr>
@@ -269,16 +267,20 @@ document.write(`
 <tr>
 <td>
 <div class="kr-rail-logo-cell">
-<span class="font-black italic text-[#1A2A59] text-xl leading-none">HDTX</span>
-<span class="font-bold text-[#333] text-[0.55rem] leading-none">에이치디티엑스운영(주)</span>
+<span class="font-black italic text-[#1A2A59] text-xl leading-none"><del>HDTX</del></span>
+<span class="font-bold text-[#333] text-[0.55rem] leading-none"><del>에이치디티엑스운영(주)</del></span>
 </div>
-<div class="kr-rail-name-cell" style="background-color: #1A2A59;"><a href="에이치디티엑스운영.html" target="_blank">에이치디티엑스운영</a></div>
+<div class="kr-rail-name-cell" style="background-color: #1A2A59;"><a href="에이치디티엑스운영.html" target="_blank"><del>에이치디티엑스운영</del></a></div>
 </td>
 <td>
-<div class="kr-rail-logo-cell"><span class="font-bold text-[#00AABB] text-[0.9rem] tracking-tighter">천주도시공사</span></div>
-<div class="kr-rail-name-cell" style="background-color: #00AABB;"><a href="천주도시공사.html" target="_blank">천주도시공사</a></div>
+<div class="kr-rail-logo-cell"><span class="font-bold text-[#00AABB] text-[0.9rem] tracking-tighter"><del>천주도시공사</del></span></div>
+<div class="kr-rail-name-cell" style="background-color: #00AABB;"><a href="천주도시공사.html" target="_blank"><del>천주도시공사</del></a></div>
 </td>
-<td colspan="2" style="background: #fdfdfd;"></td>
+<td>
+<div class="kr-rail-logo-cell"><span class="font-bold text-[#55DDEE] text-[0.8rem] tracking-tighter"><del>서해도시철도공사</del></span></div>
+<div class="kr-rail-name-cell" style="background-color: #55DDEE;"><a href="서해도시철도공사.html" target="_blank"><del>서해도시철도공사</del></a></div>
+</td>
+<td style="background: #fdfdfd;"></td>
 </tr>
 <tr>
 <td class="bg-gray-100 p-2 font-bold cursor-pointer hover:bg-gray-200 text-[#333]" colspan="4">

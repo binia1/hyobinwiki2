@@ -401,8 +401,16 @@ def get_js_dynamic_categories():
                 dist_name = district.group(1).split()[0]
                 cats.append(f"{dist_name}의 정치")
                 if "비례" not in dist_name: cats.append(f"{dist_name} 출신")
+            
+            # 1. 출생 연도 추출
             birth = re.search(r'birth:\s*\'(\d{4})년', block)
             if birth: cats.append(f"{birth.group(1)}년 출생")
+            
+            # 2. 🔥 [추가] 출생 월/일 추출 (예: 1968년 5월 5일 -> 5월 5일 출생)
+            birth_md = re.search(r'birth:\s*\'[^\']*?(\d{1,2})월\s*(\d{1,2})일', block)
+            if birth_md: 
+                cats.append(f"{birth_md.group(1)}월 {birth_md.group(2)}일 출생")
+
             history = re.search(r'history:\s*"([^"]+)"', block)
             if history:
                 first_line = history.group(1).split('<br>')[0]
@@ -411,7 +419,7 @@ def get_js_dynamic_categories():
             results.append({"title": name, "url": f"10대_시의원.html#{name}", "cats": cats})
     except Exception as e: print(f"⚠️ JS 파일 파싱 오류: {e}")
     return results
-
+    
 def assign_category(cat_full, item_data, category_map, sub_categories):
     """🔥 부모 카테고리 자동 생성 로직 초정밀 업그레이드"""
     parent = None
@@ -484,6 +492,41 @@ def generate_wiki_index():
 
                 for block in target_blocks:
                     final_categories = []
+                    infobox = block['soup'].find(class_='infobox')
+                    if infobox:
+                        for tooltip in infobox.find_all(['span', 'sup'], class_=re.compile(r'wiki-tooltip|wiki-fn')):
+                            tooltip.extract()
+                        
+                        def get_td_th_text(th_regex):
+                            th = infobox.find('th', string=re.compile(th_regex))
+                            if th and th.find_next_sibling('td'):
+                                return th.find_next_sibling('td').get_text(separator=' ', strip=True)
+                            return ""
+
+                        birth_text = get_td_th_text(r'^출생$|^출생일$|^생일$')
+                        if birth_text:
+                            y_m = re.search(r'(\d{4})년', birth_text)
+                            if y_m: final_categories.append(f"{y_m.group(1)}년 출생")
+                            md_m = re.search(r'(\d{1,2})월\s*(\d{1,2})일', birth_text)
+                            if md_m: final_categories.append(f"{md_m.group(1)}월 {md_m.group(2)}일 출생")
+
+                        sns_text = ""
+                        for tr in infobox.find_all('tr'):
+                            th = tr.find('th')
+                            if th and any(k in th.get_text() for k in ['관련 링크', 'SNS', '방송', '링크']):
+                                sns_text += tr.get_text() + " "
+                        
+                        sns_keywords = {
+                            '유튜브': ['유튜브', '채널', 'YouTube'],
+                            '치지직': ['치지직', 'CHZZK'],
+                            '인스타그램': ['인스타그램', 'Instagram', '인스타'],
+                            '엑스(SNS)': ['트위터', 'X계정'],
+                            '틱톡': ['틱톡', 'TikTok'],
+                            '네이버 카페': ['네이버 카페', '카페 매니저']
+                        }
+                        for cat_name, keywords in sns_keywords.items():
+                            if any(kw.lower() in sns_text.lower() for kw in keywords):
+                                final_categories.append(f"{cat_name} 사용자")
                     cat_boxes = list(block['soup'].find_all('div', class_=re.compile(r'category-box|classification-box|wiki-context-area')))
                     for tag in block['soup'].find_all(['div', 'p']):
                         if tag.text and ('분류:' in tag.text or '분류 :' in tag.text):
@@ -752,6 +795,22 @@ def generate_wiki_index():
     </script>
 </body>
 </html>"""
+
+# ==========================================
+    # 🔥 [추가] 생일 달력 위젯용 JSON 파일 자동 갱신
+    # ==========================================
+    calendar_db = {}
+    for cat, items in category_map.items():
+        if '월 ' in cat and '출생' in cat:
+            calendar_db[cat] = [item['title'] for item in items]
+        elif '년 출생' in cat:
+            calendar_db[cat] = [item['title'] for item in items]
+            
+    os.makedirs('js', exist_ok=True)
+    with open('js/birthday_data.js', 'w', encoding='utf-8') as jf:
+        jf.write(f"window.birthdayDB = {json.dumps(calendar_db, ensure_ascii=False, indent=2)};")
+    print(f"📅 [달력 데이터 연동] js/birthday_data.js 자동 생성 완료!")
+    # ==========================================
 
     with open(RESULT_FILE, 'w', encoding='utf-8') as out:
         out.write(html_content)

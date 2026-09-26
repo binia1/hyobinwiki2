@@ -1,5 +1,5 @@
 (function() {
-    // 1. 기존의 쓰레기 같은 스타일과 태그들을 싹 다 청소
+    // 1. 기존의 스타일과 태그들을 싹 다 청소
     const oldStyles = document.querySelectorAll('style[id^="style-template-unopened-map"]');
     oldStyles.forEach(el => el.remove());
     const existingMaps = document.querySelectorAll('.wiki-table-container, .wiki-hb-wrap-v4, #hyobin-unopened-map');
@@ -222,7 +222,7 @@
                                         <tr>
                                             <td style="border-top: 5px solid #808080 !important;">
                                                 <a href="9호선.html" class="hb-link-v4">9호선</a><br>
-                                                <a href="9호선.html" class="hb-sublink-v4">북고송-흑택</a>
+                                                <a href="9호선.html" class="hb-sublink-v4">북고송-루비</a>
                                             </td>
                                             <td style="border-top: 5px solid #0077DD !important;">
                                                 <a href="1호선.html" class="hb-link-v4">1호선</a><br>
@@ -246,7 +246,10 @@
                                                 <a href="4호선.html" class="hb-link-v4">4호선</a><br>
                                                 <a href="4호선.html" class="hb-sublink-v4">약산연장(고해-약산)</a>
                                             </td>
-                                            <td style="border-top: 5px solid #e0e0e0 !important; color: #999;">-</td>
+                                            <td style="border-top: 5px solid #607D8B !important;">
+                                                <a href="고송선.html" class="hb-link-v4">고송선</a><br>
+                                                <a href="고송선.html" class="hb-sublink-v4">건강보험공단-입희</a>
+                                            </td>
                                             <td style="border-top: 5px solid #e0e0e0 !important; color: #999;">-</td>
                                         </tr>
                                         

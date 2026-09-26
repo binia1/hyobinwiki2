@@ -3279,7 +3279,7 @@ const imageFiles = [
         "category": "station"
     },
     {
-        "file": "구시청앞역_승강장.webp",
+        "file": "효빈시청_2대.webp",
         "category": "station"
     },
     {

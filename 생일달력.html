@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>생일 및 출생연도 달력 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="wiki_font_standard.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800&display=swap');
+        
+        :root { 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #f9f9f9; 
+            --wiki-link: #0022aa; 
+            --wiki-visited: #800080;
+            --wiki-table-header: #7777AA; 
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1300px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: 2.8rem !important; font-weight: 800; color: #000; margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1px; } 
+        h2 { font-size: 1.6rem !important; font-weight: 700 !important; border-bottom: 2px solid var(--wiki-table-header); padding-bottom: 8px; margin-top: 3rem; margin-bottom: 1.2rem; display: block; }
+        
+        a.wiki-link { color: var(--wiki-link); text-decoration: none; cursor: pointer; font-weight: bold; }
+        a.wiki-link:hover { text-decoration: underline; }
+        
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.8rem; margin: 15px 0; border-radius: 4px; }
+        
+        .tab-menu { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid var(--wiki-main); padding-bottom: 0; }
+        .tab-btn { padding: 10px 20px; font-weight: bold; cursor: pointer; background: #eee; border: 1px solid #ccc; border-bottom: none; border-radius: 6px 6px 0 0; color: #555; transition: all 0.2s; }
+        .tab-btn.active { background: var(--wiki-main); color: white; border-color: var(--wiki-main); }
+
+        .calendar-container { border: 1px solid var(--wiki-border); border-radius: 6px; background: #fff; padding: 20px; }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--wiki-main); color: white; padding: 12px 20px; border-radius: 4px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
+        .cal-day-header { font-weight: bold; padding: 8px; background: #eee; font-size: 0.9rem; border-radius: 3px; }
+        .cal-cell { border: 1px solid #ddd; min-height: 95px; padding: 6px; cursor: pointer; border-radius: 4px; background: #fff; transition: all 0.2s; display: flex; flex-direction: column; justify-content: space-between; }
+        .cal-cell:hover { border-color: var(--wiki-main); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .has-birthday { background-color: #fff8f0 !important; border-color: #ffb74d !important; }
+        .birthday-badge { background: var(--wiki-main); color: white; border-radius: 10px; font-size: 0.75rem; padding: 2px 6px; font-weight: bold; margin-top: 4px; }
+        
+        .year-card { border: 1px solid #ddd; border-radius: 6px; padding: 15px; margin-bottom: 15px; background: #fafafa; }
+        .year-title { font-size: 1.2rem; font-weight: bold; color: var(--wiki-main); border-bottom: 1px dashed #ccc; padding-bottom: 5px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <div class="w-[30px] h-[30px] bg-white text-[#7777AA] rounded font-black flex items-center justify-center text-lg">H</div>
+            <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white">HyobinWiki</a>
+            <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+                <a href="index.html" class="hover:underline font-bold text-white no-underline">대문</a>
+                <a href="최근_변경.html" class="hover:underline text-white no-underline">최근 변경</a>
+                <a href="최근_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="headerSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }">
+            <button onclick="handleSearch('headerSearchInput')" class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
+        </div>
+    </nav>
+
+    <div class="wiki-container shadow-lg">
+        <div class="flex justify-between items-end border-b-2 border-gray-300 pb-2 mb-4">
+            <div class="txt-lvl-1">효빈위키 생일 & 출생연도 아카이브</div>
+        </div>
+
+        <div class="category-box">
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="분류.html#특수_기능" class="wiki-link">특수 기능</a> | 
+            <span class="text-gray-600">생일 달력 및 연도별 목록</span>
+        </div>
+
+        <!-- 탭 메뉴 (달력 보기 / 연도별 목록 보기) -->
+        <div class="tab-menu">
+            <div class="tab-btn active" id="btn-tab-cal" onclick="switchTab('cal')">📅 월별 달력 보기</div>
+            <div class="tab-btn" id="btn-tab-year" onclick="switchTab('year')">📋 연도별 출생자 목록</div>
+        </div>
+
+        <!-- 1. 달력 뷰 영역 -->
+        <div id="view-cal" class="calendar-container shadow-sm">
+            <div class="cal-header">
+                <div style="font-size: 1.2rem; font-weight: bold;" id="cal-title">생일 달력</div>
+                <div style="display: flex; gap: 8px;">
+                    <select id="cal-month" onchange="renderCalendar()" style="padding: 6px 12px; border-radius: 4px; color: black; font-weight: bold; background: white; cursor: pointer;">
+                        <option value="1">1월</option><option value="2">2월</option><option value="3">3월</option>
+                        <option value="4">4월</option><option value="5">5월</option><option value="6">6월</option>
+                        <option value="7">7월</option><option value="8">8월</option><option value="9">9월</option>
+                        <option value="10">10월</option><option value="11">11월</option><option value="12">12월</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="cal-grid" id="calendar-grid"></div>
+
+            <div style="margin-top: 25px; padding: 15px; border: 1px dashed var(--wiki-main); border-radius: 6px; background: #fafafa;">
+                <div style="font-weight: bold; color: var(--wiki-main); margin-bottom: 8px; font-size: 1.05rem;">📌 선택한 날짜 생일 인물 목록</div>
+                <div id="detail-content" style="font-size: 0.95rem; color: #555;">달력에서 생일 표시(🎂)가 있는 날짜를 클릭하면 해당 인물들이 표시됩니다.</div>
+            </div>
+        </div>
+
+        <!-- 2. 연도별 목록 뷰 영역 -->
+        <div id="view-year" class="calendar-container shadow-sm" style="display: none;">
+            <div class="cal-header">
+                <div style="font-size: 1.2rem; font-weight: bold;">연도별 출생자 아카이브</div>
+                <div>
+                    <select id="year-filter" onchange="renderYearList()" style="padding: 6px 12px; border-radius: 4px; color: black; font-weight: bold; background: white; cursor: pointer;">
+                        <option value="ALL">전체 연도 보기</option>
+                    </select>
+                </div>
+            </div>
+            <div id="year-content-area" style="margin-top: 15px;"></div>
+        </div>
+
+        <div id="footer-container"></div>
+    </div>
+
+    <script src="js/birthday_data.js"></script>
+    <script src="assets/wiki_index.js"></script>
+    <script src="assets/hb_data_map.js"></script>
+    <script src="assets/hb_wiki_core.js"></script>
+    <script src="assets/hb_index_scripts.js"></script>
+    <script src="assets/jana.js"></script>
+    <script src="assets/load-footer.js"></script>
+    <script src="assets/ad_logic.js"></script>
+
+    <script>
+        window.handleSearch = function(inputId) {
+            let input = document.getElementById(inputId).value.trim();
+            if(input) {
+                if(input.endsWith('.js')) input = input.replace('.js', '');
+                let targetHash = window.aliasMap && window.aliasMap[input] ? window.aliasMap[input] : input;
+                window.location.hash = targetHash;
+            }
+        };
+
+        // 데이터 가공: 캐릭터별 출생 연도 매핑 및 생일 매핑 구축
+        let characterYears = {};
+        let characterBirthDates = {};
+
+        function initData() {
+            if (!window.birthdayDB) return;
+            for (let key in window.birthdayDB) {
+                if (key.includes('년 출생')) {
+                    let year = key.replace('년 출생', '').trim();
+                    window.birthdayDB[key].forEach(name => {
+                        characterYears[name] = year;
+                    });
+                } else if (key.includes('월 ') && key.includes('출생')) {
+                    let dateStr = key.replace(' 출생', '').trim();
+                    window.birthdayDB[key].forEach(name => {
+                        characterBirthDates[name] = dateStr;
+                    });
+                }
+            }
+        }
+
+        function switchTab(tab) {
+            document.getElementById('view-cal').style.display = tab === 'cal' ? 'block' : 'none';
+            document.getElementById('view-year').style.display = tab === 'year' ? 'block' : 'none';
+            document.getElementById('btn-tab-cal').className = `tab-btn ${tab === 'cal' ? 'active' : ''}`;
+            document.getElementById('btn-tab-year').className = `tab-btn ${tab === 'year' ? 'active' : ''}`;
+            if(tab === 'year') renderYearList();
+        }
+
+        function renderCalendar() {
+            initData();
+            const month = parseInt(document.getElementById('cal-month').value);
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+
+            ['일', '월', '화', '수', '목', '금', '토'].forEach(day => {
+                let dHeader = document.createElement('div');
+                dHeader.className = 'cal-day-header';
+                dHeader.innerText = day;
+                grid.appendChild(dHeader);
+            });
+
+// 수정된 코드: 2월인 경우 윤년 여부와 상관없이 29일생 캐릭터를 위해 항상 29일까지 표시
+            let daysInMonth = new Date(2026, month, 0).getDate();
+            if (parseInt(month) === 2) {
+                daysInMonth = 29;
+            }
+            
+            let firstDayIndex = new Date(2026, month - 1, 1).getDay();
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                let emptyCell = document.createElement('div');
+                emptyCell.style.border = "1px solid transparent";
+                grid.appendChild(emptyCell);
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                let cell = document.createElement('div');
+                cell.className = 'cal-cell';
+                
+                let dateKey = `${month}월 ${day}일 출생`;
+                let characters = window.birthdayDB ? (window.birthdayDB[dateKey] || []) : [];
+
+                let dayNumDiv = document.createElement('div');
+                dayNumDiv.style.fontWeight = "bold";
+                dayNumDiv.style.fontSize = "0.95rem";
+                dayNumDiv.innerText = day;
+                cell.appendChild(dayNumDiv);
+
+                if (characters.length > 0) {
+                    cell.classList.add('has-birthday');
+                    let badge = document.createElement('div');
+                    badge.className = 'birthday-badge';
+                    badge.innerText = `🎂 ${characters.length}명`;
+                    cell.appendChild(badge);
+
+                    cell.onclick = () => showDetails(month, day, characters);
+                } else {
+                    cell.onclick = () => {
+                        document.getElementById('detail-content').innerHTML = `<strong>${month}월 ${day}일</strong>생일인 인물이 없습니다.`;
+                    };
+                }
+
+                grid.appendChild(cell);
+            }
+
+            document.getElementById('detail-content').innerHTML = `${month}월 달력에서 생일 표시가 있는 날짜를 클릭해 주세요.`;
+        }
+
+        function showDetails(month, day, characters) {
+            let html = `<strong>${month}월 ${day}일생 (${characters.length}명):</strong><br><div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">`;
+            characters.forEach(name => {
+                let year = characterYears[name] ? ` (${characterYears[name]}년생)` : '';
+                html += `<a href="${name}.html" class="wiki-link" style="background: white; padding: 4px 10px; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">${name}${year}</a>`;
+            });
+            html += `</div>`;
+            document.getElementById('detail-content').innerHTML = html;
+        }
+
+        function renderYearList() {
+            initData();
+            let years = [];
+            for (let key in window.birthdayDB) {
+                if (key.includes('년 출생')) {
+                    years.push(key.replace('년 출생', '').trim());
+                }
+            }
+            years.sort((a, b) => parseInt(a) - parseInt(b));
+
+            // 셀렉트 박스 채우기
+            let select = document.getElementById('year-filter');
+            let currentSelected = select.value;
+            select.innerHTML = '<option value="ALL">전체 연도 보기</option>';
+            years.forEach(y => {
+                select.innerHTML += `<option value="${y}">${y}년생</option>`;
+            });
+            select.value = currentSelected;
+
+            let filterYear = select.value;
+            let area = document.getElementById('year-content-area');
+            let html = '';
+
+            let targetYears = filterYear === 'ALL' ? years : [filterYear];
+
+            targetYears.forEach(y => {
+                let catKey = `${y}년 출생`;
+                let chars = window.birthdayDB[catKey] || [];
+                if (chars.length === 0) return;
+
+                html += `<div class="year-card">
+                    <div class="year-title">📅 ${y}년생 (${chars.length}명)</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">`;
+                
+                chars.sort().forEach(name => {
+                    let bday = characterBirthDates[name] ? ` [${characterBirthDates[name]}]` : '';
+                    html += `<a href="${name}.html" class="wiki-link" style="background: white; padding: 4px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9rem;">${name}${bday}</a>`;
+                });
+
+                html += `</div></div>`;
+            });
+
+            area.innerHTML = html || '<p class="text-gray-500 text-center py-6">해당 연도에 출생한 인물이 없습니다.</p>';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initData();
+            let currentMonth = new Date().getMonth() + 1;
+            document.getElementById('cal-month').value = currentMonth;
+            renderCalendar();
+        });
+    </script>
+</body>
+</html>

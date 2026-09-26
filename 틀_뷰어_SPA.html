@@ -223,8 +223,52 @@
 
         #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
         .anchor-offset { scroll-margin-top: 70px; }
+        
+/* ========================================= */
+        /* ★ 학교 목록 테이블 스타일 (절대 안 깨지는 무적 코드) ★ */
+        /* ========================================= */
+        .school-table { width: 100%; border-collapse: collapse; background: #fff; margin-bottom: 20px; }
+        [data-theme='dark'] .school-table { background: #2d2f34; }
+        
+        /* 1. 표 제목(헤더) 무조건 색칠하기 (!important로 모든 방해물 무시) */
+        .school-table th,
+        .school-table thead tr th,
+        .school-table tr:first-child td[colspan],
+        .school-table tr:first-child th[colspan] { 
+            background-color: var(--wiki-main) !important; 
+            color: #ffffff !important; 
+            border: 1px solid var(--wiki-border) !important; 
+            padding: 10px !important; 
+            text-align: center !important; 
+            font-weight: bold !important; 
+        }
 
-   </style>
+        /* 2. 일반 칸 스타일 */
+        .school-table td { 
+            border: 1px solid var(--wiki-border) !important; 
+            padding: 8px; 
+            text-align: center; 
+            width: 20%; 
+            font-size: 0.85rem; 
+        }
+        
+        /* 3. 남/여 학교 구분 색상 */
+        .bg-boy { background-color: #e3f2fd !important; color: #333 !important; } 
+        .bg-girl { background-color: #ffebee !important; color: #333 !important; } 
+        [data-theme='dark'] .bg-boy { background-color: #1e3a8a !important; color: #fff !important; }
+        [data-theme='dark'] .bg-girl { background-color: #881337 !important; color: #fff !important; }
+        /* ========================================= */
+        /* ★ 진짜 범인: 학교 틀 헤더는 th가 아니라 nav-box-header 였습니다! ★ */
+        .nav-box-header { 
+            background-color: var(--wiki-main) !important; 
+            color: #ffffff !important; 
+            padding: 8px 12px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }   </style>
+        
     <!-- 루트 디렉토리 공통 스크립트 -->
     <script src="assets//ad_logic.js"></script>
     <link rel="stylesheet" href="wiki_font_standard.css">
@@ -314,7 +358,7 @@
         <script src="assets/load-footer.js"></script>
     </div>
 
-    <script>
+<script>
         // DOMContentLoaded 이벤트를 놓치지 않게 즉시 실행 처리
         const originalAddEventListener = document.addEventListener;
         document.addEventListener = function(type, listener, options) {
@@ -340,24 +384,59 @@
             console.log(modalId + " 모달창이 열렸습니다.");
         };
 
-function loadTemplateByHash() {
+        function loadTemplateByHash() {
             let rawHash = window.location.hash.substring(1);
             if (!rawHash) { rawHash = "틀_미개통노선도"; window.location.hash = rawHash; return; }
             rawHash = decodeURIComponent(rawHash);
 
-            // ★ 핵심 해결: 물음표(?)를 기준으로 파일명과 ?from= 파라미터를 완벽하게 분리합니다!
-            let hash = rawHash.split('?')[0]; // 순수 문서 이름 (예: neugumma)
+            let hash = rawHash.split('?')[0]; 
             let queryPart = rawHash.split('?')[1];
+            
+            // ==========================================
+            // ★ 51개 지자체 퍼스널 컬러 완벽 매핑 ★
+            // ==========================================
+            const regionColors = {
+                "효빈광역시": "#7777aa", "효빈": "#7777aa",
+                "중구": "#BB9955", "동구": "#FF9922", "서구": "#00AABB", "남구": "#DDBBFF", "북구": "#7799CC", "청엽구": "#006699", "창전구": "#33AAFF", "안천구": "#AA66DD", "탄성군": "#BBFF64",
+                "덕빈북도": "#4AD898", "덕빈북": "#4AD898",
+                "강주시": "#ffc94a", "계성시": "#ED7D95", "군천시": "#E7D600", "기도군": "#01B7ED", "낭원군": "#485EC6", "덕현군": "#FF5800", "모제군": "#A664A0", "반양군": "#D81C2F", "상안군": "#84C36E", "서진시": "#9CA5B9", "서해시": "#37B484", "선곡군": "#D6D5CA", "약산시": "#F8C8C4", "저천군": "#1D1D1D", "전산시": "#FF7F27", "치원군": "#aa7799", "천주시": "#8B4993", "빈주시": "#ffeeaa", "궁하구": "#8B4993", "천성구": "#8B4993", "빈성구": "#ffeeaa", "가원구": "#ffeeaa", "장기구": "#ffeeaa",
+                "덕빈남도": "#335566", "덕빈남": "#335566",
+                "매산군": "#A0FFF9", "매성시": "#FF6E90", "비천시": "#74F466", "석창군": "#0000A0", "방산시": "#FFF442", "분주군": "#FF3535", "고포군": "#B2FFDD", "곡천군": "#FF51C4", "인곡군": "#4cd2e2", "관수군": "#e49dfd", "운진군": "#bbff64", "두원군": "#e3ba3a", "마진시": "#ff99be", "덕주시": "#ff9ea9", "조전구": "#ff9ea9", "덕산구": "#ff9ea9", "하정시": "#ff3b72", "원안군": "#00aabb", "낙주시": "#bb0033"
+            };
+
+            let isColorSet = false;
+            const sortedRegions = Object.keys(regionColors).sort((a, b) => b.length - a.length);
+
+            for (let region of sortedRegions) {
+                if (hash.includes(region)) {
+                    document.documentElement.style.setProperty('--wiki-main', regionColors[region]);
+                    document.documentElement.style.setProperty('--wiki-table-header', regionColors[region]);
+                    isColorSet = true;
+                    break;
+                }
+            }
+            
+            if (!isColorSet) {
+                document.documentElement.style.setProperty('--wiki-main', '#7777AA');
+                document.documentElement.style.setProperty('--wiki-table-header', '#7777AA');
+            }
+            // ==========================================
+
             let fromAlias = null;
             if (queryPart) {
                 let params = new URLSearchParams(queryPart);
                 fromAlias = params.get('from');
             }
-
-            let folderPath = window.filePaths ? window.filePaths[hash] : undefined;
-            if (folderPath === undefined) { folderPath = "assets/"; } 
             
-            let fullPath = folderPath + hash + ".js"; // 이제 깨끗하게 assets/neugumma.js가 됨!
+            let folderPath = window.filePaths ? window.filePaths[hash] : undefined;
+            if (folderPath === undefined) { 
+                if (hash.includes('학교') || hash.includes('행정') || hash.includes('분주군')) {
+                    folderPath = "js/";
+                } else {
+                    folderPath = "assets/"; 
+                }
+            }            
+            let fullPath = folderPath + hash + ".js"; 
             let data = window.specificDB ? window.specificDB[hash] : null;
 
             if (!data) {
@@ -383,7 +462,6 @@ function loadTemplateByHash() {
                 <li><strong>종류:</strong> 동적 렌더링 스크립트 (자동 컨테이너 할당)</li>
             `;
 
-            // ★ SPA 뷰어 전용 파란 박스(넘어옴 배너) 렌더링
             const existingBanner = document.getElementById('wiki-redirect-banner');
             if (existingBanner) existingBanner.remove();
 
@@ -457,6 +535,29 @@ function loadTemplateByHash() {
                     script.textContent = scriptText;
                     script.className = 'dynamic-injected-script';
                     renderZone.appendChild(script);
+
+                    // ==========================================
+                    // ★ _pop 자동 실행 만능 코드 (노가다 방지용) ★
+                    // ==========================================
+                    if (hash.includes('_pop')) {
+                        let regionName = hash.replace('_pop', ''); 
+                        let containerId = regionName + '-pop-table-area';
+                        let funcName = 'render_' + regionName + '_PopTable';
+                        
+                        if (!document.getElementById(containerId)) {
+                            let popDiv = document.createElement('div');
+                            popDiv.id = containerId;
+                            popDiv.style.width = "100%";
+                            renderZone.appendChild(popDiv);
+                        }
+                        
+                        setTimeout(() => {
+                            if (typeof window[funcName] === 'function') {
+                                window[funcName](containerId);
+                            }
+                        }, 50);
+                    }
+                    // ==========================================
 
                     document.write = originalWrite;
                     document.writeln = originalWriteln;
