@@ -1,9 +1,11 @@
 /**
  * HyobinWiki JS Master Index (Auto-Generated & Fixed Aliases)
- * 업데이트: 2026. 09. 26. 오후 11:23:23
+ * 업데이트: 2026. 09. 27. 오후 12:39:53
  */
 
 window.filePaths = {
+    "05트리오": "js/",
+    "08즈": "js/",
     "10대_효빈시의원_목록": "assets/",
     "1960_1961_광역자치단체장": "js/",
     "CGV네비": "js/",

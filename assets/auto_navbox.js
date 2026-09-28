@@ -388,7 +388,7 @@ const navboxCSS = `
         <div class="wiki-navbox" style="border-color: #4AD898;">
             <div class="wiki-navbox-header" style="background-color: #4AD898;">
                 <div class="header-content">
-                    <img src="이미지/덕북로고.webp" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/svg/덕빈북도.svg" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">덕빈북도</div>
                         <div class="title-main">덕빈북도 관내 대로</div>
@@ -1087,7 +1087,7 @@ const navboxCSS = `
         <div class="wiki-navbox" style="border-color: #335566;">
             <div class="wiki-navbox-header" style="background-color: #335566;">
                 <div class="header-content">
-                    <img src="이미지/덕빈남도_로고.webp" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/svg/덕빈남도.svg" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">덕빈남도</div>
                         <div class="title-main">덕빈남도 관내 대로</div>

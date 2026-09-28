@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <summary style="background-color: #335566; color: white; padding: 0; font-weight: bold; cursor: pointer; text-align: center; list-style: none;">
                 <!-- 타이틀 영역 -->
                 <div style="padding: 14px; font-size: 1.3rem; display: flex; align-items: center; justify-content: center; gap: 12px;">
-                    <img onerror="this.style.display='none'" src="이미지/덕빈남도_로고.webp" style="max-height: 32px; width: auto;" alt="Logo"/>
+                    <img onerror="this.style.display='none'" src="이미지/svg/덕빈남도.svg" style="max-height: 32px; width: auto;" alt="Logo"/>
                     <span style="font-weight: 900; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">덕빈남도 버스 터미널</span>
                 </div>
                 <!-- 펼치기/접기 버튼 영역 -->

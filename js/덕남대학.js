@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function() {
         {
             category: '공립', catClass: 'public',
             groups: [
-                { char: 'ㄷ', schools: [mkLink('덕남도립대학', '덕빈남도_로고.webp')] }
+                { char: 'ㄷ', schools: [mkLink('덕남도립대학', 'svg/덕빈남도.svg')] }
             ]
         },
         {

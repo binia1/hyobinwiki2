@@ -690,7 +690,7 @@ window.updateRecommend = function() {
         
         imgEl.src = '이미지/' + imgFileName + '.webp';
         
-        // 3. 에러 시 대체 로고 (한국어 규칙 무시하고 hyobin1.webp 적용)
+        // 3. 에러 시 대체 로고 (한국어 규칙 무시하고 svg/효빈광역시.svg 적용)
         imgEl.onerror = function() { 
             this.onerror = null; // 무한루프 방지
             this.src = '이미지/hyobin1.webp'; 

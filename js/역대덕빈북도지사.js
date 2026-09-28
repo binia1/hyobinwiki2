@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <td class="db-nav-header" colspan="2">
                                 <div class="db-nav-header-flex">
                                     <a href="덕빈북도.html">
-                                        <img src="이미지/덕북로고.webp" alt="덕빈북도 휘장" class="db-nav-symbol" onerror="this.style.display='none'; this.parentElement.innerHTML=''">
+                                        <img src="이미지/svg/덕빈북도.svg" alt="덕빈북도 휘장" class="db-nav-symbol" onerror="this.style.display='none'; this.parentElement.innerHTML=''">
                                     </a>
                                     <a href="덕빈북도지사.html">역대 덕빈북도지사</a>
                                     <span class="db-toggle-btn" id="db-nav-toggle">[접기]</span>

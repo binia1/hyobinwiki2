@@ -360,7 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             <div class="s-sub-region">덕북권</div>
             <div class="s-city-bar bg-hyobin">
-                <img src="이미지/logo.webp" alt="효빈광역시"> 효빈광역시 소재 상급종합병원
+                <img src="이미지/hyobin1.webp" alt="효빈광역시"> 효빈광역시 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>
@@ -374,7 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </table>
 
             <div class="s-city-bar bg-deokbuk">
-                <img src="이미지/덕북로고.webp" alt="덕빈북도"> 덕빈북도 소재 상급종합병원
+                <img src="이미지/svg/덕빈북도.svg" alt="덕빈북도"> 덕빈북도 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>
@@ -385,7 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             <div class="s-sub-region">덕남권</div>
             <div class="s-city-bar bg-deoknam">
-                <img src="이미지/덕빈남도_로고.webp" alt="덕빈남도"> 덕빈남도 소재 상급종합병원
+                <img src="이미지/svg/덕빈남도.svg" alt="덕빈남도"> 덕빈남도 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>

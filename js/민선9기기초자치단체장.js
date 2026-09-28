@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <span class="nav-header-wrap" style="display:inline-flex; align-items:center; gap:8px; justify-content: center; width: 100%;">
                         <a class="wiki-link" href="효빈광역시.html" style="color:white;">
                             <!-- 로고 강제 흰색 처리(invert) 및 크기 35px로 확대 -->
-                            <img src="이미지/logo.webp" style="vertical-align: middle; display:block; width: 35px; filter: brightness(0) invert(1);" alt="로고"/>
+                            <img src="이미지/hyobin1.webp" style="vertical-align: middle; display:block; width: 35px; filter: brightness(0) invert(1);" alt="로고"/>
                         </a>
                         <a class="wiki-link" href="효빈광역시.html#s-자치단체장" style="color:white; font-weight: bold;">민선 9기 효빈광역시 기초자치단체장</a>
                     </span>

@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <details class="dn-company-container" open>
             <summary class="dn-company-summary">
                 <div class="dn-company-header">
-                    <img alt="덕빈남도 로고" onerror="this.style.display='none'" src="이미지/덕빈남도_로고.webp" style="max-height: 32px; width: auto; background: white; border-radius: 9999px; padding: 2px;"/>
+                    <img alt="덕빈남도 로고" onerror="this.style.display='none'" src="이미지/svg/덕빈남도.svg" style="max-height: 32px; width: auto; background: white; border-radius: 9999px; padding: 2px;"/>
                     <span style="font-weight: 900; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">덕빈남도 시내/농어촌버스 회사</span>
                 </div>
                 <div class="dn-company-toggle">[ 펼치기 · 접기 ]</div>

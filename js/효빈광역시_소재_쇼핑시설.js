@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="w-full mx-auto border-2 text-sm font-sans bg-white shadow-sm mb-4" style="border-color: #7777AA;">
             <!-- 상단 헤더 -->
             <div class="text-white p-2.5 flex justify-center items-center gap-3 border-b" style="background-color: #7777AA; border-bottom-color: #7777AA;">
-                <img src="이미지/logo.webp" alt="효빈광역시 로고" class="h-10 object-contain bg-transparent">
+                <img src="이미지/hyobin1.webp" alt="효빈광역시 로고" class="h-10 object-contain bg-transparent">
                 <div class="flex flex-col items-center justify-center text-center">
                     <span class="font-extrabold text-[17px] tracking-widest leading-tight drop-shadow-sm text-white">효빈광역시 소재 쇼핑시설</span>
                 </div>
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1.5">
-                            <img src="이미지/logo.webp" alt="기타" class="h-9 mx-auto object-contain opacity-50">
+                            <img src="이미지/hyobin1.webp" alt="기타" class="h-9 mx-auto object-contain opacity-50">
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300 leading-tight">기타 폐점<br>백화점</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1.5">
-                            <img src="이미지/logo.webp" alt="기타" class="h-9 mx-auto object-contain opacity-50">
+                            <img src="이미지/hyobin1.webp" alt="기타" class="h-9 mx-auto object-contain opacity-50">
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">기타</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -299,7 +299,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1.5">
-                            <img src="이미지/logo.webp" alt="기타몰" class="h-9 mx-auto object-contain opacity-50">
+                            <img src="이미지/hyobin1.webp" alt="기타몰" class="h-9 mx-auto object-contain opacity-50">
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300 leading-tight">기타 주요<br>복합쇼핑몰</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -313,7 +313,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1.5">
-                            <img src="이미지/logo.webp" alt="폐점몰" class="h-9 mx-auto object-contain opacity-50">
+                            <img src="이미지/hyobin1.webp" alt="폐점몰" class="h-9 mx-auto object-contain opacity-50">
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300 leading-tight">기타 폐점한<br>복합쇼핑몰</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -378,7 +378,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1.5">
-                            <img src="이미지/logo.webp" alt="기타" class="h-9 mx-auto object-contain opacity-50">
+                            <img src="이미지/hyobin1.webp" alt="기타" class="h-9 mx-auto object-contain opacity-50">
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">기타</th>
                         <td class="text-left py-1.5 px-3 leading-loose">
@@ -592,7 +592,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1.5">
-                            <img src="이미지/logo.webp" alt="기타 지하상가" class="h-9 mx-auto object-contain">
+                            <img src="이미지/hyobin1.webp" alt="기타 지하상가" class="h-9 mx-auto object-contain">
                         </td>
                         <th class="bg-[#7777AA] text-white py-1.5 font-bold border-r border-gray-300">기타 지하상가</th>
                         <td class="text-left py-1.5 px-3 leading-loose">

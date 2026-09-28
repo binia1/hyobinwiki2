@@ -111,11 +111,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <span style="font-weight: bold;">경상남도</span>
                                 </a>
                                 <a href="덕빈북도.html" style="text-decoration: none; color: #4AD898; display: flex; flex-direction: column; align-items: center;">
-                                    <img src="이미지/덕북로고.webp" style="height: 28px; margin-bottom: 8px;" onerror="this.style.display='none'">
+                                    <img src="이미지/svg/덕빈북도.svg" style="height: 28px; margin-bottom: 8px;" onerror="this.style.display='none'">
                                     <span style="font-weight: bold;">덕빈북도</span>
                                 </a>
                                 <a href="덕빈남도.html" style="text-decoration: none; color: #335566; display: flex; flex-direction: column; align-items: center;">
-                                    <img src="이미지/덕빈남도_로고.webp" style="height: 28px; margin-bottom: 8px;" onerror="this.style.display='none'">
+                                    <img src="이미지/svg/덕빈남도.svg" style="height: 28px; margin-bottom: 8px;" onerror="this.style.display='none'">
                                     <span style="font-weight: bold;">덕빈남도</span>
                                 </a>
                             </div>
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div style="border: 1px solid #4AD898; width: 100%; box-sizing: border-box; font-family: sans-serif; background: white; margin-bottom: 25px;">
         <div style="background: #4AD898; color: white; display: flex; align-items: center; justify-content: center; padding: 12px; border-bottom: 1px solid #4AD898;">
             <div style="display: flex; align-items: center; gap: 15px; border: 1px solid white; padding: 5px 20px;">
-                <img src="이미지/덕북로고.webp" style="height: 30px; filter: brightness(0) invert(1);" alt="덕북 로고">
+                <img src="이미지/svg/덕빈북도.svg" style="height: 30px; filter: brightness(0) invert(1);" alt="덕북 로고">
                 <div style="display: flex; flex-direction: column; line-height: 1.2; text-align: left;">
                     <span style="font-size: 13px; font-weight: bold;">덕빈북도</span>
                     <span style="font-size: 20px; font-weight: bold;">기초자치단체</span>

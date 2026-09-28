@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 9. 27. 오전 1:22:00
+ * 업데이트: 2026. 9. 28. 오후 10:38:14
  */
 
 window.HB_WIKI_PAGES = [
@@ -11561,10 +11561,6 @@ window.HB_WIKI_PAGES = [
     "href": "통근.html"
   },
   {
-    "title": "군사정권",
-    "href": "군사정권.html"
-  },
-  {
     "title": "환승",
     "href": "환승.html"
   },
@@ -12707,6 +12703,30 @@ window.HB_WIKI_PAGES = [
   {
     "title": "임세연",
     "href": "임세연.html"
+  },
+  {
+    "title": "거주지별_열람",
+    "href": "거주지별_열람.html"
+  },
+  {
+    "title": "효빈창전경찰서",
+    "href": "효빈창전경찰서.html"
+  },
+  {
+    "title": "효빈청엽경찰서",
+    "href": "효빈청엽경찰서.html"
+  },
+  {
+    "title": "엘린지역아동센터",
+    "href": "엘린지역아동센터.html"
+  },
+  {
+    "title": "먼지년",
+    "href": "먼지년.html"
+  },
+  {
+    "title": "경영15병신",
+    "href": "경영15병신.html"
   }
 ];
 
@@ -19545,7 +19565,6 @@ window.HB_WIKI_ALIASES = {
   "모다아울렛 고해점": "모다아울렛 고해점.html",
   "위성도시": "위성도시.html",
   "통근": "통근.html",
-  "군사정권": "군사정권.html",
   "환승": "환승.html",
   "통": "통.html",
   "통(행정구역)": "통(행정구역).html",
@@ -20043,5 +20062,11 @@ window.HB_WIKI_ALIASES = {
   "생일달력": "생일달력.html",
   "출생지별_열람": "출생지별_열람.html",
   "하루아": "하루아.html",
-  "임세연": "임세연.html"
+  "임세연": "임세연.html",
+  "거주지별_열람": "거주지별_열람.html",
+  "효빈창전경찰서": "효빈창전경찰서.html",
+  "효빈청엽경찰서": "효빈청엽경찰서.html",
+  "엘린지역아동센터": "엘린지역아동센터.html",
+  "먼지년": "먼지년.html",
+  "경영15병신": "경영15병신.html"
 };

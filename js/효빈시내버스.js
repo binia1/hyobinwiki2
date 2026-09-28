@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="bus-nav-wrapper">
                 <div class="bus-nav-header" id="bus-nav-header-btn">
                     <div class="bus-nav-title">
-                        <img alt="효빈광역시 로고" src="이미지/효빈로고흰색.webp" class="bus-nav-logo" onerror="this.src='이미지/logo.webp';">
+                        <img alt="효빈광역시 로고" src="이미지/효빈로고흰색.webp" class="bus-nav-logo" onerror="this.src='이미지/hyobin1.webp';">
                         <span>효빈광역시 시내버스 회사</span>
                     </div>
                     <span class="bus-nav-toggle" id="bus-nav-toggle-text">[ 접기 ]</span>

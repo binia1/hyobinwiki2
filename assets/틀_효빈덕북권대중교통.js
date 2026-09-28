@@ -16,7 +16,7 @@
                             <!-- 효빈광역시 (이미지 로고 포함) -->
                             <td style="font-weight:bold; border: 1px solid #000; width: 30%; background-color:#F9F9F9; text-align: center; padding: 6px;">
                                 <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-                                    <img src="이미지/logo.webp" alt="효빈광역시" style="height:20px; object-fit:contain;" onerror="this.style.display='none'">
+                                    <img src="이미지/hyobin1.webp" alt="효빈광역시" style="height:20px; object-fit:contain;" onerror="this.style.display='none'">
                                     <a href="효빈광역시.html" style="color: #0055AA; text-decoration: none; font-weight: bold;">효빈광역시</a>
                                 </div>
                             </td>
@@ -24,7 +24,7 @@
                             <!-- 덕빈북도 (이미지 로고 포함) -->
                             <td style="font-weight:bold; border: 1px solid #000; width: 30%; background-color:#F9F9F9; text-align: center; padding: 6px;">
                                 <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-                                    <img src="이미지/덕북로고.webp" alt="덕빈북도" style="height:20px; object-fit:contain;" onerror="this.style.display='none'">
+                                    <img src="이미지/svg/덕빈북도.svg" alt="덕빈북도" style="height:20px; object-fit:contain;" onerror="this.style.display='none'">
                                     <a href="덕빈북도.html" style="color: #0055AA; text-decoration: none; font-weight: bold;">덕빈북도</a>
                                 </div>
                             </td>
@@ -32,7 +32,7 @@
                             <!-- 덕빈남도 (이미지 로고 포함) -->
                             <td style="font-weight:bold; border: 1px solid #000; width: 30%; background-color:#F9F9F9; text-align: center; padding: 6px;">
                                 <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-                                    <img src="이미지/덕빈남도_로고.webp" alt="덕빈남도" style="height:20px; object-fit:contain;" onerror="this.style.display='none'">
+                                    <img src="이미지/svg/덕빈남도.svg" alt="덕빈남도" style="height:20px; object-fit:contain;" onerror="this.style.display='none'">
                                     <a href="덕빈남도.html" style="color: #0055AA; text-decoration: none; font-weight: bold;">덕빈남도</a>
                                 </div>
                             </td>

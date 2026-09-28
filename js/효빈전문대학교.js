@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     schools: [
                         mkLink('해총대학교', '해총대학교_UI.webp'), 
                         mkLink('효빈과학대학교', '효빈과학대학교_UI.webp'),
-                        mkLink('효빈보건대학교', '효빈보건대학교_UI.webp'),
+                        mkLink('효빈보건대학교', 'svg/효빈보건대학교.svg'),
                         mkLink('효빈예술대학교', '효빈예술대학교_UI.webp')
                     ] 
                 }

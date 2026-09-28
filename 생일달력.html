@@ -77,13 +77,11 @@
             <span class="text-gray-600">생일 달력 및 연도별 목록</span>
         </div>
 
-        <!-- 탭 메뉴 (달력 보기 / 연도별 목록 보기) -->
         <div class="tab-menu">
             <div class="tab-btn active" id="btn-tab-cal" onclick="switchTab('cal')">📅 월별 달력 보기</div>
             <div class="tab-btn" id="btn-tab-year" onclick="switchTab('year')">📋 연도별 출생자 목록</div>
         </div>
 
-        <!-- 1. 달력 뷰 영역 -->
         <div id="view-cal" class="calendar-container shadow-sm">
             <div class="cal-header">
                 <div style="font-size: 1.2rem; font-weight: bold;" id="cal-title">생일 달력</div>
@@ -105,7 +103,6 @@
             </div>
         </div>
 
-        <!-- 2. 연도별 목록 뷰 영역 -->
         <div id="view-year" class="calendar-container shadow-sm" style="display: none;">
             <div class="cal-header">
                 <div style="font-size: 1.2rem; font-weight: bold;">연도별 출생자 아카이브</div>
@@ -121,6 +118,7 @@
         <div id="footer-container"></div>
     </div>
 
+    <!-- 파이썬이 생성한 생일 데이터 파일 로드 -->
     <script src="js/birthday_data.js"></script>
     <script src="assets/wiki_index.js"></script>
     <script src="assets/hb_data_map.js"></script>
@@ -140,22 +138,24 @@
             }
         };
 
-        // 데이터 가공: 캐릭터별 출생 연도 매핑 및 생일 매핑 구축
+        // 데이터 가공 맵
         let characterYears = {};
         let characterBirthDates = {};
 
         function initData() {
-            if (!window.birthdayDB) return;
-            for (let key in window.birthdayDB) {
-                if (key.includes('년 출생')) {
-                    let year = key.replace('년 출생', '').trim();
-                    window.birthdayDB[key].forEach(name => {
-                        characterYears[name] = year;
+            // 🚨 파이썬이 만든 변수명 'birthdayData'와 'birthYearData'를 사용하도록 수정
+            if (typeof birthYearData !== 'undefined') {
+                for (let yearKey in birthYearData) {
+                    let cleanYear = yearKey.replace('년', '').trim();
+                    birthYearData[yearKey].forEach(name => {
+                        characterYears[name] = cleanYear;
                     });
-                } else if (key.includes('월 ') && key.includes('출생')) {
-                    let dateStr = key.replace(' 출생', '').trim();
-                    window.birthdayDB[key].forEach(name => {
-                        characterBirthDates[name] = dateStr;
+                }
+            }
+            if (typeof birthdayData !== 'undefined') {
+                for (let dateKey in birthdayData) {
+                    birthdayData[dateKey].forEach(name => {
+                        characterBirthDates[name] = dateKey;
                     });
                 }
             }
@@ -182,10 +182,9 @@
                 grid.appendChild(dHeader);
             });
 
-// 수정된 코드: 2월인 경우 윤년 여부와 상관없이 29일생 캐릭터를 위해 항상 29일까지 표시
             let daysInMonth = new Date(2026, month, 0).getDate();
             if (parseInt(month) === 2) {
-                daysInMonth = 29;
+                daysInMonth = 29; // 2월은 항상 29일까지 표시 (윤년생일 대응)
             }
             
             let firstDayIndex = new Date(2026, month - 1, 1).getDay();
@@ -200,8 +199,9 @@
                 let cell = document.createElement('div');
                 cell.className = 'cal-cell';
                 
-                let dateKey = `${month}월 ${day}일 출생`;
-                let characters = window.birthdayDB ? (window.birthdayDB[dateKey] || []) : [];
+                // 🚨 검색 규칙 수정: "5월 15일" 형태로 찾기
+                let dateKey = `${month}월 ${day}일`;
+                let characters = typeof birthdayData !== 'undefined' ? (birthdayData[dateKey] || []) : [];
 
                 let dayNumDiv = document.createElement('div');
                 dayNumDiv.style.fontWeight = "bold";
@@ -219,7 +219,7 @@
                     cell.onclick = () => showDetails(month, day, characters);
                 } else {
                     cell.onclick = () => {
-                        document.getElementById('detail-content').innerHTML = `<strong>${month}월 ${day}일</strong>생일인 인물이 없습니다.`;
+                        document.getElementById('detail-content').innerHTML = `<strong>${month}월 ${day}일</strong> 생일인 인물이 없습니다.`;
                     };
                 }
 
@@ -231,7 +231,7 @@
 
         function showDetails(month, day, characters) {
             let html = `<strong>${month}월 ${day}일생 (${characters.length}명):</strong><br><div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">`;
-            characters.forEach(name => {
+            characters.sort().forEach(name => {
                 let year = characterYears[name] ? ` (${characterYears[name]}년생)` : '';
                 html += `<a href="${name}.html" class="wiki-link" style="background: white; padding: 4px 10px; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">${name}${year}</a>`;
             });
@@ -242,14 +242,15 @@
         function renderYearList() {
             initData();
             let years = [];
-            for (let key in window.birthdayDB) {
-                if (key.includes('년 출생')) {
-                    years.push(key.replace('년 출생', '').trim());
+            
+            // 🚨 연도 데이터 변수 읽기
+            if (typeof birthYearData !== 'undefined') {
+                for (let key in birthYearData) {
+                    years.push(key.replace('년', '').trim());
                 }
             }
             years.sort((a, b) => parseInt(a) - parseInt(b));
 
-            // 셀렉트 박스 채우기
             let select = document.getElementById('year-filter');
             let currentSelected = select.value;
             select.innerHTML = '<option value="ALL">전체 연도 보기</option>';
@@ -265,8 +266,8 @@
             let targetYears = filterYear === 'ALL' ? years : [filterYear];
 
             targetYears.forEach(y => {
-                let catKey = `${y}년 출생`;
-                let chars = window.birthdayDB[catKey] || [];
+                let catKey = `${y}년`;
+                let chars = birthYearData ? (birthYearData[catKey] || []) : [];
                 if (chars.length === 0) return;
 
                 html += `<div class="year-card">

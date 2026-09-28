@@ -142,7 +142,7 @@
 </td>
 <td class="border border-gray-300 p-2 align-middle">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/효빈글로벌도시재단_로고.webp"/>
+<img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/hyobin1.webp"/>
 <a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈글로벌도시재단.html">효빈글로벌도시재단</a>
 </div>
 </td>

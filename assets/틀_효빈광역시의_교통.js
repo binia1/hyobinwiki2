@@ -131,7 +131,7 @@ document.write(`
         <tr>
             <td colspan="3" class="transport-header">
                 <div style="display:flex; align-items:center; justify-content:center; gap:8px;">
-                    <a href="효빈광역시.html" style="display: inline-flex;"><img src="이미지/logo.webp" style="width: 24px !important; height: auto !important; display: inline-block !important; vertical-align:middle; filter: brightness(0) invert(1);" onerror="this.src='https://placehold.co/24x24/7777aa/white?text=H'"></a>
+                    <a href="효빈광역시.html" style="display: inline-flex;"><img src="이미지/hyobin1.webp" style="width: 24px !important; height: auto !important; display: inline-block !important; vertical-align:middle; filter: brightness(0) invert(1);" onerror="this.src='https://placehold.co/24x24/7777aa/white?text=H'"></a>
                     <div style="line-height:1.1; text-align:left;">
                         <span style="font-size:0.75em; opacity:0.9;"><a href="효빈광역시.html" style="color:inherit; text-decoration:none;">효빈광역시</a></span><br>
                         <span style="font-size:1.15em; font-weight:bold;"><a href="효빈광역시_교통.html" style="color:inherit; text-decoration:none;">교통</a></span>

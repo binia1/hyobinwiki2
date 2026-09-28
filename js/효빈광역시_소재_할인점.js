@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="w-full mx-auto border-2 text-sm font-sans bg-white shadow-sm mb-4" style="border-color: #7777AA !important;">
             <!-- 상단 헤더 -->
             <div class="p-2.5 flex justify-center items-center gap-3 border-b" style="background-color: #7777AA !important; border-bottom-color: #7777AA !important;">
-                <img src="이미지/logo.webp" alt="효빈광역시 로고" class="h-8 object-contain bg-transparent" onerror="this.style.display='none'">
+                <img src="이미지/hyobin1.webp" alt="효빈광역시 로고" class="h-8 object-contain bg-transparent" onerror="this.style.display='none'">
                 <div class="flex flex-col items-center justify-center text-center">
                     <span class="font-bold text-[13px] tracking-wide text-white opacity-90">효빈광역시 소재</span>
                     <span class="font-extrabold text-[17px] tracking-widest leading-tight drop-shadow-sm text-white">대형 할인점</span>
@@ -299,7 +299,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                     <tr class="border-b border-gray-200">
                         <td class="bg-white border-r border-gray-300 align-middle p-1">
-                            <img src="이미지/logo.webp" alt="기타 브랜드" class="max-h-5 mx-auto object-contain opacity-50" onerror="this.style.display='none'">
+                            <img src="이미지/hyobin1.webp" alt="기타 브랜드" class="max-h-5 mx-auto object-contain opacity-50" onerror="this.style.display='none'">
                         </td>
                         <th class="py-1.5 font-bold border-r border-gray-300" style="background-color: #808080 !important; color: #ffffff !important;">우성유통</th>
                         <td class="text-left py-1.5 px-3 leading-loose">

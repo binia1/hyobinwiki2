@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="nav-header tracking-wide" style="background-color: #335566; color: white; text-align: center; font-weight: bold; padding: 8px; font-size: 1.05rem;">
 
                 <span style="display:inline-flex; align-items:center; gap:6px;">
-                    <img src="이미지/덕빈남도_로고.webp" alt="덕빈남도 로고" style="height: 40px !important; width: auto; vertical-align: middle; filter: brightness(0) invert(1);">
+                    <img src="이미지/svg/덕빈남도.svg" alt="덕빈남도 로고" style="height: 40px !important; width: auto; vertical-align: middle; filter: brightness(0) invert(1);">
                     <a href="덕빈남도.html" style="color:white; text-decoration: none;">덕빈남도 민선 9기 기초자치단체장</a>
                 </span>
             </div>

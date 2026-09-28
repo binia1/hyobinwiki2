@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="nav-header tracking-wide" style="background-color: #7777aa; color: white; text-align: center; font-weight: bold; padding: 8px; font-size: 1.05rem;">
 
                 <span style="display:inline-flex; align-items:center; gap:6px;">
-                    <img src="이미지/logo.webp" alt="효빈광역시 로고" style="height: 40px !important; width: auto; vertical-align: middle; filter: brightness(0) invert(1);">
+                    <img src="이미지/hyobin1.webp" alt="효빈광역시 로고" style="height: 40px !important; width: auto; vertical-align: middle; filter: brightness(0) invert(1);">
                     <a href="효빈광역시.html" style="color:white; text-decoration: none;">효빈광역시 민선 7기 기초자치단체장</a>
                 </span>
             </div>

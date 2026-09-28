@@ -124,10 +124,7 @@ function render_가원구_PopTable(containerId) {
                     <div style="position: absolute; top: 0; left: 0; height: 100%; width: 4.1%; background-color: #4AD898;"></div>
                     <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; color: #fff; font-size: 0.9em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">서원동 4,142명</div>
                 </div>
-                <div style="position: relative; height: 32px; border-bottom: 1px solid #fff; background-color: #888888;">
-                    <div style="position: absolute; top: 0; left: 0; height: 100%; width: 3.0%; background-color: #4AD898;"></div>
-                    <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; color: #fff; font-size: 0.9em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">중앙동 3,027명</div>
-                </div>
+
                 <div style="position: relative; height: 32px; border-bottom: 1px solid #fff; background-color: #888888;">
                     <div style="position: absolute; top: 0; left: 0; height: 100%; width: 2.3%; background-color: #4AD898;"></div>
                     <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; color: #fff; font-size: 0.9em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">현권면 2,258명</div>
@@ -157,7 +154,7 @@ function render_가원구_PopTable(containerId) {
                         <td style="padding: 8px; border: 1px solid #ccc;">덕빈북도</td>
                         <td style="padding: 8px; border: 1px solid #ccc;">빈주시 가원구</td>
                         <td style="padding: 8px; border: 1px solid #ccc;">-</td>
-                        <td style="padding: 8px; border: 1px solid #ccc; color: #d6001c;">305,312</td>
+                        <td style="padding: 8px; border: 1px solid #ccc; color: #d6001c;">302,285</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px; border: 1px solid #ccc;">덕빈북도</td>
@@ -243,12 +240,7 @@ function render_가원구_PopTable(containerId) {
                         <td style="padding: 8px; border: 1px solid #ccc;">서원동</td>
                         <td style="padding: 8px; border: 1px solid #ccc;">4,142</td>
                     </tr>
-                    <tr>
-                        <td style="padding: 8px; border: 1px solid #ccc;">덕빈북도</td>
-                        <td style="padding: 8px; border: 1px solid #ccc;">빈주시 가원구</td>
-                        <td style="padding: 8px; border: 1px solid #ccc;">중앙동</td>
-                        <td style="padding: 8px; border: 1px solid #ccc;">3,027</td>
-                    </tr>
+
                     <tr>
                         <td style="padding: 8px; border: 1px solid #ccc;">덕빈북도</td>
                         <td style="padding: 8px; border: 1px solid #ccc;">빈주시 가원구</td>

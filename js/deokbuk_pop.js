@@ -133,7 +133,7 @@ function renderDeokbukPopTable(containerId) {
         <div style="margin: 30px auto; border: 2px solid #4AD898; border-radius: 4px; background-color: #fff; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <div style="background-color: #4AD898; color: white; padding: 12px; text-align: center; font-weight: bold; font-size: 1.1em; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <div style="width: 20px; height: 20px; background: white; border-radius: 2px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                    <img src="이미지/덕북로고.webp" alt="로고" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.style.display='none'">
+                    <img src="이미지/svg/덕빈북도.svg" alt="로고" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.style.display='none'">
                 </div>
                 덕빈북도 기초자치단체 인구 통계
             </div>

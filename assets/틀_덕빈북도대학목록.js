@@ -40,7 +40,7 @@
 <tr>
 <th colspan="2">
 <div class="hb-univ-header-content">
-<img alt="덕빈북도" class="hb-univ-logo" onerror="this.style.display='none'" src="이미지/덕북로고.webp">
+<img alt="덕빈북도" class="hb-univ-logo" onerror="this.style.display='none'" src="이미지/svg/덕빈북도.svg">
 <span class="hb-univ-title">덕빈북도의 대학 목록</span>
 <span class="hb-toggle-btn" id="hb-univ-toggle" onclick="toggleDeokbinTable()">[접기]</span>
 </div>

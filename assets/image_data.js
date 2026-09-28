@@ -1443,7 +1443,7 @@ const imageFiles = [
         "category": "logo"
     },
     {
-        "file": "hyobin1.webp",
+        "file": "svg/효빈광역시.svg",
         "category": "etc"
     },
     {
@@ -4611,7 +4611,7 @@ const imageFiles = [
         "category": "facility_gov"
     },
     {
-        "file": "덕북로고.webp",
+        "file": "svg/덕빈북도.svg",
         "category": "logo"
     },
     {
@@ -4639,7 +4639,7 @@ const imageFiles = [
         "category": "logo"
     },
     {
-        "file": "덕빈남도_로고.webp",
+        "file": "svg/덕빈남도.svg",
         "category": "logo"
     },
     {
@@ -7295,7 +7295,7 @@ const imageFiles = [
         "category": "person"
     },
     {
-        "file": "부산광역시장_전재수.webp",
+        "file": "전재수.webp",
         "category": "facility_com"
     },
     {
@@ -12707,7 +12707,7 @@ const imageFiles = [
         "category": "merch"
     },
     {
-        "file": "임세하네소베리.webp",
+        "file": "임세하_네소베리.webp",
         "category": "merch"
     },
     {
@@ -13119,7 +13119,7 @@ const imageFiles = [
         "category": "person"
     },
     {
-        "file": "전노아네소베리.webp",
+        "file": "전노아_네소베리.webp",
         "category": "merch"
     },
     {

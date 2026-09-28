@@ -48,7 +48,7 @@
 <tr>
 <th colspan="2">
 <div class="hbn-univ-header-content">
-<img alt="덕빈남도 로고" class="hbn-univ-logo" onerror="this.outerHTML='<span style=\\'font-size:1.5rem;\\'>🏙️</span>'" src="이미지/덕빈남도_로고.webp">
+<img alt="덕빈남도 로고" class="hbn-univ-logo" onerror="this.outerHTML='<span style=\\'font-size:1.5rem;\\'>🏙️</span>'" src="이미지/svg/덕빈남도.svg">
 <span class="hbn-univ-title">덕빈남도의 대학 목록</span>
 <span class="hbn-toggle-btn" id="hbn-univ-toggle" onclick="toggleDeokbinnamTable()">[접기]</span>
 </div>

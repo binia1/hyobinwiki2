@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <thead>
 <tr>
 <td class="history-nav-header" colspan="5">
-<img alt="로고" onerror="this.style.display='none'" src="이미지/덕북로고.webp"/> 역대 덕빈북도 천주시장
+<img alt="로고" onerror="this.style.display='none'" src="이미지/svg/덕빈북도.svg"/> 역대 덕빈북도 천주시장
                     </td>
 </tr>
 <tr>

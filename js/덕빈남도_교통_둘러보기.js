@@ -118,7 +118,7 @@ document.write(`
         <tr>
             <td colspan="3" class="transport-header-deoknam">
                 <div style="display:flex; align-items:center; justify-content:center; gap:8px;">
-                    <a href="덕빈남도.html" style="display: inline-flex;"><img src="이미지/덕빈남도_로고.webp" style="width: 24px !important; height: auto !important; display: inline-block !important; vertical-align:middle; filter: brightness(0) invert(1);" onerror="this.src='https://placehold.co/24x24/335566/white?text=D'"></a>
+                    <a href="덕빈남도.html" style="display: inline-flex;"><img src="이미지/svg/덕빈남도.svg" style="width: 24px !important; height: auto !important; display: inline-block !important; vertical-align:middle; filter: brightness(0) invert(1);" onerror="this.src='https://placehold.co/24x24/335566/white?text=D'"></a>
                     <div style="line-height:1.1; text-align:left;">
                         <span style="font-size:0.75em; opacity:0.9;"><a href="덕빈남도.html" style="color:inherit; text-decoration:none;">덕빈남도</a></span><br>
                         <span style="font-size:1.15em; font-weight:bold;"><a href="덕빈남도_교통.html" style="color:inherit; text-decoration:none;">교통망</a></span>

@@ -9,7 +9,7 @@ function render_빈성구_PopTable(containerId) {
         
         <!-- 원본 HTML 내용 그대로 유지 (방천군, 합산 차트 등 손실 없음) -->
         <h3 id="s-4-4">4.4. 인구</h3>
-<p>2025년 기준 <strong>199,816명</strong>이며, 구도심 공동화 현상으로 인해 평균 연령이 높은 편이다.</p>
+<p>2025년 기준 <strong>203,027명</strong>이며, 구도심 공동화 현상으로 인해 평균 연령이 높은 편이다.</p>
 <div id="pop-chart-빈성구" style="margin: 20px auto; max-width: 480px; border: 2px solid #FF9800; border-radius: 4px; font-family: 'Noto Sans KR', sans-serif; background-color: #fff; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
 <div style="padding: 15px 10px; border-bottom: 1px solid #FF9800; text-align: center; background-color: #fff;">
 <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
@@ -54,7 +54,7 @@ function render_빈성구_PopTable(containerId) {
 <div style="position: relative; height: 36px; border-bottom: 1px solid #fff; background-color: #888888;">
 <div style="position: absolute; top: 0; left: 0; height: 100%; width: 40.0%; background-color: #FF9800; z-index: 1;"></div>
 <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; z-index: 2; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.6), -1px -1px 2px rgba(0,0,0,0.6); font-size: 0.9em; font-weight: bold;">
-                2025년 199,816명
+                2025년 203,027명
             </div>
 </div>
 </div>
@@ -107,6 +107,10 @@ function render_빈성구_PopTable(containerId) {
                     <div style="position: absolute; top: 0; left: 0; height: 100%; width: 8.6%; background-color: #4AD898;"></div>
                     <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; color: #fff; font-size: 0.9em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">시능동 8,643명</div>
                 </div>
+                                <div style="position: relative; height: 32px; border-bottom: 1px solid #fff; background-color: #888888;">
+                    <div style="position: absolute; top: 0; left: 0; height: 100%; width: 3.0%; background-color: #4AD898;"></div>
+                    <div style="position: absolute; top: 0; left: 10px; height: 100%; display: flex; align-items: center; color: #fff; font-size: 0.9em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">중앙동 3,027명</div>
+                </div>
             </div>
             <div style="padding: 10px; font-size: 0.75em; color: #666; background-color: #f9f9f9; text-align: center; border-top: 1px solid #ddd;">
                 2026년 4월 기준, 그래프 최대 값은 100,000명
@@ -128,7 +132,7 @@ function render_빈성구_PopTable(containerId) {
                         <td style="padding: 8px; border: 1px solid #ccc;">덕빈북도</td>
                         <td style="padding: 8px; border: 1px solid #ccc;">빈주시 빈성구</td>
                         <td style="padding: 8px; border: 1px solid #ccc;">-</td>
-                        <td style="padding: 8px; border: 1px solid #ccc; color: #d6001c;">197,861</td>
+                        <td style="padding: 8px; border: 1px solid #ccc; color: #d6001c;">200,888</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px; border: 1px solid #ccc;">덕빈북도</td>
@@ -183,6 +187,12 @@ function render_빈성구_PopTable(containerId) {
                         <td style="padding: 8px; border: 1px solid #ccc;">빈주시 빈성구</td>
                         <td style="padding: 8px; border: 1px solid #ccc;">시능동</td>
                         <td style="padding: 8px; border: 1px solid #ccc;">8,643</td>
+                    </tr>
+                                        <tr>
+                        <td style="padding: 8px; border: 1px solid #ccc;">덕빈북도</td>
+                        <td style="padding: 8px; border: 1px solid #ccc;">빈주시 빈성구</td>
+                        <td style="padding: 8px; border: 1px solid #ccc;">중앙동</td>
+                        <td style="padding: 8px; border: 1px solid #ccc;">3,027</td>
                     </tr>
                 </tbody>
             </table>

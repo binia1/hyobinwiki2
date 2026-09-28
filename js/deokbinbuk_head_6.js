@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="nav-box shadow-sm" style="border: 1px solid #aaa; margin-bottom: 30px; background-color: #fff; font-family: 'Noto Sans KR', sans-serif;">
             <div class="nav-header tracking-wide" style="background-color: #4AD898; color: white; text-align: center; font-weight: bold; padding: 8px; font-size: 1.05rem;">
                 <span style="display:inline-flex; align-items:center; gap:6px;">
-<img src="이미지/덕북로고.webp" alt="덕빈북도 로고" style="height: 40px !important; width: auto; vertical-align: middle; filter: brightness(0) invert(1);">
+<img src="이미지/svg/덕빈북도.svg" alt="덕빈북도 로고" style="height: 40px !important; width: auto; vertical-align: middle; filter: brightness(0) invert(1);">
                     <a href="덕빈북도.html" style="color:white; text-decoration: none;">덕빈북도 민선 6기 기초자치단체장</a>
                 </span>
             </div>

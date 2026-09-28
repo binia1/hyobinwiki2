@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         <td colspan="3" class="db-header-title">
                             <div class="db-header-content">
                                 <!-- 덕빈북도 로고가 있다면 추가 가능, 없으면 텍스트만 유지 -->
-                                <img src="이미지/덕북로고.webp" class="db-header-logo" alt="덕빈북도 로고" style="height: 20px; width: auto; filter: brightness(0) invert(1);" onerror="this.style.display='none'">
+                                <img src="이미지/svg/덕빈북도.svg" class="db-header-logo" alt="덕빈북도 로고" style="height: 20px; width: auto; filter: brightness(0) invert(1);" onerror="this.style.display='none'">
                                 덕빈북도의 대학교
                             </div>
                         </td>

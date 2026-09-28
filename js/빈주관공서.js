@@ -32,7 +32,7 @@
 <th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle">지방자치</th>
 <td class="border border-gray-300 p-2 align-middle bg-[#f0f4f8]" colspan="2">
 <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5">
-<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" src="이미지/덕북로고.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕빈북도청.html">덕빈북도청</a></div>
+<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" src="이미지/svg/덕빈북도.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕빈북도청.html">덕빈북도청</a></div>
 <div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" src="이미지/svg/의회_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕빈북도의회.html">덕빈북도의회</a></div>
 </div>
 </td>

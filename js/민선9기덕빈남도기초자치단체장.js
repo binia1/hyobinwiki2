@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <span class="nav-header-wrap" style="display:inline-flex; align-items:center; gap:8px; justify-content: center; width: 100%;">
                         <a href="덕빈남도.html" class="wiki-link" style="color:white;">
                             <!-- 로고 강제 흰색 처리(invert) 및 크기 35px로 확대 -->
-                            <img src="이미지/덕빈남도_로고.webp" style="vertical-align: middle; display:block; width: 35px; filter: brightness(0) invert(1);" alt="덕빈남도 로고">
+                            <img src="이미지/svg/덕빈남도.svg" style="vertical-align: middle; display:block; width: 35px; filter: brightness(0) invert(1);" alt="덕빈남도 로고">
                         </a>
                         <a href="덕빈남도.html#s-자치단체장" class="wiki-link" style="color:white; font-weight: bold;">민선 9기 덕빈남도 기초자치단체장</a>
                     </span>

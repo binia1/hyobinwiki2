@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
         
         <!-- 로고 영역 -->
         <div style="padding: 10px; display: flex; justify-content: center; align-items: center;">
-            <img src="이미지/세이브존.webp" alt="세이브존" style="height: 24px; object-fit: contain;" 
+            <img src="이미지/svg/세이브존_로고.svg" alt="세이브존" style="height: 24px; object-fit: contain;" 
                  onerror="this.outerHTML='<span style=\\'color:#1A237E; font-weight:900; font-size:1.2rem; font-style:italic;\\'>SZ <span style=\\'color:#FF6600;\\'>SAVE ZONE</span></span>'">
         </div>
         

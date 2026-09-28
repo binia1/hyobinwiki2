@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <thead>
 <tr>
 <td class="history-nav-header-maesan" colspan="5">
-<img alt="로고" onerror="this.style.display='none'" src="이미지/덕빈남도_로고.webp"/> 덕빈남도 매산군수
+<img alt="로고" onerror="this.style.display='none'" src="이미지/svg/덕빈남도.svg"/> 덕빈남도 매산군수
                     </td>
 </tr>
 <tr>
