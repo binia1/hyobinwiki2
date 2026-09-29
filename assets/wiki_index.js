@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 9. 28. 오후 10:38:14
+ * 업데이트: 2026. 9. 30. 오전 12:44:47
  */
 
 window.HB_WIKI_PAGES = [
@@ -12727,6 +12727,18 @@ window.HB_WIKI_PAGES = [
   {
     "title": "경영15병신",
     "href": "경영15병신.html"
+  },
+  {
+    "title": "천사도(섬)",
+    "href": "천사도(섬).html"
+  },
+  {
+    "title": "포상도",
+    "href": "포상도.html"
+  },
+  {
+    "title": "휴소도",
+    "href": "휴소도.html"
   }
 ];
 
@@ -20069,16 +20081,17 @@ window.HB_WIKI_ALIASES = {
   "엘린지역아동센터": "엘린지역아동센터.html",
   "먼지년": "먼지년.html",
   "경영15병신": "경영15병신.html",
-    "binju-rail-nav": "틀_뷰어_SPA.html#binju-rail-nav",
-    "korea-rail-nav": "틀_뷰어_SPA.html#korea-rail-nav",
-    "child_center_nav": "틀_뷰어_SPA.html#child_center_nav",
-    "assembly-floor-comp": "틀_뷰어_SPA.html#assembly-floor-comp",
-    "binhyo-rail-nav": "틀_뷰어_SPA.html#binhyo-rail-nav",
-    "binju-rail-nav": "틀_뷰어_SPA.html#binju-rail-nav",
-    "deokbin-floor-comp": "틀_뷰어_SPA.html#deokbin-floor-comp",
-    "deoknam-floor-comp": "틀_뷰어_SPA.html#deoknam-floor-comp",
-    "hyobin-floor-comp": "틀_뷰어_SPA.html#hyobin-floor-comp",
-    "korea-council-nav": "틀_뷰어_SPA.html#korea-council-nav",
-    "korea-rail-nav": "틀_뷰어_SPA.html#korea-rail-nav",
-    "line3-nav": "틀_뷰어_SPA.html#line3-nav",
+  "binju-rail-nav": "틀_뷰어_SPA.html#binju-rail-nav",
+  "korea-rail-nav": "틀_뷰어_SPA.html#korea-rail-nav",
+  "child_center_nav": "틀_뷰어_SPA.html#child_center_nav",
+  "assembly-floor-comp": "틀_뷰어_SPA.html#assembly-floor-comp",
+  "binhyo-rail-nav": "틀_뷰어_SPA.html#binhyo-rail-nav",
+  "deokbin-floor-comp": "틀_뷰어_SPA.html#deokbin-floor-comp",
+  "deoknam-floor-comp": "틀_뷰어_SPA.html#deoknam-floor-comp",
+  "hyobin-floor-comp": "틀_뷰어_SPA.html#hyobin-floor-comp",
+  "korea-council-nav": "틀_뷰어_SPA.html#korea-council-nav",
+  "line3-nav": "틀_뷰어_SPA.html#line3-nav",
+  "천사도(섬)": "천사도(섬).html",
+  "포상도": "포상도.html",
+  "휴소도": "휴소도.html"
 };
