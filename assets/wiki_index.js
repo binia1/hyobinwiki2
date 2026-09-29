@@ -20068,5 +20068,17 @@ window.HB_WIKI_ALIASES = {
   "효빈청엽경찰서": "효빈청엽경찰서.html",
   "엘린지역아동센터": "엘린지역아동센터.html",
   "먼지년": "먼지년.html",
-  "경영15병신": "경영15병신.html"
+  "경영15병신": "경영15병신.html",
+    "binju-rail-nav": "틀_뷰어_SPA.html#binju-rail-nav",
+    "korea-rail-nav": "틀_뷰어_SPA.html#korea-rail-nav",
+    "child_center_nav": "틀_뷰어_SPA.html#child_center_nav",
+    "assembly-floor-comp": "틀_뷰어_SPA.html#assembly-floor-comp",
+    "binhyo-rail-nav": "틀_뷰어_SPA.html#binhyo-rail-nav",
+    "binju-rail-nav": "틀_뷰어_SPA.html#binju-rail-nav",
+    "deokbin-floor-comp": "틀_뷰어_SPA.html#deokbin-floor-comp",
+    "deoknam-floor-comp": "틀_뷰어_SPA.html#deoknam-floor-comp",
+    "hyobin-floor-comp": "틀_뷰어_SPA.html#hyobin-floor-comp",
+    "korea-council-nav": "틀_뷰어_SPA.html#korea-council-nav",
+    "korea-rail-nav": "틀_뷰어_SPA.html#korea-rail-nav",
+    "line3-nav": "틀_뷰어_SPA.html#line3-nav",
 };

@@ -1,6 +1,6 @@
 /**
  * HyobinWiki JS Master Index (Auto-Generated & Fixed Aliases)
- * 업데이트: 2026. 09. 27. 오후 12:39:53
+ * 업데이트: 2026. 09. 29. 오후 04:55:00
  */
 
 window.filePaths = {
@@ -14,6 +14,7 @@ window.filePaths = {
     "ad_logic": "assets/",
     "ancheon_pop": "js/",
     "app": "assets/",
+    "assembly-floor-comp": "js/",
     "assembly22_indep_nav": "js/",
     "assembly22_jinbo_nav": "js/",
     "assembly22_joguk_nav": "js/",
@@ -21,15 +22,19 @@ window.filePaths = {
     "assembly22_ppp_nav": "js/",
     "auto_navbox": "assets/",
     "bangdream-nav": "assets/",
+    "binhyo-rail-nav": "js/",
+    "binju-rail-nav": "js/",
     "birthday_data": "js/",
     "blind_board_core": "assets/",
     "bukgu_highschool_nav": "assets/",
     "bukgu_pop": "js/",
     "changjeon_pop": "js/",
     "cheongyeop_pop": "js/",
+    "child_center_nav": "assets/",
     "config": "",
     "data": "assets/",
     "defunct_admin_nav": "assets/",
+    "deokbin-floor-comp": "js/",
     "deokbinbuk_1": "js/",
     "deokbinbuk_10": "js/",
     "deokbinbuk_11": "js/",
@@ -95,6 +100,7 @@ window.filePaths = {
     "deokbinnam_head_8": "js/",
     "deokbinnam_head_9": "js/",
     "deokbuk_pop": "js/",
+    "deoknam-floor-comp": "js/",
     "deoknam_pop": "js/",
     "donggu_pop": "js/",
     "find-missing": "",
@@ -103,6 +109,7 @@ window.filePaths = {
     "hb_index_scripts": "assets/",
     "hb_members": "assets/",
     "hb_wiki_core": "assets/",
+    "hyobin-floor-comp": "js/",
     "hyobin_head_1": "js/",
     "hyobin_head_2": "js/",
     "hyobin_head_3": "js/",
@@ -117,9 +124,12 @@ window.filePaths = {
     "jana": "assets/",
     "js_paths": "assets/",
     "junggu_pop": "js/",
+    "korea-council-nav": "js/",
+    "korea-rail-nav": "js/",
     "korea_admini_class": "assets/",
     "korea_special_city": "assets/",
     "korea_special_city_800k": "assets/",
+    "line3-nav": "js/",
     "load-footer": "assets/",
     "lovelive_bluebird_nav": "assets/",
     "lovelive_hasu_nav": "assets/",
