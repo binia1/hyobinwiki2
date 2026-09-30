@@ -306,7 +306,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             <a href="이자파크몰.html" class="text-[#0275d8] hover:underline">이자파크몰</a> <span class="text-gray-300 mx-1">·</span>
                             <a href="HJ몰 중수점.html" class="text-[#0275d8] hover:underline">HJ몰 중수점</a> <span class="text-gray-300 mx-1">·</span>
                             <a href="아논타워몰.html" class="text-[#0275d8] hover:underline">아논타워몰</a> <span class="text-gray-300 mx-1">·</span>
-                            <a href="청엽시티몰.html" class="text-[#0275d8] hover:underline">청엽시티몰</a> <span class="text-gray-300 mx-1">·</span>
+                            <a href="청덕아쿠아시티몰.html" class="text-[#0275d8] hover:underline">청덕아쿠아시티몰</a> <span class="text-gray-300 mx-1">·</span>
                             <a href="리에라몰.html" class="text-[#0275d8] hover:underline">리에라몰</a> <span class="text-gray-300 mx-1">·</span>
                             <a href="도변스퀘어몰.html" class="text-[#0275d8] hover:underline">도변스퀘어몰</a>
                         </td>

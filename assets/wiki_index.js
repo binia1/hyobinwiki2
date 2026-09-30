@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 9. 30. 오전 12:44:47
+ * 업데이트: 2026. 9. 30. 오후 10:23:58
  */
 
 window.HB_WIKI_PAGES = [
@@ -12739,6 +12739,18 @@ window.HB_WIKI_PAGES = [
   {
     "title": "휴소도",
     "href": "휴소도.html"
+  },
+  {
+    "title": "개비도",
+    "href": "개비도.html"
+  },
+  {
+    "title": "휴소도경전철",
+    "href": "휴소도경전철.html"
+  },
+  {
+    "title": "시연재",
+    "href": "시연재.html"
   }
 ];
 
@@ -20093,5 +20105,8 @@ window.HB_WIKI_ALIASES = {
   "line3-nav": "틀_뷰어_SPA.html#line3-nav",
   "천사도(섬)": "천사도(섬).html",
   "포상도": "포상도.html",
-  "휴소도": "휴소도.html"
+  "휴소도": "휴소도.html",
+  "개비도": "개비도.html",
+  "휴소도경전철": "휴소도경전철.html",
+  "시연재": "시연재.html"
 };
