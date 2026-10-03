@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <td class="bg-boy"><a class="wiki-link" href="서구고등학교.html">서구고</a></td>
 <td class="bg-girl"><a class="wiki-link" href="서구여자고등학교.html">서구여고</a></td>
 <td><a class="wiki-link" href="이은고등학교.html">이은고</a></td>
-<td></td>
+<td><a class="wiki-link" href="빈주전자고등학교.html">◈빈주전자고</a></td>
 </tr>
 </table>
 </div>

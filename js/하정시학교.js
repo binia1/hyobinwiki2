@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </tr>
 <tr>
 <td><a class="wiki-link" href="구주초등학교.html">구주초등학교</a></td>
-<td><a class="wiki-link" href="팔봉초등학교.html">팔봉초등학교</a></td>
+<td><a class="wiki-link" href="팔번초등학교.html">팔번초등학교</a></td>
 <td><a class="wiki-link" href="등전초등학교.html">등전초등학교</a></td>
 <td><a class="wiki-link" href="귀선초등학교.html">귀선초등학교</a></td>
 <td><a class="wiki-link" href="산동초등학교.html">산동초등학교</a></td>
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <td><a class="wiki-link" href="별당중학교.html">별당중학교</a></td>
 <td><a class="wiki-link" href="동석중학교.html">동석중학교</a></td>
 <td><a class="wiki-link" href="구주중학교.html">구주중학교</a></td>
-<td><a class="wiki-link" href="팔봉중학교.html">팔봉중학교</a></td>
+<td><a class="wiki-link" href="팔번중학교.html">팔번중학교</a></td>
 <td><a class="wiki-link" href="등전중학교.html">등전중학교</a></td>
 </tr>
 <tr>

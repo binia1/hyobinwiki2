@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <tr>
                         <td style="border: 1px solid #eee; padding: 10px;"><a href="스타필드마켓_경산.html" style="color: #CE0024; text-decoration: none;">경산</a></td>
                         <td style="border: 1px solid #eee; padding: 10px;"><a href="스타필드마켓_월계.html" style="color: #555; text-decoration: none;">월계</a></td>
-                        <td style="border: 1px solid #eee; padding: 10px;"></td>
+                        <td style="border: 1px solid #eee; padding: 10px;"><a href="스타필드마켓_군산.html" style="color: #CE0024; text-decoration: none;">군산</a></td>
                     </tr>
 
                     <!-- 스타필드 빌리지 -->

@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="nav-header-container-auto" onclick="toggleNav('${uniqueNavId}', '${uniqueLabelId}')">
                 <div class="nav-header-top-auto">
                     <div class="nav-header-title-box">
-                        <img src="이미지/기본.webp" alt="로고" style="height: 40px;" onerror="this.src='이미지/hyobin1.webp'">
+                        <img src="이미지/빈주시.webp" alt="로고" style="height: 40px;" onerror="this.src='이미지/hyobin1.webp'">
                         <div style="text-align: left; line-height: 1.3;">
                             <div style="font-size: 13px; font-weight: bold;">덕빈북도 빈주시 가원구</div>
                             <div style="font-size: 20px; font-weight: 900;">행정구역</div>

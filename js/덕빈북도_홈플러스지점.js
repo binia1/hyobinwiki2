@@ -53,7 +53,7 @@
                                         </td>
                                         <td style="padding: 8px; border: none;">
                                             <a href="홈플러스_천성점.html" class="wiki-link">천성점</a><br>
-                                            <span class="small-text" style="font-size: 0.8em; color: #666;">천주시 천성구 천성동</span>
+                                            <span class="small-text" style="font-size: 0.8em; color: #666;">천주시 천성구 비원동</span>
                                         </td>
                                     </tr>
                                     <tr>

@@ -64,15 +64,15 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 <div class="bg-white p-2 text-center text-xs border-b border-[#ccc]">
 <div class="mb-1">
-<span class="bg-boy px-1 border border-gray-200">남자고등학교</span>, 
-                        <span class="bg-girl px-1 border border-gray-200">여자고등학교</span>, 
-                        이외 남녀공학
-                    </div>
+<span class="bg-boy px-1 border border-gray-200">남자고등학교</span>, 
+                        <span class="bg-girl px-1 border border-gray-200">여자고등학교</span>, 
+                        이외 남녀공학
+                    </div>
 <div class="font-bold text-[#7777AA]">※: 자사고, ⊙: 자공고, ▣: 특목고, ◈: 특성화고, 이외 일반계고</div>
 </div>
 <table class="school-table">
 <tr>
-<td>◈<a class="wiki-link" href="빈주전자고등학교.html">빈주전자고</a></td>
+<td>◈<a class="wiki-link" href="황명소프트웨어고등학교.html">황명소프트웨어고</a></td>
 <td><a class="wiki-link" href="빈주제일고등학교.html">빈주제일고</a></td>
 <td class="bg-boy"><a class="wiki-link" href="장기고등학교.html">장기고</a></td>
 <td class="bg-girl"><a class="wiki-link" href="장기여자고등학교.html">장기여고</a></td>
@@ -80,8 +80,8 @@ document.addEventListener("DOMContentLoaded", function() {
 </tr>
 <tr>
 <td><a class="wiki-link" href="송원고등학교.html">송원고</a></td>
-<td class="bg-boy"><a class="wiki-link" href="송원남고등학교.html">송원남고</a></td>
-<td class="bg-girl"><a class="wiki-link" href="송원여자고등학교.html">송원여고</a></td>
+<td><a class="wiki-link" href="월삼고등학교.html">월삼고</a></td>
+<td class="bg-girl"><a class="wiki-link" href="월삼여자고등학교.html">월삼여고</a></td>
 <td><a class="wiki-link" href="오택고등학교.html">오택고</a></td>
 <td><a class="wiki-link" href="천종고등학교.html">천종고</a></td>
 </tr>
