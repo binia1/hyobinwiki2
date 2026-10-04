@@ -1316,15 +1316,20 @@ if (document.readyState === 'loading') {
 })();
 
 // =====================================================================
-// 🚀 [나무위키 스타일 제목 & 버튼 그룹 자동 생성기 - 즐겨찾기 완벽 연동 수정본]
+// 🚀 [나무위키 스타일 제목 & 버튼 그룹 - 다른 사이트/페이지 침범 방지 수정본]
 // =====================================================================
 document.addEventListener("DOMContentLoaded", function() {
+    // 0. 🛡️ [방어막 1] 이미 타이틀 버튼 그룹이 생성되어 있으면 중단
     if (document.querySelector('.namu-btn-group')) return;
 
-    // 1. .txt-lvl-1 클래스가 없더라도 wiki-container 내부의 h1 또는 일반 h1 탐색
-    const titleEl = document.querySelector('.txt-lvl-1') || 
-                    document.querySelector('.wiki-container h1') || 
-                    document.querySelector('h1');
+    // 0. 🛡️️ [방어막 2] 위키 본문 컨테이너(.wiki-container)가 없는 일반 페이지(인스타, 외부 웹 등)면 절대 실행하지 않음
+    const wikiContainer = document.querySelector('.wiki-container');
+    if (!wikiContainer) return;
+
+    // 1. 위키 컨테이너 내부에서만 안전하게 h1 타이틀 탐색
+    const titleEl = wikiContainer.querySelector('.txt-lvl-1') || 
+                    wikiContainer.querySelector('h1') || 
+                    document.querySelector('.txt-lvl-1');
                     
     if (!titleEl) return; 
 
@@ -1380,14 +1385,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // 2. 기존 h1 감싸는 영역 교체
     const parentWrapper = titleEl.closest('.flex') || titleEl.parentElement;
-    if (parentWrapper && parentWrapper !== document.body && parentWrapper !== document.querySelector('.wiki-container')) {
+    if (parentWrapper && parentWrapper !== document.body && parentWrapper !== wikiContainer) {
         parentWrapper.parentNode.replaceChild(newTitleArea, parentWrapper);
     } else {
         titleEl.parentNode.insertBefore(newTitleArea, titleEl);
         titleEl.remove();
     }
 
-    // 3. 🌟 [즐겨찾기 버튼 이벤트 & 상태 직접 바인딩]
+    // 3. 🌟 [즐겨찾기 버튼 이벤트 & 상태 바인딩]
     const starBtn = newTitleArea.querySelector('.hb-star-btn');
     if (starBtn) {
         function getLivePageInfo() {
@@ -1406,11 +1411,9 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
 
-        // 페이지 켜졌을 때/해시 변경 시 별 색상 갱신
         updateStarUI();
         window.addEventListener('hashchange', updateStarUI);
 
-        // 클릭 시 즐겨찾기 추가/해제
         starBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
