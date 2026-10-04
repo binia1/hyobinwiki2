@@ -1314,3 +1314,98 @@ if (document.readyState === 'loading') {
         initRedirectBanner();
     }
 })();
+
+// =====================================================================
+// 🚀 [나무위키 스타일 제목 & 버튼 그룹 자동 생성기 - 크기/색상 완벽 고정 버전]
+// =====================================================================
+document.addEventListener("DOMContentLoaded", function() {
+    if (document.querySelector('.namu-btn-group')) return;
+
+    const titleEl = document.querySelector('.txt-lvl-1');
+    if (!titleEl) return; 
+
+    const titleText = titleEl.textContent.trim();
+
+    const dateObj = new Date(document.lastModified);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+    const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+    const modTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+    const newTitleArea = document.createElement('div');
+    newTitleArea.className = 'title-area border-b border-gray-300 mb-6 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4 mt-4';
+    
+    // 🔥 인라인 스타일로 폰트 크기(2.75rem / var(--font-h1)), 굵기(900), 색상(#000000) 강제 지정
+    newTitleArea.innerHTML = `
+        <div>
+            <h1 class="wiki-heading-title" style="font-size: var(--font-h1, 2.75rem) !important; font-weight: 900 !important; color: #000000 !important; margin: 0 !important; line-height: 1.1 !important; letter-spacing: -1.5px !important; text-decoration: none !important; display: block !important;">${titleText}</h1>
+            <div class="text-[0.85rem] text-gray-500 mt-2">최근 수정 시각: ${modTime}</div>
+        </div>
+        
+        <div class="namu-btn-group relative flex items-center bg-white border border-gray-300 rounded-[4px] shadow-sm text-sm font-medium text-gray-600 shrink-0 h-[34px]">
+            <a href="javascript:void(0);" class="px-3 h-full border-r border-gray-300 hover:bg-gray-50 flex items-center justify-center transition-colors text-gray-400 hover:text-yellow-400" title="즐겨찾기">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            </a>
+            <a href="수정.html" class="px-3 h-full border-r border-gray-300 hover:bg-gray-50 flex items-center gap-1.5 transition-colors">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> 편집
+            </a>
+            <a href="토론.html" class="px-3 h-full border-r border-gray-300 hover:bg-gray-50 flex items-center gap-1.5 transition-colors">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"></path></svg> 토론
+            </a>
+            <a href="역사.html" class="px-3 h-full border-r border-gray-300 hover:bg-gray-50 flex items-center gap-1.5 transition-colors">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v4"></path><path d="M12 18v4"></path><path d="M4.93 4.93l2.83 2.83"></path><path d="M16.24 16.24l2.83 2.83"></path><path d="M2 12h4"></path><path d="M18 12h4"></path><path d="M4.93 19.07l2.83-2.83"></path><path d="M16.24 7.76l2.83-2.83"></path></svg> 역사
+            </a>
+            <button class="hb-more-btn px-2.5 h-full hover:bg-gray-50 flex items-center justify-center transition-colors">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
+            </button>
+            
+            <div class="hb-dropdown hidden absolute right-0 top-[110%] w-32 bg-white border border-gray-300 rounded shadow-lg z-50 py-1 flex flex-col">
+                <a href="역링크.html" class="px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-gray-700 transition-colors">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg> 역링크
+                </a>
+                <a href="ACL.html" class="px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-gray-700 transition-colors">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> ACL
+                </a>
+            </div>
+        </div>
+    `;
+
+    const oldTitleArea = document.querySelector('.title-area');
+    const oldToolGroup = document.querySelector('.wiki-tool-group');
+    const topButtons = document.querySelectorAll('.wiki-btn');
+
+    if (oldTitleArea) {
+        oldTitleArea.parentNode.replaceChild(newTitleArea, oldTitleArea);
+    } else {
+        titleEl.parentNode.insertBefore(newTitleArea, titleEl);
+        titleEl.remove();
+    }
+    
+    if (oldToolGroup) oldToolGroup.remove();
+    topButtons.forEach(btn => {
+        if (btn.textContent.includes('토론') || btn.textContent.includes('편집') || btn.textContent.includes('역사') || btn.textContent.includes('수정')) {
+            btn.remove();
+        }
+    });
+
+    const moreBtn = newTitleArea.querySelector('.hb-more-btn');
+    const dropdown = newTitleArea.querySelector('.hb-dropdown');
+    
+    moreBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        dropdown.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', function() {
+        if (!dropdown.classList.contains('hidden')) {
+            dropdown.classList.add('hidden');
+        }
+    });
+    
+    dropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+});

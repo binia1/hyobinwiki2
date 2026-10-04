@@ -1871,37 +1871,27 @@ function autoPatchWikiLinks() {
     });
 }
 
-// 페이지가 처음 열릴 때 및 인포박스 등 자바스크립트로 내용이 나중에 채워질 때 자동 실행
-document.addEventListener("DOMContentLoaded", () => {
-    autoPatchWikiLinks();
-    
-    // 동적으로 생성되는 HTML(대찬대학교 인포박스 등)을 실시간 감시하여 링크 자동 보정
-    const observer = new MutationObserver(() => {
-        autoPatchWikiLinks();
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-});
 document.addEventListener("DOMContentLoaded", function() {
     const tocContainer = document.querySelector('.toc');
     if (!tocContainer) return;
 
-    // 목차 타이틀 디자인 원본과 동일하게 복구
+    // 목차 타이틀
     tocContainer.innerHTML = '<div class="text-center font-black border-b border-[#ccc] mb-4 pb-2 uppercase tracking-widest text-sm">목차</div>';
     
     const mainUl = document.createElement('ul');
-    // 메인 목차 ul 디자인 클래스 추가
     mainUl.className = 'space-y-1.5 text-sm font-bold text-black';
     tocContainer.appendChild(mainUl);
 
     let currentH2Li = null; 
     let currentH3Ul = null;
 
-    // [수정 핵심] .anchor-offset 조건 삭제. wiki-container 내부의 모든 h2, h3 탐색
+    // wiki-container 내부의 모든 h2, h3 탐색
     const headings = document.querySelectorAll('.wiki-container h2, .wiki-container h3');
 
-    headings.forEach(heading => {
+    headings.forEach((heading, index) => {
+        // ID가 없으면 강제로 s-1, s-2 형태의 ID 부여
         if (!heading.id) {
-            heading.id = 's-' + Math.random().toString(36).substring(2, 9);
+            heading.id = 's-' + (index + 1);
         }
 
         const li = document.createElement('li');
@@ -1909,7 +1899,6 @@ document.addEventListener("DOMContentLoaded", function() {
         a.className = 'wiki-link';
         a.href = '#' + heading.id;
         
-        // ▼ 기호와 [편집] 텍스트를 공백으로 치환 후 앞뒤 여백 제거
         let cleanText = heading.textContent
             .replace(/▼/g, '')
             .replace(/\[편집\]/g, '')
@@ -1923,7 +1912,6 @@ document.addEventListener("DOMContentLoaded", function() {
             currentH2Li = li;
             
             currentH3Ul = document.createElement('ul');
-            // 서브 목차 ul 디자인 클래스 추가
             currentH3Ul.className = 'pl-4 space-y-1';
             currentH2Li.appendChild(currentH3Ul);
             
@@ -1940,3 +1928,4 @@ document.addEventListener("DOMContentLoaded", function() {
     const emptyUls = mainUl.querySelectorAll('ul:empty');
     emptyUls.forEach(emptyUl => emptyUl.remove());
 });
+
