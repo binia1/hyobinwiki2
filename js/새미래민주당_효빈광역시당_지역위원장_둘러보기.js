@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <!-- 상단 헤더 (민트색) -->
                 <div style="background-color: #41B6B5; text-align: center; padding: 12px;">
                     <span style="display:inline-flex; align-items:center; justify-content:center; gap:6px;">
-                        <a class="wiki-link" href="새미래민주당.html" style="color:white; font-weight:900; font-size: 1.25rem; text-decoration: none; letter-spacing: -1px;" class="hover:underline">
+              <a class="wiki-link" href="새미래민주당.html" style="color:white; font-weight:900; font-size: 1.25rem; text-decoration: none; letter-spacing: -1px;" class="hover:underline">
                             새미래민주당 <span style="font-weight: 700; font-size: 1.15rem; letter-spacing: -0.5px;">효빈광역시당 지역위원장</span>
                         </a>
                     </span>

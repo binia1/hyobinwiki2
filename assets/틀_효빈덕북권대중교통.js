@@ -13,26 +13,26 @@
                         <tr>
                             <td style="background:#AAA; font-weight:bold; width: 10%; border: 1px solid #000;"></td>
                             
-                            <!-- 효빈광역시 (이미지 로고 포함) -->
+                            <!-- 효빈광역시 -->
                             <td style="font-weight:bold; border: 1px solid #000; width: 30%; background-color:#F9F9F9; text-align: center; padding: 6px;">
                                 <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-                                    <img src="이미지/hyobin1.webp" alt="효빈광역시" style="height:20px; object-fit:contain;" onerror="this.style.display='none'">
+                                    <img src="이미지/hyobin1.webp" alt="효빈광역시" style="height:20px; width:auto; display:inline-block !important; object-fit:contain; margin:0;" onerror="this.style.display='none'">
                                     <a href="효빈광역시.html" style="color: #0055AA; text-decoration: none; font-weight: bold;">효빈광역시</a>
                                 </div>
                             </td>
 
-                            <!-- 덕빈북도 (이미지 로고 포함) -->
+                            <!-- 덕빈북도 -->
                             <td style="font-weight:bold; border: 1px solid #000; width: 30%; background-color:#F9F9F9; text-align: center; padding: 6px;">
                                 <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-                                    <img src="이미지/svg/덕빈북도.svg" alt="덕빈북도" style="height:20px; object-fit:contain;" onerror="this.style.display='none'">
+                                    <img src="이미지/svg/덕빈북도.svg" alt="덕빈북도" style="height:20px; width:auto; display:inline-block !important; object-fit:contain; margin:0;" onerror="this.style.display='none'">
                                     <a href="덕빈북도.html" style="color: #0055AA; text-decoration: none; font-weight: bold;">덕빈북도</a>
                                 </div>
                             </td>
 
-                            <!-- 덕빈남도 (이미지 로고 포함) -->
+                            <!-- 덕빈남도 -->
                             <td style="font-weight:bold; border: 1px solid #000; width: 30%; background-color:#F9F9F9; text-align: center; padding: 6px;">
                                 <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-                                    <img src="이미지/svg/덕빈남도.svg" alt="덕빈남도" style="height:20px; object-fit:contain;" onerror="this.style.display='none'">
+                                    <img src="이미지/svg/덕빈남도.svg" alt="덕빈남도" style="height:20px; width:auto; display:inline-block !important; object-fit:contain; margin:0;" onerror="this.style.display='none'">
                                     <a href="덕빈남도.html" style="color: #0055AA; text-decoration: none; font-weight: bold;">덕빈남도</a>
                                 </div>
                             </td>
@@ -47,80 +47,121 @@
 
                         <tr>
                             <td style="background:#AAA; font-weight:bold; text-align: center; border: 1px solid #000; padding: 6px;">항만</td>
-                            <td style="text-align:center; border: 1px solid #000; padding: 6px; font-size: 0.85rem;">
+                            <td style="text-align:center; border: 1px solid #000; padding: 6px; font-size: 0.85rem; line-height: 1.6;">
                                 <a href="효빈항 국제여객터미널.html" style="color: #0055AA; text-decoration: none;">효빈항 국제여객터미널</a> · <a href="효빈 유람선.html" style="color: #0055AA; text-decoration: none;">효빈 유람선</a> · <a href="효빈내항.html" style="color: #0055AA; text-decoration: none;">효빈내항</a> · <a href="어간항.html" style="color: #0055AA; text-decoration: none;">어간항</a> · <a href="탄성-승남항.html" style="color: #0055AA; text-decoration: none;">탄성-승남항(예정)</a>
                             </td>
-                            <td style="text-align:center; border: 1px solid #000; padding: 6px; font-size: 0.85rem;">
+                            <td style="text-align:center; border: 1px solid #000; padding: 6px; font-size: 0.85rem; line-height: 1.6;">
                                 <a href="궁하항.html" style="color: #0055AA; text-decoration: none;">궁하항</a> · <a href="천주여객선터미널.html" style="color: #0055AA; text-decoration: none;">천주여객선터미널</a> · <a href="장곡여객선터미널.html" style="color: #0055AA; text-decoration: none;">장곡여객선터미널</a> · <a href="서해항.html" style="color: #0055AA; text-decoration: none;">서해항</a> · <a href="강주항.html" style="color: #0055AA; text-decoration: none;">강주항</a> · <a href="풍영여객선터미널.html" style="color: #0055AA; text-decoration: none;">풍영여객선터미널</a> · <a href="전산항.html" style="color: #0055AA; text-decoration: none;">전산항</a> · <a href="서진항.html" style="color: #0055AA; text-decoration: none;">서진항</a> · <a href="군천항.html" style="color: #0055AA; text-decoration: none;">군천항</a>
                             </td>
-                            <td style="text-align:center; border: 1px solid #000; padding: 6px; font-size: 0.85rem;">
+                            <td style="text-align:center; border: 1px solid #000; padding: 6px; font-size: 0.85rem; line-height: 1.6;">
                                 <a href="비천항.html" style="color: #0055AA; text-decoration: none;">비천항</a> · <a href="운진항.html" style="color: #0055AA; text-decoration: none;">운진항</a> · <a href="마진항.html" style="color: #0055AA; text-decoration: none;">마진항</a> · <a href="방산항.html" style="color: #0055AA; text-decoration: none;">방산항</a> · <a href="낙주항.html" style="color: #0055AA; text-decoration: none;">낙주항</a>
                             </td>
                         </tr>
 
                         <tr>
-                            <td style="background:#AAA; font-weight:bold; text-align: center; border: 1px solid #000; padding: 6px;">철도</td>
+                            <td rowspan="2" style="background:#AAA; font-weight:bold; text-align: center; border: 1px solid #000; padding: 6px;">철도</td>
                             <td style="text-align:center; border: 1px solid #000; padding: 6px;"><a href="효빈광역시_교통.html" style="color: #0055AA; text-decoration: none; font-weight: bold;">역 목록</a></td>
                             <td style="text-align:center; border: 1px solid #000; padding: 6px;"><a href="덕빈북도_교통.html" style="color: #0055AA; text-decoration: none; font-weight: bold;">역 목록</a></td>
                             <td style="text-align:center; border: 1px solid #000; padding: 6px;"><a href="덕빈남도_교통.html" style="color: #0055AA; text-decoration: none; font-weight: bold;">역 목록</a></td>
                         </tr>
 
                         <tr>
-                            <td style="background:#AAA; font-weight:bold; text-align: center; border: 1px solid #000;"></td>
-                            
                             <!-- 효빈권 전철 -->
-                            <td style="text-align:center; border: 1px solid #000; vertical-align: top; padding: 10px 6px;">
-                                <div style="margin-bottom: 5px;">
-                                    <a href="효빈권전철.html" style="color: #0055AA; text-decoration: none; font-weight: bold;">효빈권 전철</a><br>
-                                    <span style="vertical-align: middle;">(</span>
-                                    <a href="1호선.html" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#fff; border:2px solid #0077DD; color:#0077DD; font-weight:900; font-size:0.75rem; text-decoration:none; margin:0 1px; vertical-align:middle;">1</a>·
-                                    <a href="2호선.html" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#fff; border:2px solid #00CCAA; color:#00CCAA; font-weight:900; font-size:0.75rem; text-decoration:none; margin:0 1px; vertical-align:middle;">2</a>·
-                                    <a href="3호선.html" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#fff; border:2px solid #FFCC11; color:#FFCC11; font-weight:900; font-size:0.75rem; text-decoration:none; margin:0 1px; vertical-align:middle;">3</a>·
-                                    <a href="4호선.html" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#fff; border:2px solid #FF5522; color:#FF5522; font-weight:900; font-size:0.75rem; text-decoration:none; margin:0 1px; vertical-align:middle;">4</a>·
-                                    <a href="5호선.html" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#fff; border:2px solid #EE0022; color:#EE0022; font-weight:900; font-size:0.75rem; text-decoration:none; margin:0 1px; vertical-align:middle;">5</a>·
-                                    <a href="6호선.html" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#fff; border:2px solid #881188; color:#881188; font-weight:900; font-size:0.75rem; text-decoration:none; margin:0 1px; vertical-align:middle;">6</a>·
-                                    <a href="7호선.html" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#fff; border:2px solid #FF8899; color:#FF8899; font-weight:900; font-size:0.75rem; text-decoration:none; margin:0 1px; vertical-align:middle;">7</a>·
-                                    <a href="8호선.html" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#fff; border:2px solid #9856FF; color:#9856FF; font-weight:900; font-size:0.75rem; text-decoration:none; margin:0 1px; vertical-align:middle;">8</a>·
-                                    <a href="빈효광역선.html" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#fff; border:2px solid #6677CC; color:#6677CC; font-weight:900; font-size:0.6rem; text-decoration:none; margin:0 1px; vertical-align:middle;">빈</a>
-                                    <span style="vertical-align: middle;">)</span>
+                            <td style="text-align:center; border: 1px solid #000; vertical-align: top; padding: 12px 6px;">
+                                <div style="margin-bottom: 8px;">
+                                    <a href="효빈권전철.html" style="color: #0055AA; text-decoration: none; font-weight: bold;">효빈권 전철</a>
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                    <div style="display: flex; justify-content: center; align-items: center; gap: 4px;">
+                                        <span style="font-weight:bold;">(</span>
+                                        <a href="1호선.html" style="display:inline-block;"><img src="이미지/svg/효빈1호선.svg" alt="1호선" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; margin:0;"></a>
+                                        <span style="font-weight:bold;">·</span>
+                                        <a href="2호선.html" style="display:inline-block;"><img src="이미지/svg/효빈2호선.svg" alt="2호선" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; margin:0;"></a>
+                                        <span style="font-weight:bold;">·</span>
+                                        <a href="3호선.html" style="display:inline-block;"><img src="이미지/svg/효빈3호선.svg" alt="3호선" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; margin:0;"></a>
+                                        <span style="font-weight:bold;">·</span>
+                                        <a href="4호선.html" style="display:inline-block;"><img src="이미지/svg/효빈4호선.svg" alt="4호선" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; margin:0;"></a>
+                                        <span style="font-weight:bold;">·</span>
+                                        <a href="5호선.html" style="display:inline-block;"><img src="이미지/svg/효빈5호선.svg" alt="5호선" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; margin:0;"></a>
+                                    </div>
+                                    <div style="display: flex; justify-content: center; align-items: center; gap: 4px;">
+                                        <a href="6호선.html" style="display:inline-block;"><img src="이미지/svg/효빈6호선.svg" alt="6호선" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; margin:0;"></a>
+                                        <span style="font-weight:bold;">·</span>
+                                        <a href="7호선.html" style="display:inline-block;"><img src="이미지/svg/효빈7호선.svg" alt="7호선" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; margin:0;"></a>
+                                        <span style="font-weight:bold;">·</span>
+                                        <a href="8호선.html" style="display:inline-block;"><img src="이미지/svg/효빈8호선.svg" alt="8호선" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; margin:0;"></a>
+                                        <span style="font-weight:bold;">·</span>
+                                        <a href="빈효선.html" style="display:inline-block;"><img src="이미지/svg/빈효광역선.svg" alt="빈효선" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; margin:0;"></a>
+                                        <span style="font-weight:bold;">·</span>
+                                        <a href="창전선.html" style="display:inline-block;"><del><img src="이미지/svg/창전선.svg" alt="창전선" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; opacity:0.5; margin:0;"></del></a>
+                                        <span style="font-weight:bold;">)</span>
+                                    </div>
                                 </div>
                             </td>
 
                             <!-- 덕북권 전철 -->
-                            <td style="text-align:center; border: 1px solid #000; vertical-align: top; padding: 10px 6px;">
-                                <div style="margin-bottom: 8px;">
+                            <td style="text-align:center; border: 1px solid #000; vertical-align: top; padding: 12px 6px;">
+                                <div style="margin-bottom: 10px;">
                                     <a href="덕북권_전철.html" style="color: #0054A6; font-size: 1.05em; font-weight: bold; text-decoration: none;">덕북권 전철</a>
                                 </div>
-                                <div style="margin-bottom: 8px;">
-                                    <a href="빈주권_전철.html" style="color: #0055AA; text-decoration: none; font-weight: bold;">빈주권 전철</a><br>
-                                    <span style="vertical-align: middle;">(</span>
-                                    <a href="빈주1호선.html" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:4px; background:#CFBA0F; color:#000; font-weight:900; font-size:0.75rem; text-decoration:none; margin:0 1px; vertical-align:middle;">1</a>·
-                                    <a href="빈주2호선.html" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:4px; background:#C455F6; color:#fff; font-weight:900; font-size:0.75rem; text-decoration:none; margin:0 1px; vertical-align:middle;">2</a>·
-                                    <a href="빈주광역철도.html" style="display:inline-flex; align-items:center; justify-content:center; height:22px; padding:0 6px; border-radius:11px; background:#005BAC; color:#fff; font-weight:900; font-size:0.7rem; text-decoration:none; margin:0 1px; vertical-align:middle;">빈주</a>
-                                    <span style="vertical-align: middle;">)</span>
+                                <div style="margin-bottom: 6px;">
+                                    <a href="빈주권_전철.html" style="color: #0055AA; text-decoration: none; font-weight: bold;">빈주권 전철</a>
                                 </div>
-                                <div style="margin-bottom: 5px;">
-                                    <a href="서해경전철.html" style="color: #aaa; text-decoration: line-through;">서해경전철</a><br>
-                                    <span style="color: #aaa; vertical-align: middle;">(</span>
-                                    <a href="서해경전철.html" style="display:inline-flex; align-items:center; justify-content:center; height:22px; padding:0 6px; border-radius:11px; background:#aaa; color:#fff; font-weight:900; font-size:0.7rem; text-decoration:line-through; margin:0 1px; vertical-align:middle;">서해</a>
-                                    <span style="color: #aaa; vertical-align: middle;">)</span>
+                                <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px; margin-bottom: 12px;">
+                                    <span style="font-weight:bold;">(</span>
+                                    <a href="빈주1호선.html" style="display:inline-block;"><img src="이미지/svg/빈주1.svg" alt="빈주1호선" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; margin:0;"></a>
+                                    <span style="font-weight:bold;">·</span>
+                                    <a href="빈주2호선.html" style="display:inline-block;"><img src="이미지/svg/빈주2.svg" alt="빈주2호선" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; margin:0;"></a>
+                                    <span style="font-weight:bold;">·</span>
+                                    <a href="빈주광역철도.html" style="display:inline-block;"><img src="이미지/svg/빈주광역선.svg" alt="빈주광역선" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; margin:0;"></a>
+                                    <span style="font-weight:bold;">)</span>
                                 </div>
-                                <div>
-                                    <a href="천주1호선.html" style="color: #aaa; text-decoration: line-through;">천주1호선</a><br>
-                                    <span style="color: #aaa; vertical-align: middle;">(</span>
-                                    <a href="천주1호선.html" style="display:inline-flex; align-items:center; justify-content:center; height:22px; padding:0 6px; border-radius:11px; background:#aaa; color:#fff; font-weight:900; font-size:0.7rem; text-decoration:line-through; margin:0 1px; vertical-align:middle;">천주1</a>
-                                    <span style="color: #aaa; vertical-align: middle;">)</span>
+                                
+                                <div style="margin-bottom: 4px;">
+                                    <a href="서해경전철.html" style="color: #aaa; text-decoration: line-through; font-weight: bold;">서해경전철</a>
+                                </div>
+                                <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px; margin-bottom: 12px;">
+                                    <span style="color: #aaa; font-weight:bold;">(</span>
+                                    <a href="서해경전철.html" style="display:inline-block;"><del><img src="이미지/svg/서해경전철.svg" alt="서해경전철" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; opacity:0.5; margin:0;" onerror="this.style.display='none'"></del></a>
+                                    <span style="color: #aaa; font-weight:bold;">)</span>
+                                </div>
+
+                                <div style="margin-bottom: 4px;">
+                                    <a href="천주1호선.html" style="color: #aaa; text-decoration: line-through; font-weight: bold;">천주1호선</a>
+                                </div>
+                                <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px;">
+                                    <span style="color: #aaa; font-weight:bold;">(</span>
+                                    <a href="천주1호선.html" style="display:inline-block;"><del><img src="이미지/svg/천주1.svg" alt="천주1호선" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; opacity:0.5; margin:0;" onerror="this.style.display='none'"></del></a>
+                                    <span style="color: #aaa; font-weight:bold;">)</span>
                                 </div>
                             </td>
 
                             <!-- 덕남권 전철 -->
-                            <td style="text-align:center; border: 1px solid #000; vertical-align: top; padding: 10px 6px;">
-                                <div style="margin-bottom: 5px;">
-                                    <a href="덕남권_전철.html" style="color: #0055AA; text-decoration: none; font-weight: bold;">덕남권 전철</a><br>
-                                    <span style="vertical-align: middle;">(</span>
-                                    <a href="덕주1호선.html" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:4px; background:#FF4F91; color:#fff; font-weight:900; font-size:0.75rem; text-decoration:none; margin:0 1px; vertical-align:middle;" title="덕주 도시철도 1호선">1</a>·
-                                    <a href="덕남권_광역철도.html" style="display:inline-flex; align-items:center; justify-content:center; height:22px; padding:0 6px; border-radius:11px; background:#aaa; color:#fff; font-weight:900; font-size:0.7rem; text-decoration:line-through; margin:0 1px; vertical-align:middle;" title="덕남권 광역철도(착공예정)">덕남</a>
-                                    <span style="vertical-align: middle;">)</span>
+                            <td style="text-align:center; border: 1px solid #000; vertical-align: top; padding: 12px 6px;">
+                                <div style="margin-bottom: 6px;">
+                                    <a href="덕남권_전철.html" style="color: #0055AA; text-decoration: none; font-weight: bold;">덕남권 전철</a>
+                                </div>
+                                <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px;">
+                                    <span style="font-weight:bold;">(</span>
+                                    <a href="덕주1호선.html" style="display:inline-block;"><img src="이미지/svg/덕주1.svg" alt="덕주1호선" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; margin:0;"></a>
+                                    <span style="font-weight:bold;">·</span>
+                                    <a href="덕남권_광역철도.html" style="display:inline-block;"><del><img src="이미지/svg/덕남권광역철도.svg" alt="덕남권광역철도" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; opacity:0.5; margin:0;"></del></a>
+                                    <span style="font-weight:bold;">)</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- 광역급행철도(HDTX) 병합 행 -->
+                        <tr>
+                            <td style="background:#AAA; font-weight:bold; text-align: center; border: 1px solid #000; padding: 6px;">HDTX</td>
+                            <td colspan="3" style="text-align:center; border: 1px solid #000; padding: 10px 6px;">
+                                <div style="display:flex; flex-wrap: wrap; align-items:center; justify-content:center; gap: 6px;">
+                                    <a href="HDTX.html" style="color: #aaa; text-decoration: line-through; font-weight: bold; margin-right:4px; vertical-align:middle;">광역급행철도 (HDTX)</a>
+                                    <span style="color: #aaa; font-weight:bold;">(</span>
+                                    <a href="HDTX-A.html" style="display:inline-block;"><del><img src="이미지/svg/HDTXA.svg" alt="HDTX-A" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; opacity:0.5; margin:0;"></del></a>
+                                    <span style="color: #aaa; font-weight:bold;">·</span>
+                                    <a href="HDTX-B.html" style="display:inline-block;"><del><img src="이미지/svg/HDTXB.svg" alt="HDTX-B" style="height:22px; width:auto; display:inline-block !important; vertical-align:middle; opacity:0.5; margin:0;"></del></a>
+                                    <span style="color: #aaa; font-weight:bold;">)</span>
                                 </div>
                             </td>
                         </tr>
@@ -130,7 +171,7 @@
                             <td style="text-align:center; border: 1px solid #000; padding: 6px;"><a href="효빈광역시의_버스_터미널.html" style="color: #0055AA; text-decoration: none;">터미널 목록</a><br><a href="효빈광역시 시내버스.html" style="color: #0055AA; text-decoration: none;">효빈광역시 시내버스</a></td>
                             <td style="text-align:center; border: 1px solid #000; padding: 6px;">
                                 <a href="덕빈북도의 버스 터미널.html" style="color: #0055AA; text-decoration: none;">터미널 목록</a><br>
-                                <a href="덕빈북도 시내버스.html" style="color: #0055AA; text-decoration: none;">덕빈북도 시내/농어촌버스</a>
+                                <a href="덕빈북도 시내/농어촌버스.html" style="color: #0055AA; text-decoration: none;">덕빈북도 시내/농어촌버스</a>
                             </td>
                             <td style="text-align:center; border: 1px solid #000; padding: 6px;">
                                 <a href="덕빈남도의 버스 터미널.html" style="color: #0055AA; text-decoration: none;">터미널 목록</a><br>
@@ -172,9 +213,10 @@
         };
     }
 
-    const renderZone = document.getElementById('template-render-zone');
+    // HTML에 직접 주입 (기존 찌꺼기 표 완벽 교체)
+    const renderZone = document.getElementById('template-render-zone') || document.getElementById('deokbuk-transit-zone');
     if (renderZone) {
-        renderZone.insertAdjacentHTML('beforeend', templateHTML);
+        renderZone.innerHTML = templateHTML;
     } else if (document.currentScript) {
         document.currentScript.insertAdjacentHTML('afterend', templateHTML);
     } else {

@@ -7,11 +7,11 @@ document.addEventListener("DOMContentLoaded", function() {
             <tr>
                 <td class="nav-header" style="background-color: #7777AA; padding: 8px;">
                     <span class="nav-header-wrap" style="display:inline-flex; align-items:center; gap:8px; justify-content: center; width: 100%;">
-                        <a class="wiki-link" href="효빈광역시.html" style="color:white;">
+              <a class="wiki-link" href="효빈광역시.html" style="color:white;">
                             <!-- 로고 강제 흰색 처리(invert) 및 크기 35px로 확대 -->
                             <img src="이미지/hyobin1.webp" style="vertical-align: middle; display:block; width: 35px; filter: brightness(0) invert(1);" alt="로고"/>
                         </a>
-                        <a class="wiki-link" href="효빈광역시.html#s-자치단체장" style="color:white; font-weight: bold;">민선 9기 효빈광역시 기초자치단체장</a>
+              <a class="wiki-link" href="효빈광역시.html#s-자치단체장" style="color:white; font-weight: bold;">민선 9기 효빈광역시 기초자치단체장</a>
                     </span>
                 </td>
             </tr>
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </tr>
                                 <tr>
                                     <td colspan="3" style="background-color: #f9f9f9; font-size: 0.9em; padding: 10px;">
-                                        <a class="wiki-link" href="제9회_전국동시지방선거_효빈광역시.html">선거 결과</a>
+                              <a class="wiki-link" href="제9회_전국동시지방선거_효빈광역시.html">선거 결과</a>
                                     </td>
                                 </tr>
                             </table>

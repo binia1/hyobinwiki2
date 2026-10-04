@@ -10,12 +10,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div style="background-color: #FFED00; text-align: center; padding: 12px; position: relative; overflow: hidden;">
                     <span style="display:inline-flex; align-items:center; justify-content:center; gap:6px; position: relative; z-index: 2;">
                         <!-- 정의당 체크마크 로고 (SVG) -->
-                        <a class="wiki-link" href="정의당.html" style="display:flex; align-items:center; text-decoration:none;">
+              <a class="wiki-link" href="정의당.html" style="display:flex; align-items:center; text-decoration:none;">
                             <svg width="24" height="24" viewBox="0 0 100 100" fill="white" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M15,45 L40,75 L85,20 L70,10 L40,50 L25,35 Z" />
                             </svg>
                         </a>
-                        <a class="wiki-link" href="정의당.html" style="color:black; font-weight:900; font-size: 1.15rem; text-decoration: none; letter-spacing: -0.5px;" class="hover:underline">
+              <a class="wiki-link" href="정의당.html" style="color:black; font-weight:900; font-size: 1.15rem; text-decoration: none; letter-spacing: -0.5px;" class="hover:underline">
                             정의당 효빈광역시당 지역위원장
                         </a>
                     </span>

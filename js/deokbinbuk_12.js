@@ -20,10 +20,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     <table class="nav-table" style="width: 100%; border-collapse: collapse; table-layout: fixed; background-color: #ffffff; text-align: center; font-size: 0.95rem; word-break: keep-all;">
                         <tbody>
                                         <tr>
-                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제1(빈주/빈성).html" style="color: #ffffff; text-decoration: none;">덕빈북 제1(빈주/빈성)</a></td>
-                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제2(탄성/선곡/약산).html" style="color: #ffffff; text-decoration: none;">덕빈북 제2(탄성/선곡/약산)</a></td>
-                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제3(강주/강산/기도/저천).html" style="color: #ffffff; text-decoration: none;">덕빈북 제3(강주/강산/기도/저천)</a></td>
-                                            <td class="district-cell" style="width: 25%; background-color: #E6573B; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제4(천성/궁하/치원).html" style="color: #ffffff; text-decoration: none;">덕빈북 제4(천성/궁하/치원)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제1(빈주/빈성).html" style="color: #ffffff; text-decoration: none;">덕북 제1(빈주/빈성)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제2(탄성/선곡/약산).html" style="color: #ffffff; text-decoration: none;">덕북 제2(탄성/선곡/약산)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제3(강주/강산/기도/저천).html" style="color: #ffffff; text-decoration: none;">덕북 제3(강주/강산/기도/저천)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #E6573B; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제4(천성/궁하/치원).html" style="color: #ffffff; text-decoration: none;">덕북 제4(천성/궁하/치원)</a></td>
                                         </tr>
                                         <tr>
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="주암인.html" style="color: #0A84E9; text-decoration: none;">주암인</a></td>
@@ -32,10 +32,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="서진우.html" style="color: #E6573B; text-decoration: none;">서진우</a></td>
                                         </tr>
                                         <tr>
-                                            <td class="district-cell" style="width: 25%; background-color: #E6573B; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제5(천주/낭원).html" style="color: #ffffff; text-decoration: none;">덕빈북 제5(천주/낭원)</a></td>
-                                            <td class="district-cell" style="width: 25%; background-color: #808080; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제6(반양/계성/덕현).html" style="color: #ffffff; text-decoration: none;">덕빈북 제6(반양/계성/덕현)</a></td>
-                                            <td class="district-cell" style="width: 25%; background-color: #ED2939; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제7(서해/압일).html" style="color: #ffffff; text-decoration: none;">덕빈북 제7(서해/압일)</a></td>
-                                            <td class="district-cell" style="width: 25%; background-color: #ED2939; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제8(상안/서진/모제).html" style="color: #ffffff; text-decoration: none;">덕빈북 제8(상안/서진/모제)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #E6573B; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제5(천주/낭원).html" style="color: #ffffff; text-decoration: none;">덕북 제5(천주/낭원)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #808080; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제6(반양/계성/덕현).html" style="color: #ffffff; text-decoration: none;">덕북 제6(반양/계성/덕현)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #ED2939; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제7(서해/압일).html" style="color: #ffffff; text-decoration: none;">덕북 제7(서해/압일)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #ED2939; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제8(상안/서진/모제).html" style="color: #ffffff; text-decoration: none;">덕북 제8(상안/서진/모제)</a></td>
                                         </tr>
                                         <tr>
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="강태원.html" style="color: #E6573B; text-decoration: none;">강태원</a></td>
@@ -44,10 +44,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="남궁진.html" style="color: #ED2939; text-decoration: none;">남궁진</a></td>
                                         </tr>
                                         <tr>
-                                            <td class="district-cell" style="width: 25%; background-color: #E6573B; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제9(군천/군양/전산).html" style="color: #ffffff; text-decoration: none;">덕빈북 제9(군천/군양/전산)</a></td>
-                                            <td class="district-cell" style="width: 25%; background-color: #ED2939; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제1(빈주/빈성).html" style="color: #ffffff; text-decoration: none;">덕빈북 제1(빈주/빈성)</a></td>
-                                            <td class="district-cell" style="width: 25%; background-color: #ED2939; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제2(탄성/선곡/약산).html" style="color: #ffffff; text-decoration: none;">덕빈북 제2(탄성/선곡/약산)</a></td>
-                                            <td class="district-cell" style="width: 25%; background-color: #ED2939; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제3(강주/강산/기도/저천).html" style="color: #ffffff; text-decoration: none;">덕빈북 제3(강주/강산/기도/저천)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #E6573B; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제9(군천/군양/전산).html" style="color: #ffffff; text-decoration: none;">덕북 제9(군천/군양/전산)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #ED2939; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제1(빈주/빈성).html" style="color: #ffffff; text-decoration: none;">덕북 제1(빈주/빈성)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #ED2939; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제2(탄성/선곡/약산).html" style="color: #ffffff; text-decoration: none;">덕북 제2(탄성/선곡/약산)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #ED2939; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제3(강주/강산/기도/저천).html" style="color: #ffffff; text-decoration: none;">덕북 제3(강주/강산/기도/저천)</a></td>
                                         </tr>
                                         <tr>
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="홍길수.html" style="color: #E6573B; text-decoration: none;">홍길수</a></td>
@@ -56,10 +56,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="윤성호.html" style="color: #ED2939; text-decoration: none;">윤성호</a></td>
                                         </tr>
                                         <tr>
-                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제4(천성/궁하/치원).html" style="color: #ffffff; text-decoration: none;">덕빈북 제4(천성/궁하/치원)</a></td>
-                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제5(천주/낭원).html" style="color: #ffffff; text-decoration: none;">덕빈북 제5(천주/낭원)</a></td>
-                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제6(반양/계성/덕현).html" style="color: #ffffff; text-decoration: none;">덕빈북 제6(반양/계성/덕현)</a></td>
-                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제7(서해/압일).html" style="color: #ffffff; text-decoration: none;">덕빈북 제7(서해/압일)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제4(천성/궁하/치원).html" style="color: #ffffff; text-decoration: none;">덕북 제4(천성/궁하/치원)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제5(천주/낭원).html" style="color: #ffffff; text-decoration: none;">덕북 제5(천주/낭원)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제6(반양/계성/덕현).html" style="color: #ffffff; text-decoration: none;">덕북 제6(반양/계성/덕현)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제7(서해/압일).html" style="color: #ffffff; text-decoration: none;">덕북 제7(서해/압일)</a></td>
                                         </tr>
                                         <tr>
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="오명석.html" style="color: #0A84E9; text-decoration: none;">오명석</a></td>
@@ -68,8 +68,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="배창호.html" style="color: #0A84E9; text-decoration: none;">배창호</a></td>
                                         </tr>
                                         <tr>
-                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제8(상안/서진/모제).html" style="color: #ffffff; text-decoration: none;">덕빈북 제8(상안/서진/모제)</a></td>
-                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕빈북 제9(군천/군양/전산).html" style="color: #ffffff; text-decoration: none;">덕빈북 제9(군천/군양/전산)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제8(상안/서진/모제).html" style="color: #ffffff; text-decoration: none;">덕북 제8(상안/서진/모제)</a></td>
+                                            <td class="district-cell" style="width: 25%; background-color: #0A84E9; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="덕북 제9(군천/군양/전산).html" style="color: #ffffff; text-decoration: none;">덕북 제9(군천/군양/전산)</a></td>
                                             <td style="width: 25%; background-color: #f9f9f9; border: 1px solid #aaa; "></td>
                                             <td style="width: 25%; background-color: #f9f9f9; border: 1px solid #aaa; "></td>
                                         </tr>

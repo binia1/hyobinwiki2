@@ -28,47 +28,47 @@ document.addEventListener("DOMContentLoaded", function() {
 <td class="bank-nav-section border border-[#ccc]">시중은행</td>
 <td class="text-left pl-2 border border-[#ccc]" colspan="4">
 <a class="wiki-link" href="신한은행.html">신한은행</a> · 
-                                <a class="wiki-link" href="우리은행.html">우리은행</a> · 
-                                <a class="wiki-link" href="SC제일은행.html">SC제일은행</a> · 
-                                <a class="wiki-link" href="하나은행.html">하나은행</a> · 
-                                <a class="wiki-link" href="KB국민은행.html">KB국민은행</a> · 
-                                <a class="wiki-link" href="한국씨티은행.html">한국씨티은행</a><span class="text-[9px] align-super">⊛</span> · 
-                                <a class="wiki-link" href="iM뱅크.html">iM뱅크</a>
+                      <a class="wiki-link" href="우리은행.html">우리은행</a> · 
+                      <a class="wiki-link" href="SC제일은행.html">SC제일은행</a> · 
+                      <a class="wiki-link" href="하나은행.html">하나은행</a> · 
+                      <a class="wiki-link" href="KB국민은행.html">KB국민은행</a> · 
+                      <a class="wiki-link" href="한국씨티은행.html">한국씨티은행</a><span class="text-[9px] align-super">⊛</span> · 
+                      <a class="wiki-link" href="iM뱅크.html">iM뱅크</a>
 </td>
 </tr>
 <tr>
 <td class="bank-nav-section border border-[#ccc]">국책은행</td>
 <td class="text-left pl-2 border border-[#ccc]" colspan="4">
 <a class="wiki-link" href="한국산업은행.html">한국산업은행</a> · 
-                                <a class="wiki-link" href="IBK기업은행.html">IBK기업은행</a> · 
-                                <a class="wiki-link" href="한국수출입은행.html">한국수출입은행</a><span class="text-[9px] align-super">⊛</span>
+                      <a class="wiki-link" href="IBK기업은행.html">IBK기업은행</a> · 
+                      <a class="wiki-link" href="한국수출입은행.html">한국수출입은행</a><span class="text-[9px] align-super">⊛</span>
 </td>
 </tr>
 <tr>
 <td class="bank-nav-section border border-[#ccc]">특수은행</td>
 <td class="text-left pl-2 border border-[#ccc]" colspan="4">
 <a class="wiki-link" href="NH농협은행.html">NH농협은행</a> · 
-                                <a class="wiki-link" href="Sh수협은행.html">Sh수협은행</a>
+                      <a class="wiki-link" href="Sh수협은행.html">Sh수협은행</a>
 </td>
 </tr>
 <tr>
 <td class="bank-nav-section border border-[#ccc]">지방은행</td>
 <td class="text-left pl-2 border border-[#ccc]" colspan="4">
 <a class="wiki-link" href="BNK부산은행.html">BNK부산은행</a> · 
-                                <a class="wiki-link" href="광주은행.html">광주은행</a> · 
-                                <a class="wiki-link" href="제주은행.html">제주은행</a> · 
-                                <a class="wiki-link" href="전북은행.html">전북은행</a> · 
-                                <a class="wiki-link" href="BNK경남은행.html">BNK경남은행</a> · 
+                      <a class="wiki-link" href="광주은행.html">광주은행</a> · 
+                      <a class="wiki-link" href="제주은행.html">제주은행</a> · 
+                      <a class="wiki-link" href="전북은행.html">전북은행</a> · 
+                      <a class="wiki-link" href="BNK경남은행.html">BNK경남은행</a> · 
                                 <strong><a class="wiki-link" href="효빈은행.html">효빈은행</a></strong> · 
-                                <a class="wiki-link" href="덕북은행.html">덕북은행</a>
+                      <a class="wiki-link" href="덕북은행.html">덕북은행</a>
 </td>
 </tr>
 <tr>
 <td class="bank-nav-section border border-[#ccc]">인터넷<br/>전문은행</td>
 <td class="text-left pl-2 border border-[#ccc]" colspan="4">
 <a class="wiki-link" href="케이뱅크.html">케이뱅크</a> · 
-                                <a class="wiki-link" href="카카오뱅크.html">카카오뱅크</a> · 
-                                <a class="wiki-link" href="토스뱅크.html">토스뱅크</a>
+                      <a class="wiki-link" href="카카오뱅크.html">카카오뱅크</a> · 
+                      <a class="wiki-link" href="토스뱅크.html">토스뱅크</a>
 </td>
 </tr>
 <!-- 외국은행 -->
@@ -80,58 +80,58 @@ document.addEventListener("DOMContentLoaded", function() {
 <td class="bank-nav-section w-[15%] text-center border-r border-[#ccc]">미국</td>
 <td class="pl-2">
 <a class="wiki-link" href="JP모간_체이스.html">JP모간 체이스</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="모건_스탠리.html">모건 스탠리</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="뱅크_오브_아메리카.html">뱅크 오브 아메리카</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="웰스_파고.html">웰스 파고</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="BNY멜론.html">BNY멜론</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="스테이트_스트리트.html">스테이트 스트리트</a><span class="text-[9px] align-super">⊛</span>
+                                  <a class="wiki-link" href="모건_스탠리.html">모건 스탠리</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="뱅크_오브_아메리카.html">뱅크 오브 아메리카</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="웰스_파고.html">웰스 파고</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="BNY멜론.html">BNY멜론</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="스테이트_스트리트.html">스테이트 스트리트</a><span class="text-[9px] align-super">⊛</span>
 </td>
 </tr>
 <tr class="border-b border-[#ccc]">
 <td class="bank-nav-section text-center border-r border-[#ccc]">유럽</td>
 <td class="pl-2">
 <a class="wiki-link" href="도이체방크.html">도이체방크</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="UBS.html">UBS</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="HSBC.html">HSBC</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="BNP_파리바.html">BNP 파리바</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="크레디_아그리콜.html">크레디 아그리콜</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="소시에테_제네랄.html">소시에테 제네랄</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="ING(기업).html">ING</a> · 
-                                            <a class="wiki-link" href="바덴뷔르템베르크_주립은행.html">LBBW</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="유바프은행.html">유바프은행</a><span class="text-[9px] align-super">⊛</span>
+                                  <a class="wiki-link" href="UBS.html">UBS</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="HSBC.html">HSBC</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="BNP_파리바.html">BNP 파리바</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="크레디_아그리콜.html">크레디 아그리콜</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="소시에테_제네랄.html">소시에테 제네랄</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="ING(기업).html">ING</a> · 
+                                  <a class="wiki-link" href="바덴뷔르템베르크_주립은행.html">LBBW</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="유바프은행.html">유바프은행</a><span class="text-[9px] align-super">⊛</span>
 </td>
 </tr>
 <tr class="border-b border-[#ccc]">
 <td class="bank-nav-section text-center border-r border-[#ccc]">일본</td>
 <td class="pl-2">
 <a class="wiki-link" href="미즈호은행.html">미즈호은행</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="미쓰비시_UFJ_은행.html">미쓰비시 UFJ 은행</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="미쓰이스미토모은행.html">미쓰이스미토모은행</a><span class="text-[9px] align-super">⊛</span>
+                                  <a class="wiki-link" href="미쓰비시_UFJ_은행.html">미쓰비시 UFJ 은행</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="미쓰이스미토모은행.html">미쓰이스미토모은행</a><span class="text-[9px] align-super">⊛</span>
 </td>
 </tr>
 <tr class="border-b border-[#ccc]">
 <td class="bank-nav-section text-center border-r border-[#ccc]">중국</td>
 <td class="pl-2">
 <a class="wiki-link" href="중국공상은행.html">중국공상은행</a> · 
-                                            <a class="wiki-link" href="중국농업은행.html">중국농업은행</a> · 
-                                            <a class="wiki-link" href="중국건설은행.html">중국건설은행</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="중국은행.html">중국은행</a> · 
-                                            <a class="wiki-link" href="교통은행.html">교통은행</a> · 
-                                            <a class="wiki-link" href="중국광대은행.html">중국광대은행</a>
+                                  <a class="wiki-link" href="중국농업은행.html">중국농업은행</a> · 
+                                  <a class="wiki-link" href="중국건설은행.html">중국건설은행</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="중국은행.html">중국은행</a> · 
+                                  <a class="wiki-link" href="교통은행.html">교통은행</a> · 
+                                  <a class="wiki-link" href="중국광대은행.html">중국광대은행</a>
 </td>
 </tr>
 <tr>
 <td class="bank-nav-section text-center border-r border-[#ccc]">기타</td>
 <td class="pl-2">
 <a class="wiki-link" href="싱가포르개발은행.html">DBS</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="OCBC.html">OCBC</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="대화은행.html">대화은행</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="인도네시아느가라은행.html">BNI</a> · 
-                                            <a class="wiki-link" href="스테이트_뱅크_오브_인디아.html">SBI</a> · 
-                                            <a class="wiki-link" href="ANZ_뱅크.html">ANZ</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="메트로은행.html">메트로은행</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="파키스탄국립은행.html">파키스탄국립은행</a><span class="text-[9px] align-super">⊛</span> · 
-                                            <a class="wiki-link" href="멜라트은행.html">멜라트은행</a><span class="text-[9px] align-super">⊛</span>
+                                  <a class="wiki-link" href="OCBC.html">OCBC</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="대화은행.html">대화은행</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="인도네시아느가라은행.html">BNI</a> · 
+                                  <a class="wiki-link" href="스테이트_뱅크_오브_인디아.html">SBI</a> · 
+                                  <a class="wiki-link" href="ANZ_뱅크.html">ANZ</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="메트로은행.html">메트로은행</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="파키스탄국립은행.html">파키스탄국립은행</a><span class="text-[9px] align-super">⊛</span> · 
+                                  <a class="wiki-link" href="멜라트은행.html">멜라트은행</a><span class="text-[9px] align-super">⊛</span>
 </td>
 </tr>
 </table>

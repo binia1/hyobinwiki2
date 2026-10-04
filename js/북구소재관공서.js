@@ -40,7 +40,7 @@
 </td>
 </tr>
 <tr>
-<th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle">법조</th>
+<th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle" rowspan="2">법조</th>
 <td class="border border-gray-300 p-2 align-middle">
 <div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_법원_로고.svg'" src="이미지/svg/대한민국_법원_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈고등법원.html">효빈고등법원</a></div>
 </td>
@@ -48,11 +48,17 @@
 <div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_법원_로고.svg'" src="이미지/svg/대한민국_법원_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방법원.html">효빈지방법원</a></div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5 flex-wrap"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_검찰청_로고.svg'" src="이미지/svg/대한민국_검찰청_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈고등검찰청.html">효빈고등검찰청</a> <span class="text-[10px] text-gray-500 font-bold break-keep"><del>(변경예정)</del></span></div>
+<div class="flex items-center justify-center gap-1.5 flex-wrap"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_정부_로고.svg'" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈광역공소청.html">효빈광역공소청</a></div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5 flex-wrap"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_검찰청_로고.svg'" src="이미지/svg/대한민국_검찰청_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방검찰청.html">효빈지방검찰청</a> <span class="text-[10px] text-gray-500 font-bold break-keep"><del>(변경예정)</del></span></div>
+<div class="flex items-center justify-center gap-1.5 flex-wrap"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_정부_로고.svg'" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방공소청.html">효빈지방공소청</a></div>
 </td>
+</tr>
+<tr>
+<td class="border border-gray-300 p-2 align-middle">
+<div class="flex items-center justify-center gap-1.5 flex-wrap"><img class="w-4 h-4 object-contain" onerror="this.src='이미지/svg/대한민국_정부_로고.svg'" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈지방중대범죄수사청.html">효빈지방중대범죄수사청</a></div>
+</td>
+<td class="border border-gray-300 p-2 align-middle" colspan="3"></td>
 </tr>
 <tr>
 <th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle">교육</th>

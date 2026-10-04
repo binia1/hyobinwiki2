@@ -26,25 +26,25 @@
                                 <table style="width: 100%; border-collapse: collapse; text-align: center;">
                                     <tr>
                                         <td style="padding: 8px; border: none; width: 33.33%;">
-                                            <a class="wiki-link" href="롯데마트_조전점.html">조전점</a><br>
+                                  <a class="wiki-link" href="롯데마트_조전점.html">조전점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">덕주시 조전구 조전동</span>
                                         </td>
                                         <td style="padding: 8px; border: none; width: 33.33%;">
-                                            <a class="wiki-link" href="롯데마트_낙주점.html">낙주점</a><br>
+                                  <a class="wiki-link" href="롯데마트_낙주점.html">낙주점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">낙주시 삼채동</span>
                                         </td>
                                         <td style="padding: 8px; border: none; width: 33.33%;">
-                                            <a class="wiki-link" href="롯데마트_방산점.html">방산점</a><br>
+                                  <a class="wiki-link" href="롯데마트_방산점.html">방산점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">방산시 주강동</span>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="padding: 8px; border: none;">
-                                            <a class="wiki-link" href="롯데마트_매성점.html">매성점</a><br>
+                                  <a class="wiki-link" href="롯데마트_매성점.html">매성점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">매성시 근암동</span>
                                         </td>
                                         <td style="padding: 8px; border: none;">
-                                            <a class="wiki-link" href="롯데마트_비천점.html">비천점</a><br>
+                                  <a class="wiki-link" href="롯데마트_비천점.html">비천점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">비천시 성두동</span>
                                         </td>
                                         <td style="padding: 8px; border: none;"></td>

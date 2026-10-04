@@ -1881,3 +1881,62 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     observer.observe(document.body, { childList: true, subtree: true });
 });
+document.addEventListener("DOMContentLoaded", function() {
+    const tocContainer = document.querySelector('.toc');
+    if (!tocContainer) return;
+
+    // 목차 타이틀 디자인 원본과 동일하게 복구
+    tocContainer.innerHTML = '<div class="text-center font-black border-b border-[#ccc] mb-4 pb-2 uppercase tracking-widest text-sm">목차</div>';
+    
+    const mainUl = document.createElement('ul');
+    // 메인 목차 ul 디자인 클래스 추가
+    mainUl.className = 'space-y-1.5 text-sm font-bold text-black';
+    tocContainer.appendChild(mainUl);
+
+    let currentH2Li = null; 
+    let currentH3Ul = null;
+
+    // [수정 핵심] .anchor-offset 조건 삭제. wiki-container 내부의 모든 h2, h3 탐색
+    const headings = document.querySelectorAll('.wiki-container h2, .wiki-container h3');
+
+    headings.forEach(heading => {
+        if (!heading.id) {
+            heading.id = 's-' + Math.random().toString(36).substring(2, 9);
+        }
+
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.className = 'wiki-link';
+        a.href = '#' + heading.id;
+        
+        // ▼ 기호와 [편집] 텍스트를 공백으로 치환 후 앞뒤 여백 제거
+        let cleanText = heading.textContent
+            .replace(/▼/g, '')
+            .replace(/\[편집\]/g, '')
+            .trim();
+            
+        a.textContent = cleanText;
+        li.appendChild(a);
+
+        if (heading.tagName.toLowerCase() === 'h2') {
+            mainUl.appendChild(li);
+            currentH2Li = li;
+            
+            currentH3Ul = document.createElement('ul');
+            // 서브 목차 ul 디자인 클래스 추가
+            currentH3Ul.className = 'pl-4 space-y-1';
+            currentH2Li.appendChild(currentH3Ul);
+            
+        } else if (heading.tagName.toLowerCase() === 'h3') {
+            if (currentH3Ul) {
+                currentH3Ul.appendChild(li);
+            } else {
+                mainUl.appendChild(li);
+            }
+        }
+    });
+
+    // 비어있는 ul 태그 정리
+    const emptyUls = mainUl.querySelectorAll('ul:empty');
+    emptyUls.forEach(emptyUl => emptyUl.remove());
+});

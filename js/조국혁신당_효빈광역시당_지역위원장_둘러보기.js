@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div style="display: flex; width: 100%; min-height: 48px;">
                     <div style="flex: 1; background-color: #002D62;"></div>
                     <div style="flex: 3; background-color: #0073CF; display: flex; align-items: center; justify-content: center; padding: 10px;">
-                        <a class="wiki-link" href="조국혁신당.html" style="color:white; font-weight:900; font-size: 1.15rem; text-decoration: none; letter-spacing: -0.5px;" class="hover:underline">
+              <a class="wiki-link" href="조국혁신당.html" style="color:white; font-weight:900; font-size: 1.15rem; text-decoration: none; letter-spacing: -0.5px;" class="hover:underline">
                             조국혁신당 효빈광역시당 지역위원장
                         </a>
                     </div>

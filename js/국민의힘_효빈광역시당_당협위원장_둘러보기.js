@@ -10,12 +10,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div style="background-color: #E61E2B; text-align: center; padding: 12px;">
                     <span style="display:inline-flex; align-items:center; justify-content:center; gap:6px;">
                         <!-- 국민의힘 당 로고 (좌측 상단, 우측 하단이 잘린 사각형 정확히 구현) -->
-                        <a class="wiki-link" href="국민의힘.html" style="color:white; display:flex; align-items:center; text-decoration:none;">
+              <a class="wiki-link" href="국민의힘.html" style="color:white; display:flex; align-items:center; text-decoration:none;">
                             <svg width="22" height="22" viewBox="0 0 100 100" fill="white" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M10,35 L35,10 H90 V65 L65,90 H10 Z" />
                             </svg>
                         </a>
-                        <a class="wiki-link" href="국민의힘.html" style="color:white; font-weight:900; font-size: 1.15rem; text-decoration: none; letter-spacing: -0.5px;" class="hover:underline">
+              <a class="wiki-link" href="국민의힘.html" style="color:white; font-weight:900; font-size: 1.15rem; text-decoration: none; letter-spacing: -0.5px;" class="hover:underline">
                             국민의힘 효빈광역시당 당협위원장
                         </a>
                     </span>

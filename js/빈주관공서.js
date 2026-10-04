@@ -82,8 +82,8 @@
 </td>
 <td class="border border-gray-300 p-2 align-middle">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" src="이미지/svg/대한민국_검찰청_로고.svg"/>
-<a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="빈주지방검찰청.html">빈주지방검찰청</a>
+<img class="w-4 h-4 object-contain" src="이미지/svg/대한민국_정부_로고.svg"/>
+<a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="빈주지방공소청.html">빈주지방공소청</a>
 </div>
 </td>
 <td class="border border-gray-300 p-2 align-middle" colspan="2">

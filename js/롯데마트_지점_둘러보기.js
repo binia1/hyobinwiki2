@@ -28,25 +28,25 @@
                                 <table style="width: 100%; border-collapse: collapse; text-align: center;">
                                     <tr>
                                         <td style="padding: 8px; border: none;">
-                                            <a class="wiki-link" href="롯데마트_과진점.html">과진점</a><br>
+                                  <a class="wiki-link" href="롯데마트_과진점.html">과진점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">서구 과진동</span>
                                         </td>
                                         <td style="padding: 8px; border: none;">
-                                            <a class="wiki-link" href="롯데마트_평당점.html">평당점</a><br>
+                                  <a class="wiki-link" href="롯데마트_평당점.html">평당점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">남구 평당동</span>
                                         </td>
                                         <td style="padding: 8px; border: none;">
-                                            <a class="wiki-link" href="롯데마트_도변점.html">도변점</a><br>
+                                  <a class="wiki-link" href="롯데마트_도변점.html">도변점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">탄성군 도변읍</span>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="padding: 8px; border: none;">
-                                            <a class="wiki-link" href="롯데마트_진희점.html">진희점</a><br>
+                                  <a class="wiki-link" href="롯데마트_진희점.html">진희점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">북구 진희동</span>
                                         </td>
                                         <td style="padding: 8px; border: none;">
-                                            <a class="wiki-link" href="롯데마트_이자점.html">이자점</a><br>
+                                  <a class="wiki-link" href="롯데마트_이자점.html">이자점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">안천구 이자동</span>
                                         </td>
                                         <td style="padding: 8px; border: none;"></td>

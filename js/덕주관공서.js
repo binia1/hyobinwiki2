@@ -74,7 +74,7 @@
 <td class="border border-gray-300 p-2 align-middle" colspan="2">
 <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5">
 <div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" src="이미지/svg/대한민국_법원_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕주지방법원.html">덕주지방법원</a></div>
-<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" src="이미지/svg/대한민국_검찰청_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕주지방검찰청.html">덕주지방검찰청</a></div>
+<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" src="이미지/svg/대한민국_정부_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕주지방공소청.html">덕주지방공소청</a></div>
 </div>
 </td>
 <td class="border border-gray-300 p-2 align-middle" colspan="2">

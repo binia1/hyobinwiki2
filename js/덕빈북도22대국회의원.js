@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     <!-- 하단 링크 -->
                                     <tr>
                                         <td style="background-color: #f9f9f9; padding: 12px 0 8px 0; font-size: 0.9em; border: 1px solid #ddd;" colspan="4">
-                                            <a class="wiki-link" href="덕빈북도_제22대총선_결과.html" style="color: #0022AA; font-weight: bold; text-decoration: none;">선거 결과 전체 보기</a>
+                                  <a class="wiki-link" href="덕빈북도_제22대총선_결과.html" style="color: #0022AA; font-weight: bold; text-decoration: none;">선거 결과 전체 보기</a>
                                         </td>
                                     </tr>
                                 </tbody>

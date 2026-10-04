@@ -26,13 +26,13 @@ document.addEventListener("DOMContentLoaded", function() {
                         </tr>
                         <tr>
                             <td colspan="2" width="33%">
-                                <a class="wiki-link" href="KNN.html">KNN</a><br/><span class="bg-[#0073A5] text-white px-2 py-0.5 rounded text-[10px]">부산, 경남</span>
+                      <a class="wiki-link" href="KNN.html">KNN</a><br/><span class="bg-[#0073A5] text-white px-2 py-0.5 rounded text-[10px]">부산, 경남</span>
                             </td>
                             <td colspan="2" width="33%">
-                                <a class="wiki-link" href="TBC.html">TBC</a><br/><span class="bg-[#0073A5] text-white px-2 py-0.5 rounded text-[10px]">대구, 경북</span>
+                      <a class="wiki-link" href="TBC.html">TBC</a><br/><span class="bg-[#0073A5] text-white px-2 py-0.5 rounded text-[10px]">대구, 경북</span>
                             </td>
                             <td colspan="2" width="34%">
-                                <a class="wiki-link" href="광주방송.html">kbc</a><br/><span class="bg-[#0073A5] text-white px-2 py-0.5 rounded text-[10px]">광주, 전남</span>
+                      <a class="wiki-link" href="광주방송.html">kbc</a><br/><span class="bg-[#0073A5] text-white px-2 py-0.5 rounded text-[10px]">광주, 전남</span>
                             </td>
                         </tr>
                         <tr>
@@ -40,10 +40,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <a class="wiki-link font-bold text-[#0047a0]" href="HBS.html">HBS 효빈방송</a><br/><span class="bg-[#00a0e9] text-white px-2 py-0.5 rounded text-[10px]">효빈, 덕북</span>
                             </td>
                             <td colspan="2">
-                                <a class="wiki-link" href="DBS.html">DBS 덕남방송</a><br/><span class="bg-[#0073A5] text-white px-2 py-0.5 rounded text-[10px]">덕남</span>
+                      <a class="wiki-link" href="DBS.html">DBS 덕남방송</a><br/><span class="bg-[#0073A5] text-white px-2 py-0.5 rounded text-[10px]">덕남</span>
                             </td>
                             <td colspan="2">
-                                <a class="wiki-link" href="청주방송.html">CJB</a><br/><span class="bg-[#0073A5] text-white px-2 py-0.5 rounded text-[10px]">충북</span>
+                      <a class="wiki-link" href="청주방송.html">CJB</a><br/><span class="bg-[#0073A5] text-white px-2 py-0.5 rounded text-[10px]">충북</span>
                             </td>
                         </tr>
                     </table>

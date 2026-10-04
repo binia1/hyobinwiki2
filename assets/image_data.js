@@ -16695,7 +16695,7 @@ const imageFiles = [
         "category": "facility_gov"
     },
     {
-        "file": "효빈고등검찰청.webp",
+        "file": "효빈광역공소청.webp",
         "category": "facility_gov"
     },
     {

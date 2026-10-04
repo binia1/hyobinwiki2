@@ -28,35 +28,35 @@
                                 <table style="width: 100%; border-collapse: collapse; text-align: center;">
                                     <tr>
                                         <td style="padding: 8px; border: none; width: 33.33%;">
-                                            <a class="wiki-link" href="롯데마트_서해점.html">서해점</a><br>
+                                  <a class="wiki-link" href="롯데마트_서해점.html">서해점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">서해시 우궁동</span>
                                         </td>
                                         <td style="padding: 8px; border: none; width: 33.33%;">
-                                            <a class="wiki-link" href="롯데마트_장기점.html">장기점</a><br>
+                                  <a class="wiki-link" href="롯데마트_장기점.html">장기점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">빈주시 장기구 월삼동</span>
                                         </td>
                                         <td style="padding: 8px; border: none; width: 33.33%;">
-                                            <a class="wiki-link" href="롯데마트_약산점.html">약산점</a><br>
+                                  <a class="wiki-link" href="롯데마트_약산점.html">약산점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">약산시 장곡읍</span>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="padding: 8px; border: none;">
-                                            <a class="wiki-link" href="롯데마트_천성점.html">천성점</a><br>
+                                  <a class="wiki-link" href="롯데마트_천성점.html">천성점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">천주시 천성구 복주동</span>
                                         </td>
                                         <td style="padding: 8px; border: none;">
-                                            <a class="wiki-link" href="롯데마트_군천점.html">군천점</a><br>
+                                  <a class="wiki-link" href="롯데마트_군천점.html">군천점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">군천시 하강동</span>
                                         </td>
                                         <td style="padding: 8px; border: none;">
-                                            <a class="wiki-link" href="롯데마트_전산점.html">전산점</a><br>
+                                  <a class="wiki-link" href="롯데마트_전산점.html">전산점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">전산시 전산동</span>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="padding: 8px; border: none;">
-                                            <a class="wiki-link" href="롯데마트_낭원점.html">낭원점</a><br>
+                                  <a class="wiki-link" href="롯데마트_낭원점.html">낭원점</a><br>
                                             <span class="small-text" style="font-size: 0.8em; color: #666;">낭원군 낭원읍</span>
                                         </td>
                                         <td style="padding: 8px; border: none;"></td>

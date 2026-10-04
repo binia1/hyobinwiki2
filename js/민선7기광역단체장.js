@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             </td>
                         </tr>
 
-                        <!-- 5열 (제주 및 추가 요청된 효빈, 덕빈북, 덕빈남) -->
+                        <!-- 5열 (제주 및 추가 요청된 효빈, 덕북, 덕빈남) -->
                         <tr style="color: white; font-weight: bold;">
                             <td style="background-color: #000000; padding: 6px; border: 1px solid #ddd;">제주</td>
                             <td style="background-color: #000000; padding: 6px; border: 1px solid #ddd;">효빈</td>

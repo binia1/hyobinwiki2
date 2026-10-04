@@ -10,10 +10,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div style="background-color: #FF7018; text-align: center; padding: 12px;">
                     <span style="display:inline-flex; align-items:center; justify-content:center; gap:6px;">
                         <!-- 개혁신당 로고 텍스트 구현 -->
-                        <a class="wiki-link" href="개혁신당.html" style="text-decoration: none; font-weight: 900; font-size: 1.3rem; letter-spacing: -1px; font-style: italic;">
+              <a class="wiki-link" href="개혁신당.html" style="text-decoration: none; font-weight: 900; font-size: 1.3rem; letter-spacing: -1px; font-style: italic;">
                             <span style="color: black;">개혁</span><span style="color: white;">신당</span>
                         </a>
-                        <a class="wiki-link" href="개혁신당.html" style="color:white; font-weight:900; font-size: 1.15rem; text-decoration: none; letter-spacing: -0.5px;" class="hover:underline">
+              <a class="wiki-link" href="개혁신당.html" style="color:white; font-weight:900; font-size: 1.15rem; text-decoration: none; letter-spacing: -0.5px;" class="hover:underline">
                             효빈광역시당 당협위원장
                         </a>
                     </span>

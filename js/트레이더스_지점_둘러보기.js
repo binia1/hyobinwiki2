@@ -79,7 +79,7 @@
                                     </tr>
                                 </table>
                                 <div style="margin-top: 15px; padding: 8px; background-color: var(--traders-dark, #231815); text-align: center; border-radius: 4px;">
-                                    <a class="wiki-link" href="https://namu.wiki/w/이마트/지점" style="color: white; font-weight: bold; text-decoration: none;" target="_blank">이마트/지점</a>
+                          <a class="wiki-link" href="https://namu.wiki/w/이마트/지점" style="color: white; font-weight: bold; text-decoration: none;" target="_blank">이마트/지점</a>
                                 </div>
                             </div>
                         </details>

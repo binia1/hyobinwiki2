@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div style="flex: 1; background-color: #004EA2;"></div>
                     <div style="flex: 1.5; background-color: #56188C; display: flex; align-items: center; justify-content: center; padding: 12px 5px;">
                         <!-- '더불어'를 '민' 글자 바로 좌측 상단에 겹치게 배치 -->
-                        <a class="wiki-link" href="더불어민주당.html" style="color:white; font-weight:900; font-size: 1.15rem; text-decoration: none; letter-spacing: -0.5px; position: relative;">
+              <a class="wiki-link" href="더불어민주당.html" style="color:white; font-weight:900; font-size: 1.15rem; text-decoration: none; letter-spacing: -0.5px; position: relative;">
                             <span style="position: absolute; top: -12px; left: 0px; font-size: 0.65rem; font-style: italic; font-weight: 700; font-family: 'Noto Sans KR', sans-serif;">더불어</span>
                             민주당 효빈광역시당 지역위원장
                         </a>

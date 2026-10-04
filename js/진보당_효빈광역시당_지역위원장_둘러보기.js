@@ -10,12 +10,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div style="background-color: #D6001C; text-align: center; padding: 12px;">
                     <span style="display:inline-flex; align-items:center; justify-content:center; gap:6px;">
                         <!-- 진보당 말풍선 로고 (SVG 직접 구현) -->
-                        <a class="wiki-link" href="진보당.html" style="color:white; display:flex; align-items:center; text-decoration:none;">
+              <a class="wiki-link" href="진보당.html" style="color:white; display:flex; align-items:center; text-decoration:none;">
                             <svg width="22" height="22" viewBox="0 0 100 100" fill="white" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M 15 15 H 90 V 80 H 35 L 10 95 L 25 80 H 15 Z" />
                             </svg>
                         </a>
-                        <a class="wiki-link" href="진보당.html" style="color:white; font-weight:900; font-size: 1.15rem; text-decoration: none; letter-spacing: -0.5px;" class="hover:underline">
+              <a class="wiki-link" href="진보당.html" style="color:white; font-weight:900; font-size: 1.15rem; text-decoration: none; letter-spacing: -0.5px;" class="hover:underline">
                             진보당 효빈광역시당 지역위원장
                         </a>
                     </span>

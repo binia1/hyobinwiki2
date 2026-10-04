@@ -9,10 +9,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 <tr>
                     <td class="nav-header" style="background-color: #7777AA; text-align: center; padding: 8px;">
                         <span class="nav-header-wrap" style="display:inline-flex; align-items:center; gap:4px;">
-                            <a class="wiki-link" href="효빈광역시.html" style="color:white;">
+                  <a class="wiki-link" href="효빈광역시.html" style="color:white;">
                                 <img onerror="this.style.display='none'" src="이미지/효빈광역시_흰색로고.webp" style="vertical-align: middle; display:block;" width="20"/>
                             </a>
-                            <a class="wiki-link" href="제22대_국회의원.html" style="color:white; font-weight: bold;">효빈광역시 제22대 국회의원</a>
+                  <a class="wiki-link" href="제22대_국회의원.html" style="color:white; font-weight: bold;">효빈광역시 제22대 국회의원</a>
                         </span>
                     </td>
                 </tr>
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         </tr>
                                         <tr>
                                             <td colspan="4" style="background-color: #f9f9f9; font-size: 0.9em; padding: 10px 0 5px 0;">
-                                                <a class="wiki-link" href="제22대_국회의원_선거_효빈광역시.html">선거 결과</a>
+                                      <a class="wiki-link" href="제22대_국회의원_선거_효빈광역시.html">선거 결과</a>
                                             </td>
                                         </tr>
                                     </tbody>
