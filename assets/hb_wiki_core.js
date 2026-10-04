@@ -1316,16 +1316,21 @@ if (document.readyState === 'loading') {
 })();
 
 // =====================================================================
-// 🚀 [나무위키 스타일 제목 & 버튼 그룹 자동 생성기 - 크기/색상 완벽 고정 버전]
+// 🚀 [나무위키 스타일 제목 & 버튼 그룹 자동 생성기 - 즐겨찾기 완벽 연동 수정본]
 // =====================================================================
 document.addEventListener("DOMContentLoaded", function() {
     if (document.querySelector('.namu-btn-group')) return;
 
-    const titleEl = document.querySelector('.txt-lvl-1');
+    // 1. .txt-lvl-1 클래스가 없더라도 wiki-container 내부의 h1 또는 일반 h1 탐색
+    const titleEl = document.querySelector('.txt-lvl-1') || 
+                    document.querySelector('.wiki-container h1') || 
+                    document.querySelector('h1');
+                    
     if (!titleEl) return; 
 
     const titleText = titleEl.textContent.trim();
 
+    // 최근 수정 시각 생성
     const dateObj = new Date(document.lastModified);
     const year = dateObj.getFullYear();
     const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -1335,18 +1340,18 @@ document.addEventListener("DOMContentLoaded", function() {
     const seconds = String(dateObj.getSeconds()).padStart(2, '0');
     const modTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
+    // 새 타이틀 영역 생성
     const newTitleArea = document.createElement('div');
-    newTitleArea.className = 'title-area border-b border-gray-300 mb-6 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4 mt-4';
+    newTitleArea.className = 'title-area border-b border-gray-300 mb-6 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4 mt-2';
     
-    // 🔥 인라인 스타일로 폰트 크기(2.75rem / var(--font-h1)), 굵기(900), 색상(#000000) 강제 지정
     newTitleArea.innerHTML = `
         <div>
-            <h1 class="wiki-heading-title" style="font-size: var(--font-h1, 2.75rem) !important; font-weight: 900 !important; color: #000000 !important; margin: 0 !important; line-height: 1.1 !important; letter-spacing: -1.5px !important; text-decoration: none !important; display: block !important;">${titleText}</h1>
+            <h1 class="wiki-heading-title" style="font-size: var(--font-h1, 2.5rem) !important; font-weight: 900 !important; color: #000000 !important; margin: 0 !important; line-height: 1.2 !important; letter-spacing: -1px !important; text-decoration: none !important; border: none !important; padding: 0 !important;">${titleText}</h1>
             <div class="text-[0.85rem] text-gray-500 mt-2">최근 수정 시각: ${modTime}</div>
         </div>
         
         <div class="namu-btn-group relative flex items-center bg-white border border-gray-300 rounded-[4px] shadow-sm text-sm font-medium text-gray-600 shrink-0 h-[34px]">
-            <a href="javascript:void(0);" class="px-3 h-full border-r border-gray-300 hover:bg-gray-50 flex items-center justify-center transition-colors text-gray-400 hover:text-yellow-400" title="즐겨찾기">
+            <a href="javascript:void(0);" class="hb-star-btn px-3 h-full border-r border-gray-300 hover:bg-gray-50 flex items-center justify-center transition-colors text-gray-400 hover:text-yellow-400" title="즐겨찾기">
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
             </a>
             <a href="수정.html" class="px-3 h-full border-r border-gray-300 hover:bg-gray-50 flex items-center gap-1.5 transition-colors">
@@ -1373,24 +1378,61 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     `;
 
-    const oldTitleArea = document.querySelector('.title-area');
-    const oldToolGroup = document.querySelector('.wiki-tool-group');
-    const topButtons = document.querySelectorAll('.wiki-btn');
-
-    if (oldTitleArea) {
-        oldTitleArea.parentNode.replaceChild(newTitleArea, oldTitleArea);
+    // 2. 기존 h1 감싸는 영역 교체
+    const parentWrapper = titleEl.closest('.flex') || titleEl.parentElement;
+    if (parentWrapper && parentWrapper !== document.body && parentWrapper !== document.querySelector('.wiki-container')) {
+        parentWrapper.parentNode.replaceChild(newTitleArea, parentWrapper);
     } else {
         titleEl.parentNode.insertBefore(newTitleArea, titleEl);
         titleEl.remove();
     }
-    
-    if (oldToolGroup) oldToolGroup.remove();
-    topButtons.forEach(btn => {
-        if (btn.textContent.includes('토론') || btn.textContent.includes('편집') || btn.textContent.includes('역사') || btn.textContent.includes('수정')) {
-            btn.remove();
-        }
-    });
 
+    // 3. 🌟 [즐겨찾기 버튼 이벤트 & 상태 직접 바인딩]
+    const starBtn = newTitleArea.querySelector('.hb-star-btn');
+    if (starBtn) {
+        function getLivePageInfo() {
+            const liveTitle = document.title.replace(" - 효빈위키", "").trim();
+            const liveUrl = decodeURIComponent(window.location.pathname.split("/").pop() + window.location.search + window.location.hash);
+            return { title: liveTitle, url: liveUrl };
+        }
+
+        function updateStarUI() {
+            const info = getLivePageInfo();
+            let bookmarks = JSON.parse(localStorage.getItem('hyobinBookmarks')) || [];
+            if (bookmarks.some(b => b.url === info.url)) {
+                starBtn.style.color = '#FFCC11'; // 즐겨찾기 상태: 노란별
+            } else {
+                starBtn.style.color = ''; // 해제 상태: 회색
+            }
+        }
+
+        // 페이지 켜졌을 때/해시 변경 시 별 색상 갱신
+        updateStarUI();
+        window.addEventListener('hashchange', updateStarUI);
+
+        // 클릭 시 즐겨찾기 추가/해제
+        starBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const info = getLivePageInfo();
+            let bookmarks = JSON.parse(localStorage.getItem('hyobinBookmarks')) || [];
+            const existingIndex = bookmarks.findIndex(b => b.url === info.url);
+
+            if (existingIndex > -1) {
+                bookmarks.splice(existingIndex, 1);
+                alert(`'${info.title}' 문서를 즐겨찾기에서 해제했습니다.`);
+            } else {
+                bookmarks.push({ title: info.title, url: info.url });
+                alert(`'${info.title}' 문서를 즐겨찾기에 추가했습니다!`);
+            }
+
+            localStorage.setItem('hyobinBookmarks', JSON.stringify(bookmarks));
+            updateStarUI();
+        });
+    }
+
+    // 4. 더보기 드롭다운 이벤트 연결
     const moreBtn = newTitleArea.querySelector('.hb-more-btn');
     const dropdown = newTitleArea.querySelector('.hb-dropdown');
     
