@@ -661,7 +661,6 @@ def generate_wiki_index():
     <script src="assets/wiki_index.js"></script>
 <script src="assets/hb_data_map.js"></script>
     <script src="secret_search.js"></script>
-    <script src="assets/hb_wiki_core.js?v=2"></script>
     <script src="assets/hb_index_scripts.js"></script>
     <script src="assets/jana.js"></script>
     <script src="assets/load-footer.js"></script>

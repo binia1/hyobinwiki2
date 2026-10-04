@@ -1454,3 +1454,9 @@ document.addEventListener("DOMContentLoaded", function() {
         e.stopPropagation();
     });
 });
+// URL 해시(#) 변경 시 분류 데이터 다시 로드
+window.addEventListener('hashchange', function() {
+    if (location.pathname.includes('분류.html')) {
+        loadCategoryData(); // 분류 데이터 불러오는 본인 프로젝트의 함수명으로 변경
+    }
+});

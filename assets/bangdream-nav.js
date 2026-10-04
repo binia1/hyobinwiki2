@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         "Afterglow": {
             bg: "#EE3344", color: "#EE3344",
-            logo: "Afterglow(BanG_Dream!)_로고.svg", image10th: "Afterglow_10th.webp",
+            logo: "svg/Afterglow(BanG_Dream!)_로고.svg", image10th: "Afterglow_10th.webp",
             members: [
                 { name: "미타케 란", role: "기타 & 보컬", color: "#EE0022", textColor: "#FFF", hasCard: true },
                 { name: "아오바 모카", role: "기타", color: "#00CCAA", textColor: "#000", hasCard: true },
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         "Pastel*Palettes": {
             bg: "#33DDAA", color: "#33DDAA",
-            logo: "파스파레로고.svg", image10th: "Pastel_Palettes_10th.webp",
+            logo: "svg/파스파레로고.svg", image10th: "Pastel_Palettes_10th.webp",
             members: [
                 { name: "마루야마 아야", role: "보컬", color: "#FF88BB", textColor: "#000", hasCard: true },
                 { name: "히카와 히나", role: "기타", color: "#55DDEE", textColor: "#000", hasCard: true },

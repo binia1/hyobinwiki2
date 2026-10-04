@@ -20339,5 +20339,7 @@ window.HB_WIKI_ALIASES = {
   "산음면": "원안군_행정구역.html#산음면",
   "소운면": "원안군_행정구역.html#소운면",
   "휴소도역": "휴소도역.html",
-  "효빈지방중대범죄수사청": "효빈지방중대범죄수사청.html"
+  "효빈지방중대범죄수사청": "효빈지방중대범죄수사청.html",
+  "hyobin.go.kr":"https://binia1.github.io/hyobincity/index.html",
+  "hyobin.go.kr.html":"https://binia1.github.io/hyobincity/index.html"
 };
