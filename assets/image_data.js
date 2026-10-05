@@ -5863,7 +5863,7 @@ const imageFiles = [
         "category": "person"
     },
     {
-        "file": "맥도날드_로고.webp",
+        "file": "svg/맥도날드_로고.svg",
         "category": "logo"
     },
     {
