@@ -946,9 +946,16 @@ function loadMember(key) {
         return;
     }
 
-    // 1. 문서 제목 업데이트
-    document.getElementById('doc-title').innerText = key;
+    // 1. 문서 제목 업데이트 (Null 방어 코드 추가)
+    const docTitleEl = document.getElementById('doc-title');
+    if (docTitleEl) {
+        docTitleEl.innerText = key;
+    }
 
+    const docCategoryEl = document.getElementById('doc-category');
+    if (docCategoryEl) {
+        docCategoryEl.innerHTML = `...`; // 기존 분류 HTML 설정
+    }
     // 💡 [추가] 출생지 및 학력 스마트 추출기 (인포박스 & 분류 박스에서 공통 사용)
     let birthplace = "알 수 없음";
     const birthMatch = data.life.match(/\d{4}년\s+(.+?)(?:\s*출생|\s*에서 태어났다|\s*에서)/);
