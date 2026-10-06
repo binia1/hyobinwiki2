@@ -36,7 +36,7 @@ function render_조전구_PopTable(containerId) {
         <div style="margin: 30px auto; border: 2px solid #ff9ea9; border-radius: 4px; background-color: #fff; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <div style="background-color: #ff9ea9; color: white; padding: 12px; text-align: center; font-weight: bold; font-size: 1.1em; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <div style="width: 20px; height: 20px; background: white; border-radius: 2px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                    <img src="이미지/조전구.webp" alt="로고" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.style.display='none';">
+                    <img src="이미지/덕주시.webp" alt="로고" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.style.display='none';">
                 </div>
                 덕빈남도 덕주시 조전구 읍면동별 인구 통계 (2026년 4월)
             </div>
