@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
-    <link rel="icon" href="이미지/효빈위키아이콘.webp">
-    <meta charset="UTF-8">
-    <title>효빈위키 - 세하 마스터 제어판 (페르소나 8분할 반응 적용)</title>
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-    <style>
+<link href="이미지/효빈위키아이콘.webp" rel="icon"/>
+<meta charset="utf-8"/>
+<title>효빈위키 - 세하 마스터 제어판 (페르소나 8분할 반응 적용)</title>
+<link href="data:;base64,iVBORw0KGgo=" rel="icon"/>
+<style>
         body { margin: 0; padding: 0; overflow: hidden; background-color: transparent; }
         canvas { display: block; width: 100vw; height: 100vh; }
         #control-panel {
@@ -49,71 +50,71 @@
     
     
 </style>
-    <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.9/dist/browser/pixi.min.js"></script>
-    <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display/dist/cubism4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.9/dist/browser/pixi.min.js"></script>
+<script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display/dist/cubism4.min.js"></script>
 <script src="assets/ad_logic.js"></script>
-
-    <!-- 효빈위키 폰트 CSS -->
-    <link rel="stylesheet" href="wiki_font_standard.css">
+<!-- 효빈위키 폰트 CSS -->
+<link href="wiki_font_standard.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<style>
+    .wiki-fn-sup { position: relative; cursor: help; display: inline-block; padding: 0 2px; }
+    .wiki-fn-sup:hover .wiki-fn-tooltip { visibility: visible; opacity: 1; }
+    .wiki-fn-tooltip {
+        visibility: hidden; opacity: 0; position: absolute; bottom: 130%; right: 0;
+        background-color: #fff; color: #333; text-align: left; padding: 12px; border-radius: 6px;
+        font-size: 12px; width: max-content; max-width: 350px; z-index: 99999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #BBFF64;
+        font-weight: normal; line-height: 1.5; transition: opacity 0.2s; pointer-events: none;
+    }
+</style>
 </head>
 <body>
-    <div id="control-panel">
-        <h3>세하 마스터 엔진</h3>
-
-        <div class="category-title">접속자(유저) 페르소나 설정</div>
-        <select id="user-identity">
-            <option value="general">👤 1. 일반인 (직장 동료 / 행인)</option>
-            <option value="noah">🍊 2. 전노아 (05년생 찐친 / 빈효선)</option>
-            <option value="soha">🎀 3. 미소하 (05년생 찐친 / 5호선)</option>
-            <option value="hyobin">💖 4. 박효빈 (2003년생 / 연인)</option>
-            <option value="yuria">🔧 5. 유리아 (17세 후배 / 8호선)</option>
-            <option value="sejeong">👑 6. 임세정 (30세 맏언니 / 7호선)</option>
-            <option value="rasena">⏱️ 7. 라세나 (19세 고3 숨덕 / 6호선)</option>
-            <option value="harubin">☕ 8. 하루빈 (24세 뺀질이 선배 / 2호선)</option>
-        </select>
-
-        <label class="mode-switch" style="margin-top: 15px;"><input type="checkbox" id="manual-mode"> 🕹️ 수동 제어 모드 활성화</label>
-
-        <div class="category-title">원클릭 표정 프리셋 (수동모드)</div>
-        <div class="preset-grid">
-            <button class="preset-btn" onclick="setPreset('smile')">😄 기쁨 / 미소</button>
-            <button class="preset-btn" onclick="setPreset('shy')">😳 부끄 / 홍조</button>
-            <button class="preset-btn" onclick="setPreset('angry')">😠 화남 / 뾰루퉁</button>
-            <button class="preset-btn" onclick="setPreset('sad')">😢 슬픔 / 아련</button>
-            <button class="preset-btn reset" onclick="setPreset('reset')">🔄 기본 표정으로 초기화</button>
-        </div>
-
-        <div class="category-title">의상 제어 (상시 작동)</div>
-        <div class="slider-group clothing-toggle"><label>의상 토글 스위치 <span class="slider-value" id="val-ParamClothing">0</span></label><input type="range" id="slider-ParamClothing" min="0" max="1" value="0" step="1"></div>
-        
-        <div class="category-title">시선 및 신체 방향</div>
-        <div class="slider-group"><label>고개 회전 X <span class="slider-value" id="val-ParamAngleX">0</span></label><input type="range" id="slider-ParamAngleX" min="-30" max="30" value="0"></div>
-        <div class="slider-group"><label>고개 회전 Y <span class="slider-value" id="val-ParamAngleY">0</span></label><input type="range" id="slider-ParamAngleY" min="-30" max="30" value="0"></div>
-        <div class="slider-group"><label>고개 회전 Z <span class="slider-value" id="val-ParamAngleZ">0</span></label><input type="range" id="slider-ParamAngleZ" min="-30" max="30" value="0"></div>
-
-        <div class="category-title">찐 얼굴 파츠 (Param5~9)</div>
-        <div class="slider-group"><label>진짜 눈 L (Param5) <span class="slider-value" id="val-Param5">1</span></label><input type="range" id="slider-Param5" min="0" max="1" value="1" step="0.05"></div>
-        <div class="slider-group"><label>진짜 눈 R (Param6) <span class="slider-value" id="val-Param6">1</span></label><input type="range" id="slider-Param6" min="0" max="1" value="1" step="0.05"></div>
-        <div class="slider-group"><label>찐 입 여닫기 (Param7) <span class="slider-value" id="val-Param7">0</span></label><input type="range" id="slider-Param7" min="0" max="1" value="0" step="0.05"></div>
-        <div class="slider-group"><label>찐 입 변형 A (Param8) <span class="slider-value" id="val-Param8">0</span></label><input type="range" id="slider-Param8" min="-1" max="1" value="0" step="0.05"></div>
-        <div class="slider-group"><label>찐 입 변형 B (Param9) <span class="slider-value" id="val-Param9">0</span></label><input type="range" id="slider-Param9" min="-1" max="1" value="0" step="0.05"></div>
-        
-        <div class="slider-group"><label>찐 홍조 (Param) <span class="slider-value" id="val-Param">0</span></label><input type="range" id="slider-Param" min="0" max="1" value="0" step="0.05"></div>
-
-        <div class="category-title">물리 상호작용</div>
-        <div class="slider-group"><label>앞머리 흔들림 <span class="slider-value" id="val-ParamHairFront">0</span></label><input type="range" id="slider-ParamHairFront" min="-1" max="1" value="0" step="0.05"></div>
-        <div class="slider-group"><label>바보털 제어 <span class="slider-value" id="val-Param11">0</span></label><input type="range" id="slider-Param11" min="-1" max="1" value="0" step="0.05"></div>
-        <div class="slider-group"><label>포니테일 제어 <span class="slider-value" id="val-Param12">0</span></label><input type="range" id="slider-Param12" min="-1" max="1" value="0" step="0.05"></div>
-        <div class="slider-group"><label>볼 꼬집기 L <span class="slider-value" id="val-ParamCheekPinch_L">0</span></label><input type="range" id="slider-ParamCheekPinch_L" min="0" max="1" value="0" step="0.05"></div>
-        <div class="slider-group"><label>볼 꼬집기 R <span class="slider-value" id="val-ParamCheekPinch_R">0</span></label><input type="range" id="slider-ParamCheekPinch_R" min="0" max="1" value="0" step="0.05"></div>
-    </div>
-
-    <div id="reaction-toast">반응 메시지</div>
-    <canvas id="live2d-canvas"></canvas>
-
-    <script>
+<div id="control-panel">
+<h3>세하 마스터 엔진</h3>
+<div class="category-title">접속자(유저) 페르소나 설정</div>
+<select id="user-identity">
+<option value="general">👤 1. 일반인 (직장 동료 / 행인)</option>
+<option value="noah">🍊 2. 전노아 (05년생 찐친 / 빈효선)</option>
+<option value="soha">🎀 3. 미소하 (05년생 찐친 / 5호선)</option>
+<option value="hyobin">💖 4. 박효빈 (2003년생 / 연인)</option>
+<option value="yuria">🔧 5. 유리아 (17세 후배 / 8호선)</option>
+<option value="sejeong">👑 6. 임세정 (30세 맏언니 / 7호선)</option>
+<option value="rasena">⏱️ 7. 라세나 (19세 고3 숨덕 / 6호선)</option>
+<option value="harubin">☕ 8. 하루빈 (24세 뺀질이 선배 / 2호선)</option>
+</select>
+<label class="mode-switch" style="margin-top: 15px;"><input id="manual-mode" type="checkbox"/> 🕹️ 수동 제어 모드 활성화</label>
+<div class="category-title">원클릭 표정 프리셋 (수동모드)</div>
+<div class="preset-grid">
+<button class="preset-btn" onclick="setPreset('smile')">😄 기쁨 / 미소</button>
+<button class="preset-btn" onclick="setPreset('shy')">😳 부끄 / 홍조</button>
+<button class="preset-btn" onclick="setPreset('angry')">😠 화남 / 뾰루퉁</button>
+<button class="preset-btn" onclick="setPreset('sad')">😢 슬픔 / 아련</button>
+<button class="preset-btn reset" onclick="setPreset('reset')">🔄 기본 표정으로 초기화</button>
+</div>
+<div class="category-title">의상 제어 (상시 작동)</div>
+<div class="slider-group clothing-toggle"><label>의상 토글 스위치 <span class="slider-value" id="val-ParamClothing">0</span></label><input id="slider-ParamClothing" max="1" min="0" step="1" type="range" value="0"/></div>
+<div class="category-title">시선 및 신체 방향</div>
+<div class="slider-group"><label>고개 회전 X <span class="slider-value" id="val-ParamAngleX">0</span></label><input id="slider-ParamAngleX" max="30" min="-30" type="range" value="0"/></div>
+<div class="slider-group"><label>고개 회전 Y <span class="slider-value" id="val-ParamAngleY">0</span></label><input id="slider-ParamAngleY" max="30" min="-30" type="range" value="0"/></div>
+<div class="slider-group"><label>고개 회전 Z <span class="slider-value" id="val-ParamAngleZ">0</span></label><input id="slider-ParamAngleZ" max="30" min="-30" type="range" value="0"/></div>
+<div class="category-title">찐 얼굴 파츠 (Param5~9)</div>
+<div class="slider-group"><label>진짜 눈 L (Param5) <span class="slider-value" id="val-Param5">1</span></label><input id="slider-Param5" max="1" min="0" step="0.05" type="range" value="1"/></div>
+<div class="slider-group"><label>진짜 눈 R (Param6) <span class="slider-value" id="val-Param6">1</span></label><input id="slider-Param6" max="1" min="0" step="0.05" type="range" value="1"/></div>
+<div class="slider-group"><label>찐 입 여닫기 (Param7) <span class="slider-value" id="val-Param7">0</span></label><input id="slider-Param7" max="1" min="0" step="0.05" type="range" value="0"/></div>
+<div class="slider-group"><label>찐 입 변형 A (Param8) <span class="slider-value" id="val-Param8">0</span></label><input id="slider-Param8" max="1" min="-1" step="0.05" type="range" value="0"/></div>
+<div class="slider-group"><label>찐 입 변형 B (Param9) <span class="slider-value" id="val-Param9">0</span></label><input id="slider-Param9" max="1" min="-1" step="0.05" type="range" value="0"/></div>
+<div class="slider-group"><label>찐 홍조 (Param) <span class="slider-value" id="val-Param">0</span></label><input id="slider-Param" max="1" min="0" step="0.05" type="range" value="0"/></div>
+<div class="category-title">물리 상호작용</div>
+<div class="slider-group"><label>앞머리 흔들림 <span class="slider-value" id="val-ParamHairFront">0</span></label><input id="slider-ParamHairFront" max="1" min="-1" step="0.05" type="range" value="0"/></div>
+<div class="slider-group"><label>바보털 제어 <span class="slider-value" id="val-Param11">0</span></label><input id="slider-Param11" max="1" min="-1" step="0.05" type="range" value="0"/></div>
+<div class="slider-group"><label>포니테일 제어 <span class="slider-value" id="val-Param12">0</span></label><input id="slider-Param12" max="1" min="-1" step="0.05" type="range" value="0"/></div>
+<div class="slider-group"><label>볼 꼬집기 L <span class="slider-value" id="val-ParamCheekPinch_L">0</span></label><input id="slider-ParamCheekPinch_L" max="1" min="0" step="0.05" type="range" value="0"/></div>
+<div class="slider-group"><label>볼 꼬집기 R <span class="slider-value" id="val-ParamCheekPinch_R">0</span></label><input id="slider-ParamCheekPinch_R" max="1" min="0" step="0.05" type="range" value="0"/></div>
+</div>
+<div id="reaction-toast">반응 메시지</div>
+<canvas id="live2d-canvas"></canvas>
+<script>
         const canvas = document.getElementById('live2d-canvas');
         const app = new PIXI.Application({ view: canvas, width: window.innerWidth, height: window.innerHeight, backgroundAlpha: 0, autoStart: true, antialias: true });
         const { Live2DModel } = PIXI.live2d;
@@ -649,13 +650,11 @@ else if (targetArea === '윗물풍선') {
         }
         initSeha();
     </script>
-
-    <script src="assets/wiki_index.js"></script>
+<script src="assets/wiki_index.js"></script>
 <script src="assets/hb_data_map.js"></script>
-    <script src="assets/hb_wiki_core.js"></script>
-    <script src="assets/hb_index_scripts.js"></script>
-    <script src="assets/jana.js"></script>
-
-    <script src="assets/load-footer.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+<script src="assets/load-footer.js"></script>
 </body>
 </html>

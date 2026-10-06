@@ -1,13 +1,14 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
-    <link href="이미지/효빈위키아이콘.webp" rel="icon"/>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>효빈광역시 통합 유튜브 플랫폼</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-    <style>
+<link href="이미지/효빈위키아이콘.webp" rel="icon"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>효빈광역시 통합 유튜브 플랫폼</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
         body { font-family: 'Noto Sans KR', sans-serif; background-color: #ffffff; color: #0f0f0f; }
         ::-webkit-scrollbar { width: 8px; }
@@ -22,167 +23,164 @@
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
-    <script src="assets/ad_logic.js"></script>
+<script src="assets/ad_logic.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-</head>        
-
+<style>
+    .wiki-fn-sup { position: relative; cursor: help; display: inline-block; padding: 0 2px; }
+    .wiki-fn-sup:hover .wiki-fn-tooltip { visibility: visible; opacity: 1; }
+    .wiki-fn-tooltip {
+        visibility: hidden; opacity: 0; position: absolute; bottom: 130%; right: 0;
+        background-color: #fff; color: #333; text-align: left; padding: 12px; border-radius: 6px;
+        font-size: 12px; width: max-content; max-width: 350px; z-index: 99999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #BBFF64;
+        font-weight: normal; line-height: 1.5; transition: opacity 0.2s; pointer-events: none;
+    }
+</style>
+</head>
 <body class="flex flex-col min-h-screen bg-white">
-    <!-- 공유하기 토스트 알림 (숨김) -->
-    <div class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-full text-sm opacity-0 transition-opacity duration-300 z-[200] pointer-events-none" id="toast">
+<!-- 공유하기 토스트 알림 (숨김) -->
+<div class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-full text-sm opacity-0 transition-opacity duration-300 z-[200] pointer-events-none" id="toast">
         클립보드에 링크가 복사되었습니다.
     </div>
-
-    <!-- 상단 네비게이션 -->
-    <nav class="bg-white fixed top-0 w-full z-50 h-[56px] flex items-center justify-between px-4 border-b border-gray-200">
-        <div class="flex items-center gap-4">
-            <button class="w-10 h-10 rounded-full hover-bg-yt-gray flex justify-center items-center transition"><i class="fas fa-bars text-xl"></i></button>
-            <div class="flex items-center gap-1 cursor-pointer" onclick="switchTab('home')">
-                <i class="fab fa-youtube text-3xl yt-red"></i>
-                <span class="text-xl font-bold tracking-tighter">YouTube</span><span class="text-xs text-gray-500 -mt-3">KR</span>
-            </div>
-        </div>
-        
-        <div class="hidden md:flex flex-1 justify-center max-w-[720px] ml-10">
-            <div class="flex w-full">
-                <div class="flex items-center w-full border border-gray-300 rounded-l-full px-4 py-2 bg-white focus-within:border-blue-500">
-                    <i class="fas fa-search text-gray-400 mr-2"></i>
-                    <input class="w-full outline-none font-medium" id="top-search-input" onkeypress="if(event.key === 'Enter') executeSearch()" placeholder="채널 또는 동영상 검색" type="text"/>
-                </div>
-                <button class="border border-l-0 border-gray-300 bg-[#f8f8f8] px-5 rounded-r-full hover:bg-[#f0f0f0] transition" onclick="executeSearch()"><i class="fas fa-search text-gray-600"></i></button>
-            </div>
-        </div>
-
-        <div class="flex items-center gap-2 sm:gap-4">
-            <!-- 자연스러운 지역 선택기 -->
-            <select class="bg-gray-100 border border-gray-300 text-gray-700 text-sm font-semibold rounded-full px-4 py-1.5 outline-none cursor-pointer hover:bg-gray-200 transition hidden sm:block" id="regionSelect" onchange="changeRegion(this.value); switchTab('home');">
-                <option value="효빈광역시청">효빈광역시청</option>
-                <option value="천성구">천성구</option>
-                <option value="치원군">치원군</option>
-                <option value="남구(효빈)">남구(효빈)</option>
-            </select>
-            <button class="w-8 h-8 rounded-full overflow-hidden ml-2"><img class="w-full h-full object-cover" src="이미지/이름없음.webp"/></button>
-        </div>
-    </nav>
-
-    <div class="flex flex-1 h-full mt-[56px]">
-        <!-- 사이드바 -->
-        <aside class="hidden xl:flex flex-col w-[240px] px-3 py-2 fixed h-[calc(100vh-56px)] overflow-y-auto hover:scrollbar-thumb-gray-400">
-            <a class="flex items-center px-3 py-2.5 rounded-lg hover-bg-yt-gray transition mb-1" href="#" onclick="switchTab('home')"><i class="fas fa-home text-xl w-8 text-center mr-4"></i><span class="font-medium">홈</span></a>
-            <a class="flex items-center px-3 py-2.5 rounded-lg hover-bg-yt-gray transition mb-1" href="#" onclick="switchTab('shorts')"><i class="fas fa-bolt text-xl w-8 text-center mr-4"></i><span class="font-medium">Shorts</span></a>
-            <div class="h-[1px] bg-gray-200 my-3"></div>
-            <h3 class="px-4 py-1 text-base font-bold">구독</h3>
-            <div class="flex flex-col" id="sidebar-subscriptions">
-                <!-- JS에서 채워짐 (최대 5개) -->
-            </div>
-            <!-- 전체 보기 메뉴 -->
-            <button class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 transition mt-1 text-gray-700 w-full text-left" onclick="openAllSubsModal()">
-                <i class="fas fa-chevron-down text-lg w-8 text-center mr-4"></i><span class="font-medium">전체 보기</span>
-            </button>
-        </aside>
-
-        <!-- 메인 컨텐츠 영역 -->
-        <main class="flex-1 xl:ml-[240px] w-full max-w-[1280px] mx-auto pb-10" id="main-content">
-            <!-- 공통 헤더 -->
-            <div class="w-full h-[15vw] min-h-[150px] max-h-[250px] xl:rounded-2xl overflow-hidden mt-4 bg-gray-200">
-                <img alt="배너" class="w-full h-full object-cover" id="yt-banner" src="이미지/배너.webp"/>
-            </div>
-            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 px-4 py-6">
-                <img alt="로고" class="w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] rounded-full object-cover border border-gray-200" id="yt-logo" src="이미지/로고.webp"/>
-                <div class="flex-1 text-center sm:text-left">
-                    <h1 class="text-3xl font-bold mb-1 flex items-center justify-center sm:justify-start gap-2">
-                        <span id="yt-name">지자체명</span> <i class="fas fa-check-circle text-gray-500 text-[18px]"></i>
-                    </h1>
-                    <div class="text-gray-600 text-sm mb-2 font-medium">
-                        <span class="font-bold text-black" id="yt-handle">@Handle</span> ‧ 구독자 <span id="yt-subs">0만명</span> ‧ 동영상 1,024개
+<!-- 상단 네비게이션 -->
+<nav class="bg-white fixed top-0 w-full z-50 h-[56px] flex items-center justify-between px-4 border-b border-gray-200">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 rounded-full hover-bg-yt-gray flex justify-center items-center transition"><i class="fas fa-bars text-xl"></i></button>
+<div class="flex items-center gap-1 cursor-pointer" onclick="switchTab('home')">
+<i class="fab fa-youtube text-3xl yt-red"></i>
+<span class="text-xl font-bold tracking-tighter">YouTube</span><span class="text-xs text-gray-500 -mt-3">KR</span>
+</div>
+</div>
+<div class="hidden md:flex flex-1 justify-center max-w-[720px] ml-10">
+<div class="flex w-full">
+<div class="flex items-center w-full border border-gray-300 rounded-l-full px-4 py-2 bg-white focus-within:border-blue-500">
+<i class="fas fa-search text-gray-400 mr-2"></i>
+<input class="w-full outline-none font-medium" id="top-search-input" onkeypress="if(event.key === 'Enter') executeSearch()" placeholder="채널 또는 동영상 검색" type="text"/>
+</div>
+<button class="border border-l-0 border-gray-300 bg-[#f8f8f8] px-5 rounded-r-full hover:bg-[#f0f0f0] transition" onclick="executeSearch()"><i class="fas fa-search text-gray-600"></i></button>
+</div>
+</div>
+<div class="flex items-center gap-2 sm:gap-4">
+<!-- 자연스러운 지역 선택기 -->
+<select class="bg-gray-100 border border-gray-300 text-gray-700 text-sm font-semibold rounded-full px-4 py-1.5 outline-none cursor-pointer hover:bg-gray-200 transition hidden sm:block" id="regionSelect" onchange="changeRegion(this.value); switchTab('home');">
+<option value="효빈광역시청">효빈광역시청</option>
+<option value="천성구">천성구</option>
+<option value="치원군">치원군</option>
+<option value="남구(효빈)">남구(효빈)</option>
+</select>
+<button class="w-8 h-8 rounded-full overflow-hidden ml-2"><img class="w-full h-full object-cover" src="이미지/이름없음.webp"/></button>
+</div>
+</nav>
+<div class="flex flex-1 h-full mt-[56px]">
+<!-- 사이드바 -->
+<aside class="hidden xl:flex flex-col w-[240px] px-3 py-2 fixed h-[calc(100vh-56px)] overflow-y-auto hover:scrollbar-thumb-gray-400">
+<a class="flex items-center px-3 py-2.5 rounded-lg hover-bg-yt-gray transition mb-1" href="#" onclick="switchTab('home')"><i class="fas fa-home text-xl w-8 text-center mr-4"></i><span class="font-medium">홈</span></a>
+<a class="flex items-center px-3 py-2.5 rounded-lg hover-bg-yt-gray transition mb-1" href="#" onclick="switchTab('shorts')"><i class="fas fa-bolt text-xl w-8 text-center mr-4"></i><span class="font-medium">Shorts</span></a>
+<div class="h-[1px] bg-gray-200 my-3"></div>
+<h3 class="px-4 py-1 text-base font-bold">구독</h3>
+<div class="flex flex-col" id="sidebar-subscriptions">
+<!-- JS에서 채워짐 (최대 5개) -->
+</div>
+<!-- 전체 보기 메뉴 -->
+<button class="flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-100 transition mt-1 text-gray-700 w-full text-left" onclick="openAllSubsModal()">
+<i class="fas fa-chevron-down text-lg w-8 text-center mr-4"></i><span class="font-medium">전체 보기</span>
+</button>
+</aside>
+<!-- 메인 컨텐츠 영역 -->
+<main class="flex-1 xl:ml-[240px] w-full max-w-[1280px] mx-auto pb-10" id="main-content">
+<!-- 공통 헤더 -->
+<div class="w-full h-[15vw] min-h-[150px] max-h-[250px] xl:rounded-2xl overflow-hidden mt-4 bg-gray-200">
+<img alt="배너" class="w-full h-full object-cover" id="yt-banner" src="이미지/배너.webp"/>
+</div>
+<div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 px-4 py-6">
+<img alt="로고" class="w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] rounded-full object-cover border border-gray-200" id="yt-logo" src="이미지/로고.webp"/>
+<div class="flex-1 text-center sm:text-left">
+<h1 class="text-3xl font-bold mb-1 flex items-center justify-center sm:justify-start gap-2">
+<span id="yt-name">지자체명</span> <i class="fas fa-check-circle text-gray-500 text-[18px]"></i>
+</h1>
+<div class="text-gray-600 text-sm mb-2 font-medium">
+<span class="font-bold text-black" id="yt-handle">@Handle</span> ‧ 구독자 <span id="yt-subs">0만명</span> ‧ 동영상 1,024개
                     </div>
-                    <div class="text-gray-600 text-sm mb-4 max-w-2xl cursor-pointer group" onclick="openAboutModal()">
-                        <span class="line-clamp-2" id="yt-desc">소개글</span>
-                        <span class="font-bold text-black mt-1 inline-block group-hover:underline">... 더보기 <i class="fas fa-chevron-right text-[10px]"></i></span>
-                    </div>
-                    <button class="bg-[#0f0f0f] hover:bg-[#272727] text-white font-bold px-4 py-2 rounded-full transition" id="subscribe-btn" onclick="toggleSubscribe()">구독</button>
-                </div>
-            </div>
-
-            <!-- 유튜브 탭 버튼 -->
-            <div class="flex border-b border-gray-200 px-4 overflow-x-auto">
-                <button class="yt-tab px-6 py-3 font-bold text-black border-b-[3px] border-black whitespace-nowrap" id="tab-btn-home" onclick="switchTab('home')">홈</button>
-                <button class="yt-tab px-6 py-3 font-semibold text-gray-600 hover:text-black transition whitespace-nowrap" id="tab-btn-videos" onclick="switchTab('videos')">동영상</button>
-                <button class="yt-tab px-6 py-3 font-semibold text-gray-600 hover:text-black transition whitespace-nowrap" id="tab-btn-shorts" onclick="switchTab('shorts')">Shorts</button>
-                <button class="yt-tab px-6 py-3 font-semibold text-gray-600 hover:text-black transition whitespace-nowrap" id="tab-btn-community" onclick="switchTab('community')">커뮤니티</button>
-            </div>
-
-            <!-- 1. [홈] 탭 영역 -->
-            <div class="tab-content block animate-fade-in" id="content-home">
-                <div class="px-4 py-6 border-b border-gray-200">
-                    <div class="flex flex-col md:flex-row gap-4 cursor-pointer hover:bg-gray-50 rounded-xl transition p-2" id="home-featured"></div>
-                </div>
-                <div class="px-4 py-6 border-b border-gray-200">
-                    <div class="flex items-center gap-2 mb-4">
-                        <h2 class="text-lg font-bold cursor-pointer hover:text-blue-600" onclick="switchTab('videos')">최근 업로드된 동영상</h2>
-                        <button class="w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center transition" onclick="switchTab('videos')"><i class="fas fa-play text-xs"></i></button>
-                    </div>
-                    <div class="flex gap-4 overflow-x-auto pb-4 snap-x" id="home-recent-videos"></div>
-                </div>
-            </div>
-
-            <!-- 2. [동영상] 탭 영역 -->
-            <div class="tab-content hidden animate-fade-in" id="content-videos">
-                <div class="px-4 py-6">
-                    <div class="mb-6 flex flex-col gap-4" id="channel-search-result"></div>
-                    <div class="flex gap-3 mb-6">
-                        <button class="bg-black text-white px-3 py-1.5 rounded-lg text-sm font-semibold">최신순</button>
-                        <button class="bg-[#f2f2f2] hover:bg-[#e5e5e5] text-black px-3 py-1.5 rounded-lg text-sm font-semibold transition">인기순</button>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8" id="videos-grid"></div>
-                </div>
-            </div>
-
-            <!-- 3. [Shorts] 탭 영역 -->
-            <div class="tab-content hidden animate-fade-in" id="content-shorts">
-                <div class="px-4 py-6">
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-6" id="shorts-grid"></div>
-                </div>
-            </div>
-
-            <!-- 4. [커뮤니티] 탭 영역 -->
-            <div class="tab-content hidden animate-fade-in" id="content-community">
-                <div class="px-4 py-6 max-w-[850px]" id="community-posts-container">
-                    <!-- JS에서 생성됨 -->
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- 모달 창들 -->
-    <div class="fixed inset-0 bg-black bg-opacity-50 z-[200] hidden flex items-center justify-center animate-fade-in" id="about-modal" onclick="closeAboutModal()">
-        <div class="bg-white rounded-2xl w-full max-w-[500px] p-6 m-4 shadow-xl transform transition-transform scale-95" id="about-modal-content" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-start mb-4">
-                <h2 class="text-xl font-bold">정보</h2>
-                <button class="text-gray-500 hover:text-black w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition" onclick="closeAboutModal()"><i class="fas fa-times text-xl"></i></button>
-            </div>
-            <div class="space-y-4">
-                <p class="text-[14px] whitespace-pre-wrap text-black leading-relaxed" id="modal-desc"></p>
-                <h3 class="font-bold text-lg pt-4 border-t border-gray-200">채널 세부정보</h3>
-                <div class="flex flex-col gap-3 text-[14px] text-black">
-                    <div class="flex items-center gap-4"><i class="fas fa-globe text-xl text-gray-500 w-6 text-center"></i><a class="text-blue-600 hover:underline" href="www.hyobin.go.kr.html">www.hyobin.go.kr</a></div>
-                    <div class="flex items-center gap-4"><i class="fas fa-user text-xl text-gray-500 w-6 text-center"></i>구독자 <span id="modal-subs"></span>명</div>
-                    <div class="flex items-center gap-4"><i class="fas fa-video text-xl text-gray-500 w-6 text-center"></i>동영상 1,024개</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="fixed inset-0 bg-black bg-opacity-50 z-[200] hidden flex items-center justify-center animate-fade-in" id="all-subs-modal" onclick="closeAllSubsModal()">
-        <div class="bg-white rounded-2xl w-full max-w-[500px] max-h-[80vh] flex flex-col m-4 shadow-xl transform transition-transform scale-95" id="all-subs-content" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center p-4 border-b border-gray-200">
-                <h2 class="text-xl font-bold">모든 지자체 채널</h2>
-                <button class="text-gray-500 hover:text-black w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition" onclick="closeAllSubsModal()"><i class="fas fa-times text-xl"></i></button>
-            </div>
-            <div class="p-2 overflow-y-auto flex-1 flex flex-col" id="all-subs-list"></div>
-        </div>
-    </div>
-
-    <script>
+<div class="text-gray-600 text-sm mb-4 max-w-2xl cursor-pointer group" onclick="openAboutModal()">
+<span class="line-clamp-2" id="yt-desc">소개글</span>
+<span class="font-bold text-black mt-1 inline-block group-hover:underline">... 더보기 <i class="fas fa-chevron-right text-[10px]"></i></span>
+</div>
+<button class="bg-[#0f0f0f] hover:bg-[#272727] text-white font-bold px-4 py-2 rounded-full transition" id="subscribe-btn" onclick="toggleSubscribe()">구독</button>
+</div>
+</div>
+<!-- 유튜브 탭 버튼 -->
+<div class="flex border-b border-gray-200 px-4 overflow-x-auto">
+<button class="yt-tab px-6 py-3 font-bold text-black border-b-[3px] border-black whitespace-nowrap" id="tab-btn-home" onclick="switchTab('home')">홈</button>
+<button class="yt-tab px-6 py-3 font-semibold text-gray-600 hover:text-black transition whitespace-nowrap" id="tab-btn-videos" onclick="switchTab('videos')">동영상</button>
+<button class="yt-tab px-6 py-3 font-semibold text-gray-600 hover:text-black transition whitespace-nowrap" id="tab-btn-shorts" onclick="switchTab('shorts')">Shorts</button>
+<button class="yt-tab px-6 py-3 font-semibold text-gray-600 hover:text-black transition whitespace-nowrap" id="tab-btn-community" onclick="switchTab('community')">커뮤니티</button>
+</div>
+<!-- 1. [홈] 탭 영역 -->
+<div class="tab-content block animate-fade-in" id="content-home">
+<div class="px-4 py-6 border-b border-gray-200">
+<div class="flex flex-col md:flex-row gap-4 cursor-pointer hover:bg-gray-50 rounded-xl transition p-2" id="home-featured"></div>
+</div>
+<div class="px-4 py-6 border-b border-gray-200">
+<div class="flex items-center gap-2 mb-4">
+<h2 class="text-lg font-bold cursor-pointer hover:text-blue-600" onclick="switchTab('videos')">최근 업로드된 동영상</h2>
+<button class="w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center transition" onclick="switchTab('videos')"><i class="fas fa-play text-xs"></i></button>
+</div>
+<div class="flex gap-4 overflow-x-auto pb-4 snap-x" id="home-recent-videos"></div>
+</div>
+</div>
+<!-- 2. [동영상] 탭 영역 -->
+<div class="tab-content hidden animate-fade-in" id="content-videos">
+<div class="px-4 py-6">
+<div class="mb-6 flex flex-col gap-4" id="channel-search-result"></div>
+<div class="flex gap-3 mb-6">
+<button class="bg-black text-white px-3 py-1.5 rounded-lg text-sm font-semibold">최신순</button>
+<button class="bg-[#f2f2f2] hover:bg-[#e5e5e5] text-black px-3 py-1.5 rounded-lg text-sm font-semibold transition">인기순</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8" id="videos-grid"></div>
+</div>
+</div>
+<!-- 3. [Shorts] 탭 영역 -->
+<div class="tab-content hidden animate-fade-in" id="content-shorts">
+<div class="px-4 py-6">
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-6" id="shorts-grid"></div>
+</div>
+</div>
+<!-- 4. [커뮤니티] 탭 영역 -->
+<div class="tab-content hidden animate-fade-in" id="content-community">
+<div class="px-4 py-6 max-w-[850px]" id="community-posts-container">
+<!-- JS에서 생성됨 -->
+</div>
+</div>
+</main>
+</div>
+<!-- 모달 창들 -->
+<div class="fixed inset-0 bg-black bg-opacity-50 z-[200] hidden flex items-center justify-center animate-fade-in" id="about-modal" onclick="closeAboutModal()">
+<div class="bg-white rounded-2xl w-full max-w-[500px] p-6 m-4 shadow-xl transform transition-transform scale-95" id="about-modal-content" onclick="event.stopPropagation()">
+<div class="flex justify-between items-start mb-4">
+<h2 class="text-xl font-bold">정보</h2>
+<button class="text-gray-500 hover:text-black w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition" onclick="closeAboutModal()"><i class="fas fa-times text-xl"></i></button>
+</div>
+<div class="space-y-4">
+<p class="text-[14px] whitespace-pre-wrap text-black leading-relaxed" id="modal-desc"></p>
+<h3 class="font-bold text-lg pt-4 border-t border-gray-200">채널 세부정보</h3>
+<div class="flex flex-col gap-3 text-[14px] text-black">
+<div class="flex items-center gap-4"><i class="fas fa-globe text-xl text-gray-500 w-6 text-center"></i><a class="text-blue-600 hover:underline" href="www.hyobin.go.kr.html">www.hyobin.go.kr</a></div>
+<div class="flex items-center gap-4"><i class="fas fa-user text-xl text-gray-500 w-6 text-center"></i>구독자 <span id="modal-subs"></span>명</div>
+<div class="flex items-center gap-4"><i class="fas fa-video text-xl text-gray-500 w-6 text-center"></i>동영상 1,024개</div>
+</div>
+</div>
+</div>
+</div>
+<div class="fixed inset-0 bg-black bg-opacity-50 z-[200] hidden flex items-center justify-center animate-fade-in" id="all-subs-modal" onclick="closeAllSubsModal()">
+<div class="bg-white rounded-2xl w-full max-w-[500px] max-h-[80vh] flex flex-col m-4 shadow-xl transform transition-transform scale-95" id="all-subs-content" onclick="event.stopPropagation()">
+<div class="flex justify-between items-center p-4 border-b border-gray-200">
+<h2 class="text-xl font-bold">모든 지자체 채널</h2>
+<button class="text-gray-500 hover:text-black w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition" onclick="closeAllSubsModal()"><i class="fas fa-times text-xl"></i></button>
+</div>
+<div class="p-2 overflow-y-auto flex-1 flex flex-col" id="all-subs-list"></div>
+</div>
+</div>
+<script>
         let regionDB = {};
 
         function getCityLogo(regionName) {

@@ -1,12 +1,13 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>효빈위키 마크다운 에디터 프로 v5.0 (완전통합판)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>효빈위키 마크다운 에디터 프로 v5.0 (완전통합판)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+<style>
         body { background-color: #0f111a; color: #a6accd; font-family: 'Pretendard', 'Noto Sans KR', sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         .header-area { background: #1a1c29; border-bottom: 1px solid #292d3e; }
         .btn-primary { background: #E76092; color: white; transition: background 0.2s; }
@@ -43,155 +44,169 @@
         .mode-tab.inactive { background: #1a1c29; color: #676e95; border-bottom: 2px solid transparent; }
         .mode-tab.inactive:hover { color: #a6accd; background: #1f2233; }
     </style>
+<style>
+    .wiki-fn-sup { position: relative; cursor: help; display: inline-block; padding: 0 2px; }
+    .wiki-fn-sup:hover .wiki-fn-tooltip { visibility: visible; opacity: 1; }
+    .wiki-fn-tooltip {
+        visibility: hidden; opacity: 0; position: absolute; bottom: 130%; right: 0;
+        background-color: #fff; color: #333; text-align: left; padding: 12px; border-radius: 6px;
+        font-size: 12px; width: max-content; max-width: 350px; z-index: 99999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #BBFF64;
+        font-weight: normal; line-height: 1.5; transition: opacity 0.2s; pointer-events: none;
+    }
+</style>
 </head>
 <body>
-    <header class="header-area p-3 flex justify-between items-center shrink-0">
-        <div class="flex items-center gap-3">
-            <div class="bg-[#E76092] text-white font-black w-8 h-8 flex items-center justify-center rounded shadow-md">H</div>
-            <h1 class="text-lg font-bold text-white tracking-wide">효빈위키 문서 제작기 <span class="text-xs font-normal text-gray-400 bg-gray-800 px-2 py-0.5 rounded ml-2">PRO v5.0</span></h1>
-        </div>
-        <div class="flex gap-2">
-            <button onclick="toggleModal('guideModal')" class="btn-help px-4 py-2 rounded text-sm font-bold shadow"><i class="fas fa-question-circle mr-1"></i> 문법 가이드</button>
-            <button onclick="copyHTML('body')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded text-sm transition font-bold shadow"><i class="fas fa-code mr-1"></i> 본문 복사</button>
-            <button onclick="copyHTML('full')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded text-sm transition font-bold shadow"><i class="fas fa-copy mr-1"></i> 전체 복사</button>
-            <button onclick="downloadHTML()" class="btn-primary px-4 py-2 rounded text-sm font-bold shadow"><i class="fas fa-download mr-1"></i> HTML 다운로드</button>
-        </div>
-    </header>
-
-    <div id="guideModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="text-xl font-bold text-white"><i class="fas fa-book text-[#E76092] mr-2"></i> 효빈위키 전용 문법 가이드</h2>
-                <i class="fas fa-times modal-close" onclick="toggleModal('guideModal')"></i>
-            </div>
-            <div class="p-6">
-                <p class="text-gray-400 mb-4 text-sm">에디터에 아래 문법을 입력하면, 완벽한 효빈위키 HTML 코드로 자동 변환됩니다.</p>
-                <table class="guide-table">
-                    <tbody>
-                        <tr><th>기본 메타 데이터</th><td><span class="guide-code">!TITLE:김시연</span> (제목 지정)<br><span class="guide-code">!COLOR:#E76092</span> (테마 컬러)</td></tr>
-                        <tr><th>카테고리 박스</th><td><span class="guide-code">[cat:인물, 2004년 출생]</span></td></tr>
-                        <tr><th>인포박스</th><td><span class="guide-code">[info:title=이름|subtitle=영어|image=경로|항목=내용]</span></td></tr>
-                        <tr><th>제목 및 자동 목차</th><td><span class="guide-code">== 1. 개요 ==</span> (H2) <br><span class="guide-code">[TOC]</span> (목차 자동 생성)</td></tr>
-                        <tr><th>정당 뱃지</th><td><span class="guide-code">[badge:bg-theminju|더불어민주당]</span></td></tr>
-                        <tr><th>내부 링크</th><td><span class="guide-code">[[우에하라 아유무]]</span></td></tr>
-                        <tr><th>각주 달기</th><td><span class="guide-code">[*1]</span> 본문 / <span class="guide-code">[fn:1] 내용</span> 하단</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div id="smartGuideModal" class="modal-overlay">
-        <div class="modal-content border-yellow-600/30">
-            <div class="modal-header border-yellow-600/30">
-                <h2 class="text-xl font-bold text-white"><i class="fas fa-wand-magic-sparkles text-yellow-400 mr-2"></i> 스마트 변환 작성 가이드</h2>
-                <i class="fas fa-times modal-close" onclick="toggleModal('smartGuideModal')"></i>
-            </div>
-            <div class="p-6">
-                <p class="text-gray-400 mb-4 text-sm">일반 텍스트(줄글)를 효빈위키 문법으로 자동 변환합니다.</p>
-                <table class="guide-table">
-                    <tbody>
-                        <tr><th>정보상자 생성</th><td>맨 위에 <span class="text-yellow-400 font-bold">[정보]</span> 라고 적고 줄바꿈 후 <span class="guide-code">이름=홍길동</span> 형식으로 기입</td></tr>
-                        <tr><th>자동 제목/목차</th><td><span class="guide-code">1. 개요</span> 와 같이 번호로 시작하면 자동 목차 [TOC]와 제목 치환</td></tr>
-                        <tr><th>정당 뱃지 치환</th><td>더불어민주당, 국민의힘 등 정당명 입력시 뱃지로 치환</td></tr>
-                        <tr><th>키워드 링크</th><td>주요 인물명 자동 파란색 링크 처리</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <main class="flex-1 flex overflow-hidden">
-        <div class="w-1/2 flex flex-col border-r border-[#292d3e] relative bg-[#0f111a]">
-            
-            <div class="flex shrink-0 bg-[#1a1c29] border-b border-[#292d3e]">
-                <div id="tab-mode-wiki" class="mode-tab active" onclick="setEditMode('wiki')"><i class="fas fa-code mr-1"></i> 정밀 위키 모드</div>
-                <div id="tab-mode-smart" class="mode-tab inactive" onclick="setEditMode('smart')"><i class="fas fa-magic mr-1 text-yellow-400"></i> 자동 텍스트 변환</div>
-                <div id="tab-mode-namu" class="mode-tab inactive" onclick="setEditMode('namu')"><i class="fas fa-leaf mr-1 text-green-400"></i> 나무위키 템플릿 변환기</div>
-            </div>
-
-            <div id="ui-wiki" class="flex flex-col h-full overflow-hidden">
-                <div class="toolbar-group shrink-0">
-                    <button class="toolbar-btn" onclick="insertSyntax('**', '**')" title="볼드체"><i class="fas fa-bold"></i></button>
-                    <button class="toolbar-btn" onclick="insertSyntax('~~', '~~')" title="취소선"><i class="fas fa-strikethrough"></i></button>
-                    <button class="toolbar-btn" onclick="insertSyntax('[c:red]', '[/c]')" title="글자색"><i class="fas fa-palette"></i></button>
-                    <button class="toolbar-btn" onclick="insertSyntax('[[', ']]')" title="문서 링크"><i class="fas fa-link"></i> 링크</button>
-                    <button class="toolbar-btn" onclick="insertSyntax('[badge:bg-theminju|', ']')" title="정당 뱃지 생성"><i class="fas fa-id-badge"></i> 정당뱃지</button>
-                    <div class="w-px bg-[#3b3f54] mx-1"></div>
-                    <button class="toolbar-btn" onclick="insertText('\n== H2 제목 ==\n')" title="H2">H2</button>
-                    <button class="toolbar-btn" onclick="insertText('\n=== H3 소제목 ===\n')" title="H3">H3</button>
-                    <button class="toolbar-btn" onclick="insertText('\n[TOC]\n')" title="자동 목차"><i class="fas fa-list-ol"></i> 목차</button>
-                    <button class="toolbar-btn" onclick="insertText('\n> ')" title="인용문"><i class="fas fa-quote-right"></i> 인용</button>
-                    <div class="w-px bg-[#3b3f54] mx-1"></div>
-                    <button class="toolbar-btn" onclick="insertText('[*1]')" title="본문 각주번호"><i class="fas fa-superscript"></i> [1]</button>
-                    <button class="toolbar-btn" onclick="insertText('\n[fn:1] 각주 내용\n')" title="하단 각주내용">[fn]</button>
-                    <div class="w-px bg-[#3b3f54] mx-1"></div>
-                    <button class="toolbar-btn template-btn" onclick="insertTemplate('info')" title="정보상자 양식"><i class="fas fa-table"></i> Info상자</button>
-                    <button class="toolbar-btn template-btn" onclick="insertTemplate('cat')" title="카테고리 양식"><i class="fas fa-tags"></i> 분류</button>
-                    <button class="toolbar-btn template-btn" onclick="insertTemplate('table')" title="기본 표 HTML"><i class="fas fa-th-list"></i> 기본 표</button>
-                    <button class="toolbar-btn template-btn" onclick="insertTemplate('election')" title="선거결과 표 HTML"><i class="fas fa-vote-yea"></i> 선거 표</button>
-                </div>
-                <div class="flex-1 relative">
-                    <textarea id="editor" class="editor-area" oninput="debounceCompile()" spellcheck="false" placeholder="효빈위키 마크다운 문법을 입력하세요..."></textarea>
-                </div>
-            </div>
-
-            <div id="ui-smart" class="flex flex-col h-full overflow-hidden hidden">
-                <div class="bg-[#1f2233] p-3 shrink-0 flex justify-between items-center border-b border-[#292d3e]">
-                    <div class="text-xs text-gray-400 leading-tight flex-1">
-                        자연스러운 줄글이나 메모장 쓰듯 작성 후 <b class="text-yellow-400">마법 변환</b>을 누르세요.<br>정보상자, 목차, 정당 뱃지, 링크 등이 위키 문법으로 자동 치환됩니다.
+<header class="header-area p-3 flex justify-between items-center shrink-0">
+<div class="flex items-center gap-3">
+<div class="bg-[#E76092] text-white font-black w-8 h-8 flex items-center justify-center rounded shadow-md">H</div>
+<h1 class="text-lg font-bold text-white tracking-wide">효빈위키 문서 제작기 <span class="text-xs font-normal text-gray-400 bg-gray-800 px-2 py-0.5 rounded ml-2">PRO v5.0</span></h1>
+</div>
+<div class="flex gap-2">
+<button class="btn-help px-4 py-2 rounded text-sm font-bold shadow" onclick="toggleModal('guideModal')"><i class="fas fa-question-circle mr-1"></i> 문법 가이드</button>
+<button class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded text-sm transition font-bold shadow" onclick="copyHTML('body')"><i class="fas fa-code mr-1"></i> 본문 복사</button>
+<button class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded text-sm transition font-bold shadow" onclick="copyHTML('full')"><i class="fas fa-copy mr-1"></i> 전체 복사</button>
+<button class="btn-primary px-4 py-2 rounded text-sm font-bold shadow" onclick="downloadHTML()"><i class="fas fa-download mr-1"></i> HTML 다운로드</button>
+</div>
+</header>
+<div class="modal-overlay" id="guideModal">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="text-xl font-bold text-white"><i class="fas fa-book text-[#E76092] mr-2"></i> 효빈위키 전용 문법 가이드</h2>
+<i class="fas fa-times modal-close" onclick="toggleModal('guideModal')"></i>
+</div>
+<div class="p-6">
+<p class="text-gray-400 mb-4 text-sm">에디터에 아래 문법을 입력하면, 완벽한 효빈위키 HTML 코드로 자동 변환됩니다.</p>
+<table class="guide-table">
+<tbody>
+<tr><th>기본 메타 데이터</th><td><span class="guide-code">!TITLE:김시연</span> (제목 지정)<br/><span class="guide-code">!COLOR:#E76092</span> (테마 컬러)</td></tr>
+<tr><th>카테고리 박스</th><td><span class="guide-code">[cat:인물, 2004년 출생]</span></td></tr>
+<tr><th>인포박스</th><td><span class="guide-code">[info:title=이름|subtitle=영어|image=경로|항목=내용]</span></td></tr>
+<tr><th>제목 및 자동 목차</th><td><span class="guide-code">== 1. 개요 ==</span> (H2) <br/><span class="guide-code">[TOC]</span> (목차 자동 생성)</td></tr>
+<tr><th>정당 뱃지</th><td><span class="guide-code">[badge:bg-theminju|더불어민주당]</span></td></tr>
+<tr><th>내부 링크</th><td><span class="guide-code">[[우에하라 아유무]]</span></td></tr>
+<tr><th>각주 달기</th><td><span class="guide-code">[*1]</span> 본문 / <span class="guide-code">[fn:1] 내용</span> 하단</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="smartGuideModal">
+<div class="modal-content border-yellow-600/30">
+<div class="modal-header border-yellow-600/30">
+<h2 class="text-xl font-bold text-white"><i class="fas fa-wand-magic-sparkles text-yellow-400 mr-2"></i> 스마트 변환 작성 가이드</h2>
+<i class="fas fa-times modal-close" onclick="toggleModal('smartGuideModal')"></i>
+</div>
+<div class="p-6">
+<p class="text-gray-400 mb-4 text-sm">일반 텍스트(줄글)를 효빈위키 문법으로 자동 변환합니다.</p>
+<table class="guide-table">
+<tbody>
+<tr><th>정보상자 생성</th><td>맨 위에 <span class="text-yellow-400 font-bold">[정보]</span> 라고 적고 줄바꿈 후 <span class="guide-code">이름=홍길동</span> 형식으로 기입</td></tr>
+<tr><th>자동 제목/목차</th><td><span class="guide-code">1. 개요</span> 와 같이 번호로 시작하면 자동 목차 [TOC]와 제목 치환</td></tr>
+<tr><th>정당 뱃지 치환</th><td>더불어민주당, 국민의힘 등 정당명 입력시 뱃지로 치환</td></tr>
+<tr><th>키워드 링크</th><td>주요 인물명 자동 파란색 링크 처리</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<main class="flex-1 flex overflow-hidden">
+<div class="w-1/2 flex flex-col border-r border-[#292d3e] relative bg-[#0f111a]">
+<div class="flex shrink-0 bg-[#1a1c29] border-b border-[#292d3e]">
+<div class="mode-tab active" id="tab-mode-wiki" onclick="setEditMode('wiki')"><i class="fas fa-code mr-1"></i> 정밀 위키 모드</div>
+<div class="mode-tab inactive" id="tab-mode-smart" onclick="setEditMode('smart')"><i class="fas fa-magic mr-1 text-yellow-400"></i> 자동 텍스트 변환</div>
+<div class="mode-tab inactive" id="tab-mode-namu" onclick="setEditMode('namu')"><i class="fas fa-leaf mr-1 text-green-400"></i> 나무위키 템플릿 변환기</div>
+</div>
+<div class="flex flex-col h-full overflow-hidden" id="ui-wiki">
+<div class="toolbar-group shrink-0">
+<button class="toolbar-btn" onclick="insertSyntax('**', '**')" title="볼드체"><i class="fas fa-bold"></i></button>
+<button class="toolbar-btn" onclick="insertSyntax('~~', '~~')" title="취소선"><i class="fas fa-strikethrough"></i></button>
+<button class="toolbar-btn" onclick="insertSyntax('[c:red]', '[/c]')" title="글자색"><i class="fas fa-palette"></i></button>
+<button class="toolbar-btn" onclick="insertSyntax('[[', ']]')" title="문서 링크"><i class="fas fa-link"></i> 링크</button>
+<button class="toolbar-btn" onclick="insertSyntax('[badge:bg-theminju|', ']')" title="정당 뱃지 생성"><i class="fas fa-id-badge"></i> 정당뱃지</button>
+<div class="w-px bg-[#3b3f54] mx-1"></div>
+<button class="toolbar-btn" onclick="insertText('\n== H2 제목 ==\n')" title="H2">H2</button>
+<button class="toolbar-btn" onclick="insertText('\n=== H3 소제목 ===\n')" title="H3">H3</button>
+<button class="toolbar-btn" onclick="insertText('\n[TOC]\n')" title="자동 목차"><i class="fas fa-list-ol"></i> 목차</button>
+<button class="toolbar-btn" onclick="insertText('\n&gt; ')" title="인용문"><i class="fas fa-quote-right"></i> 인용</button>
+<div class="w-px bg-[#3b3f54] mx-1"></div>
+<button class="toolbar-btn" onclick="insertText('[*1]')" title="본문 각주번호"><i class="fas fa-superscript"></i> [1]</button>
+<button class="toolbar-btn" onclick="insertText('\n[fn:1] 각주 내용\n')" title="하단 각주내용">[fn]</button>
+<div class="w-px bg-[#3b3f54] mx-1"></div>
+<button class="toolbar-btn template-btn" onclick="insertTemplate('info')" title="정보상자 양식"><i class="fas fa-table"></i> Info상자</button>
+<button class="toolbar-btn template-btn" onclick="insertTemplate('cat')" title="카테고리 양식"><i class="fas fa-tags"></i> 분류</button>
+<button class="toolbar-btn template-btn" onclick="insertTemplate('table')" title="기본 표 HTML"><i class="fas fa-th-list"></i> 기본 표</button>
+<button class="toolbar-btn template-btn" onclick="insertTemplate('election')" title="선거결과 표 HTML"><i class="fas fa-vote-yea"></i> 선거 표</button>
+</div>
+<div class="flex-1 relative">
+<textarea class="editor-area" id="editor" oninput="debounceCompile()" placeholder="효빈위키 마크다운 문법을 입력하세요..." spellcheck="false"></textarea>
+</div>
+</div>
+<div class="flex flex-col h-full overflow-hidden hidden" id="ui-smart">
+<div class="bg-[#1f2233] p-3 shrink-0 flex justify-between items-center border-b border-[#292d3e]">
+<div class="text-xs text-gray-400 leading-tight flex-1">
+                        자연스러운 줄글이나 메모장 쓰듯 작성 후 <b class="text-yellow-400">마법 변환</b>을 누르세요.<br/>정보상자, 목차, 정당 뱃지, 링크 등이 위키 문법으로 자동 치환됩니다.
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="toggleModal('smartGuideModal')" class="bg-[#444a66] hover:bg-[#5c6380] text-white px-3 py-2 rounded text-sm font-bold shadow transition border border-[#5c6380]"><i class="fas fa-lightbulb mr-1 text-yellow-300"></i> 가이드</button>
-                        <button onclick="executeSmartConvert()" class="bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded text-sm font-bold shadow transition"><i class="fas fa-wand-magic-sparkles mr-1"></i> 마법 변환</button>
-                    </div>
-                </div>
-                <div class="flex-1 relative bg-[#131520]">
-                    <textarea id="editor-smart" class="editor-area bg-transparent border-none text-gray-300 placeholder-gray-600" spellcheck="false" placeholder="아래 예시처럼 편하게 줄글로 작성해보세요!&#10;&#10;[정보]&#10;이름=홍길동&#10;출생=2000년&#10;소속 정당=더불어민주당&#10;&#10;1. 개요&#10;효빈시의 차세대 괴물이다. 효빈대학교를 졸업했다.&#10;&#10;2. 특징&#10;2.1. 상세 특징&#10;우에하라 아유무를 매우 좋아한다.&#10;&#10;인용: 나는 무거운 사랑이 좋다."></textarea>
-                </div>
-            </div>
+<div class="flex gap-2">
+<button class="bg-[#444a66] hover:bg-[#5c6380] text-white px-3 py-2 rounded text-sm font-bold shadow transition border border-[#5c6380]" onclick="toggleModal('smartGuideModal')"><i class="fas fa-lightbulb mr-1 text-yellow-300"></i> 가이드</button>
+<button class="bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded text-sm font-bold shadow transition" onclick="executeSmartConvert()"><i class="fas fa-wand-magic-sparkles mr-1"></i> 마법 변환</button>
+</div>
+</div>
+<div class="flex-1 relative bg-[#131520]">
+<textarea class="editor-area bg-transparent border-none text-gray-300 placeholder-gray-600" id="editor-smart" placeholder="아래 예시처럼 편하게 줄글로 작성해보세요!
 
-            <div id="ui-namu" class="flex flex-col h-full overflow-hidden hidden">
-                <div class="bg-[#1f2233] p-3 shrink-0 border-b border-[#292d3e]">
-                    <div class="flex items-center gap-2 mb-2">
-                        <input type="text" id="namu-title" placeholder="문서 또는 템플릿 제목 (예: 틀_도도부현)" class="p-2 rounded bg-[#0f111a] text-white border border-[#3b3f54] flex-1 text-sm focus:outline-none focus:border-[#E76092]">
-                        <button onclick="executeNamuConvert()" class="bg-green-600 hover:bg-green-500 text-white px-3 py-2 rounded text-sm font-bold shadow transition whitespace-nowrap"><i class="fas fa-sync-alt mr-1"></i> 에디터 치환</button>
-                        <button onclick="generateJsTemplateFile()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded text-sm font-bold shadow transition whitespace-nowrap"><i class="fas fa-file-code mr-1"></i> JS 템플릿 생성</button>
-                    </div>
-                    <div class="text-xs text-gray-400 leading-tight">
+[정보]
+이름=홍길동
+출생=2000년
+소속 정당=더불어민주당
+
+1. 개요
+효빈시의 차세대 괴물이다. 효빈대학교를 졸업했다.
+
+2. 특징
+2.1. 상세 특징
+우에하라 아유무를 매우 좋아한다.
+
+인용: 나는 무거운 사랑이 좋다." spellcheck="false"></textarea>
+</div>
+</div>
+<div class="flex flex-col h-full overflow-hidden hidden" id="ui-namu">
+<div class="bg-[#1f2233] p-3 shrink-0 border-b border-[#292d3e]">
+<div class="flex items-center gap-2 mb-2">
+<input class="p-2 rounded bg-[#0f111a] text-white border border-[#3b3f54] flex-1 text-sm focus:outline-none focus:border-[#E76092]" id="namu-title" placeholder="문서 또는 템플릿 제목 (예: 틀_도도부현)" type="text"/>
+<button class="bg-green-600 hover:bg-green-500 text-white px-3 py-2 rounded text-sm font-bold shadow transition whitespace-nowrap" onclick="executeNamuConvert()"><i class="fas fa-sync-alt mr-1"></i> 에디터 치환</button>
+<button class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded text-sm font-bold shadow transition whitespace-nowrap" onclick="generateJsTemplateFile()"><i class="fas fa-file-code mr-1"></i> JS 템플릿 생성</button>
+</div>
+<div class="text-xs text-gray-400 leading-tight">
                         나무위키 코드를 붙여넣으세요. <b>[에디터 치환]</b>은 좌측 에디터에 본문을, <b>[JS 템플릿 생성]</b>은 효빈위키 템플릿용 외부 스크립트(.js)를 생성합니다.
                     </div>
-                </div>
-                <div class="flex-1 relative bg-[#131520]">
-                    <textarea id="editor-namu" class="editor-area bg-transparent border-none text-gray-300 placeholder-gray-600" spellcheck="false" placeholder="||<tablewidth=100%><tablebordercolor=#003B96,#003B96><bgcolor=#003B96,#003B96> {{{#!wiki style=&#34;margin:-10px&#34; ... 나무위키 코드를 붙여넣으세요 ..."></textarea>
-                </div>
-            </div>
-        </div>
-
-        <div class="w-1/2 flex flex-col bg-[#0f111a]">
-            <div class="flex bg-[#1a1c29] shrink-0 border-b border-[#292d3e]">
-                <div class="tab-btn active flex-1 text-center" id="tab-preview" onclick="switchTab('preview')"><i class="fas fa-desktop mr-1"></i> 완벽 미리보기</div>
-                <div class="tab-btn flex-1 text-center" id="tab-body" onclick="switchTab('body')"><i class="fas fa-code mr-1"></i> Body 컨텐츠</div>
-                <div class="tab-btn flex-1 text-center" id="tab-full" onclick="switchTab('full')"><i class="fas fa-file-code mr-1"></i> Full HTML</div>
-            </div>
-            
-            <div class="flex-1 overflow-hidden relative bg-white">
-                <div id="view-preview" class="h-full w-full">
-                    <iframe id="preview-iframe" class="w-full h-full border-none" sandbox="allow-same-origin allow-scripts"></iframe>
-                </div>
-                <div id="view-body" class="h-full w-full hidden">
-                    <div id="body-code" class="code-output"></div>
-                </div>
-                <div id="view-full" class="h-full w-full hidden">
-                    <div id="full-code" class="code-output"></div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <div id="toast" class="toast-msg">메시지</div>
-
-    <script>
+</div>
+<div class="flex-1 relative bg-[#131520]">
+<textarea class="editor-area bg-transparent border-none text-gray-300 placeholder-gray-600" id="editor-namu" placeholder='||&lt;tablewidth=100%&gt;&lt;tablebordercolor=#003B96,#003B96&gt;&lt;bgcolor=#003B96,#003B96&gt; {{{#!wiki style="margin:-10px" ... 나무위키 코드를 붙여넣으세요 ...' spellcheck="false"></textarea>
+</div>
+</div>
+</div>
+<div class="w-1/2 flex flex-col bg-[#0f111a]">
+<div class="flex bg-[#1a1c29] shrink-0 border-b border-[#292d3e]">
+<div class="tab-btn active flex-1 text-center" id="tab-preview" onclick="switchTab('preview')"><i class="fas fa-desktop mr-1"></i> 완벽 미리보기</div>
+<div class="tab-btn flex-1 text-center" id="tab-body" onclick="switchTab('body')"><i class="fas fa-code mr-1"></i> Body 컨텐츠</div>
+<div class="tab-btn flex-1 text-center" id="tab-full" onclick="switchTab('full')"><i class="fas fa-file-code mr-1"></i> Full HTML</div>
+</div>
+<div class="flex-1 overflow-hidden relative bg-white">
+<div class="h-full w-full" id="view-preview">
+<iframe class="w-full h-full border-none" id="preview-iframe" sandbox="allow-same-origin allow-scripts"></iframe>
+</div>
+<div class="h-full w-full hidden" id="view-body">
+<div class="code-output" id="body-code"></div>
+</div>
+<div class="h-full w-full hidden" id="view-full">
+<div class="code-output" id="full-code"></div>
+</div>
+</div>
+</div>
+</main>
+<div class="toast-msg" id="toast">메시지</div>
+<script>
         let compileTimer;
 
         const rawJsFileList = `
@@ -1107,6 +1122,19 @@ wiki_parktex.js .js \hyobinwiki2\assets\
     </style>
     <script src="ad_logic.js"><` + `/script>
     <link rel="stylesheet" href="wiki_font_standard.css">
+
+<style>
+    .wiki-fn-sup { position: relative; cursor: help; display: inline-block; padding: 0 2px; }
+    .wiki-fn-sup:hover .wiki-fn-tooltip { visibility: visible; opacity: 1; }
+    .wiki-fn-tooltip {
+        visibility: hidden; opacity: 0; position: absolute; bottom: 130%; right: 0;
+        background-color: #fff; color: #333; text-align: left; padding: 12px; border-radius: 6px;
+        font-size: 12px; width: max-content; max-width: 350px; z-index: 99999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #BBFF64;
+        font-weight: normal; line-height: 1.5; transition: opacity 0.2s; pointer-events: none;
+    }
+</style>
+
 </head>
 <body>
     <nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">

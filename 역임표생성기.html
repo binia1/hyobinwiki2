@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>효빈위키 국회의원 역임표 & 각주 자동 생성기</title>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>효빈위키 국회의원 역임표 &amp; 각주 자동 생성기</title>
 <style>
     body { font-family: 'Noto Sans KR', sans-serif; background-color: #f4f6f9; padding: 20px; color: #333; }
     .container { max-width: 850px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
@@ -22,70 +23,72 @@
     .wiki-fn-link { color: #0022AA; font-size: 0.8em; vertical-align: super; text-decoration: none; font-weight: bold; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<style>
+    .wiki-fn-sup { position: relative; cursor: help; display: inline-block; padding: 0 2px; }
+    .wiki-fn-sup:hover .wiki-fn-tooltip { visibility: visible; opacity: 1; }
+    .wiki-fn-tooltip {
+        visibility: hidden; opacity: 0; position: absolute; bottom: 130%; right: 0;
+        background-color: #fff; color: #333; text-align: left; padding: 12px; border-radius: 6px;
+        font-size: 12px; width: max-content; max-width: 350px; z-index: 99999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #BBFF64;
+        font-weight: normal; line-height: 1.5; transition: opacity 0.2s; pointer-events: none;
+    }
+</style>
 </head>
 <body>
-
 <div class="container">
-    <h2>국회의원 역임표 & 각주 자동 생성기</h2>
-    
-    <div class="section-title">1. 선거구 기본 정보</div>
-    <div class="grid-container">
-        <div class="form-group">
-            <label>시/도 (예: 경기, 효빈, 강원)</label>
-            <input type="text" id="region" value="경기">
-        </div>
-        <div class="form-group">
-            <label>선거구명 (예: 하남시 갑, 중구·동구)</label>
-            <input type="text" id="district" value="하남시 갑">
-        </div>
-    </div>
-
-    <div class="section-title">2. 인물 정보 입력</div>
-    <div class="grid-container">
-        <!-- 전임자 -->
-        <div style="background: #fdfdfd; padding: 15px; border: 1px solid #eee; border-radius: 4px;">
-            <strong style="display:block; margin-bottom:10px; color:#D81C2F;">[전임자]</strong>
-            <div class="form-group"><label>대수 (예: 제22대)</label><input type="text" id="prevTerm" value="제22대"></div>
-            <div class="form-group"><label>이름 (예: 추미애)</label><input type="text" id="prevName" value="추미애"></div>
-            <div class="form-group"><label>각주 번호 (숫자만, 없으면 빈칸)</label><input type="number" id="prevFnNum" value="1"></div>
-            <div class="form-group"><label>각주 내용 (문서 하단 추가용)</label><input type="text" id="prevFnText" value="경기도지사 출마로 인한 사퇴."></div>
-        </div>
-
-        <!-- 현임자/후임자 -->
-        <div>
-            <div style="background: #fdfdfd; padding: 15px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 15px;">
-                <strong style="display:block; margin-bottom:10px; color:#003B96;">[현임자 (주인공)]</strong>
-                <div class="form-group"><label>대수 (예: 제22대)</label><input type="text" id="currTerm" value="제22대"></div>
-                <div class="form-group"><label>이름 (예: 이광재)</label><input type="text" id="currName" value="이광재"></div>
-            </div>
-
-            <div style="background: #fdfdfd; padding: 15px; border: 1px solid #eee; border-radius: 4px;">
-                <strong style="display:block; margin-bottom:10px; color:#444;">[후임자]</strong>
-                <div class="form-group"><label>대수 (현직일 경우 빈칸)</label><input type="text" id="nextTerm" placeholder="예: 제23대"></div>
-                <div class="form-group"><label>이름 ('현직' 입력 시 이탤릭체 자동적용)</label><input type="text" id="nextName" value="현직"></div>
-                <div class="form-group"><label>각주 번호 (숫자만, 없으면 빈칸)</label><input type="number" id="nextFnNum" placeholder="예: 2"></div>
-                <div class="form-group"><label>각주 내용 (문서 하단 추가용)</label><input type="text" id="nextFnText" placeholder="예: 재보궐선거 당선."></div>
-            </div>
-        </div>
-    </div>
-
-    <button onclick="generateCode()">⚡ HTML 코드 생성하기</button>
-
-    <div class="section-title">출력 1. 본문 삽입용 (역임표 표 코드)</div>
-    <p style="font-size: 0.85em; color: #555; margin-bottom: 5px;">개요나 프로필 표 주변에 삽입할 HTML 코드입니다.</p>
-    <textarea id="outputTableCode" onclick="this.select()" readonly></textarea>
-    <div class="preview-box" id="previewTableArea">미리보기 영역</div>
-
-    <div class="section-title">출력 2. 하단 삽입용 (각주 리스트 코드)</div>
-    <p style="font-size: 0.85em; color: #555; margin-bottom: 5px;">문서 맨 밑의 <b>&lt;h2 id="s-9"&gt;각주&lt;/h2&gt;</b> 아래의 <b>&lt;ul&gt;</b> 태그 안에 이 코드를 복사해 넣으세요.</p>
-    <textarea id="outputFootnoteCode" onclick="this.select()" readonly></textarea>
-    <div class="preview-box">
-        <ul style="list-style: none; padding-left: 0; line-height: 1.8; color: #555; margin:0;" id="previewFootnoteArea">
+<h2>국회의원 역임표 &amp; 각주 자동 생성기</h2>
+<div class="section-title">1. 선거구 기본 정보</div>
+<div class="grid-container">
+<div class="form-group">
+<label>시/도 (예: 경기, 효빈, 강원)</label>
+<input id="region" type="text" value="경기"/>
+</div>
+<div class="form-group">
+<label>선거구명 (예: 하남시 갑, 중구·동구)</label>
+<input id="district" type="text" value="하남시 갑"/>
+</div>
+</div>
+<div class="section-title">2. 인물 정보 입력</div>
+<div class="grid-container">
+<!-- 전임자 -->
+<div style="background: #fdfdfd; padding: 15px; border: 1px solid #eee; border-radius: 4px;">
+<strong style="display:block; margin-bottom:10px; color:#D81C2F;">[전임자]</strong>
+<div class="form-group"><label>대수 (예: 제22대)</label><input id="prevTerm" type="text" value="제22대"/></div>
+<div class="form-group"><label>이름 (예: 추미애)</label><input id="prevName" type="text" value="추미애"/></div>
+<div class="form-group"><label>각주 번호 (숫자만, 없으면 빈칸)</label><input id="prevFnNum" type="number" value="1"/></div>
+<div class="form-group"><label>각주 내용 (문서 하단 추가용)</label><input id="prevFnText" type="text" value="경기도지사 출마로 인한 사퇴."/></div>
+</div>
+<!-- 현임자/후임자 -->
+<div>
+<div style="background: #fdfdfd; padding: 15px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 15px;">
+<strong style="display:block; margin-bottom:10px; color:#003B96;">[현임자 (주인공)]</strong>
+<div class="form-group"><label>대수 (예: 제22대)</label><input id="currTerm" type="text" value="제22대"/></div>
+<div class="form-group"><label>이름 (예: 이광재)</label><input id="currName" type="text" value="이광재"/></div>
+</div>
+<div style="background: #fdfdfd; padding: 15px; border: 1px solid #eee; border-radius: 4px;">
+<strong style="display:block; margin-bottom:10px; color:#444;">[후임자]</strong>
+<div class="form-group"><label>대수 (현직일 경우 빈칸)</label><input id="nextTerm" placeholder="예: 제23대" type="text"/></div>
+<div class="form-group"><label>이름 ('현직' 입력 시 이탤릭체 자동적용)</label><input id="nextName" type="text" value="현직"/></div>
+<div class="form-group"><label>각주 번호 (숫자만, 없으면 빈칸)</label><input id="nextFnNum" placeholder="예: 2" type="number"/></div>
+<div class="form-group"><label>각주 내용 (문서 하단 추가용)</label><input id="nextFnText" placeholder="예: 재보궐선거 당선." type="text"/></div>
+</div>
+</div>
+</div>
+<button onclick="generateCode()">⚡ HTML 코드 생성하기</button>
+<div class="section-title">출력 1. 본문 삽입용 (역임표 표 코드)</div>
+<p style="font-size: 0.85em; color: #555; margin-bottom: 5px;">개요나 프로필 표 주변에 삽입할 HTML 코드입니다.</p>
+<textarea id="outputTableCode" onclick="this.select()" readonly=""></textarea>
+<div class="preview-box" id="previewTableArea">미리보기 영역</div>
+<div class="section-title">출력 2. 하단 삽입용 (각주 리스트 코드)</div>
+<p style="font-size: 0.85em; color: #555; margin-bottom: 5px;">문서 맨 밑의 <b>&lt;h2 id="s-9"&gt;각주&lt;/h2&gt;</b> 아래의 <b>&lt;ul&gt;</b> 태그 안에 이 코드를 복사해 넣으세요.</p>
+<textarea id="outputFootnoteCode" onclick="this.select()" readonly=""></textarea>
+<div class="preview-box">
+<ul id="previewFootnoteArea" style="list-style: none; padding-left: 0; line-height: 1.8; color: #555; margin:0;">
             미리보기 영역
         </ul>
-    </div>
 </div>
-
+</div>
 <script>
 function generateCode() {
     // 1. 입력값 가져오기
