@@ -3,7 +3,6 @@ import json
 import re
 from bs4 import BeautifulSoup
 
-# 1. 스승님이 지정해주신 49개 지역 퍼스널 컬러 매핑표
 COLOR_MAP = {
     "중구": "#BB9955", "동구": "#FF9922", "서구": "#00AABB", "남구": "#DDBBFF",
     "청엽구": "#006699", "창전구": "#33AAFF", "안천구": "#AA66DD", "탄성군": "#BBFF64",
@@ -20,11 +19,10 @@ COLOR_MAP = {
     "원안군": "#00aabb", "낙주시": "#bb0033"
 }
 
-# 2. 추출 데이터 로드
 with open('extracted_infobox_data.json', 'r', encoding='utf-8') as f:
     extracted_data = json.load(f)
 
-# 3. 텍스트 파일(각주) 파싱 로직
+# 각주 텍스트 파일 파싱
 footnotes_db = {}
 if os.path.exists('시군구_각주용_정리본.txt'):
     with open('시군구_각주용_정리본.txt', 'r', encoding='utf-8') as f:
@@ -63,14 +61,13 @@ if os.path.exists('시군구_각주용_정리본.txt'):
                 for party, mem_list in party_to_members.items():
                     if party not in target_dict:
                         target_dict[party] = []
-                    target_dict[party].append(f"{dist_part}: {', '.join(mem_list)}")
+                    target_dict[party].append(f"<strong style='color:#005BAC;'>[{dist_part}]</strong><br>{', '.join(mem_list)}")
 
 for reg in footnotes_db:
     for c_type in ["광역", "기초"]:
         for party in footnotes_db[reg][c_type]:
-            footnotes_db[reg][c_type][party] = "<br>".join(footnotes_db[reg][c_type][party])
+            footnotes_db[reg][c_type][party] = "<br><br>".join(footnotes_db[reg][c_type][party])
 
-# 4. 정당 뱃지 & 하이퍼링크 절대 보존 파서
 def parse_political_data(html_str):
     if not html_str or html_str == "-": return []
     soup = BeautifulSoup(html_str, 'html.parser')
@@ -112,8 +109,7 @@ def parse_political_data(html_str):
     content_html = re.sub(r'\[\d+\]', '', content_html).strip()
     return [{"badge": badge_html, "sub_label": "", "content": content_html}]
 
-# 5. rowspan HTML 및 각주 조립 함수 (서브 헤더 퍼스널 컬러 완벽 적용)
-def build_rowspan_trs(title, data_list, theme_color, footnotes_dict, fn_counter, global_footnotes):
+def build_rowspan_trs(title, data_list, theme_color, footnotes_dict, fn_counter, global_footnotes, is_assembly=False):
     if not data_list or (not data_list[0].get("badge") and not data_list[0].get("content")):
         return "", fn_counter
     
@@ -132,24 +128,41 @@ def build_rowspan_trs(title, data_list, theme_color, footnotes_dict, fn_counter,
         fn_html = ""
         if party_name and party_name in footnotes_dict:
             fn_text = footnotes_dict[party_name]
-            # ★ 툴팁 적용 및 하단 각주 배열에 저장
-            fn_html = f' <sup class="fn-sup"><a id="rfn-{fn_counter}" href="#fn-{fn_counter}" style="color: {theme_color}; text-decoration: none; font-weight: bold;">[{fn_counter}]</a><span class="fn-tooltip" style="display:none; text-align:left; min-width: 350px;">{fn_text}</span></sup>'
+            # ★ 표 깨짐 방지: 전용 wiki-fn-tooltip 클래스를 사용하여 완벽하게 숨김 & 팝업 처리 ★
+            fn_html = f' <sup class="wiki-fn-sup"><a id="rfn-{fn_counter}" href="#fn-{fn_counter}" style="color: {theme_color}; text-decoration: none; font-weight: bold;">[{fn_counter}]</a><span class="wiki-fn-tooltip">{fn_text}</span></sup>'
             global_footnotes.append((fn_counter, fn_text))
             fn_counter += 1
             
+        # ★ 스승님 요청 반영: 국회의원은 링크 날리고 열병합하여 깔끔하게 조립 ★
+        if is_assembly:
+            clean_sub = BeautifulSoup(sub, 'html.parser').get_text(strip=True) if sub else ""
+            m = re.search(r'^(.*?)\s*\((.*?)\)$', content)
+            if m:
+                name_html = m.group(1).strip()
+                history = m.group(2).strip()
+                if clean_sub:
+                    content = f'{name_html}<br><span style="font-size: 0.8em; color: #666;">({clean_sub} / {history})</span>'
+                else:
+                    content = f'{name_html}<br><span style="font-size: 0.8em; color: #666;">({history})</span>'
+            else:
+                if clean_sub:
+                    content = f'{content}<br><span style="font-size: 0.8em; color: #666;">({clean_sub})</span>'
+            
+            sub = "" # sub를 비워서 무조건 colspan="2" (열병합)을 타게 만듦
+
         if sub: 
             if i == 0:
                 html += f"""
             <tr>
                 <th rowspan="{rowspan}" style="background-color: {theme_color}; color: #fff; padding: 8px; border: 1px solid #ccc; vertical-align: middle;">{title}</th>
-                <th style="background-color: {theme_color}; color: #fff; padding: 8px; border: 1px solid #ccc; vertical-align: middle;">{sub}</th>
+                <th style="background-color: {theme_color}; filter: brightness(0.9); color: #fff; padding: 8px; border: 1px solid #ccc; vertical-align: middle;">{sub}</th>
                 <td style="padding: 6px; border: 1px solid #ccc; vertical-align: middle;">{badge}</td>
                 <td style="padding: 6px; border: 1px solid #ccc; color: #333; vertical-align: middle; text-align: left; padding-left: 10px;">{content}{fn_html}</td>
             </tr>"""
             else:
                 html += f"""
             <tr>
-                <th style="background-color: {theme_color}; color: #fff; padding: 8px; border: 1px solid #ccc; vertical-align: middle;">{sub}</th>
+                <th style="background-color: {theme_color}; filter: brightness(0.9); color: #fff; padding: 8px; border: 1px solid #ccc; vertical-align: middle;">{sub}</th>
                 <td style="padding: 6px; border: 1px solid #ccc; vertical-align: middle;">{badge}</td>
                 <td style="padding: 6px; border: 1px solid #ccc; color: #333; vertical-align: middle; text-align: left; padding-left: 10px;">{content}{fn_html}</td>
             </tr>"""
@@ -209,16 +222,27 @@ for region, data in extracted_data.items():
     fn_counter = 1
     global_footnotes = []
 
+    mayor_html, fn_counter = build_rowspan_trs("단체장", mayor, theme_color, {}, fn_counter, global_footnotes)
     local_council_html, fn_counter = build_rowspan_trs("지방의회", local_council, theme_color, region_fn_db["기초"], fn_counter, global_footnotes)
     city_council_html, fn_counter = build_rowspan_trs("광역의원", city_council, theme_color, region_fn_db["광역"], fn_counter, global_footnotes)
-    assembly_html, fn_counter = build_rowspan_trs("국회의원", assembly, theme_color, {}, fn_counter, global_footnotes)
-    mayor_html, fn_counter = build_rowspan_trs("단체장", mayor, theme_color, {}, fn_counter, global_footnotes)
+    # ★ 국회의원: 링크 없애고 열병합 처리 활성화 (is_assembly=True) ★
+    assembly_html, fn_counter = build_rowspan_trs("국회의원", assembly, theme_color, {}, fn_counter, global_footnotes, is_assembly=True) 
 
-    # ★ 1. 선 없앤 하얀 배경 헤더 & 로고 박스 완벽 구현 ★
+    # ★ 툴팁이 표를 깨지 않도록 전용 CSS 스타일을 인포박스 상단에 강제 삽입 ★
     new_html = f"""
+<style>
+    .wiki-fn-sup {{ position: relative; cursor: help; display: inline-block; padding: 0 2px; }}
+    .wiki-fn-sup:hover .wiki-fn-tooltip {{ visibility: visible; opacity: 1; }}
+    .wiki-fn-tooltip {{
+        visibility: hidden; opacity: 0; position: absolute; bottom: 130%; right: 0;
+        background-color: #fff; color: #333; text-align: left; padding: 12px; border-radius: 6px;
+        font-size: 12px; width: max-content; max-width: 350px; z-index: 99999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid {theme_color};
+        font-weight: normal; line-height: 1.5; transition: opacity 0.2s; pointer-events: none;
+    }}
+</style>
 <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden h-fit order-1 md:order-2" style="border: 1px solid #ccc; background: #fff; width: 100%; max-width: 430px; float: right; margin-left: 20px; margin-bottom: 20px;">
     
-    <!-- 텍스트-로고 사이 선 삭제 및 간격 조절 -->
     <div style="text-align: center; font-weight: bold; font-size: 16px; padding: 15px 10px 5px; color: #000; background-color: #fff; letter-spacing: -0.5px;">
         {parent_text}의 {entity_label}
     </div>
@@ -236,7 +260,7 @@ for region, data in extracted_data.items():
         </div>
     </div>
 
-    <!-- 구청 사진 대체: 효빈위키 지도 프레임(iframe) -->
+    <!-- 구청 사진 대체: 지도 iframe -->
     <div style="width: 100%; height: 250px; overflow: hidden; position: relative; border-bottom: 1px solid #ccc; border-top: 1px solid #ccc; background: #f3f4f6;">
         <iframe src="https://binia1.github.io/mymap/" style="width: 160%; height: 160%; border: none; position: absolute; top: 0; left: 0; transform: scale(0.625); transform-origin: 0 0;"></iframe>
     </div>
@@ -261,14 +285,14 @@ for region, data in extracted_data.items():
             {city_council_html}
             {assembly_html}
             
-            <!-- ★ 2. 구화, 구목, 구조 등 상징 서브 헤더에 퍼스널 컬러 완벽 적용 ★ -->
+            <!-- ★ 구화, 구목, 구조 서브헤더에 퍼스널 컬러 적용 완료 ★ -->
             <tr>
                 <th rowspan="3" style="background-color: {theme_color}; color: #fff; padding: 8px; border: 1px solid #ccc; vertical-align: middle;">상징</th>
-                <th style="background-color: {theme_color}; color: #fff; padding: 8px; border: 1px solid #ccc;">구화</th>
+                <th style="background-color: {theme_color}; filter: brightness(0.9); color: #fff; padding: 8px; border: 1px solid #ccc;">구화</th>
                 <td colspan="2" style="padding: 8px; border: 1px solid #ccc; color: #333;">{flower}</td>
             </tr>
-            <tr><th style="background-color: {theme_color}; color: #fff; padding: 8px; border: 1px solid #ccc;">구목</th><td colspan="2" style="padding: 8px; border: 1px solid #ccc; color: #333;">{tree}</td></tr>
-            <tr><th style="background-color: {theme_color}; color: #fff; padding: 8px; border: 1px solid #ccc;">구조</th><td colspan="2" style="padding: 8px; border: 1px solid #ccc; color: #333;">{bird}</td></tr>
+            <tr><th style="background-color: {theme_color}; filter: brightness(0.9); color: #fff; padding: 8px; border: 1px solid #ccc;">구목</th><td colspan="2" style="padding: 8px; border: 1px solid #ccc; color: #333;">{tree}</td></tr>
+            <tr><th style="background-color: {theme_color}; filter: brightness(0.9); color: #fff; padding: 8px; border: 1px solid #ccc;">구조</th><td colspan="2" style="padding: 8px; border: 1px solid #ccc; color: #333;">{bird}</td></tr>
             <tr><th colspan="2" style="background-color: {theme_color}; color: #fff; padding: 8px; border: 1px solid #ccc;">지역 번호</th><td colspan="2" style="padding: 8px; border: 1px solid #ccc; color: #333;">{phone}</td></tr>
             <tr><th colspan="2" style="background-color: {theme_color}; color: #fff; padding: 8px; border: 1px solid #ccc;">SNS</th><td colspan="2" style="padding: 8px; border: 1px solid #ccc;">{sns}</td></tr>
         </tbody>
@@ -278,26 +302,27 @@ for region, data in extracted_data.items():
     new_soup = BeautifulSoup(new_html, 'html.parser')
     old_infobox.replace_with(new_soup)
 
-    # ★ 3. 추출된 각주들을 문서 최하단 <div id="footer-container"> 바로 위에 삽입 ★
+    # ★ 추출된 각주들을 문서 최하단 <div id="footer-container"> 바로 위에 삽입 ★
     if global_footnotes:
         bottom_fn_html = '<div class="footnote-section" style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #ccc; clear: both; background-color: #F9F9FA; border-radius: 8px; padding: 20px;">\n'
         bottom_fn_html += '<h3 style="font-size: 1.5rem !important; font-weight: bold; margin-bottom: 15px; margin-top: 0; padding-left: 0; border: none; color: #333;">각주</h3>\n<ul class="footnote-list" style="list-style: none; padding: 0; margin: 0; font-size: 0.9rem; line-height: 1.6; color: #444;">\n'
         for fn_id, fn_text in global_footnotes:
-            bottom_fn_html += f'<li style="margin-bottom: 8px; display: flex; align-items: flex-start; gap: 10px;"><a id="fn-{fn_id}" href="#rfn-{fn_id}" style="color: #005BAC; font-weight: bold; text-decoration: none;">[{fn_id}]</a> <span>{fn_text}</span></li>\n'
+            bottom_fn_html += f'<li style="margin-bottom: 8px; display: flex; align-items: flex-start; gap: 10px;"><a id="fn-{fn_id}" href="#rfn-{fn_id}" style="color: {theme_color}; font-weight: bold; text-decoration: none;">[{fn_id}]</a> <span>{fn_text}</span></li>\n'
         bottom_fn_html += '</ul>\n</div>\n'
         
         bottom_soup = BeautifulSoup(bottom_fn_html, 'html.parser')
         
-        # footer-container 바로 위에 각주 박스 붙여넣기
         footer_div = soup.find(id='footer-container')
         if footer_div:
+            old_fn_sec = soup.find('div', class_='footnote-section')
+            if old_fn_sec: old_fn_sec.decompose()
             footer_div.insert_before(bottom_soup)
         else:
-            soup.body.append(bottom_soup) # footer가 없으면 문서 맨 끝에 삽입
+            soup.body.append(bottom_soup)
 
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(soup.encode(formatter=None).decode('utf-8'))
         
-    print(f"[{region}] ✅ 완벽 렌더링: 남구 디자인 적용 + 서브헤더 컬러매핑 + 하단 각주 삽입 완료")
+    print(f"[{region}] ✅ 최종 완성본 변환 성공! (툴팁 CSS 이식 + 국회의원 열병합 + 색상 적용)")
 
-print("\n🚀 모든 오류를 완벽히 수정한 49개 지역 디자인 일괄 덮어쓰기 작업이 완료되었습니다.")
+print("\n🚀 지긋지긋했던 49개 지역 문서 완벽 변환이 드디어 마무리되었습니다.")
