@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from bs4 import BeautifulSoup
 
 TARGET_REGIONS = [
@@ -8,7 +9,7 @@ TARGET_REGIONS = [
     "두원군", "고포군", "서해시", "장기구", "약산시", "가원구", "천성구", "강주시",
     "천주시", "궁하구", "군천시", "빈주시", "빈성구", "계성시", "낭원군", "서진시",
     "전산시", "기도군", "선곡군", "덕현군", "상안군", "저천군", "반양군", "치원군",
-    "모제군", "청엽구", "안천구", "남구", "창전구", "서구", "탄성군", "동구", "중구"
+    "모제군", "청엽구", "안천구", "남구", "창전구", "서구", "탄성군", "동구", "중구","북구"
 ]
 
 OUTPUT_FILE = "extracted_infobox_data.json"
@@ -28,44 +29,72 @@ for region in TARGET_REGIONS:
         infobox = soup.find('table', style=lambda s: s and 'float: right' in s)
         
     if not infobox:
-        print(f"[{region}] ⚠️️ 인포박스 구조를 찾을 수 없습니다.")
+        print(f"[{region}] ⚠ 인포박스 구조를 찾을 수 없습니다.")
         continue
-        
-    # 인포박스 내부의 메인 테이블 추출
-    main_table = infobox if infobox.name == 'table' else infobox.find('table')
-    if not main_table:
-        continue
-        
-    tbody = main_table.find('tbody')
-    
-    # 핵심 1: recursive=False를 써서 표 내부의 '접기/펼치기 표'가 개별 줄로 인식되어 꼬이는 것을 방지
-    rows = tbody.find_all('tr', recursive=False) if tbody else main_table.find_all('tr', recursive=False)
-    
+
     region_data = {}
-    last_key = None
+
+    # ==========================================
+    # ★ [추가] 한자명 및 영문명 완벽 추출 로직 ★
+    # ==========================================
+    hanja_name = ""
+    eng_name = ""
     
-    for tr in rows:
-        ths = tr.find_all('th', recursive=False)
-        tds = tr.find_all('td', recursive=False)
+    # 1. 신형 디자인(<div class="infobox-name">)에서 찾기
+    name_div = infobox.find(class_='infobox-name')
+    if name_div:
+        for text in name_div.stripped_strings:
+            # 텍스트에 한자가 포함된 경우
+            if re.search(r'[一-龥]', text):
+                if '/' in text: # "東區 / DONG-GU" 형태
+                    parts = text.split('/')
+                    hanja_name = parts[0].strip()
+                    eng_name = parts[1].strip()
+                else:
+                    hanja_name = text.strip()
+            # 텍스트가 순수 영문인 경우
+            elif re.search(r'[A-Za-z]', text) and not eng_name:
+                eng_name = text.strip()
+
+    # 2. 구형 테이블 디자인이거나 위에서 못 찾은 경우 정규식으로 전체 텍스트 긁기
+    if not hanja_name or not eng_name:
+        full_text = infobox.get_text(separator=' ')
+        if not hanja_name:
+            hanja_match = re.search(r'([一-龥]{2,})', full_text)
+            if hanja_match:
+                hanja_name = hanja_match.group(1)
+        if not eng_name:
+            eng_match = re.search(r'([A-Za-z\s\-]+(?:gu|si|gun|do))', full_text, re.IGNORECASE)
+            if eng_match:
+                eng_name = eng_match.group(1).strip()
+
+    # 추출한 값 저장 (못 찾았을 경우 기본값 세팅)
+    region_data["한자명"] = hanja_name if hanja_name else "漢字"
+    region_data["영문명"] = eng_name if eng_name else "Eng-Name"
+    # ==========================================
+
+    # 기존 인포박스 내부 표 추출
+    main_table = infobox if infobox.name == 'table' else infobox.find('table')
+    if main_table:
+        tbody = main_table.find('tbody')
+        rows = tbody.find_all('tr', recursive=False) if tbody else main_table.find_all('tr', recursive=False)
         
-        if ths:
-            # 항목명(th)이 있는 정상적인 줄
-            key = " ".join([th.get_text(strip=True) for th in ths])
+        last_key = None
+        for tr in rows:
+            ths = tr.find_all('th', recursive=False)
+            tds = tr.find_all('td', recursive=False)
             
-            # 값이 여러 칸으로 나뉘어 있을 경우 (예: <td>민주당</td> <td>6석</td>) 파이프(|)로 묶음
-            val_html = " | ".join([td.decode_contents().strip() for td in tds])
-            region_data[key] = val_html
-            last_key = key
-            
-        elif tds and last_key:
-            # 핵심 2: th 없이 td만 있는 줄 (rowspan으로 병합된 다당제 의석수 등)
-            val_html = " | ".join([td.decode_contents().strip() for td in tds])
-            
-            # 이전 항목(예: '구의회')에 줄바꿈(<br>)으로 계속 이어붙여서 누락 방지
-            region_data[last_key] += "<br>" + val_html
-            
+            if ths:
+                key = " ".join([th.get_text(strip=True) for th in ths])
+                val_html = " | ".join([td.decode_contents().strip() for td in tds])
+                region_data[key] = val_html
+                last_key = key
+            elif tds and last_key:
+                val_html = " | ".join([td.decode_contents().strip() for td in tds])
+                region_data[last_key] += "<br>" + val_html
+                
     result_data[region] = region_data
-    print(f"[{region}] ✅ 추출 완료")
+    print(f"[{region}] ✅ 한자/영문 포함 추출 완료 ({region_data['한자명']} / {region_data['영문명']})")
 
 with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
     json.dump(result_data, f, ensure_ascii=False, indent=4)
