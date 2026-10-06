@@ -938,7 +938,6 @@ const db = {
     }
 };
 
-// 동적 로드 함수 (프레임워크 완벽 복원 - 이미지 로드 및 다중 분류 추가)
 function loadMember(key) {
     const data = db[key];
     if (!data) {
@@ -946,55 +945,60 @@ function loadMember(key) {
         return;
     }
 
-    // 1. 문서 제목 업데이트 (Null 방어 코드 추가)
+    // 1. 문서 제목 업데이트 (안전장치 적용)
     const docTitleEl = document.getElementById('doc-title');
     if (docTitleEl) {
         docTitleEl.innerText = key;
     }
 
-    const docCategoryEl = document.getElementById('doc-category');
-    if (docCategoryEl) {
-        docCategoryEl.innerHTML = `...`; // 기존 분류 HTML 설정
-    }
-    // 💡 [추가] 출생지 및 학력 스마트 추출기 (인포박스 & 분류 박스에서 공통 사용)
+    // URL 해시 동기화 (새로고침 시 유지)
+    history.replaceState(null, null, '#' + key);
+
+    // 💡 [안전 강화] 출생지 스마트 추출기 (null 에러 원천 차단)
     let birthplace = "알 수 없음";
-    const birthMatch = data.life.match(/\d{4}년\s+(.+?)(?:\s*출생|\s*에서 태어났다|\s*에서)/);
-    if (birthMatch && birthMatch[1]) {
-        birthplace = birthMatch[1].trim();
+    if (data.life) {
+        const birthMatch = data.life.match(/\d{4}년\s+(.+?)(?:\s*출생|\s*에서 태어났다|\s*에서)/);
+        if (birthMatch && birthMatch[1]) {
+            birthplace = birthMatch[1].trim();
+        }
     }
 
     let education = "알 수 없음";
-    const historyFirstLine = data.history.split('<br>')[0];
-    if (historyFirstLine.includes('학교')) {
-        education = historyFirstLine.replace(/(?: 총학생회장| 학생회장| 특임강사| 졸업| 재학)/g, '').trim();
+    if (data.history) {
+        const historyFirstLine = data.history.split('<br>')[0];
+        if (historyFirstLine.includes('학교')) {
+            education = historyFirstLine.replace(/(?: 총학생회장| 학생회장| 특임강사| 졸업| 재학)/g, '').trim();
+        }
     }
 
-// 🌟 [신규 추가] 다채로운 분류용 스마트 추출기
-    
-    // (1) 출신 학교 분류 추출
+    // 분류용 스마트 추출기
     let schoolCategory = "";
-    const schoolMatch = data.history.match(/([가-힣a-zA-Z]+(?:대학교|고등학교|중학교|초등학교))/);
+    const schoolMatch = data.history ? data.history.match(/([가-힣a-zA-Z]+(?:대학교|고등학교|중학교|초등학교))/) : null;
     if (schoolMatch) {
         schoolCategory = ` | <a href="분류.html#${schoolMatch[1]} 출신" class="wiki-link">${schoolMatch[1]} 출신</a>`;
     }
 
-    // (2) 출신 지역구 분류 추출 (비례대표 제외)
     let regionCategory = "";
-    const regionName = data.district.split(' ')[0];
-    if (!regionName.includes('비례')) { 
-        regionCategory = ` | <a href="분류.html#${regionName} 출신" class="wiki-link">${regionName} 출신</a>`;
+    if (data.district) {
+        const regionName = data.district.split(' ')[0];
+        if (!regionName.includes('비례')) { 
+            regionCategory = ` | <a href="분류.html#${regionName} 출신" class="wiki-link">${regionName} 출신</a>`;
+        }
     }
 
-    // 🌟 화면 상단 분류 박스 업데이트 (모든 링크를 분류.html# 로 수정!)
-    document.getElementById('doc-category').innerHTML = `
-        <span class="font-bold text-[#7777AA]">분류:</span> 
-        <a href="분류.html#효빈광역시의원" class="wiki-link">효빈광역시의원</a> | 
-        <a href="분류.html#${data.district.split(' ')[0]}의 정치" class="wiki-link">${data.district.split(' ')[0]}의 정치</a> | 
-        <a href="분류.html#${data.party} 소속" class="wiki-link">${data.party} 소속</a> | 
-        <a href="분류.html#${data.birth.substring(0,4)}년 출생" class="wiki-link">${data.birth.substring(0,4)}년 출생</a>${regionCategory}${schoolCategory}
-    `;
+    // 화면 상단 분류 박스 업데이트 (안전한 선언)
+    const docCategoryEl = document.getElementById('doc-category');
+    if (docCategoryEl) {
+        docCategoryEl.innerHTML = `
+            <span class="font-bold text-[#7777AA]">분류:</span> 
+            <a href="분류.html#효빈광역시의원" class="wiki-link">효빈광역시의원</a> | 
+            <a href="분류.html#${data.district ? data.district.split(' ')[0] : ''}의 정치" class="wiki-link">${data.district ? data.district.split(' ')[0] : ''}의 정치</a> | 
+            <a href="분류.html#${data.party} 소속" class="wiki-link">${data.party} 소속</a> | 
+            <a href="분류.html#${data.birth ? data.birth.substring(0,4) : ''}년 출생" class="wiki-link">${data.birth ? data.birth.substring(0,4) : ''}년 출생</a>${regionCategory}${schoolCategory}
+        `;
+    }
 
-// 2. 우측 인포박스 조립 (신체, 가족, 본관, 링크 자동화 추가)
+    // 2. 우측 인포박스 조립
     let infoHtml = `
         <div class="${data.partyClass} text-white text-center p-3 font-bold text-lg leading-tight">
             ${data.current}<br>
@@ -1012,17 +1016,15 @@ function loadMember(key) {
             <tr><th>소속 정당</th><td class="text-sm"><span class="party-box ${data.partyClass} w-full block text-center">${data.party}</span></td></tr>
             <tr><th>지역구</th><td class="text-sm">${data.district}</td></tr>
             <tr><th>의원 대수</th><td class="text-sm">${data.terms}</td></tr>
-            
             ${data.body ? `<tr><th>신체</th><td class="text-sm">${data.body}</td></tr>` : ''}
             ${data.family ? `<tr><th>가족</th><td class="text-sm text-left pl-3">${data.family}</td></tr>` : ''}
             ${data.sns ? `<tr><th>링크</th><td class="text-sm" style="padding: 8px 10px; text-align: left;">${data.sns}</td></tr>` : ''}
-            
             <tr><th>약력</th><td class="text-sm text-xs leading-relaxed text-left pl-3">${data.history}</td></tr>
         </table>
     `;
 
     // 3. 선거이력 행 조립
-    let electionsHtml = data.elections.map(e => `
+    let electionsHtml = (data.elections || []).map(e => `
         <tr>
             <td>${e.year}</td>
             <td>${e.name}</td>
@@ -1036,7 +1038,7 @@ function loadMember(key) {
     `).join('');
 
     // 4. 소속정당 행 조립
-    let partyHistoryHtml = data.partyHistory.map(p => `
+    let partyHistoryHtml = (data.partyHistory || []).map(p => `
         <tr>
             <td>${p.period}</td>
             <td><span class="party-box ${p.partyClass}">${p.party}</span></td>
@@ -1044,7 +1046,7 @@ function loadMember(key) {
         </tr>
     `).join('');
 
-    // 5. 전체 본문 렌더링 (h2 태그에 외부 CSS 우측 정렬 무력화 적용)
+    // 5. 전체 본문 렌더링
     let contentHtml = `
         <aside class="infobox fade-in">${infoHtml}</aside>
         <div class="wiki-content fade-in">
@@ -1067,7 +1069,7 @@ function loadMember(key) {
             <p>${data.life}</p>
             
             <h2 id="s-3" class="anchor-offset" style="text-align: left !important; display: block !important; float: none !important; direction: ltr !important;">3. 의정 활동 및 여담</h2>
-            <div class="bg-[#f8f9fa] border-l-4 border-[${data.partyClass.includes('minju') ? '#004ea2' : data.partyClass.includes('ppp') ? '#E61E2B' : data.partyClass.includes('jinbo') ? '#d6001c' : data.partyClass.includes('indep') ? '#808080' : '#7777AA'}] p-4 my-4 text-sm text-gray-700 shadow-sm leading-relaxed">
+            <div class="bg-[#f8f9fa] border-l-4 border-[${data.partyClass && data.partyClass.includes('minju') ? '#004ea2' : data.partyClass && data.partyClass.includes('ppp') ? '#E61E2B' : data.partyClass && data.partyClass.includes('jinbo') ? '#d6001c' : '#7777AA'}] p-4 my-4 text-sm text-gray-700 shadow-sm leading-relaxed">
                 ${data.activities}
             </div>
 
@@ -1101,9 +1103,12 @@ function loadMember(key) {
         </div>
     `;
 
-    document.getElementById('dynamic-view-area').innerHTML = contentHtml;
+    const viewAreaEl = document.getElementById('dynamic-view-area');
+    if (viewAreaEl) {
+        viewAreaEl.innerHTML = contentHtml;
+    }
 
-    // 소속 정당에 맞는 네비게이션 표만 노출 및 하이라이트 처리
+    // 소속 정당에 맞는 네비게이션 표 노출
     const partyIds = {
         "더불어민주당": "nav-party-minju",
         "국민의힘": "nav-party-ppp",
