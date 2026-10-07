@@ -114,7 +114,7 @@ function renderHyobinAdminHistory(containerId) {
         <tr><td>유내동, 리사동, 정동</td><td>유내동</td></tr>
         <tr><td>일향동</td><td>일향동</td><td rowspan="6" class="hb-bg-gray">중부출장소</td></tr>
         <tr><td>오주동, 목동</td><td>오주동</td></tr>
-        <tr><td>주동, 약맥동</td><td>약맥동</td></tr>
+        <tr><td>삼각동, 약맥동</td><td>약맥동</td></tr>
         <tr><td>고도동</td><td>고도동</td></tr>
         <tr><td>시남동, 시북동, 우이동</td><td>시우동</td></tr>
         <tr><td>십덕동</td><td>십덕동</td></tr>
