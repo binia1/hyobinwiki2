@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="w-full mx-auto border-2 text-sm font-sans bg-white shadow-sm mb-4" style="border-color: #8A7E70;">
             <!-- 상단 헤더 -->
             <div class="text-white p-2.5 flex justify-center items-center gap-3 border-b" style="background-color: #8A7E70; border-bottom-color: #8A7E70;">
-                <img src="이미지/롯데백화점_로고_화이트.webp" alt="롯데백화점" class="h-5 object-contain bg-transparent" onerror="this.style.display='none'">
+                <img src="이미지/svg/롯데백화점_로고.svg" alt="롯데백화점" class="h-5 object-contain bg-transparent" onerror="this.style.display='none'">
                 <div class="flex flex-col items-center justify-center text-center">
                     <span class="font-extrabold text-[15px] tracking-widest leading-tight drop-shadow-sm text-white">롯데백화점 점포 목록</span>
                 </div>

@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td class="w-[22%]"><a href="박효빈.html" class="nw-link"><img src="이미지/박효빈.webp" class="nw-img" onerror="this.src='이미지/효빈위키아이콘.webp'">박효빈 시장<span class="nw-subtext">(태평양 어깨 / 자비 없는 고소)</span></a></td>
                         <td class="w-[22%]"><a href="이주미.html" class="nw-link"><img src="이미지/이주미.webp" class="nw-img" onerror="this.src='이미지/효빈위키아이콘.webp'">이주미<span class="nw-subtext">(정당방위 사자후 / 완벽한 결백)</span></a></td>
                         <td class="w-[22%]"><a href="하화연.html" class="nw-link"><img src="이미지/하화연.webp" class="nw-img" onerror="this.src='이미지/효빈위키아이콘.webp'">하화연<span class="nw-subtext">(분식집 2차 사자후 / 인실좆)</span></a></td>
-                        <td class="w-[22%]"><a href="최원형.html" class="nw-link"><img src="이미지/최원형.webp" class="nw-img" onerror="this.src='이미지/효빈위키아이콘.webp'">최원형 & 2심 판사<span class="nw-subtext">(법정모독 참교육 / 징역 12년)</span></a></td>
+                        <td class="w-[22%]"><a href="최원형.html" class="nw-link"><img src="이미지/최_부장판사.webp" class="nw-img" onerror="this.src='이미지/효빈위키아이콘.webp'">최원형 & 2심 판사<span class="nw-subtext">(법정모독 참교육 / 징역 12년)</span></a></td>
                     </tr>
                 </table>
             </details>

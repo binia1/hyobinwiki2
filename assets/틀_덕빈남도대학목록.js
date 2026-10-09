@@ -94,7 +94,7 @@
 <tr>
 <td class="hbn-td-initial">ㅎ</td>
 <td class="hbn-td-content">
-    <a class="hbn-link" href="한국국방기술대학교.html">한국국방기술대학교</a> <del>취업 깡패</del>
+    <a class="hbn-link" href="한국국방과학기술대학교.html">한국국방과학기술대학교</a> <del>취업 깡패</del>
 </td>
 </tr>
 <tr class="hbn-category-row">

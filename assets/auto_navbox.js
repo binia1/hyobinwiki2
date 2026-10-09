@@ -1577,7 +1577,7 @@ const navboxCSS = `
         <div class="wiki-navbox" style="border-color: #ff3b72;">
             <div class="wiki-navbox-header" style="background-color: #ff3b72;">
                 <div class="header-content">
-                    <img src="이미지/하정시.webp" alt="로고" onerror="this.style.display='none'">
+                    <img src="이미지/svg/하정시.svg" alt="로고" onerror="this.style.display='none'">
                     <div>
                         <div class="title-sub">덕빈남도</div>
                         <div class="title-main">하정시 관내 로</div>

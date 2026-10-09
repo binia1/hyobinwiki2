@@ -1495,3 +1495,30 @@ document.addEventListener("DOMContentLoaded", function() {
     // body 태그 안에서 일어나는 모든 요소 추가/변경을 감시
     observer.observe(document.body, { childList: true, subtree: true });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    // 페이지 내에 존재하는 모든 <a> 태그를 검사
+    document.querySelectorAll("a").forEach(aTag => {
+        // 만약 onclick에 goToLink나 goToUniv가 들어있는데 href가 없거나 '#'인 경우
+        const onclickAttr = aTag.getAttribute("onclick");
+        if (onclickAttr && (onclickAttr.includes("goToLink") || onclickAttr.includes("goToUniv"))) {
+            
+            // onclick 안의 파일명이나 인자 추출 (예: goToLink('덕남대학교.html') -> 덕남대학교.html)
+            let match = onclickAttr.match(/'([^']+)'/);
+            if (match && match[1]) {
+                let targetUrl = match[1];
+                
+                // href가 비어있거나 '#'이면 올바른 경로로 자동 설정
+                if (!aTag.hasAttribute("href") || aTag.getAttribute("href") === "#") {
+                    aTag.setAttribute("href", targetUrl);
+                }
+                
+                // 휠 클릭이나 새 탭 열기가 정상 작동하도록 기본 좌클릭 이벤트 제어 추가
+                // (이미 event.preventDefault가 안 들어있는 경우에만 감싸기)
+                if (!onclickAttr.includes("event.preventDefault")) {
+                    aTag.setAttribute("onclick", `event.preventDefault(); ${onclickAttr}`);
+                }
+            }
+        }
+    });
+});

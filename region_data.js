@@ -6101,7 +6101,7 @@ const regionData = {
     "subtitle": "하정시의 모든 것을 알려드립니다 🌟",
     "color": "#005BAC",
     "hoverColor": "#00478a",
-    "logo": "이미지/하정시.webp",
+    "logo": "이미지/svg/하정시.svg",
     "mascot": "하정시 마스코트.webp",
     "banner": "이미지/하정시청.webp",
     "cover": "이미지/하정시청.webp",

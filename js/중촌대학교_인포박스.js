@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="p-0 bg-white text-center border-b">
     <!-- 학교 전경 이미지가 인포박스에 꽉 차게 나오도록 설정 -->
     <div class="w-full flex justify-center">
-        <img alt="중촌대학교 전경" class="w-full object-cover" src="이미지/중촌대학교_전경.webp" style="max-height: 250px;"/>
+        <img alt="중촌대학교 전경" class="w-full object-cover" src="이미지/중촌대학교.webp" style="max-height: 250px;"/>
     </div>
 </div>
 <table>

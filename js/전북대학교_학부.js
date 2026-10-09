@@ -1,6 +1,6 @@
 document.currentScript.insertAdjacentHTML('beforebegin', `
 <div class="gradient-box">
-            <img src="이미지/전북대학교_흰색_로고.webp" alt="전북대학교 로고" style="height: 50px; display: inline-block;" onerror="this.style.display='none'">
+            <img src="이미지/svg/전북대_로고.svg" alt="전북대학교 로고" style="height: 50px; display: inline-block;" onerror="this.style.display='none'">
             <div class="text-lg font-bold mt-2">전북대학교 학부 요람</div>
         </div>
 

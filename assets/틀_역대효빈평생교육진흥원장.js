@@ -2,7 +2,7 @@
     const template = `
 <div style="border: 2px solid #FF8844; font-family: 'Noto Sans KR', sans-serif; background-color: #fff; max-width: 100%; box-sizing: border-box; clear: both; margin-bottom: 40px; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
     <div style="background-color: #FF8844; padding: 20px 0 15px 0; text-align: center; border-bottom: 1px solid #E06622;">
-        <img src="이미지/효빈평생교육진흥원_흰색로고.webp" onerror="this.outerHTML='<span style=\\'font-size:1.5rem; font-weight:bold; color:white;\\'>효빈성평등가족과 평생교육진흥원</span>'" style="height: 45px; display: block; margin: 0 auto 10px auto; object-fit: contain;">
+        <img src="이미지/logo.webp" onerror="this.outerHTML='<span style=\\'font-size:1.5rem; font-weight:bold; color:white;\\'>효빈성평등가족과 평생교육진흥원</span>'" style="height: 45px; display: block; margin: 0 auto 10px auto; object-fit: contain;">
         <div style="color: #fff; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.5px;">역대 효빈성평등가족과 평생교육진흥원장</div>
     </div>
     <details open style="margin: 0; padding: 0;">

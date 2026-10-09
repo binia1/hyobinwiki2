@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <thead>
 <tr>
 <td class="history-nav-header-gokcheon" colspan="5">
-<img alt="로고" onerror="this.src='이미지/곡천군.webp'; this.style.filter='brightness(0) invert(1) drop-shadow(0 0 2px rgba(0,0,0,0.5))';" src="이미지/곡천군_흰색로고.webp" style="height: 45px; margin-right: 12px; vertical-align: middle; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"/> 덕빈남도 곡천군수
+<img alt="로고" onerror="this.src='이미지/곡천군.webp'; this.style.filter='brightness(0) invert(1) drop-shadow(0 0 2px rgba(0,0,0,0.5))';" src="이미지/곡천군.webp" style="height: 45px; margin-right: 12px; vertical-align: middle; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"/> 덕빈남도 곡천군수
                     </td>
 </tr>
 <tr>

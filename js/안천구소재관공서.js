@@ -148,7 +148,7 @@
 </td>
 <td class="border border-gray-300 p-2 align-middle" colspan="2">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/효빈성평등가족과_평생교육진흥원_로고.webp"/>
+<img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/logo.webp"/>
 <a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈성평등가족과 평생교육진흥원.html">효빈성평등가족과<br>평생교육진흥원</a>
 </div>
 </td>

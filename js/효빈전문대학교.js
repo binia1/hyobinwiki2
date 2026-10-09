@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     schools: [
                         mkLink('해총대학교', '해총대학교_UI.webp'), 
                         mkLink('효빈과학대학교', '효빈과학대학교_UI.webp'),
-                        mkLink('효빈보건대학교', 'svg/효빈보건대학교.svg'),
+                        mkLink('효빈보건대학교', '이미지/svg/효빈보건대학교.svg'),
                         mkLink('효빈예술대학교', '효빈예술대학교_UI.webp')
                     ] 
                 }
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <tr>
                         <td colspan="3" class="hb-header-title">
                             <div class="hb-header-content">
-                                <img src="이미지/효빈광역시.webp" class="hb-header-logo" alt="효빈광역시 로고" onerror="this.src='이미지/효빈광역시_흰색로고.webp'; this.onerror=function(){this.style.display='none';};">
+                                <img src="이미지/logo.webp" class="hb-header-logo" alt="효빈광역시 로고" onerror="this.src='이미지/효빈광역시_흰색로고.webp'; this.onerror=function(){this.style.display='none';};">
                                 효빈광역시의 전문대학
                             </div>
                         </td>

@@ -114,7 +114,7 @@ function renderAllHyobinMayorsNav(containerId) {
                         <td colspan="2" class="hb-slogan-cell">
                             <div class="hb-slogan-wrap">
                                 <a href="효빈광역시.html">
-                                    <img src="이미지/효빈광역시_시정슬로건.webp" alt="효빈광역시 시정슬로건" class="hb-slogan-img" onerror="this.style.display='none'; this.parentElement.innerHTML=''">
+                                    <img src="이미지/hyobin4.webp" alt="효빈광역시 시정슬로건" class="hb-slogan-img" onerror="this.style.display='none'; this.parentElement.innerHTML=''">
                                 </a>
                             </div>
                         </td>

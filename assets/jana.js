@@ -963,9 +963,9 @@ populateRecentList();
                 if (!adContainer) return;
 
                 const ads = [
-                    { title: "효빈지하철 2호선 하루빈과 함께!", img: "이미지/하루빈_광고.webp", link: "효빈도시철도.html" },
-                    { title: "제4회 효빈 애니메이션 페스티벌", img: "이미지/haf_banner.webp", link: "효빈축제.html" },
-                    { title: "박효빈 시장의 발전 계획", img: "이미지/mayor_ad.webp", link: "박효빈.html" }
+                    { title: "효빈지하철 2호선 하루빈과 함께!", img: "이미지/하루빈.webp", link: "효빈도시철도.html" },
+                    { title: "제4회 효빈 애니메이션 페스티벌", img: "이미지/HAF광고.webp", link: "효빈축제.html" },
+                    { title: "박효빈 시장의 발전 계획", img: "이미지/박효빈.webp", link: "박효빈.html" }
                 ];
 
                 const randomAd = ads[Math.floor(Math.random() * ads.length)];

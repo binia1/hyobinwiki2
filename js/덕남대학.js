@@ -59,13 +59,13 @@ document.addEventListener("DOMContentLoaded", function() {
             category: '국립', catClass: '',
             groups: [
                 { char: 'ㄷ', schools: [mkLink('국립덕남대학교', '국립덕남대학교_UI.webp', '덕남대학교.html'), mkLink('덕주교육대학교', '국립덕주교육대학교_ui.svg')] },
-                { char: 'ㅎ', schools: [mkLink('한국국방기술대학교', '대한민국_정부_로고.svg')] }
+                { char: 'ㅎ', schools: [mkLink('한국국방과학기술대학교', '대한민국_정부_로고.svg')] }
             ]
         },
         {
             category: '공립', catClass: 'public',
             groups: [
-                { char: 'ㄷ', schools: [mkLink('덕남도립대학', 'svg/덕빈남도.svg')] }
+                { char: 'ㄷ', schools: [mkLink('덕남도립대학', '이미지/svg/덕빈남도.svg')] }
             ]
         },
         {

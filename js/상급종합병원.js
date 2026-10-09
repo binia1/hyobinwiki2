@@ -217,7 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             <div class="s-sub-region">강원권</div>
             <div class="s-city-bar bg-gangwon">
-                <img src="이미지/svg/강원특별자치도.svg" alt="강원특별자치도"> 강원특별자치도 소재 상급종합병원
+                <img src="이미지/svg/강원도.svg" alt="강원특별자치도"> 강원특별자치도 소재 상급종합병원
             </div>
             <table class="s-table">
                 <tr>

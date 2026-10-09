@@ -671,20 +671,20 @@ document.addEventListener("DOMContentLoaded", () => {
                         </tr>
                         <tr>
                             <th colspan="2" rowspan="3" class="bg-[#ef9a9a] text-[#362023] dark:bg-[#362023] dark:text-[#ef9a9a]">멤버</th>
-                            <td colspan="2"><a href="츠바키 루리카.html" class="nw-link"><img src="이미지/츠바키 루리카.webp" class="nw-img" onerror="this.style.display='none'">츠바키 루리카</a></td>
-                            <td colspan="2"><a href="타키자와 안즈.html" class="nw-link"><img src="이미지/타키자와 안즈.webp" class="nw-img" onerror="this.style.display='none'">타키자와 안즈</a></td>
+                            <td colspan="2"><a href="츠바키 루리카.html" class="nw-link"><img src="이미지/츠바키_루리카.webp" class="nw-img" onerror="this.style.display='none'">츠바키 루리카</a></td>
+                            <td colspan="2"><a href="타키자와 안즈.html" class="nw-link"><img src="이미지/타키자와_안즈.webp" class="nw-img" onerror="this.style.display='none'">타키자와 안즈</a></td>
                         </tr>
                         <tr>
-                            <td class="w-[21%]"><a href="스메라기 유즈하.html" class="nw-link"><img src="이미지/스메라기 유즈하.webp" class="nw-img" onerror="this.style.display='none'">스메라기 유즈하</a></td>
-                            <td class="w-[21%]"><a href="호죠 유키노(러브 라이브!).html" class="nw-link"><img src="이미지/호죠 유키노.webp" class="nw-img" onerror="this.style.display='none'">호죠 유키노</a></td>
-                            <td class="w-[21%]"><a href="와카츠키 미스즈.html" class="nw-link"><img src="이미지/와카츠키 미스즈.webp" class="nw-img" onerror="this.style.display='none'">와카츠키 미스즈</a></td>
-                            <td class="w-[21%]"><a href="쿠루스 토아.html" class="nw-link"><img src="이미지/쿠루스 토아.webp" class="nw-img" onerror="this.style.display='none'">쿠루스 토아</a></td>
+                            <td class="w-[21%]"><a href="스메라기 유즈하.html" class="nw-link"><img src="이미지/스메라기_유즈하.webp" class="nw-img" onerror="this.style.display='none'">스메라기 유즈하</a></td>
+                            <td class="w-[21%]"><a href="호죠 유키노(러브 라이브!).html" class="nw-link"><img src="이미지/호죠_유키노.webp" class="nw-img" onerror="this.style.display='none'">호죠 유키노</a></td>
+                            <td class="w-[21%]"><a href="와카츠키 미스즈.html" class="nw-link"><img src="이미지/와카츠키_미스즈.webp" class="nw-img" onerror="this.style.display='none'">와카츠키 미스즈</a></td>
+                            <td class="w-[21%]"><a href="쿠루스 토아.html" class="nw-link"><img src="이미지/쿠루스_토아.webp" class="nw-img" onerror="this.style.display='none'">쿠루스 토아</a></td>
                         </tr>
                         <tr>
-                            <td><a href="아마쿠사 히카루.html" class="nw-link"><img src="이미지/아마쿠사 히카루.webp" class="nw-img" onerror="this.style.display='none'">아마쿠사 히카루</a></td>
-                            <td><a href="미카사 마야.html" class="nw-link"><img src="이미지/미카사 마야.webp" class="nw-img" onerror="this.style.display='none'">미카사 마야</a></td>
-                            <td><a href="스즈키 레나.html" class="nw-link"><img src="이미지/스즈키 레나.webp" class="nw-img" onerror="this.style.display='none'">스즈키 레나</a></td>
-                            <td><a href="하루카제 사야카.html" class="nw-link"><img src="이미지/하루카제 사야카.webp" class="nw-img" onerror="this.style.display='none'">하루카제 사야카</a></td>
+                            <td><a href="아마쿠사 히카루.html" class="nw-link"><img src="이미지/아마쿠사_히카루.webp" class="nw-img" onerror="this.style.display='none'">아마쿠사 히카루</a></td>
+                            <td><a href="미카사 마야.html" class="nw-link"><img src="이미지/미카사_마야.webp" class="nw-img" onerror="this.style.display='none'">미카사 마야</a></td>
+                            <td><a href="스즈키 레나.html" class="nw-link"><img src="이미지/스즈키_레나.webp" class="nw-img" onerror="this.style.display='none'">스즈키 레나</a></td>
+                            <td><a href="하루카제 사야카.html" class="nw-link"><img src="이미지/하루카제_사야카.webp" class="nw-img" onerror="this.style.display='none'">하루카제 사야카</a></td>
                         </tr>
                         <tr>
                             <th colspan="2" class="bg-[#ef9a9a] text-[#362023] dark:bg-[#362023] dark:text-[#ef9a9a]">실사 드라마</th>

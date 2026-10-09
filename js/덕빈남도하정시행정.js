@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="nav-header-container-auto" onclick="toggleNav('${uniqueNavId}', '${uniqueLabelId}')">
                 <div class="nav-header-top-auto">
                     <div class="nav-header-title-box">
-                        <img onerror="this.src='이미지/hyobin1.webp'" src="이미지/하정시.webp" style="height: 40px; filter: brightness(0) invert(1);"/>
+                        <img onerror="this.src='이미지/hyobin1.webp'" src="이미지/svg/하정시.svg" style="height: 40px; filter: brightness(0) invert(1);"/>
                         <div style="text-align: left; line-height: 1.3;">
                             <div style="font-size: 13px; font-weight: bold;">덕빈남도 하정시</div>
                             <div style="font-size: 20px; font-weight: 900;">행정구역</div>

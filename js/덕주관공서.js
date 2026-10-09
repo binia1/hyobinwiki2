@@ -32,7 +32,7 @@
 <th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle">지방자치</th>
 <td class="border border-gray-300 p-2 align-middle bg-[#f0f4f8]" colspan="2">
 <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5">
-<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" src="이미지/덕남로고.webp" onerror="this.src='이미지/덕주시.webp'"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕빈남도청.html">덕빈남도청</a></div>
+<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" src="이미지/svg/덕빈남도.svg" onerror="this.src='이미지/덕주시.webp'"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕빈남도청.html">덕빈남도청</a></div>
 <div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" src="이미지/svg/의회_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕빈남도의회.html">덕빈남도의회</a></div>
 </div>
 </td>
@@ -92,8 +92,8 @@
 <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5">
 <div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" src="이미지/교육청_로고.webp"/><a class="text-red-600 hover:text-red-800 hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕빈남도교육청.html">덕빈남도교육청</a></div>
 <div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" src="이미지/교육청_로고.webp"/><a class="text-green-600 hover:text-green-800 hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕주교육지원청.html">덕주교육지원청</a></div>
-<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/덕남대학교_로고.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕남대학교.html">덕남대학교</a></div>
-<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/덕주학생교육문화회관_로고.webp"/><a class="text-green-600 hover:text-green-800 hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕주학생교육문화회관.html">덕주학생교육문화회관</a></div>
+<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/국립덕남대학교_UI.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕남대학교.html">덕남대학교</a></div>
+<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/svg/덕빈남도_교육청_로고.svg"/><a class="text-green-600 hover:text-green-800 hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕주학생교육문화회관.html">덕주학생교육문화회관</a></div>
 <div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/덕주문화회관_로고.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕주문화회관.html">덕주문화회관</a></div>
 </div>
 </td>

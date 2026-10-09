@@ -7627,7 +7627,7 @@ const imageFiles = [
         "category": "train"
     },
     {
-        "file": "빈주교육대학교.webp",
+        "file": "빈주교육대학교.svg",
         "category": "school"
     },
     {
@@ -15999,7 +15999,7 @@ const imageFiles = [
         "category": "character"
     },
     {
-        "file": "하정시.webp",
+        "file": "svg/하정시.svg",
         "category": "etc"
     },
     {
@@ -16755,7 +16755,7 @@ const imageFiles = [
         "category": "map"
     },
     {
-        "file": "효빈과학기술원.webp",
+        "file": "효빈과학기술원.svg",
         "category": "etc"
     },
     {
@@ -16791,7 +16791,7 @@ const imageFiles = [
         "category": "logo"
     },
     {
-        "file": "효빈광역시_흰색로고.webp",
+        "file": "효빈광역시.webp",
         "category": "logo"
     },
     {
@@ -16831,7 +16831,7 @@ const imageFiles = [
         "category": "facility_gov"
     },
     {
-        "file": "효빈교육대학교.webp",
+        "file": "효빈교육대학교.svg",
         "category": "school"
     },
     {

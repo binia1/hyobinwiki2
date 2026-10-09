@@ -1,7 +1,7 @@
 document.currentScript.insertAdjacentHTML('beforebegin', `
 <div class="gradient-box">
 <!-- 병원 로고 영역 -->
-<img alt="삼선대학교병원 로고" src="이미지/삼선대학교병원_로고.webp" style="height: 85px; object-fit: contain; display: inline-block; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3));"/>
+<img alt="삼선대학교병원 로고" src="이미지/삼선의료원_로고.webp" style="height: 85px; object-fit: contain; display: inline-block; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3));"/>
 </div>
 <details>
 <summary><span>삼선대학교 관련 문서 틀</span></summary>

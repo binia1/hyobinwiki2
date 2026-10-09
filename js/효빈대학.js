@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 { char: 'ㅂ', schools: [mkLink('중촌대학교', '중촌대학교.webp')] },
                 { char: 'ㅅ', schools: [mkLink('삼선대학교', '삼선대학교_UI.webp'), mkLink('성택대학교', '성택대학교_UI.svg')] },
                 { char: 'ㅇ', schools: [mkLink('엽월대학교', '엽월대학교_UI.webp'), mkLink('옥선대학교', '옥선대학교_UI.webp'), mkLink('안월대학교', '안월대학교_UI.svg')] },
-                { char: 'ㅊ', schools: [mkLink('청엽국제학교 대학부', '청엽국제학교.webp', '청엽국제학교_대학부.html')] }, 
+                { char: 'ㅊ', schools: [mkLink('청엽국제학교 대학부', '청엽국제학교.svg', '청엽국제학교_대학부.html')] }, 
                 { char: 'ㅍ', schools: [mkLink('평안명대학교', '평안명대학교_UI.webp'), mkLink('평천대학교', '평천대학교_UI.webp')] },
                 { char: 'ㅎ', schools: [mkLink('해천대학교', '해천대.svg'), mkLink('효빈복지대학교', '효빈복지대학교_UI.webp'), mkLink('효빈외국어대학교', '효빈외대.svg')] }
             ]
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function() {
             category: '원격대학',
             catClass: 'remote',
             groups: [
-                { char: 'ㅇ', schools: [mkLink('한국방송통신대학교 효빈·덕북지역대학', '한국방송통신대학교.webp', '한국방송통신대학교.html')] }
+                { char: 'ㅇ', schools: [mkLink('한국방송통신대학교 효빈·덕북지역대학', '한국방송통신대학교.svg', '한국방송통신대학교.html')] }
             ]
         }
     ];
@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <tr>
                         <td colspan="3" class="hb-header-title">
                             <div class="hb-header-content">
-                                <img src="이미지/효빈광역시.webp" class="hb-header-logo" alt="효빈광역시 로고" onerror="this.src='이미지/효빈광역시_흰색로고.webp'; this.onerror=function(){this.style.display='none';};">
+                                <img src="이미지/logo.webp" class="hb-header-logo" alt="효빈광역시 로고" onerror="this.src='이미지/효빈광역시_흰색로고.webp'; this.onerror=function(){this.style.display='none';};">
                                 효빈광역시의 대학
                             </div>
                         </td>

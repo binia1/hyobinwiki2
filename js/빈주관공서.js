@@ -106,7 +106,7 @@
 </td>
 <td class="border border-gray-300 p-2 align-middle" colspan="2">
 <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5">
-<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/덕북대학교_로고.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕북대학교.html">덕북대학교</a></div>
+<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/덕북대_로고.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕북대학교.html">덕북대학교</a></div>
 <div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/덕북대학교병원_로고.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="덕북대학교병원.html">덕북대학교병원</a></div>
 </div>
 </td>
@@ -178,9 +178,9 @@
 <th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle">공기업<br>산하기관</th>
 <td class="border border-gray-300 p-2 align-middle" colspan="2">
 <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/빈주도시철도공사_로고.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="빈주도시철도공사.html">빈주도시철도공사</a></div>
-<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/빈주도시공사_로고.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="빈주도시공사.html">빈주도시공사</a></div>
-<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/빈주시시설관리공단_로고.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="빈주시시설관리공단.html">빈주시시설관리공단</a></div>
+<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/svg/빈주도시철도공사_로고.svg"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="빈주도시철도공사.html">빈주도시철도공사</a></div>
+<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/빈주시.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="빈주도시공사.html">빈주도시공사</a></div>
+<div class="flex items-center gap-1"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/빈주시.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="빈주시시설관리공단.html">빈주시시설관리공단</a></div>
 </div>
 </td>
 <td class="border border-gray-300 p-2 align-middle" colspan="2">

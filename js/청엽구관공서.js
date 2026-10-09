@@ -73,13 +73,13 @@
 <tr>
 <th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle">시청소속기관</th>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/효빈_컬쳐레스풀_로고.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈 컬쳐레스풀.html">효빈 컬쳐레스풀</a></div>
+<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/logo.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈 컬쳐레스풀.html">효빈 컬쳐레스풀</a></div>
 </td>
 <td class="border border-gray-300 p-2 align-middle">
-<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/효빈관광공사_로고.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈관광공사.html">효빈관광공사</a></div>
+<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/logo.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈관광공사.html">효빈관광공사</a></div>
 </td>
 <td class="border border-gray-300 p-2 align-middle" colspan="2">
-<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/효빈디자인진흥원_로고.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈디자인진흥원.html">효빈디자인진흥원</a></div>
+<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/logo.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈디자인진흥원.html">효빈디자인진흥원</a></div>
 </td>
 </tr>
 </tbody>

@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </td>
                         <td style="padding: 15px; border: 1px solid #e5e7eb; background: white;">
                             <a href="하정시.html" style="text-decoration: none; color: black; display: flex; flex-direction: column; align-items: center; gap: 6px;">
-                                <img src="이미지/하정시.webp" style="height: 30px; object-fit: contain;" alt="하정시" onerror="this.style.display='none'">
+                                <img src="이미지/svg/하정시.svg" style="height: 30px; object-fit: contain;" alt="하정시" onerror="this.style.display='none'">
                                 <span style="font-weight: 500;">하정시</span>
                             </a>
                         </td>

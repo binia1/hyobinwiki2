@@ -88,7 +88,7 @@ function renderHyobinCollegeTable(containerId) {
                     <tr>
                         <td colspan="3" class="hb-header-title">
                             <div class="hb-header-content">
-                                <img src="이미지/효빈광역시.webp" class="hb-header-logo" alt="효빈광역시 로고" onerror="this.src='이미지/효빈광역시_흰색로고.webp'; this.onerror=function(){this.style.display='none';};">
+                                <img src="이미지/logo.webp" class="hb-header-logo" alt="효빈광역시 로고" onerror="this.src='이미지/효빈광역시_흰색로고.webp'; this.onerror=function(){this.style.display='none';};">
                                 효빈광역시의 전문대학
                             </div>
                         </td>

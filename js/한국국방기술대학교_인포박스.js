@@ -1,16 +1,16 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const container = document.getElementById("한국국방기술대학교-infobox-container");
+    const container = document.getElementById("한국국방과학기술대학교-infobox-container");
     if (container) {
         container.innerHTML = `
 
 <div class="infobox-header">
-                    한국국방기술대학교<br/>
+                    한국국방과학기술대학교<br/>
 <span class="text-sm font-normal">Korea National Defense Technology University</span>
 </div>
 <div class="p-4 bg-white text-center border-b">
 <!-- 엠블럼 이미지 -->
 <div class="w-full flex justify-center py-4">
-<img alt="한국국방기술대학교 UI" class="w-48" src="이미지/svg/대한민국_정부_로고.svg"/>
+<img alt="한국국방과학기술대학교 UI" class="w-48" src="이미지/svg/대한민국_정부_로고.svg"/>
 </div>
 </div>
 <table>
@@ -30,13 +30,13 @@ document.addEventListener("DOMContentLoaded", function() {
 </table>
 <div class="w-full bg-[#f9f9f9] border-t border-b">
 <div class="infobox-map" style="width: 100%; height: 250px; overflow: hidden; position: relative; display: block !important;">
-<iframe src="https://binia1.github.io/mymap/?name=한국국방기술대학교" style="width: 160%; height: 160%; border: none; 
+<iframe src="https://binia1.github.io/mymap/?name=한국국방과학기술대학교" style="width: 160%; height: 160%; border: none; 
                                        position: absolute; top: 0; left: 0;
                                        transform: scale(0.625); transform-origin: 0 0;">
 </iframe>
 </div>
 <div style="padding: 5px; text-align: center; background: #eee; font-size: 0.8rem; color: #666;">
-                        한국국방기술대학교 캠퍼스 맵 (인터랙티브)
+                        한국국방과학기술대학교 캠퍼스 맵 (인터랙티브)
                     </div>
 </div>
 

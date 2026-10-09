@@ -85,7 +85,7 @@
 </td>
 <td class="border border-gray-300 p-2 align-middle" colspan="2">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/매성예술의전당_로고.webp"/>
+<img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/매성시.webp"/>
 <a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="매성예술의전당.html">매성예술의전당</a>
 </div>
 </td>
@@ -96,7 +96,7 @@
 <th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle">시청소속기관</th>
 <td class="border border-gray-300 p-2 align-middle" colspan="4">
 <div class="flex items-center justify-center gap-1.5">
-<img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/매성도시관리공단_로고.webp"/>
+<img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/매성시.webp"/>
 <a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="매성도시관리공단.html">매성도시관리공단</a>
 </div>
 </td>

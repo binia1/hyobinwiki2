@@ -63,7 +63,7 @@
 <tr>
 <th class="bg-gray-50 py-3 font-bold text-gray-800 border border-gray-300 align-middle">시청소속기관</th>
 <td class="border border-gray-300 p-2 align-middle"colspan="4">
-<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/효빈광역시사회서비스원_로고.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈광역시사회서비스원.html">효빈광역시사회서비스원</a></div>
+<div class="flex items-center justify-center gap-1.5"><img class="w-4 h-4 object-contain" onerror="this.style.display='none'" src="이미지/logo.webp"/><a class="text-[#0275d8] hover:underline font-semibold tracking-tighter break-keep leading-tight" href="효빈광역시사회서비스원.html">효빈광역시사회서비스원</a></div>
 </td>
 </tr>
 </tbody>

@@ -235,7 +235,7 @@ function renderHyobinSisterCities(containerId) {
                         <tr>
                             <th colspan="4" class="main-header">
                                 <div class="hb-sis-header-content">
-                                    <img src="이미지/효빈광역시로고.webp" class="hb-sis-logo" alt="로고" onerror="this.style.display='none'"/>
+                                    <img src="이미지/logo.webp" class="hb-sis-logo" alt="로고" onerror="this.style.display='none'"/>
                                     <span class="hb-sis-title">${title}</span>
                                     <span class="hb-toggle-btn" data-target="${id}">접기 ▲</span>
                                 </div>
