@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link href="이미지/효빈위키아이콘.webp" rel="icon"/>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>평당 아르티엠 - 효빈위키</title>
+    
+    <!-- 필수 외부 스크립트 및 CSS (절대 누락 금지) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/ad_logic.js"></script>
+    <link href="wiki_font_standard.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800&display=swap');
+        
+        :root { 
+            --wiki-main: #E4007F; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #F9F9FA; 
+            --wiki-link: #0022AA; 
+            --wiki-visited: #800080;
+            --wiki-table-header: #E4007F; 
+            --wiki-table-header-text: #ffffff;
+            --wiki-del: #999;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        .wiki-container { max-width: 1200px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+
+        .txt-lvl-1 { font-size: var(--font-h1) !important; font-weight: 800; color: #000000; margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -1px; } 
+        h2 { font-size: 1.6rem !important; font-weight: 700; border-bottom: 2px solid var(--wiki-table-header); padding-bottom: 8px; margin-top: 3rem; margin-bottom: 1.2rem; color: var(--wiki-text); display: block; }
+        h3 { font-size: 1.3rem !important; font-weight: 700; margin-top: 2rem; margin-bottom: 10px; color: var(--wiki-text); border-left: 5px solid var(--wiki-table-header); padding-left: 10px; }
+        h4 { font-size: 1.1rem !important; font-weight: 600; margin-top: 1.5rem; margin-bottom: 8px; color: #555; }
+        
+        a.wiki-link { color: var(--wiki-link); text-decoration: none; cursor: pointer; }
+        a.wiki-link:hover { text-decoration: underline; }
+        a.wiki-link:visited { color: var(--wiki-visited); }
+
+        table.wiki-table { border-collapse: collapse; width: 100%; margin: 15px 0; border: 1px solid #ccc; font-size: 0.95rem; }
+        table.wiki-table th, table.wiki-table td { border: 1px solid #ccc; padding: 10px 12px; vertical-align: middle; text-align: center; }
+        table.wiki-table th { background-color: var(--wiki-table-header); color: white; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        table.wiki-table td { background-color: #fff; }
+        table.wiki-table tr:nth-child(even) td { background-color: #fcfcfc; }
+
+        .infobox { 
+            border: 2px solid var(--wiki-table-header); 
+            background-color: #fff; 
+            width: 100%; 
+            max-width: 400px; 
+            font-size: 0.9rem; 
+            margin-bottom: 20px; 
+            float: right; 
+            margin-left: 20px; 
+            border-radius: 4px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .infobox-title { background-color: var(--wiki-table-header); color: white; padding: 12px; text-align: center; font-size: 1.2rem !important; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        .infobox-image { text-align: center; padding: 0; background: white; border-bottom: 1px solid #ddd; }
+        .infobox table { width: 100%; border-collapse: collapse; border: none; }
+        .infobox th { background-color: #f3f0ff; color: #333; width: 110px; text-align: center; padding: 8px; border: 1px solid #ddd; font-weight: bold; }
+        .infobox td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; }
+
+        .del { text-decoration: line-through; color: var(--wiki-del); }
+        .category-box { border: 1px solid #ccc; background-color: #f5f5f5; padding: 8px 15px; font-size: 0.9rem; margin-bottom: 20px; border-radius: 4px; }
+
+        .toc { display: inline-block; border: 1px solid #ccc; background-color: #f9f9f9; padding: 15px 25px; margin-bottom: 30px; min-width: 300px; border-radius: 5px; }
+        .toc-title { text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 1.1rem; }
+        .toc ul { list-style: none; padding-left: 0; margin: 0; font-size: 0.95rem; }
+        .toc li { margin-bottom: 4px; }
+        .toc a { text-decoration: none; color: #333; }
+        .toc a:hover { text-decoration: underline; color: var(--wiki-table-header); }
+
+        .wiki-tool-group { display: flex; gap: 4px; margin-bottom: 15px; justify-content: flex-end; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 13px; border: 1px solid #ccc; background: linear-gradient(to bottom, #fff, #eee); cursor: pointer; border-radius: 2px; color: #333; text-decoration: none; }
+
+        .quote { border-left: 5px solid var(--wiki-table-header); background-color: #fff0f5; padding: 20px 30px; margin: 20px 0; font-style: italic; color: #555; font-size: 1.05rem; }
+        
+        .subway-badge { 
+            display: inline-block; padding: 2px 6px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.85em; margin-right: 4px; text-shadow: 0 0 2px rgba(0,0,0,0.5); vertical-align: text-bottom;
+        }
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }   
+        
+        /* 주석 툴팁 스타일 */
+        .wiki-fn-sup { position: relative; cursor: help; display: inline-block; padding: 0 2px; }
+        .wiki-fn-sup:hover .wiki-fn-tooltip { visibility: visible; opacity: 1; }
+        .wiki-fn-tooltip {
+            visibility: hidden; opacity: 0; position: absolute; bottom: 130%; right: 0;
+            background-color: #fff; color: #333; text-align: left; padding: 12px; border-radius: 6px;
+            font-size: 12px; width: max-content; max-width: 350px; z-index: 99999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #BBFF64;
+            font-weight: normal; line-height: 1.5; transition: opacity 0.2s; pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+<nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <div class="flex items-center gap-2">
+        <div class="nav-logo-box">H</div>
+        <a class="font-bold text-xl cursor-pointer no-underline text-white" href="index.html">HyobinWiki</a>
+        <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+            <a class="hover:underline font-bold text-white no-underline" href="index.html">대문</a>
+            <a class="hover:underline text-white no-underline" href="최근_변경.html">최근 변경</a>
+            <a class="hover:underline text-white no-underline" href="최근_토론.html">최근 토론</a>
+        </div>
+    </div>
+    <div class="flex flex-col items-end gap-1">
+        <div class="flex items-center gap-2">
+            <div class="hidden lg:flex items-center gap-1 mr-2">
+                <a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="편집요청.html">편집요청</a>
+                <a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="최근_토론.html">토론</a>
+                <a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="역사.html">역사</a>
+                <a class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="즐겨찾기.html" title="즐겨찾기">★</a>
+                <a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1" href="더보기.html">더보기 <span class="text-[9px]">▼</span></a>
+            </div>
+            <input class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" id="headerSearchInput" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }" placeholder="문서 검색" type="text"/>
+            <button class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold" onclick="handleSearch('headerSearchInput')">🔍</button>
+        </div>
+        <div class="flex gap-1" id="auth-buttons">
+            <button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" id="btn-login" onclick="toggleModal('loginModal')">로그인</button>
+            <button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" onclick="toggleModal('settingsModal')">설정</button>
+        </div>
+    </div>
+</nav>
+
+<div class="wiki-container shadow-lg pt-6">
+    <div class="flex justify-between items-end border-b-2 border-gray-400 pb-2 mb-4">
+        <div class="txt-lvl-1">평당 아르티엠</div>
+        <div class="wiki-tool-group">
+            <a class="wiki-tool-btn" href="수정.html">편집</a>
+            <a class="wiki-tool-btn" href="토론.html">토론</a>
+            <a class="wiki-tool-btn" href="역사.html">역사</a>
+        </div>
+    </div>
+    
+    <div class="category-box">
+        <span class="font-bold text-[#E4007F]">분류:</span>
+        <a class="wiki-link" href="효빈광역시의아파트.html">효빈광역시의 아파트</a> | 
+        <a class="wiki-link" href="남구.html">남구(효빈)</a> |
+        <a class="wiki-link" href="평당동.html">평당동</a> |
+        <a class="wiki-link" href="평당5동.html">평당5동</a> |
+        <a class="wiki-link" href="흑역사.html">흑역사</a> |
+        <a class="wiki-link" href="마계.html">마계</a> |
+        <a class="wiki-link" href="우신면.html">우신면</a> |
+        <a class="wiki-link" href="부동산.html">부동산/하락</a>
+    </div>
+
+    <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-8 relative">
+        <div class="toc shrink-0 shadow-sm h-fit" id="toc-box">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li><a href="#s-1">1. 개요</a></li>
+                <li><a href="#s-2">2. 입지 및 상권: 화려함 속의 계륵</a></li>
+                <li><a href="#s-3">3. 입주민의 끔찍한 선민의식과 패악질</a>
+                    <ul>
+                        <li><a href="#s-3-1">3.1. 전설의 15대 엽기 갑질 및 기행 일화 (확장판)</a></li>
+                        <li><a href="#s-3-2">3.2. 효빈 시민들의 적나라한 반응 7선</a></li>
+                        <li><a href="#s-3-3">3.3. "저긴 돔으로 덮어야..." 엘리트 연합의 극대노 팩폭</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-4">4. 타 지역 및 대장주 단지와의 극명한 비교</a></li>
+                <li><a href="#s-5">5. 박효빈 시장과의 지독한 악연과 '금융치료'</a>
+                    <ul>
+                        <li><a href="#s-5-1">5.1. 40장 민원 폭격과 '헬창 공익'의 분노 (환장의 콜라보)</a></li>
+                        <li><a href="#s-5-2">5.2. 시장 박효빈의 자비 없는 '풀 스택 금융치료' 참교육</a></li>
+                    </ul>
+                </li>
+                <li><a href="#s-6">6. 기형적 정치 지형 및 선거 결과 (완벽한 인과응보)</a>
+                    <ul>
+                        <li><a href="#s-6-1">6.1. 우신면의 펜트하우스 만행과 2025년 '정상인 엑소더스'</a></li>
+                        <li><a href="#s-6-2">6.2. 평당5동 내에서의 쓰레기 취급 및 효빈시 최저 득표율의 원흉</a></li>
+                        <li><a href="#s-6-3">6.3. 역대 지방선거 득표 현황 및 단지 내 단독 분석</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        
+        <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden lg:order-last">
+            <div class="infobox-title" style="background: #333333;">평당 아르티엠<br/><span class="text-sm font-normal" style="color:#d4af37;">Pyeongdang Artem</span></div>
+            <div class="infobox-image">
+                <img alt="아르티엠 아파트 로고" class="w-full h-auto object-cover" src="이미지/아르티엠.webp" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIiB2aWV3Qm94PSIwIDAgNDAwIDI1MCI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyNTAiIGZpbGw9IiNlZWVlZWUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZmlsbD0iIzY2NjY2NiIgZm9udC1zaXplPSIyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuydtOuvuOyngCBkYXRhIHBsYWNlaG9sZGVyPC90ZXh0Pjwvc3ZnPg=='"/>
+                <div class="mt-2 text-sm font-bold text-[#d4af37] p-2" style="background-color: #222;">"격조 높은 삶의 완성... 이었어야 할 곳"</div>
+            </div>
+            <table>
+                <tr><th>소재지</th><td><a class="wiki-link" href="효빈광역시.html">효빈광역시</a> 남구 평당동 (평당5동)</td></tr>
+                <tr><th>세대수</th><td>726세대 (6개동)</td></tr>
+                <tr><th>입주 인구</th><td>약 2,175명 <span style="font-size:0.8em; color:#777;">(추산)</span></td></tr>
+                <tr><th>건설사</th><td>세영건설 <span style="font-size:0.8em;" class="del">(철근도둑놈들)</span></td></tr>
+                <tr><th>입주</th><td>2022년 1월</td></tr>
+                <tr><th>주요 출신(?)</th><td><a class="wiki-link" href="우신면.html">우신면</a> <span style="font-size:0.8em; color:#777;">(펜트하우스 거주 후 탈주)</span></td></tr>
+                <tr><th>별명</th><td><span class="del">신흥 귀족</span> <strong>마계 아르티엠</strong></td></tr>
+                <tr><th>시세 수준</th><td><span style="color:#e40000; font-weight:bold;">청덕 세라스의 1/5 미만</span><br/><span style="font-size:0.8em; color:#666;">(덕현동 30년 구축과 엎치락뒤치락)</span></td></tr>
+                <tr><th>교통</th><td>
+                    <span class="subway-badge" style="background-color: #0077DD;">1호선</span> <a class="wiki-link" href="평당역.html">평당역</a><br/>
+                    <span class="subway-badge" style="background-color: #9856FF;">8호선</span> <a class="wiki-link" href="남구선관위역.html">남구선관위역</a><br/>
+                    <span style="font-size:0.8em; color:#666;">(둘 다 애매하게 먼 도보 15분+)</span>
+                </td></tr>
+            </table>
+        </aside>
+    </div>
+
+    <h2 id="s-1">1. 개요</h2>
+    <div class="quote">
+        <strong>"우리가 바로 효빈시의 신흥 귀족이다! ...현실은 혐오 단지 1위 마계 아르티엠."</strong>
+    </div>
+    <p>
+        <a class="wiki-link" href="효빈광역시.html">효빈광역시</a> 남구 평당동(평당5동)에 위치한 726세대 규모의 고급 아파트 단지. 2022년 1월 입주를 시작했으며, 세영건설의 최고급 브랜드인 '아르티엠' 시리즈 중 효빈시에 최초로 지어진 1호 단지다. 무엇보다 8호선 백지화 논란과 2D 캐릭터 고소 사건으로 유명한 <strong><a class="wiki-link" href="우신면.html">우신면</a> 전 의원이 가장 높은 펜트하우스에 거주했던 바로 그 아파트</strong>로 악명이 높다.
+    </p>
+    <p class="mt-2">
+        입주 초기에는 이른바 '평당동 프리미엄'과 대형 평수의 위용을 앞세워 남구 최고 부촌의 상징으로 자리 잡는 듯했다. 그러나 입주 직후부터 쏟아져 나온 입주민들의 끔찍한 선민의식, 악질적인 갑질, 억지 이기주의, 그리고 패륜 혐오 정치인 <a class="wiki-link" href="윤재훈.html">윤재훈</a>을 종교처럼 떠받드는 맹목적인 정치적 광기가 결합되면서 효빈시 전체에서 <strong>가장 상종하기 싫은 비호감 단지 1위</strong>로 전락했다. <del>입주 4년 차에 '노후 승강기'가 고장 나고 천장에서 폭포수가 떨어지는 세영건설의 기적의 부실시공은 덤이다.</del>
+    </p>
+    <p class="mt-2">
+        결국 남구 내 다른 대단지 아파트들이 안정적인 시세를 굳히며 우상향할 때, <strong>이 아파트 홀로 매매가가 곤두박질치는 기현상</strong>이 벌어졌다. 참다못해 탈출한 우신면과 그나마 상식적이던 정상인들의 2025년 '대규모 엑소더스' 이후, 그 빈자리를 극한의 인지부조화를 겪는 극단주의자들이 마저 채우면서 이른바 <strong>'마계 아르티엠'</strong>이라는 씻을 수 없는 주홍글씨가 새겨졌다. 현재 이 아파트의 매매가는 효빈시 최고 신흥 부촌인 서구 청덕동의 대장주 <a class="wiki-link" href="청덕세라스아파트.html">청덕 세라스 아파트</a>의 <strong>1/5 값도 안 되는 헐값</strong>으로 추락했으며, 심지어 효빈 외곽 덕현동 구도심의 30년 된 엘리베이터도 없는 낡은 구축 주공아파트와 시세가 엎치락뒤치락하는 기적의 떡락을 기록 중이다.
+    </p>
+
+    <h2 id="s-2">2. 입지 및 상권: 화려함 속의 계륵</h2>
+    <p>
+        단지가 속한 <strong>평당5동</strong>은 <a class="wiki-link" href="롯데백화점.html">롯데백화점 평당점</a>과 롯데마트 평당점 등 거대 상권이 도보권에 밀집한 핵심 상업 구역이다. 주변 도로망도 잘 정비되어 있어 자가용 접근성은 훌륭하다.
+    </p>
+    <p class="mt-2">
+        하지만 <strong>대중교통 입지는 완벽한 '계륵(역세권 호소인)'</strong>이다. 효빈도시철도 <span class="subway-badge" style="background-color: #0077DD;">1호선</span> 평당역과 <span class="subway-badge" style="background-color: #9856FF;">8호선</span> 남구선관위역 사이에 절묘하게 끼어 있는데, 어느 역으로 가든 성인 걸음으로 최소 15~20분이 소요된다. 심지어 단지 앞을 지나는 알짜배기 버스 노선들마저 입주 초기에 주민들이 "매연과 소음이 고급 아파트의 품격을 떨어뜨린다"는 황당한 님비(NIMBY) 민원을 넣어 정류장을 멀리 치워버린 탓에 스스로 대중교통 오지로 전락했다. <del>그래놓고 나중엔 대중교통 불편하다고 구청에 난리 친 건 안 비밀이다.</del>
+    </p>
+
+    <h2 id="s-3">3. 입주민의 끔찍한 선민의식과 패악질</h2>
+    <p>
+        이 아파트가 '마계'라는 타이틀을 얻게 된 데에는 입주민들 스스로가 쌓아 올린 어마어마한 흑역사와 엽기적인 패악질들이 존재한다. 이들의 행태는 지역 뉴스를 넘어 전국구 사회면까지 도배하며 전 국민의 혀를 내두르게 만들었다. 원래 10대 일화였으나 갈수록 선을 넘는 기행들로 인해 **15대 엽기 만행**으로 그 내용이 대폭 추가되었다.
+    </p>
+
+    <h3 id="s-3-1">3.1. 전설의 15대 엽기 갑질 및 기행 일화 (확장판)</h3>
+    <ul class="list-disc pl-5 space-y-4 mt-2 text-justify">
+        <li>
+            <strong>[갑질 1] 배달기사 헬멧 강제 탈의 및 신분증 압수:</strong> 
+            "더러운 트럭이 고급 보도블록을 훼손한다"며 택배 차량의 진입을 막은 것은 예사였다. 최악의 만행은 폭우가 쏟아지는 우천 시에도 라이더들에게 정문에서부터 수백 미터를 걸어서 도보 배달을 강요한 것이다. 나아가 <strong>'범죄 예방 및 신원 확인'을 핑계로 헬멧 강제 탈의는 물론 신분증 제시와 경비실 압수까지 무단으로 요구</strong>하며 배달 노동자를 잠재적 범죄자 취급했다. 심지어 부실시공으로 승강기가 멈췄을 때 "배달 왔으면 30층까지 걸어 올라오라"는 미친 짓을 강요하자, 폭발한 효빈시 배달 노동조합 전체가 이 아파트 정문에 "아르티엠 배달을 전면 거부한다"는 현수막을 걸고 대대적인 보이콧을 선언하는 사태가 벌어졌다.
+        </li>
+        <li>
+            <strong>[갑질 2] 수입차 주차 딱지 보복 해고와 "분변 핥아라" 파문:</strong> 
+            한 입주민이 소방차 전용 구역에 벤츠를 불법 주차해 두어, 경비원이 규정대로 주차위반 스티커를 부착했다. 그러자 입주자대표회의 간부들이 떼로 몰려가 경비실 유리를 박살 낼 듯 두드리며 폭언을 퍼부었고, 해당 경비원은 <strong>당일 부당 해고</strong>를 당하고 말았다. 또한 아파트 산책로에 본인들의 반려견이 싸놓은 배설물을 치우지 않고 지나가다가 미화원과 마찰이 생기자, <strong>"미화원들이 비싼 관리비 쳐받으면서 뭐하냐, 당장 네 혓바닥으로 핥아서라도 치워라"</strong>라고 막말을 퍼부은 녹취록이 전국 뉴스에 보도되어 전 국민적인 지탄을 받았다.
+        </li>
+        <li>
+            <strong>[갑질 3] 공공보행통로 3m 철제 펜스 용접 폐쇄:</strong> 
+            아파트 인허가 조건으로 법적으로 시민 모두에게 개방하기로 약속된 단지 내 공공보행통로를, 입주 직후 <strong>"외부 천민(?)들이 우리 단지를 가로질러 다니면서 집값을 떨어뜨리는 꼴을 도저히 못 보겠다"</strong>며 임의로 3m짜리 거대한 철제 펜스를 용접해 요새처럼 폐쇄해버렸다. 이 이기적인 만행 탓에 통로만 건너면 5분 만에 갈 수 있던 인근 초·중학교 학생들은, 대형 트럭이 쌩쌩 달리는 위험한 8차선 대로변으로 20분을 빙 둘러 등교해야만 했다.
+        </li>
+        <li>
+            <strong>[갑질 4] 8호선 뷰 망친다며 외제차 길막 발작 (우신면의 님비):</strong> 
+            효빈 도시철도 8호선 고가 철도 공사 당시, <strong>"우리 아파트 최고급 테라스 뷰를 망치고 경관을 침해해 집값을 떨어뜨린다! 고무 타이어에서 철가루가 날린다!"</strong>며 노선 통과 자체를 전면 백지화하거나 지하화하라며 억지를 부렸다. 이 단지의 최고층 펜트하우스에 거주하던 당시 국회의원 <a class="wiki-link" href="우신면.html">우신면</a>이 비상 입주민 대책회의를 열고 앞장서서 선동했으며, 우신면 본인부터 자기 집 조망권 지키겠다고 공사 현장 진입로에 본인의 벤츠를 불법 주차해 길막을 시전했다. 이에 세뇌된 입주민들이 포르쉐와 BMW 수십 대를 동원해 굴삭기와 덤프트럭을 며칠 동안 가로막는 엽기적인 불법 물리 시위를 벌였다.
+        </li>
+        <li>
+            <strong>[갑질 5] 국토부에 적발된 카톡방 조폭식 집값 담합:</strong> 
+            위의 수많은 갑질로 인해 집값이 떨어질 기미를 보이자, '아르티엠 시크릿 오너스 클럽'이라는 익명 카카오톡 오픈채팅방을 파서 조직적으로 부동산 호가를 조작했다. 단체 채팅방에서 결의한 대로, 시세인 15억 이하로 정상 매물을 올린 단지 내 공인중개사사무소를 찾아가 <strong>물리적으로 위협하고 입구를 점거하며 업무방해</strong>를 하다가, 결국 국토교통부 특사경과 효빈지방경찰청의 압수수색을 당하며 조폭이나 다름없는 수준이 전국에 까발려졌다.
+        </li>
+        <li>
+            <strong>[갑질 6] 청덕동 무시와 '진짜 영애' 유세라 거지년 망언 참교육:</strong>
+            이들은 오직 과거 화환마을 판자촌 똥통이었다는 편견 하나만 붙들고 서구 <a class="wiki-link" href="청덕동.html">청덕동</a> 주민들을 <strong>"근본 없는 우민, 양아치들"</strong>이라며 대놓고 멸시하는 기조가 강했다. 
+            어느 날 청덕동 최고 부촌(청덕 세라스)에 거주하는 '진짜 찐부자 영애' <a class="wiki-link" href="유세라.html">유세라</a>가 볼일이 있어 단지 근처를 지나고 있었다. 아르티엠 입주민 몇 명이 유세라의 화려한 옷차림을 보고 <strong>"어디서 굴러먹던 서구 청덕동 거지년이 감히 우리 명품 단지 앞을 지나가냐"</strong>며 대놓고 시비를 걸었다. 그러자 유세라는 콧방귀를 뀌며 지갑에서 <strong>한도 무제한의 '블랙카드'</strong>를 꺼내 인근 백화점 매장의 최고급 상품을 일시불로 긁어버린 뒤, <em>"세상에 블랙카드를 긁고 다니는 거지년도 있나요? 저희 집 별장 화장실보다 싼 아파트에 사시면서 왜 저렇게 화가 많으실까요? 우후훗!"</em> 하고 우아하게 웃으며 입주민들의 알량한 멘탈을 가루로 만들어버렸다.
+        </li>
+        <li style="background-color: #fff9fa; padding: 10px; border-left: 4px solid #E4007F;">
+            <strong>[갑질 7] 평당 자이 아파트의 오열과 월드비전 기부 촌극:</strong> 
+            유세라 망언 사건의 소식을 들은 바로 옆 단지 '평당 자이' 주민들은 사색이 되었다. 아르티엠의 미친 짓거리 때문에 평당동 전체의 집값이 <a class="wiki-link" href="창전 아쿠아 3단지.html">창전 아쿠아 3단지</a> 발끝에도 못 미치게 곤두박질칠 위기에 처했기 때문이다. 보수 성향이 강한 평당 자이 주민들조차 더는 참지 못하고 당장 입주자 대표회의를 소집해 아르티엠으로 달려가 <strong>"제발 니들 때문에 우리 집값까지 창전 아쿠아보다 떨어지게 만들지 좀 마라, 진짜, 하..."</strong>라며 통곡을 하는 사태가 벌어졌다. 
+            급기야 평당 자이 주민들은 단체로 "저런 미개한 이웃을 둬서 평당동 주민으로서 창피하고 죄송합니다"라며 속죄의 의미로 <strong>월드비전에 거액의 기부금을 쾌척</strong>하는 웃지 못할 촌극을 벌였다. 그 결과, 양심적 행보로 여론의 민심을 회복한 평당 자이는 집값이 약간 더 오르며 시세를 방어했으나, 아르티엠은 전국적인 조롱거리가 되며 혼자 끝없는 하한가를 뚫고 지하로 처박혔다.
+        </li>
+        <li>
+            <strong>[갑질 8] 타 단지 어린이 놀이터 이용 시 '주민등록등본' 요구:</strong> 
+            단지 내 놀이터에 인근 빌라나 구축 아파트에 사는 5~6살짜리 동네 꼬마들이 놀러 들어오자, 아파트 자체 보안요원과 학부모들을 풀어 <strong>"가족관계증명서나 주민등록등본상 우리 아파트 거주자가 아니면 당장 쫓아내라"</strong>며 아이들의 목덜미를 잡고 울려 쫓아내는 아동 학대급 기행을 저질렀다.
+        </li>
+        <li>
+            <strong>[갑질 9] 인근 래미안 주민들에게 '목례' 강요 맘카페 공지:</strong> 
+            주변 구축 아파트(래미안 등) 주민들이 단지 주변 공용 벤치에 앉아 있거나 길을 지나갈 때, "급이 다른 명품 아르티엠 앞을 지나가려면 최소한 입주민을 향해 목례라도 하고 가는 게 상식 아니냐"는 미친 공고문을 지역 맘카페에 당당하게 올렸다가 전국구 단위로 융단 폭격을 맞았다.
+        </li>
+        <li>
+            <strong>[갑질 10] 참새 떼 소총 살처분 민원:</strong> 
+            "단지 내 고급 조경수에 앉아 지저귀는 참새 소리가 시끄러워 고귀한 수면을 방해한다"며, 남구청 환경과에 <strong>"엽총이나 소총을 든 유해조수 포획단을 당장 파견해 참새 떼를 살처분해 달라"</strong>는 싸이코패스적인 악성 민원을 수십 통이나 쑤셔 넣었다.
+        </li>
+        <li>
+            <strong>[갑질 11] 8차선 공도 VIP 전용 하이패스 차선 요구:</strong> 
+            단지 앞을 지나는 시 소유의 8차선 공용 도로 중 맨 우측 1개 차선을 오직 <strong>'아르티엠 입주민만 다닐 수 있는 전용 VIP 차선'</strong>으로 지정해 달라고 남부경찰서에 찾아가 집단 행패를 부렸다. 당연히 미친 소리 취급을 받으며 반려당했다.
+        </li>
+        <li>
+            <strong>[갑질 12] 금가루 도색 소송과 다이소 락카 테러 참사:</strong> 
+            "아르티엠(Artem)이라는 명품 예술의 이름에 걸맞지 않게 아파트 외벽이 칙칙하다"며, 세영건설 본사를 상대로 <strong>"실제 금가루 10kg을 섞은 특수 페인트로 외벽을 전면 재도색하라"는 억지 소송</strong>을 걸었다가 법원에서 헛소리 취급을 받으며 패소했다. 이에 앙심과 오기가 뻗친 몇몇 동대표들이 다이소에서 파는 2,000원짜리 금색 락카 스프레이 수십 개를 사 와서 아파트 정문 대형 문주를 밤새 직접 칠했다. 하지만 며칠 뒤 폭우가 쏟아지자 싸구려 락카가 녹물처럼 시뻘겋게 흘러내리며 아파트 입구를 공포 영화의 흉물로 전락시키는 대참사가 일어났다.
+        </li>
+        <li>
+            <strong>[윤재훈 신봉 1] 경로당 내 엽기적인 '윤재훈 제단' 설치:</strong> 
+            제8회 지선에서 9.99%로 선거비용 미보전 파산을 맞은 윤재훈이 평당5동에서만큼은 20%대를 기록하자, 뇌가 파먹힌 일부 극성 입주민들이 아파트 경로당 한구석에 <strong>'윤재훈 구국(?) 위원회 제단'</strong>을 차렸다. 제단 위에는 윤재훈의 유튜브 썸네일과 사진을 액자에 걸어두고 촛불을 켠 채, 매일 아침 극우 유튜브 라이브를 대형 TV로 틀어놓으며 <em>"종부세를 멸하시고 우리 집값을 떡상시킬 구원자시여, 다시 시장으로 돌아오소서"</em>라며 합장을 하고 기도를 올리는 사이비 종교 뺨치는 정신병적 촌극을 매일같이 벌였다.
+        </li>
+        <li>
+            <strong>[윤재훈 신봉 2] 보조금 거부와 부실시공의 기막힌 콜라보:</strong> 
+            입주한 지 <strong>고작 4년밖에 안 된 2026년</strong>에 벌써 아파트 승강기가 멈추고 어린이집 천장에서 빗물이 폭포수처럼 쏟아지는 대참사가 발생했다. 입주 4년 차 신축 아파트에 <strong>'노후 수리'</strong>라는 단어가 붙는 것부터가 세영건설의 역대급 철근 삥땅과 끔찍한 부실시공을 증명하는 셈이었다. 이에 시청에서 '공동주택 관리 보조금' 수억 원을 배정해 주었음에도, 입주자대표회의 간부진이 <em>"박효빈 같은 공산당 빨갱이 시장이 주는 더러운 돈은 우리 고귀한 아르티엠에 들일 수 없다!"</em>며 지원금 수령을 거부해버렸다. 결국 물바다가 된 어린이집과 멈춰버린 승강기 수리비를 오롯이 일반 입주민들이 사비(수선유지비 폭탄)로 토해내야 했다.
+        </li>
+        <li>
+            <strong>[엽기 1] 단지 내 '14표 차 신승' 자축 심야 카퍼레이드:</strong> 
+            제9회 지방선거 개표일, 정상인들이 대거 이탈한 탓에 단지 내부 투표소에서 윤재훈이 박효빈을 상대로 고작 14표 차이로 신승을 거뒀다. 효빈시 전체에서 박효빈이 57%로 압승하여 시장 재선이 확정되었음에도 불구하고, 오직 단지 내에서 박효빈을 이겼다는 사실 하나에 미쳐버린 입주민들은 <strong>새벽 2시에 지하 주차장부터 단지 지상 둘레길까지 벤츠와 포르쉐 30대를 일렬로 세우고 비상깜빡이를 켠 채 윤재훈 선거 로고송을 최대 볼륨으로 틀며 자축 카퍼레이드</strong>를 벌였다. 경적을 울리며 샴페인을 터뜨리는 이들의 모습은 외부인들이 보기엔 완벽한 집단 광기이자 정신병동 그 자체였다.
+        </li>
+    </ul>
+
+    <h3 id="s-3-2">3.2. 효빈 시민들의 적나라한 반응 7선</h3>
+    <p>
+        이러한 눈을 의심케 하는 만행들이 연일 포털 메인에 오르내리자, 효빈 시민들의 반응은 분노를 넘어 처절한 혐오와 경멸로 바뀌었다. 효빈시민과 인근 주민들의 뼈 때리는 반응 7가지는 다음과 같다.
+    </p>
+    <div class="bg-gray-100 p-4 rounded-md text-sm text-gray-800 space-y-3 mt-2 leading-relaxed">
+        <p><strong>1. 배달 라이더 연합회:</strong> "비 오는데 헬멧 벗고 걸어 들어와서 엘리베이터 고장 났다고 30층까지 계단으로 올라가라고요? 미친 거 아닙니까? 거긴 콜 단가 5만 원 찍혀도 절대 안 갑니다. 자기들 배고픈 줄은 모르고 아주 갑질은 세계 1등이네요."</p>
+        <p><strong>2. 인근 초등학교 학부모 연합 (트랙터 시위 주도):</strong> "아니, 애들 등교하는 공공길을 지들 맘대로 펜스 용접해서 막는 게 사람입니까? 차 쌩쌩 달리는 8차선으로 20분을 삥 돌아가라니, 맹수도 자기 새끼는 아낀다는데 저 사람들은 진짜 짐승만도 못해요. 트랙터로 저 철창 다 밀어버리고 싶은 심정입니다."</p>
+        <p><strong>3. 평당동 인근 공인중개사:</strong> "아르티엠 매물 나오면 중개사들도 한숨부터 나옵니다. 자기들끼리 카톡방에서 담합해서 15억 밑으로 올리면 떼로 찾아와서 오물 던지고 물리적 위협을 가하는데, 정작 매수자들은 '거기 혐오 단지잖아요' 하고 거들떠보지도 않아요. 악성 재고의 끝판왕입니다."</p>
+        <p><strong>4. 청덕동 대아 아파트(구축) 주민:</strong> "자기들이 신흥 귀족이라면서 우리 동네를 똥통이라고 개무시하던데, 웃긴 건 우리 30년 된 청덕동 구축 아파트 떡상가랑 걔네 신축 떡락가랑 매매가가 엎치락뒤치락한다는 겁니다. 지들끼리 펜스 치고 자멸하는 코미디가 따로 없죠."</p>
+        <p><strong>5. 효빈대 에브리타임 유저:</strong> "아르티엠 심야 카퍼레이드 영상 봤냐? ㅋㅋㅋ 시 전체에서 박효빈이 57%로 발라버렸는데, 지들 단지에서 윤재훈 14표 차이로 이겼다고 새벽에 벤츠 끌고 비상깜빡이 켜고 빙빙 도는 거 보고 진짜 어디 격리된 사이비 종교 집단인 줄 알았다."</p>
+        <p><strong>6. 효빈도시철도 공사 관계자:</strong> "8호선 뚫을 때 진짜 지옥이었습니다. 뷰 망친다고 정문 앞에 포크레인 들어오는 걸 우신면이랑 입주민들이 외제차로 다 막아버리는데, 대체 고무바퀴 철도에서 철가루가 날린다는 기적의 논리는 어느 빡통에서 나온 건지 모르겠습니다. 그런 짐승 같은 님비는 머리털 나고 처음 봤습니다."</p>
+        <p><strong>7. 평범한 효빈 시민:</strong> "진짜 부자들은 교양이라도 있지, 저긴 영끌해서 들어간 대출 빚쟁이 졸부들이 자격지심에 똘똘 뭉쳐서 주변 사람들 다 괴롭히는 괴물 수용소 같습니다. 제발 그 펜스 안에서 평생 나오지 말고 자기들끼리 갇혀 살았으면 좋겠네요."</p>
+    </div>
+
+    <h3 id="s-3-3">3.3. "저긴 돔으로 덮어야..." 엘리트 연합의 극대노 팩폭</h3>
+    <p>
+        이 아파트의 상상을 초월하는 기행과 갑질 릴레이를 지켜본 효빈시의 차세대 엘리트 연합(김시연, 유세라, 유초애)은 헛웃음을 숨기지 못하며 살벌한 팩트 폭격을 남겼다. 이들의 반응은 그야말로 아르티엠 입주민들의 알량한 자존심을 우주 끝까지 찢어발기는 수준이었다.
+    </p>
+    <div class="quote">
+        <strong><a class="wiki-link" href="김시연.html">김시연</a> (효빈대 정치외교학과, 김성민 의원 둘째 딸)</strong><br/>
+        "어차피 정상적인 지능을 가진 시민들은 진작에 저기 다 탈출했잖아요? 온갖 불법은 다 저지르면서 자기들 권리만 챙기겠다고 떼를 쓰는데, 정작 4년 만에 아파트 승강기 멈추는 부실시공은 건설사한테 쫄아서 찍소리도 못하고 보조금이나 걷어차고 있잖아요? 저런 지능을 가진 생물체들이 효빈시 한복판을 걸어 다닌다는 것 자체가 시민 안전에 중대한 위협이에요. <strong>저긴 공공보행로에 철제 펜스 칠 게 아니라, 아예 시청 예산으로 두께 50cm짜리 방음벽과 티타늄 돔 뚜껑을 덮어서 효빈시로부터 완벽하게 격리시켜야 해요. 공기조차 섞이기 싫으니까요. 아, 돔 건설 비용은 그분들 아파트 수선유지비에서 강제 징수하면 완벽하겠네요. 안 그래요? ^^</strong>"
+    </div>
+    <div class="quote">
+        <strong><a class="wiki-link" href="유세라.html">유세라</a> (청덕동 재개발 찐부자 영애)</strong><br/>
+        "어머, 저한테 <strong>거지년</strong>이라고 하셨나요? 후훗, 정말 구제 불능의 우민들이네요! 청덕동 과거 타령만 주구장창 하시는데... 세상에 어떤 귀족이 다이소에서 파는 2,000원짜리 락카 스프레이로 자기 집 대문을 칠하나요? <strong>저희 집 화장실은커녕 1/5 값도 안 되는 주제에,</strong> 비 오니까 녹물 질질 흐르는 거 보고 저희 집 메이드들이 배를 잡고 웃더라고요. 게다가 입주 4년 만에 승강기가 덜컹거리고 어린이집 천장에서 폭포수가 새다니, <strong>저희 집 정원에 있는 셰퍼드 개집도 세영건설이 지은 저 쓰레기 아파트보단 훨씬 튼튼할 거예요.</strong> 꼴에 우파랍시고 시장님이 주시는 지원금까지 걷어차며 사비로 엘리베이터 고치는 지능을 보고 있자니 제 블랙카드가 다 우는 것 같답니다. <strong>주미 님! 저 천박하고 미개한 우민들이 숨 쉬며 내뱉은 이산화탄소가 제 피부에 닿기 전에, 당장 저 아파트 반경 1km 이내를 전면 방역해 주세요!</strong>"
+    </div>
+    <div class="quote">
+        <strong><a class="wiki-link" href="유초애.html">유초애</a> (당선동 명문가 출신 맏언니)</strong><br/>
+        "예의도, 근본도 없는 전형적인 졸부들의 끔찍한 표본이군요. 2,000원짜리 다이소 락카로 칠해놓은 저 흉측한 금색 아파트 문주와, 자기보다 힘없는 배달 기사나 경비원들에게 분풀이하는 저열한 인성을 보고 있자니... 당선동 명문가의 장녀로서 도저히 이 역겨움을 참을 수가 없군요. 저런 쓰레기 콘크리트 덩어리가 효빈시 남구의 미관을 해치고 있다는 것 자체가 수치입니다. 자기가 사는 아파트 뷰를 망친다고 8호선 공사 장비를 외제차로 길막을 해요? <strong>저한테 대형 불도저 한 대만 주시면, 저 얄팍한 펜스부터 시뻘건 녹물이 흐르는 문주, 그리고 저들의 그 알량한 자존심까지 제 손으로 직접 흔적도 없이 완벽하게 박살 내고 평탄화 작업을 해드리고 싶어집니다. 뼈대부터 썩어문드러진 부실시공 아파트엔 물리적인 철거만이 유일한 구원이니까요. (빠직)</strong>"
+    </div>
+
+    <h2 id="s-4">4. 타 지역 및 대장주 단지와의 극명한 비교</h2>
+    <p>효빈시의 다른 주요 지역들과 비교해 보면 이 아파트의 기형적이고 처참한 현실이 더욱 확연하게 드러난다.</p>
+    
+    <ul class="list-disc pl-5 space-y-3 mt-2">
+        <li>
+            <strong>청덕동, 중수동, 고송동과의 비교:</strong> 과거 달동네에서 천지개벽한 서구 <strong>청덕동</strong>, 그리고 세련된 인프라와 쾌적한 주거환경을 자랑하는 <strong>중수동과 고송동</strong> 주민들은 아르티엠 관련 기사가 뜰 때마다 <strong>"어디 아마존 오지 미개 부족 구경하는 것 같다"</strong>며 혀를 내두른다. 이들 지역 신축 대장주들의 가격표와 비교하면 아르티엠은 감히 명함조차 내밀 수 없다.
+        </li>
+        <li>
+            <strong>덕현동과의 비교 (최대 굴욕):</strong> 효빈시 외곽이자 한물간 구도심인 <strong>덕현동</strong>의 30년 된 엘리베이터도 없는 낡은 주공아파트 떡상가와, 2022년에 지어진 자칭 명품 아르티엠의 폭락가가 **거의 차이 나지 않거나 오히려 엎치락뒤치락한다는 사실**은 아르티엠 입주민들의 숨통을 끊어놓는 최고의 발작 버튼이다. 스스로 담장을 치고 고립된 자들의 완벽한 자본주의적 몰락이다.
+        </li>
+        <li style="background-color: #f0faff; padding: 10px; border-left: 4px solid #0077DD;">
+            <strong>효빈시 대장주 '창전 아쿠아 3단지'와의 극과 극 비교:</strong> 
+            효빈시 부동산 원탑 대장주이자 진정한 부촌인 <strong><a class="wiki-link" href="창전 아쿠아 3단지.html">창전 아쿠아 3단지</a></strong>와 비교하면 이들의 천박함은 정점을 찍는다. 창전 아쿠아 3단지 주민들은 이웃에게 집값 우월감을 부리려는 소수의 입주민이 나타나자 단지 자체적으로 비판 및 징계를 가하고 효빈복지재단에 거액을 기부하는 <strong>'노블레스 오블리주'</strong>를 실천하며 영구 오션뷰의 품격을 지켰다. 
+            정치적으로도 쓰레기 같은 혐오 정치를 철저히 배척하고 합리적 투표(윤재훈 2%대 득표)를 했다. 반면 아르티엠은 배달기사에게 갑질을 하고, 다이소 락카로 칠을 하며, 경로당에서 윤재훈 제단을 숭배하다가 집값이 덕현동 구축 수준으로 나락을 갔다. 이 두 아파트의 극명한 차이는 효빈대학교 사회학과의 <strong>'자본주의와 천민 민주주의'</strong> 교양 필수 과목의 연구 사례로 쓰일 정도다.
+        </li>
+    </ul>
+
+    <h2 id="s-5">5. 박효빈 시장과의 지독한 악연과 '금융치료'</h2>
+    <p>
+        이 아파트의 가장 치명적인 불행은, 현 <a class="wiki-link" href="박효빈.html">박효빈</a> 효빈광역시장에게 청년 시절 가장 깊고 처절한 물리적·정신적 분노를 남긴 철천지원수라는 점이다.
+    </p>
+
+    <h3 id="s-5-1">5.1. 40장 민원 폭격과 '헬창 공익'의 분노 (환장의 콜라보)</h3>
+    <p>
+        2018~2020년 분양 당시, 아르티엠 분양 대행사는 분양 대박에 눈이 멀어 관할인 남구를 넘어 북구 원정까지 감행하며 주요 대로변, 좁은 골목, 전신주, 육교 등에 <strong>수만 장의 게릴라 분양 현수막을 융단 폭격</strong>했다. 
+    </p>
+    <p class="mt-2">
+        특히 이 대행사 새끼들이 박효빈을 가장 극대노하게 만든 이유는, 현수막을 단속하기 쉬운 탁 트인 대로변이 아니라 <strong>골목 입구나 대로변에서 약간 애매하게 꺾여 들어가야 하는 얌체 같은 사각지대</strong>에 집중적으로 도배해 놓았다는 점이다. 이 때문에 단속 차량을 운전하는 담당 주사님은 차를 수십 번씩 삥삥 돌리며 좁은 골목에서 아슬아슬한 곡예 운전을 해야만 했고, 조수석에서 수백 번을 오르락내리락하며 낫을 휘둘러야 했던 공익 박효빈은 땀범벅이 된 채 극한의 체력 소모를 겪어야 했다.
+    </p>
+    <p class="mt-2">
+        설상가상으로 하필 이때, 행안부 포상금에 미친 악성 민원인(일명 '찍새')이 아르티엠 분양 현수막과 각종 일수 스티커를 섞어 <strong>하루에만 무려 40장 가까이 폭격하듯 민원을 넣는 사태</strong>가 벌어졌다. 떼어내야 할 아르티엠 얌체 현수막은 산더미인데, 민원 답변용으로 '조치 전/조치 후' 사진까지 일일이 각도를 맞춰 찍어 전산에 올려야 하는 <strong>'아르티엠 대행사 + 악성 찍새 민원인'의 환장할 콜라보 갈라쇼</strong>가 터져버린 것이다.
+    </p>
+    <div class="quote">
+        <strong>[근손실의 원한과 빤스런 사태]</strong><br/>
+        이 미친 행정력 낭비 사태를 수습하느라 점심시간을 통째로 날린 박효빈은, 결국 그날 자신의 유일한 삶의 낙이었던 구청 체력단련실 웨이트 트레이닝 시간을 <strong>평소 루틴의 3분의 2를 날려버린 25분 속성 쇠질</strong>로 끝내야만 했다. 근손실을 겪고 덤벨을 쥔 채 피눈물을 흘렸던 헬창 공익 박효빈의 뇌리에 <strong>'평당 아르티엠 = 내 근육과 관절을 박살 내고 주사님을 개고생시킨 철천지원수'</strong>라는 앙금이 태평양보다 깊게 뿌리내렸다.<br/><br/>
+        게다가 며칠 뒤, 단속 사각지대인 골목 샛길에 현수막 줄을 묶고 있던 알바생을 순찰 돌던 담당 주사님과 박효빈이 현장에서 덮쳤다. 덜미가 잡히자 알바생은 손에 쥐고 있던 끈 매듭을 휙 놓아버리며 <strong>"어? 내 손 떠났네? 아직 매듭 안 묶었으니 내 거 아님! 공무원이 내 사유재산 침해하네! 민간인 인권탄압이다!!"</strong>라고 길바닥에서 쌩발작을 하며 냅다 도주하는 추태까지 부렸다.
+    </div>
+    
+    <h3 id="s-5-2">5.2. 시장 박효빈의 자비 없는 '풀 스택 금융치료' 참교육</h3>
+    <p>
+        현장에서 당했던 이 공권력 능멸과 착취, 그리고 신성한 쇠질 시간을 빼앗긴 굴욕을 뼛속 깊이 새겼던 박효빈은 시장에 당선되자마자 <strong>"1만 장이면 32억 원의 과태료를 때려부어서 대행사 자체를 완전히 공중분해시키겠다"</strong>며, 상위법의 맹점이었던 과태료 상한선(500만 원)을 조례 개정으로 원천 무력화시켰다. 그리고 적발된 현수막 1장당 16~32만 원씩 1원 단위 에누리 없이 무한 누적 부과하는 <strong>'풀 스택 금융치료(무한 합산 과태료)'</strong> 시스템을 구축해 아르티엠 분양 대행사를 말 그대로 파산시켜버렸다.
+    </p>
+    <p class="mt-2">
+        시장 취임 후에도 앙금은 여전했다. 아르티엠 입주민들이 인가 조건인 공공보행통로에 불법 철제 펜스를 용접해버리자, 박효빈 시장은 보고를 받자마자 즉각 원상복구 시정명령과 함께 <strong>매일매일 복리로 눈덩이처럼 불어나는 징벌적 이행강제금 폭탄</strong>을 아파트 관리사무소로 날려버렸다. 
+        또한, 집값 떡락을 막아보고자 입주민들이 아파트 외벽과 정문 주변에 덕지덕지 걸어둔 '시세 방어용 및 8호선 결사반대 불법 현수막' 역시, 단속반을 출동시켜 장당 무한 누적 과태료로 먼지 하나 남기지 않고 가위로 완벽하게 썰어버리며 성역 없는 무관용 원칙 행정의 피바람을 보여주었다.
+    </p>
+
+    <h2 id="s-6">6. 기형적 정치 지형 및 선거 결과 (완벽한 인과응보)</h2>
+    <h3 id="s-6-1">6.1. 우신면의 펜트하우스 만행과 2025년 '정상인 엑소더스'</h3>
+    <p>
+        이 아파트의 몰락에 가장 크게 일조한 빌런은 단연 <strong>이 단지 최고층 펜트하우스에 거주했던 <a class="wiki-link" href="우신면.html">우신면</a> 전 의원</strong>이었다. 자기 뷰를 망친다며 8호선을 백지화하려 깽판을 치던 우신면은 2024년 22대 총선에서 남구 갑 전역에서 20.50%라는 치욕적인 득표율로 참패했다. <strong>하지만 소름 돋게도, 평당 아르티엠 단지 내 투표소에서만큼은 우신면에게 엄청난 지지를 던지며 남구 전체를 통틀어 우신면의 지지율이 압도적으로 높았던 아파트로 기록되었다.</strong> 우신면의 극단적 님비주의와 입주민들의 끔찍한 이기주의적 공생 관계가 증명된 셈이다.
+    </p>
+    <p class="mt-2">
+        그러나 8호선 개통으로 주변 집값이 다 오르는데 자기네 아파트 시세만 15% 이상 폭락하자, 그나마 단지 내에 남아 우신면의 님비 깽판을 비판하며 탄핵 서명을 주도하던 일부 상식적인 정상인 주민들조차 두 손 두 발을 다 들고 말았다. 결국 뻔뻔하게 버티던 우신면이 2024년 시세보다 싸게 급매를 던지고 단양으로 야반도주하듯 탈주하자, <strong>2025년부터는 정상인들의 진정한 '대규모 엑소더스'가 시작되었다.</strong>
+    </p>
+    <p class="mt-2">
+        연일 뉴스 1면을 장식하는 갑질 사태, 4년 만의 부실시공 수리비 폭탄, 곤두박질치는 시세에 완전히 질려버린 정상인들이 수억 원의 매매 손해를 감수하고서라도 "이 정신병동에서 당장 나가야 한다"며 아파트를 대거 손절하고 짐을 쌌다. 그 빈자리를 <strong>"오직 윤재훈만이 우리의 집값을 올려줄 신이다"</strong>라고 맹신하는 현실 부정 극단주의자들이 영끌 대출로 헐값에 매입해 들어오면서, 아르티엠은 <strong>완벽하게 갈라파고스화 된 슬럼(마계)</strong>으로 흑화하고 말았다.
+    </p>
+
+    <h3 id="s-6-2">6.2. 평당5동 내에서의 쓰레기 취급 및 효빈시 최저 득표율의 원흉</h3>
+    <p>
+        평당 아르티엠은 같은 보수 텃밭인 평당5동 내의 같은 지역 주민들조차 치를 떨게 만들며 <strong>"보수의 수치", "평당동의 오물"</strong> 취급을 받으며 철저히 쓰레기 단지로 배척당하고 있다. 
+    </p>
+    <p class="mt-2">
+        특히 제9회 지방선거에서 박효빈 시장의 <strong>효빈광역시 전체 행정동 중 가장 낮게 나온 득표율(57.04%)의 결정적인 원흉</strong>이 바로 이 아파트다. 평당5동의 일반 주택가나 평당 자이 등 다른 정상적인 아파트 단지에서는 합리적인 보수 성향을 띠며 박효빈 시장에게 고르게 표를 던졌으나, 오직 아르티엠 단지 내 투표소에서만 윤재훈에게 몰표가 쏟아지는 기형적인 결과가 나오는 바람에 평당5동 전체의 투표 통계를 바닥으로 끌어내려 오염시켜 버린 것이다.
+    </p>
+
+    <h3 id="s-6-3">6.3. 역대 지방선거 득표 현황 및 단지 내 단독 분석</h3>
+    <p>평당5동(행정동) 전체 득표 통계. 이 수치만 보면 평범하게 박효빈이 우세한 보수 경합지로 보일 수 있다.</p>
+    <table class="wiki-table">
+        <thead>
+            <tr>
+                <th rowspan="2">선거</th>
+                <th rowspan="2">구</th>
+                <th rowspan="2">행정동</th>
+                <th rowspan="2">선거인수</th>
+                <th rowspan="2">투표율</th>
+                <th>더불어민주당</th>
+                <th>국민의힘</th>
+                <th>정의당</th>
+                <th>무소속/새미래</th>
+                <th>무소속</th>
+            </tr>
+            <tr>
+                <th>박효빈</th>
+                <th>윤재훈</th>
+                <th>이사원</th>
+                <th>강성택 / 지총민</th>
+                <th>유성민</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="font-weight: bold; background-color: #f9f9f9;">9회 지선</td>
+                <td>남구</td>
+                <td>평당5동</td>
+                <td>17,450명</td>
+                <td>78.96%</td>
+                <td><strong>57.04%</strong><br/><span style="font-size: 0.8em; color: #666;">(7,859표)</span></td>
+                <td>6.19%<br/><span style="font-size: 0.8em; color: #666;">(853표)</span></td>
+                <td>3.32%<br/><span style="font-size: 0.8em; color: #666;">(458표)</span></td>
+                <td>0.75%<br/><span style="font-size: 0.8em; color: #666;">(지총민 103표)</span></td>
+                <td>32.70%<br/><span style="font-size: 0.8em; color: #666;">(4,505표)</span></td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold; background-color: #f9f9f9;">8회 지선</td>
+                <td>남구</td>
+                <td>평당5동</td>
+                <td>18,254명</td>
+                <td>73.59%</td>
+                <td><strong>38.34%</strong><br/><span style="font-size: 0.8em; color: #666;">(5,150표)</span></td>
+                <td>26.15%<br/><span style="font-size: 0.8em; color: #666;">(3,513표)</span></td>
+                <td>3.50%<br/><span style="font-size: 0.8em; color: #666;">(470표)</span></td>
+                <td>3.80%<br/><span style="font-size: 0.8em; color: #666;">(강성택 510표)</span></td>
+                <td>28.21%<br/><span style="font-size: 0.8em; color: #666;">(3,789표)</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4 class="anchor-offset" style="color:#d4af37; border-left: 4px solid #d4af37; padding-left: 10px; margin-top: 20px;">⭐️ 평당 아르티엠 단지 내 전용 투표소 개표 결과 (단독 분석)</h4>
+    <p>
+        위의 표는 평당5동 전체 통계일 뿐, <strong>순수하게 평당 아르티엠 입주민(726세대, 인구 약 2,175명 규모)</strong>들만 배정되어 투표한 '아르티엠 단지 내 투표소'의 개표함을 따로 열어보면 그야말로 상상을 초월하는 기형적이고 광기 어린 결과가 적나라하게 드러난다.
+    </p>
+    <table class="wiki-table" style="border: 2px solid #333;">
+        <thead style="background-color:#333; color:white;">
+            <tr>
+                <th>선거</th>
+                <th>추산 유권자</th>
+                <th>실투표수(율)</th>
+                <th>더불어민주당<br/>박효빈</th>
+                <th>국민의힘<br/>윤재훈</th>
+                <th>무소속<br/>유성민</th>
+                <th>결과 요약 및 격차</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="background-color:#fffdf5;">
+                <td style="font-weight: bold;">9회 지선</td>
+                <td>약 1,690명</td>
+                <td>1,375표<br/><span style="font-size: 0.85em; color: #e40000; font-weight:bold;">(81.36% - 초결집)</span></td>
+                <td>34.98% <span style="font-size: 0.8em; color: #666;">(481표)</span></td>
+                <td><strong style="color:#e40000;">36.00%</strong> <span style="font-size: 0.8em; color: #e40000;">(495표)</span></td>
+                <td>29.01% <span style="font-size: 0.8em; color: #666;">(399표)</span></td>
+                <td style="text-align: left; padding: 10px;">
+                    <span style="color:#e40000; font-weight:bold;">윤재훈 1.02% (14표 차) 신승.</span><br/>
+                    <span style="font-size:0.85em;">정상인 대거 이탈 후 극단주의자들만 남아 영혼을 끌어모은 투표. 박효빈이 압승한 <strong>효빈시 85개 행정동 및 수천 개 아파트 단지를 통틀어 '유일하게 윤재훈이 1위'를 차지</strong>한 기괴한 진기록. (기타 0표)</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold;">8회 지선</td>
+                <td>약 1,725명</td>
+                <td>1,310표<br/><span style="font-size: 0.85em; color: #666;">(75.94%)</span></td>
+                <td><strong style="color:#0077DD;">36.03%</strong> <span style="font-size: 0.8em; color: #0077DD;">(472표)</span></td>
+                <td>35.87% <span style="font-size: 0.8em; color: #666;">(470표)</span></td>
+                <td>28.09% <span style="font-size: 0.8em; color: #666;">(368표)</span></td>
+                <td style="text-align: left; padding: 10px;">
+                    <span style="color:#0077DD; font-weight:bold;">박효빈 불과 '2표 차(0.16%)' 신승.</span><br/>
+                    <span style="font-size:0.85em;">평당5동 평균 지지율(38.34%)보다 확연히 낮은 박효빈 득표율. 시 전체 득표율 9.99%로 파산한 패륜아 윤재훈에게 관내 최고 수준의 몰표를 안겨주며 꼴보수 아파트의 조짐을 명확히 드러냄.</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="quote" style="margin-top: 15px;">
+        <strong>※ 결론:</strong> 아르티엠 입주민들은 시 전체의 상식적인 여론과는 완벽히 동떨어진 그들만의 병든 평행우주에 갇혀 살고 있다. 타인을 멸시하고 배척하며 이기주의의 끝을 달리던 오만한 선민의식은 <strong>'효빈시에서 가장 상종하기 싫은 혐오 아파트'라는 낙인과 함께, 주변 시세가 오를 때 나홀로 집값이 덕현동 썩다리 주공아파트 급으로 떡락하는 가장 완벽하고도 차가운 자본주의적 인과응보</strong>로 통쾌하게 귀결되었다.
+    </div>
+
+    <div id="footer-container"></div>
+    <script src="assets/load-footer.js"></script>
+</div>
+<script>
+    function handleSearch(inputId) {
+        const query = document.getElementById(inputId).value.trim();
+        if (!query) return;
+        const target = query + '.html';
+        window.location.href = target;
+    }
+
+    document.querySelectorAll('.wiki-fn-link').forEach(link => {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'wiki-fn-tooltip';
+        tooltip.innerText = link.getAttribute('data-content');
+        link.appendChild(tooltip);
+    });
+</script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_data_map.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+</body>
+</html>

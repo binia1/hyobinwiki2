@@ -126,8 +126,8 @@
                         <!-- 비마리동 구역 -->
                         <tr>
                             <td class="hb-admin-bg"><a href="비마리동.html">비마리동</a></td>
-                            <td class="hb-legal-bg"><a href="비마동.html">비마동</a></td>
-                            <td colspan="2" class="hb-legal-bg"><a href="사노동.html">사노동</a></td>
+                            <td class="hb-legal-bg"><a href="비마리동.html#s-3-1">비마동</a></td>
+                            <td colspan="2" class="hb-legal-bg"><a href="비마리동.html#s-3-2">사노동</a></td>
                         </tr>
                         
                         <!-- 우전동 구역 -->
@@ -148,13 +148,13 @@
                         <tr>
                             <td class="hb-admin-bg"><a href="입빈동.html">입빈동</a></td>
                             <td class="hb-legal-bg">
-                                <a href="효빈동1가.html">효빈동1가</a><br/>
-                                <a href="효빈동2가.html">효빈동2가</a>
+                                <a href="입빈동.html#s-4-4">효빈동1가</a><br/>
+                                <a href="입빈동.html#s-4-5">효빈동2가</a>
                             </td>
                             <td colspan="2" class="hb-legal-bg">
-                                <a href="입동.html">입동1가</a><br/>
-                                <a href="입동.html">입동2가</a><br/>
-                                <a href="입동.html">입동3가</a>
+                                <a href="입빈동.html#s-4-1">입동1가</a><br/>
+                                <a href="입빈동.html#s-4-1">입동2가</a><br/>
+                                <a href="입빈동.html#s-4-1">입동3가</a>
                             </td>
                         </tr>
                         

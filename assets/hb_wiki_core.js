@@ -1460,3 +1460,38 @@ window.addEventListener('hashchange', function() {
         loadCategoryData(); // 분류 데이터 불러오는 본인 프로젝트의 함수명으로 변경
     }
 });
+// 지도에 '크게 보기' 버튼을 달아주는 핵심 함수
+function addExpandMapButtons() {
+    // '.has-expand-btn' 클래스가 없는(아직 처리 안 된) 지도 컨테이너만 찾음
+    const mapContainers = document.querySelectorAll('.infobox-map:not(.has-expand-btn)');
+    
+    mapContainers.forEach(container => {
+        const iframe = container.querySelector('iframe');
+        if (!iframe || !iframe.src) return;
+
+        const linkBtn = document.createElement('a');
+        linkBtn.className = 'btn-expand-map';
+        linkBtn.innerHTML = '🔍 크게 보기';
+        linkBtn.href = iframe.src;
+        linkBtn.target = '_blank';
+        linkBtn.rel = 'noopener noreferrer'; 
+        
+        container.appendChild(linkBtn);
+        
+        // 버튼이 중복으로 생성되지 않도록 처리 완료 표시
+        container.classList.add('has-expand-btn');
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. 처음 로딩될 때 이미 존재하는 지도 처리
+    addExpandMapButtons();
+
+    // 2. 이후 자바스크립트로 동적 추가되는 지도까지 실시간 감지 (MutationObserver)
+    const observer = new MutationObserver(function(mutations) {
+        addExpandMapButtons();
+    });
+
+    // body 태그 안에서 일어나는 모든 요소 추가/변경을 감시
+    observer.observe(document.body, { childList: true, subtree: true });
+});
