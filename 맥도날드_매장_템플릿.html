@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
 <link href="이미지/효빈위키아이콘.webp" rel="icon"/>
@@ -44,7 +43,6 @@
         .wiki-link:hover { text-decoration: underline; }
         del { color: #888; text-decoration: line-through; }
 
-        /* 예정 노선 SVG 취소선 특수 CSS */
         .route-planned { position: relative; display: inline-flex; align-items: center; gap: 4px; padding: 0 4px; }
         .route-planned img { filter: grayscale(100%) opacity(50%); }
         .route-planned a { color: #888 !important; text-decoration: none !important; }
@@ -85,7 +83,6 @@
         .transport-table td { padding: 10px 15px; border: 1px solid var(--wiki-border); line-height: 1.8; }
         [data-theme='dark'] .transport-table th, [data-theme='dark'] .transport-table td { border-color: #444; }
         
-        /* 각주 툴팁 박스 */
         #wiki-footnote-tooltip { position: absolute; display: none; background: #fff; border: 1px solid #777; padding: 12px 16px; font-size: 0.85rem; z-index: 10000; box-shadow: 3px 3px 12px rgba(0,0,0,0.2); border-radius: 4px; max-width: 400px; word-break: keep-all; color: #222; pointer-events: none; line-height: 1.6; }
         [data-theme='dark'] #wiki-footnote-tooltip { background: #2d2f34; color: #eee; border-color: #888; box-shadow: 3px 3px 12px rgba(0,0,0,0.8); }
     </style>
@@ -146,7 +143,7 @@
 <ul>
 <li><a href="#s-1">1. 개요</a></li>
 <li><a href="#s-2">2. 상세</a>
-<ul>
+<ul id="toc-section-2-sub">
 <li><a href="#s-2-1">2.1. 여담</a></li>
 <li><a href="#s-2-2">2.2. 드립 및 밈</a></li>
 <li><a href="#s-2-3">2.3. 배달</a></li>
@@ -211,7 +208,6 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>`;
     });
 
-    // --- 인포박스 렌더링 (한국맥도날드 운영사 추가) ---
     const isClosed = storeData.type.includes('폐점');
     const infoboxHtml = `
         <tr><td colspan="2" style="padding: 0; border: none; border-bottom: 1px solid #ccc; background-color: #DB0007;">
@@ -244,7 +240,6 @@ document.addEventListener("DOMContentLoaded", function() {
     `;
     document.getElementById('infobox-table').innerHTML = infoboxHtml;
 
-    // --- 대중교통 파싱 (예정 노선 SVG 취소선 완벽 적용) ---
     function parseTransitToSvg(transitStr) {
         if (!transitStr || transitStr === "-") return "해당 노선 없음";
         let isPlanned = transitStr.includes('예정') || transitStr.includes('계획');
@@ -279,7 +274,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return html;
     }
 
-    // --- 버스 도색 파서 ---
     function getBusColor(busName, region, district) {
         let n = busName.replace(/\s+/g, '');
         let type = '일반';
@@ -362,7 +356,6 @@ document.addEventListener("DOMContentLoaded", function() {
             if(colors[type]) return colors[type];
         }
 
-        // 최후의 보루 (절대 회색 방지)
         const fallback = {
             '간선': '#00B5E2', '지선': '#8DC63F', '급행': '#D81C2F', '광역': '#485EC6', '좌석': '#FF5800', '순환': '#FFBF00', '마을': '#F7E600', 'BRT': '#E60012', '공항': '#003366', '공영': '#ffeeaa', '심야': '#8DC63F'
         };
@@ -381,7 +374,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return html;
     }
 
-    // --- 배달 서술 생성기 ---
     function generateDeliveryNarrative(data) {
         let isDelivery = data.services.includes("딜리버리") || data.services.includes("맥딜리버리");
         let is24h = data.hours.includes("24시간");
@@ -402,7 +394,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return n;
     }
 
-    // --- 지능형 교통 서술 생성기 ---
     function generateTrafficNarrative(data) {
         let n = "";
         let isHellRoad = ["효빈광역시", "빈주시", "서해시", "덕주시"].some(loc => data.region.includes(loc) || data.district.includes(loc));
@@ -454,7 +445,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return n;
     }
 
-    // --- 동적 각주 리스트 생성 ---
     function generateFootnotes(data) {
         let fns = [];
         fns.push(`도로명 주소 기준. 구 지번 주소 표기와 혼동하지 않도록 주의 요망.`);
@@ -483,6 +473,32 @@ document.addEventListener("DOMContentLoaded", function() {
     let detailOpening = `<span class="font-bold">${storeData.openDate}</span>에 개점한 매장으로, `;
     if(isClosed) detailOpening = `<span class="font-bold">${storeData.openDate}</span>에 개점하여 치열하게 영업했던 매장으로, `;
 
+    // --- 커스텀 추가 문단(extraSections) 생성기 및 목차 업데이트 ---
+    let extraSectionsHtml = "";
+    if (storeData.extraSections && storeData.extraSections.length > 0) {
+        const tocSubUl = document.getElementById('toc-section-2-sub');
+        storeData.extraSections.forEach((sec, idx) => {
+            let anchorId = `s-2-extra-${idx}`;
+            // 본문 HTML 조립
+            extraSectionsHtml += `
+                <h3 id="${anchorId}" class="anchor-offset">${sec.title}</h3>
+                <p style="font-size: 1.05rem; line-height: 1.8; margin-bottom: 15px;">${sec.content}</p>
+            `;
+            // 목차(TOC) 항목 동적 추가
+            if (tocSubUl) {
+                tocSubUl.innerHTML += `<li><a href="#${anchorId}">${sec.title}</a></li>`;
+            }
+        });
+    }
+
+    // --- 교통 서술(Traffic) 오버라이드 로직 ---
+    let trafficHtml = "";
+    if (storeData.trafficOverride) {
+        trafficHtml = `<p style="font-size: 1.05rem; line-height: 1.8; margin-bottom: 12px;">${storeData.trafficOverride}</p>`;
+    } else {
+        trafficHtml = generateTrafficNarrative(storeData);
+    }
+
     const bodyHtml = `
         <h2 id="s-1" class="anchor-offset">1. 개요</h2>
         <p style="font-size: 1.05rem; line-height: 1.8;">
@@ -507,8 +523,11 @@ document.addEventListener("DOMContentLoaded", function() {
         <h3 id="s-2-3" class="anchor-offset">2.3. 배달</h3>
         ${generateDeliveryNarrative(storeData)}
 
+        ${extraSectionsHtml}
+
         <h2 id="s-3" class="anchor-offset">3. 교통</h2>
-        ${generateTrafficNarrative(storeData)}
+        ${trafficHtml}
+
         <table class="transport-table">
             <tbody>
                 <tr>
@@ -529,7 +548,6 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('wiki-body-content').innerHTML = bodyHtml;
     document.getElementById('footnotes-container').innerHTML = generateFootnotes(storeData);
 
-    // --- 각주 툴팁 이벤트 로직 ---
     setTimeout(() => {
         const tooltip = document.getElementById('wiki-footnote-tooltip');
         const fnLinks = document.querySelectorAll('.wiki-fn-link');
