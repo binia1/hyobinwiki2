@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <!-- [아쿠아 멤버 목록 표 박스] -->
         <div class="w-full max-w-[600px] mx-auto border border-[#34abfe] rounded-[10px] bg-[#b2ebf4] text-center text-[#34abfe] overflow-hidden mb-6 shadow-sm">
             <div class="w-4/5 mx-auto py-2 border-b border-[#34abfe] font-bold text-xl text-black">
-                <a href="Aqours.html" class="nw-link"><img src="이미지/Aqours 로고.webp" alt="Aqours" class="h-8 mx-auto" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none;">Aqours</span></a>
+                <a href="Aqours.html" class="nw-link"><img src="이미지/Aqours_로고.webp" alt="Aqours" class="h-8 mx-auto" onerror="this.style.display='none'; this.nextSibling.style.display='inline';"><span style="display:none;">Aqours</span></a>
             </div>
             <details class="bg-white dark:bg-[#2d2f34] text-black dark:text-white p-2">
                 <summary class="cursor-pointer text-xs text-gray-500 mb-2 list-none outline-none">[ 펼치기 · 접기 ]</summary>

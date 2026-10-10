@@ -1,6 +1,6 @@
 /**
  * HyobinWiki JS Master Index (Auto-Generated & Fixed Aliases)
- * 업데이트: 2026. 10. 09. 오후 11:22:02
+ * 업데이트: 2026. 10. 10. 오전 11:56:18
  */
 
 window.filePaths = {
@@ -145,6 +145,7 @@ window.filePaths = {
     "hyobin_head_7": "js/",
     "hyobin_head_8": "js/",
     "hyobin_head_9": "js/",
+    "hyobin_museums_nav": "assets/",
     "hyobin_pop": "js/",
     "icue-nav": "js/",
     "image_data": "assets/",

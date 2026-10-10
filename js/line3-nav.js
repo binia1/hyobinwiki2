@@ -59,7 +59,7 @@
                     <tbody>
                         <tr>
                             <td colspan="2" class="text-center line3-header-bg">
-                                <a href="효빈 도시철도 3호선.html" class="line3-text flex justify-center items-center text-lg">
+                                <a href="3호선.html" class="line3-text flex justify-center items-center text-lg">
                                     <span class="logo-base logo-ring line3-logo-color">3</span>
                                     효빈 도시철도 3호선
                                 </a>

@@ -100,8 +100,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         <tr style="color: white; font-weight: bold;">
                             <td style="background-color: #000000; padding: 6px; border: 1px solid #ddd;">제주</td>
                             <td style="background-color: #000000; padding: 6px; border: 1px solid #ddd;">효빈</td>
-                            <td style="background-color: #004EA2; padding: 6px; border: 1px solid #ddd;">덕빈북</td>
-                            <td style="background-color: #004EA2; padding: 6px; border: 1px solid #ddd;">덕빈남</td>
+                            <td style="background-color: #004EA2; padding: 6px; border: 1px solid #ddd;">덕북</td>
+                            <td style="background-color: #004EA2; padding: 6px; border: 1px solid #ddd;">덕남</td>
                         </tr>
                         <tr style="background-color: #fff;">
                             <td style="padding: 10px 5px; border: 1px solid #ddd; line-height: 1.3;">

@@ -18,7 +18,7 @@ document.currentScript.insertAdjacentHTML('beforebegin', `
 
 <div class="hbnu-isolate-box" style="font-family: 'Noto Sans KR', sans-serif; clear: both; width: 100%;">
     <div style="background-image: linear-gradient(to right, #3344aa, #2a3a8c, #2a3a8c, #3344aa); color: white; padding: 20px; text-align: center; border-radius: 5px; margin-bottom: 0px;">
-        <img alt="효빈대학교 로고" onerror="this.style.display='none'" src="이미지/효빈대_로고.webp" style="width: 220px; display: inline-block;"/>
+        <img alt="효빈대학교 로고" onerror="this.style.display='none'" src="이미지/효빈대_가로로고.webp" style="width: 220px; display: inline-block;"/>
     </div>
     <details>
         <summary></summary>
