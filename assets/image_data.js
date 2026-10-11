@@ -1523,11 +1523,11 @@ const imageFiles = [
         "category": "etc"
     },
     {
-        "file": "jungsu_platform_2.webp",
+        "file": "중수역_2호선_승강장.webp",
         "category": "etc"
     },
     {
-        "file": "jungsu_platform_6.webp",
+        "file": "중수역_6호선_승강장.webp",
         "category": "etc"
     },
     {

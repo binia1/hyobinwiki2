@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>지역 시설 안내표 생성기</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* 탭 메뉴 스타일 */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .tab-btn.active {
+      border-bottom-color: transparent;
+      background-color: white;
+      color: #3b82f6;
+      font-weight: bold;
+    }
+    
+    /* 코드 블록 스타일 */
+    pre {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      font-size: 0.875rem;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    /* 생성기 내부 미리보기용 격리 스타일 */
+    #preview-container {
+      all: initial;
+      font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    }
+    
+    /* 사용자 정의 스크롤바 */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
+
+  <header class="bg-blue-600 text-white p-4 shadow-md shrink-0 flex justify-between items-center">
+    <div>
+      <h1 class="text-2xl font-bold">🗺️ 지역 시설 안내표 자동 생성기</h1>
+      <p class="text-sm text-blue-200 mt-1">이름만 쉼표로 입력하면 HTML이 자동으로 완성됩니다!</p>
+    </div>
+    <button onclick="generateOutput()" class="bg-white text-blue-600 hover:bg-blue-50 font-bold py-2 px-6 rounded shadow transition-colors">
+      생성 및 미리보기 업데이트 🚀
+    </button>
+  </header>
+
+  <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+    
+    <!-- 왼쪽: 폼 영역 -->
+    <div class="w-full lg:w-1/2 p-4 lg:p-6 overflow-y-auto bg-white border-r border-gray-200 shadow-sm flex flex-col gap-6">
+      
+      <section class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+        <h2 class="text-lg font-semibold mb-4 text-gray-700 border-b pb-2">1. 지역 및 테마 설정</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">광역자치단체</label>
+            <select id="prov-select" class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500" onchange="updateDistricts()">
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">기초자치단체</label>
+            <select id="dist-select" class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500" onchange="updateThemePreview()">
+            </select>
+          </div>
+        </div>
+        
+        <div class="mt-4 flex items-center gap-4 bg-white p-3 rounded border border-gray-100 shadow-sm">
+          <div class="flex flex-col">
+            <span class="text-xs text-gray-500 mb-1">적용될 테마 컬러</span>
+            <div class="flex items-center gap-2">
+              <div id="color-preview" class="w-6 h-6 rounded-full border border-gray-300 shadow-inner"></div>
+              <span id="color-code" class="text-sm font-mono text-gray-600"></span>
+            </div>
+          </div>
+          <div class="flex flex-col border-l pl-4 border-gray-200 overflow-hidden">
+             <span class="text-xs text-gray-500 mb-1">적용될 로고 경로</span>
+             <span id="logo-path-preview" class="text-sm font-mono text-gray-600 truncate"></span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="flex justify-between items-end mb-4 border-b pb-2">
+          <h2 class="text-lg font-semibold text-gray-700">2. 표시할 시설 정보 (텍스트만 입력하세요)</h2>
+          <button onclick="openAddCategoryModal()" class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1.5 px-3 rounded shadow transition-colors">
+            + 종류 추가
+          </button>
+        </div>
+        
+        <div id="categories-container" class="space-y-3">
+          <!-- JS로 카테고리 항목들이 채워짐 -->
+        </div>
+      </section>
+    </div>
+
+    <!-- 오른쪽: 결과 영역 (미리보기 & 코드) -->
+    <div class="w-full lg:w-1/2 flex flex-col bg-gray-100">
+      
+      <!-- 탭 버튼 -->
+      <div class="flex border-b border-gray-300 bg-gray-200 px-2 pt-2 shrink-0">
+        <button class="tab-btn active px-4 py-2 text-sm font-medium text-gray-600 border border-transparent border-b-0 rounded-t-lg hover:text-gray-800 hover:bg-gray-50" onclick="switchTab('preview')">
+          👀 미리보기
+        </button>
+        <button class="tab-btn px-4 py-2 text-sm font-medium text-gray-600 border border-transparent border-b-0 rounded-t-lg hover:text-gray-800 hover:bg-gray-50" onclick="switchTab('code')">
+          💻 자바스크립트 코드
+        </button>
+        <button class="tab-btn px-4 py-2 text-sm font-medium text-gray-600 border border-transparent border-b-0 rounded-t-lg hover:text-gray-800 hover:bg-gray-50" onclick="switchTab('guide')">
+          📖 적용 가이드
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 relative">
+        
+        <!-- 미리보기 탭 -->
+        <div id="tab-preview" class="tab-content active h-full">
+          <div class="bg-white p-6 rounded-lg shadow-sm min-h-full border border-gray-200">
+            <h3 class="text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider">Live Preview</h3>
+            <div id="preview-render-area">
+              <div class="text-center text-gray-400 py-10">좌측에서 '생성 및 미리보기 업데이트' 버튼을 누르세요.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 코드 탭 -->
+        <div id="tab-code" class="tab-content h-full flex flex-col">
+          <div class="flex justify-between items-center mb-2 shrink-0">
+            <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider">Generated Code (file.js)</h3>
+            <button onclick="copyCode('generated-js-code')" class="bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1.5 px-3 rounded shadow transition-colors flex items-center gap-1">
+              복사하기
+            </button>
+          </div>
+          <pre id="generated-js-code" class="flex-1 m-0 shadow-inner">코드가 이곳에 생성됩니다.</pre>
+        </div>
+
+        <!-- 가이드 탭 -->
+        <div id="tab-guide" class="tab-content h-full">
+          <div class="bg-white p-6 rounded-lg shadow-sm h-full border border-gray-200 prose prose-blue max-w-none">
+            <h2 class="text-xl font-bold mb-4">웹사이트에 적용하는 방법</h2>
+            <h3 class="text-lg font-semibold mt-6 mb-2">1. HTML에 컨테이너 요소 추가</h3>
+            <div class="relative group">
+              <pre id="guide-html" class="bg-gray-800 text-gray-100 p-3 rounded text-sm">&lt;div id="district-nav-container"&gt;&lt;/div&gt;</pre>
+            </div>
+            <h3 class="text-lg font-semibold mt-6 mb-2">2. 스크립트 파일 로드</h3>
+            <div class="relative group">
+              <pre id="guide-script" class="bg-gray-800 text-gray-100 p-3 rounded text-sm">&lt;script src="경로/facility_nav.js"&gt;&lt;/script&gt;</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Category Modal -->
+  <div id="category-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40 hidden">
+    <div class="bg-white rounded-lg p-6 w-96 shadow-xl">
+      <h3 class="text-lg font-bold mb-4">새로운 시설 종류 추가</h3>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">분류명 (예: 박물관, 놀이공원)</label>
+        <input type="text" id="new-cat-name" class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500" placeholder="시설 종류 입력">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">입력 방식</label>
+        <select id="new-cat-type" class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
+          <option value="simple">단일형 (쉼표로 구분)</option>
+          <option value="complex">그룹형 (줄바꿈 및 [그룹명] 사용)</option>
+        </select>
+      </div>
+      <div class="flex justify-end gap-2 mt-6">
+        <button onclick="closeAddCategoryModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors font-medium">취소</button>
+        <button onclick="addNewCategory()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors font-medium">추가하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Message -->
+  <div id="toast" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none z-50 font-bold">
+    메시지
+  </div>
+
+  <script>
+    const regionData = [
+      { prov: "효빈광역시", dist: "효빈광역시", color: "#7777aa", logo: "이미지/효빈광역시_흰색로고.webp" },
+      { prov: "효빈광역시", dist: "중구", color: "#BB9955", logo: "이미지/중구_흰색로고.webp" },
+      { prov: "효빈광역시", dist: "동구", color: "#FF9922", logo: "이미지/동구_흰색로고.webp" },
+      { prov: "효빈광역시", dist: "서구", color: "#00AABB", logo: "이미지/서구_흰색로고.webp" },
+      { prov: "효빈광역시", dist: "남구", color: "#DDBBFF", logo: "이미지/남구_흰색로고.webp" },
+      { prov: "효빈광역시", dist: "북구", color: "#7799CC", logo: "이미지/북구_흰색로고.webp" },
+      { prov: "효빈광역시", dist: "청엽구", color: "#006699", logo: "이미지/청엽구_흰색로고.webp" },
+      { prov: "효빈광역시", dist: "창전구", color: "#33AAFF", logo: "이미지/창전구_흰색로고.webp" },
+      { prov: "효빈광역시", dist: "안천구", color: "#AA66DD", logo: "이미지/안천구_흰색로고.webp" },
+      { prov: "효빈광역시", dist: "탄성군", color: "#BBFF64", logo: "이미지/탄성군_흰색로고.webp" },
+      
+      { prov: "덕빈북도", dist: "덕빈북도", color: "#4AD898", logo: "이미지/svg/덕빈북도.svg" },
+      { prov: "덕빈북도", dist: "강주시", color: "#ffc94a", logo: "이미지/강주시.webp" },
+      { prov: "덕빈북도", dist: "계성시", color: "#ED7D95", logo: "이미지/계성시.webp" },
+      { prov: "덕빈북도", dist: "군천시", color: "#E7D600", logo: "이미지/군천시.webp" },
+      { prov: "덕빈북도", dist: "기도군", color: "#01B7ED", logo: "이미지/기도군.webp" },
+      { prov: "덕빈북도", dist: "낭원군", color: "#485EC6", logo: "이미지/낭원군.webp" },
+      { prov: "덕빈북도", dist: "덕현군", color: "#FF5800", logo: "이미지/덕현군.webp" },
+      { prov: "덕빈북도", dist: "모제군", color: "#A664A0", logo: "이미지/모제군.webp" },
+      { prov: "덕빈북도", dist: "반양군", color: "#D81C2F", logo: "이미지/반양군.webp" },
+      { prov: "덕빈북도", dist: "상안군", color: "#84C36E", logo: "이미지/상안군.webp" },
+      { prov: "덕빈북도", dist: "서진시", color: "#9CA5B9", logo: "이미지/서진시.webp" },
+      { prov: "덕빈북도", dist: "서해시", color: "#37B484", logo: "이미지/서해시.webp" },
+      { prov: "덕빈북도", dist: "선곡군", color: "#D6D5CA", logo: "이미지/선곡군.webp" },
+      { prov: "덕빈북도", dist: "약산시", color: "#F8C8C4", logo: "이미지/약산시.webp" },
+      { prov: "덕빈북도", dist: "저천군", color: "#1D1D1D", logo: "이미지/저천군.webp" },
+      { prov: "덕빈북도", dist: "전산시", color: "#FF7F27", logo: "이미지/전산시.webp" },
+      { prov: "덕빈북도", dist: "치원군", color: "#aa7799", logo: "이미지/치원군.webp" },
+      { prov: "덕빈북도", dist: "천주시", color: "#8B4993", logo: "이미지/천주시.webp" },
+      { prov: "덕빈북도", dist: "빈주시", color: "#ffeeaa", logo: "이미지/빈주시.webp" },
+      { prov: "덕빈북도", dist: "궁하구", color: "#8B4993", logo: "이미지/궁하구.webp" },
+      { prov: "덕빈북도", dist: "천성구", color: "#8B4993", logo: "이미지/천성구.webp" },
+      { prov: "덕빈북도", dist: "빈성구", color: "#ffeeaa", logo: "이미지/빈성구.webp" },
+      { prov: "덕빈북도", dist: "가원구", color: "#ffeeaa", logo: "이미지/가원구.webp" },
+      { prov: "덕빈북도", dist: "장기구", color: "#ffeeaa", logo: "이미지/장기구.webp" },
+      
+      { prov: "덕빈남도", dist: "덕빈남도", color: "#335566", logo: "이미지/svg/덕빈남도.svg" },
+      { prov: "덕빈남도", dist: "매산군", color: "#A0FFF9", logo: "이미지/매산군.webp" },
+      { prov: "덕빈남도", dist: "매성시", color: "#FF6E90", logo: "이미지/매성시.webp" },
+      { prov: "덕빈남도", dist: "비천시", color: "#74F466", logo: "이미지/비천시.webp" },
+      { prov: "덕빈남도", dist: "석창군", color: "#0000A0", logo: "이미지/석창군.webp" },
+      { prov: "덕빈남도", dist: "방산시", color: "#FFF442", logo: "이미지/방산시.webp" },
+      { prov: "덕빈남도", dist: "분주군", color: "#FF3535", logo: "이미지/분주군.webp" },
+      { prov: "덕빈남도", dist: "고포군", color: "#B2FFDD", logo: "이미지/고포군.webp" },
+      { prov: "덕빈남도", dist: "곡천군", color: "#FF51C4", logo: "이미지/곡천군.webp" },
+      { prov: "덕빈남도", dist: "인곡군", color: "#4cd2e2", logo: "이미지/인곡군.webp" },
+      { prov: "덕빈남도", dist: "관수군", color: "#e49dfd", logo: "이미지/관수군.webp" },
+      { prov: "덕빈남도", dist: "운진군", color: "#bbff64", logo: "이미지/운진군.webp" },
+      { prov: "덕빈남도", dist: "두원군", color: "#e3ba3a", logo: "이미지/두원군.webp" },
+      { prov: "덕빈남도", dist: "마진시", color: "#ff99be", logo: "이미지/마진시.webp" },
+      { prov: "덕빈남도", dist: "덕주시", color: "#ff9ea9", logo: "이미지/덕주시.webp" },
+      { prov: "덕빈남도", dist: "조전구", color: "#ff9ea9", logo: "이미지/조전구.webp" },
+      { prov: "덕빈남도", dist: "덕산구", color: "#ff9ea9", logo: "이미지/덕산구.webp" },
+      { prov: "덕빈남도", dist: "하정시", color: "#ff3b72", logo: "이미지/하정시.webp" },
+      { prov: "덕빈남도", dist: "원안군", color: "#00aabb", logo: "이미지/원안군.webp" },
+      { prov: "덕빈남도", dist: "낙주시", color: "#bb0033", logo: "이미지/낙주시.webp" }
+    ];
+
+    // 사용자가 쉼표로만 입력하면 되도록 템플릿 내용 단순화
+    const categoryTemplates = [
+      { id: 'cat-metro', name: '도시철도', checked: true, type: 'complex', content: "[1호선] 천왕사역, 백천역, 입희역\n[2호선] 신영역, 채산역\n[3호선] 사능역" },
+      { id: 'cat-train', name: '일반철도', checked: true, type: 'complex', content: "[강빈선] 북효빈역" },
+      { id: 'cat-highway', name: '고속도로', checked: true, type: 'simple', content: "효빈외곽순환고속도로, 평전공단IC, 곡진IC" },
+      { id: 'cat-park', name: '공원', checked: true, type: 'simple', content: "시청공원, 사가당공원, 진희공원" },
+      { id: 'cat-theater', name: '공연장', checked: true, type: 'simple', content: "HSCO 오디토리움, 만화애니메이션의전당" },
+      { id: 'cat-exhibition', name: '전시장', checked: true, type: 'simple', content: "HSCO" },
+      { id: 'cat-plaza', name: '광장', checked: true, type: 'simple', content: "효빈시청광장" },
+      { id: 'cat-sports', name: '체육시설', checked: true, type: 'simple', content: "효빈종합운동장, 효빈 e스포츠 아레나" },
+      { id: 'cat-waterpark', name: '워터파크', checked: false, type: 'simple', content: "효빈 아쿠아파크" },
+      { id: 'cat-hospital', name: '종합병원', checked: true, type: 'simple', content: "삼선대학교병원, 고송병원" },
+      { id: 'cat-commerce', name: '상업시설', checked: true, type: 'complex', content: "[전통시장] 중수시장, 청능도매종합시장\n[백화점] 롯데백화점 진희점\n[대형마트] 이마트 중수점" },
+      { id: 'cat-cinema', name: '영화관', checked: true, type: 'simple', content: "메가박스 고송, CGV고송" },
+      { id: 'cat-transport', name: '교통시설', checked: true, type: 'simple', content: "효빈종합버스터미널, 효빈공영차고지" },
+      { id: 'cat-hotel', name: '숙박', checked: true, type: 'simple', content: "효빈 하라오호텔, 브레온 호텔" },
+      { id: 'cat-religion', name: '종교시설', checked: true, type: 'simple', content: "천왕사, 원각사, 효빈교회" },
+      { id: 'cat-beach', name: '해수욕장', checked: false, type: 'simple', content: "토모리해수욕장, 고송해수욕장" },
+      { id: 'cat-library', name: '도서관', checked: true, type: 'simple', content: "효빈시청한바다도서관, 효빈광역시립시민도서관" },
+      { id: 'cat-dock', name: '선착장', checked: false, type: 'simple', content: "효빈유람선 중수포산선착장, 고송선착장" },
+      { id: 'cat-bridge', name: '교량', checked: true, type: 'complex', content: "[팔천강] 등중교, 중수대교\n[기타하천] 고송교, 효빈교" },
+      { id: 'cat-broadcast', name: '방송시설', checked: false, type: 'simple', content: "효빈방송" },
+      { id: 'cat-skyscraper', name: '마천루', checked: true, type: 'simple', content: "고송토모리빌딩, 중수마가렛빌딩" }
+    ];
+
+    const provinces = [...new Set(regionData.map(item => item.prov))];
+
+    function initSelects() {
+      const provSelect = document.getElementById('prov-select');
+      provSelect.innerHTML = provinces.map(p => `<option value="${p}">${p}</option>`).join('');
+      updateDistricts();
+      initCategories();
+    }
+
+    function updateDistricts() {
+      const selectedProv = document.getElementById('prov-select').value;
+      const distSelect = document.getElementById('dist-select');
+      
+      const dists = regionData.filter(item => item.prov === selectedProv);
+      distSelect.innerHTML = dists.map(d => `<option value="${d.dist}">${d.dist}</option>`).join('');
+      
+      const defaultDist = dists.find(d => d.dist === '북구') || dists[0];
+      if(defaultDist) distSelect.value = defaultDist.dist;
+
+      updateThemePreview();
+    }
+
+    function getSelectedData() {
+      const prov = document.getElementById('prov-select').value;
+      const dist = document.getElementById('dist-select').value;
+      return regionData.find(item => item.prov === prov && item.dist === dist);
+    }
+
+    function updateThemePreview() {
+      const data = getSelectedData();
+      if(data) {
+        document.getElementById('color-preview').style.backgroundColor = data.color;
+        document.getElementById('color-code').innerText = data.color;
+        document.getElementById('logo-path-preview').innerText = data.logo;
+      }
+    }
+
+    function initCategories() {
+      const container = document.getElementById('categories-container');
+      let html = '';
+
+      categoryTemplates.forEach((cat) => {
+        const isComplex = cat.type === 'complex';
+        const badge = isComplex 
+          ? `<span class="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded font-bold border border-purple-200">그룹형 (줄바꿈 구분)</span>`
+          : `<span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded font-bold border border-green-200">단일형 (쉼표 구분)</span>`;
+          
+        const placeholder = isComplex 
+          ? '[그룹명] 시설1, 시설2\\n[그룹명2] 시설3, 시설4\\n(이런 형태로 입력하세요)' 
+          : '시설1, 시설2, 시설3 (쉼표로만 구분하여 입력하세요)';
+
+        html += `
+          <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm category-block">
+            <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="document.getElementById('${cat.id}').click(); event.stopPropagation();">
+              <label class="flex items-center gap-2 font-bold text-gray-700 cursor-pointer">
+                <input type="checkbox" id="${cat.id}" class="cat-checkbox w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" ${cat.checked ? 'checked' : ''} onclick="event.stopPropagation();">
+                ${cat.name}
+              </label>
+              ${badge}
+            </div>
+            
+            <textarea id="${cat.id}-content" rows="${isComplex ? 4 : 2}" class="w-full text-sm font-mono border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500 mt-1" placeholder="${placeholder}">${cat.content}</textarea>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // 텍스트를 받아서 <a> 태그로 자동 변환해주는 마법의 함수!
+    function makeLink(text) {
+      const name = text.trim();
+      if(!name) return '';
+      // 파일명 매칭을 위해 공백을 언더바로 변환하여 링크 생성 (위키 표준)
+      const href = name.replace(/ /g, '_') + '.html';
+      return `<a href="${href}">${name}</a>`;
+    }
+
+    function generateCodeString() {
+      const data = getSelectedData();
+      const provName = data.prov;
+      const distName = data.dist;
+      const color = data.color;
+      const logoPath = data.logo;
+
+      // HTML 행 자동 생성기
+      let rowsHtml = '';
+      categoryTemplates.forEach(cat => {
+        const checkbox = document.getElementById(cat.id);
+        const textarea = document.getElementById(`${cat.id}-content`);
+        
+        if (checkbox && checkbox.checked) {
+          const content = textarea.value.trim();
+          if (!content) return; // 내용이 비었으면 건너뜀
+
+          // 그룹형(Complex) 처리
+          if (cat.type === 'complex') {
+            // 줄바꿈으로 파싱
+            const lines = content.split('\n').map(l => l.trim()).filter(l => l);
+            const rowspan = lines.length;
+            if (rowspan === 0) return;
+
+            rowsHtml += `\n    <!-- ${cat.name} -->`;
+            
+            lines.forEach((line, index) => {
+              // 정규식으로 [그룹명] 과 그 뒤의 시설목록을 분리
+              const match = line.match(/^\[(.*?)\](.*)$/);
+              let subcat = '';
+              let itemsText = line; // 기본값 (괄호 안썼을 때 대비)
+              
+              if (match) {
+                subcat = match[1].trim();
+                itemsText = match[2].trim();
+              }
+              
+              // 쉼표로 분리 후 링크 태그 씌우고 가운데점(·)으로 합치기
+              const itemsHtml = itemsText.split(',').map(makeLink).filter(Boolean).join(' · ');
+
+              rowsHtml += `\n    <tr>`;
+              
+              // 첫 줄일 때만 좌측 카테고리(병합 셀) 출력
+              if (index === 0) {
+                rowsHtml += `\n      <td rowspan="${rowspan}" class="hyobin-cat">${cat.name}</td>`;
+              }
+              
+              // 도시철도는 특별 취급 (로고 이미지 생성)
+              if (cat.id === 'cat-metro' && subcat) {
+                // 광역자치단체 이름 앞 두글자 (효빈, 덕빈 등) 추출해서 자동 적용
+                const regionPrefix = provName.substring(0, 2); 
+                const svgPath = `이미지/svg/${regionPrefix}${subcat}.svg`;
+                
+                rowsHtml += `\n      <td class="hyobin-metro-cell">`;
+                // 이미지가 없을 경우 글자만 나오도록 onerror 마법 추가 (DOM 삭제 전 클래스 변경부터 하도록 수정)
+                rowsHtml += `<img src="${svgPath}" alt="${subcat}" class="hyobin-metro-logo" onerror="const p=this.parentNode; p.className='hyobin-subcat'; p.innerText='${subcat}';">`;
+                rowsHtml += `</td>`;
+              } else if (subcat) {
+                // 일반 그룹명
+                rowsHtml += `\n      <td class="hyobin-subcat">${subcat}</td>`;
+              } else {
+                // 그룹명 안적었을 때 빈칸 방지
+                rowsHtml += `\n      <td class="hyobin-subcat">-</td>`;
+              }
+              
+              rowsHtml += `\n      <td class="hyobin-content">\n        ${itemsHtml}\n      </td>`;
+              rowsHtml += `\n    </tr>`;
+            });
+            
+          } 
+          // 단일형(Simple) 처리
+          else { 
+            // 쉼표로 분리 후 즉시 변환
+            const itemsHtml = content.split(',').map(makeLink).filter(Boolean).join(' · ');
+            
+            rowsHtml += `
+    <!-- ${cat.name} -->
+    <tr>
+      <td class="hyobin-cat">${cat.name}</td>
+      <td colspan="2" class="hyobin-content">
+        ${itemsHtml}
+      </td>
+    </tr>`;
+          }
+        }
+      });
+
+      const jsTemplate = `(function() {
+  const facilityTableHTML = \`
+  <style>
+    .hyobin-table {
+      width: 100%;
+      max-width: 1000px;
+      border-collapse: collapse;
+      border: 2px solid ${color};
+      font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+      font-size: 13px;
+      margin: 0 auto;
+    }
+    .hyobin-table th, .hyobin-table td {
+      border: 1px solid #e0e0e0;
+      padding: 8px;
+    }
+    .hyobin-header {
+      background-color: ${color};
+      text-align: center;
+      padding: 15px !important;
+      border-bottom: none;
+    }
+    /* 헤더 박스 */
+    .hyobin-header-box {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid white;
+      padding: 8px 15px;
+      color: white;
+    }
+    .hyobin-header-logo {
+      padding-right: 15px;
+      border-right: 1px solid white;
+      margin-right: 15px;
+    }
+    .hyobin-header-logo img {
+      height: 35px;
+      display: block;
+    }
+    .hyobin-header-text {
+      text-align: left;
+    }
+    .hyobin-header-text .subtitle {
+      font-size: 12px;
+      display: block;
+      line-height: 1.2;
+      font-weight: normal;
+    }
+    .hyobin-header-text .title {
+      font-size: 18px;
+      font-weight: bold;
+      display: block;
+      line-height: 1.2;
+      margin-top: 2px;
+    }
+    .hyobin-toggle {
+      background-color: #ffffff;
+      text-align: center;
+      font-weight: bold;
+      color: #333;
+      border-bottom: 2px solid ${color} !important;
+    }
+    .hyobin-cat {
+      background-color: ${color};
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      white-space: nowrap;
+      width: 15%;
+    }
+    .hyobin-subcat {
+      background-color: #f8f9fa;
+      text-align: center;
+      font-weight: bold;
+      width: 12%;
+      color: #333;
+    }
+    /* 로고 전용 칸 */
+    .hyobin-metro-cell {
+      background-color: #f8f9fa;
+      text-align: center !important;
+      vertical-align: middle !important;
+      width: 12%;
+    }
+    .hyobin-metro-logo {
+      width: 25px;
+      height: 25px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .hyobin-content {
+      background-color: #ffffff;
+      text-align: left;
+      line-height: 1.8;
+      word-break: keep-all;
+    }
+    .hyobin-content a {
+      color: #0055aa;
+      text-decoration: none;
+    }
+    .hyobin-content a:hover {
+      text-decoration: underline;
+    }
+  </style>
+
+  <table class="hyobin-table">
+    <!-- 헤더 -->
+    <tr>
+      <td colspan="3" class="hyobin-header">
+        <div class="hyobin-header-box">
+          <div class="hyobin-header-logo">
+            <img src="${logoPath}" alt="${distName} 로고" onerror="this.style.display='none'">
+          </div>
+          <div class="hyobin-header-text">
+            <span class="subtitle">${provName}</span>
+            <span class="title">${distName}의 시설</span>
+          </div>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3" class="hyobin-toggle">[ 펼치기 · 접기 ]</td>
+    </tr>${rowsHtml}
+  </table>
+  \`;
+
+  const container = document.getElementById('district-nav-container');
+  if (container) {
+    container.innerHTML = facilityTableHTML;
+  } else {
+    console.error("오류: 'district-nav-container' 요소를 찾을 수 없어 표를 렌더링하지 못했습니다.");
+  }
+})();`;
+      return jsTemplate;
+    }
+
+    function generateOutput() {
+      const code = generateCodeString();
+      
+      document.getElementById('generated-js-code').textContent = code;
+      
+      // 즉시 실행 함수 안에 감싸인 HTML 문자열만 정규식으로 똑 떼어내서 렌더링
+      const htmlMatch = code.match(/facilityTableHTML = `([\s\S]*?)`;/);
+      if (htmlMatch && htmlMatch[1]) {
+        const rawHTML = htmlMatch[1];
+        document.getElementById('preview-render-area').innerHTML = rawHTML;
+      }
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function copyCode(elementId) {
+      const el = document.getElementById(elementId);
+      const textToCopy = el.textContent;
+      
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        showToast('코드가 클립보드에 복사되었습니다!');
+      }).catch(err => {
+        const textArea = document.createElement("textarea");
+        textArea.value = textToCopy;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          showToast('코드가 복사되었습니다!');
+        } catch (err) {
+          showToast('복사에 실패했습니다. 텍스트를 직접 드래그하여 복사해주세요.');
+        }
+        document.body.removeChild(textArea);
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 3000);
+    }
+
+    function openAddCategoryModal() {
+      document.getElementById('new-cat-name').value = '';
+      document.getElementById('category-modal').classList.remove('hidden');
+    }
+
+    function closeAddCategoryModal() {
+      document.getElementById('category-modal').classList.add('hidden');
+    }
+
+    function syncCategoriesState() {
+      categoryTemplates.forEach(cat => {
+        const checkbox = document.getElementById(cat.id);
+        const textarea = document.getElementById(`${cat.id}-content`);
+        if(checkbox) cat.checked = checkbox.checked;
+        if(textarea) cat.content = textarea.value;
+      });
+    }
+
+    function addNewCategory() {
+      const nameInput = document.getElementById('new-cat-name').value.trim();
+      const typeInput = document.getElementById('new-cat-type').value;
+      
+      if(!nameInput) {
+        showToast('분류명을 입력해주세요.');
+        return;
+      }
+      
+      syncCategoriesState(); // 추가하기 전 기존에 작성된 텍스트 보존
+      
+      const newId = 'cat-custom-' + Date.now();
+      categoryTemplates.push({
+        id: newId,
+        name: nameInput,
+        checked: true,
+        type: typeInput,
+        content: ""
+      });
+      
+      initCategories(); // 화면 다시 그리기
+      closeAddCategoryModal();
+      showToast(nameInput + ' 분류가 성공적으로 추가되었습니다!');
+    }
+
+    window.onload = () => {
+      initSelects();
+      generateOutput();
+    };
+  </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 /**
  * HyobinWiki JS Master Index (Auto-Generated & Fixed Aliases)
- * 업데이트: 2026. 10. 10. 오전 11:56:18
+ * 업데이트: 2026. 10. 11. 오전 11:16:41
  */
 
 window.filePaths = {
@@ -120,6 +120,7 @@ window.filePaths = {
     "dy-pres-nav": "js/",
     "ecommerce-univ-nav": "js/",
     "educollab-univ-nav": "js/",
+    "eupseong_template": "assets/",
     "find-missing": "",
     "gangju-univ-nav": "js/",
     "gifted-sci-nav": "js/",
@@ -196,6 +197,7 @@ window.filePaths = {
     "namgu_pop": "js/",
     "nangwon-univ-nav": "js/",
     "nat-univ-nav": "js/",
+    "national_museum_nav": "assets/",
     "neugumma": "assets/",
     "niji_members_nav": "js/",
     "nimisibal": "assets/",

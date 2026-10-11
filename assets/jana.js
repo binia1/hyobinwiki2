@@ -1,6 +1,3 @@
-
-
-
 function applyAutoLinks() {
     // 버스 번호 자동 증식 로직
     const expandedMap = { ...wikiLinkMap };
@@ -47,21 +44,23 @@ function applyAutoLinks() {
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     const nodesToReplace = [];
 
+// 💡 1. 자동 링크 원천 차단 구역
 const forbiddenSelectors = [
-        'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
-        '.txt-lvl-1', '#page-title', 
-        'a', 'nav', 'button', 'header', 'footer', 'summary',
-        '.category-box', '#toc-box', '.wiki-fn-content',
-        '.wiki-btn-group', '.nav-box-header', '.nav-table th',
-        '#lovelive-all-nav-container', '#lovelive-nav-container',
-        '.nav-box', '.wiki-macro-toc', 
-        'script', 'style', 'textarea', 'noscript', 'title',
-        '.no-autolink', '#hyobin-police-offices', // <--- 여기 ID를 넣으세요
-        'svg', 'canvas',     
-        '#wiki-footer-area','#bangdream-nav-zone'
-    ].join(', ');
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
+    '.txt-lvl-1', '#page-title', 
+    'a', 'nav', 'button', 'header', 'footer', 'summary',
+    '.category-box', '#toc-box', '.wiki-fn-content',
+    '.wiki-btn-group', '.nav-box-header', '.nav-table th',
+    '#lovelive-all-nav-container', '#lovelive-nav-container',
+    '.nav-box', '.wiki-macro-toc', 
+    'script', 'style', 'textarea', 'noscript', 'title',
+    '.no-autolink', '#hyobin-police-offices',
+    'svg', 'canvas',     
+    '#wiki-footer-area','#bangdream-nav-zone',
+    '#hyobin-med-container' // 🔥 추가: 효빈의료기관 틀 내부 전체 자동 링크 차단
+].join(', ');
 
-// 💡 3. 카멜레온 스텔스 구역
+// 💡 3. 카멜레온 스텔스 구역 (기존 색상/스타일 유지)
 const preserveStyleSelectors = [
     '.infobox', '.nav-line-name', 'th', '.infobox-top-label', '.nav-box-body td',
     'span[style*="color"]', 'span[style*="background"]', 
@@ -70,13 +69,10 @@ const preserveStyleSelectors = [
     '.l1', '.l2', '.l3', '.l4', '.l5', '.l6', '.l7', '.l8', '.lbinhyo', 
     '.wiki-fn', '.namu-head', '.namu-title', '.city', '.kind', '.badge', '.rounded', '.route-tab', '.text-white', 'summary', 'details', 'table', '.bus-badge',
     '.hb-guide-icon', '.hb-project-header', '.hb-project-footer', '.hb-structure-header', '.hb-badge',
-    // 👇 구역(컨테이너) 자체를 통째로 스텔스 처리
     'nav', '.wiki-navbox-header', '.wiki-navbox-footer', '.wiki-navbox', '.red-link', '.blue-link',
-    
-    // 🚨 [추가] 교통카드 실물 디자인 강제 변색 방어막!
-    '.transport-card', '.card-title', '.card-subtitle', '.card-footer', '.logo-box'
+    '.transport-card', '.card-title', '.card-subtitle', '.card-footer', '.logo-box',
+    '.hb-med-header', '.hb-med-table th' // 🔥 추가: 헤더와 테이블 지역명 <th>의 흰색 폰트 강제 유지
 ].join(', ');
-
     
     while (walker.nextNode()) {
         const node = walker.currentNode;
@@ -1253,21 +1249,10 @@ document.addEventListener('DOMContentLoaded', () => {
         { title: "【신규 역장 특전】 지금 접속 시 무료 300연차 & 사능동 소금빵 500개 지급! 리세마라 0티어 [UR 골든 아워 박라미] 확정 획득 찬스!", img: "이미지/레일루미네_스마일_페스티벌.webp", link: "레일루미네_스마일 페스티벌.html" },
         { title: "🚨국회의원도 기겁한 논란의 그 게임! '효빈 집 침실' 배경 풀더빙 상호작용 업데이트! 당장 플레이하세요", img: "이미지/효빈집침실.webp", link: "레일루미네_스마일 페스티벌.html" },
         { title: "\"선배님 이름 조별과제에서 뺍니다? 찡긋~💕\" 어뮤즈의 광견 [SSR 전노아] 한정 픽업 진행 중! (지금 다운로드)", img: "이미지/전노아_과잠2.webp", link: "레일루미네_스마일_페스티벌_게임.html" },
-        { title: "Lv.1 짬처리 역무원 박빛나 ➡️ Lv.99 단말기 퀵드로우 마스터! 당신만의 철도 미소녀를 육성하세요!", img: "이미지/박빛나.webp", link: "레일루미네_스마일_페스티벌_게임.html" },{ 
-  title: "🚨[경보] \"오빠... 방금 다른 역무원 뽑은 거야...?\" GPS 우정 팔찌 위치 추적 가동! [UR 흑묘 임세하] 픽업", 
-  img: "이미지/임세하.webp", 
-  link: "임세하.html" 
-},
-{ 
-  title: "정비복 속에 봉인된 B87의 압도적 중장갑! 효빈대 기계공학과 수석의 끈적한(?) 특별 과외가 시작됩니다!", 
-  img: "이미지/임세하_수영복.webp", 
-  link: "임세하.html" 
-},
-{ 
-  title: "【신규 유저 보상】 지금 가입 시 '부활의 영약 WD-40' 100개 & 퍼지바 500개 즉시 지급! 3천만원짜리 모터를 수리하세요!", 
-  img: "이미지/임세하_프로필.webp", 
-  link: "임세하.html" 
-}
+        { title: "Lv.1 짬처리 역무원 박빛나 ➡️ Lv.99 단말기 퀵드로우 마스터! 당신만의 철도 미소녀를 육성하세요!", img: "이미지/박빛나.webp", link: "레일루미네_스마일_페스티벌_게임.html" },
+        { title: "🚨[경보] \"오빠... 방금 다른 역무원 뽑은 거야...?\" GPS 우정 팔찌 위치 추적 가동! [UR 흑묘 임세하] 픽업", img: "이미지/임세하.webp", link: "임세하.html" },
+        { title: "정비복 속에 봉인된 B87의 압도적 중장갑! 효빈대 기계공학과 수석의 끈적한(?) 특별 과외가 시작됩니다!", img: "이미지/임세하_수영복.webp", link: "임세하.html" },
+        { title: "【신규 유저 보상】 지금 가입 시 '부활의 영약 WD-40' 100개 & 퍼지바 500개 즉시 지급! 3천만원짜리 모터를 수리하세요!", img: "이미지/임세하_프로필.webp", link: "임세하.html" }
     ];
 
     const injectAd = () => {

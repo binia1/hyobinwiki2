@@ -608,22 +608,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
     allElements.forEach(el => {
         // 자식 태그가 없고 순수하게 텍스트만 '★'인 요소를 찾음
-        if (el.textContent.trim() === '★' && el.children.length === 0) {
-            // a 태그일 경우 원래 걸려있던 링크(http://127.0.0.1:5501/%EC%A6%90%EA%B2%A8%EC%B0%BE%EA%B8%B0.html 같은 것) 무력화
-            if (el.tagName.toLowerCase() === 'a') {
-                el.href = 'javascript:void(0);'; 
-            }
-            
-            // 즐겨찾기 기능 덮어씌우기
-            el.style.cursor = 'pointer';
-            el.onclick = function(e) {
-                e.preventDefault(); // 기본 클릭 이벤트 차단
-                toggleBookmark(el);
-            };
-            
-            applyStarColor(el);
-            starFound = true;
-        }
+if (el.textContent.trim() === '★' && el.children.length === 0 && !el.closest('nav, table, .infobox, .wiki-fn-sup, sup')) {
+    if (el.tagName.toLowerCase() === 'a') {
+        el.href = 'javascript:void(0);'; 
+    }
+    el.style.cursor = 'pointer';
+    el.onclick = function(e) {
+        e.preventDefault();
+        toggleBookmark(el);
+    };
+    applyStarColor(el);
+    starFound = true;
+}
     });
 
     // --- [작전 2] 화면에 '★'가 단 하나도 없다면? ---
@@ -1520,5 +1516,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         }
+    });
+});
+// 툴팁 박스 내부에서 중복으로 튀어나오는 [1], [2] 각주 번호 텍스트 강제 삭제
+document.addEventListener("DOMContentLoaded", function() {
+    const tooltips = document.querySelectorAll('.wiki-fn-tooltip');
+    tooltips.forEach(tooltip => {
+        // 툴팁 내부 텍스트 중 맨 앞에 나오는 [숫자] 형태만 깔끔하게 제거
+        tooltip.innerHTML = tooltip.innerHTML.replace(/^\[\d+\]\s*/, '');
     });
 });

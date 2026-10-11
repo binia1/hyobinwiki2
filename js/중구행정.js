@@ -132,10 +132,10 @@
                         
                         <!-- 내조동 구역 -->
                         <tr>
-                            <td class="hb-admin-bg"><a href="내조1동.html">내조1동</a></td>
+                            <td class="hb-admin-bg"><a href="내조동.html">내조1동</a></td>
                             <td colspan="4" rowspan="2" class="hb-legal-bg"><a href="내조동.html">내조동</a></td>
                         </tr>
-                        <tr><td class="hb-admin-bg"><a href="내조2동.html">내조2동</a></td></tr>
+                        <tr><td class="hb-admin-bg"><a href="내조동.html">내조2동</a></td></tr>
                         
                         <!-- 고도동 구역 -->
                         <tr>

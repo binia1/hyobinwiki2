@@ -2610,11 +2610,11 @@ window.HB_WIKI_PAGES = [
   },
   {
     "title": "내조1동",
-    "href": "내조1동.html"
+    "href": "내조동.html"
   },
   {
     "title": "내조2동",
-    "href": "내조2동.html"
+    "href": "내조동.html"
   },
   {
     "title": "내조공원역",
@@ -15795,8 +15795,8 @@ window.HB_WIKI_ALIASES = {
   "남주여객": "남주여객.html",
   "낭원군": "낭원군.html",
   "내삼여객": "내삼여객.html",
-  "내조1동": "내조1동.html",
-  "내조2동": "내조2동.html",
+  "내조1동": "내조동.html",
+  "내조2동": "내조동.html",
   "내조공원역": "내조공원역.html",
   "내조역": "내조역.html",
   "내항01": "내항01.html",
@@ -20914,5 +20914,8 @@ window.HB_WIKI_ALIASES = {
   "효빈미술관": "효빈미술관.html",
   "효빈시립미술관": "효빈미술관.html",
   "효빈철도박물관": "효빈철도박물관.html",
-  "효빈애니메이션 박물관": "효빈애니메이션 박물관.html"
+  "효빈애니메이션 박물관": "효빈애니메이션 박물관.html",
+      "eupseong_template": "틀_뷰어_SPA.html#eupseong_template",
+    "national_museum_nav": "틀_뷰어_SPA.html#national_museum_nav",
+
 };
