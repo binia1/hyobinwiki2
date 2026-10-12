@@ -279,7 +279,7 @@
     <tr>
       <td class="hyobin-cat">숙박</td>
       <td colspan="2" class="hyobin-content">
-        <a href="효빈_하라오호텔.html">효빈 하라오호텔</a> · <a href="니지벨리_호텔.html">니지벨리 호텔</a> · <a href="에버그린_효빈.html">에버그린 효빈</a> · <a href="켄싱턴호텔_효빈.html">켄싱턴호텔 효빈</a> · <a href="브레온_호텔.html">브레온 호텔</a>
+        <a href="효빈_하라오호텔.html">효빈 하라오호텔</a> · <a href="니지벨리_호텔.html">니지벨리 호텔</a> · <a href="에버그린_효빈.html">에버그린 효빈</a> · <a href="켄싱턴호텔_효빈.html">켄싱턴호텔 효빈</a> · <a href="브레온_호텔.html">브레온 호텔</a>· <a href="롯데호텔_효빈.html">롯데호텔 효빈</a>
       </td>
     </tr>
 

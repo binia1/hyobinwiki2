@@ -126,7 +126,7 @@
     <tr>
       <td class="hyobin-cat">숙박</td>
       <td colspan="2" class="hyobin-content">
-        <a href="리엘라스테이.html">리엘라스테이</a> · <a href="헬로 해피 월드호첼.html">헬로 해피 월드호첼</a> · <a href="파스텔 호텔.html">파스텔 호텔</a> · <a href="애프터글로우호텔.html">애프터글로우호텔</a> · <a href="씨더스 호텔.html">씨더스 호텔</a> · <a href="레이즈 어 스이렌 호텔.html">레이즈 어 스이렌 호텔</a> · <a href="토치만 호텔.html">토치만 호텔</a> · <a href="라마다 효빈 호텔.html">라마다 효빈 호텔</a> · <a href="토네호텔.html">토네호텔</a> · <a href="완동호텔.html">완동호텔</a> · <a href="타이니스타 호텔.html">타이니스타 호텔</a> · <a href="세나드 호텔.html">세나드 호텔</a> · <a href="토요코인 효빈.html">토요코인 효빈</a> · <a href="사니파신 호텔.html">사니파신 호텔</a>
+        <a href="리엘라스테이.html">리엘라스테이</a> · <a href="헬로 해피 월드호첼.html">헬로 해피 월드호첼</a> · <a href="파스텔 호텔.html">파스텔 호텔</a> · <a href="애프터글로우호텔.html">애프터글로우호텔</a> · <a href="씨더스 호텔.html">씨더스 호텔</a> · <a href="레이즈 어 스이렌 호텔.html">레이즈 어 스이렌 호텔</a> · <a href="토치만호텔.html">토치만 호텔</a> · <a href="라마다 효빈 호텔.html">라마다 효빈 호텔</a> · <a href="토네호텔.html">토네호텔</a> · <a href="완동호텔.html">완동호텔</a> · <a href="타이니스타 호텔.html">타이니스타 호텔</a> · <a href="세나드 호텔.html">세나드 호텔</a> · <a href="토요코인 효빈.html">토요코인 효빈</a> · <a href="사니파신 호텔.html">사니파신 호텔</a>
       </td>
     </tr>
     <tr>

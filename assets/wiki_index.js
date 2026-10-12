@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 10. 10. 오후 4:46:06
+ * 업데이트: 2026. 10. 12. 오후 11:44:17
  */
 
 window.HB_WIKI_PAGES = [
@@ -13307,6 +13307,34 @@ window.HB_WIKI_PAGES = [
   {
     "title": "효빈애니메이션 박물관",
     "href": "효빈애니메이션 박물관.html"
+  },
+  {
+    "title": "철도역 승강장의 유형",
+    "href": "철도역 승강장의 유형.html"
+  },
+  {
+    "title": "js생성기",
+    "href": "js생성기.html"
+  },
+  {
+    "title": "시설생성기",
+    "href": "시설생성기.html"
+  },
+  {
+    "title": "효빈복지재단 사랑병원",
+    "href": "효빈복지재단 사랑병원.html"
+  },
+  {
+    "title": "서효빈병원",
+    "href": "서효빈병원.html"
+  },
+  {
+    "title": "효빈_샤이니_리조트",
+    "href": "효빈_샤이니_리조트.html"
+  },
+  {
+    "title": "효빈_하라오호텔",
+    "href": "효빈_하라오호텔.html"
   }
 ];
 
@@ -20915,7 +20943,13 @@ window.HB_WIKI_ALIASES = {
   "효빈시립미술관": "효빈미술관.html",
   "효빈철도박물관": "효빈철도박물관.html",
   "효빈애니메이션 박물관": "효빈애니메이션 박물관.html",
-      "eupseong_template": "틀_뷰어_SPA.html#eupseong_template",
-    "national_museum_nav": "틀_뷰어_SPA.html#national_museum_nav",
-
+  "eupseong_template": "틀_뷰어_SPA.html#eupseong_template",
+  "national_museum_nav": "틀_뷰어_SPA.html#national_museum_nav",
+  "철도역 승강장의 유형": "철도역 승강장의 유형.html",
+  "js생성기": "js생성기.html",
+  "시설생성기": "시설생성기.html",
+  "효빈복지재단 사랑병원": "효빈복지재단 사랑병원.html",
+  "서효빈병원": "서효빈병원.html",
+  "효빈_샤이니_리조트": "효빈_샤이니_리조트.html",
+  "효빈_하라오호텔": "효빈_하라오호텔.html"
 };
