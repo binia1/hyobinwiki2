@@ -1396,58 +1396,349 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 2. 공통 모달 및 다크 모드 개선 CSS는 문서에 없으면 어떤 페이지든 무조건 주입
+// 2. 공통 모달 및 다크 모드 개선 CSS는 문서에 없으면 어떤 페이지든 무조건 주입
     if (!document.getElementById('hyobin-modal-styles')) {
         const modalStyle = `
             <style id="hyobin-modal-styles">
+                /* === 기존 모달 스타일 === */
                 .modal-overlay {
                     position: fixed !important; top: 0; left: 0; width: 100%; height: 100%;
                     background-color: rgba(0, 0, 0, 0.65); display: none;
                     justify-content: center; align-items: center; z-index: 99999 !important;
                     backdrop-filter: blur(2px);
                 }
-                .modal-overlay.active, .modal-overlay.show, .modal-overlay.open {
-                    display: flex !important;
-                }
+                .modal-overlay.active, .modal-overlay.show, .modal-overlay.open { display: flex !important; }
                 .modal-window {
                     background-color: #ffffff; padding: 24px; border-radius: 10px;
                     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); width: 90%; max-width: 400px;
                     position: relative; box-sizing: border-box; font-family: inherit; color: #222;
                     border: 1px solid #e5e7eb;
                 }
-                body.dark-mode { background-color: #1f2023 !important; color: #ddd !important; }
-                body.dark-mode nav { background-color: #33334d !important; }
-                body.dark-mode .modal-window { background-color: #2a2d30; color: #eee; border-color: #444; }
-                body.dark-mode .modal-header { border-bottom: 1px solid #444; color: #fff; }
-                body.dark-mode .modal-input { background-color: #1a1a24; border-color: #444; color: #fff; }
-                body.dark-mode .modal-input:focus { border-color: #8888cc; }
-                .modal-header {
-                    font-size: 1.15rem; font-weight: bold; margin-bottom: 18px; padding-bottom: 12px;
-                    border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;
-                }
+                .modal-header { font-size: 1.15rem; font-weight: bold; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
                 .close-btn { cursor: pointer; font-size: 1.5rem; color: #888; line-height: 1; }
                 .close-btn:hover { color: #ef4444; }
-                .modal-input {
-                    width: 100%; padding: 11px 14px; margin-bottom: 12px; border: 1px solid #ccc;
-                    border-radius: 6px; font-size: 0.9rem; box-sizing: border-box; background-color: #fafafa;
-                }
+                .modal-input { width: 100%; padding: 11px 14px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; box-sizing: border-box; background-color: #fafafa; }
                 .modal-input:focus { outline: none; border-color: #7777AA; background-color: #fff; }
-                .modal-btn {
-                    width: 100%; background-color: #666699; color: white; padding: 11px; border: none;
-                    border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 6px;
-                }
+                .modal-btn { width: 100%; background-color: #666699; color: white; padding: 11px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 6px; }
                 .modal-btn:hover { background-color: #555588; }
                 .modal-btn-sub { background-color: #6b7280; margin-top: 8px; }
                 .modal-btn-sub:hover { background-color: #4b5563; }
                 .modal-link { color: #666699; cursor: pointer; font-weight: bold; text-decoration: underline; }
-                body.dark-mode .modal-link { color: #6699ff; }
                 .setting-item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; font-size: 0.95rem; }
+/* === [data-theme='dark'] 기반 문서들 다크모드 완벽 대응 === */
+                [data-theme='dark'] body,
+                [data-theme='dark'] .wiki-container,
+                [data-theme='dark'] .infobox,
+                [data-theme='dark'] .infobox-title-row,
+                [data-theme='dark'] .infobox-logo,
+                [data-theme='dark'] .toc,
+                [data-theme='dark'] .category-box,
+                [data-theme='dark'] .quote-box,
+                [data-theme='dark'] .seongdeok-alert,
+                [data-theme='dark'] .navbox-content,
+                [data-theme='dark'] table,
+                [data-theme='dark'] th,
+                [data-theme='dark'] td {
+                    background-color: #2b2d31 !important;
+                    color: #dbdee1 !important;
+                    border-color: #3f4147 !important;
+                }
+                [data-theme='dark'] .infobox-top-label,
+                [data-theme='dark'] th {
+                    background-color: #1e1f22 !important;
+                    color: #f2f3f5 !important;
+                }
+                [data-theme='dark'] h1,
+                [data-theme='dark'] h2,
+                [data-theme='dark'] h3 {
+                    color: #f2f3f5 !important;
+                }
+                /* === 깔끔하고 눈이 편안한 다크모드 통합 통합본 === */
+                body.dark-mode { 
+                    background-color: #2b2d31 !important; 
+                    color: #dbdee1 !important; 
+                }
+                body.dark-mode .wiki-container { 
+                    background-color: #313338 !important; 
+                    border-color: #3f4147 !important; 
+                }
+                body.dark-mode nav.bg-\\[\\#7777AA\\] { 
+                    background-color: #1e1f22 !important; 
+                }
+                body.dark-mode .modal-window { 
+                    background-color: #313338 !important; 
+                    color: #dbdee1 !important; 
+                    border-color: #4e5058 !important; 
+                }
+                body.dark-mode .modal-header { 
+                    border-bottom: 1px solid #3f4147 !important; 
+                    color: #f2f3f5 !important; 
+                }
+                body.dark-mode .modal-input { 
+                    background-color: #1e1f22 !important; 
+                    border-color: #4e5058 !important; 
+                    color: #f2f3f5 !important; 
+                }
+                body.dark-mode .modal-link { 
+                    color: #6699ff !important; 
+                }
+                body.dark-mode .category-box {
+                    background-color: #2b2d31 !important;
+                    border-color: #3f4147 !important;
+                    color: #dbdee1 !important;
+                }
+                body.dark-mode div[id$="-container"] table,
+                body.dark-mode div[id$="-container"] td,
+                body.dark-mode div[id$="-container"] th {
+                    background-color: #2b2d31 !important;
+                    color: #dbdee1 !important;
+                    border-color: #3f4147 !important;
+                }
+                body.dark-mode div[id$="-container"] th {
+                    background-color: #1e1f22 !important;
+                    color: #f2f3f5 !important;
+                }
+                body.dark-mode .nav-logo-box { 
+                    background-color: #3a3a55 !important; 
+                    color: #eee !important; 
+                }
+                body.dark-mode input[placeholder="문서 검색"] { 
+                    background-color: #252525 !important; 
+                    color: #eee !important; 
+                    border: 1px solid #444 !important; 
+                }
+                /* 이미지나 지도(iframe)는 반전/깨짐 방지 보호 */
+                body.dark-mode img, 
+                body.dark-mode iframe { 
+                    filter: none !important; 
+                }
+                    /* === 목차 박스 및 둘러보기 틀/테이블 다크모드 강제 고정 === */
+                body.dark-mode .toc {
+                    background-color: #2b2d31 !important;
+                    border-color: #3f4147 !important;
+                    color: #dbdee1 !important;
+                }
+                body.dark-mode .toc .toc-title {
+                    color: #f2f3f5 !important;
+                    border-bottom: 1px solid #3f4147 !important;
+                }
+                body.dark-mode .toc a {
+                    color: #99aab5 !important;
+                }
+                body.dark-mode .toc a:hover {
+                    color: #6699ff !important;
+                }
+                /* 둘러보기 틀 및 내부 모든 표/셀 강제 진압 */
+                body.dark-mode .nav-template,
+                body.dark-mode .nav-template summary,
+                body.dark-mode .nav-template-content,
+                body.dark-mode .nav-cell {
+                    background-color: #2b2d31 !important;
+                    color: #dbdee1 !important;
+                    border-color: #3f4147 !important;
+                }
+                body.dark-mode .nav-template summary {
+                    background-color: #1e1f22 !important;
+                    color: #f2f3f5 !important;
+                }
+                    /* === 인포박스(오른쪽 정보 표) 및 내부 요소 다크모드 강제 고정 === */
+                body.dark-mode .infobox {
+                    background-color: #2b2d31 !important;
+                    border-color: #3f4147 !important;
+                    color: #dbdee1 !important;
+                }
+                body.dark-mode .infobox-title {
+                    background-color: var(--theme-color) !important;
+                    color: #ffffff !important;
+                }
+                body.dark-mode .infobox-image {
+                    background-color: #2b2d31 !important;
+                }
+                body.dark-mode .infobox table,
+                body.dark-mode .infobox th,
+                body.dark-mode .infobox td {
+                    background-color: #2b2d31 !important;
+                    color: #dbdee1 !important;
+                    border-color: #3f4147 !important;
+                }
+                body.dark-mode .infobox th {
+                    background-color: #1e1f22 !important;
+                    color: #f2f3f5 !important;
+                }
+                    /* === 인용구(blockquote) 박스 다크모드 강제 고정 === */
+                body.dark-mode blockquote {
+                    background-color: #2b2d31 !important;
+                    border-left-color: var(--theme-color, #00CCAA) !important;
+                    color: #dbdee1 !important;
+                }
+                body.dark-mode blockquote span {
+                    color: #99aab5 !important;
+                }
+                    /* === 다크모드 시 너무 진한 하이퍼링크 색상 부드럽게 조정 === */
+                body.dark-mode a,
+                body.dark-mode .wiki-link {
+                    color: #58a6ff !important;
+                }
+                body.dark-mode a:hover,
+                body.dark-mode .wiki-link:hover {
+                    color: #79c0ff !important;
+                }
+                    /* === 우측 하단 툴버튼(플로팅 버튼) 다크모드 강제 고정 === */
+                body.dark-mode div[style*="fixed"], 
+                body.dark-mode .floating-tools, 
+                body.dark-mode button:not([class*="modal"]),
+                body.dark-mode .fixed {
+                    background-color: #313338 !important;
+                    color: #dbdee1 !important;
+                    border-color: #3f4147 !important;
+                }
+                /* 우측 하단 플로팅 버튼 컨테이너 및 내부 버튼 일괄 정돈 */
+                body.dark-mode body > div[class*="fixed"],
+                body.dark-mode body > div[style*="position: fixed"] {
+                    background-color: transparent !important;
+                }
+                body.dark-mode body > div[style*="position: fixed"] button,
+                body.dark-mode body > div[style*="position: fixed"] a {
+                    background-color: #2b2d31 !important;
+                    color: #dbdee1 !important;
+                    border: 1px solid #3f4147 !important;
+                }
+
+                /* === 파워링크 광고 박스 다크모드 강제 고정 === */
+                body.dark-mode div[style*="ad"], 
+                body.dark-mode .ad-box, 
+                body.dark-mode div:has(> img[alt*="광고"]),
+                body.dark-mode *:has(> * > img[alt*="광고"]) {
+                    background-color: #2b2d31 !important;
+                    border-color: #3f4147 !important;
+                    color: #dbdee1 !important;
+                }
+                    /* === 본문 우측 상단 편집, 토론, 역사 등 위키 버튼 다크모드 강제 고정 === */
+                body.dark-mode .wiki-btn {
+                    background-color: #2b2d31 !important;
+                    color: #dbdee1 !important;
+                    border-color: #3f4147 !important;
+                }
+                body.dark-mode .wiki-btn:hover {
+                    background-color: #383a40 !important;
+                    color: #f2f3f5 !important;
+                }
+                    /* === 이미지는 반전시키지 않고 밝기만 살짝 낮춰서 눈부심 방지 === */
+                body.dark-mode img:not(.nav-logo-box img), 
+                body.dark-mode iframe { 
+                    filter: brightness(0.85) contrast(1.05) !important; 
+                }
+                    /* === 우측 하단 플로팅 툴버튼 및 외부 스크립트 박스 완벽 제압 === */
+                body.dark-mode div[style*="position: fixed"],
+                body.dark-mode div[style*="position:fixed"],
+                body.dark-mode div[style*="position: absolute"] {
+                    background-color: transparent !important;
+                }
+                body.dark-mode div[style*="position: fixed"] button,
+                body.dark-mode div[style*="position: fixed"] a,
+                body.dark-mode div[style*="position:fixed"] button,
+                body.dark-mode div[style*="position:fixed"] a,
+                body.dark-mode #toc-floating-btn, 
+                body.dark-mode .floating-btn,
+                body.dark-mode div[style*="z-index"] > button,
+                body.dark-mode div[style*="z-index"] > a {
+                    background-color: #2b2d31 !important;
+                    color: #dbdee1 !important;
+                    border: 1px solid #3f4147 !important;
+                }
+                
+                /* 광고 및 외부 스크립트 박스 내부 배경 강제 진압 */
+                body.dark-mode [src*="ad_logic"],
+                body.dark-mode div[id*="ad"], 
+                body.dark-mode div[class*="ad"],
+                body.dark-mode script ~ div {
+                    background-color: #2b2d31 !important;
+                    color: #dbdee1 !important;
+                    border-color: #3f4147 !important;
+                }
+                    /* === 상단 전문대학 등 모든 위키 표/내부 셀 다크모드 완벽 고정 === */
+                body.dark-mode table,
+                body.dark-mode tr,
+                body.dark-mode th,
+                body.dark-mode td {
+                    background-color: #2b2d31 !important;
+                    color: #dbdee1 !important;
+                    border-color: #3f4147 !important;
+                }
+                body.dark-mode th {
+                    background-color: #1e1f22 !important;
+                    color: #f2f3f5 !important;
+                }
+                    /* === 다크모드 시 문서 제목 및 주요 헤더 글자 안 보임 현상 강제 해결 === */
+                body.dark-mode .txt-lvl-1,
+                body.dark-mode h1,
+                body.dark-mode h2,
+                body.dark-mode h3,
+                body.dark-mode h4,
+                body.dark-mode .title-area div {
+                    color: #f2f3f5 !important;
+                }
+                    /* === 스퀘어시티 등 본문 표 및 개별 배경색 지정 셀 다크모드 완벽 진압 === */
+                body.dark-mode table,
+                body.dark-mode table.wiki-table,
+                body.dark-mode .wiki-table th,
+                body.dark-mode .wiki-table td,
+                body.dark-mode table td[style*="background"],
+                body.dark-mode table col[style*="background"] {
+                    background-color: #2b2d31 !important;
+                    color: #dbdee1 !important;
+                    border-color: #3f4147 !important;
+                }
+                body.dark-mode table.wiki-table th,
+                body.dark-mode .wiki-table th {
+                    background-color: #1e1f22 !important;
+                    color: #f2f3f5 !important;
+                }
+                    /* === 1문단 인용구 박스 및 내부 텍스트/취소선 다크모드 완벽 진압 === */
+                body.dark-mode .quote,
+                body.dark-mode div.quote {
+                    background-color: #2b2d31 !important;
+                    border-left-color: var(--wiki-table-header, #7777AA) !important;
+                    color: #dbdee1 !important;
+                }
+                body.dark-mode .quote p,
+                body.dark-mode .quote span,
+                body.dark-mode .quote a,
+                body.dark-mode .quote .del {
+                    color: #dbdee1 !important;
+                }
+                body.dark-mode .quote .text-gray-500,
+                body.dark-mode .quote .del {
+                    color: #99aab5 !important;
+                }
+                    /* === 네비게이션 박스(nav-box) 다크모드 완벽 고정 === */
+                body.dark-mode .nav-box,
+                body.dark-mode div.nav-box {
+                    background-color: #2b2d31 !important;
+                    border-color: #3f4147 !important;
+                    color: #dbdee1 !important;
+                }
+                body.dark-mode .nav-box a,
+                body.dark-mode div.nav-box a {
+                    color: #58a6ff !important;
+                }
+                    /* === 심세이 문서 등 .wiki-quote 인용구 박스 다크모드 완벽 진압 === */
+                body.dark-mode .wiki-quote {
+                    background-color: #2b2d31 !important;
+                    border-left-color: var(--wiki-main, #33aaff) !important;
+                    color: #dbdee1 !important;
+                }
+                body.dark-mode .wiki-quote p,
+                body.dark-mode .wiki-quote span,
+                body.dark-mode .wiki-quote .wiki-drip {
+                    color: #dbdee1 !important;
+                }
+                    
             </style>
         `;
         document.head.insertAdjacentHTML('beforeend', modalStyle);
     }
-
-    // 3. 문서 내에 모달창 HTML이 없을 때만(일반 문서들) 모달 HTML 구조를 생성하여 주입
+        // 3. 문서 내에 모달창 HTML이 없을 때만(일반 문서들) 모달 HTML 구조를 생성하여 주입
     if (!document.getElementById('loginModal')) {
         const modalHTML = `
             <div id="loginModal" class="modal-overlay" style="display: none;">

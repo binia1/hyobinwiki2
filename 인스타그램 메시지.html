@@ -255,7 +255,7 @@
 <div class="p-4 flex-shrink-0 bg-white z-20">
 <div class="border border-gray-300 rounded-full flex items-center px-4 py-2 bg-white gap-3 focus-within:border-gray-400 relative">
 <i class="far fa-smile text-2xl text-[#262626] cursor-pointer hover:text-gray-500" onclick="toggleEmojiPicker(event)"></i>
-<input class="flex-1 outline-none text-[15px] bg-transparent" id="message-input" onkeypress="handleKeyPress(event)" placeholder="메시지 입력..." type="text"/>
+<input class="flex-1 outline-none text-[15px] bg-transparent" id="message-input" onkeydown="handleKeyPress(event)" placeholder="메시지 입력..." type="text"/>
 <div class="flex items-center gap-3 text-2xl text-[#262626]">
 <input accept="image/*" class="hidden" id="image-upload" onchange="handleImageUpload(event)" type="file"/>
 <i class="far fa-image cursor-pointer hover:text-gray-500" onclick="document.getElementById('image-upload').click()"></i>
@@ -716,10 +716,13 @@ window.onload = async () => { // 💡 async 추가
             container.scrollTop = container.scrollHeight;
         }
 
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') sendMessage();
-        }
-
+function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();    // 기본 동작 방지
+        event.stopPropagation();   // ✨ 핵심: 이벤트가 위키 전역 스크립트로 전달되는 것을 차단
+        sendMessage();
+    }
+}
         function sendMessage() {
             const input = document.getElementById('message-input');
             const text = input.value.trim();
@@ -854,11 +857,17 @@ window.onload = async () => { // 💡 async 추가
                 const data = await response.json();
 
                 // 💡 수정됨: 구글 API가 정상 응답을 주지 않았을 때 (404, 400 등) 에러 원인을 화면에 띄움
-                if (!response.ok) {
+if (!response.ok) {
                     console.error("구글 API 에러 상세:", data);
-                    return `[API 에러] 앗! 구글 서버가 응답을 거부했습니다. 원인: ${data.error?.message || response.statusText}`;
+                    
+                    if (data.error?.message?.includes("high demand") || response.status === 503 || response.status === 429) {
+                        return "⚠️ 현재 인스타그램 서버 접속이 지연되고 있습니다. 잠시 후 다시 시도해주세요."; 
+                    }
+                    
+                    return "⚠️ 알 수 없는 오류로 메시지를 전송하지 못했습니다.";
                 }
 
+                // ✨ 이 줄이 삭제되어서 undefined가 떴습니다. 꼭 추가해주세요!
                 return data.candidates[0].content.parts[0].text.trim();
                 
             } catch (error) {

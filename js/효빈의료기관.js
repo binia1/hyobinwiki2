@@ -1,11 +1,7 @@
-/* 파일 경로: js/효빈의료기관.js */
+/* 파일 경로: assets/효빈의료기관.js */
 
-/**
- * 효빈광역시 의료기관(상급종합/종합병원) 목록 렌더링 함수
- * @param {string} containerId - 표를 넣을 HTML 요소의 ID
- */
-function renderHyobinMedicalTable(containerId) {
-    const container = document.getElementById(containerId);
+document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById('hyobin-med-container');
     if (!container) return;
 
     // --- 1. 스타일 정의 ---
@@ -15,44 +11,33 @@ function renderHyobinMedicalTable(containerId) {
         style.id = styleId;
         style.textContent = `
             .hb-med-wrapper { width: 100%; overflow-x: auto; margin-bottom: 1.5rem; }
-            .hb-med-table { width: 100%; min-width: 500px; border-collapse: collapse; border: 1px solid #ccc; font-size: 0.82rem; }
-            
-            /* 헤더 스타일 */
+            .hb-med-table { width: 100%; min-width: 500px; border-collapse: collapse; border: 1px solid #ccc; font-size: 0.9rem; }
             .hb-med-thead th { background-color: #7777AA; color: white; padding: 10px; position: relative; }
             .hb-med-header-content { display: flex; align-items: center; justify-content: center; gap: 10px; }
             .hb-med-logo { max-height: 28px; width: auto; }
             .hb-med-title { font-weight: bold; font-size: 1.1em; }
             .hb-toggle-btn { font-size: 0.8rem; cursor: pointer; margin-left: 15px; opacity: 0.8; user-select: none; }
             .hb-toggle-btn:hover { text-decoration: underline; opacity: 1; }
-
-            /* 본문 스타일 */
             .hb-med-tbody { transition: all 0.2s; }
             .hb-med-tbody.hidden { display: none; }
-            .hb-med-tbody th, .hb-med-tbody td { border: 1px solid #e5e7eb; padding: 8px; vertical-align: middle; }
-            
-            /* 셀 스타일 유틸리티 */
-            .hb-th-dist { background-color: #7777AA; text-align: center; font-weight: bold; width: 6rem; white-space: nowrap; }
+            .hb-med-tbody th, .hb-med-tbody td { border: 1px solid #e5e7eb; padding: 10px; vertical-align: middle; }
+            .hb-th-dist { background-color: #f8f9fa; color: #333; text-align: center; font-weight: bold; width: 6rem; white-space: nowrap; }
             .hb-td-content { text-align: left; }
-
-            /* 링크 스타일 */
-            .hb-link { cursor: pointer; color: inherit; text-decoration: none; }
-            .hb-link:hover { text-decoration: underline; color: #2563eb; }
-            .hb-sep { margin-right: 2px; color: #000; } /* 쉼표 스타일 */
+            .hb-link { cursor: pointer; color: #0022AA; text-decoration: none; font-weight: 600; }
+            .hb-link:hover { text-decoration: underline; color: #003366; }
         `;
         document.head.appendChild(style);
     }
 
-    // --- 2. 데이터 정의 ---
-    const mkLink = (name) => `<span class="hb-link" onclick="handleSearchFromNav('${name}')">${name}</span>`;
+    // --- 2. 데이터 정의 (핵심 해결책: onclick을 없애고 data-target 사용) ---
+    const mkLink = (name) => `<a class="hb-link" data-target="${name}.html">${name}</a>`;
 
-    // 상급종합병원 데이터
     const upperGeneral = [
-        { dist: '남구', hospitals: [mkLink('엽월대학교 병원')] },
+        { dist: '남구', hospitals: [mkLink('엽월대학교병원')] },
         { dist: '서구 · 북구', hospitals: [mkLink('효빈대학교병원')] },
-        { dist: '북구', hospitals: [mkLink('삼선대학교 병원')] }
+        { dist: '북구', hospitals: [mkLink('삼선대학교병원')] }
     ];
 
-    // 종합병원 데이터
     const general = [
         { dist: '중구', hospitals: [mkLink('효빈대학교 병원 분관'), mkLink('복산병원')] },
         { dist: '남구', hospitals: [mkLink('효빈의료원'), mkLink('토장병원')] },
@@ -65,7 +50,6 @@ function renderHyobinMedicalTable(containerId) {
         { dist: '창전구', hospitals: [mkLink('창전병원'), mkLink('쌍엽병원')] }
     ];
 
-    // --- 3. 테이블 생성 헬퍼 함수 ---
     function createTableHTML(title, data, tableId) {
         let html = `
             <div class="hb-med-wrapper">
@@ -83,47 +67,44 @@ function renderHyobinMedicalTable(containerId) {
                     </thead>
                     <tbody id="${tableId}" class="hb-med-tbody">
         `;
-
         data.forEach(row => {
-            html += `
-                <tr>
-                    <th class="hb-th-dist">${row.dist}</th>
-                    <td class="hb-td-content">${row.hospitals.join(', ')}</td>
-                </tr>
-            `;
+            html += `<tr><th class="hb-th-dist">${row.dist}</th><td class="hb-td-content">${row.hospitals.join(' · ')}</td></tr>`;
         });
-
-        html += `
-                    </tbody>
-                </table>
-            </div>
-        `;
+        html += `</tbody></table></div>`;
         return html;
     }
 
-    // --- 4. HTML 조립 및 주입 ---
-    const upperId = 'hb-med-upper-body';
-    const generalId = 'hb-med-general-body';
+    container.innerHTML = createTableHTML('효빈광역시 상급종합병원', upperGeneral, 'hb-med-upper-body') + 
+                          createTableHTML('효빈광역시 관내 종합병원', general, 'hb-med-general-body');
 
-    let fullHtml = createTableHTML('효빈광역시 상급종합병원', upperGeneral, upperId);
-    fullHtml += createTableHTML('효빈광역시 관내 종합병원', general, generalId);
-
-    container.innerHTML = fullHtml;
-
-    // --- 5. 이벤트 연결 (접기/펼치기) ---
-    container.querySelectorAll('.hb-toggle-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const targetId = this.getAttribute('data-target');
+    // --- 3. 이벤트 위임 (브라우저 차단을 뚫는 절대 실패 안 하는 클릭 로직) ---
+    container.addEventListener('click', function(e) {
+        // 병원 이름(링크)을 클릭했을 때
+        if (e.target.classList.contains('hb-link')) {
+            const targetFile = e.target.getAttribute('data-target');
+            
+            // HTML 하단에 있는 goToLink 함수를 강제로 실행
+            if (typeof window.goToLink === 'function') {
+                window.goToLink(targetFile);
+            } else {
+                // 만약 함수를 못 찾아도 무조건 페이지를 이동시킴
+                window.location.href = targetFile;
+            }
+        }
+        
+        // 접기 버튼을 클릭했을 때
+        if (e.target.classList.contains('hb-toggle-btn')) {
+            const targetId = e.target.getAttribute('data-target');
             const tbody = document.getElementById(targetId);
             if (tbody) {
                 if (tbody.classList.contains('hidden')) {
                     tbody.classList.remove('hidden');
-                    this.textContent = '[접기]';
+                    e.target.textContent = '[접기]';
                 } else {
                     tbody.classList.add('hidden');
-                    this.textContent = '[펼치기]';
+                    e.target.textContent = '[펼치기]';
                 }
             }
-        });
+        }
     });
-}
+});

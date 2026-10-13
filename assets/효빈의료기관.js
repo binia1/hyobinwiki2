@@ -166,10 +166,12 @@
             document.head.appendChild(style);
         }
 
-        // --- 3. 데이터 정의 ---
+        // --- 3. 데이터 정의 (★ 핵심 수정 부분: goToLink 적용) ---
         const mkLink = (displayName, targetName) => {
             const searchTarget = targetName || displayName;
-            return `<span class="hb-link" onclick="handleSearchFromNav('${searchTarget}')">${displayName}</span>`;
+            // 에러를 유발하던 부분을 걷어내고, HTML에 있는 goToLink 함수를 안정적으로 호출합니다.
+            // 함수가 인식되지 않는 만약의 사태를 대비해 일반 링크 이동(location.href) 폴백도 넣었습니다.
+            return `<a class="hb-link" onclick="if(typeof goToLink === 'function') { goToLink('${searchTarget}.html'); } else { window.location.href = '${searchTarget}.html'; }">${displayName}</a>`;
         };
         const sepG = `<span class="hb-sep-gray">·</span>`;
         const sepW = `<span class="hb-sep">·</span>`;

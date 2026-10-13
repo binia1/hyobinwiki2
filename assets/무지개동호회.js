@@ -10,20 +10,21 @@ document.addEventListener("DOMContentLoaded", () => {
         .nw-title-rainbow { background: white; margin: -5px -10px 10px; padding: 10px; border-bottom: 2px solid #9C27B0; display: flex; justify-content: center; align-items: center; border-top-left-radius: 6px; border-top-right-radius: 6px; }
         .nw-box { border: 2px solid; margin-bottom: 10px; background: #fff; border-radius: 4px; overflow: hidden; }
         [data-theme='dark'] .nw-box { background: #1f2023; color: #ddd; }
-        .nw-box summary { font-weight: bold; cursor: pointer; padding: 8px; display: flex; justify-content: center; align-items: center; gap: 10px; list-style: none; font-size: 0.95rem; }
+        .nw-box summary { font-weight: bold; cursor: pointer; padding: 10px; display: flex; justify-content: center; align-items: center; gap: 10px; list-style: none; font-size: 1rem; }
         .nw-box summary::-webkit-details-marker { display: none; }
-        .nw-tbl { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 0.8rem; word-break: keep-all; }
-        .nw-tbl th, .nw-tbl td { border: 1px solid currentColor; padding: 8px 4px; vertical-align: middle; text-align: center; }
+        .nw-tbl { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 0.9rem; word-break: keep-all; }
+        .nw-tbl th, .nw-tbl td { border: 1px solid currentColor; padding: 10px 6px; vertical-align: middle; text-align: center; }
         
-        .nw-img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; margin: 0 auto 4px; display: block; border: 1px solid #ddd; transition: transform 0.2s; }
+        /* 이미지 크기 확대 (60px -> 100px) */
+        .nw-img { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; margin: 0 auto 6px; display: block; border: 1px solid #ddd; transition: transform 0.2s; }
         .nw-link:hover .nw-img { transform: scale(1.05); border-color: #673AB7; }
         .nw-link { color: inherit; text-decoration: none; font-weight: bold; display: flex; flex-direction: column; align-items: center; }
         .nw-link:hover { text-decoration: underline; color: #673AB7; }
-        .nw-subtext { font-size: 0.7rem; color: #777; font-weight: normal; margin-top: 2px; }
+        .nw-subtext { font-size: 0.75rem; color: #777; font-weight: normal; margin-top: 4px; }
         
-        /* 다수 인원 배치를 위한 플렉스 그룹 */
-        .flex-group { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; padding: 5px 0; }
-        .flex-group .nw-link { flex: 0 1 12%; min-width: 65px; }
+        /* 다수 인원 배치를 위한 플렉스 그룹 (이미지 크기 확대로 인한 2열/다중행 배치) */
+        .flex-group { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; padding: 10px 0; }
+        .flex-group .nw-link { flex: 0 1 20%; min-width: 110px; }
     </style>
     `;
 
@@ -31,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const navHtml = `
         <div class="nw-frame-rainbow shadow-sm">
             <div class="nw-title-rainbow">
-                <a href="무지개 동호회.html" class="font-black text-xl hover:underline" style="color: #673AB7; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;">
+                <a href="무지개_동호회.html" class="font-black text-xl hover:underline" style="color: #673AB7; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;">
                     <!-- 무지개 동호회 전용 내장 SVG 로고 (구름과 무지개 아치) -->
                     <svg viewBox="0 0 120 120" class="h-8 w-8 drop-shadow-md" xmlns="http://www.w3.org/2000/svg">
                         <defs>
@@ -96,14 +97,38 @@ document.addEventListener("DOMContentLoaded", () => {
                 </table>
             </details>
 
-            <!-- 3. 샌드백 듀오 & 관련자 -->
-            <details id="nw-sandbag-box" class="nw-box mb-1" style="border-color:#795548;">
-                <summary style="background-color:#795548; color:white;" class="outline-none">🥊 샌드백 듀오 및 동맹 세력 ▼</summary>
+            <!-- 3. 샌드백 듀오 -->
+            <details id="nw-sandbag-box" class="nw-box" style="border-color:#795548;">
+                <summary style="background-color:#795548; color:white;" class="outline-none">🥊 샌드백 듀오 ▼</summary>
                 <table class="nw-tbl" style="border-color:#795548;">
                     <tr>
                         <th class="w-[12%] bg-[#EFEBE9] text-[#3E2723]">샌<br>드<br>백</th>
-                        <td class="w-[44%]"><a href="주성우.html" class="nw-link"><img src="이미지/주성우.webp" class="nw-img" onerror="this.style.display='none'">주성우<span class="nw-subtext">(물리 방패)</span></a></td>
-                        <td class="w-[44%]"><a href="은현성.html" class="nw-link"><img src="이미지/은현성.webp" class="nw-img" onerror="this.style.display='none'">은현성<span class="nw-subtext">(팩폭 소방수)</span></a></td>
+                        <td class="w-[88%] py-3">
+                            <div class="flex-group">
+                                <a href="주성우.html" class="nw-link"><img src="이미지/주성우.webp" class="nw-img" onerror="this.style.display='none'">주성우<span class="nw-subtext">(물리 방패)</span></a>
+                                <a href="은현성.html" class="nw-link"><img src="이미지/은현성.webp" class="nw-img" onerror="this.style.display='none'">은현성<span class="nw-subtext">(팩폭 소방수)</span></a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </details>
+
+            <!-- 4. 동맹 세력 -->
+            <details id="nw-alliance-box" class="nw-box mb-1" style="border-color:#00796B;">
+                <summary style="background-color:#00796B; color:white;" class="outline-none">🤝 동맹 세력 ▼</summary>
+                <table class="nw-tbl" style="border-color:#00796B;">
+                    <tr>
+                        <th class="w-[12%] bg-[#E0F2F1] text-[#004D40]">동<br>맹<br>군</th>
+                        <td class="w-[88%] py-3">
+                            <div class="flex-group">
+                                <a href="박효빈.html" class="nw-link"><img src="이미지/박효빈.webp" class="nw-img" onerror="this.style.display='none'">박효빈<span class="nw-subtext">(시장)</span></a>
+                                <a href="김성민.html" class="nw-link"><img src="이미지/김성민.webp" class="nw-img" onerror="this.style.display='none'">김성민<span class="nw-subtext">(국회의원)</span></a>
+                                <a href="이한선.html" class="nw-link"><img src="이미지/이한선.webp" class="nw-img" onerror="this.style.display='none'">이한선<span class="nw-subtext">(철혈의 사모님)</span></a>
+                                <a href="노정미.html" class="nw-link"><img src="이미지/노정미.webp" class="nw-img" onerror="this.style.display='none'">노정미<span class="nw-subtext">(뮤즈연합)</span></a>
+                                <a href="석루비.html" class="nw-link"><img src="이미지/석루비.webp" class="nw-img" onerror="this.style.display='none'">석루비<span class="nw-subtext">(아쿠아 오시연합)</span></a>
+                                <a href="임은혜.html" class="nw-link"><img src="이미지/임은혜.webp" class="nw-img" onerror="this.style.display='none'">임은혜<span class="nw-subtext">(리에하스연합)</span></a>
+                            </div>
+                        </td>
                     </tr>
                 </table>
             </details>
@@ -118,6 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const core7 = ["김시연", "고소유", "오이슬", "나수미", "유채나", "고노애", "강하애"];
     const ext6 = ["소남주", "태미아", "조향림", "엠마 체레스떼", "천리내", "김시안"];
     const sandbag = ["주성우", "은현성"];
+    const alliance = ["박효빈", "김성민", "이한선", "노정미", "석루비", "임은혜"];
 
     let isMatched = false;
 
@@ -129,8 +155,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const box = document.getElementById('nw-ext6-box');
         if(box) { box.open = true; isMatched = true; }
     }
-    if (sandbag.includes(pageTitle) || pageTitle === "무지개 동호회") {
+    if (sandbag.includes(pageTitle)) {
         const box = document.getElementById('nw-sandbag-box');
+        if(box) { box.open = true; isMatched = true; }
+    }
+    if (alliance.includes(pageTitle) || pageTitle === "무지개 동호회") {
+        const box = document.getElementById('nw-alliance-box');
         if(box) { box.open = true; isMatched = true; }
     }
     

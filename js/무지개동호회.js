@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const navHtml = `
         <div class="nw-frame-rainbow shadow-sm">
             <div class="nw-title-rainbow">
-                <a href="무지개 동호회.html" class="font-black text-xl hover:underline" style="color: #673AB7; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;">
+                <a href="무지개_동호회.html" class="font-black text-xl hover:underline" style="color: #673AB7; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;">
                     <!-- 무지개 동호회 전용 내장 SVG 로고 (구름과 무지개 아치) -->
                     <svg viewBox="0 0 120 120" class="h-8 w-8 drop-shadow-md" xmlns="http://www.w3.org/2000/svg">
                         <defs>

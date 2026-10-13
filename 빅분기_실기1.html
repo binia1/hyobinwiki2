@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<link href="이미지/효빈위키아이콘.webp" rel="icon"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>빅분기 실기 1. 파이썬 기초 - 효빈위키</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- 파이썬 웹 컴파일러(Pyodide) 로드 -->
+<script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Apple+SD+Gothic+Neo:wght@400;700&display=swap');
+        
+        :root { 
+            /* 위키 테마색 - 파이썬 느낌의 푸른색 */
+            --wiki-line-color: #3776AB;
+            --wiki-table-header-bg: #3776AB; 
+            
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #F9F9FA; 
+            --wiki-link: #0022AA;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        
+        .namu-infobox {
+            width: 100%;
+            max-width: 350px;
+            border: 1px solid #b0b0b0 !important;
+            background-color: #ffffff;
+            font-size: 0.85rem;
+            border-collapse: collapse !important;
+            margin: 0;
+        }
+        .namu-infobox th, .namu-infobox td {
+            border: 1px solid #b0b0b0 !important;
+            padding: 6px 10px;
+        }
+        .namu-infobox .title-cell {
+            padding: 20px 0 !important; 
+            text-align: center !important;
+            background-color: #ffffff !important;
+        }
+        .inner-title-box {
+            display: inline-table !important;
+            margin: 0 auto !important;
+            border: 1px solid #b0b0b0 !important;
+            border-collapse: collapse !important;
+            background-color: #ffffff !important;
+            width: max-content !important;
+        }
+        .inner-title-box td {
+            padding: 12px 18px !important;
+            vertical-align: middle !important;
+            border: none !important;
+        }
+        .inner-title-box td:first-child {
+            border-right: 1px solid #b0b0b0 !important;
+        }
+        
+        .namu-infobox .section-title {
+            background-color: var(--wiki-table-header-bg);
+            color: #ffffff !important;
+            font-weight: bold;
+            text-align: center;
+            padding: 5px 0;
+            border: 1px solid #b0b0b0 !important;
+        }
+        .namu-infobox .row-title {
+            background-color: #f4f4f4;
+            color: #444444;
+            font-weight: bold;
+            text-align: center;
+            width: 35%;
+        }
+
+        .img-box { margin: 0; padding: 0; line-height: 0; border-bottom: 1px solid #ddd; }
+        .img-note { line-height: 1.5; padding: 8px 5px; font-size: 0.85rem; text-align: center; background-color: #ffffff; color: #333; font-weight: 500; }
+
+        .wiki-fn-link { font-size: 0.8em; vertical-align: super; color: #0275d8; text-decoration: none; cursor: pointer; position: relative; display: inline-block; }
+        .wiki-fn-link:hover { text-decoration: underline; }
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }   
+
+        .wiki-container { max-width: 1400px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+        .txt-lvl-1 { font-size: 2.2rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 5px solid var(--wiki-table-header-bg); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.1rem !important; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; }
+
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 0.9rem; font-weight: bold; color: #555; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; line-height: 1.2; }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+        
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        blockquote { border-left: 5px solid var(--wiki-table-header-bg); background-color: #f7f7f7; padding: 15px; margin: 15px 0; font-style: italic; color: #555; }
+        .wiki-link { color: var(--wiki-link); cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .strike { text-decoration: line-through; color: #777; font-size: 0.9em; }
+
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.9rem; margin: 15px 0; border-radius: 4px; }
+
+        .python-editor-container {
+            background: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            border: 1px solid #444;
+        }
+        .editor-header {
+            background: #2d2d2d;
+            color: #d4d4d4;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: monospace;
+            border-bottom: 1px solid #444;
+        }
+        .run-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .run-btn:hover { background: #45a049; }
+        .run-btn:disabled { background: #555; cursor: not-allowed; }
+        
+        .code-area {
+            width: 100%;
+            background: #1e1e1e;
+            color: #9CDCFE; /* VS Code style light blue */
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 1rem;
+            padding: 15px;
+            border: none;
+            resize: vertical;
+            min-height: 180px;
+            outline: none;
+            line-height: 1.5;
+        }
+        .output-area {
+            background: #000;
+            color: #BBFF64; /* Terminal green */
+            font-family: 'Consolas', 'Monaco', monospace;
+            padding: 15px;
+            font-size: 0.95rem;
+            min-height: 60px;
+            white-space: pre-wrap;
+            border-top: 1px solid #333;
+        }
+        
+        /* Pyodide Loading Overlay */
+        #pyodide-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.5s;
+        }
+        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid #3776AB; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; mb-4 }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
+<script src="assets/ad_logic.js"></script>
+<link href="wiki_font_standard.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+</head>
+<body>
+
+<div id="pyodide-loader">
+    <div class="spinner mb-4"></div>
+    <h2 class="font-bold text-xl text-gray-800">파이썬 엔진을 브라우저에 싣는 중...</h2>
+    <p class="text-gray-500 mt-2">첫 로딩 시 5~10초 정도 소요될 수 있습니다. (서버 연결 없이 브라우저 단독 실행)</p>
+</div>
+
+<nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+<div class="flex items-center gap-2">
+<div class="nav-logo-box">H</div>
+<a class="font-bold text-xl cursor-pointer no-underline text-white" href="#">HyobinWiki</a>
+<div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+<a class="hover:underline font-bold text-white no-underline" href="#">대문</a>
+<a class="hover:underline text-white no-underline" href="#">최근 변경</a>
+<a class="hover:underline text-white no-underline" href="#">최근 토론</a>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<div class="flex items-center gap-2">
+<div class="hidden lg:flex items-center gap-1 mr-2">
+<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="#">편집요청</a>
+<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="#">토론</a>
+<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="#">역사</a>
+</div>
+<input class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" placeholder="문서 검색" type="text"/>
+<button class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
+</div>
+</div>
+</nav>
+
+<div class="wiki-container shadow-lg">
+<div class="title-area">
+<h1 class="txt-lvl-1">빅분기 실기 1. 파이썬 기초</h1>
+<div class="flex gap-2 mb-1">
+<button class="wiki-btn">토론</button>
+<button class="wiki-btn">수정</button>
+<button class="wiki-btn">역사</button>
+</div>
+</div>
+
+<div class="category-box">
+<span class="font-bold text-[#3776AB]">분류:</span>
+<a class="wiki-link" href="#">빅데이터분석기사</a> | 
+<a class="wiki-link" href="#">파이썬</a> | 
+<a class="wiki-link" href="#">효빈위키 학습서</a>
+</div>
+
+<!-- 요청된 외부 스크립트 틀 유지 -->
+<div class="no-autolink" style="display:none;">
+<script src="assets/틀_미개통.js"></script>
+<script src="assets/틀_미개통노선도.js"></script>
+</div>
+
+<div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4">
+<div class="toc shrink-0 shadow-sm h-fit order-2 md:order-1" id="toc-box">
+<div class="toc-title">목차</div>
+<ul class="text-[#555555]">
+<li><a class="hover:underline" href="#s-1">1. 개요 (그리고 오해)</a></li>
+<li><a class="hover:underline" href="#s-2">2. 변수와 출력, 사칙연산</a></li>
+<li><a class="hover:underline" href="#s-3">3. 문자열 (String) 다루기</a></li>
+<li><a class="hover:underline" href="#s-4">4. 리스트 (List)와 인덱스</a></li>
+<li><a class="hover:underline" href="#s-5">5. 딕셔너리 (Dictionary)</a></li>
+<li><a class="hover:underline" href="#s-6">6. 조건문(if)과 반복문(for)</a></li>
+<li><a class="hover:underline" href="#s-7">7. 함수: return vs print</a></li>
+<li><a class="hover:underline" href="#s-8">8. 모듈과 오류 대처 (형변환)</a></li>
+</ul>
+</div>
+
+<table class="namu-infobox shrink-0 shadow-sm order-1 md:order-2">
+<tbody>
+<tr>
+<td class="title-cell" colspan="2">
+<table class="inner-title-box">
+<tr>
+<td>
+<div style="width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; background-color: #3776AB; color: white; border-radius: 8px; font-weight: 900; font-size: 24px;">Py</div>
+</td>
+<td style="text-align: left !important; line-height: 1.3 !important;">
+<div style="font-weight: 900; font-size: 1.25rem; color: #3776AB; letter-spacing: -0.5px;">빅분기 실기 파이썬 기초</div>
+<div style="font-size: 0.85rem; color: #555555; font-weight: 500; margin-top: 2px;">Python Basics for Big Data</div>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td colspan="2" style="padding: 0; border: 1px solid #b0b0b0 !important; text-align: center; background-color: #ffffff;">
+<div class="img-box bg-gray-100 flex justify-center py-4">
+    <svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+        <text x="10" y="45" font-family="monospace" font-size="20" fill="#3776AB" font-weight="bold">print("합격!")</text>
+        <path d="M 160 30 Q 180 30, 180 50 Q 180 70, 160 70 Q 140 70, 140 50 Q 140 30, 160 30 Z" fill="#FFD43B"/>
+    </svg>
+</div>
+<div class="img-note">빅분기 합격의 길은 파이썬 기초부터!</div>
+</td>
+</tr>
+<tr><th class="section-title" colspan="2">과목 정보</th></tr>
+<tr><th class="row-title">과목명</th><td><a class="wiki-link" href="#">빅데이터분석기사 실기</a></td></tr>
+<tr><th class="row-title">필수 환경</th><td>Python 3.x, pandas</td></tr>
+<tr><th class="row-title">등장 캐릭터</th><td>나카스 카스미, 토야마 카스미 등 <span class="strike">카스미 위키 아님</span></td></tr>
+<tr><th class="row-title">난이도</th><td><span style="color: green; font-weight: bold;">기초 (★☆☆☆☆)</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="s-1"><b>1. 개요 (그리고 오해)</b></h2>
+<p>
+    빅데이터분석기사(이하 빅분기) 실기 시험을 위해 반드시 숙지해야 할 <strong>파이썬(Python) 기초 문법</strong>을 정리한 문서이다. 
+    이론만 백날 읽는 것보다 직접 쳐보는 것이 중요하므로, 본 문서에는 애니메이션(러브라이브, 뱅드림 등) 캐릭터를 활용한 찰진 예제와 <strong>실제 브라우저에서 파이썬 코드를 돌려볼 수 있는 실습 에디터</strong>가 탑재되어 있다.
+</p>
+<blockquote class="border-l-4 border-[#3776AB] bg-[#f0f7fb] p-4 my-4 shadow-sm text-gray-800">
+    <strong>💡 Q: "()이면 전체 변수인가요?"</strong><br><br>
+    <strong>A: 아닙니다! 괄호 <code>()</code>는 "이름표가 붙은 도구(기계)를 지금 당장 작동시켜라!"라는 <span class="text-red-500 font-bold">실행 버튼</span>입니다.</strong><br>
+    - <code>print</code>: 출력하는 도구 자체의 이름.<br>
+    - <code>print("유키나")</code>: 출력 도구 안에 유키나를 넣고 <strong>작동(실행)</strong>시켜서 화면에 보여주라는 뜻입니다.
+</blockquote>
+<p>
+    <span class="strike">판다스(pandas) 하다가 데이터프레임에서 빡쳐서 파이썬 기초부터 다시 보러 온 당신, 환영한다. 늦지 않았다.</span>
+</p>
+
+<h2 id="s-2"><b>2. 변수와 출력, 사칙연산</b></h2>
+<ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
+    <li><strong>print(...):</strong> 괄호 안에 있는 것을 화면에 보여주는 도구. 화면에 나온 글자를 <b>출력</b>이라고 한다. <code>print(a, b)</code>처럼 쉼표(,)로 여러 개를 주면 한 줄에 띄어쓰기로 붙여서 보여준다.</li>
+    <li><strong>변수 (이름표):</strong> 값에 붙이는 이름표. 영문 알파벳, 숫자, 밑줄(_)로 짓지만 <strong>숫자로 시작할 수는 없다.</strong></li>
+    <li><strong>= 와 == 의 차이 (매우 중요):</strong> 
+        <br><code>=</code>는 "같다"가 아니라 <b>오른쪽 값을 왼쪽 이름표 상자에 "담아라"</b>는 뜻이다. 
+        <br><code>==</code> 기호가 진짜로 양쪽이 같은지 비교하는 기호다.
+    </li>
+    <li><strong>사칙연산:</strong> <code>+</code>, <code>-</code>, <code>*</code>(곱하기), <code>/</code>(소수까지 나누기), <code>//</code>(몫만), <code>%</code>(나머지만).<br>
+    <code>round(값, 자리수)</code>를 쓰면 소수점 아래 몇 자리까지 남길지 지정할 수 있다.</li>
+</ul>
+
+<div class="python-editor-container">
+    <div class="editor-header">
+        <span>[실습] 변수와 몫/나머지</span>
+        <button class="run-btn" id="btn-run-1" onclick="runPythonCode('code-1', 'out-1', 'btn-run-1')">▶ 실행 (Run)</button>
+    </div>
+    <textarea id="code-1" class="code-area" spellcheck="false">
+# 1. 변수 담기 (글자는 따옴표로 감싼다!)
+character = "nakasu kasumi" 
+
+# 2. 쉼표로 연결해서 출력하기
+print(character, "최고야!")
+
+# 3. 띄어쓰기는 계산에 영향 없음
+print("계산 결과:", 43000 + 7 == 43000 + 7) 
+
+# 4. 나누기, 몫, 나머지
+print("나누기:", 10 / 3)
+print("몫만:", 10 // 3)
+print("나머지만:", 10 % 3)
+
+# 🚀 [도전 과제] 아래에 round 함수를 써서 10/3 의 결과를 소수점 2자리까지만 출력해보세요!
+</textarea>
+    <div id="out-1" class="output-area">여기에 결과가 출력됩니다. (▶ 실행 버튼을 누르세요)</div>
+</div>
+
+<h2 id="s-3"><b>3. 문자열 (String) 다루기</b></h2>
+<p>따옴표로 감싼 글자를 '문자열'이라고 한다. 문자열에는 자기 자신을 변형하는 유용한 기능들이 내장되어 있으며, <code>값.기능()</code> 모양으로 부른다.</p>
+<ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
+    <li><code>len(값)</code>: 길이를 센다. 문자열을 넣으면 <strong>글자 수</strong>를 센다. (공백도 한 글자로 취급!)</li>
+    <li><code>.strip()</code>: 양 끝의 쓸데없는 공백을 제거한다.</li>
+    <li><code>.upper()</code> / <code>.lower()</code>: 모든 문자를 대문자 / 소문자로 바꾼다.</li>
+    <li><code>.split(" ")</code>: 띄어쓰기(또는 지정한 글자)를 기준으로 잘라서 <strong>여러 조각의 리스트</strong>로 만든다. 첫 조각은 뒤에 <code>[0]</code>을 붙여 꺼낸다.</li>
+    <li><strong class="text-blue-600">f-string (핵심):</strong> 따옴표 앞에 <code>f</code>를 붙이면 <code>f"..."</code> 안의 <code>{변수}</code>가 그 변수의 실제 값으로 바뀐다. 숫자와 글자를 섞어 출력할 때 빅분기에서 가장 많이 쓴다.</li>
+</ul>
+
+<div class="python-editor-container">
+    <div class="editor-header">
+        <span>[실습] 카스미 분리 마술과 f-string</span>
+        <button class="run-btn" id="btn-run-2" onclick="runPythonCode('code-2', 'out-2', 'btn-run-2')">▶ 실행 (Run)</button>
+    </div>
+    <textarea id="code-2" class="code-area" spellcheck="false">
+song = "  Teardrops  "
+clean_song = song.strip().upper()
+
+# f-string의 위력
+print(f"뱅드림! 제가 제일 좋아하는 곡은 {clean_song}입니다.")
+print("공백 포함 글자 수:", len(song))
+
+# 띄어쓰기로 자르기
+name = "토야마 카스미"
+pieces = name.split(" ")  # ["토야마", "카스미"] 2조각이 됨
+print("첫 조각(성씨):", pieces[0])
+
+# 🚀 [도전 과제] pieces 변수에서 "카스미" 부분만 꺼내서 출력해보세요! (힌트: 두 번째 조각의 인덱스는?)
+</textarea>
+    <div id="out-2" class="output-area"></div>
+</div>
+
+<h2 id="s-4"><b>4. 리스트 (List)와 인덱스</b></h2>
+<p>리스트는 값 여러 개를 순서대로 담는 상자로, <code>대괄호 []</code>를 사용한다.</p>
+<ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
+    <li><strong>인덱스 (자리번호):</strong> 파이썬은 <strong>0부터 센다.</strong> 첫 번째는 <code>[0]</code>, 두 번째는 <code>[1]</code>이다. <strong>맨 뒤는 <code>[-1]</code></strong>, 뒤에서 두 번째는 <code>[-2]</code>다.</li>
+    <li><strong>슬라이싱 (자르기):</strong> <code>[1:3]</code>처럼 적으면 1번 자리부터 <strong>3번 자리 직전(2번)까지만</strong> 잘라온다. <span class="text-red-500">끝 번호는 포함 안 함을 명심하자! (시험에서 제일 많이 틀림)</span></li>
+    <li><strong>슬라이싱 응용 (생략하기):</strong> 시작이나 끝 번호를 비워두면 전체를 가져올 수 있다. <code>scores[:]</code>는 <strong>처음부터 끝까지(전체)</strong> 가져온다. <code>scores[2:]</code>는 2번부터 끝까지, <code>scores[:3]</code>은 처음부터 3번 직전(2번)까지라는 뜻이다.</li>
+    <li><strong>리스트 도구들:</strong> <code>len()</code>은 개수, <code>sum()</code>은 합, <code>max()</code>/<code>min()</code>은 최대/최소를 바로 구해준다. <strong>평균은 <code>sum(리스트) / len(리스트)</code></strong>로 직접 계산해야 한다.</li>
+    <li><code>sorted(리스트)</code>: 작은 것에서 큰 것(오름차순)으로 정렬된 새 리스트를 준다. 두 번째로 큰 값을 찾고 싶으면 정렬 후 <code>[-2]</code>로 꺼낸다.</li>
+</ul>
+
+<div class="python-editor-container">
+    <div class="editor-header">
+        <span>[실습] 점수 리스트 요리하기</span>
+        <button class="run-btn" id="btn-run-3" onclick="runPythonCode('code-3', 'out-3', 'btn-run-3')">▶ 실행 (Run)</button>
+    </div>
+    <textarea id="code-3" class="code-area" spellcheck="false">
+scores = [72, 88, 95, 61, 80]
+
+print("첫 점수:", scores[0])
+print("마지막 점수:", scores[-1])
+print("1번부터 3번 직전까지 자르기:", scores[1:3]) # [88, 95] 나옴
+
+# 슬라이싱 응용 (비워두기)
+print("전체 복사해오기:", scores[:])
+print("2번부터 끝까지:", scores[2:])
+
+print("데이터 개수:", len(scores))
+print("총점:", sum(scores))
+print("평균 점수:", sum(scores) / len(scores))
+
+# 오름차순 정렬 후 뒤에서 두 번째 값 (두 번째로 큰 값)
+print("두 번째로 높은 점수:", sorted(scores)[-2])
+
+# 🚀 [도전 과제] scores 리스트의 최댓값(max)과 최솟값(min)의 차이를 구해서 출력해보세요!
+</textarea>
+    <div id="out-3" class="output-area"></div>
+</div>
+
+<h2 id="s-5"><b>5. 딕셔너리 (Dictionary)</b></h2>
+<p>자리 번호(0, 1...) 대신 <strong>이름(키)</strong>으로 값을 꺼내는 상자다. <code>중괄호 {}</code>로 적는다.</p>
+<ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
+    <li>꺼낼 때는 리스트처럼 대괄호를 쓰되, 안에 숫자가 아닌 키를 적는다: <code>info["이름"]</code></li>
+    <li>없는 키에 값을 넣으면 새로 추가되고, <strong>있는 키에 넣으면 덮어쓴다.</strong> (<code>info["점수"] = 92</code> 한 줄로 수정 끝)</li>
+    <li><code>.keys()</code>는 키들만, <code>.values()</code>는 값들만 준다. 보기 편하게 <code>list(...)</code>로 감싸서 확인한다.</li>
+    <li><span class="bg-yellow-100 px-1">이 딕셔너리 모양 <code>{"A": "B"}</code>는 나중에 Pandas에서 열 이름을 바꾸거나(rename), 그룹별 계산을 시킬 때(agg) 그대로 등장하므로 눈에 익혀두어야 한다.</span></li>
+</ul>
+
+<div class="python-editor-container">
+    <div class="editor-header">
+        <span>[실습] Aqours 멤버 딕셔너리</span>
+        <button class="run-btn" id="btn-run-4" onclick="runPythonCode('code-4', 'out-4', 'btn-run-4')">▶ 실행 (Run)</button>
+    </div>
+    <textarea id="code-4" class="code-area" spellcheck="false">
+# 딕셔너리 만들기
+info = {"이름": "사쿠라우치 리코", "점수": 88}
+
+# 값 수정 (덮어쓰기)
+info["점수"] = 92  
+# 값 추가 (새로 생김)
+info["포지션"] = "피아노" 
+
+print("이름을 키로 값 꺼내기:", info["이름"])
+print("키들만 보기:", list(info.keys()))
+print("값들만 보기:", list(info.values()))
+
+# 🚀 [도전 과제] info 딕셔너리에 "학년" 이라는 키로 2 라는 값을 추가하고, 딕셔너리 전체(info)를 출력해보세요!
+</textarea>
+    <div id="out-4" class="output-area"></div>
+</div>
+
+<h2 id="s-6"><b>6. 조건문(if)과 반복문(for)</b></h2>
+<p>
+    파이썬에서는 <strong>들여쓰기(스페이스 4칸)가 문법 그 자체</strong>다. 멋으로 넣는 것이 아니며, 틀리면 <code>IndentationError</code>가 발생한다. <span class="strike">제발 탭과 스페이스를 섞어 쓰지 마라.</span>
+</p>
+<ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
+    <li><strong>조건문:</strong> <code>if 조건:</code> 아래에 들여쓴 줄은 조건이 맞을 때만 실행된다. 아니면 <code>elif 조건:</code>, 다 틀리면 <code>else:</code>로 간다.</li>
+    <li><strong>비교 기호:</strong> <code>==</code>(같다) <code>!=</code>(다르다) <code>></code> <code><</code> <code>>=</code> <code><=</code>. 담을 때 쓰는 <code>=</code>와 헷갈리면 안 된다!</li>
+    <li>비교의 결과 자체가 값(<code>True</code>/<code>False</code>)이다. <code>and</code>(둘다), <code>or</code>(하나만), <code>not</code>(뒤집기)으로 조건을 묶을 수 있다.</li>
+    <li><strong>반복문:</strong> <code>for 이름 in 리스트:</code> 리스트 값을 하나씩 꺼내 '이름'에 담아가며 아래 들여쓴 줄을 반복한다.</li>
+    <li><code>range(3)</code>은 0, 1, 2를 만든다 (끝 숫자 포함 안 함).</li>
+    <li><strong class="text-red-600">누적의 함정:</strong> 누적 그릇(<code>total = 0</code>, <code>count = 0</code>)은 반드시 <strong>반복문 밖</strong>에서 만들어야 한다. 안에서 만들면 매번 0으로 비워져서 마지막 값만 남는 대참사가 일어난다.</li>
+</ul>
+
+<div class="python-editor-container">
+    <div class="editor-header">
+        <span>[실습] 조건과 누적 합계</span>
+        <button class="run-btn" id="btn-run-5" onclick="runPythonCode('code-5', 'out-5', 'btn-run-5')">▶ 실행 (Run)</button>
+    </div>
+    <textarea id="code-5" class="code-area" spellcheck="false">
+prices = [1200, 3400, 900]
+total = 0  # 바구니는 반드시 for문 바깥에!
+
+for p in prices:
+    total = total + p  # 꺼낸 가격을 바구니에 누적
+print("총 가격:", total)
+
+# range 반복과 if 조건문
+for i in range(3):
+    if i % 2 == 0:
+        print(f"{i}는 짝수(또는 0)입니다.")
+    else:
+        print(f"{i}는 홀수입니다.")
+
+# 🚀 [도전 과제] prices 리스트에서 1000보다 큰 값만 더하도록 for문 안에 if문을 추가해보세요!
+</textarea>
+    <div id="out-5" class="output-area"></div>
+</div>
+
+<h2 id="s-7"><b>7. 함수: return vs print</b></h2>
+<p>함수는 이름을 붙여 둔 계산 묶음이다. <code>def 이름(재료_매개변수):</code> 로 만든다.</p>
+<blockquote class="bg-gray-100 border-l-4 border-[#EE0022] p-3 italic text-gray-800 mb-4 font-bold">
+    🚨 초보가 가장 자주 만나는 함정!<br>
+    return이 없으면 함수는 아무것도 돌려주지 않는다 (None이 나옴). <br>
+    print는 화면에 보여줄 뿐이다. <span class="strike">빵을 구워서 남에게 주려면 return을 해라. print는 유리창 너머로 빵을 보여주기만 하고 안 주는 악질 행위다.</span>
+</blockquote>
+<ul class="list-disc pl-5 font-bold text-gray-800 space-y-1">
+    <li><code>def tax(price, rate=0.1):</code> 처럼 기본값을 줄 수 있다. 부를 때 안 주면 0.1이 쓰인다.</li>
+    <li>사실 우리가 쓰던 <code>sum</code>, <code>len</code>, <code>round</code> 도 전부 파이썬에 이미 만들어진 함수다.</li>
+</ul>
+
+<div class="python-editor-container">
+    <div class="editor-header">
+        <span>[실습] 함수 만들고 부르기</span>
+        <button class="run-btn" id="btn-run-6" onclick="runPythonCode('code-6', 'out-6', 'btn-run-6')">▶ 실행 (Run)</button>
+    </div>
+    <textarea id="code-6" class="code-area" spellcheck="false">
+# 값을 돌려주는 착한 함수
+def double(x):
+    return x * 2
+
+print("결과:", double(7))
+
+# 기본값을 가진 함수
+def greet(name, mark="!"):
+    return f"{name}{mark}"
+
+print(greet("서연"))          # mark를 안 주면 기본값 '!' 사용
+print(greet("카스미", "♡")) # mark를 주면 준 값 사용
+
+# 🚀 [도전 과제] 세 개의 숫자를 재료로 받아서 모두 더한 값을 return 하는 add_three 함수를 만들어보세요!
+</textarea>
+    <div id="out-6" class="output-area"></div>
+</div>
+
+<h2 id="s-8"><b>8. 모듈과 오류 대처 (형변환)</b></h2>
+<ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
+    <li><strong>모듈 가져오기:</strong> 파이썬 도구 상자다. 시험장에서는 이미 깔린 것만 <code>import</code> 할 수 있다.
+        <ul class="list-circle pl-5 mt-1 text-gray-700">
+            <li><code>import math</code>: 상자 전체 가져오기. 쓸 땐 <code>math.sqrt()</code></li>
+            <li><code>from statistics import mean</code>: 상자 안에서 하나만 쏙 빼오기 (지 혼자 가져온 놈). 상자 이름 없이 <code>mean()</code> 이름만 쓴다.</li>
+            <li><code>import pandas as pd</code>: 상자를 가져오면서 <code>pd</code>라는 짧은 별명을 붙인다.</li>
+        </ul>
+    </li>
+    <li><strong>오류는 정확한 안내문이다:</strong> 겁먹지 말고 맨 아랫줄을 보자.<br>
+        <code>TypeError: unsupported operand type(s) for +: 'int' and 'str'</code><br>
+        ➡️ "정수(int)와 문자열(str)을 더할 수 없다"는 뜻이다.
+    </li>
+    <li><strong>형변환:</strong> CSV 파일을 읽으면 숫자가 글자로 들어오는 경우가 흔하다. 겉보기가 같아도 <code>3</code>(숫자)과 <code>"3"</code>(글자)은 다르다. 값이 뭔지 모르겠으면 <code>type(값)</code>으로 확인한다.
+        <ul class="list-circle pl-5 mt-1 text-gray-700">
+            <li>글자 ➡️ 숫자로: <code>int("3")</code> 또는 <code>float("3.5")</code></li>
+            <li>숫자 ➡️ 글자로: <code>str(3)</code></li>
+        </ul>
+    </li>
+</ul>
+
+<div class="python-editor-container">
+    <div class="editor-header">
+        <span>[실습] Type Error 해결하기</span>
+        <button class="run-btn" id="btn-run-7" onclick="runPythonCode('code-7', 'out-7', 'btn-run-7')">▶ 실행 (Run)</button>
+    </div>
+    <textarea id="code-7" class="code-area" spellcheck="false">
+value = "12"
+print("value의 정체:", type(value))  # <class 'str'>
+
+# 아래 주석을 풀고 실행하면 TypeError가 납니다!
+# print(value + 1)  
+
+# 해결법 1: 글자를 숫자로 바꿔서 수학적 덧셈하기
+print("숫자 덧셈:", int(value) + 1)
+
+# 해결법 2: 숫자를 글자로 바꿔서 글자끼리 이어붙이기
+print("글자 연결:", str(7) + "번")
+
+# 🚀 [도전 과제] "100.5" 라는 글자를 변수에 담고, 이를 float()를 이용해 소수로 바꾼 뒤 10을 더해 출력해보세요!
+</textarea>
+    <div id="out-7" class="output-area"></div>
+</div>
+
+<div class="category-box mt-8">
+<span class="font-bold">다음 문서:</span>
+<a class="wiki-link font-bold text-blue-700" href="#">빅분기 실기 2. 판다스(pandas) 데이터프레임 기초 ➡️</a>
+</div>
+
+<div id="wiki-footer-area"></div>
+
+<script>
+    // Pyodide Initialization
+    let pyodideReadyPromise;
+    const loaderUI = document.getElementById('pyodide-loader');
+
+    async function initPyodide() {
+        try {
+            let pyodide = await loadPyodide();
+            // 파이썬 실행 버튼 활성화
+            document.querySelectorAll('.run-btn').forEach(btn => {
+                btn.innerText = "▶ 실행 (Run)";
+                btn.disabled = false;
+            });
+            // 로딩 오버레이 숨기기
+            loaderUI.style.opacity = '0';
+            setTimeout(() => loaderUI.style.display = 'none', 500);
+            return pyodide;
+        } catch (err) {
+            console.error("Pyodide 로딩 실패:", err);
+            loaderUI.innerHTML = `<h2 class="text-red-500 font-bold text-xl">파이썬 엔진 로딩에 실패했습니다.</h2><p>${err}</p>`;
+        }
+    }
+
+    pyodideReadyPromise = initPyodide();
+
+    // 초기 버튼 상태
+    document.querySelectorAll('.run-btn').forEach(btn => {
+        btn.innerText = "엔진 로딩중...";
+        btn.disabled = true;
+    });
+
+    // 코드 실행 함수
+    async function runPythonCode(editorId, outputId, btnId) {
+        const btn = document.getElementById(btnId);
+        const outputEl = document.getElementById(outputId);
+        const code = document.getElementById(editorId).value;
+        
+        btn.disabled = true;
+        btn.innerText = "실행 중...";
+        outputEl.style.color = "#BBFF64";
+        outputEl.textContent = "실행 중...";
+
+        try {
+            let pyodide = await pyodideReadyPromise;
+            
+            // 파이썬 stdout을 문자열로 캡처하도록 설정
+            pyodide.runPython(`
+import sys
+import io
+sys.stdout = io.StringIO()
+            `);
+            
+            // 코드 실행
+            await pyodide.runPythonAsync(code);
+            
+            // 캡처된 출력 가져오기
+            let stdout = pyodide.runPython("sys.stdout.getvalue()");
+            if (stdout === "") {
+                stdout = "(출력값이 없습니다. print() 함수를 사용했는지 확인하세요.)";
+                outputEl.style.color = "#aaa";
+            }
+            outputEl.textContent = stdout;
+            
+        } catch (err) {
+            outputEl.style.color = "#ff5555";
+            // 에러 메시지 정리 (Traceback 중 마지막 줄 위주로 보여주기)
+            let errStr = err.toString();
+            let splitErr = errStr.split('\n');
+            let shortErr = splitErr.slice(-3).join('\n'); // 마지막 3줄 정도
+            outputEl.textContent = "에러 발생!\n" + (shortErr || errStr);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "▶ 실행 (Run)";
+        }
+    }
+</script>
+
+<!-- 사용자 요청: 외부스크립트 누락하지 말 것 -->
+<script src="assets/wiki_main.js"></script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_data_map.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+</div>
+</body>
+</html>

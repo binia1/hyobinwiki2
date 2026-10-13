@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const navHtml = `
         <div class="nw-frame-aqours shadow-sm">
             <div class="nw-title-aqours">
-                <a href="Aqours 오시 어벤져스.html" class="font-black text-xl hover:underline" style="color: #00A3E0; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;">
+                <a href="아쿠아_어벤져스.html" class="font-black text-xl hover:underline" style="color: #00A3E0; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;">
                     <!-- 아쿠아 연합 전용 내장 SVG 로고 (닻과 태양, 물방울의 융합) -->
                     <svg viewBox="0 0 120 120" class="h-8 w-8 drop-shadow-md" xmlns="http://www.w3.org/2000/svg">
                         <defs>

@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const navHtml = `
         <div class="nw-frame-palmang shadow-sm">
             <div class="nw-title-palmang">
-                <a href="팔망성고 3인방.html" class="font-black text-xl hover:underline" style="color: #4A235A; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;">
+                <a href="팔망성고_3인방.html" class="font-black text-xl hover:underline" style="color: #4A235A; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;">
                     <!-- 팔망성고 3인방 전용 내장 SVG 로고 (8각별과 블루버드 융합) -->
                     <svg viewBox="0 0 120 120" class="h-8 w-8 drop-shadow-md" xmlns="http://www.w3.org/2000/svg">
                         <defs>

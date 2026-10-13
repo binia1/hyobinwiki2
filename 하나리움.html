@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
-<link href="이미지/효빈위키아이콘.webp" rel="icon"/>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>하나리움(효빈광역시) - 효빈위키</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-<style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+    <link href="이미지/효빈위키아이콘.webp" rel="icon"/>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>하나리움 - 효빈위키</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
         
         :root { 
-            /* 효빈위키 공통 테마 */
+            --wiki-main: #003B96; 
             --wiki-nav: #7777AA; 
             --wiki-header: #BBFF64;
             --wiki-header-text: #000000;
@@ -20,18 +20,34 @@
             --wiki-bg: #ffffff; 
             --wiki-text: #373a3c; 
             --wiki-gray-bg: #F9F9FA; 
-            --wiki-link: #0022AA; 
-            
-            /* 지하철 노선 색상 (사용자 지정) */
-            --line-1: #0077DD;
-            --line-2: #00CCAA;
+            --wiki-link: #0022AA;
+            --wiki-table-header: var(--wiki-main);
+            --wiki-table-header-text: #ffffff;
+
+            /* 폰트 사이즈 */
+            --font-base: 0.9rem;
+            --font-h1: 3.1rem;
+            --font-h2: 2rem;
+            --font-h3: 1.6rem;
+            --font-h4: 1.3rem;
+            --font-h5: 1.1rem;
+            --font-small: 0.8rem;
+
+            /* 도시철도 노선 색상 */
+            --line-1: #0077DD; 
+            --line-2: #00CCAA; 
             --line-3: #FFCC11;
-            --line-4: #FF5522;
-            --line-5: #EE0022;
+            --line-4: #FF5522; 
+            --line-5: #EE0022; 
             --line-6: #881188;
-            --line-7: #FF8899;
+            --line-7: #FF8899; 
             --line-8: #9856FF;
             --line-binhyo: #6677CC;
+            --wiki-line-deokju1: #FF4F91;
+            --wiki-line-binju1: #CFBA0F; 
+            --wiki-line-binju2: #C455F6;
+            --wiki-line-binju3: #6AE673;
+            --line-k: #005BAC;
             --line-changjeon: #33AAFF;
             --line-cheongyeop: #D6D5CA;
         }
@@ -43,238 +59,366 @@
             --wiki-border: #444; 
             --wiki-bg: #121212; 
             --wiki-text: #eeeeee; 
-            --wiki-gray-bg: #F9F9FA; 
-            --wiki-link: #0022AA; 
+            --wiki-gray-bg: #1e1e1e; 
+            --wiki-link: #5588FF; 
         }
 
-        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; margin: 0; }
-        .wiki-container { max-width: 1280px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); display: flex; flex-direction: column; }
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; overflow-x: hidden; width: 100%; }
 
-        /* 테이블 스타일 */
-        table { border-collapse: collapse !important; width: 100% !important; margin: 15px 0; border: 1px solid var(--wiki-border) !important; table-layout: fixed !important; }
-        th, td { border: 1px solid var(--wiki-border) !important; padding: 8px 6px; text-align: center; vertical-align: middle; font-size: 0.9rem; word-break: break-word; }
-        th { background-color: #7777AA; color: white; font-weight: bold; } 
-        [data-theme='dark'] th { background-color: #444477; color: #fff; }
+        .wiki-container { width: 100%; max-width: 1300px; margin: 0 auto; padding: 20px 15px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); box-sizing: border-box; display: flex; flex-direction: column; }
+        @media (min-width: 768px) { .wiki-container { padding: 20px 40px; } }
 
-        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; border-bottom: 2px solid var(--wiki-main); padding-bottom: 10px; word-break: keep-all; line-height: 1.2; }
+        @media (max-width: 767px) { h1 { font-size: calc(var(--font-h1) * 0.7) !important; } }
+
+        h2 { font-size: 1.85rem !important; font-weight: 700 !important; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
+        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-main); }
+        h3 { font-size: 1.45rem !important; font-weight: bold !important; margin-top: 2rem; border-left: 7px solid var(--wiki-main); padding-left: 15px; color: var(--wiki-text); }
+        [data-theme='dark'] h3 { color: #ddd; }
+        h4 { font-size: 1.2rem !important; font-weight: 800; margin-top: 1.5rem; margin-bottom: 0.8rem; color: var(--wiki-text); border-bottom: 1px dashed var(--wiki-border); padding-bottom: 3px; line-height: 1.3 !important; }
+
+        .wiki-link { color: var(--wiki-link); font-weight: bold; cursor: pointer; text-decoration: none; }
         .wiki-link:hover { text-decoration: underline; }
+        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: var(--font-small); font-weight: bold; color: #555; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; white-space: nowrap; }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
         
-        del { color: #aaa; text-decoration: line-through; }
-        [data-theme='dark'] del { color: #777; }
-        
-        h1 { font-size: 2.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem; line-height: 1.2; border-bottom: 2px solid var(--wiki-header); padding-bottom: 10px; }
-        h2 { font-size: 1.85rem !important; font-weight: 700 !important; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--wiki-border); padding-bottom: 0.3rem; display: flex; align-items: center; gap: 10px; }
-        h2::before { content: ""; display: inline-block; width: 5px; height: 1.8rem; background: var(--wiki-header); }
-        
-        h3 { font-size: 1.45rem !important; font-weight: 700 !important; margin-top: 1.8rem; margin-bottom: 0.8rem; color: #000000; border-left: 4px solid var(--wiki-header); padding-left: 12px; }
+        .category-box { background: var(--wiki-gray-bg); border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.85rem; margin: 15px 0; border-radius: 4px; word-break: break-all; }
 
         /* 인포박스 */
-        .infobox { border: 2px solid var(--wiki-header); background-color: var(--wiki-gray-bg); width: 100%; max-width: 400px; margin-bottom: 20px; border-radius: 4px; overflow: hidden; font-size: 0.85rem;}
-        .infobox-top-label { background: linear-gradient(135deg, #7777AA 50%, var(--wiki-header) 50%); color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 1.2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
-        .infobox th { background-color: #eee !important; color: #333 !important; width: 100px; text-align: center; font-weight: bold; }
+        .infobox { border: 2px solid var(--wiki-main); background-color: var(--wiki-gray-bg); width: 100%; max-width: 350px; margin-bottom: 20px; float: right; margin-left: 20px; border-radius: 4px; overflow: hidden; font-size: 0.85rem;}
+        .infobox-top-label { background: var(--wiki-main); color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 1.2rem; }
+        .infobox table { border-collapse: collapse; width: 100%; margin: 0; }
+        .infobox th { background-color: #eee !important; color: #333 !important; width: 100px; text-align: center; font-weight: bold; border: 1px solid var(--wiki-border); padding: 8px; }
         [data-theme='dark'] .infobox th { background-color: #333 !important; color: #eee !important; }
-        .infobox td { text-align: left; padding: 5px 10px; }
+        .infobox td { text-align: left; padding: 8px; border: 1px solid var(--wiki-border); }
 
-        .wiki-tool-btn { padding: 4px 12px; font-size: 11px; border-right: 1px solid var(--wiki-border); cursor: pointer; color: inherit; display: flex; align-items: center; text-decoration: none; }
+        /* 테이블 공통 */
+        table.regional-table { width: 100%; border-collapse: collapse; text-align: center; margin: 15px auto; background-color: var(--wiki-bg); border: 2px solid #AF6E4D; }
+        table.regional-table th, table.regional-table td { padding: 8px 12px; border: 1px solid var(--wiki-border); word-break: keep-all; }
+        table.regional-table th { background-color: #f4f4f4; font-weight: bold; }
+        [data-theme='dark'] table.regional-table th { background-color: #333; color: #eee; }
+
+        .toc { display: inline-block; width: 100%; max-width: 400px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; box-sizing: border-box; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .toc > ul > li { margin-bottom: 8px; font-weight: bold; font-size: 1.05rem; } 
+        .toc ul ul { margin-top: 4px; margin-left: 20px; } 
+        .toc ul ul li { margin-bottom: 4px; font-weight: normal; }
+        .toc ul ul li a { color: var(--wiki-text); text-decoration: none; }
+        .toc ul ul li a:hover { color: var(--wiki-link); text-decoration: underline; }
+
+        del { color: #999; text-decoration: line-through; }
+        
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-nav); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }   
+        .anchor-offset { scroll-margin-top: 70px; }
         #wiki-msg-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 50px; font-size: 14px; z-index: 10000; display: none; }
-/* 로고 박스 스타일 추가 */
-        .nav-logo-box {
-            width: 30px; height: 30px; background: white; color: var(--wiki-main);
-            border-radius: 4px; font-weight: 900; display: flex; align-items: center;
-            justify-content: center; font-size: 1.2rem;
-        }   
- 
+
+        .wiki-fn-sup { position: relative; cursor: help; display: inline-block; padding: 0 2px; }
+        .wiki-fn-sup:hover .wiki-fn-tooltip { visibility: visible; opacity: 1; }
+        .wiki-fn-tooltip {
+            visibility: hidden; opacity: 0; position: absolute; bottom: 130%; right: 0;
+            background-color: #fff; color: #333; text-align: left; padding: 12px; border-radius: 6px;
+            font-size: 12px; width: max-content; max-width: 350px; z-index: 99999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #BBFF64;
+            font-weight: normal; line-height: 1.5; transition: opacity 0.2s; pointer-events: none;
+        }
+    </style>
     
-</style>
-<script src="assets/ad_logic.js"></script>
-<!-- 효빈위키 폰트 CSS -->
-<link href="wiki_font_standard.css" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-<style>
-    .wiki-fn-sup { position: relative; cursor: help; display: inline-block; padding: 0 2px; }
-    .wiki-fn-sup:hover .wiki-fn-tooltip { visibility: visible; opacity: 1; }
-    .wiki-fn-tooltip {
-        visibility: hidden; opacity: 0; position: absolute; bottom: 130%; right: 0;
-        background-color: #fff; color: #333; text-align: left; padding: 12px; border-radius: 6px;
-        font-size: 12px; width: max-content; max-width: 350px; z-index: 99999;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #BBFF64;
-        font-weight: normal; line-height: 1.5; transition: opacity 0.2s; pointer-events: none;
-    }
-</style>
+    <!-- 외부 스크립트 및 폰트 -->
+    <script src="assets/ad_logic.js"></script>
+    <link rel="stylesheet" href="wiki_font_standard.css">
 </head>
 <body data-theme="light">
 <div id="wiki-msg-box"></div>
 <nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
-<div class="flex items-center gap-2">
-<div class="nav-logo-box">H</div>
-<a class="font-bold text-xl cursor-pointer no-underline text-white" href="index.html">HyobinWiki</a>
-<div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
-<a class="hover:underline font-bold text-white no-underline" href="index.html">대문</a>
-<a class="hover:underline text-white no-underline" href="최근_변경.html">최근 변경</a>
-<a class="hover:underline text-white no-underline" href="최근_토론.html">최근 토론</a>
-</div>
-</div>
-<div class="flex flex-col items-end gap-1">
-<div class="flex items-center gap-2">
-<div class="hidden lg:flex items-center gap-1 mr-2">
-<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="편집요청.html">편집요청</a>
-<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="최근_토론.html">토론</a>
-<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="역사.html">역사</a>
-<a class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="즐겨찾기.html" title="즐겨찾기">★</a>
-<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1" href="더보기.html">더보기 <span class="text-[9px]">▼</span></a>
-</div>
-<!-- 검색창 (Enter 작동 유지) -->
-<input class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" id="headerSearchInput" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }" placeholder="문서 검색" type="text"/>
-<button class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold" onclick="handleSearch('headerSearchInput')">🔍</button>
-</div>
-<div class="flex gap-1" id="auth-buttons">
-<button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" id="btn-login" onclick="toggleModal('loginModal')">로그인</button>
-<button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" onclick="toggleModal('settingsModal')">설정</button>
-</div>
-</div>
+    <div class="flex items-center gap-2">
+        <div class="nav-logo-box">H</div>
+        <a href="index.html" class="font-bold text-xl cursor-pointer no-underline text-white">HyobinWiki</a>
+        <div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+            <a href="index.html" class="hover:underline font-bold text-white no-underline">대문</a>
+            <a href="최근_변경.html" class="hover:underline text-white no-underline">최근 변경</a>
+            <a href="최근_토론.html" class="hover:underline text-white no-underline">최근 토론</a>
+        </div>
+    </div>
+    <div class="flex flex-col items-end gap-1">
+        <div class="flex items-center gap-2">
+            <div class="hidden lg:flex items-center gap-1 mr-2">
+                <a href="편집요청.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">편집요청</a>
+                <a href="최근_토론.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">토론</a>
+                <a href="역사.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold">역사</a>
+                <a href="즐겨찾기.html" class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" title="즐겨찾기">★</a>
+                <a href="더보기.html" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1">더보기 <span class="text-[9px]">▼</span></a>
+            </div>
+            <input type="text" id="headerSearchInput" placeholder="문서 검색" class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }">
+            <button onclick="handleSearch('headerSearchInput')" class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold">🔍</button>
+        </div>
+        <div class="flex gap-1" id="auth-buttons">
+            <button onclick="toggleModal('loginModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" id="btn-login">로그인</button>
+            <button onclick="toggleTheme()" id="themeBtn" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">다크모드</button>
+            <button onclick="toggleModal('settingsModal')" class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors">설정</button>
+        </div>
+    </div>
 </nav>
+
 <div class="wiki-container shadow-lg">
-<div class="flex justify-between items-end mb-4">
-<h1 class="m-0 border-none p-0">하나리움(효빈광역시)</h1>
-<div class="flex bg-white border rounded overflow-hidden shadow-sm mb-4">
-<a class="wiki-tool-btn" href="토론.html">토론</a>
-<a class="wiki-tool-btn" href="수정.html">편집</a>
-<a class="wiki-tool-btn" href="역사.html">역사</a>
-<div class="px-3 py-1 text-[11px] cursor-pointer hover:bg-gray-100" onclick="showMsg('즐겨찾기에 추가됨')">★</div>
+    <div class="flex justify-between items-end border-b-2 border-[#ccc] mb-5 pb-2">
+        <h1 class="!mb-0 !border-none !pb-0">하나리움</h1>
+        <div class="flex gap-2 mb-1">
+            <a class="wiki-btn" href="토론.html">토론</a>
+            <a class="wiki-btn" href="수정.html">편집</a>
+            <a class="wiki-btn" href="역사.html">역사</a>
+            <button class="wiki-btn" onclick="showMsg('즐겨찾기에 추가됨')">☆</button>
+        </div>
+    </div>
+    
+    <div class="category-box">
+        <span class="font-bold" style="color: var(--wiki-main);">분류:</span>
+        <a class="wiki-link" href="하나리움.html">하나리움</a> | 
+        <a class="wiki-link" href="아파트_브랜드_목록.html">아파트 브랜드 목록</a> |
+        <a class="wiki-link" href="효빈광역시의_건축물.html">효빈광역시의 건축물</a> |
+        <a class="wiki-link" href="러브라이브!_선샤인!!.html">러브라이브! 선샤인!!</a>
+    </div>
+
+    <div>
+        <aside class="infobox">
+            <div class="infobox-top-label">하나리움<br><span class="text-sm font-normal">Hanarium</span></div>
+            <table>
+                <tr>
+                    <td colspan="2" style="padding: 0; border-bottom: 2px solid var(--wiki-main);">
+                        <img src="이미지/Capture+_2020-01-09-21-27-43.png" style="width: 100%; height: auto; display:block;">
+                    </td>
+                </tr>
+                <tr>
+                    <th>시공사</th>
+                    <td>하나건설, 로컬건설</td>
+                </tr>
+                <tr>
+                    <th>특화 브랜드</th>
+                    <td>하나리움 퀸즈파크, 하나리움 아인스파크</td>
+                </tr>
+                <tr>
+                    <th>주요 타이틀<br>(효빈·덕빈 한정)</th>
+                    <td>러브라이브! 선샤인!! <strong><a class="wiki-link" href="쿠니키다_하나마루.html">쿠니키다 하나마루</a></strong> 성지</td>
+                </tr>
+                <tr>
+                    <th>최대 단지</th>
+                    <td>평당 하나리움 (효빈광역시, 1,350세대)</td>
+                </tr>
+            </table>
+        </aside>
+
+        <div class="toc shrink-0 shadow-sm" id="toc-box">
+            <div class="toc-title">목차</div>
+            <ul>
+                <li><a href="#s-1">1. 개요</a></li>
+                <li><a href="#s-2">2. 지역별 단지 현황</a>
+                    <ul>
+                        <li><a href="#s-3">2.1. 부산광역시</a></li>
+                        <li><a href="#s-4">2.2. 대구광역시</a></li>
+                        <li><a href="#s-5">2.3. 강원특별자치도</a>
+                            <ul><li><a href="#s-6">2.3.1. 동해시</a></li></ul>
+                        </li>
+                        <li><a href="#s-7">2.4. 충청남도</a>
+                            <ul><li><a href="#s-8">2.4.1. 천안시</a></li></ul>
+                        </li>
+                        <li><a href="#s-9">2.5. 전북특별자치도</a>
+                            <ul>
+                                <li><a href="#s-10">2.5.1. 군산시</a></li>
+                                <li><a href="#s-11">2.5.2. 익산시</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#s-12">2.6. 효빈광역시</a>
+                            <ul>
+                                <li><a href="#s-13">2.6.1. 남구</a></li>
+                                <li><a href="#s-14">2.6.2. 서구</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#s-15">2.7. 덕빈북도</a>
+                            <ul><li><a href="#s-16">2.7.1. 천주시</a></li></ul>
+                        </li>
+                        <li><a href="#s-17">2.8. 덕빈남도</a>
+                            <ul><li><a href="#s-18">2.8.1. 낙주시</a></li></ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#s-19">3. 특징 및 여담 (효빈·덕빈 한정)</a></li>
+                <li><a href="#s-20">4. 외부 링크</a></li>
+                <li><a href="#s-21">5. 관련항목</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <h2 class="anchor-offset" id="s-1">1. 개요</h2>
+    <p>
+        하나리움은 전남광주통합특별시의 건설업체인 하나건설 및 일부 로컬 건설사에서 시공하는 아파트 브랜드이다. 
+    </p>
+    <p>
+        우미린, 아이파크, 베르디움처럼 대놓고 전국구 1군 브랜드는 아니지만, 특유의 푸근한 주거 환경과 탄탄한 학군/도서관 인프라를 바탕으로 각 지역 내 알짜배기 단지로 군림하고 있다. 특히 서브컬처 문화가 발달한 <a class="wiki-link" href="효빈광역시.html">효빈광역시</a>와 인근 덕빈 권역에서는 대놓고 <a class="wiki-link" href="러브라이브!_선샤인!!.html">러브라이브! 선샤인!!</a>의 멤버 <strong><a class="wiki-link" href="쿠니키다_하나마루.html">쿠니키다 하나마루</a></strong>의 이름을 딴 밈과 스텔스 성지로 취급받고 있는 묘한 입지를 지녔다.
+    </p>
+    
+    <h2 class="anchor-offset" id="s-2">2. 지역별 단지 현황</h2>
+    
+    <h3 class="anchor-offset" id="s-3">2.1. <a class="wiki-link" href="부산광역시.html">부산광역시</a></h3>
+    <table class="regional-table">
+        <tbody>
+            <tr><th><strong>단지명</strong></th><th><strong>소재지</strong></th><th><strong>규모</strong></th><th><strong>입주</strong></th></tr>
+            <tr><td>남항 하나타운</td><td><a class="wiki-link" href="부산광역시.html">부산광역시</a> <a class="wiki-link" href="영도구.html">영도구</a> <a class="wiki-link" href="남항동.html">남항동1가</a></td><td>33세대</td><td>2003년 12월</td></tr>
+        </tbody>
+    </table>
+    
+    <h3 class="anchor-offset" id="s-4">2.2. <a class="wiki-link" href="대구광역시.html">대구광역시</a></h3>
+    <table class="regional-table">
+        <tbody>
+            <tr><th><strong>단지명</strong></th><th><strong>소재지</strong></th><th><strong>규모</strong></th><th><strong>입주</strong></th></tr>
+            <tr><td><a class="wiki-link" href="대구_테크노폴리스_하나리움_퀸즈파크.html">대구 테크노폴리스 하나리움 퀸즈파크</a></td><td><a class="wiki-link" href="대구광역시.html">대구광역시</a> <a class="wiki-link" href="달성군.html">달성군</a> <a class="wiki-link" href="유가읍.html">유가읍</a></td><td>908세대</td><td>2015년 4월</td></tr>
+        </tbody>
+    </table>
+    
+    <h3 class="anchor-offset" id="s-5">2.3. <a class="wiki-link" href="강원특별자치도.html">강원특별자치도</a></h3>
+    <h4 class="anchor-offset" id="s-6">2.3.1. <a class="wiki-link" href="동해시.html">동해시</a></h4>
+    <table class="regional-table">
+        <tbody>
+            <tr><th><strong>단지명</strong></th><th><strong>소재지</strong></th><th><strong>규모</strong></th><th><strong>입주</strong></th></tr>
+            <tr><td>동해 하나리움</td><td><a class="wiki-link" href="동해시.html">동해시</a> <a class="wiki-link" href="평릉동.html">평릉동</a></td><td>435세대</td><td>2010년 9월</td></tr>
+        </tbody>
+    </table>
+    
+    <h3 class="anchor-offset" id="s-7">2.4. <a class="wiki-link" href="충청남도.html">충청남도</a></h3>
+    <h4 class="anchor-offset" id="s-8">2.4.1. <a class="wiki-link" href="천안시.html">천안시</a></h4>
+    <table class="regional-table">
+        <tbody>
+            <tr><th><strong>단지명</strong></th><th><strong>소재지</strong></th><th><strong>규모</strong></th><th><strong>입주</strong></th></tr>
+            <tr><td>천안 하나리움 아인스파크</td><td><a class="wiki-link" href="천안시.html">천안시</a> <a class="wiki-link" href="동남구.html">동남구</a> <a class="wiki-link" href="신방동.html">신방동</a></td><td>305세대</td><td>2016년 4월</td></tr>
+        </tbody>
+    </table>
+    
+    <h3 class="anchor-offset" id="s-9">2.5. <a class="wiki-link" href="전북특별자치도.html">전북특별자치도</a></h3>
+    <h4 class="anchor-offset" id="s-10">2.5.1. <a class="wiki-link" href="군산시.html">군산시</a></h4>
+    <table class="regional-table">
+        <tbody>
+            <tr><th><strong>단지명</strong></th><th><strong>소재지</strong></th><th><strong>규모</strong></th><th><strong>입주</strong></th></tr>
+            <tr><td>산북 1차 하나리움 시티</td><td rowspan="2"><a class="wiki-link" href="군산시.html">군산시</a> <a class="wiki-link" href="산북동(군산).html">산북동</a></td><td>952세대</td><td>2014년 2월</td></tr>
+            <tr><td>산북 2차 하나리움 시티</td><td>175세대</td><td>2014년 12월</td></tr>
+            <tr><td><a class="wiki-link" href="군산_하나리움_레비뉴스테이.html">군산 하나리움 레비뉴스테이</a></td><td><a class="wiki-link" href="군산시.html">군산시</a> <a class="wiki-link" href="대명동(군산).html">대명동</a></td><td>869세대</td><td>2020년 7월</td></tr>
+        </tbody>
+    </table>
+    
+    <h4 class="anchor-offset" id="s-11">2.5.2. <a class="wiki-link" href="익산시.html">익산시</a></h4>
+    <table class="regional-table">
+        <tbody>
+            <tr><th><strong>단지명</strong></th><th><strong>소재지</strong></th><th><strong>규모</strong></th><th><strong>입주</strong></th></tr>
+            <tr><td>부송 하나리움</td><td><a class="wiki-link" href="익산시.html">익산시</a> <a class="wiki-link" href="부송동.html">부송동</a></td><td>396세대</td><td>2012년 10월</td></tr>
+        </tbody>
+    </table>
+
+    <h3 class="anchor-offset" id="s-12">2.6. <a class="wiki-link" href="효빈광역시.html">효빈광역시</a></h3>
+    <h4 class="anchor-offset" id="s-13">2.6.1. <a class="wiki-link" href="남구(효빈).html">남구</a></h4>
+    <table class="regional-table">
+        <tbody>
+            <tr><th><strong>단지명</strong></th><th><strong>소재지</strong></th><th><strong>규모</strong></th><th><strong>입주</strong></th></tr>
+            <tr><td>평당 하나리움</td><td><a class="wiki-link" href="효빈광역시.html">효빈광역시</a> <a class="wiki-link" href="남구(효빈).html">남구</a> <a class="wiki-link" href="평당동.html">평당5동(평당동)</a></td><td>1,350세대</td><td>2011년 5월</td></tr>
+        </tbody>
+    </table>
+    
+    <h4 class="anchor-offset" id="s-14">2.6.2. <a class="wiki-link" href="서구(효빈).html">서구</a></h4>
+    <table class="regional-table">
+        <tbody>
+            <tr><th><strong>단지명</strong></th><th><strong>소재지</strong></th><th><strong>규모</strong></th><th><strong>입주</strong></th></tr>
+            <tr><td>청덕 하나리움 1차</td><td rowspan="2"><a class="wiki-link" href="효빈광역시.html">효빈광역시</a> <a class="wiki-link" href="서구(효빈).html">서구</a> <a class="wiki-link" href="청덕동.html">청덕3동(청덕동)</a></td><td>800세대</td><td>2013년 1월</td></tr>
+            <tr><td>청덕 하나리움 2차</td><td>850세대</td><td>2014년 11월</td></tr>
+        </tbody>
+    </table>
+
+    <h3 class="anchor-offset" id="s-15">2.7. <a class="wiki-link" href="덕빈북도.html">덕빈북도</a></h3>
+    <h4 class="anchor-offset" id="s-16">2.7.1. <a class="wiki-link" href="천주시.html">천주시</a></h4>
+    <table class="regional-table">
+        <tbody>
+            <tr><th><strong>단지명</strong></th><th><strong>소재지</strong></th><th><strong>규모</strong></th><th><strong>입주</strong></th></tr>
+            <tr><td>궁하 하나리움</td><td><a class="wiki-link" href="덕빈북도.html">덕빈북도</a> <a class="wiki-link" href="천주시.html">천주시</a> <a class="wiki-link" href="궁하구.html">궁하구</a> <a class="wiki-link" href="궁하동.html">궁하2동(궁하동)</a></td><td>800세대</td><td>2021년 3월</td></tr>
+        </tbody>
+    </table>
+
+    <h3 class="anchor-offset" id="s-17">2.8. <a class="wiki-link" href="덕빈남도.html">덕빈남도</a></h3>
+    <h4 class="anchor-offset" id="s-18">2.8.1. <a class="wiki-link" href="낙주시.html">낙주시</a></h4>
+    <table class="regional-table">
+        <tbody>
+            <tr><th><strong>단지명</strong></th><th><strong>소재지</strong></th><th><strong>규모</strong></th><th><strong>입주</strong></th></tr>
+            <tr><td>낙주 하나리움</td><td><a class="wiki-link" href="덕빈남도.html">덕빈남도</a> <a class="wiki-link" href="낙주시.html">낙주시</a> <a class="wiki-link" href="이파동.html">이파동</a></td><td>1,200세대</td><td>2024년 1월</td></tr>
+        </tbody>
+    </table>
+
+    <h2 class="anchor-offset" id="s-19">3. 특징 및 여담 (효빈·덕빈 한정)</h2>
+    <p>
+        효빈시 및 덕빈 권역에 지어진 하나리움 아파트들은 이름부터가 '하나'마루와 닮아 있어 팬덤의 사랑을 받고 있으며, 묘하게 캐릭터의 설정(문학소녀, 빵순이)과 일치하는 인프라를 완벽히 구축하고 있다.
+    </p>
+    <ul class="list-disc pl-5 mt-2 space-y-2">
+        <li><strong>하마루의 실거주지 (성지 중의 성지):</strong> 현실판 쿠니키다 하나마루 도플갱어로 유명한 동구대 26학번 <strong><a class="wiki-link" href="하마루.html">하마루</a></strong>가 실제로 효빈광역시 서구 <strong>청덕 하나리움 2차</strong>에 거주하고 있다. 이 사실이 알려지면서 아파트 단지 상가 매출이 급증하고 입주를 희망하는 덕후들이 줄을 서고 있다.</li>
+        <li><strong>문학소녀의 성지:</strong> 하나리움 단지들은 유독 교육열이 높은 학원가(서구 청덕동, 낙주시 이파동 등)에 위치해 있거나, 단지 내 도서관 시설이 기형적으로 훌륭하게 갖춰져 있다. 주민들은 "도서관에 가면 하나마루가 책을 읽고 있을 것 같다"는 낭만적인 착각에 빠지곤 한다. 실제로 하마루가 종종 출몰해 책을 읽으며 빵을 먹는 모습이 목격된다.</li>
+        <li><strong>환청 주의:</strong> 단지 내를 걷다 보면 어디선가 "즈라~" 하는 소리가 환청으로 들린다는 오타쿠들의 인증글이 효빈 갤러리에 심심찮게 올라온다. 남구 평당 하나리움의 단지 중앙광장은 폐쇄형 구조라 아이들이 소리를 지르면 메아리가 <strong>"즈라아아~"</strong> 하고 울려 퍼진다고 한다.</li>
+        <li><strong>북구 중수동 '하나린'과의 관계:</strong> 효빈광역시 북구 중수4동에 위치한 <strong><a class="wiki-link" href="하나린.html">하나린</a></strong> 아파트 역시 이름 때문에 하나마루+린 조합의 성지로 묶인다. 서구의 하나리움 주민들은 "우리가 진짜 원조 하나마루 성지"라며 묘한 라이벌 의식을 불태우고 있다.</li>
+        <li><strong>오마리 방문과 단팥빵 하이패스:</strong> 하마루의 영혼의 단짝인 얼음공주 <strong><a class="wiki-link" href="오마리.html">오마리</a></strong>가 청덕 하나리움 정문을 통과하려다 제지당하자, 마중 나온 하마루가 경비원 입에 단팥빵 하나를 쑥 물려주며 무사통과시켰다는 전설적인 일화가 있다.</li>
+        <li><strong>화환역(5호선) 출구 쟁탈전:</strong> 청덕 하나리움 단지 바로 앞 5호선 화환역의 인테리어는 온통 노란색 포인트로 가득한데, 이는 하나리움 입주민들의 끈질긴 민원 폭격 덕분이었다. 5호선 상징색인 빨간색(#EE0022) 대신 노란색을 허가해 낸 박효빈 시장의 위대한 결과물이다.</li>
+    </ul>
+
+    <h2 class="anchor-offset" id="s-20">4. 외부 링크</h2>
+    <ul style="list-style-type: disc; padding-left: 20px; margin: 10px 0; line-height: 1.6;">
+        <li><a class="wiki-link" href="http://www.hanarium.kr/">하나리움 홈페이지</a></li>
+    </ul>
+    
+    <h2 class="anchor-offset" id="s-21">5. 관련항목</h2>
+    <ul style="list-style-type: disc; padding-left: 20px; margin: 10px 0; line-height: 1.6;">
+        <li><a class="wiki-link" href="아파트.html">아파트</a></li>
+        <li><a class="wiki-link" href="전남광주통합특별시.html">전남광주통합특별시</a></li>
+        <li><a class="wiki-link" href="효빈광역시.html">효빈광역시</a></li>
+    </ul>
+
+    <!-- 효빈광역시장 네비게이션용 숨김 블록 (외부 스크립트 연결) -->
+    <div class="no-autolink" style="display: none;">
+        <div id="hyobin-all-mayors-nav"></div>
+        <script src="js/전체효빈광역시장.js"></script>
+        <script> if(typeof renderAllHyobinMayorsNav === 'function') renderAllHyobinMayorsNav('hyobin-all-mayors-nav'); </script>
+    </div>
+    
+    <div id="footer-container"></div>
+    <script src="assets/load-footer.js"></script>
 </div>
-</div>
-<div class="category-box bg-white border p-2 mb-4 text-xs">
-<span class="font-bold text-[#7777AA]">분류:</span>
-<a class="wiki-link" href="효빈광역시.html">효빈광역시</a> | 
-  <a class="wiki-link" href="효빈광역시의_건축물.html">효빈광역시의 건축물</a> |
-  <a class="wiki-link" href="아파트.html">아파트</a> |
-  <a class="wiki-link" href="러브라이브!_선샤인!!.html">러브라이브! 선샤인!!</a>
-</div>
-<div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4 flex-grow">
-<!-- 목차 -->
-<div class="toc shrink-0 shadow-sm h-fit order-2 md:order-1 w-full md:w-auto bg-[#f9f9f9] border border-gray-300 p-4 rounded" id="toc-box"></div>
-<!-- 인포박스 -->
-<aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 md:order-2">
-<div class="infobox-top-label">
-                    효빈광역시 하나리움 아파트<br/>
-<span class="text-sm font-normal">Hanarium in Hyobin</span>
-</div>
-<table>
-<tr>
-<th>시공사</th>
-<td>
-                            하나건설, 로컬건설
-                        </td>
-</tr>
-<tr>
-<th>관내 단지 수</th>
-<td>총 3개 단지</td>
-</tr>
-<tr>
-<th>총 세대수</th>
-<td>3,000세대</td>
-</tr>
-<tr>
-<th>주요 타이틀</th>
-<td>
-                            러브라이브! 선샤인!! <strong><a class="wiki-link" href="쿠니키다_하나마루.html">쿠니키다 하나마루</a></strong> 성지
-                        </td>
-</tr>
-<tr>
-<th>최대 단지</th>
-<td>평당 하나리움 (1,350세대)</td>
-</tr>
-</table>
-</aside>
-</div>
-<h2 id="s-1">1. 개요</h2>
-<p>
-<a class="wiki-link" href="효빈광역시.html">효빈광역시</a> 관내에 지어진 <strong>'하나리움(Hanarium)'</strong> 아파트 단지들을 다루는 문서.
-        </p>
-<p>
-            본래 하나건설 및 일부 로컬 건설사에서 시공한 중견 아파트 브랜드지만, 덕업일치의 끝을 달리는 효빈광역시에서는 대놓고 <a class="wiki-link" href="러브라이브!_선샤인!!.html">러브라이브! 선샤인!!</a>의 멤버 <strong><a class="wiki-link" href="쿠니키다_하나마루.html">쿠니키다 하나마루</a></strong>의 이름을 딴 밈과 스텔스 성지로 취급받고 있다. 우미린, 아이파크, 베르디움처럼 대놓고 전국구 1군 브랜드는 아니지만, 특유의 푸근한 주거 환경과 탄탄한 학군/도서관 인프라를 바탕으로 지역 내 알짜배기 단지로 군림하고 있다.
-        </p>
-<h2 id="s-2">2. 특징 (즈라~ 의 성지)</h2>
-<p>
-            효빈시 하나리움 아파트들은 이름부터가 '하나'마루와 닮아 있어 팬덤의 사랑을 받고 있으며, 묘하게 캐릭터의 설정(문학소녀, 빵순이)과 일치하는 인프라를 구축하고 있다.
-        </p>
-<ul class="list-disc pl-5 mt-2 space-y-2">
-<li><strong>문학소녀의 성지:</strong> 하나리움 단지들은 유독 교육열이 높은 학원가(서구 청덕동)에 위치해 있거나, 단지 내 도서관 시설이 기형적으로 훌륭하게 갖춰져 있다. 주민들은 "도서관에 가면 하나마루가 책을 읽고 있을 것 같다"는 낭만적인 착각에 빠지곤 한다.</li>
-<li><strong>빵지순례의 중심지:</strong> 하나마루가 사랑하는 놋포빵(기린빵)을 연상시키는 길쭉한 빵을 파는 로컬 베이커리나, 이름난 디저트 맛집들이 하나리움 단지 상가에 꼭 하나씩은 입점해 있다. 이 때문에 입주민들이 이사 온 후 살이 찐다는 웃지 못할 카더라가 돈다.</li>
-<li><strong>환청 주의:</strong> 단지 내를 걷다 보면 어디선가 "즈라~" 하는 소리가 환청으로 들린다는 오타쿠들의 인증글이 효빈 갤러리에 심심찮게 올라온다. <s>물론 진짜 하나마루가 나타난 것은 아니다.</s></li>
-</ul>
-<h2 id="s-3">3. 단지 목록</h2>
-<p>
-            효빈광역시에 위치한 하나리움 아파트는 총 3개 단지, 3,000세대 규모로 남구와 서구에 집중되어 있다.
-        </p>
-<table class="w-full text-center text-sm mb-4">
-<tr class="bg-[#7777AA] font-bold text-white">
-<th style="width: 10%;">구</th>
-<th style="width: 15%;">행정동(법정동)</th>
-<th style="width: 20%;">단지명</th>
-<th style="width: 12%;">세대수</th>
-<th style="width: 12%;">입주연월</th>
-<th>비고 (단지 특징)</th>
-</tr>
-<tr>
-<td class="font-bold">남구</td>
-<td>평당5동<br/>(평당동)</td>
-<td><strong>평당 하나리움</strong></td>
-<td>1,350세대</td>
-<td>2011.05</td>
-<td class="text-left">로컬건설 시공. 전세대 대형 평수 위주로 구성되어 있어 남구 내에서 <strong>부촌 이미지</strong>가 강하게 박혀 있다.</td>
-</tr>
-<tr>
-<td class="font-bold">서구</td>
-<td>청덕3동<br/>(청덕동)</td>
-<td><strong>청덕 하나리움 1차</strong></td>
-<td>800세대</td>
-<td>2013.01</td>
-<td class="text-left">하나건설 시공. 청덕지구 하나리움 타운의 선발대 역할을 했으며, 학원가 이용이 매우 편리한 학세권이다.</td>
-</tr>
-<tr>
-<td class="font-bold">서구</td>
-<td>청덕3동<br/>(청덕동)</td>
-<td><strong>청덕 하나리움 2차</strong></td>
-<td>850세대</td>
-<td>2014.11</td>
-<td class="text-left">하나건설 시공. 1차와 합쳐 1,650세대의 대단지 시너지 효과를 내는 중이다.</td>
-</tr>
-</table>
-<h2 id="s-4">4. 사건사고 및 여담</h2>
-<ul class="list-disc pl-5 mt-2 space-y-2 text-sm text-gray-700">
-<li><strong>북구 중수동 '하나린'과의 관계:</strong> 북구 중수4동에 위치한 <strong><a class="wiki-link" href="하나린.html">하나린</a></strong> 아파트 역시 이름 때문에 하나마루+린 조합의 성지로 묶인다. 하나린은 시립 도서관급 규모의 단지 도서관을 보유하여 하나마루 밈의 정석을 보여주는데, 서구의 하나리움 주민들은 "우리가 진짜 원조 하나마루 성지"라며 묘한 라이벌 의식을 불태우고 있다.</li>
-<li><strong>미래 지향적(?) 평면 설계:</strong> 2011년에 입주한 남구 평당 하나리움은 로컬건설이 시공했음에도 불구하고 전세대 대형 평수와 파격적인 평면 설계를 도입해 당시 큰 반향을 일으켰다. 하나마루가 전자기기에 놀라 "미래즈라!"를 외치는 것처럼, 10여 년 전 입주 당시 홈네트워크 시스템을 보고 감탄한 어르신 입주민들이 많았다는 따뜻한 일화가 전해진다.</li>
-</ul>
-<div id="footer-container"></div>
-<script src="assets/load-footer.js"></script>
-</div>
+
 <script>
-        function toggleTheme() {
-            const body = document.body;
-            const isDark = body.getAttribute('data-theme') === 'dark';
-            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
-            document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+    function toggleTheme() {
+        const body = document.body;
+        const isDark = body.getAttribute('data-theme') === 'dark';
+        body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+        localStorage.setItem('wiki_theme', isDark ? 'light' : 'dark');
+        document.getElementById('themeBtn').innerText = isDark ? '다크모드' : '라이트모드';
+    }
+    function showMsg(text) {
+        const box = document.getElementById('wiki-msg-box');
+        box.innerText = text; box.style.display = 'block';
+        setTimeout(() => { box.style.display = 'none'; }, 2000);
+    }
+    window.onload = function() {
+        const savedTheme = localStorage.getItem('wiki_theme');
+        if (savedTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            document.getElementById('themeBtn').innerText = '라이트모드';
         }
-        function showMsg(text) {
-            const box = document.getElementById('wiki-msg-box');
-            box.innerText = text; box.style.display = 'block';
-            setTimeout(() => { box.style.display = 'none'; }, 2000);
-        }
-        window.onload = function() {
-            const savedTheme = localStorage.getItem('wiki_theme');
-            if (savedTheme === 'dark') {
-                document.body.setAttribute('data-theme', 'dark');
-                document.getElementById('themeBtn').innerText = '라이트모드';
-            }
-        };
-        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && this.value.trim()) {
-                location.href = this.value.trim() + ".html";
+        
+        document.querySelectorAll('.calc-age').forEach(span => {
+            const birthdate = span.getAttribute('data-birthdate');
+            if(birthdate) {
+                const age = 2026 - new Date(birthdate).getFullYear();
+                span.innerText = age;
             }
         });
-    </script>
+    };
+    document.getElementById('headerSearchInput')?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && this.value.trim()) {
+            location.href = this.value.trim() + ".html";
+        }
+    });
+</script>
+
 <script src="assets/wiki_index.js"></script>
 <script src="assets/hb_data_map.js"></script>
 <script src="assets/hb_wiki_core.js"></script>
