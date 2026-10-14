@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     </style>
     `;
 
-    // 2. HTML 구조 주입 (제공된 페이지 정보 및 지시사항 완벽 반영)
+    // 2. HTML 구조 주입 (효빈·덕북·덕남 성덕 정치인 및 관계자 총망라)
     const navHtml = `
         <div class="nw-frame-otaku">
             <div class="nw-title-otaku">
@@ -67,6 +67,25 @@ document.addEventListener("DOMContentLoaded", () => {
                         </td>
                     </tr>
 
+                    <!-- 광역 부단체장 -->
+                    <tr>
+                        <th>광역<br>부단체장<br><span style="font-size: 0.75em; font-weight: normal;">(시정 2인자)</span></th>
+                        <td>
+                            <div class="flex-group-otaku">
+                                <a href="강휴석.html" class="nw-link-otaku">
+                                    <img src="이미지/강휴석.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    강휴석
+                                    <span class="nw-subtext-otaku">(효빈 행정부시장 / 선 타는 즈라·하나마루 오시)</span>
+                                </a>
+                                <a href="최대현.html" class="nw-link-otaku">
+                                    <img src="이미지/최대현.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    최대현
+                                    <span class="nw-subtext-otaku">(효빈 경제부시장 / 1조의 사나이·양다리 P)</span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+
                     <!-- 국회의원 -->
                     <tr>
                         <th>국회의원<br><span style="font-size: 0.75em; font-weight: normal;">(입법부 엘리트)</span></th>
@@ -75,12 +94,27 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <a href="김성민.html" class="nw-link-otaku">
                                     <img src="이미지/김성민.webp" class="nw-img-otaku" onerror="this.style.display='none'">
                                     김성민
-                                    <span class="nw-subtext-otaku">(중·동구 / 노조미&메이 오시)</span>
+                                    <span class="nw-subtext-otaku">(효빈 중·동구 / 노조미&메이 오시)</span>
                                 </a>
                                 <a href="지선진.html" class="nw-link-otaku">
                                     <img src="이미지/지선진.webp" class="nw-img-otaku" onerror="this.style.display='none'">
                                     지선진
-                                    <span class="nw-subtext-otaku">(서구 / 학생회장 콜렉터)</span>
+                                    <span class="nw-subtext-otaku">(효빈 서구 / 학생회장 콜렉터)</span>
+                                </a>
+                                <a href="박청권.html" class="nw-link-otaku">
+                                    <img src="이미지/박청권.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    박청권
+                                    <span class="nw-subtext-otaku">(효빈 탄성 / 니시키노 마키 오시)</span>
+                                </a>
+                                <a href="남소현.html" class="nw-link-otaku">
+                                    <img src="이미지/남소현.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    남소현
+                                    <span class="nw-subtext-otaku">(덕북 계성·반양 / 이마이 리사 오시)</span>
+                                </a>
+                                <a href="송원민.html" class="nw-link-otaku">
+                                    <img src="이미지/송원민.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    송원민
+                                    <span class="nw-subtext-otaku">(덕남 방산·석창 갑 / 카스밍 오시)</span>
                                 </a>
                             </div>
                         </td>
@@ -91,6 +125,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         <th>기초<br>자치단체장<br><span style="font-size: 0.75em; font-weight: normal;">(현장 행정 책임자)</span></th>
                         <td>
                             <div class="flex-group-otaku">
+                                <!-- 효빈권 -->
+                                <a href="성선설.html" class="nw-link-otaku">
+                                    <img src="이미지/성선설.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    성선설
+                                    <span class="nw-subtext-otaku">(탄성군수 / 현실판 쿠로사와 루비)</span>
+                                </a>
+                                <a href="김지언.html" class="nw-link-otaku">
+                                    <img src="이미지/김지언.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    김지언
+                                    <span class="nw-subtext-otaku">(효빈 북구청장 / 세이나 오시)</span>
+                                </a>
+                                <!-- 덕북권 -->
                                 <a href="오현주.html" class="nw-link-otaku">
                                     <img src="이미지/오현주.webp" class="nw-img-otaku" onerror="this.style.display='none'">
                                     오현주
@@ -116,6 +162,42 @@ document.addEventListener("DOMContentLoaded", () => {
                                     장은재
                                     <span class="nw-subtext-otaku">(전산시장 / 쿠라타 마시로 오시)</span>
                                 </a>
+                                <a href="강미소.html" class="nw-link-otaku">
+                                    <img src="이미지/강미소.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    강미소
+                                    <span class="nw-subtext-otaku">(상안군수 / 아야&치사토 오시)</span>
+                                </a>
+                                <!-- 덕남권 -->
+                                <a href="정동혁.html" class="nw-link-otaku">
+                                    <img src="이미지/정동혁.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    정동혁
+                                    <span class="nw-subtext-otaku">(덕주시장 / 리사&니코 오시)</span>
+                                </a>
+                                <a href="이재원.html" class="nw-link-otaku">
+                                    <img src="이미지/이재원.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    이재원
+                                    <span class="nw-subtext-otaku">(방산시장 / 더블 카스미 오시)</span>
+                                </a>
+                                <a href="오세윤.html" class="nw-link-otaku">
+                                    <img src="이미지/오세윤.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    오세윤
+                                    <span class="nw-subtext-otaku">(매성시장 / 호시미 준나 오시)</span>
+                                </a>
+                                <a href="최현수.html" class="nw-link-otaku">
+                                    <img src="이미지/최현수.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    최현수
+                                    <span class="nw-subtext-otaku">(낙주시장 / 와카미야 이브 오시)</span>
+                                </a>
+                                <a href="최민규.html" class="nw-link-otaku">
+                                    <img src="이미지/최민규.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    최민규
+                                    <span class="nw-subtext-otaku">(석창군수 / 츠루마키 코코로 오시)</span>
+                                </a>
+                                <a href="윤재민.html" class="nw-link-otaku">
+                                    <img src="이미지/윤재민.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    윤재민
+                                    <span class="nw-subtext-otaku">(원안군수 / 샤이니 아재·마리 오시)</span>
+                                </a>
                                 <a href="서윤수.html" class="nw-link-otaku">
                                     <img src="이미지/서윤수.webp" class="nw-img-otaku" onerror="this.style.display='none'">
                                     서윤수
@@ -126,10 +208,10 @@ document.addEventListener("DOMContentLoaded", () => {
                                     주언일
                                     <span class="nw-subtext-otaku">(곡천군수 / 미나토 유키나 오시)</span>
                                 </a>
-                                <a href="강미소.html" class="nw-link-otaku">
-                                    <img src="이미지/강미소.webp" class="nw-img-otaku" onerror="this.style.display='none'">
-                                    강미소
-                                    <span class="nw-subtext-otaku">(상안군수 / 아야&치사토 오시)</span>
+                                <a href="김태수.html" class="nw-link-otaku">
+                                    <img src="이미지/김태수.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    김태수
+                                    <span class="nw-subtext-otaku">(분주군수 / 야자와 니코 오시)</span>
                                 </a>
                             </div>
                         </td>
@@ -169,6 +251,40 @@ document.addEventListener("DOMContentLoaded", () => {
                                     <img src="이미지/염세현.webp" class="nw-img-otaku" onerror="this.style.display='none'">
                                     염세현
                                     <span class="nw-subtext-otaku">(치원군의원 / 파란 피의 료 오시)</span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- 차세대 주자 & 원로·참모진 -->
+                    <tr>
+                        <th>차세대·원로<br>및 핵심 참모<br><span style="font-size: 0.75em; font-weight: normal;">(성덕 생태계)</span></th>
+                        <td>
+                            <div class="flex-group-otaku">
+                                <a href="김시연.html" class="nw-link-otaku">
+                                    <img src="이미지/김시연.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    김시연
+                                    <span class="nw-subtext-otaku">(효빈대 단대장 / 합법 얀데레·아유무 오시)</span>
+                                </a>
+                                <a href="박현만.html" class="nw-link-otaku">
+                                    <img src="이미지/박현만.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    박현만
+                                    <span class="nw-subtext-otaku">(전 효빈시장 / 1세대 우주세기 건덕후)</span>
+                                </a>
+                                <a href="민부선.html" class="nw-link-otaku">
+                                    <img src="이미지/민부선.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    민부선
+                                    <span class="nw-subtext-otaku">(효빈대 총장 / 마리&엠마 오시)</span>
+                                </a>
+                                <a href="오다구.html" class="nw-link-otaku">
+                                    <img src="이미지/오다구.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    오다구
+                                    <span class="nw-subtext-otaku">(전 효빈도시공사 사장 / 효빈 서브컬처의 아버지)</span>
+                                </a>
+                                <a href="천비서실장.html" class="nw-link-otaku">
+                                    <img src="이미지/천_비서실장.webp" class="nw-img-otaku" onerror="this.style.display='none'">
+                                    천 비서실장
+                                    <span class="nw-subtext-otaku">(효빈시장 비서실장 / 치카리코 오시)</span>
                                 </a>
                             </div>
                         </td>

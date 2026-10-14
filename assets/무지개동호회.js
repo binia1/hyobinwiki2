@@ -127,6 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <a href="노정미.html" class="nw-link"><img src="이미지/노정미.webp" class="nw-img" onerror="this.style.display='none'">노정미<span class="nw-subtext">(뮤즈연합)</span></a>
                                 <a href="석루비.html" class="nw-link"><img src="이미지/석루비.webp" class="nw-img" onerror="this.style.display='none'">석루비<span class="nw-subtext">(아쿠아 오시연합)</span></a>
                                 <a href="임은혜.html" class="nw-link"><img src="이미지/임은혜.webp" class="nw-img" onerror="this.style.display='none'">임은혜<span class="nw-subtext">(리에하스연합)</span></a>
+                                <a href="나수민.html" class="nw-link"><img src="이미지/나수민.webp" class="nw-img" onerror="this.style.display='none'">나수민<span class="nw-subtext">(나수미의 언니이자 효빈의 동창)</span></a>
                             </div>
                         </td>
                     </tr>

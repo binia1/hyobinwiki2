@@ -4,10 +4,9 @@
 <link href="이미지/효빈위키아이콘.webp" rel="icon"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>빅분기 실기 1.5. 판다스 오류 해결편 - 효빈위키</title>
+<title>빅분기 실기 2. 판다스 기초 완전 정복 - 효빈위키</title>
 <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- 파이썬 웹 컴파일러(Pyodide) 로드 -->
 <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
 
 <style>
@@ -15,9 +14,9 @@
         @import url('https://fonts.googleapis.com/css2?family=Apple+SD+Gothic+Neo:wght@400;700&display=swap');
         
         :root { 
-            /* 위키 테마색 - 오류 해결(Warning) 느낌의 주황색 */
-            --wiki-line-color: #FF5522;
-            --wiki-table-header-bg: #FF5522; 
+            /* 위키 테마색 - Pandas 느낌의 네이비/골드 */
+            --wiki-line-color: #150458;
+            --wiki-table-header-bg: #150458; 
             
             --wiki-main: #7777AA; 
             --wiki-border: #ccc; 
@@ -29,62 +28,18 @@
 
         body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
         
-        .namu-infobox {
-            width: 100%;
-            max-width: 350px;
-            border: 1px solid #b0b0b0 !important;
-            background-color: #ffffff;
-            font-size: 0.85rem;
-            border-collapse: collapse !important;
-            margin: 0;
-        }
-        .namu-infobox th, .namu-infobox td {
-            border: 1px solid #b0b0b0 !important;
-            padding: 6px 10px;
-        }
-        .namu-infobox .title-cell {
-            padding: 20px 0 !important; 
-            text-align: center !important;
-            background-color: #ffffff !important;
-        }
-        .inner-title-box {
-            display: inline-table !important;
-            margin: 0 auto !important;
-            border: 1px solid #b0b0b0 !important;
-            border-collapse: collapse !important;
-            background-color: #ffffff !important;
-            width: max-content !important;
-        }
-        .inner-title-box td {
-            padding: 12px 18px !important;
-            vertical-align: middle !important;
-            border: none !important;
-        }
-        .inner-title-box td:first-child {
-            border-right: 1px solid #b0b0b0 !important;
-        }
-        
-        .namu-infobox .section-title {
-            background-color: var(--wiki-table-header-bg);
-            color: #ffffff !important;
-            font-weight: bold;
-            text-align: center;
-            padding: 5px 0;
-            border: 1px solid #b0b0b0 !important;
-        }
-        .namu-infobox .row-title {
-            background-color: #f4f4f4;
-            color: #444444;
-            font-weight: bold;
-            text-align: center;
-            width: 35%;
-        }
+        .namu-infobox { width: 100%; max-width: 350px; border: 1px solid #b0b0b0 !important; background-color: #ffffff; font-size: 0.85rem; border-collapse: collapse !important; margin: 0; }
+        .namu-infobox th, .namu-infobox td { border: 1px solid #b0b0b0 !important; padding: 6px 10px; }
+        .namu-infobox .title-cell { padding: 20px 0 !important; text-align: center !important; background-color: #ffffff !important; }
+        .inner-title-box { display: inline-table !important; margin: 0 auto !important; border: 1px solid #b0b0b0 !important; border-collapse: collapse !important; background-color: #ffffff !important; width: max-content !important; }
+        .inner-title-box td { padding: 12px 18px !important; vertical-align: middle !important; border: none !important; }
+        .inner-title-box td:first-child { border-right: 1px solid #b0b0b0 !important; }
+        .namu-infobox .section-title { background-color: var(--wiki-table-header-bg); color: #ffffff !important; font-weight: bold; text-align: center; padding: 5px 0; border: 1px solid #b0b0b0 !important; }
+        .namu-infobox .row-title { background-color: #f4f4f4; color: #444444; font-weight: bold; text-align: center; width: 35%; }
 
         .img-box { margin: 0; padding: 0; line-height: 0; border-bottom: 1px solid #ddd; }
         .img-note { line-height: 1.5; padding: 8px 5px; font-size: 0.85rem; text-align: center; background-color: #ffffff; color: #333; font-weight: 500; }
 
-        .wiki-fn-link { font-size: 0.8em; vertical-align: super; color: #0275d8; text-decoration: none; cursor: pointer; position: relative; display: inline-block; }
-        .wiki-fn-link:hover { text-decoration: underline; }
         .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }   
 
         .wiki-container { max-width: 1400px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
@@ -107,6 +62,7 @@
         .wiki-link { color: var(--wiki-link); cursor: pointer; text-decoration: none; }
         .wiki-link:hover { text-decoration: underline; }
         .strike { text-decoration: line-through; color: #777; font-size: 0.9em; }
+        .highlight { background-color: #fff8e1; border: 1px solid #ffc107; padding: 2px 4px; border-radius: 4px; font-weight: bold; }
 
         .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.9rem; margin: 15px 0; border-radius: 4px; }
 
@@ -120,11 +76,10 @@
         .output-area { background: #000; color: #BBFF64; font-family: 'Consolas', 'Monaco', monospace; padding: 15px; font-size: 0.95rem; min-height: 60px; white-space: pre-wrap; border-top: 1px solid #333; max-height: 300px; overflow-y: auto; }
         
         #pyodide-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s; }
-        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid #FF5522; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 1rem; }
+        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid #150458; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 1rem; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .highlight-box { background: #fff8e1; border: 1px solid #ffc107; padding: 10px; border-radius: 5px; margin: 10px 0; }
-        .error-box { background: #ffeeee; border: 1px solid #ff5555; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .note-box { background: #ffeeee; border-left: 5px solid #ff5555; padding: 15px; margin: 15px 0; border-radius: 4px; }
 </style>
 <script src="assets/ad_logic.js"></script>
 <link href="wiki_font_standard.css" rel="stylesheet"/>
@@ -134,7 +89,7 @@
 
 <div id="pyodide-loader">
     <div class="spinner"></div>
-    <h2 class="font-bold text-xl text-gray-800">Pandas 긴급 복구반 투입 중... 🚑</h2>
+    <h2 class="font-bold text-xl text-gray-800">Pandas 엔진을 싣는 중... 🐼</h2>
     <p class="text-gray-500 mt-2 font-bold text-red-500">※ 무거운 라이브러리를 불러오므로 첫 로딩 시 10~20초 정도 소요됩니다!</p>
 </div>
 
@@ -151,7 +106,7 @@
 
 <div class="wiki-container shadow-lg">
 <div class="title-area">
-<h1 class="txt-lvl-1">빅분기 실기 1.5. 판다스 대환장 오류 해결편</h1>
+<h1 class="txt-lvl-1">빅분기 실기 2. 판다스 기초 완전 정복</h1>
 <div class="flex gap-2 mb-1">
 <button class="wiki-btn">토론</button>
 <button class="wiki-btn">수정</button>
@@ -160,28 +115,31 @@
 </div>
 
 <div class="category-box">
-<span class="font-bold text-[#FF5522]">분류:</span>
+<span class="font-bold text-[#150458]">분류:</span>
 <a class="wiki-link" href="#">빅데이터분석기사</a> | 
 <a class="wiki-link" href="#">파이썬</a> | 
-<a class="wiki-link" href="#">오류해결</a> | 
+<a class="wiki-link" href="#">Pandas</a> | 
 <a class="wiki-link" href="#">효빈위키 학습서</a>
 </div>
 
-<blockquote class="border-l-4 border-[#FF5522] bg-[#f0f7fb] p-4 my-4 shadow-sm text-gray-800">
-    <strong>"씨발 이건 또 왜 안되는거지?"</strong><br>
-    빅분기 실기를 준비하며 키보드 샷건을 치기 직전인 당신을 위해 준비했습니다.<br>
-    통계는 아는데 배열이 헷갈리고, 괄호 하나에 에러가 터져서 눈물 짓는 분들의 멘탈을 치유해 드립니다. <span class="strike">나만 당할 수 없지</span><br>
-    <span class="text-sm text-blue-600 font-bold">※ 본 문서는 이해를 돕기 위해 러브라이브 & 뱅드림 아이돌 데이터를 예시로 사용합니다.</span>
+<blockquote class="note-box text-gray-800">
+    <strong>"하... ㅈㄴ 헷갈리네. 씨발 이건 또 왜 안되는거지?"</strong><br>
+    키보드 샷건을 치기 직전인 당신을 위해 준비했습니다. 대괄호 하나, 점 하나에 에러를 뿜는 판다스의 멱살을 잡고 하드캐리 해드립니다. 
+    <span class="strike">눈으로만 보지 말고 제발 아래 에디터에서 직접 실행(Run)을 눌러보세요.</span>
 </blockquote>
 
 <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4">
 <div class="toc shrink-0 shadow-sm h-fit order-2 md:order-1" id="toc-box">
 <div class="toc-title">목차</div>
 <ul class="text-[#555555]">
-<li><a class="hover:underline" href="#s-1">1. 마스킹(Masking)의 함정: shape의 배신</a></li>
-<li><a class="hover:underline" href="#s-2">2. 괄호와 오타: torist()와 sorted_values()의 콜라보</a></li>
-<li><a class="hover:underline" href="#s-3">3. 날짜형(dt) 객체의 딜레마: 왜 min().date()는 안 될까?</a></li>
-<li><a class="hover:underline" href="#s-4">4. round() 함수 vs .round() 메서드: 언제 뭘 써야 해?</a></li>
+<li><a class="hover:underline" href="#s-1">1. 파일 읽기와 구조 파악 (read_csv, shape, info)</a></li>
+<li><a class="hover:underline" href="#s-2">2. 1차원 vs 2차원, 그리고 데이터 추출 (loc, iloc)</a></li>
+<li><a class="hover:underline" href="#s-3">3. 조건으로 필터링 (마스킹, isin, between)</a></li>
+<li><a class="hover:underline" href="#s-4">4. 결측치 처리와 통계 (fillna, dropna, std의 함정)</a></li>
+<li><a class="hover:underline" href="#s-5">5. 범주형 데이터 다루기 (value_counts, unique)</a></li>
+<li><a class="hover:underline" href="#s-6">6. 묶어서 계산하기 (groupby, sort_values)</a></li>
+<li><a class="hover:underline" href="#s-7">7. 문자열 다루기와 병합 (str, merge, pivot)</a></li>
+<li><a class="hover:underline" href="#s-8">8. 파생 변수 만들기 (where, cut, drop)</a></li>
 </ul>
 </div>
 
@@ -192,11 +150,11 @@
 <table class="inner-title-box">
 <tr>
 <td>
-<div style="width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; background-color: #FF5522; color: white; border-radius: 8px; font-weight: 900; font-size: 24px;">Err</div>
+<div style="width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; background-color: #150458; color: white; border-radius: 8px; font-weight: 900; font-size: 24px;">Pd</div>
 </td>
 <td style="text-align: left !important; line-height: 1.3 !important;">
-<div style="font-weight: 900; font-size: 1.25rem; color: #FF5522; letter-spacing: -0.5px;">판다스 에러 뽀개기</div>
-<div style="font-size: 0.85rem; color: #555555; font-weight: 500; margin-top: 2px;">Pandas Troubleshooting</div>
+<div style="font-weight: 900; font-size: 1.25rem; color: #150458; letter-spacing: -0.5px;">판다스 기초 총정리</div>
+<div style="font-size: 0.85rem; color: #555555; font-weight: 500; margin-top: 2px;">Pandas DataFrame Basics</div>
 </td>
 </tr>
 </table>
@@ -206,220 +164,342 @@
 <td colspan="2" style="padding: 0; border: 1px solid #b0b0b0 !important; text-align: center; background-color: #ffffff;">
 <div class="img-box bg-gray-100 flex justify-center py-4">
     <svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-        <text x="10" y="30" font-family="monospace" font-size="14" fill="#EE0022">TypeError:</text>
-        <text x="10" y="50" font-family="monospace" font-size="12" fill="#333">씨발 이건 또 왜 안돼?</text>
-        <path d="M 170 30 L 190 50 M 190 30 L 170 50" stroke="#EE0022" stroke-width="4"/>
+        <rect x="20" y="10" width="160" height="60" fill="white" stroke="#150458" stroke-width="2"/>
+        <line x1="20" y1="30" x2="180" y2="30" stroke="#150458" stroke-width="2"/>
+        <line x1="70" y1="10" x2="70" y2="70" stroke="#150458" stroke-width="1"/>
+        <line x1="120" y1="10" x2="120" y2="70" stroke="#150458" stroke-width="1"/>
+        <text x="35" y="25" font-size="12" font-family="sans-serif" font-weight="bold">이름</text>
+        <text x="85" y="25" font-size="12" font-family="sans-serif" font-weight="bold">부서</text>
+        <text x="135" y="25" font-size="12" font-family="sans-serif" font-weight="bold">연봉</text>
+        <text x="30" y="45" font-size="10" font-family="sans-serif">카스미</text>
+        <text x="80" y="45" font-size="10" font-family="sans-serif">기획</text>
+        <text x="135" y="45" font-size="10" font-family="sans-serif">3500</text>
     </svg>
 </div>
-<div class="img-note">에러 메시지의 마지막 줄이 곧 정답이다.</div>
+<div class="img-note">판다스는 파이썬계의 엑셀이다.</div>
 </td>
 </tr>
-<tr><th class="section-title" colspan="2">진단 정보</th></tr>
-<tr><th class="row-title">환자 상태</th><td>메서드 체이닝 중독, 괄호 실종 증후군</td></tr>
-<tr><th class="row-title">주요 증상</th><td>SyntaxError, TypeError, AttributeError</td></tr>
-<tr><th class="row-title">특효약</th><td>`type(값)` 찍어보기, 들여쓰기 확인</td></tr>
+<tr><th class="section-title" colspan="2">과목 정보</th></tr>
+<tr><th class="row-title">과목명</th><td>빅데이터분석기사 실기</td></tr>
+<tr><th class="row-title">핵심 라이브러리</th><td>pandas, numpy</td></tr>
+<tr><th class="row-title">자주 뜨는 에러</th><td>KeyError, TypeError</td></tr>
+<tr><th class="row-title">난이도</th><td><span style="color: #EE0022; font-weight: bold;">극혐 (★★★★☆)</span></td></tr>
 </tbody>
 </table>
 </div>
 
-<h2 id="s-1"><b>1. 마스킹(Masking)의 함정: shape의 배신</b></h2>
+<h2 id="s-1"><b>1. 파일 읽기와 구조 파악 (read_csv, shape, info)</b></h2>
 <p>
-    질문해주신 두 코드가 왜 결과가 다른지, <strong>"마스킹(Masking)"</strong>이라는 판다스의 핵심 원리로 완벽하게 분해해 드립니다.
-    (예시를 위해 이름에 "카"가 들어가는 아이돌을 찾는 상황으로 가정하겠습니다.)
+    CSV는 쉼표로 칸을 나눈 표 파일(엑셀로 열리는 그것)입니다. 첫 줄은 보통 열 이름이고, 그 아래가 데이터입니다. <code>pandas</code>는 이 표를 다루는 도구 묶음이며, 관행대로 <code>import pandas as pd</code>로 가져옵니다. 
 </p>
-<div class="bg-gray-100 p-3 rounded font-mono text-sm mb-2">
-    1) print(df["이름"].str.contains("카").shape[0])<br>
-    2) print(df[df["이름"].str.contains("카")].shape[0])
-</div>
 <ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
-    <li><strong>1번 코드의 정체 (마스크 정답지 자체):</strong><br> 
-        <code>df["이름"].str.contains("카")</code>를 실행하면, 컴퓨터는 아이돌 리스트 전체를 위에서부터 훑으면서 "이름에 '카'가 있나?" 하고 검사합니다.<br>
-        결과물은 <span class="text-blue-600">[False(아유무), True(카스미), True(호노카), True(치카), ...]</span> 이런 식의 <strong>O/X 정답지(Series)</strong>가 됩니다. <br>
-        이 <strong>정답지 자체의 길이(shape[0])</strong>를 쟀으니, 당연히 조건을 만족하는 사람 수가 아니라 <strong>전체 아이돌 인원수(30명)</strong>가 나옵니다.
-    </li>
-    <li><strong>2번 코드의 정체 (정답지로 필터링된 '진짜 표'):</strong><br>
-        <code>df[ ... O/X 정답지 ... ]</code> 처럼 원본 표 <code>df</code>의 대괄호 안에 방금 만든 정답지를 집어넣으면, 판다스는 <strong>True인 행만 남기고 나머지(False)를 표에서 전부 찢어버립니다.</strong> <br>
-        즉, 이름에 "카"가 들어간 사람만 남은 <strong>완전히 새로운 표(DataFrame)</strong>가 탄생합니다. 이 새 표의 행 개수를 쟀으니 우리가 원하던 <strong>조건을 만족하는 진짜 인원수(12명)</strong>가 나오는 것입니다.
-    </li>
+    <li><code>pd.read_csv("파일이름")</code>: 파일을 읽어 DataFrame(표)으로 만듭니다.</li>
+    <li><code>len(df)</code>는 행 수, <code>df.columns.tolist()</code>는 열 이름 목록입니다. **읽자마자 이 둘을 찍어보는 습관**을 들이면 파일을 잘못 읽은 채 30분 버리는 일이 사라집니다.</li>
+    <li><code>df.shape</code>는 <code>(행 수, 열 수)</code>를 한 번에 알려줍니다. <code>shape[0]</code>이 행, <code>shape[1]</code>이 열입니다.</li>
+    <li><code>df.head(3)</code>은 위에서 3행, <code>tail(1)</code>은 아래 1행을 봅니다. (비우면 기본 5행)</li>
+    <li><span class="highlight text-red-600">인덱스의 저주:</span> 출력의 맨 왼쪽 줄 번호는 열이 아니라 행의 이름표(인덱스)입니다. 나중에 <code>to_csv</code>로 저장할 때 이것이 딸려 나가면 오답 처리되므로 반드시 <code>index=False</code>를 씁니다.</li>
+    <li><span class="highlight text-blue-600">결측치의 나비효과:</span> <code>df.info()</code>를 찍어보면 <code>int64(정수)</code>, <code>float64(실수)</code>, <code>object(글자)</code>가 나옵니다. 만약 분명히 '근속연수'가 정수여야 하는데 <code>float64</code>로 읽혔다면? <strong>빈칸(NaN) 때문입니다.</strong> 빈칸은 실수 취급을 받아서 열 전체를 오염시킵니다. "왜 20이 아니라 20.0이지?" 고민하지 말고 결측치를 의심하세요!</li>
 </ul>
 
 <div class="python-editor-container">
     <div class="editor-header">
-        <span>[실습 1] O/X 정답지와 진짜 표의 차이</span>
+        <span>[실습 1] 파일 읽기와 구조 파악</span>
         <button class="run-btn" id="btn-run-1" onclick="runPythonCode('code-1', 'out-1', 'btn-run-1')">▶ 실행 (Run)</button>
     </div>
     <textarea id="code-1" class="code-area" spellcheck="false">
 import pandas as pd
+
+# (참고) 브라우저 실습을 위해 가상의 emp.csv가 미리 생성되어 있습니다.
 df = pd.read_csv("emp.csv")
 
-# 1. 마스크 (O/X 정답지) 자체의 모양
-mask = df["이름"].str.contains("카")
-print("1) 마스크(O/X 정답지)의 형태:\n", mask.head(5)) 
-print("\n-> 마스크의 전체 개수(shape[0]):", mask.shape[0]) 
-# 30명 전체를 검사했으니 30이 나옵니다!
+print("1. 행 수와 열 이름 확인:")
+print(len(df))
+print(df.columns.tolist())
 
-# 2. 마스크를 씌워서 걸러낸 진짜 표의 모양
-filtered_df = df[mask]
-print("\n2) 필터링된 진짜 표의 형태:\n", filtered_df[["이름", "소속"]].head(5))
-print("\n-> 필터링된 표의 행 개수(shape[0]):", filtered_df.shape[0]) 
-# "카"가 들어간 진짜 인원수(12명)가 나옵니다!
+print("\n2. shape 한 줄 출력:")
+print(df.shape[0], df.shape[1])  # 쉼표로 두 개를 넘기면 한 줄에 띄어쓰기로 나옴
+
+print("\n3. 데이터 상위 2개 (왼쪽에 붙은 0, 1 번호가 인덱스입니다!):")
+print(df.head(2))
+
+print("\n4. info() 로 결측치와 타입 확인:")
+print(df.info())
+# 🚨 근속연수에 24 non-null 이라고 나옵니다 (6개가 비었음). 그래서 float64 가 됩니다!
+
+# 단일 열의 타입만 볼 때는 dtypes가 아니라 dtype 입니다.
+print("\n사번 열의 타입:", df["사번"].dtype)
 </textarea>
     <div id="out-1" class="output-area"></div>
 </div>
 
-
-<h2 id="s-2"><b>2. 괄호와 오타: torist()와 sorted_values()의 콜라보</b></h2>
+<h2 id="s-2"><b>2. 1차원 vs 2차원, 그리고 데이터 추출 (loc, iloc)</b></h2>
 <p>
-    질문자님이 겪으신 <code>print(sorted(tr["팬클럽등급"].str.upper().tolist())</code> 와 <code>torist()</code> 등의 에러 원인입니다.<br>
-    판다스는 점(.)을 찍어서 명령을 기차처럼 이어붙이는 <strong>메서드 체이닝(Method Chaining)</strong>을 자주 쓰는데, 여기서 철자 하나만 틀리거나 순서가 어긋나면 기차가 탈선합니다.
+    판다스에서 사람을 미치게 하는 괄호의 개수입니다. <code>[]</code>와 <code>[[]]</code>를 구별해야 합니다. 막혔을 때 <code>type(값).__name__</code>을 찍어보면 내가 든 게 무엇인지 알 수 있습니다.
 </p>
 <ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
-    <li><strong>에러 1: 괄호 짝짝이 (SyntaxError)</strong><br>
-        <code>print(sorted(... .tolist())</code> ➡️ 여는 괄호 <code>(</code>는 3개인데, 닫는 괄호 <code>)</code>는 2개입니다! 컴퓨터는 "어? 문장이 덜 끝났는데?" 하고 다음 줄을 읽다가 에러를 뱉습니다. 맨 뒤에 <code>)</code>를 하나 더 붙여야 합니다.
-    </li>
-    <li><strong>에러 2: 기적의 오타 퍼레이드 (AttributeError)</strong><br>
-        <code>torist()</code>가 아니라 <strong><code>tolist()</code></strong>입니다. (파이썬 기본 형태인 List로 to(보낸다)는 뜻!)<br>
-        <code>sorted_values()</code>가 아니라 <strong><code>sort_values()</code></strong>입니다. 판다스 표 자체를 정렬할 때는 이걸 씁니다.
-    </li>
-    <li><strong>⭕ 정답 코드가 완벽하게 돌아간 이유:</strong><br>
-        <code>print(sorted(tr["팬클럽등급"].str.upper().unique().tolist()))</code><br>
-        이 코드는 흐름이 예술입니다.<br>
-        1) <code>tr["팬클럽등급"]</code> (팬클럽 열만 뽑음) <br>
-        2) <code>.str.upper()</code> (글자를 전부 대문자로 바꿈) <br>
-        3) <code>.unique()</code> (중복을 제거해서 종류만 남김) <br>
-        4) <code>.tolist()</code> (판다스 전용 배열을 파이썬 리스트로 바꿈) <br>
-        5) <code>sorted(...)</code> (알파벳 순으로 예쁘게 정렬) <br>
-        6) <code>print(...)</code> (출력!)<br>
-        이렇게 톱니바퀴가 완벽하게 맞물렸기 때문에 에러 없이 작동한 것입니다.
-    </li>
+    <li><code>df["연봉"]</code>: 괄호 하나. 열 하나만 쏙 뺀 <strong>1차원(Series)</strong>. (모양: `(30,)`)</li>
+    <li><code>df[["연봉"]]</code>: 괄호 두 개. 표 모양을 그대로 유지한 <strong>2차원(DataFrame)</strong>. (모양: `(30, 1)`)</li>
+    <li>머신러닝(scikit-learn) 모델은 2차원을 요구하므로 <code>fit_transform(df[["연봉"]])</code> 처럼 두 겹을 써야 차원 오류가 안 납니다. 여러 열을 고를 때도 <code>df[["이름", "연봉"]]</code> 두 겹입니다!</li>
 </ul>
+<blockquote class="bg-gray-100 p-4 border-l-4 border-blue-500 my-4 text-gray-800 font-bold">
+    💡 데이터 추출: 무조건 하나만 외운다. <span class="text-blue-600 text-xl">df.loc[ 행 조건 , 열 이름 ]</span><br>
+    - <code>loc</code>은 이름과 조건으로 고르고, <code>iloc</code>은 숫자 위치로 고릅니다.<br>
+    - <code>iloc[0:3, 0:2]</code>는 슬라이스 규칙을 따라 3행과 2열은 포함하지 않습니다. (0,1,2행 / 0,1열)
+</blockquote>
 
 <div class="python-editor-container">
     <div class="editor-header">
-        <span>[실습 2] 체인 콤보와 오타 수정</span>
+        <span>[실습 2] 괄호 겹수와 loc/iloc</span>
         <button class="run-btn" id="btn-run-2" onclick="runPythonCode('code-2', 'out-2', 'btn-run-2')">▶ 실행 (Run)</button>
     </div>
     <textarea id="code-2" class="code-area" spellcheck="false">
 import pandas as pd
-tr = pd.read_csv("churn_train.csv")
+df = pd.read_csv("emp.csv")
 
-# ❌ 오류 1: 괄호가 덜 닫힘 (주석 풀고 실행하면 SyntaxError 발생)
-# print(sorted(tr["팬클럽등급"].str.upper().tolist()) 
+# 1. Series 와 DataFrame 의 차이
+print("1겹 타입:", type(df["연봉"]).__name__, "모양:", df["연봉"].shape)
+print("2겹 타입:", type(df[["연봉"]]).__name__, "모양:", df[["연봉"]].shape)
 
-# ❌ 오류 2: 오타 (주석 풀면 AttributeError 발생 - 그런 명령은 없다고 화냄)
-# print(tr["팬클럽등급"].str.upper().sorted_values().torist())
+# 2. iloc: 0번째 행, 1번째 열(이름)
+print("\niloc[0, 1] 결과:", df.iloc[0, 1])
 
-# ⭕ 정답: 중복 제거(unique) 후 파이썬 리스트로 만들어 정렬하기
-result = sorted(tr["팬클럽등급"].str.upper().unique().tolist())
-print("깔끔하게 정렬된 팬클럽 등급 리스트:\n", result)
+# 3. loc: 0번째 인덱스 이름, "이름" 이라는 열
+print("loc[0, '이름'] 결과:", df.loc[0, "이름"])
+
+# 4. 슬라이싱 규칙 (끝 번호 포함 안함)
+print("\niloc[0:3, 0:2] 결과:")
+print(df.iloc[0:3, 0:2])
+
+# 5. 대망의 조건 추출: df.loc[행조건, 열이름]
+print("\n개발 부서 연봉 합계:", df.loc[df["부서"] == "개발", "연봉"].sum())
+print("개발 부서 이름,연봉 크기:", df.loc[df["부서"] == "개발", ["이름", "연봉"]].shape)
 </textarea>
     <div id="out-2" class="output-area"></div>
 </div>
 
-
-<h2 id="s-3"><b>3. 날짜형(dt) 객체의 딜레마: 왜 min().date()는 안 될까?</b></h2>
-<div class="error-box font-bold">
-    "씨발 이건 또 왜 안되는거지? dt는 붙이면 안되는거야? 다른데서는 붙이라고 했으면서?"
-</div>
+<h2 id="s-3"><b>3. 조건으로 필터링 (마스킹, isin, between)</b></h2>
 <p>
-    이 분노, 1000% 이해합니다. 판다스에서 가장 헷갈리는 <code>.dt</code> (날짜 도구상자) 규칙 때문입니다.
-    핵심은 단 하나, <strong>"내가 지금 들고 있는 게 덩어리(Series)냐, 낱개(값 하나)냐"</strong>를 파악하는 것입니다.
+    <code>df["연봉"] >= 5000</code>은 행마다 True/False를 적어둔 <strong>마스크(Series)</strong>입니다. 이 마스크를 <code>df[...]</code> 안에 넣으면 True인 행만 남습니다. 여기에 <code>.sum()</code>을 때리면 조건에 맞는 행의 개수가 바로 튀어나옵니다.
 </p>
 <ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
-    <li><strong>상황 1: 덩어리 (Series)</strong><br>
-        <code>df["데뷔일"]</code> ➡️ 30명 전체의 데뷔일이 묶인 <strong>긴 덩어리</strong>입니다. <br>
-        이 덩어리 전체에서 연도만 쏙쏙 뽑아내려면, 이 덩어리를 뜯어고칠 특수 도구상자인 <code>.dt</code>를 꺼내야 합니다. <br>그래서 <code>df["데뷔일"].dt.year</code> 라고 씁니다.
-    </li>
-    <li><strong>상황 2: 낱개 (Timestamp)</strong><br>
-        <code>df["데뷔일"].min()</code> ➡️ 30명 중 가장 빨리 데뷔한 <strong>'날짜 딱 1개' (예: 2010-08-13)</strong>가 튀어나옵니다. <br>
-        <strong>결정적 차이:</strong> 이 '낱개' 날짜는 덩어리가 아니기 때문에 <code>.dt</code>라는 도구상자가 필요 없습니다(아예 달려있지도 않습니다). 그냥 자기 자신에게 바로 "연도 알려줘!"라고 명령하면 됩니다.
-    </li>
-    <li>따라서 낱개에 대고 <code>df["데뷔일"].min().dt.date()</code> 라고 쓰면 <strong>에러(AttributeError)</strong>가 납니다. "나 낱개인데 왜 덩어리용 도구를 써?" 하고 뱉는 겁니다.<br>
-        ➡️ <strong>올바른 표현:</strong> <code>df["데뷔일"].min().date()</code> (낱개에 직접 명령) <br>
-        ➡️ <strong>또는:</strong> <code>df["데뷔일"].dt.date.min()</code> (미리 덩어리 전체에서 시간 떼고 날짜만 남긴 뒤, 그중 최솟값 구하기)
-    </li>
+    <li><span class="highlight text-red-600">괄호 폭동 주의:</span> 조건을 묶을 때는 <code>and/or</code>가 아니라 <strong><code>&</code> / <code>|</code></strong> 이고, 각 조건은 반드시 <strong>괄호 <code>()</code></strong>로 감싸야 합니다. 괄호 빼면 연산자 우선순위 때문에 엉뚱한 에러가 납니다! <code>(A) & (B)</code> </li>
+    <li><code>~</code>: "아닌 것" (NOT). <code>~(df["부서"] == "지원")</code></li>
+    <li><code>isin(["과장", "부장"])</code>: 여러 개 중 하나. 리스트를 던져줍니다.</li>
+    <li><code>between(10, 20)</code>: 양 끝 숫자를 포함하는 범위.</li>
 </ul>
 
 <div class="python-editor-container">
     <div class="editor-header">
-        <span>[실습 3] 덩어리와 낱개의 차이 (dt)</span>
+        <span>[실습 3] 조건 마스킹과 괄호의 늪</span>
         <button class="run-btn" id="btn-run-3" onclick="runPythonCode('code-3', 'out-3', 'btn-run-3')">▶ 실행 (Run)</button>
     </div>
     <textarea id="code-3" class="code-area" spellcheck="false">
 import pandas as pd
 df = pd.read_csv("emp.csv")
-# 문자열을 진짜 날짜형(datetime)으로 변환
-df["데뷔일"] = pd.to_datetime(df["데뷔일"])
 
-# 1. [덩어리] 상태일 때는 .dt 를 붙여서 명령한다.
-print("2020년 이후 데뷔 인원수:", (df["데뷔일"].dt.year >= 2020).sum())
+# 1. 마스크에 바로 sum()을 때려서 개수 세기
+print("연봉 7000 이상 인원:", (df["연봉"] >= 7000).sum())
 
-# 2. [낱개] 가장 빠른 데뷔일 구하기 (.min() 은 낱개 하나를 뱉는다!)
-first_debut = df["데뷔일"].min()
-print("\n가장 빠른 데뷔일(낱개):", first_debut)
-print("이 낱개의 진짜 타입:", type(first_debut)) # Timestamp 객체
+# 2. 마스크를 씌운 진짜 표의 개수 세기 (shape[0])
+print("사원 직급 인원:", df[df["직급"] == "사원"].shape[0])
 
-# 3. 낱개에는 dt가 없다! 바로 .date() 나 .year 를 쓴다.
-print("\n낱개에서 시간 떼고 날짜만 보기:", first_debut.date())
+# 3. isin (리스트 전달)
+print("개발 또는 인사 부서 인원:", df[df["부서"].isin(["개발", "인사"])].shape[0])
 
-# 4. (응용) 덩어리를 아예 날짜 덩어리로 싹 바꾼 뒤 min()을 때려도 된다.
-print("덩어리 먼저 바꾸고 최솟값:", df["데뷔일"].dt.date.min())
+# 4. ~ (NOT) 활용하여 loc에 넣기
+print("\n지원 부서가 아닌 사람들의 연봉 합계:")
+print(df.loc[~(df["부서"] == "지원"), "연봉"].sum())
 </textarea>
     <div id="out-3" class="output-area"></div>
 </div>
 
-
-<h2 id="s-4"><b>4. round() 함수 vs .round() 메서드: 언제 뭘 써야 해?</b></h2>
-<p>
-    파이썬은 정말 친절하면서도 불친절합니다. 똑같이 반올림을 하는 건데 방법이 두 가지나 있어서 사람을 미치게 하죠. 이 역시 <strong>"덩어리냐 낱개냐"</strong>로 구분하면 편합니다.
-</p>
+<h2 id="s-4"><b>4. 결측치 처리와 통계 (fillna, dropna, std의 함정)</b></h2>
 <ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
-    <li><strong><code>round(값, 자리수)</code> (파이썬 내장 기본 함수):</strong><br>
-        이건 <strong>단일 숫자 1개(스칼라)</strong>를 다룰 때 씁니다. <br>
-        <code>mean_score = df["인기도"].mean()</code> 을 하면 숫자 1개가 툭 튀어나옵니다 (예: 4.1235). 이 숫자 하나를 반올림할 때 <strong>알을 품듯이 <code>round(mean_score, 2)</code> 처럼 크게 감싸서</strong> 씁니다.
-    </li>
-    <li><strong><code>값.round(자리수)</code> (판다스 표/덩어리용 기능):</strong><br>
-        이건 <strong>표(DataFrame) 전체나 한 열(Series) 전체</strong>에 한꺼번에 반올림 폭격을 가할 때 뒤에 이어 붙입니다. <br>
-        <code>(df["연봉"] / 12)</code> 를 하면 30명 전체의 월급 덩어리가 나오는데, 이 수많은 숫자들에 일일이 <code>round()</code>를 씌울 수 없으니 <strong><code>(df["연봉"] / 12).round(1)</code> 처럼 뒤에 기능 스위치를 켜듯 붙여버립니다.</strong>
-    </li>
-    <li><strong>왜 섞어서 써지나요? (헷갈림의 원흉)</strong><br>
-        사실 판다스에서 <code>.mean()</code>으로 뽑은 숫자 1개가 순수 파이썬 숫자가 아니라 `Numpy float`라는 특수 숫자라서, 그 뒤에 <code>.round(2)</code>를 붙여도 에러 없이 작동할 때가 있습니다. <br>
-        하지만 시험장에서 헷갈리지 않으려면 <strong>[숫자 1개면 <code>round(값)</code>으로 크게 감싸고, 덩어리/표 전체면 뒤에 <code>.round()</code>를 붙인다]</strong>고 기준을 콱 잡아두세요!
+    <li><code>df.isnull().sum()</code>: 칸마다 T/F를 세어 열별 빈칸 개수를 줍니다. 한 번 더 `.sum()`하면 전체 빈칸 개수입니다.</li>
+    <li><code>df["열"].fillna(값)</code>: 빈칸을 채웁니다. <strong class="text-red-500">결과를 원래 변수에 다시 담아야( = ) 표가 바뀝니다!</strong></li>
+    <li>평균으로 채울 때는 <code>mean = s.mean()</code> 처럼 변수에 담아두는 게 안전합니다. 평균을 채워도 원래 덩어리의 평균은 변하지 않습니다 (예: `[1, 3, NaN]` 평균은 2. 2로 채우면 `[1, 3, 2]`, 평균 여전히 2).</li>
+    <li><code>df.dropna()</code>: 빈칸이 하나라도 있는 '행'을 찢어버립니다. <code>dropna(subset=["근속연수"])</code> 처럼 기준 열을 정해줄 수 있습니다. ("해당 직원 삭제"라는 발문에 쓰임)</li>
+    <li><code>count()</code>는 결측치가 '아닌' 개수를 셉니다 (len과 다름). <code>quantile(0.75)</code>는 3사분위수 (0.5는 중앙값).</li>
+    <li><span class="highlight text-blue-600 bg-blue-50 text-xl block p-2 border border-blue-200 mt-2">🚨 치명적 함정: 표준편차 (std)</span>
+        - <code>pandas</code>의 <code>std()</code>: 기본이 <strong>ddof=1 (표본표준편차, n-1로 나눔)</strong><br>
+        - <code>numpy</code>의 <code>np.std()</code>: 기본이 <strong>ddof=0 (모표준편차, n으로 나눔)</strong><br>
+        답이 미세하게 어긋나면 무조건 여기를 봐야 합니다! 발문이 시키는 대로 써야 합니다.
     </li>
 </ul>
 
 <div class="python-editor-container">
     <div class="editor-header">
-        <span>[실습 4] 반올림의 두 가지 얼굴</span>
+        <span>[실습 4] 결측치와 std의 함정</span>
         <button class="run-btn" id="btn-run-4" onclick="runPythonCode('code-4', 'out-4', 'btn-run-4')">▶ 실행 (Run)</button>
     </div>
     <textarea id="code-4" class="code-area" spellcheck="false">
 import pandas as pd
+import numpy as np
 df = pd.read_csv("emp.csv")
 
-# 1. [덩어리] 전체를 반올림 할 때 -> 뒤에 .round() 를 붙인다.
-# (연봉을 12로 나눈 월급 덩어리를 소수점 1자리까지 표시)
-monthly = (df["연봉"] / 12).round(1)
-print("덩어리 반올림 결과 (앞의 3명만):\n", monthly.head(3))
+print("1. 빈칸 개수 확인:\n", df.isnull().sum())
 
-# 2. [숫자 1개] (평균값 등)를 반올림 할 때 -> round(값, 자리수) 로 감싼다.
-avg_pop = df["인기도"].mean()
-print("\n평균 인기도(원본 숫자 1개):", avg_pop)
-print("평균 인기도(round로 감싸서 반올림):", round(avg_pop, 2))
+print("\n2. 원래 행 수 vs 버린 후 행 수:")
+print(df.shape[0], "vs", df.dropna().shape[0])
 
-# 💡 실기시험 필수 꿀팁: 
-# value_counts(normalize=True) 로 비율을 구할 때는 '비율 덩어리(Series)'가 나옵니다.
-# 덩어리니까 뒤에 .round(4)를 붙이는 것이 정석입니다!
-print("\n[복습] 팬클럽 등급별 비율 (덩어리에 round 붙이기):")
-tr = pd.read_csv("churn_train.csv")
-print(tr["팬클럽등급"].value_counts(normalize=True).round(4))
+# 3. Series 평균 채우기의 신비
+s = pd.Series([1, 3, None])
+print(f"\n원본 평균: {s.mean()}, 채운 후 평균: {s.fillna(s.mean()).mean()}")
+
+# 4. std의 두 얼굴 (이거 진짜 중요)
+print("\n[std의 차이]")
+print("Pandas 표본표준편차(ddof=1):", round(df["연봉"].std(), 4))
+print("Numpy 모표준편차(ddof=0):", round(np.std(df["연봉"]), 4))
 </textarea>
     <div id="out-4" class="output-area"></div>
 </div>
 
+<h2 id="s-5"><b>5. 범주형 데이터 다루기 (value_counts, unique)</b></h2>
+<p>
+    <code>value_counts()</code>는 항목별로 몇 번 나오는지 <strong>가장 많은 순서대로 정렬</strong>해서 줍니다. 범주형 열을 볼 때 가장 먼저 찍는 마법의 도구입니다.
+</p>
+<ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
+    <li><code>nunique()</code>: 서로 다른 값이 몇 '종류'인지 개수만 알려줍니다.</li>
+    <li><code>unique()</code>: 종류 리스트를 뽑습니다. 단, "나온 순서"대로 나오므로 답으로 쓸 땐 <strong><code>sorted(...)</code>로 정렬해서</strong> 쓰는 게 안전합니다.</li>
+    <li><code>value_counts(normalize=True)</code>: 개수 대신 <strong>비율(합계 1)</strong>을 구합니다. <br>
+    <span class="text-red-500">※ 주의: 오타 `nomallize` 내지 마세요! 비율을 구할 때는 round() 안에 감싸지 말고 뒤에 `.round(4)`로 이어 붙이세요. (비율 자체가 Series 덩어리기 때문입니다)</span></li>
+    <li><code>drop_duplicates(subset=[...])</code>: 조합이 같은 행을 하나만 남깁니다 ("중복 제거" 발문).</li>
+</ul>
+
+<div class="python-editor-container">
+    <div class="editor-header">
+        <span>[실습 5] 종류 세기와 정렬</span>
+        <button class="run-btn" id="btn-run-5" onclick="runPythonCode('code-5', 'out-5', 'btn-run-5')">▶ 실행 (Run)</button>
+    </div>
+    <textarea id="code-5" class="code-area" spellcheck="false">
+import pandas as pd
+df = pd.read_csv("sales.csv") # 지점, 회원등급, 상품, 수량
+
+print("1. 지점 종류 개수(nunique):", df["지점"].nunique())
+
+print("\n2. 회원등급 종류 정렬해서 보기(unique):")
+print(sorted(df["회원등급"].unique()))
+
+print("\n3. 상품별 판매 건수(value_counts):")
+print(df["상품"].value_counts())
+
+print("\n4. 회원등급 비율 (normalize=True 후 뒤에 .round() 붙임):")
+print(df["회원등급"].value_counts(normalize=True).round(4))
+</textarea>
+    <div id="out-5" class="output-area"></div>
+</div>
+
+<h2 id="s-6"><b>6. 묶어서 계산하기 (groupby, sort_values)</b></h2>
+<ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
+    <li><code>df.groupby("부서")["연봉"].mean()</code>: 읽는 순서 그대로 <strong>'부서'별로 묶어서 '연봉'의 '평균'</strong>을 냅니다. 결과의 왼쪽에 부서 이름(Index)이 붙는데, <code>.reset_index()</code>를 치면 평범한 표(DataFrame)로 내려옵니다.</li>
+    <li><code>.agg(["count", "max"])</code> 리스트를 주면 여러 계산을 한 번에 합니다.</li>
+    <li><code>df.sort_values("연봉", ascending=False)</code>: 내림차순(큰 것부터) 정렬! (원본 안 바뀜)</li>
+    <li><code>nlargest(3)</code> / <code>nsmallest(3)</code>: 큰 것 3개 / 작은 것 3개를 바로 뽑습니다.</li>
+    <li><span class="highlight text-blue-600 bg-blue-50 p-2 font-bold block mt-2">💡 "두 번째로 큰 것" 공식:</span> 내림차순 정렬 후 <code>iloc[1]</code>로 꺼냅니다 (0부터 세니까 1이 두 번째!). 
+        그룹 결과 <code>g</code>에서 두 번째 그룹 이름은 <code>g.index[1]</code>, 값은 <code>g.iloc[1]</code> 입니다.</li>
+</ul>
+
+<div class="python-editor-container">
+    <div class="editor-header">
+        <span>[실습 6] 그룹핑과 두 번째 값 찾기</span>
+        <button class="run-btn" id="btn-run-6" onclick="runPythonCode('code-6', 'out-6', 'btn-run-6')">▶ 실행 (Run)</button>
+    </div>
+    <textarea id="code-6" class="code-area" spellcheck="false">
+import pandas as pd
+df = pd.read_csv("emp.csv")
+
+# 1. 2번째로 연봉이 높은 사람 찾기 (내림차순 후 인덱스 주의)
+# ascending=False 를 안 쓰면 꼴찌가 나옵니다!
+print("상위 3명 이름/연봉:\n", df.sort_values("연봉", ascending=False).head(3)[["이름", "연봉"]])
+print("\nnlargest로 뽑은 탑3 연봉 리스트:", df["연봉"].nlargest(3).tolist())
+
+# 2. 부서별 평균 연봉이 '두 번째로' 높은 부서와 그 값 찾기
+# 주의: sort_values() 에는 "연봉" 열 이름을 안 적습니다! 이미 연봉 Series 이기 때문입니다.
+g = df.groupby("부서")["연봉"].mean().sort_values(ascending=False)
+print("\n부서별 평균 연봉 순위:\n", round(g, 2))
+
+# 그룹 이름은 index, 값은 iloc 로 꺼낸다! (1이 두번째)
+print(f"\n두 번째로 높은 부서: {g.index[1]}, 평균: {round(g.iloc[1], 2)}")
+</textarea>
+    <div id="out-6" class="output-area"></div>
+</div>
+
+<h2 id="s-7"><b>7. 문자열 다루기와 병합 (str, merge, pivot)</b></h2>
+<ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
+    <li>문자열 기능을 쓸 땐 <strong>무조건 <code>.str</code>을 한 번 거쳐야</strong> 합니다: <code>df["이름"].str.upper()</code> </li>
+    <li><code>.str[0]</code>은 각 값의 첫 글자(성씨 뽑기), <code>.str[:2]</code>는 앞 두 글자.</li>
+    <li><code>.str.contains("서")</code>: "서"가 들어있는지 T/F로 반환. <strong><span class="text-red-500">주의: contains는 기본적으로 대소문자를 구분합니다.</span></strong> 영문 조건일 때 대소문자 무시하려면 <code>case=False</code>를 붙이세요.</li>
+    <li><code>pd.merge(왼쪽, 오른쪽, on="공통열", how="inner")</code>: 엑셀 VLOOKUP입니다. <code>how="left"</code>면 짝이 없어도 왼쪽 표 행은 살리고 빈칸(NaN)으로 둡니다. <strong>병합 후에는 행 수가 늘어나지 않았는지 반드시 확인하세요 (중복 키 문제).</strong></li>
+    <li><code>pivot_table(index="세로", columns="가로", values="계산열", aggfunc="mean")</code>: 2차원 피벗. 빈칸은 <code>fill_value=0</code>으로 채울 수 있습니다. 개수만 셀 때는 <code>pd.crosstab(A, B)</code>가 직빵입니다 (카이제곱 검정 입력용).</li>
+</ul>
+
+<div class="python-editor-container">
+    <div class="editor-header">
+        <span>[실습 7] 문자열과 병합</span>
+        <button class="run-btn" id="btn-run-7" onclick="runPythonCode('code-7', 'out-7', 'btn-run-7')">▶ 실행 (Run)</button>
+    </div>
+    <textarea id="code-7" class="code-area" spellcheck="false">
+import pandas as pd
+emp = pd.read_csv("emp.csv")
+dept = pd.read_csv("dept.csv") # 부서, 지역 데이터
+
+# 1. '이름'의 성씨 종류 개수 (첫 글자 추출)
+print("성씨 종류 개수:", emp["이름"].str[0].nunique())
+
+# 2. 이름에 "서"가 들어가는 사람 수 (조건 마스킹 후 shape[0])
+print("'서'가 들어가는 사람 수:", emp[emp["이름"].str.contains("서")].shape[0])
+
+# 3. 부서 기준으로 표 합치기
+merged = pd.merge(emp, dept, on="부서")
+print("\n병합 후 결과 미리보기:\n", merged.head(2)[["이름", "부서", "지역"]])
+
+# 4. 피벗 테이블 (부서 x 직급별 평균 연봉)
+# 짝이 없어서 NaN이 나오는 칸은 fill_value=0 으로 채움
+pivot = emp.pivot_table(index="부서", columns="직급", values="연봉", aggfunc="mean", fill_value=0)
+print("\n피벗 테이블 결과:\n", pivot.round(0))
+</textarea>
+    <div id="out-7" class="output-area"></div>
+</div>
+
+<h2 id="s-8"><b>8. 파생 변수 만들기 (where, cut, drop)</b></h2>
+<ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
+    <li><code>df["새열"] = df["기존열"] * 2</code>: 없는 열 이름에 값을 담으면 <strong>새 열이 만들어집니다.</strong> 열끼리 계산하면 행마다 짝을 맞춰 한 번에 끝납니다.</li>
+    <li><code>np.where(조건, 참일때값, 거짓일때값)</code>: 조건에 따라 두 값 중 하나를 빠르고 쉽게 채웁니다.</li>
+    <li><code>pd.cut(값, bins=[...], labels=[...])</code>: 숫자를 구간으로 쪼개서 이름표(등급)를 붙입니다. <strong>bins(경계)는 labels(이름)보다 반드시 1개 많아야 합니다!</strong></li>
+    <li><code>df.rename(columns={"옛이름": "새이름"})</code>: 열 이름 변경. 딕셔너리 모양을 씁니다.</li>
+    <li><code>df.drop(columns=["사번"])</code>: 열을 버립니다. 작업형 2유형에서 ID처럼 예측에 도움 안 되는 쓸데없는 열 버릴 때 씁니다.</li>
+</ul>
+
+<div class="python-editor-container">
+    <div class="editor-header">
+        <span>[실습 8] 새로운 열 창조하기</span>
+        <button class="run-btn" id="btn-run-8" onclick="runPythonCode('code-8', 'out-8', 'btn-run-8')">▶ 실행 (Run)</button>
+    </div>
+    <textarea id="code-8" class="code-area" spellcheck="false">
+import pandas as pd
+import numpy as np
+df = pd.read_csv("emp.csv")
+
+# 1. 없는 열에 값 넣기 (세후 연봉)
+df["세후"] = (df["연봉"] * 0.92).round(0)
+
+# 2. np.where (근속연수 10년 이상이면 '장기', 아니면 '단기')
+# 결측치(NaN)는 10 이상이 아니므로 자동으로 '단기'가 됩니다.
+df["장기"] = np.where(df["근속연수"] >= 10, "장기", "단기")
+
+# 3. pd.cut (연봉을 기준으로 등급 나누기)
+# bins: 0~4000, 4000~6000, 6000~10000 (경계 4개)
+# labels: C, B, A (이름 3개)
+df["등급"] = pd.cut(df["연봉"], bins=[0, 4000, 6000, 10000], labels=["C", "B", "A"])
+
+print(df[["이름", "연봉", "세후", "장기", "등급"]].head(6))
+</textarea>
+    <div id="out-8" class="output-area"></div>
+</div>
+
 <div class="category-box mt-8">
 <span class="font-bold">다음 문서:</span>
-<a class="wiki-link font-bold text-[#FF5522]" href="#">빅분기 실기 2. 전처리와 결측치 심화 ➡️</a>
+<a class="wiki-link font-bold text-[#150458]" href="#">빅분기 실기 핵심. 작업형2 머신러닝 템플릿 ➡️</a>
 </div>
 
 <div id="wiki-footer-area"></div>
@@ -433,51 +513,49 @@ print(tr["팬클럽등급"].value_counts(normalize=True).round(4))
             let pyodide = await loadPyodide();
             await pyodide.loadPackage(['pandas', 'numpy']);
             
-            // 실습을 위한 가상의 emp.csv (아이돌 데이터로 교체!)
-            const emp_csv = `사번,이름,소속,포지션,연봉,연차,인기도,데뷔일
-1001,토야마 카스미,포핀파,보컬,3230,2,3.8,2024-08-28
-1002,미나토 유키나,로젤리아,보컬,4083,3,4.2,2023-07-26
-1003,코사카 호노카,뮤즈,보컬,7395,12,4.6,2010-08-13
-1004,미나미 코토리,뮤즈,댄서,8075,12,,2010-08-13
-1005,타카미 치카,아쿠아,보컬,4558,7,4.7,2015-10-07
-1006,와타나베 요우,아쿠아,댄서,5796,,4.6,2015-10-07
-1007,우에하라 아유무,니지가사키,보컬,3545,4,,2020-07-29
-1008,나카스 카스미,니지가사키,댄서,3724,4,4.9,2020-07-29
-1009,시부야 카논,리에라,보컬,3222,2,3.4,2021-04-07
-1010,탕 쿠쿠,리에라,댄서,3477,2,,2021-04-07
-1011,미타케 란,앱글,보컬,3581,3,3.3,2023-06-12
-1012,마루야마 아야,파스팔레,보컬,4410,4,4.9,2022-06-04
-1013,아야세 에리,뮤즈,댄서,7820,12,4.1,2010-08-13
-1014,츠루마키 코코로,하로해피,보컬,9999,3,4.8,2023-01-01
-1015,쿠로사와 다이아,아쿠아,댄서,5400,7,4.4,2015-10-07
-1016,텐노지 리나,니지가사키,보컬,3400,4,,2020-07-29
-1017,오사카 시즈쿠,니지가사키,댄서,3500,4,4.2,2020-07-29
-1018,이치가야 아리사,포핀파,키보드,3300,2,3.9,2024-08-28
-1019,시라사기 치사토,파스팔레,베이스,4300,4,4.5,2022-06-04
-1020,타카사키 유우,니지가사키,매니저,3000,4,4.9,2020-07-29
-1021,아사카 카린,니지가사키,댄서,3900,4,4.7,2020-07-29
-1022,헤안나 스미레,리에라,보컬,3100,2,3.5,2021-04-07
-1023,아라시 치사토,리에라,댄서,3200,2,3.8,2021-04-07
-1024,미야시타 아이,니지가사키,댄서,3600,4,4.3,2020-07-29
-1025,유우키 세츠나,니지가사키,보컬,4000,4,4.8,2020-07-29
-1026,쿠니키다 하나마루,아쿠아,보컬,4200,7,4.2,2015-10-07
-1027,츠시마 요시코,아쿠아,댄서,4100,7,4.3,2015-10-07
-1028,소노다 우미,뮤즈,보컬,7500,12,4.5,2010-08-13
-1029,호시조라 린,뮤즈,댄서,7200,12,4.4,2010-08-13
-1030,코이즈미 하나요,뮤즈,보컬,7100,12,4.2,2010-08-13`;
+            // 실습을 위한 가상의 CSV 데이터 3종 생성 (브라우저 메모리 파일시스템)
+            // 러브라이브 & 뱅드림 아이돌 직원 명부
+            const emp_csv = `사번,이름,부서,직급,연봉,근속연수,고객만족도,입사일
+1001,코사카 호노카,영업,부장,8000,10,4.8,2010-08-13
+1002,미나미 코토리,기획,과장,6000,,4.5,2010-08-13
+1003,소노다 우미,개발,사원,4000,2,4.9,2024-01-01
+1004,타카미 치카,영업,대리,5000,4,4.2,2022-10-07
+1005,토야마 카스미,지원,사원,3500,1,,2025-02-28
+1006,미나토 유키나,개발,부장,9000,8,4.7,2017-04-19
+1007,사쿠라우치 리코,기획,대리,5500,5,4.3,2021-06-30
+1008,와타나베 요우,영업,과장,6200,6,,2020-05-15
+1009,나카스 카스미,인사,사원,3200,1,3.8,2025-01-01
+1010,시부야 카논,기획,사원,3800,2,4.1,2024-03-02
+1011,마루야마 아야,영업,사원,4200,,4.6,2023-08-11
+1012,츠루마키 코코로,지원,부장,9999,9,4.9,2016-03-16
+1013,미타케 란,개발,사원,4100,3,3.9,2023-04-10
+1014,이치가야 아리사,인사,과장,5800,7,4.4,2019-02-05
+1015,우에하라 아유무,기획,대리,4800,4,,2022-09-01`;
             pyodide.FS.writeFile("emp.csv", emp_csv);
 
-            // 실습을 위한 churn_train.csv (팬클럽 회원 데이터로 교체!)
-            const churn_csv = `고객ID,성별,팬클럽등급,가입개월,월요금,굿즈구매수,이탈
-C1001,남,standard,22,44300,3,1
-C1002,여,premium,1,62000,1,1
-C1003,남,premium,45,64000,0,1
-C1004,남,basic,10,32200,1,1
-C1005,남,premium,5,69500,0,1
-C1006,여,basic,56,29500,0,0
-C1007,여,premium,48,62800,2,0`;
-            pyodide.FS.writeFile("churn_train.csv", churn_csv);
+            // 부서 데이터
+            const dept_csv = `부서,지역
+영업,오토노키자카
+기획,우라노호시
+개발,하나사키가와
+지원,니지가사키
+인사,유이가오카
+물류,하네오카`;
+            pyodide.FS.writeFile("dept.csv", dept_csv);
 
+            // 판매 데이터
+            const sales_csv = `지점,회원등급,상품,수량
+도쿄,VIP,펜라이트,50
+누마즈,Gold,타월,30
+오다이바,Silver,티셔츠,10
+도쿄,Gold,펜라이트,20
+누마즈,VIP,티셔츠,40
+오다이바,VIP,펜라이트,60
+도쿄,Silver,타월,15
+누마즈,Silver,머그컵,25`;
+            pyodide.FS.writeFile("sales.csv", sales_csv);
+
+            // 버튼 활성화
             document.querySelectorAll('.run-btn').forEach(btn => {
                 btn.innerText = "▶ 실행 (Run)";
                 btn.disabled = false;

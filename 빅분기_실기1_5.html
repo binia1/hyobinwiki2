@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<link href="이미지/효빈위키아이콘.webp" rel="icon"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>빅분기 실기 1.5. 판다스 오류 해결편 - 효빈위키</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- 파이썬 웹 컴파일러(Pyodide) 로드 -->
+<script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Apple+SD+Gothic+Neo:wght@400;700&display=swap');
+        
+        :root { 
+            /* 위키 테마색 - 오류 해결(Warning) 느낌의 주황색 */
+            --wiki-line-color: #FF5522;
+            --wiki-table-header-bg: #FF5522; 
+            
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #F9F9FA; 
+            --wiki-link: #0022AA;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        
+        .namu-infobox {
+            width: 100%;
+            max-width: 350px;
+            border: 1px solid #b0b0b0 !important;
+            background-color: #ffffff;
+            font-size: 0.85rem;
+            border-collapse: collapse !important;
+            margin: 0;
+        }
+        .namu-infobox th, .namu-infobox td {
+            border: 1px solid #b0b0b0 !important;
+            padding: 6px 10px;
+        }
+        .namu-infobox .title-cell {
+            padding: 20px 0 !important; 
+            text-align: center !important;
+            background-color: #ffffff !important;
+        }
+        .inner-title-box {
+            display: inline-table !important;
+            margin: 0 auto !important;
+            border: 1px solid #b0b0b0 !important;
+            border-collapse: collapse !important;
+            background-color: #ffffff !important;
+            width: max-content !important;
+        }
+        .inner-title-box td {
+            padding: 12px 18px !important;
+            vertical-align: middle !important;
+            border: none !important;
+        }
+        .inner-title-box td:first-child {
+            border-right: 1px solid #b0b0b0 !important;
+        }
+        
+        .namu-infobox .section-title {
+            background-color: var(--wiki-table-header-bg);
+            color: #ffffff !important;
+            font-weight: bold;
+            text-align: center;
+            padding: 5px 0;
+            border: 1px solid #b0b0b0 !important;
+        }
+        .namu-infobox .row-title {
+            background-color: #f4f4f4;
+            color: #444444;
+            font-weight: bold;
+            text-align: center;
+            width: 35%;
+        }
+
+        .img-box { margin: 0; padding: 0; line-height: 0; border-bottom: 1px solid #ddd; }
+        .img-note { line-height: 1.5; padding: 8px 5px; font-size: 0.85rem; text-align: center; background-color: #ffffff; color: #333; font-weight: 500; }
+
+        .wiki-fn-link { font-size: 0.8em; vertical-align: super; color: #0275d8; text-decoration: none; cursor: pointer; position: relative; display: inline-block; }
+        .wiki-fn-link:hover { text-decoration: underline; }
+        .nav-logo-box { width: 30px; height: 30px; background: white; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }   
+
+        .wiki-container { max-width: 1400px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+        .txt-lvl-1 { font-size: 2.2rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
+        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 5px solid var(--wiki-table-header-bg); padding-left: 12px; color: var(--wiki-text); }
+        h4 { font-size: 1.1rem !important; font-weight: 700; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #444; }
+
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 0.9rem; font-weight: bold; color: #555; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; line-height: 1.2; }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+        
+        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        
+        blockquote { border-left: 5px solid var(--wiki-table-header-bg); background-color: #f7f7f7; padding: 15px; margin: 15px 0; font-style: italic; color: #555; }
+        .wiki-link { color: var(--wiki-link); cursor: pointer; text-decoration: none; }
+        .wiki-link:hover { text-decoration: underline; }
+        .strike { text-decoration: line-through; color: #777; font-size: 0.9em; }
+
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.9rem; margin: 15px 0; border-radius: 4px; }
+
+        .python-editor-container { background: #1e1e1e; border-radius: 8px; overflow: hidden; margin: 20px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.2); border: 1px solid #444; }
+        .editor-header { background: #2d2d2d; color: #d4d4d4; padding: 8px 15px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; font-family: monospace; border-bottom: 1px solid #444; }
+        .run-btn { background: #4CAF50; color: white; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: background 0.2s; display: flex; align-items: center; gap: 5px; }
+        .run-btn:hover { background: #45a049; }
+        .run-btn:disabled { background: #555; cursor: not-allowed; }
+        
+        .code-area { width: 100%; background: #1e1e1e; color: #9CDCFE; font-family: 'Consolas', 'Monaco', monospace; font-size: 1rem; padding: 15px; border: none; resize: vertical; min-height: 200px; outline: none; line-height: 1.5; }
+        .output-area { background: #000; color: #BBFF64; font-family: 'Consolas', 'Monaco', monospace; padding: 15px; font-size: 0.95rem; min-height: 60px; white-space: pre-wrap; border-top: 1px solid #333; max-height: 300px; overflow-y: auto; }
+        
+        #pyodide-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s; }
+        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid #FF5522; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 1rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .highlight-box { background: #fff8e1; border: 1px solid #ffc107; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .error-box { background: #ffeeee; border: 1px solid #ff5555; padding: 10px; border-radius: 5px; margin: 10px 0; }
+</style>
+<script src="assets/ad_logic.js"></script>
+<link href="wiki_font_standard.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+</head>
+<body>
+
+<div id="pyodide-loader">
+    <div class="spinner"></div>
+    <h2 class="font-bold text-xl text-gray-800">Pandas 긴급 복구반 투입 중... 🚑</h2>
+    <p class="text-gray-500 mt-2 font-bold text-red-500">※ 무거운 라이브러리를 불러오므로 첫 로딩 시 10~20초 정도 소요됩니다!</p>
+</div>
+
+<nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+<div class="flex items-center gap-2">
+<div class="nav-logo-box">H</div>
+<a class="font-bold text-xl cursor-pointer no-underline text-white" href="#">HyobinWiki</a>
+<div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+<a class="hover:underline font-bold text-white no-underline" href="#">대문</a>
+<a class="hover:underline text-white no-underline" href="#">최근 변경</a>
+</div>
+</div>
+</nav>
+
+<div class="wiki-container shadow-lg">
+<div class="title-area">
+<h1 class="txt-lvl-1">빅분기 실기 1.5. 판다스 대환장 오류 해결편</h1>
+<div class="flex gap-2 mb-1">
+<button class="wiki-btn">토론</button>
+<button class="wiki-btn">수정</button>
+<button class="wiki-btn">역사</button>
+</div>
+</div>
+
+<div class="category-box">
+<span class="font-bold text-[#FF5522]">분류:</span>
+<a class="wiki-link" href="#">빅데이터분석기사</a> | 
+<a class="wiki-link" href="#">파이썬</a> | 
+<a class="wiki-link" href="#">오류해결</a> | 
+<a class="wiki-link" href="#">효빈위키 학습서</a>
+</div>
+
+<blockquote class="border-l-4 border-[#FF5522] bg-[#f0f7fb] p-4 my-4 shadow-sm text-gray-800">
+    <strong>"씨발 이건 또 왜 안되는거지?"</strong><br>
+    빅분기 실기를 준비하며 키보드 샷건을 치기 직전인 당신을 위해 준비했습니다.<br>
+    통계는 아는데 배열이 헷갈리고, 괄호 하나에 에러가 터져서 눈물 짓는 분들의 멘탈을 치유해 드립니다. <span class="strike">나만 당할 수 없지</span><br>
+    <span class="text-sm text-blue-600 font-bold">※ 본 문서는 이해를 돕기 위해 러브라이브 & 뱅드림 아이돌 데이터를 예시로 사용합니다.</span>
+</blockquote>
+
+<div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4">
+<div class="toc shrink-0 shadow-sm h-fit order-2 md:order-1" id="toc-box">
+<div class="toc-title">목차</div>
+<ul class="text-[#555555]">
+<li><a class="hover:underline" href="#s-1">1. 마스킹(Masking)의 함정: shape의 배신</a></li>
+<li><a class="hover:underline" href="#s-2">2. 괄호와 오타: torist()와 sorted_values()의 콜라보</a></li>
+<li><a class="hover:underline" href="#s-3">3. 날짜형(dt) 객체의 딜레마: 왜 min().date()는 안 될까?</a></li>
+<li><a class="hover:underline" href="#s-4">4. round() 함수 vs .round() 메서드: 언제 뭘 써야 해?</a></li>
+</ul>
+</div>
+
+<table class="namu-infobox shrink-0 shadow-sm order-1 md:order-2">
+<tbody>
+<tr>
+<td class="title-cell" colspan="2">
+<table class="inner-title-box">
+<tr>
+<td>
+<div style="width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; background-color: #FF5522; color: white; border-radius: 8px; font-weight: 900; font-size: 24px;">Err</div>
+</td>
+<td style="text-align: left !important; line-height: 1.3 !important;">
+<div style="font-weight: 900; font-size: 1.25rem; color: #FF5522; letter-spacing: -0.5px;">판다스 에러 뽀개기</div>
+<div style="font-size: 0.85rem; color: #555555; font-weight: 500; margin-top: 2px;">Pandas Troubleshooting</div>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td colspan="2" style="padding: 0; border: 1px solid #b0b0b0 !important; text-align: center; background-color: #ffffff;">
+<div class="img-box bg-gray-100 flex justify-center py-4">
+    <svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+        <text x="10" y="30" font-family="monospace" font-size="14" fill="#EE0022">TypeError:</text>
+        <text x="10" y="50" font-family="monospace" font-size="12" fill="#333">씨발 이건 또 왜 안돼?</text>
+        <path d="M 170 30 L 190 50 M 190 30 L 170 50" stroke="#EE0022" stroke-width="4"/>
+    </svg>
+</div>
+<div class="img-note">에러 메시지의 마지막 줄이 곧 정답이다.</div>
+</td>
+</tr>
+<tr><th class="section-title" colspan="2">진단 정보</th></tr>
+<tr><th class="row-title">환자 상태</th><td>메서드 체이닝 중독, 괄호 실종 증후군</td></tr>
+<tr><th class="row-title">주요 증상</th><td>SyntaxError, TypeError, AttributeError</td></tr>
+<tr><th class="row-title">특효약</th><td>`type(값)` 찍어보기, 들여쓰기 확인</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="s-1"><b>1. 마스킹(Masking)의 함정: shape의 배신</b></h2>
+<p>
+    질문해주신 두 코드가 왜 결과가 다른지, <strong>"마스킹(Masking)"</strong>이라는 판다스의 핵심 원리로 완벽하게 분해해 드립니다.
+    (예시를 위해 이름에 "카"가 들어가는 아이돌을 찾는 상황으로 가정하겠습니다.)
+</p>
+<div class="bg-gray-100 p-3 rounded font-mono text-sm mb-2">
+    1) print(df["이름"].str.contains("카").shape[0])<br>
+    2) print(df[df["이름"].str.contains("카")].shape[0])
+</div>
+<ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
+    <li><strong>1번 코드의 정체 (마스크 정답지 자체):</strong><br> 
+        <code>df["이름"].str.contains("카")</code>를 실행하면, 컴퓨터는 아이돌 리스트 전체를 위에서부터 훑으면서 "이름에 '카'가 있나?" 하고 검사합니다.<br>
+        결과물은 <span class="text-blue-600">[False(아유무), True(카스미), True(호노카), True(치카), ...]</span> 이런 식의 <strong>O/X 정답지(Series)</strong>가 됩니다. <br>
+        이 <strong>정답지 자체의 길이(shape[0])</strong>를 쟀으니, 당연히 조건을 만족하는 사람 수가 아니라 <strong>전체 아이돌 인원수(30명)</strong>가 나옵니다.
+    </li>
+    <li><strong>2번 코드의 정체 (정답지로 필터링된 '진짜 표'):</strong><br>
+        <code>df[ ... O/X 정답지 ... ]</code> 처럼 원본 표 <code>df</code>의 대괄호 안에 방금 만든 정답지를 집어넣으면, 판다스는 <strong>True인 행만 남기고 나머지(False)를 표에서 전부 찢어버립니다.</strong> <br>
+        즉, 이름에 "카"가 들어간 사람만 남은 <strong>완전히 새로운 표(DataFrame)</strong>가 탄생합니다. 이 새 표의 행 개수를 쟀으니 우리가 원하던 <strong>조건을 만족하는 진짜 인원수(12명)</strong>가 나오는 것입니다.
+    </li>
+</ul>
+
+<div class="python-editor-container">
+    <div class="editor-header">
+        <span>[실습 1] O/X 정답지와 진짜 표의 차이</span>
+        <button class="run-btn" id="btn-run-1" onclick="runPythonCode('code-1', 'out-1', 'btn-run-1')">▶ 실행 (Run)</button>
+    </div>
+    <textarea id="code-1" class="code-area" spellcheck="false">
+import pandas as pd
+df = pd.read_csv("emp.csv")
+
+# 1. 마스크 (O/X 정답지) 자체의 모양
+mask = df["이름"].str.contains("카")
+print("1) 마스크(O/X 정답지)의 형태:\n", mask.head(5)) 
+print("\n-> 마스크의 전체 개수(shape[0]):", mask.shape[0]) 
+# 30명 전체를 검사했으니 30이 나옵니다!
+
+# 2. 마스크를 씌워서 걸러낸 진짜 표의 모양
+filtered_df = df[mask]
+print("\n2) 필터링된 진짜 표의 형태:\n", filtered_df[["이름", "소속"]].head(5))
+print("\n-> 필터링된 표의 행 개수(shape[0]):", filtered_df.shape[0]) 
+# "카"가 들어간 진짜 인원수(12명)가 나옵니다!
+</textarea>
+    <div id="out-1" class="output-area"></div>
+</div>
+
+
+<h2 id="s-2"><b>2. 괄호와 오타: torist()와 sorted_values()의 콜라보</b></h2>
+<p>
+    질문자님이 겪으신 <code>print(sorted(tr["팬클럽등급"].str.upper().tolist())</code> 와 <code>torist()</code> 등의 에러 원인입니다.<br>
+    판다스는 점(.)을 찍어서 명령을 기차처럼 이어붙이는 <strong>메서드 체이닝(Method Chaining)</strong>을 자주 쓰는데, 여기서 철자 하나만 틀리거나 순서가 어긋나면 기차가 탈선합니다.
+</p>
+<ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
+    <li><strong>에러 1: 괄호 짝짝이 (SyntaxError)</strong><br>
+        <code>print(sorted(... .tolist())</code> ➡️ 여는 괄호 <code>(</code>는 3개인데, 닫는 괄호 <code>)</code>는 2개입니다! 컴퓨터는 "어? 문장이 덜 끝났는데?" 하고 다음 줄을 읽다가 에러를 뱉습니다. 맨 뒤에 <code>)</code>를 하나 더 붙여야 합니다.
+    </li>
+    <li><strong>에러 2: 기적의 오타 퍼레이드 (AttributeError)</strong><br>
+        <code>torist()</code>가 아니라 <strong><code>tolist()</code></strong>입니다. (파이썬 기본 형태인 List로 to(보낸다)는 뜻!)<br>
+        <code>sorted_values()</code>가 아니라 <strong><code>sort_values()</code></strong>입니다. 판다스 표 자체를 정렬할 때는 이걸 씁니다.
+    </li>
+    <li><strong>⭕ 정답 코드가 완벽하게 돌아간 이유:</strong><br>
+        <code>print(sorted(tr["팬클럽등급"].str.upper().unique().tolist()))</code><br>
+        이 코드는 흐름이 예술입니다.<br>
+        1) <code>tr["팬클럽등급"]</code> (팬클럽 열만 뽑음) <br>
+        2) <code>.str.upper()</code> (글자를 전부 대문자로 바꿈) <br>
+        3) <code>.unique()</code> (중복을 제거해서 종류만 남김) <br>
+        4) <code>.tolist()</code> (판다스 전용 배열을 파이썬 리스트로 바꿈) <br>
+        5) <code>sorted(...)</code> (알파벳 순으로 예쁘게 정렬) <br>
+        6) <code>print(...)</code> (출력!)<br>
+        이렇게 톱니바퀴가 완벽하게 맞물렸기 때문에 에러 없이 작동한 것입니다.
+    </li>
+</ul>
+
+<div class="python-editor-container">
+    <div class="editor-header">
+        <span>[실습 2] 체인 콤보와 오타 수정</span>
+        <button class="run-btn" id="btn-run-2" onclick="runPythonCode('code-2', 'out-2', 'btn-run-2')">▶ 실행 (Run)</button>
+    </div>
+    <textarea id="code-2" class="code-area" spellcheck="false">
+import pandas as pd
+tr = pd.read_csv("churn_train.csv")
+
+# ❌ 오류 1: 괄호가 덜 닫힘 (주석 풀고 실행하면 SyntaxError 발생)
+# print(sorted(tr["팬클럽등급"].str.upper().tolist()) 
+
+# ❌ 오류 2: 오타 (주석 풀면 AttributeError 발생 - 그런 명령은 없다고 화냄)
+# print(tr["팬클럽등급"].str.upper().sorted_values().torist())
+
+# ⭕ 정답: 중복 제거(unique) 후 파이썬 리스트로 만들어 정렬하기
+result = sorted(tr["팬클럽등급"].str.upper().unique().tolist())
+print("깔끔하게 정렬된 팬클럽 등급 리스트:\n", result)
+</textarea>
+    <div id="out-2" class="output-area"></div>
+</div>
+
+
+<h2 id="s-3"><b>3. 날짜형(dt) 객체의 딜레마: 왜 min().date()는 안 될까?</b></h2>
+<div class="error-box font-bold">
+    "씨발 이건 또 왜 안되는거지? dt는 붙이면 안되는거야? 다른데서는 붙이라고 했으면서?"
+</div>
+<p>
+    이 분노, 1000% 이해합니다. 판다스에서 가장 헷갈리는 <code>.dt</code> (날짜 도구상자) 규칙 때문입니다.
+    핵심은 단 하나, <strong>"내가 지금 들고 있는 게 덩어리(Series)냐, 낱개(값 하나)냐"</strong>를 파악하는 것입니다.
+</p>
+<ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
+    <li><strong>상황 1: 덩어리 (Series)</strong><br>
+        <code>df["데뷔일"]</code> ➡️ 30명 전체의 데뷔일이 묶인 <strong>긴 덩어리</strong>입니다. <br>
+        이 덩어리 전체에서 연도만 쏙쏙 뽑아내려면, 이 덩어리를 뜯어고칠 특수 도구상자인 <code>.dt</code>를 꺼내야 합니다. <br>그래서 <code>df["데뷔일"].dt.year</code> 라고 씁니다.
+    </li>
+    <li><strong>상황 2: 낱개 (Timestamp)</strong><br>
+        <code>df["데뷔일"].min()</code> ➡️ 30명 중 가장 빨리 데뷔한 <strong>'날짜 딱 1개' (예: 2010-08-13)</strong>가 튀어나옵니다. <br>
+        <strong>결정적 차이:</strong> 이 '낱개' 날짜는 덩어리가 아니기 때문에 <code>.dt</code>라는 도구상자가 필요 없습니다(아예 달려있지도 않습니다). 그냥 자기 자신에게 바로 "연도 알려줘!"라고 명령하면 됩니다.
+    </li>
+    <li>따라서 낱개에 대고 <code>df["데뷔일"].min().dt.date()</code> 라고 쓰면 <strong>에러(AttributeError)</strong>가 납니다. "나 낱개인데 왜 덩어리용 도구를 써?" 하고 뱉는 겁니다.<br>
+        ➡️ <strong>올바른 표현:</strong> <code>df["데뷔일"].min().date()</code> (낱개에 직접 명령) <br>
+        ➡️ <strong>또는:</strong> <code>df["데뷔일"].dt.date.min()</code> (미리 덩어리 전체에서 시간 떼고 날짜만 남긴 뒤, 그중 최솟값 구하기)
+    </li>
+</ul>
+
+<div class="python-editor-container">
+    <div class="editor-header">
+        <span>[실습 3] 덩어리와 낱개의 차이 (dt)</span>
+        <button class="run-btn" id="btn-run-3" onclick="runPythonCode('code-3', 'out-3', 'btn-run-3')">▶ 실행 (Run)</button>
+    </div>
+    <textarea id="code-3" class="code-area" spellcheck="false">
+import pandas as pd
+df = pd.read_csv("emp.csv")
+# 문자열을 진짜 날짜형(datetime)으로 변환
+df["데뷔일"] = pd.to_datetime(df["데뷔일"])
+
+# 1. [덩어리] 상태일 때는 .dt 를 붙여서 명령한다.
+print("2020년 이후 데뷔 인원수:", (df["데뷔일"].dt.year >= 2020).sum())
+
+# 2. [낱개] 가장 빠른 데뷔일 구하기 (.min() 은 낱개 하나를 뱉는다!)
+first_debut = df["데뷔일"].min()
+print("\n가장 빠른 데뷔일(낱개):", first_debut)
+print("이 낱개의 진짜 타입:", type(first_debut)) # Timestamp 객체
+
+# 3. 낱개에는 dt가 없다! 바로 .date() 나 .year 를 쓴다.
+print("\n낱개에서 시간 떼고 날짜만 보기:", first_debut.date())
+
+# 4. (응용) 덩어리를 아예 날짜 덩어리로 싹 바꾼 뒤 min()을 때려도 된다.
+print("덩어리 먼저 바꾸고 최솟값:", df["데뷔일"].dt.date.min())
+</textarea>
+    <div id="out-3" class="output-area"></div>
+</div>
+
+
+<h2 id="s-4"><b>4. round() 함수 vs .round() 메서드: 언제 뭘 써야 해?</b></h2>
+<p>
+    파이썬은 정말 친절하면서도 불친절합니다. 똑같이 반올림을 하는 건데 방법이 두 가지나 있어서 사람을 미치게 하죠. 이 역시 <strong>"덩어리냐 낱개냐"</strong>로 구분하면 편합니다.
+</p>
+<ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
+    <li><strong><code>round(값, 자리수)</code> (파이썬 내장 기본 함수):</strong><br>
+        이건 <strong>단일 숫자 1개(스칼라)</strong>를 다룰 때 씁니다. <br>
+        <code>mean_score = df["인기도"].mean()</code> 을 하면 숫자 1개가 툭 튀어나옵니다 (예: 4.1235). 이 숫자 하나를 반올림할 때 <strong>알을 품듯이 <code>round(mean_score, 2)</code> 처럼 크게 감싸서</strong> 씁니다.
+    </li>
+    <li><strong><code>값.round(자리수)</code> (판다스 표/덩어리용 기능):</strong><br>
+        이건 <strong>표(DataFrame) 전체나 한 열(Series) 전체</strong>에 한꺼번에 반올림 폭격을 가할 때 뒤에 이어 붙입니다. <br>
+        <code>(df["연봉"] / 12)</code> 를 하면 30명 전체의 월급 덩어리가 나오는데, 이 수많은 숫자들에 일일이 <code>round()</code>를 씌울 수 없으니 <strong><code>(df["연봉"] / 12).round(1)</code> 처럼 뒤에 기능 스위치를 켜듯 붙여버립니다.</strong>
+    </li>
+    <li><strong>왜 섞어서 써지나요? (헷갈림의 원흉)</strong><br>
+        사실 판다스에서 <code>.mean()</code>으로 뽑은 숫자 1개가 순수 파이썬 숫자가 아니라 `Numpy float`라는 특수 숫자라서, 그 뒤에 <code>.round(2)</code>를 붙여도 에러 없이 작동할 때가 있습니다. <br>
+        하지만 시험장에서 헷갈리지 않으려면 <strong>[숫자 1개면 <code>round(값)</code>으로 크게 감싸고, 덩어리/표 전체면 뒤에 <code>.round()</code>를 붙인다]</strong>고 기준을 콱 잡아두세요!
+    </li>
+</ul>
+
+<div class="python-editor-container">
+    <div class="editor-header">
+        <span>[실습 4] 반올림의 두 가지 얼굴</span>
+        <button class="run-btn" id="btn-run-4" onclick="runPythonCode('code-4', 'out-4', 'btn-run-4')">▶ 실행 (Run)</button>
+    </div>
+    <textarea id="code-4" class="code-area" spellcheck="false">
+import pandas as pd
+df = pd.read_csv("emp.csv")
+
+# 1. [덩어리] 전체를 반올림 할 때 -> 뒤에 .round() 를 붙인다.
+# (연봉을 12로 나눈 월급 덩어리를 소수점 1자리까지 표시)
+monthly = (df["연봉"] / 12).round(1)
+print("덩어리 반올림 결과 (앞의 3명만):\n", monthly.head(3))
+
+# 2. [숫자 1개] (평균값 등)를 반올림 할 때 -> round(값, 자리수) 로 감싼다.
+avg_pop = df["인기도"].mean()
+print("\n평균 인기도(원본 숫자 1개):", avg_pop)
+print("평균 인기도(round로 감싸서 반올림):", round(avg_pop, 2))
+
+# 💡 실기시험 필수 꿀팁: 
+# value_counts(normalize=True) 로 비율을 구할 때는 '비율 덩어리(Series)'가 나옵니다.
+# 덩어리니까 뒤에 .round(4)를 붙이는 것이 정석입니다!
+print("\n[복습] 팬클럽 등급별 비율 (덩어리에 round 붙이기):")
+tr = pd.read_csv("churn_train.csv")
+print(tr["팬클럽등급"].value_counts(normalize=True).round(4))
+</textarea>
+    <div id="out-4" class="output-area"></div>
+</div>
+
+<div class="category-box mt-8">
+<span class="font-bold">다음 문서:</span>
+<a class="wiki-link font-bold text-[#FF5522]" href="#">빅분기 실기 2. 전처리와 결측치 심화 ➡️</a>
+</div>
+
+<div id="wiki-footer-area"></div>
+
+<script>
+    let pyodideReadyPromise;
+    const loaderUI = document.getElementById('pyodide-loader');
+
+    async function initPyodide() {
+        try {
+            let pyodide = await loadPyodide();
+            await pyodide.loadPackage(['pandas', 'numpy']);
+            
+            // 실습을 위한 가상의 emp.csv (아이돌 데이터로 교체!)
+            const emp_csv = `사번,이름,소속,포지션,연봉,연차,인기도,데뷔일
+1001,토야마 카스미,포핀파,보컬,3230,2,3.8,2024-08-28
+1002,미나토 유키나,로젤리아,보컬,4083,3,4.2,2023-07-26
+1003,코사카 호노카,뮤즈,보컬,7395,12,4.6,2010-08-13
+1004,미나미 코토리,뮤즈,댄서,8075,12,,2010-08-13
+1005,타카미 치카,아쿠아,보컬,4558,7,4.7,2015-10-07
+1006,와타나베 요우,아쿠아,댄서,5796,,4.6,2015-10-07
+1007,우에하라 아유무,니지가사키,보컬,3545,4,,2020-07-29
+1008,나카스 카스미,니지가사키,댄서,3724,4,4.9,2020-07-29
+1009,시부야 카논,리에라,보컬,3222,2,3.4,2021-04-07
+1010,탕 쿠쿠,리에라,댄서,3477,2,,2021-04-07
+1011,미타케 란,앱글,보컬,3581,3,3.3,2023-06-12
+1012,마루야마 아야,파스팔레,보컬,4410,4,4.9,2022-06-04
+1013,아야세 에리,뮤즈,댄서,7820,12,4.1,2010-08-13
+1014,츠루마키 코코로,하로해피,보컬,9999,3,4.8,2023-01-01
+1015,쿠로사와 다이아,아쿠아,댄서,5400,7,4.4,2015-10-07
+1016,텐노지 리나,니지가사키,보컬,3400,4,,2020-07-29
+1017,오사카 시즈쿠,니지가사키,댄서,3500,4,4.2,2020-07-29
+1018,이치가야 아리사,포핀파,키보드,3300,2,3.9,2024-08-28
+1019,시라사기 치사토,파스팔레,베이스,4300,4,4.5,2022-06-04
+1020,타카사키 유우,니지가사키,매니저,3000,4,4.9,2020-07-29
+1021,아사카 카린,니지가사키,댄서,3900,4,4.7,2020-07-29
+1022,헤안나 스미레,리에라,보컬,3100,2,3.5,2021-04-07
+1023,아라시 치사토,리에라,댄서,3200,2,3.8,2021-04-07
+1024,미야시타 아이,니지가사키,댄서,3600,4,4.3,2020-07-29
+1025,유우키 세츠나,니지가사키,보컬,4000,4,4.8,2020-07-29
+1026,쿠니키다 하나마루,아쿠아,보컬,4200,7,4.2,2015-10-07
+1027,츠시마 요시코,아쿠아,댄서,4100,7,4.3,2015-10-07
+1028,소노다 우미,뮤즈,보컬,7500,12,4.5,2010-08-13
+1029,호시조라 린,뮤즈,댄서,7200,12,4.4,2010-08-13
+1030,코이즈미 하나요,뮤즈,보컬,7100,12,4.2,2010-08-13`;
+            pyodide.FS.writeFile("emp.csv", emp_csv);
+
+            // 실습을 위한 churn_train.csv (팬클럽 회원 데이터로 교체!)
+            const churn_csv = `고객ID,성별,팬클럽등급,가입개월,월요금,굿즈구매수,이탈
+C1001,남,standard,22,44300,3,1
+C1002,여,premium,1,62000,1,1
+C1003,남,premium,45,64000,0,1
+C1004,남,basic,10,32200,1,1
+C1005,남,premium,5,69500,0,1
+C1006,여,basic,56,29500,0,0
+C1007,여,premium,48,62800,2,0`;
+            pyodide.FS.writeFile("churn_train.csv", churn_csv);
+
+            document.querySelectorAll('.run-btn').forEach(btn => {
+                btn.innerText = "▶ 실행 (Run)";
+                btn.disabled = false;
+            });
+            
+            loaderUI.style.opacity = '0';
+            setTimeout(() => loaderUI.style.display = 'none', 500);
+            return pyodide;
+        } catch (err) {
+            console.error("Pyodide 로딩 실패:", err);
+            loaderUI.innerHTML = `<h2 class="text-red-500 font-bold text-xl">엔진 로딩 실패</h2><p>${err}</p>`;
+        }
+    }
+
+    pyodideReadyPromise = initPyodide();
+
+    document.querySelectorAll('.run-btn').forEach(btn => {
+        btn.innerText = "라이브러리 로딩중...";
+        btn.disabled = true;
+    });
+
+    async function runPythonCode(editorId, outputId, btnId) {
+        const btn = document.getElementById(btnId);
+        const outputEl = document.getElementById(outputId);
+        const code = document.getElementById(editorId).value;
+        
+        btn.disabled = true;
+        btn.innerText = "실행 중...";
+        outputEl.style.color = "#BBFF64";
+        outputEl.textContent = "Pandas 실행 중... ⏳";
+
+        try {
+            let pyodide = await pyodideReadyPromise;
+            
+            pyodide.runPython(`
+import sys
+import io
+sys.stdout = io.StringIO()
+            `);
+            
+            await pyodide.runPythonAsync(code);
+            
+            let stdout = pyodide.runPython("sys.stdout.getvalue()");
+            if (stdout === "") {
+                stdout = "(출력값이 없습니다. print() 함수를 사용했는지 확인하세요.)";
+                outputEl.style.color = "#aaa";
+            }
+            outputEl.textContent = stdout;
+            
+        } catch (err) {
+            outputEl.style.color = "#ff5555";
+            let errStr = err.toString();
+            let splitErr = errStr.split('\n');
+            let shortErr = splitErr.slice(-8).join('\n'); 
+            outputEl.textContent = "에러 발생!\n" + (shortErr || errStr);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "▶ 실행 (Run)";
+        }
+    }
+</script>
+
+<script src="assets/wiki_main.js"></script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_data_map.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+</div>
+</body>
+</html>

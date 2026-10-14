@@ -71,7 +71,8 @@ const preserveStyleSelectors = [
     '.hb-guide-icon', '.hb-project-header', '.hb-project-footer', '.hb-structure-header', '.hb-badge',
     'nav', '.wiki-navbox-header', '.wiki-navbox-footer', '.wiki-navbox', '.red-link', '.blue-link',
     '.transport-card', '.card-title', '.card-subtitle', '.card-footer', '.logo-box',
-    '.hb-med-header', '.hb-med-table th' // 🔥 추가: 헤더와 테이블 지역명 <th>의 흰색 폰트 강제 유지
+    '.hb-med-header', '.hb-med-table th',
+    '.nw-frame-otaku', '.nw-title-otaku' // 🔥 추가: 성덕 정치인 틀 및 타이틀 영역 스텔스 보호
 ].join(', ');
     
     while (walker.nextNode()) {
