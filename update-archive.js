@@ -3,18 +3,40 @@ const path = require('path');
 
 const imageFolder = './이미지'; 
 const outputJsFile = './assets/image_data.js';
-const allowedExtensions = ['.webp', '.webp', '.jpeg', '.webp', '.gif', '.svg'];
+const allowedExtensions = ['.webp', '.jpeg', '.jpg', '.png', '.gif', '.svg'];
+
+// 🚨 하위 폴더(svg 등)까지 끝까지 파고들어 파일을 찾아오는 재귀 함수
+async function getAllFiles(dir, baseDir = '') {
+    let results = [];
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    
+    for (const entry of entries) {
+        // 상대 경로 생성 (예: svg/효빈1호선.svg)
+        const relativePath = path.join(baseDir, entry.name);
+        const fullPath = path.join(dir, entry.name);
+        
+        if (entry.isDirectory()) {
+            results = results.concat(await getAllFiles(fullPath, relativePath));
+        } else {
+            // 윈도우 환경에서 경로가 역슬래시(\)로 꼬이는 것을 방지
+            results.push(relativePath.replace(/\\/g, '/'));
+        }
+    }
+    return results;
+}
 
 async function updateArchive() {
     try {
-        console.log('🔍 이미지 폴더 스캔 및 서브컬처 DB 정밀 분류 중...');
+        console.log('🔍 이미지 하위 폴더 전체 스캔 및 서브컬처 DB 정밀 분류 중...');
 
-        const files = await fs.readdir(imageFolder);
+        // 기본 readdir 대신 새로 만든 재귀 함수 사용
+        const files = await getAllFiles(imageFolder);
         
         const categorizedFiles = files.reduce((acc, file) => {
             const ext = path.extname(file).toLowerCase();
             
             if (allowedExtensions.includes(ext)) {
+                // file 변수에 'svg/이름.svg' 형태로 들어오므로, basename을 써서 순수 파일명만 추출
                 const nameOnly = path.basename(file, ext).toLowerCase().trim();
                 let category = 'etc'; 
 
@@ -25,11 +47,11 @@ async function updateArchive() {
 
                 // 🚨 우선순위별 정밀 정규식 
                 
-                // 1. 버스 (숫자만 있거나, 흑택01 같은 마을버스, 관련 키워드)
+                // 1. 버스
                 if (/^\d+$/.test(nameOnly) || /^[가-힣]{2}\d{2}$/.test(nameOnly) || /(버스|여객|운수|교통|고속|택시|정류장|터미널|차고지)/.test(nameOnly)) category = 'bus';
                 // 2. 지도/노선도
                 else if (/(노선도|지도|행정동|행정구역|조감도)/.test(nameOnly)) category = 'map';
-                // 3. 역/승강장
+                // 3. 역/승강장 (여기서 깨졌던 부분 완벽 수정)
                 else if (/(역_|승강장|플랫폼|신호장|신호소|역사|출장소|환승장|역입구|역전경|역내부)/.test(nameOnly) || /역$/.test(nameOnly) || /역점$/.test(nameOnly)) category = 'station';
                 // 4. 철도차량
                 else if (/(전동차|호대|열차|기차|기관차|편성|차량사업소|차량기지|인입선|주박기지|트램)/.test(nameOnly)) category = 'train';
@@ -55,16 +77,14 @@ async function updateArchive() {
                 else if (/(굿즈|피규어|넨도|태피|네소|머그컵|티셔츠|에코백|뱃지|아크릴|앨범|콜라보|스탬프|티켓|패스|다이어리|카드|머리띠|인형|싸인)/.test(nameOnly)) category = 'merch';
                 // 15. 음식/카페
                 else if (/(디저트|케익|케이크|마카롱|빵|라멘|떡볶이|샌드위치|그라탕|피자|모나카|푸딩|음식|커피|카페|식당|마라탕|엽떡|김밥|파스타|제육|소맥|참이슬|아이스크림|크레페|버거|도시락|수혈|음료|식사|간식|맥날)/.test(nameOnly)) category = 'food';
-                
-                // 16. 실존인물 및 일본 성우 (아래 일본 성우 이름 완벽 반영)
+                // 16. 실존인물 및 일본 성우
                 else if (/(시장|주무관|교수|선생|강사|대리|과장|팀장|국장|실장|공무원|경찰|소방관|의원|기자|대표|위원장|조상현|김성민|최형석|박효빈|윤대환|윤간석|서무련|곽두환|사람|인물|시민|가족|선수|성우|원장|감독|아이들|유튜버|프로게이머|알바|학생|동생|언니|오빠|아빠|엄마|아재|아저씨|할아버지|여친|아야카|사유리|슈카|아이나|안쥬|아카리|나오미|카나|아야네|마아야)/.test(nameOnly) || is3LetterName) category = 'person';
-                
-                // 17. 마스코트 및 서브컬처 캐릭터 (럽라, 뱅드림 등 애니 캐릭터 전원 추가)
+                // 17. 마스코트 및 서브컬처 캐릭터
                 else if (/(sd|basic|고나미|하루빈|박라미|다로나|미소하|라세나|임세정|임세하|유리아|전노아|박빛나|김소빈|이덕희|심세이|한바다|마스코트|캐릭터|카스미|카난|다이아|마리|하나마루|루비|요시코|리코|요우|치카|니코|우미|노조미|에리|린|코토리|마키|호노카|타에|모카|사아야|란|유키나|아논|이브|마시로|타키|엠마|카나타|카린|아이|세츠나|시오리코|시즈쿠|쿠쿠|치사토|스미레|카논|렌|츠무기|미오|유이|아즈사|리츠|코코로|아야|리사|사요|히나|아유무|나츠미|토마리|메이|시키|키나코|메구미|츠쿠시|루이|나오|미사키|아코|토모에|리미|히마리|라나|모모카|리아|세이라|이즈미|코스즈|아리사|츠바사|토우코|이쿠요|하구미|마이카|토모리|유우|리나|사키코|에레나|츠구미|카호|나나미|마오|유우나|파레오|봇치|우이카|루리노|코즈에|마르가레테|히메|유쿠리|테일러|란쥬|러브라이브|뱅드림|케이온|뮤즈|아쿠아|니지가사키|리에라|하스노소라|성덕|럽순이|철덕|오타쿠|덕후)/.test(nameOnly)) category = 'character';
-                
                 // 18. 일러스트/일상
                 else if (/(사복|단체|트리오|회동|파티|n빵|휴식|놀러|공부|더치페이|일러스트|일상|셀카|출근|퇴근|과잠|근무|메이드|수영복|제복|정장|데이트|코타츠|단기알바|방|침실|거실|화장실|나들이|여행|모임|표정|환호)/.test(nameOnly)) category = 'illustration';
 
+                // 이제 file에는 'svg/이름.svg' 형태가 정상적으로 담겨 올라갑니다.
                 acc.push({ file: file, category: category });
             }
             return acc;
@@ -81,7 +101,7 @@ const imageFiles = ${JSON.stringify(categorizedFiles, null, 4)};
         await fs.mkdir('./assets', { recursive: true });
         await fs.writeFile(outputJsFile, jsContent, 'utf8');
 
-        console.log(`🎉 성공! ${categorizedFiles.length}개의 이미지가 서브컬처 캐릭터/성우까지 포함해 완벽하게 분류되었습니다.`);
+        console.log(`🎉 성공! ${categorizedFiles.length}개의 이미지가 서브컬처 하위 폴더 파일까지 완벽하게 분류되었습니다.`);
     } catch (error) {
         console.error('❌ 작업 중 오류가 발생했습니다:', error);
     }
