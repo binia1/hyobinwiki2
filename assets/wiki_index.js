@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 10. 14. 오후 9:47:16
+ * 업데이트: 2026. 10. 15. 오후 3:11:17
  */
 
 window.HB_WIKI_PAGES = [
@@ -13379,6 +13379,10 @@ window.HB_WIKI_PAGES = [
   {
     "title": "롯데리아_효빈광역시",
     "href": "롯데리아_효빈광역시.html"
+  },
+  {
+    "title": "서유선",
+    "href": "서유선.html"
   }
 ];
 
@@ -21007,5 +21011,6 @@ window.HB_WIKI_ALIASES = {
   "나수민": "나수민.html",
   "빅분기_실기1_5": "빅분기_실기1_5.html",
   "빅분기_2_5": "빅분기_2_5.html",
-  "롯데리아_효빈광역시": "롯데리아_효빈광역시.html"
+  "롯데리아_효빈광역시": "롯데리아_효빈광역시.html",
+  "서유선": "서유선.html"
 };
