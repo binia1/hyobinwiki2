@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 10. 15. 오후 3:11:17
+ * 업데이트: 2026. 10. 16. 오전 12:57:11
  */
 
 window.HB_WIKI_PAGES = [
@@ -13383,6 +13383,18 @@ window.HB_WIKI_PAGES = [
   {
     "title": "서유선",
     "href": "서유선.html"
+  },
+  {
+    "title": "덕빈철도차량정비단",
+    "href": "덕빈철도차량정비단.html"
+  },
+  {
+    "title": "효빈일반철도차량정비단",
+    "href": "효빈일반철도차량정비단.html"
+  },
+  {
+    "title": "강택상",
+    "href": "강택상.html"
   }
 ];
 
@@ -21012,5 +21024,8 @@ window.HB_WIKI_ALIASES = {
   "빅분기_실기1_5": "빅분기_실기1_5.html",
   "빅분기_2_5": "빅분기_2_5.html",
   "롯데리아_효빈광역시": "롯데리아_효빈광역시.html",
-  "서유선": "서유선.html"
+  "서유선": "서유선.html",
+  "덕빈철도차량정비단": "덕빈철도차량정비단.html",
+  "효빈일반철도차량정비단": "효빈일반철도차량정비단.html",
+  "강택상": "강택상.html"
 };
