@@ -8,8 +8,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
             <summary style="list-style: none; display: block; cursor: pointer; outline: none;">
                 <div style="text-align: center; padding: 12px 10px 8px 10px; background-color: #fff; border-bottom: 1px solid #e5e5e5;">
-                    <div style="font-size: 28px; font-weight: 900; color: #0054a6; letter-spacing: -1.5px; margin-bottom: 2px; font-style: italic; font-family: Arial, sans-serif;">
-                        <a href="한국철도공사.html" style="text-decoration: none; color: inherit;">K<span style="color:#00a2d1;">O</span>RAIL</a>
+                    <div style="margin-bottom: 5px; display: flex; justify-content: center; align-items: center;">
+                        <a href="한국철도공사.html" style="text-decoration: none; display: inline-block;">
+                            <img src="이미지/svg/코레일_로고.svg" alt="KORAIL" style="height: 28px; width: auto; object-fit: contain;" />
+                        </a>
                     </div>
                     <div style="font-size: 13.5px; font-weight: bold; color: #0054a6;">
                         <span style="color: #003da5;">한국철도공사의</span> <a href="차량정비단·차량사업소.html" style="text-decoration: none; color: #0275d8;">차량정비단·차량사업소</a>
@@ -22,11 +24,14 @@ document.addEventListener("DOMContentLoaded", function() {
             </summary>
 
             <!-- 1. 고속철도 KTX -->
-            <div style="background-color: #00338d; color: #fff; font-weight: bold; font-size: 13px; text-align: center; padding: 6px; border-bottom: 1px solid #fff;">
-                <a href="고속철도.html" style="text-decoration: none; color: inherit;">고속철도</a> <a href="KTX.html" style="text-decoration: none; color: inherit; font-style: italic; font-size: 15px; font-family: Arial, sans-serif; margin-left: 4px;">KTX<span style="color: #e61e2b;">+</span></a>
+            <div style="background-color: #00338d; color: #fff; font-weight: bold; font-size: 13px; text-align: center; padding: 6px; border-bottom: 1px solid #fff; display: flex; justify-content: center; align-items: center; gap: 6px;">
+                <a href="고속철도.html" style="text-decoration: none; color: inherit;">고속철도</a>
+                <a href="KTX.html" style="text-decoration: none; display: inline-flex; align-items: center; background-color: #fff; padding: 2px 6px; border-radius: 3px;">
+                    <img src="이미지/svg/KTX_BI.svg" alt="KTX" style="height: 15px; width: auto; object-fit: contain;" />
+                </a>
             </div>
             
-            <table style="width: 100%; border-collapse: collapse; text-align: center; table-layout: fixed;">
+            <table style="width: 100%; border-collapse: collapse; text-align: center; table-layout: fixed; margin: 0 !important;">
                 <tr>
                     <td style="width: 50%; background-color: #00338d; color: white; font-weight: bold; padding: 5px; font-size: 12.5px; border-right: 1px solid #fff; border-bottom: 1px solid #ccc;">
                         중정비<sup style="font-size: 9px; font-weight: normal;">[중]</sup>
@@ -36,14 +41,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     </td>
                 </tr>
                 <tr>
-                    <td style="padding: 10px 5px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; word-break: keep-all; line-height: 1.7;">
+                    <td style="padding: 10px 5px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; word-break: keep-all; line-height: 1.7; background-color: #fff;">
                         <a href="수도권철도차량정비단.html" style="text-decoration: none; color: inherit;">수도단</a> | 
                         <a href="울산차량사업소.html" style="text-decoration: none; color: inherit;">울산</a> | 
                         <a href="호남철도차량정비단.html" style="text-decoration: none; color: inherit;">호남단</a><br>
                         <a href="덕빈철도차량정비단.html" style="text-decoration: none; color: inherit;">덕빈단</a> | 
                         <a href="효빈일반철도차량정비단.html" style="text-decoration: none; color: inherit;">효빈일반단</a>
                     </td>
-                    <td style="padding: 10px 5px; border-bottom: 1px solid #ccc; color: #0275d8; word-break: keep-all; line-height: 1.7;">
+                    <td style="padding: 10px 5px; border-bottom: 1px solid #ccc; color: #0275d8; word-break: keep-all; line-height: 1.7; background-color: #fff;">
                         <a href="강릉차량사업소.html" style="text-decoration: none; color: inherit;">강릉</a> | 
                         <a href="광명주박기지.html" style="text-decoration: none; color: inherit;">광명</a><sup style="font-size:9.5px; color:#555;">[주박]</sup> | 
                         <a href="부발차량사업소.html" style="text-decoration: none; color: inherit;">부발</a> | 
@@ -68,19 +73,29 @@ document.addEventListener("DOMContentLoaded", function() {
                 <a href="일반열차.html" style="text-decoration: none; color: inherit;">일반열차 · 관광열차</a>
             </div>
 
-            <table style="width: 100%; border-collapse: collapse; text-align: center; table-layout: fixed;">
+            <table style="width: 100%; border-collapse: collapse; text-align: center; table-layout: fixed; margin: 0 !important;">
                 <tr>
-                    <td style="width: 25%; background-color: #21869e; color: white; font-weight: bold; font-style: italic; padding: 6px; border-right: 1px solid #fff; border-bottom: 1px solid #ccc;"><a href="누리로.html" style="text-decoration: none; color: inherit;">누리로</a></td>
-                    <td style="width: 25%; background-color: #169c78; color: white; font-weight: bold; padding: 6px; border-right: 1px solid #fff; border-bottom: 1px solid #ccc;"><a href="동해산타열차.html" style="text-decoration: none; color: inherit;">동해산타열차</a></td>
-                    <td colspan="2" style="width: 50%; background-color: #c30e2e; color: white; font-weight: bold; font-style: italic; padding: 6px; border-bottom: 1px solid #ccc;"><a href="ITX-새마을.html" style="text-decoration: none; color: inherit;">ITX-새마을</a></td>
+                    <td style="width: 25%; background-color: #21869e; color: white; font-weight: bold; padding: 6px; border-right: 1px solid #fff; border-bottom: 1px solid #ccc;">
+                        <a href="누리로.html" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; background-color: #fff; padding: 2px 8px; border-radius: 3px;">
+                            <img src="이미지/svg/누리로_BI.svg" alt="누리로" style="height: 15px; width: auto; object-fit: contain;" />
+                        </a>
+                    </td>
+                    <td style="width: 25%; background-color: #169c78; color: white; font-weight: bold; padding: 6px; border-right: 1px solid #fff; border-bottom: 1px solid #ccc;">
+                        <a href="동해산타열차.html" style="text-decoration: none; color: inherit;">동해산타열차</a>
+                    </td>
+                    <td colspan="2" style="width: 50%; background-color: #c30e2e; color: white; font-weight: bold; padding: 6px; border-bottom: 1px solid #ccc;">
+                        <a href="ITX-새마을.html" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; background-color: #fff; padding: 2px 8px; border-radius: 3px;">
+                            <img src="이미지/svg/ITX-새마을_BI.svg" alt="ITX-새마을" style="height: 16px; width: auto; object-fit: contain;" />
+                        </a>
+                    </td>
                 </tr>
                 <tr>
-                    <td colspan="2" style="padding: 10px 5px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6;">
+                    <td colspan="2" style="padding: 10px 5px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; background-color: #fff;">
                         <a href="강릉차량사업소.html" style="text-decoration: none; color: inherit;">강릉</a> | 
                         <a href="대구차량사업소.html" style="text-decoration: none; color: inherit;">대구</a><sup style="font-size:9.5px; color:#555;">[주박]</sup> | 
                         <a href="이문차량사업소.html" style="text-decoration: none; color: inherit;">이문</a><sup style="font-size:9.5px; color:#555;">[중]</sup>
                     </td>
-                    <td colspan="2" style="padding: 10px 5px; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6;">
+                    <td colspan="2" style="padding: 10px 5px; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; background-color: #fff;">
                         <a href="대구차량사업소.html" style="text-decoration: none; color: inherit;">대구</a><sup style="font-size:9.5px; color:#555;">[주박]</sup> | 
                         <a href="대전차량사업소.html" style="text-decoration: none; color: inherit;">대전</a><sup style="font-size:9.5px; color:#555;">[주박]</sup> | 
                         <a href="서울차량사업소.html" style="text-decoration: none; color: inherit;">서울</a> | 
@@ -94,11 +109,19 @@ document.addEventListener("DOMContentLoaded", function() {
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2" style="width: 50%; background-color: #c30e2e; color: white; font-weight: bold; font-style: italic; padding: 6px; border-right: 1px solid #fff; border-bottom: 1px solid #ccc;"><a href="ITX-마음.html" style="text-decoration: none; color: inherit;">ITX-마음</a></td>
-                    <td colspan="2" style="width: 50%; background-color: #219e5c; color: white; font-weight: bold; font-style: italic; padding: 6px; border-bottom: 1px solid #ccc;"><a href="ITX-청춘.html" style="text-decoration: none; color: inherit;">ITX-청춘</a></td>
+                    <td colspan="2" style="width: 50%; background-color: #c30e2e; color: white; font-weight: bold; padding: 6px; border-right: 1px solid #fff; border-bottom: 1px solid #ccc;">
+                        <a href="ITX-마음.html" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; background-color: #fff; padding: 2px 8px; border-radius: 3px;">
+                            <img src="이미지/svg/ITX-마음_BI.svg" onerror="this.onerror=null; this.src='이미지/ITX-마음_BI.webp';" alt="ITX-마음" style="height: 16px; width: auto; object-fit: contain;" />
+                        </a>
+                    </td>
+                    <td colspan="2" style="width: 50%; background-color: #219e5c; color: white; font-weight: bold; padding: 6px; border-bottom: 1px solid #ccc;">
+                        <a href="ITX-청춘.html" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; background-color: #fff; padding: 2px 8px; border-radius: 3px;">
+                            <img src="이미지/svg/ITX-청춘_BI.svg" alt="ITX-청춘" style="height: 16px; width: auto; object-fit: contain;" />
+                        </a>
+                    </td>
                 </tr>
                 <tr>
-                    <td colspan="2" style="padding: 10px 5px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6;">
+                    <td colspan="2" style="padding: 10px 5px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; background-color: #fff;">
                         <a href="강릉차량사업소.html" style="text-decoration: none; color: inherit;">강릉</a><sup style="font-size:9.5px; color:#555;">[주박]</sup> | 
                         <a href="서울차량사업소.html" style="text-decoration: none; color: inherit;">서울</a> | 
                         <a href="대구차량사업소.html" style="text-decoration: none; color: inherit;">대구</a><sup style="font-size:9.5px; color:#555;">[주박]</sup> | 
@@ -117,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         <a href="매성차량사업소.html" style="text-decoration: none; color: inherit;">매성</a> | 
                         <a href="풍영차량사업소.html" style="text-decoration: none; color: inherit;">풍영</a>
                     </td>
-                    <td colspan="2" style="padding: 10px 5px; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6;">
+                    <td colspan="2" style="padding: 10px 5px; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; background-color: #fff;">
                         <a href="평내차량사업소.html" style="text-decoration: none; color: inherit;">평내</a><sup style="font-size:9.5px; color:#555;">[중]</sup>
                     </td>
                 </tr>
@@ -128,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <a href="광역전철.html" style="text-decoration: none; color: inherit;">광역전철</a>
             </div>
 
-            <table style="width: 100%; border-collapse: collapse; text-align: center; table-layout: fixed; font-size: 12px;">
+            <table style="width: 100%; border-collapse: collapse; text-align: center; table-layout: fixed; font-size: 12px; margin: 0 !important;">
                 <tr>
                     <td style="width: 25%; background-color: #0052a4; color: white; font-weight: bold; padding: 5px; border-right: 1px solid #fff; border-bottom: 1px solid #ccc;"><a href="수도권 전철 1호선.html" style="text-decoration: none; color: inherit;"><span style="font-size: 10.5px; font-weight: normal;">수도권 전철</span><br>1호선</a></td>
                     <td style="width: 25%; background-color: #77c4a3; color: white; font-weight: bold; padding: 5px; border-right: 1px solid #fff; border-bottom: 1px solid #ccc;"><a href="수도권 전철 경의·중앙선.html" style="text-decoration: none; color: inherit;"><span style="font-size: 10.5px; font-weight: normal;">수도권 전철</span><br>경의·중앙선</a></td>
@@ -136,23 +159,23 @@ document.addEventListener("DOMContentLoaded", function() {
                     <td style="width: 25%; background-color: #00a4e3; color: white; font-weight: bold; padding: 5px; border-bottom: 1px solid #ccc;"><a href="수도권 전철 4호선.html" style="text-decoration: none; color: inherit;"><span style="font-size: 10.5px; font-weight: normal;">수도권 전철</span><br>4호선</a></td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; vertical-align: middle;">
+                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; vertical-align: middle; background-color: #fff;">
                         <a href="구로차량사업소.html" style="text-decoration: none; color: inherit;">구로</a><sup style="font-size:9px; color:#555;">[폐]</sup> | 
                         <a href="병점차량사업소.html" style="text-decoration: none; color: inherit;">병점</a><sup style="font-size:9px; color:#555;">[폐]</sup><br>
                         <a href="이문차량사업소.html" style="text-decoration: none; color: inherit;">이문</a> | 
                         <a href="시흥철도차량정비단.html" style="text-decoration: none; color: inherit; font-weight: bold;">시흥단</a><sup style="font-size:9px; color:#555;">[중][타][폐]</sup><br>
                         <a href="성북차량사업소.html" style="text-decoration: none; color: inherit;">성북분소</a><sup style="font-size:9px; color:#555;">[주박]</sup>
                     </td>
-                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; vertical-align: middle;">
+                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; vertical-align: middle; background-color: #fff;">
                         <a href="용문차량사업소.html" style="text-decoration: none; color: inherit;">용문</a> | 
                         <a href="문산차량사업소.html" style="text-decoration: none; color: inherit;">문산</a><sup style="font-size:9px; color:#555;">[중][폐]</sup><br>
                         <a href="시흥철도차량정비단.html" style="text-decoration: none; color: inherit; font-weight: bold;">시흥단</a><sup style="font-size:9px; color:#555;">[중][타][폐]</sup>
                     </td>
-                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; vertical-align: middle;">
+                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; vertical-align: middle; background-color: #fff;">
                         <a href="구로차량사업소.html" style="text-decoration: none; color: inherit;">구로</a><sup style="font-size:9px; color:#555;">[배속][타]</sup><br>
                         <a href="지축차량사업소.html" style="text-decoration: none; color: inherit;"><span style="text-decoration: underline;">지축</span></a><sup style="font-size:9px; color:#555;">[실무][중][폐]</sup>
                     </td>
-                    <td style="padding: 8px 3px; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; vertical-align: middle;">
+                    <td style="padding: 8px 3px; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; vertical-align: middle; background-color: #fff;">
                         <a href="시흥철도차량정비단.html" style="text-decoration: none; color: inherit; font-weight: bold;">시흥단</a><sup style="font-size:9px; color:#555;">[중][폐]</sup><br>
                         <a href="안산차량사업소.html" style="text-decoration: none; color: inherit;">안산분소</a><sup style="font-size:9px; color:#555;">[주박]</sup> | 
                         <a href="창동차량사업소.html" style="text-decoration: none; color: inherit;"><span style="text-decoration: underline;">창동</span></a><sup style="font-size:9px; color:#555;">[주박]</sup><span style="color:#000; font-size:10px;">◆</span>
@@ -166,18 +189,18 @@ document.addEventListener("DOMContentLoaded", function() {
                     <td style="background-color: #0054a6; color: white; font-weight: bold; padding: 5px; border-bottom: 1px solid #ccc;"><a href="동해선 광역전철.html" style="text-decoration: none; color: inherit;"><span style="font-size: 10.5px; font-weight: normal;">동남권 전철</span><br>동해선</a></td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6;">
+                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; background-color: #fff;">
                         <a href="분당차량사업소.html" style="text-decoration: none; color: inherit;">분당</a> | 
                         <a href="시흥철도차량정비단.html" style="text-decoration: none; color: inherit; font-weight: bold;">시흥단</a><sup style="font-size:9px; color:#555;">[중][폐]</sup>
                     </td>
-                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6;">
+                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; background-color: #fff;">
                         <a href="평내차량사업소.html" style="text-decoration: none; color: inherit;">평내</a><sup style="font-size:9px; color:#555;">[중][폐]</sup>
                     </td>
-                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6;">
+                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; background-color: #fff;">
                         <a href="부발차량사업소.html" style="text-decoration: none; color: inherit;">부발</a> | 
                         <a href="문산차량사업소.html" style="text-decoration: none; color: inherit;">문산</a><sup style="font-size:9px; color:#555;">[중][타][폐]</sup>
                     </td>
-                    <td style="padding: 8px 3px; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6;">
+                    <td style="padding: 8px 3px; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; background-color: #fff;">
                         <a href="울산차량사업소.html" style="text-decoration: none; color: inherit;">울산</a><sup style="font-size:9px; color:#555;">[중]</sup>
                     </td>
                 </tr>
@@ -188,21 +211,21 @@ document.addEventListener("DOMContentLoaded", function() {
                     <td colspan="2" style="background-color: #a9cf38; color: white; font-weight: bold; padding: 5px; border-bottom: 1px solid #ccc;"><a href="충청권 광역철도.html" style="text-decoration: none; color: inherit;"><del style="color: #fff;">충청권 광역철도</del></a></td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6;">
+                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; background-color: #fff;">
                         <a href="시흥철도차량정비단.html" style="text-decoration: none; color: inherit; font-weight: bold;">시흥단</a><sup style="font-size:9px; color:#555;">[중][타][폐]</sup> | 
                         <a href="송산차량사업소.html" style="text-decoration: none; color: inherit;"><span style="text-decoration: underline;"><del style="color:#0275d8;">송산</del></span></a>
                     </td>
-                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6;">
+                    <td style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; background-color: #fff;">
                         <a href="대구차량사업소.html" style="text-decoration: none; color: inherit;">대구</a> | 
                         <a href="울산차량사업소.html" style="text-decoration: none; color: inherit;">울산</a><sup style="font-size:9px; color:#555;">[중][타]</sup>
                     </td>
-                    <td colspan="2" style="padding: 8px 3px; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6;">
+                    <td colspan="2" style="padding: 8px 3px; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; background-color: #fff;">
                         <a href="대전차량사업소.html" style="text-decoration: none; color: inherit;">대전</a> | 
                         <a href="대전철도차량정비단.html" style="text-decoration: none; color: inherit;"><del style="color:#0275d8;">대전단 본단</del></a><sup style="font-size:9px; color:#555;">[중]</sup>
                     </td>
                 </tr>
 
-                <!-- 효빈권 · 빈주권 광역전철 (고유 색상 완벽 적용) -->
+                <!-- 효빈권 · 빈주권 광역전철 -->
                 <tr>
                     <td colspan="2" style="background-color: #6677CC; color: white; font-weight: bold; padding: 5px; border-right: 1px solid #fff; border-bottom: 1px solid #ccc;">
                         <a href="빈효선 광역전철.html" style="text-decoration: none; color: inherit;"><span style="font-size: 10.5px; font-weight: normal;">효빈권 전철</span><br>빈효선</a>
@@ -212,12 +235,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2" style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6;">
+                    <td colspan="2" style="padding: 8px 3px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; background-color: #fff;">
                         <a href="고남차량사업소.html" style="text-decoration: none; color: inherit;">고남</a> | 
                         <a href="효빈항차량주박기지.html" style="text-decoration: none; color: inherit;">효빈항</a><sup style="font-size:9px; color:#555;">[주박]</sup> | 
                         <a href="치원차량사업소.html" style="text-decoration: none; color: inherit;"><del style="color:#0275d8;">치원</del></a>
                     </td>
-                    <td colspan="2" style="padding: 8px 3px; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6;">
+                    <td colspan="2" style="padding: 8px 3px; border-bottom: 1px solid #ccc; color: #0275d8; line-height: 1.6; background-color: #fff;">
                         <a href="계성차량사업소.html" style="text-decoration: none; color: inherit;">계성</a> | 
                         <a href="풍영차량사업소.html" style="text-decoration: none; color: inherit;">풍영</a>
                     </td>
@@ -229,16 +252,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 <a href="수도권 광역급행철도.html" style="text-decoration: none; color: inherit;">수도권 광역급행철도</a>
             </div>
             
-            <table style="width: 100%; border-collapse: collapse; text-align: center; table-layout: fixed; font-size: 12px;">
+            <table style="width: 100%; border-collapse: collapse; text-align: center; table-layout: fixed; font-size: 12px; margin: 0 !important;">
                 <tr>
                     <td style="width: 50%; background-color: #12b59b; color: white; font-weight: bold; padding: 5px; border-right: 1px solid #fff; border-bottom: 1px solid #ccc;"><a href="수도권 광역급행철도 B노선.html" style="text-decoration: none; color: inherit;"><del style="color: #fff;">GTX-B</del></a></td>
                     <td style="width: 50%; background-color: #e04338; color: white; font-weight: bold; padding: 5px; border-bottom: 1px solid #ccc;"><a href="수도권 광역급행철도 C노선.html" style="text-decoration: none; color: inherit;"><del style="color: #fff;">GTX-C</del></a></td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px 5px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8;">
+                    <td style="padding: 8px 5px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #0275d8; background-color: #fff;">
                         <a href="마석차량사업소.html" style="text-decoration: none; color: inherit;"><span style="text-decoration: underline;"><del style="color:#0275d8;">마석</del></span></a>
                     </td>
-                    <td style="padding: 8px 5px; border-bottom: 1px solid #ccc; color: #0275d8;">
+                    <td style="padding: 8px 5px; border-bottom: 1px solid #ccc; color: #0275d8; background-color: #fff;">
                         <a href="덕정차량사업소.html" style="text-decoration: none; color: inherit;"><span style="text-decoration: underline;"><del style="color:#0275d8;">덕정</del></span></a> | 
                         <a href="병점차량사업소.html" style="text-decoration: none; color: inherit;"><del style="color:#0275d8;">병점</del></a><sup style="font-size:9px; color:#555;">[주박]</sup>
                     </td>
@@ -250,7 +273,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <a href="철도차량.html" style="text-decoration: none; color: inherit;">기관차 · 객차 · 발전차 · 화차</a>
             </div>
             
-            <div style="padding: 12px 10px; text-align: center; font-size: 12.5px; color: #0275d8; border-bottom: 1px solid #ccc; line-height: 1.8; word-break: keep-all;">
+            <div style="padding: 12px 10px; text-align: center; font-size: 12.5px; color: #0275d8; border-bottom: 1px solid #ccc; line-height: 1.8; word-break: keep-all; background-color: #fff;">
                 <a href="가야차량사업소.html" style="text-decoration: none; color: inherit;">가야</a> | 
                 <a href="광주차량사업소.html" style="text-decoration: none; color: inherit;">광주</a> | 
                 <a href="동해차량사업소.html" style="text-decoration: none; color: inherit;">동해</a> | 
@@ -282,7 +305,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <a href="매성역.html" style="text-decoration: none; color: inherit;">매성</a> | 
                 <a href="천주역.html" style="text-decoration: none; color: inherit;">천주</a> | 
                 <a href="군천역.html" style="text-decoration: none; color: inherit;">군천</a> | 
-                <a href="효빈차량사업소.html" style="text-decoration: none; color: inherit;">효빈</a>
+                <a href="효빈역.html" style="text-decoration: none; color: inherit;">효빈</a>
             </div>
 
             <!-- 6. 범례 설명 -->
