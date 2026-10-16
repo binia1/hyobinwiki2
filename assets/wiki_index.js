@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 10. 16. 오전 12:57:11
+ * 업데이트: 2026. 10. 16. 오후 8:59:21
  */
 
 window.HB_WIKI_PAGES = [
@@ -13395,6 +13395,10 @@ window.HB_WIKI_PAGES = [
   {
     "title": "강택상",
     "href": "강택상.html"
+  },
+  {
+    "title": "P주무관",
+    "href": "P주무관.html"
   }
 ];
 
@@ -21027,5 +21031,8 @@ window.HB_WIKI_ALIASES = {
   "서유선": "서유선.html",
   "덕빈철도차량정비단": "덕빈철도차량정비단.html",
   "효빈일반철도차량정비단": "효빈일반철도차량정비단.html",
-  "강택상": "강택상.html"
+  "강택상": "강택상.html",
+  "P주무관": "P주무관.html",
+    "박유영": "P주무관.html",
+
 };
