@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 10. 19. 오전 12:04:20
+ * 업데이트: 2026. 10. 19. 오후 3:59:10
  */
 
 window.HB_WIKI_PAGES = [
@@ -13403,6 +13403,14 @@ window.HB_WIKI_PAGES = [
   {
     "title": "유세라_주요일화및사건사고",
     "href": "유세라_주요일화및사건사고.html"
+  },
+  {
+    "title": "청덕대교",
+    "href": "청덕대교.html"
+  },
+  {
+    "title": "청덕 레인보우 브릿지",
+    "href": "청덕 레인보우 브릿지.html"
   }
 ];
 
@@ -21038,5 +21046,7 @@ window.HB_WIKI_ALIASES = {
   "강택상": "강택상.html",
   "P주무관": "P주무관.html",
   "박유영": "P주무관.html",
-  "유세라_주요일화및사건사고": "유세라_주요일화및사건사고.html"
+  "유세라_주요일화및사건사고": "유세라_주요일화및사건사고.html",
+  "청덕대교": "청덕대교.html",
+  "청덕 레인보우 브릿지": "청덕 레인보우 브릿지.html"
 };
