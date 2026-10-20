@@ -1,5 +1,4 @@
 ﻿<!DOCTYPE html>
-
 <html lang="ko">
 <head>
 <link href="이미지/효빈위키아이콘.webp" rel="icon"/>
@@ -16,8 +15,6 @@
             --wiki-bg: #ffffff;
             --wiki-link: #0022AA;
             --highlight-color: #ffeb3b; 
-            
-
             
             /* 지하철 노선 색상 (사용자 지정) */
             --line-1: #0077DD;
@@ -355,8 +352,6 @@
 }
 .namu-route-table-nav a:hover{background:var(--bus-branch);color:#fff;border-color:var(--bus-branch)}
 
-    
-
         /* 일괄 적용된 SVG 수직 정렬 CSS */
         .svg-logo { width: 38px; height: 38px; object-fit: contain; flex-shrink: 0; }
         .svg-logo-sm { width: 24px; height: 24px; object-fit: contain; flex-shrink: 0; }
@@ -570,7 +565,7 @@
             '292': {
                 num: '292',
                 pairNum: '922',
-                start: '청덕공원',
+                start: '휴소도',
                 end: '곽암종점',
                 operator: '판주여객',
                 authCount: '9대',
@@ -578,7 +573,7 @@
                 firstTime: '05:54',
                 lastTime: '22:45',
                 stops: [
-                    { name: '청덕공원', lines: ['5'] }, { name: '사복', lines: ['2'] },
+                    { name: '휴소도', lines: ['5'] }, { name: '청덕공원', lines: ['5'] }, { name: '사복', lines: ['2'] },
                     { name: '청능', lines: ['3'] }, { name: '소조', lines: ['5'] },
                     { name: '효빈성북문', lines: ['7'] }, { name: '중앙로', lines: ['1', '2', '7'] },
                     { name: '창선', lines: ['1'] }, { name: '삼각', lines: ['4'] },
@@ -614,7 +609,7 @@
                     { name: '삼각', lines: ['4'] }, { name: '창선', lines: ['1'] },
                     { name: '중앙로', lines: ['1', '2', '7'] }, { name: '효빈성북문', lines: ['7'] },
                     { name: '소조', lines: ['5'] }, { name: '청능', lines: ['3'] },
-                    { name: '사복', lines: ['2'] }, { name: '청덕공원', lines: ['5'] }
+                    { name: '사복', lines: ['2'] }, { name: '청덕공원', lines: ['5'] },{ name: '휴소도', lines: ['5'] }
                 ],
                 desc: '292번의 역방향 노선이다.',
                 features: ['곽암종점에서 출발하여 청덕공원으로 운행한다.'],
@@ -622,13 +617,19 @@
             }
         };
 
-        // *921, 922번 정류장 데이터 자동 역순 처리 (누락된 데이터 보완)
-        // 291/921은 데이터가 거의 대칭이므로 위에서 수동 정의함.
-        // 292/922도 위에서 수동 정의함.
-
         // 상태 변수
         let currentMain = '291'; 
         let currentDir = 'fwd';
+
+        // 텍스트 업데이트 방어 함수 (null 에러 완벽 차단)
+        function setTextSafe(id, text) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.innerText = text;
+            } else {
+                console.warn(`[효빈위키] 요소를 찾을 수 없어 텍스트를 업데이트하지 못했습니다: ID = ${id}`);
+            }
+        }
 
         // 초기화
         document.addEventListener("DOMContentLoaded", function() {
@@ -660,125 +661,142 @@
             const data = routeData[targetKey];
             const mainData = routeData[currentMain];
 
-            // 탭 이름 업데이트
-            document.getElementById('tab-dir-fwd').innerText = `${currentMain}번 (정방향)`;
-            document.getElementById('tab-dir-rev').innerText = `${mainData.pairNum}번 (역방향)`;
+            // 탭 이름 업데이트 (안전하게)
+            setTextSafe('tab-dir-fwd', `${currentMain}번 (정방향)`);
+            setTextSafe('tab-dir-rev', `${mainData.pairNum}번 (역방향)`);
             
-            if (currentDir === 'fwd') {
-                document.getElementById('tab-dir-fwd').classList.add('active');
-                document.getElementById('tab-dir-rev').classList.remove('active');
-            } else {
-                document.getElementById('tab-dir-fwd').classList.remove('active');
-                document.getElementById('tab-dir-rev').classList.add('active');
+            const tabFwd = document.getElementById('tab-dir-fwd');
+            const tabRev = document.getElementById('tab-dir-rev');
+            
+            if (tabFwd && tabRev) {
+                if (currentDir === 'fwd') {
+                    tabFwd.classList.add('active');
+                    tabRev.classList.remove('active');
+                } else {
+                    tabFwd.classList.remove('active');
+                    tabRev.classList.add('active');
+                }
             }
 
-            // 기본 정보 업데이트
-            document.getElementById('route-title').innerText = `${currentMain}, ${mainData.pairNum}`;
-            document.getElementById('info-header').innerText = `효빈 버스 ${data.num}`;
-            document.getElementById('tbl-num').innerText = data.num;
-            document.getElementById('route-text').innerText = data.num;
+            // 기본 정보 업데이트 (안전하게)
+            setTextSafe('route-title', `${currentMain}, ${mainData.pairNum}`);
+            setTextSafe('info-header', `효빈 버스 ${data.num}`);
+            setTextSafe('tbl-num', data.num);
+            setTextSafe('route-text', data.num);
 
-            document.getElementById('info-start').innerText = data.start;
-            document.getElementById('info-end').innerText = data.end;
-            document.getElementById('info-operator').innerText = data.operator;
-            document.getElementById('info-interval').innerText = data.intervalInfo;
+            setTextSafe('info-start', data.start);
+            setTextSafe('info-end', data.end);
+            setTextSafe('info-operator', data.operator);
+            setTextSafe('info-interval', data.intervalInfo);
 
-            document.getElementById('tbl-start').innerText = data.start;
-            document.getElementById('tbl-end').innerText = data.end;
-            document.getElementById('tbl-operator').innerText = data.operator;
-            document.getElementById('tbl-auth-count').innerText = data.authCount;
-            document.getElementById('tbl-interval').innerText = data.intervalInfo;
+            setTextSafe('tbl-start', data.start);
+            setTextSafe('tbl-end', data.end);
+            setTextSafe('tbl-operator', data.operator);
+            setTextSafe('tbl-auth-count', data.authCount);
+            setTextSafe('tbl-interval', data.intervalInfo);
             
-            document.getElementById('tbl-first-end').innerText = data.firstTime;
-            document.getElementById('tbl-last-end').innerText = data.lastTime;
+            setTextSafe('tbl-first-end', data.firstTime);
+            setTextSafe('tbl-last-end', data.lastTime);
             
             const otherKey = (currentDir === 'fwd') ? mainData.pairNum : currentMain;
-            document.getElementById('tbl-first-start').innerText = routeData[otherKey].firstTime;
-            document.getElementById('tbl-last-start').innerText = routeData[otherKey].lastTime;
+            setTextSafe('tbl-first-start', routeData[otherKey].firstTime);
+            setTextSafe('tbl-last-start', routeData[otherKey].lastTime);
 
             const pathStr = data.stops.map(s => s.name).join(' - ');
-            document.getElementById('tbl-path').innerText = pathStr;
+            setTextSafe('tbl-path', pathStr);
 
+            // 수정된 이미지 경로 (null 체크 포함)
             const imgEl = document.getElementById('bus-image');
-            imgEl.src = `${currentMain}.webp`;
+            if (imgEl) {
+                imgEl.src = `이미지/${currentMain}.webp`;
+            }
 
-            document.getElementById('desc-text').innerText = data.desc;
+            setTextSafe('desc-text', data.desc);
+            
             const featList = document.getElementById('features-list');
-            featList.innerHTML = '';
-            data.features.forEach(f => {
-                const li = document.createElement('li');
-                li.innerText = f;
-                featList.appendChild(li);
-            });
+            if (featList) {
+                featList.innerHTML = '';
+                data.features.forEach(f => {
+                    const li = document.createElement('li');
+                    li.innerText = f;
+                    featList.appendChild(li);
+                });
+            }
 
             // 연계 철도역 뱃지
             const subContainer = document.getElementById('info-subway');
-            subContainer.innerHTML = '';
-            const uniqueSubways = new Set();
-            data.stops.forEach(s => {
-                s.lines.forEach(line => uniqueSubways.add(`${line}-${s.name}`));
-            });
-            if (uniqueSubways.size > 0) {
-                const sortedSubs = Array.from(uniqueSubways).sort((a, b) => {
-                    const lineA = a.split('-')[0];
-                    const lineB = b.split('-')[0];
-                    if(lineA === 'binhyo') return -1;
-                    if(lineB === 'binhyo') return 1;
-                    return parseInt(lineA) - parseInt(lineB);
+            if (subContainer) {
+                subContainer.innerHTML = '';
+                const uniqueSubways = new Set();
+                data.stops.forEach(s => {
+                    s.lines.forEach(line => uniqueSubways.add(`${line}-${s.name}`));
                 });
-                sortedSubs.forEach(item => {
-                    const [line, station] = item.split('-');
-                    const badge = document.createElement('a');
-                    badge.href = `${station}.html`; 
-                    badge.className = `subway-badge-rect line-${line}`;
-                    let lineName = line === 'binhyo' ? '빈효' : line;
-                    badge.innerHTML = `<span style="border-right:1px solid rgba(255,255,255,0.4); padding-right:4px; margin-right:4px;">${lineName}</span>${station.replace('역', '')}`;
-                    subContainer.appendChild(badge);
-                });
-            } else {
-                subContainer.innerHTML = '<span style="color:#999;">없음</span>';
+                if (uniqueSubways.size > 0) {
+                    const sortedSubs = Array.from(uniqueSubways).sort((a, b) => {
+                        const lineA = a.split('-')[0];
+                        const lineB = b.split('-')[0];
+                        if(lineA === 'binhyo') return -1;
+                        if(lineB === 'binhyo') return 1;
+                        return parseInt(lineA) - parseInt(lineB);
+                    });
+                    sortedSubs.forEach(item => {
+                        const [line, station] = item.split('-');
+                        const badge = document.createElement('a');
+                        badge.href = `${station}.html`; 
+                        badge.className = `subway-badge-rect line-${line}`;
+                        let lineName = line === 'binhyo' ? '빈효' : line;
+                        badge.innerHTML = `<span style="border-right:1px solid rgba(255,255,255,0.4); padding-right:4px; margin-right:4px;">${lineName}</span>${station.replace('역', '')}`;
+                        subContainer.appendChild(badge);
+                    });
+                } else {
+                    subContainer.innerHTML = '<span style="color:#999;">없음</span>';
+                }
             }
 
             // 정류장 리스트
             const stopContainer = document.getElementById('stop-list-container');
-            stopContainer.innerHTML = ''; 
-            data.stops.forEach((stopObj, index) => {
-                const div = document.createElement('div');
-                div.className = 'stop-item';
-                
-                let badgesHtml = '';
-                if(stopObj.lines.length > 0) {
-                    badgesHtml += '<span class="badges-area">';
-                    stopObj.lines.forEach(line => {
-                         let lineSymbol = line === 'binhyo' ? '빈' : line;
-                         badgesHtml += `<span class="subway-badge line-${line}">${lineSymbol}</span>`;
-                    });
-                    badgesHtml += '</span>';
-                }
-                const linkUrl = `${stopObj.name}역.html`;
-                const linkHtml = `<a href="${linkUrl}">${stopObj.name}</a>`;
-                let content = badgesHtml + linkHtml;
+            if (stopContainer) {
+                stopContainer.innerHTML = ''; 
+                data.stops.forEach((stopObj, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'stop-item';
+                    
+                    let badgesHtml = '';
+                    if(stopObj.lines.length > 0) {
+                        badgesHtml += '<span class="badges-area">';
+                        stopObj.lines.forEach(line => {
+                             let lineSymbol = line === 'binhyo' ? '빈' : line;
+                             badgesHtml += `<span class="subway-badge line-${line}">${lineSymbol}</span>`;
+                        });
+                        badgesHtml += '</span>';
+                    }
+                    const linkUrl = `${stopObj.name}역.html`;
+                    const linkHtml = `<a href="${linkUrl}">${stopObj.name}</a>`;
+                    let content = badgesHtml + linkHtml;
 
-                if(index === 0) {
-                    div.innerHTML = `${content} (기점)`;
-                    div.classList.add('start');
-                } else if(index === data.stops.length - 1) {
-                    div.innerHTML = `${content} (종점)`;
-                    div.classList.add('end');
-                } else {
-                    div.innerHTML = content;
-                }
-                stopContainer.appendChild(div);
-            });
+                    if(index === 0) {
+                        div.innerHTML = `${content} (기점)`;
+                        div.classList.add('start');
+                    } else if(index === data.stops.length - 1) {
+                        div.innerHTML = `${content} (종점)`;
+                        div.classList.add('end');
+                    } else {
+                        div.innerHTML = content;
+                    }
+                    stopContainer.appendChild(div);
+                });
+            }
 
             // 시간표
             const tbody = document.getElementById('timetable-body');
-            tbody.innerHTML = '';
-            data.timetable.forEach((time, idx) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${idx + 1}회</td><td>${time}</td><td></td>`;
-                tbody.appendChild(tr);
-            });
+            if (tbody) {
+                tbody.innerHTML = '';
+                data.timetable.forEach((time, idx) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${idx + 1}회</td><td>${time}</td><td></td>`;
+                    tbody.appendChild(tr);
+                });
+            }
         }
 
         // 시간표 생성 유틸리티 (고정 배차)
@@ -799,11 +817,15 @@
             return times;
         }
 
-        // 검색
-        function handleSearch() {
-            const searchInput = document.getElementById('searchInput');
+        // 수정된 검색 기능 (inputId 매개변수 추가, null 에러 방지)
+        function handleSearch(inputId = 'headerSearchInput') {
+            const searchInput = document.getElementById(inputId);
+            if (!searchInput) return;
+
             const query = searchInput.value.trim();
             const contextArea = document.getElementById('wiki-context-area');
+            if (!contextArea) return;
+
             const marks = contextArea.querySelectorAll('mark.highlight');
             marks.forEach(mark => {
                 const text = document.createTextNode(mark.textContent);
@@ -850,8 +872,10 @@
             }
         }
         function escapeRegExp(string) { return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+        
         function showMsg(text) {
             const box = document.getElementById('wiki-msg-box');
+            if (!box) return;
             box.innerText = text; 
             box.style.display = 'block';
             setTimeout(() => { box.style.display = 'none'; }, 2500);

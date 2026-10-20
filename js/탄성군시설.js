@@ -194,7 +194,7 @@
   </table>
   `;
 
-  const container = document.getElementById('district-nav-container');
+ const container = document.getElementById('district-nav-탄성군');
   if (container) {
     container.innerHTML = facilityTableHTML;
   } else {

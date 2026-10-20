@@ -6,39 +6,26 @@
   <title>지역 시설 안내표 생성기</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* 탭 메뉴 스타일 */
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    .tab-btn.active {
-      border-bottom-color: transparent;
-      background-color: white;
-      color: #3b82f6;
-      font-weight: bold;
+    /* Toast 애니메이션 */
+    @keyframes slideInUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+    .toast-enter {
+      animation: slideInUp 0.3s ease-out forwards;
+    }
+    .toast-exit {
+      animation: fadeOut 0.5s ease-out forwards;
     }
     
-    /* 코드 블록 스타일 */
-    pre {
-      background-color: #1e1e1e;
-      color: #d4d4d4;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      overflow-x: auto;
-      font-size: 0.875rem;
-      white-space: pre-wrap;
-      word-wrap: break-word;
+    /* 미리보기 안의 텍스트가 줄바꿈 없이 길어지는 것을 방지 */
+    .preview-container * {
+      word-break: keep-all;
     }
-
-    /* 생성기 내부 미리보기용 격리 스타일 */
-    #preview-container {
-      all: initial;
-      font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-    }
-    
-    /* 사용자 정의 스크롤바 */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #f1f1f1; }
-    ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
   
         /* 일괄 적용된 SVG 수직 정렬 CSS */
         .svg-logo { width: 38px; height: 38px; object-fit: contain; flex-shrink: 0; }
@@ -49,152 +36,134 @@
         .flex-start { display: flex; align-items: center; justify-content: flex-start; gap: 6px; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
 
-  <header class="bg-blue-600 text-white p-4 shadow-md shrink-0 flex justify-between items-center">
-    <div>
-      <h1 class="text-2xl font-bold">🗺️ 지역 시설 안내표 자동 생성기</h1>
-      <p class="text-sm text-blue-200 mt-1">이름만 쉼표로 입력하면 HTML이 자동으로 완성됩니다!</p>
-    </div>
-    <button onclick="generateOutput()" class="bg-white text-blue-600 hover:bg-blue-50 font-bold py-2 px-6 rounded shadow transition-colors">
-      생성 및 미리보기 업데이트 🚀
-    </button>
+  <!-- 헤더 -->
+  <header class="bg-blue-800 text-white p-4 shadow-md flex justify-between items-center z-10">
+    <h1 class="text-xl font-bold">지역 시설 안내표 생성기 (JS버전)</h1>
   </header>
 
+  <!-- 메인 컨텐츠 영역 -->
   <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
     
     <!-- 왼쪽: 폼 영역 -->
     <div class="w-full lg:w-1/2 p-4 lg:p-6 overflow-y-auto bg-white border-r border-gray-200 shadow-sm flex flex-col gap-6">
       
+      <!-- 저장/불러오기 섹션 -->
+      <section class="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm">
+        <div class="flex items-center justify-between border-b pb-2 mb-3 border-gray-300">
+          <h2 class="text-lg font-semibold text-gray-700">💾 설정 저장 및 불러오기</h2>
+        </div>
+        <div class="flex gap-2 mb-3">
+          <input type="text" id="save-name" class="flex-1 border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500" placeholder="저장할 이름 (예: 효빈북구 템플릿)">
+          <button onclick="savePreset()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition-colors whitespace-nowrap">저장</button>
+        </div>
+        <div class="flex gap-2 items-center bg-gray-100 p-2 rounded border border-gray-200">
+          <select id="preset-select" class="flex-1 border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500 bg-white">
+            <option value="">저장된 데이터가 없습니다.</option>
+          </select>
+          <button onclick="loadPreset()" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-3 rounded shadow transition-colors whitespace-nowrap">불러오기</button>
+          <button onclick="deletePreset()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded shadow transition-colors whitespace-nowrap">삭제</button>
+        </div>
+      </section>
+
+      <!-- 지역 및 테마 설정 -->
       <section class="bg-gray-50 p-4 rounded-lg border border-gray-200">
         <h2 class="text-lg font-semibold mb-4 text-gray-700 border-b pb-2">1. 지역 및 테마 설정</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">광역자치단체</label>
-            <select id="prov-select" class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500" onchange="updateDistricts()">
+            <select id="prov-select" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500 bg-white" onchange="updateDistricts(); updateThemePreview(); generateOutput();">
+              <!-- JS에서 옵션 채움 -->
             </select>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">기초자치단체</label>
-            <select id="dist-select" class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500" onchange="updateThemePreview()">
+            <select id="dist-select" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500 bg-white" onchange="updateThemePreview(); generateOutput();">
+              <!-- JS에서 옵션 채움 -->
             </select>
           </div>
         </div>
         
-        <div class="mt-4 flex items-center gap-4 bg-white p-3 rounded border border-gray-100 shadow-sm">
-          <div class="flex flex-col">
-            <span class="text-xs text-gray-500 mb-1">적용될 테마 컬러</span>
-            <div class="flex items-center gap-2">
-              <div id="color-preview" class="w-6 h-6 rounded-full border border-gray-300 shadow-inner"></div>
-              <span id="color-code" class="text-sm font-mono text-gray-600"></span>
-            </div>
-          </div>
-          <div class="flex flex-col border-l pl-4 border-gray-200 overflow-hidden">
-             <span class="text-xs text-gray-500 mb-1">적용될 로고 경로</span>
-             <span id="logo-path-preview" class="text-sm font-mono text-gray-600 truncate"></span>
-          </div>
+        <div class="mt-4 flex items-center p-3 bg-white rounded border border-gray-200 shadow-sm">
+          <div class="text-sm font-medium text-gray-600 mr-4">선택된 테마 미리보기:</div>
+          <div id="theme-color-preview" class="w-8 h-8 rounded-full border border-gray-300 shadow-inner mr-3"></div>
+          <div id="theme-color-hex" class="text-sm text-gray-500 mr-4"></div>
+          <img id="theme-logo-preview" src="" alt="로고" class="h-8 object-contain">
         </div>
       </section>
 
-      <section>
-        <div class="flex justify-between items-end mb-4 border-b pb-2">
-          <h2 class="text-lg font-semibold text-gray-700">2. 표시할 시설 정보 (텍스트만 입력하세요)</h2>
-          <button onclick="openAddCategoryModal()" class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1.5 px-3 rounded shadow transition-colors">
-            + 종류 추가
-          </button>
+      <!-- 시설 목록 작성 -->
+      <section class="bg-gray-50 p-4 rounded-lg border border-gray-200 flex-1 flex flex-col min-h-0">
+        <div class="flex justify-between items-center border-b pb-2 mb-4">
+          <h2 class="text-lg font-semibold text-gray-700">2. 시설 목록 작성</h2>
+          <span class="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded">체크된 항목만 출력됩니다</span>
         </div>
         
-        <div id="categories-container" class="space-y-3">
-          <!-- JS로 카테고리 항목들이 채워짐 -->
+        <div class="text-sm text-gray-600 mb-4 bg-blue-50 p-3 rounded border border-blue-100">
+          <p><strong>작성 팁:</strong> 시설 이름을 쉼표(<code>,</code>)로 구분해서 입력하세요. 자동으로 링크로 변환됩니다.</p>
+          <p class="mt-1"><strong>그룹 분류:</strong> <code>[그룹명] 시설1, 시설2</code> 형식으로 줄바꿈하여 입력하면 서브 카테고리(또는 로고)가 자동으로 적용됩니다.</p>
+        </div>
+
+        <div id="category-container" class="space-y-4 overflow-y-auto pr-2 pb-4">
+          <!-- JS에서 텍스트 영역 동적 생성 -->
+        </div>
+        
+        <!-- 종류 추가 기능 -->
+        <div class="mt-4 pt-4 border-t border-gray-300 flex items-center gap-2">
+          <input type="text" id="new-cat-name" placeholder="새로운 시설 종류 (예: 박물관)" class="flex-1 border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
+          <button onclick="addNewCategory()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow transition-colors whitespace-nowrap">
+            + 종류 추가
+          </button>
         </div>
       </section>
     </div>
 
-    <!-- 오른쪽: 결과 영역 (미리보기 & 코드) -->
+    <!-- 오른쪽: 미리보기 및 코드 출력 영역 -->
     <div class="w-full lg:w-1/2 flex flex-col bg-gray-100">
       
-      <!-- 탭 버튼 -->
-      <div class="flex border-b border-gray-300 bg-gray-200 px-2 pt-2 shrink-0">
-        <button class="tab-btn active px-4 py-2 text-sm font-medium text-gray-600 border border-transparent border-b-0 rounded-t-lg hover:text-gray-800 hover:bg-gray-50" onclick="switchTab('preview')">
-          👀 미리보기
-        </button>
-        <button class="tab-btn px-4 py-2 text-sm font-medium text-gray-600 border border-transparent border-b-0 rounded-t-lg hover:text-gray-800 hover:bg-gray-50" onclick="switchTab('code')">
-          💻 자바스크립트 코드
-        </button>
-        <button class="tab-btn px-4 py-2 text-sm font-medium text-gray-600 border border-transparent border-b-0 rounded-t-lg hover:text-gray-800 hover:bg-gray-50" onclick="switchTab('guide')">
-          📖 적용 가이드
-        </button>
-      </div>
-
-      <div class="flex-1 overflow-y-auto p-4 relative">
-        
-        <!-- 미리보기 탭 -->
-        <div id="tab-preview" class="tab-content active h-full">
-          <div class="bg-white p-6 rounded-lg shadow-sm min-h-full border border-gray-200">
-            <h3 class="text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider">Live Preview</h3>
-            <div id="preview-render-area">
-              <div class="text-center text-gray-400 py-10">좌측에서 '생성 및 미리보기 업데이트' 버튼을 누르세요.</div>
-            </div>
+      <!-- 미리보기 탭 -->
+      <div class="flex-1 flex flex-col p-4 lg:p-6 pb-2 min-h-[50%]">
+        <div class="flex justify-between items-center mb-2">
+          <h2 class="text-lg font-bold text-gray-700">👀 렌더링 미리보기</h2>
+          <button onclick="generateOutput()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-1 px-3 rounded shadow transition-colors">새로고침</button>
+        </div>
+        <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-inner flex-1 overflow-auto preview-container flex justify-center items-start">
+          <div id="preview-box" class="w-full max-w-[1000px]">
+            <!-- JS에서 생성된 표가 여기에 삽입됨 -->
           </div>
         </div>
+      </div>
 
-        <!-- 코드 탭 -->
-        <div id="tab-code" class="tab-content h-full flex flex-col">
-          <div class="flex justify-between items-center mb-2 shrink-0">
-            <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider">Generated Code (file.js)</h3>
-            <button onclick="copyCode('generated-js-code')" class="bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1.5 px-3 rounded shadow transition-colors flex items-center gap-1">
+      <!-- 코드 출력 탭 -->
+      <div class="flex-1 flex flex-col p-4 lg:p-6 pt-2 min-h-[50%]">
+        <div class="flex justify-between items-center mb-2">
+          <h2 class="text-lg font-bold text-gray-700">💻 JavaScript 코드</h2>
+          <div class="flex gap-2">
+            <button onclick="downloadCode()" class="bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-1 px-3 rounded shadow transition-colors flex items-center">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              다운로드
+            </button>
+            <button onclick="copyCode()" class="bg-gray-800 hover:bg-gray-900 text-white text-sm font-bold py-1 px-3 rounded shadow transition-colors flex items-center">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
               복사하기
             </button>
           </div>
-          <pre id="generated-js-code" class="flex-1 m-0 shadow-inner">코드가 이곳에 생성됩니다.</pre>
         </div>
-
-        <!-- 가이드 탭 -->
-        <div id="tab-guide" class="tab-content h-full">
-          <div class="bg-white p-6 rounded-lg shadow-sm h-full border border-gray-200 prose prose-blue max-w-none">
-            <h2 class="text-xl font-bold mb-4">웹사이트에 적용하는 방법</h2>
-            <h3 class="text-lg font-semibold mt-6 mb-2">1. HTML에 컨테이너 요소 추가</h3>
-            <div class="relative group">
-              <pre id="guide-html" class="bg-gray-800 text-gray-100 p-3 rounded text-sm">&lt;div id="district-nav-container"&gt;&lt;/div&gt;</pre>
-            </div>
-            <h3 class="text-lg font-semibold mt-6 mb-2">2. 스크립트 파일 로드</h3>
-            <div class="relative group">
-              <pre id="guide-script" class="bg-gray-800 text-gray-100 p-3 rounded text-sm">&lt;script src="경로/facility_nav.js"&gt;&lt;/script&gt;</pre>
-            </div>
-          </div>
+        <textarea id="code-output" class="w-full flex-1 border border-gray-300 rounded-lg p-3 bg-gray-50 font-mono text-sm shadow-inner focus:outline-none focus:ring-1 focus:ring-blue-500" readonly></textarea>
+        
+        <div id="instruction-box" class="mt-2 text-sm text-gray-700 bg-yellow-50 p-3 rounded border border-yellow-300 leading-relaxed shadow-sm">
+          <!-- JS에서 동적으로 삽입 안내문 채움 -->
         </div>
       </div>
     </div>
   </main>
 
-  <!-- Category Modal -->
-  <div id="category-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40 hidden">
-    <div class="bg-white rounded-lg p-6 w-96 shadow-xl">
-      <h3 class="text-lg font-bold mb-4">새로운 시설 종류 추가</h3>
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1">분류명 (예: 박물관, 놀이공원)</label>
-        <input type="text" id="new-cat-name" class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500" placeholder="시설 종류 입력">
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1">입력 방식</label>
-        <select id="new-cat-type" class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
-          <option value="simple">단일형 (쉼표로 구분)</option>
-          <option value="complex">그룹형 (줄바꿈 및 [그룹명] 사용)</option>
-        </select>
-      </div>
-      <div class="flex justify-end gap-2 mt-6">
-        <button onclick="closeAddCategoryModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors font-medium">취소</button>
-        <button onclick="addNewCategory()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors font-medium">추가하기</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toast Message -->
-  <div id="toast" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none z-50 font-bold">
-    메시지
-  </div>
+  <!-- Toast 알림 컨테이너 -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <script>
+    /* 데이터 정의 */
     const regionData = [
       { prov: "효빈광역시", dist: "효빈광역시", color: "#7777aa", logo: "이미지/효빈광역시_흰색로고.webp" },
       { prov: "효빈광역시", dist: "중구", color: "#BB9955", logo: "이미지/중구_흰색로고.webp" },
@@ -254,392 +223,70 @@
       { prov: "덕빈남도", dist: "낙주시", color: "#bb0033", logo: "이미지/낙주시.webp" }
     ];
 
-    // 사용자가 쉼표로만 입력하면 되도록 템플릿 내용 단순화
+    /* 카테고리 상태 저장용 배열 */
     const categoryTemplates = [
-      { id: 'cat-metro', name: '도시철도', checked: true, type: 'complex', content: "[1호선] 천왕사역, 백천역, 입희역\n[2호선] 신영역, 채산역\n[3호선] 사능역" },
-      { id: 'cat-train', name: '일반철도', checked: true, type: 'complex', content: "[강빈선] 북효빈역" },
-      { id: 'cat-highway', name: '고속도로', checked: true, type: 'simple', content: "효빈외곽순환고속도로, 평전공단IC, 곡진IC" },
-      { id: 'cat-park', name: '공원', checked: true, type: 'simple', content: "시청공원, 사가당공원, 진희공원" },
-      { id: 'cat-theater', name: '공연장', checked: true, type: 'simple', content: "HSCO 오디토리움, 만화애니메이션의전당" },
-      { id: 'cat-exhibition', name: '전시장', checked: true, type: 'simple', content: "HSCO" },
-      { id: 'cat-plaza', name: '광장', checked: true, type: 'simple', content: "효빈시청광장" },
-      { id: 'cat-sports', name: '체육시설', checked: true, type: 'simple', content: "효빈종합운동장, 효빈 e스포츠 아레나" },
-      { id: 'cat-waterpark', name: '워터파크', checked: false, type: 'simple', content: "효빈 아쿠아파크" },
-      { id: 'cat-hospital', name: '종합병원', checked: true, type: 'simple', content: "삼선대학교병원, 고송병원" },
-      { id: 'cat-commerce', name: '상업시설', checked: true, type: 'complex', content: "[전통시장] 중수시장, 청능도매종합시장\n[백화점] 롯데백화점 진희점\n[대형마트] 이마트 중수점" },
-      { id: 'cat-cinema', name: '영화관', checked: true, type: 'simple', content: "메가박스 고송, CGV고송" },
-      { id: 'cat-transport', name: '교통시설', checked: true, type: 'simple', content: "효빈종합버스터미널, 효빈공영차고지" },
-      { id: 'cat-hotel', name: '숙박', checked: true, type: 'simple', content: "효빈 하라오호텔, 브레온 호텔" },
-      { id: 'cat-religion', name: '종교시설', checked: true, type: 'simple', content: "천왕사, 원각사, 효빈교회" },
-      { id: 'cat-beach', name: '해수욕장', checked: false, type: 'simple', content: "토모리해수욕장, 고송해수욕장" },
-      { id: 'cat-library', name: '도서관', checked: true, type: 'simple', content: "효빈시청한바다도서관, 효빈광역시립시민도서관" },
-      { id: 'cat-dock', name: '선착장', checked: false, type: 'simple', content: "효빈유람선 중수포산선착장, 고송선착장" },
-      { id: 'cat-bridge', name: '교량', checked: true, type: 'complex', content: "[팔천강] 등중교, 중수대교\n[기타하천] 고송교, 효빈교" },
-      { id: 'cat-broadcast', name: '방송시설', checked: false, type: 'simple', content: "효빈방송" },
-      { id: 'cat-skyscraper', name: '마천루', checked: true, type: 'simple', content: "고송토모리빌딩, 중수마가렛빌딩" }
+      { id: 'cat-metro', name: '도시철도', checked: true, content: "[1호선] 천왕사, 백천, 입희\n[2호선] 신영, 채산, 남전", isLogoGroup: true },
+      { id: 'cat-rail', name: '일반철도', checked: true, content: "[강빈선] 북효빈역", isLogoGroup: false },
+      { id: 'cat-highway', name: '고속도로', checked: true, content: "효빈외곽순환고속도로(평전공단IC, 곡진IC)", isLogoGroup: false },
+      { id: 'cat-park', name: '공원', checked: true, content: "시청공원, 사가당공원, 진희공원", isLogoGroup: false },
+      { id: 'cat-theater', name: '공연장', checked: true, content: "HSCO 오디토리움, 만화애니메이션의전당", isLogoGroup: false },
+      { id: 'cat-exhibit', name: '전시장', checked: true, content: "HSCO (효빈전시컨벤션센터)", isLogoGroup: false },
+      { id: 'cat-square', name: '광장', checked: true, content: "효빈시청광장", isLogoGroup: false },
+      { id: 'cat-sports', name: '체육시설', checked: true, content: "효빈종합운동장(월드컵경기장, 주경기장, 보조경기장, 야구장), 효빈 e스포츠 아레나", isLogoGroup: false },
+      { id: 'cat-water', name: '워터파크', checked: true, content: "효빈 아쿠아파크", isLogoGroup: false },
+      { id: 'cat-hospital', name: '종합병원', checked: true, content: "삼선대학교병원, 고송병원", isLogoGroup: false },
+      { id: 'cat-commercial', name: '상업시설', checked: true, content: "[전통시장] 중수시장, 사능시장\n[백화점] 롯데백화점 진희점, 신세계백화점 효빈점\n[대형마트] 이마트 중수점, 홈플러스 고솔점", isLogoGroup: false },
+      { id: 'cat-cinema', name: '영화관', checked: true, content: "메가박스 고송, CGV고송", isLogoGroup: false },
+      { id: 'cat-transport', name: '교통시설', checked: true, content: "효빈종합버스터미널, 효빈공영차고지", isLogoGroup: false },
+      { id: 'cat-hotel', name: '숙박', checked: true, content: "효빈 하라오호텔, 니지벨리 호텔", isLogoGroup: false },
+      { id: 'cat-religion', name: '종교시설', checked: true, content: "천왕사, 원각사", isLogoGroup: false },
+      { id: 'cat-beach', name: '해수욕장', checked: true, content: "토모리해수욕장", isLogoGroup: false },
+      { id: 'cat-library', name: '도서관', checked: true, content: "효빈시청한바다도서관, 중수도서관", isLogoGroup: false },
+      { id: 'cat-port', name: '선착장', checked: true, content: "고송선착장", isLogoGroup: false },
+      { id: 'cat-bridge', name: '교량', checked: true, content: "[팔천강] 등중교, 중수대교\n[기타하천] 고송교, 소홍교", isLogoGroup: false },
+      { id: 'cat-broadcast', name: '방송시설', checked: true, content: "효빈방송", isLogoGroup: false },
+      { id: 'cat-skyscraper', name: '마천루', checked: true, content: "고송토모리빌딩", isLogoGroup: false }
     ];
 
-    const provinces = [...new Set(regionData.map(item => item.prov))];
-
-    function initSelects() {
-      const provSelect = document.getElementById('prov-select');
-      provSelect.innerHTML = provinces.map(p => `<option value="${p}">${p}</option>`).join('');
-      updateDistricts();
-      initCategories();
-    }
-
-    function updateDistricts() {
-      const selectedProv = document.getElementById('prov-select').value;
-      const distSelect = document.getElementById('dist-select');
+    /* 유틸: Toast 메시지 띄우기 */
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'bg-gray-800 text-white px-4 py-2 rounded shadow-lg text-sm toast-enter pointer-events-auto';
+      toast.innerText = message;
       
-      const dists = regionData.filter(item => item.prov === selectedProv);
-      distSelect.innerHTML = dists.map(d => `<option value="${d.dist}">${d.dist}</option>`).join('');
+      container.appendChild(toast);
       
-      const defaultDist = dists.find(d => d.dist === '북구') || dists[0];
-      if(defaultDist) distSelect.value = defaultDist.dist;
-
-      updateThemePreview();
-    }
-
-    function getSelectedData() {
-      const prov = document.getElementById('prov-select').value;
-      const dist = document.getElementById('dist-select').value;
-      return regionData.find(item => item.prov === prov && item.dist === dist);
-    }
-
-    function updateThemePreview() {
-      const data = getSelectedData();
-      if(data) {
-        document.getElementById('color-preview').style.backgroundColor = data.color;
-        document.getElementById('color-code').innerText = data.color;
-        document.getElementById('logo-path-preview').innerText = data.logo;
-      }
-    }
-
-    function initCategories() {
-      const container = document.getElementById('categories-container');
-      let html = '';
-
-      categoryTemplates.forEach((cat) => {
-        const isComplex = cat.type === 'complex';
-        const badge = isComplex 
-          ? `<span class="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded font-bold border border-purple-200">그룹형 (줄바꿈 구분)</span>`
-          : `<span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded font-bold border border-green-200">단일형 (쉼표 구분)</span>`;
-          
-        const placeholder = isComplex 
-          ? '[그룹명] 시설1, 시설2\\n[그룹명2] 시설3, 시설4\\n(이런 형태로 입력하세요)' 
-          : '시설1, 시설2, 시설3 (쉼표로만 구분하여 입력하세요)';
-
-        html += `
-          <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm category-block">
-            <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="document.getElementById('${cat.id}').click(); event.stopPropagation();">
-              <label class="flex items-center gap-2 font-bold text-gray-700 cursor-pointer">
-                <input type="checkbox" id="${cat.id}" class="cat-checkbox w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" ${cat.checked ? 'checked' : ''} onclick="event.stopPropagation();">
-                ${cat.name}
-              </label>
-              ${badge}
-            </div>
-            
-            <textarea id="${cat.id}-content" rows="${isComplex ? 4 : 2}" class="w-full text-sm font-mono border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500 mt-1" placeholder="${placeholder}">${cat.content}</textarea>
-          </div>
-        `;
-      });
-
-      container.innerHTML = html;
-    }
-
-    // 텍스트를 받아서 <a> 태그로 자동 변환해주는 마법의 함수!
-    function makeLink(text) {
-      const name = text.trim();
-      if(!name) return '';
-      // 파일명 매칭을 위해 공백을 언더바로 변환하여 링크 생성 (위키 표준)
-      const href = name.replace(/ /g, '_') + '.html';
-      return `<a href="${href}">${name}</a>`;
-    }
-
-    function generateCodeString() {
-      const data = getSelectedData();
-      const provName = data.prov;
-      const distName = data.dist;
-      const color = data.color;
-      const logoPath = data.logo;
-
-      // HTML 행 자동 생성기
-      let rowsHtml = '';
-      categoryTemplates.forEach(cat => {
-        const checkbox = document.getElementById(cat.id);
-        const textarea = document.getElementById(`${cat.id}-content`);
-        
-        if (checkbox && checkbox.checked) {
-          const content = textarea.value.trim();
-          if (!content) return; // 내용이 비었으면 건너뜀
-
-          // 그룹형(Complex) 처리
-          if (cat.type === 'complex') {
-            // 줄바꿈으로 파싱
-            const lines = content.split('\n').map(l => l.trim()).filter(l => l);
-            const rowspan = lines.length;
-            if (rowspan === 0) return;
-
-            rowsHtml += `\n    <!-- ${cat.name} -->`;
-            
-            lines.forEach((line, index) => {
-              // 정규식으로 [그룹명] 과 그 뒤의 시설목록을 분리
-              const match = line.match(/^\[(.*?)\](.*)$/);
-              let subcat = '';
-              let itemsText = line; // 기본값 (괄호 안썼을 때 대비)
-              
-              if (match) {
-                subcat = match[1].trim();
-                itemsText = match[2].trim();
-              }
-              
-              // 쉼표로 분리 후 링크 태그 씌우고 가운데점(·)으로 합치기
-              const itemsHtml = itemsText.split(',').map(makeLink).filter(Boolean).join(' · ');
-
-              rowsHtml += `\n    <tr>`;
-              
-              // 첫 줄일 때만 좌측 카테고리(병합 셀) 출력
-              if (index === 0) {
-                rowsHtml += `\n      <td rowspan="${rowspan}" class="hyobin-cat">${cat.name}</td>`;
-              }
-              
-              // 도시철도는 특별 취급 (로고 이미지 생성)
-              if (cat.id === 'cat-metro' && subcat) {
-                // 광역자치단체 이름 앞 두글자 (효빈, 덕빈 등) 추출해서 자동 적용
-                const regionPrefix = provName.substring(0, 2); 
-                const svgPath = `이미지/svg/${regionPrefix}${subcat}.svg`;
-                
-                rowsHtml += `\n      <td class="hyobin-metro-cell">`;
-                // 이미지가 없을 경우 글자만 나오도록 onerror 마법 추가 (DOM 삭제 전 클래스 변경부터 하도록 수정)
-                rowsHtml += `<img src="${svgPath}" alt="${subcat}" class="hyobin-metro-logo" onerror="const p=this.parentNode; p.className='hyobin-subcat'; p.innerText='${subcat}';">`;
-                rowsHtml += `</td>`;
-              } else if (subcat) {
-                // 일반 그룹명
-                rowsHtml += `\n      <td class="hyobin-subcat">${subcat}</td>`;
-              } else {
-                // 그룹명 안적었을 때 빈칸 방지
-                rowsHtml += `\n      <td class="hyobin-subcat">-</td>`;
-              }
-              
-              rowsHtml += `\n      <td class="hyobin-content">\n        ${itemsHtml}\n      </td>`;
-              rowsHtml += `\n    </tr>`;
-            });
-            
-          } 
-          // 단일형(Simple) 처리
-          else { 
-            // 쉼표로 분리 후 즉시 변환
-            const itemsHtml = content.split(',').map(makeLink).filter(Boolean).join(' · ');
-            
-            rowsHtml += `
-    <!-- ${cat.name} -->
-    <tr>
-      <td class="hyobin-cat">${cat.name}</td>
-      <td colspan="2" class="hyobin-content">
-        ${itemsHtml}
-      </td>
-    </tr>`;
-          }
-        }
-      });
-
-      const jsTemplate = `(function() {
-  const facilityTableHTML = \`
-  <style>
-    .hyobin-table {
-      width: 100%;
-      max-width: 1000px;
-      border-collapse: collapse;
-      border: 2px solid ${color};
-      font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-      font-size: 13px;
-      margin: 0 auto;
-    }
-    .hyobin-table th, .hyobin-table td {
-      border: 1px solid #e0e0e0;
-      padding: 8px;
-    }
-    .hyobin-header {
-      background-color: ${color};
-      text-align: center;
-      padding: 15px !important;
-      border-bottom: none;
-    }
-    /* 헤더 박스 */
-    .hyobin-header-box {
-      display: inline-flex;
-      align-items: center;
-      border: 1px solid white;
-      padding: 8px 15px;
-      color: white;
-    }
-    .hyobin-header-logo {
-      padding-right: 15px;
-      border-right: 1px solid white;
-      margin-right: 15px;
-    }
-    .hyobin-header-logo img {
-      height: 35px;
-      display: block;
-    }
-    .hyobin-header-text {
-      text-align: left;
-    }
-    .hyobin-header-text .subtitle {
-      font-size: 12px;
-      display: block;
-      line-height: 1.2;
-      font-weight: normal;
-    }
-    .hyobin-header-text .title {
-      font-size: 18px;
-      font-weight: bold;
-      display: block;
-      line-height: 1.2;
-      margin-top: 2px;
-    }
-    .hyobin-toggle {
-      background-color: #ffffff;
-      text-align: center;
-      font-weight: bold;
-      color: #333;
-      border-bottom: 2px solid ${color} !important;
-    }
-    .hyobin-cat {
-      background-color: ${color};
-      color: white;
-      font-weight: bold;
-      text-align: center;
-      white-space: nowrap;
-      width: 15%;
-    }
-    .hyobin-subcat {
-      background-color: #f8f9fa;
-      text-align: center;
-      font-weight: bold;
-      width: 12%;
-      color: #333;
-    }
-    /* 로고 전용 칸 */
-    .hyobin-metro-cell {
-      background-color: #f8f9fa;
-      text-align: center !important;
-      vertical-align: middle !important;
-      width: 12%;
-    }
-    .hyobin-metro-logo {
-      width: 25px;
-      height: 25px;
-      display: inline-block;
-      vertical-align: middle;
-    }
-    .hyobin-content {
-      background-color: #ffffff;
-      text-align: left;
-      line-height: 1.8;
-      word-break: keep-all;
-    }
-    .hyobin-content a {
-      color: #0055aa;
-      text-decoration: none;
-    }
-    .hyobin-content a:hover {
-      text-decoration: underline;
-    }
-  </style>
-
-  <table class="hyobin-table">
-    <!-- 헤더 -->
-    <tr>
-      <td colspan="3" class="hyobin-header">
-        <div class="hyobin-header-box">
-          <div class="hyobin-header-logo">
-            <img src="${logoPath}" alt="${distName} 로고" onerror="this.style.display='none'">
-          </div>
-          <div class="hyobin-header-text">
-            <span class="subtitle">${provName}</span>
-            <span class="title">${distName}의 시설</span>
-          </div>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <td colspan="3" class="hyobin-toggle">[ 펼치기 · 접기 ]</td>
-    </tr>${rowsHtml}
-  </table>
-  \`;
-
-  const container = document.getElementById('district-nav-container');
-  if (container) {
-    container.innerHTML = facilityTableHTML;
-  } else {
-    console.error("오류: 'district-nav-container' 요소를 찾을 수 없어 표를 렌더링하지 못했습니다.");
-  }
-})();`;
-      return jsTemplate;
-    }
-
-    function generateOutput() {
-      const code = generateCodeString();
-      
-      document.getElementById('generated-js-code').textContent = code;
-      
-      // 즉시 실행 함수 안에 감싸인 HTML 문자열만 정규식으로 똑 떼어내서 렌더링
-      const htmlMatch = code.match(/facilityTableHTML = `([\s\S]*?)`;/);
-      if (htmlMatch && htmlMatch[1]) {
-        const rawHTML = htmlMatch[1];
-        document.getElementById('preview-render-area').innerHTML = rawHTML;
-      }
-    }
-
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      
-      document.getElementById(`tab-${tabId}`).classList.add('active');
-      event.target.classList.add('active');
-    }
-
-    function copyCode(elementId) {
-      const el = document.getElementById(elementId);
-      const textToCopy = el.textContent;
-      
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        showToast('코드가 클립보드에 복사되었습니다!');
-      }).catch(err => {
-        const textArea = document.createElement("textarea");
-        textArea.value = textToCopy;
-        document.body.appendChild(textArea);
-        textArea.select();
-        try {
-          document.execCommand('copy');
-          showToast('코드가 복사되었습니다!');
-        } catch (err) {
-          showToast('복사에 실패했습니다. 텍스트를 직접 드래그하여 복사해주세요.');
-        }
-        document.body.removeChild(textArea);
-      });
-    }
-
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.classList.remove('opacity-0', 'pointer-events-none');
       setTimeout(() => {
-        toast.classList.add('opacity-0', 'pointer-events-none');
+        toast.classList.replace('toast-enter', 'toast-exit');
+        toast.addEventListener('animationend', () => {
+          toast.remove();
+        });
       }, 3000);
     }
 
-    function openAddCategoryModal() {
-      document.getElementById('new-cat-name').value = '';
-      document.getElementById('category-modal').classList.remove('hidden');
+    /* 저장소(LocalStorage) 관리 */
+    const PRESET_KEY = 'hyobin_facility_presets';
+
+    function getSavedPresets() {
+      const saved = localStorage.getItem(PRESET_KEY);
+      return saved ? JSON.parse(saved) : {};
     }
 
-    function closeAddCategoryModal() {
-      document.getElementById('category-modal').classList.add('hidden');
+    function updatePresetDropdown() {
+      const presets = getSavedPresets();
+      const select = document.getElementById('preset-select');
+      const names = Object.keys(presets);
+      
+      if (names.length === 0) {
+        select.innerHTML = '<option value="">저장된 데이터가 없습니다.</option>';
+      } else {
+        select.innerHTML = '<option value="">불러올 프리셋 선택...</option>' + 
+          names.map(name => `<option value="${name}">${name}</option>`).join('');
+      }
     }
 
+    // 현재 텍스트상자 상태를 categoryTemplates 배열에 동기화
     function syncCategoriesState() {
       categoryTemplates.forEach(cat => {
         const checkbox = document.getElementById(cat.id);
@@ -649,33 +296,445 @@
       });
     }
 
-    function addNewCategory() {
-      const nameInput = document.getElementById('new-cat-name').value.trim();
-      const typeInput = document.getElementById('new-cat-type').value;
-      
-      if(!nameInput) {
-        showToast('분류명을 입력해주세요.');
+    function savePreset() {
+      const saveName = document.getElementById('save-name').value.trim();
+      if (!saveName) {
+        showToast('저장할 이름을 입력해주세요.');
         return;
       }
+
+      syncCategoriesState();
+
+      const presetData = {
+        prov: document.getElementById('prov-select').value,
+        dist: document.getElementById('dist-select').value,
+        categories: JSON.parse(JSON.stringify(categoryTemplates)) // 깊은 복사
+      };
+
+      const presets = getSavedPresets();
+      presets[saveName] = presetData;
+      localStorage.setItem(PRESET_KEY, JSON.stringify(presets));
+
+      document.getElementById('save-name').value = '';
+      updatePresetDropdown();
+      showToast(`'${saveName}'(으)로 저장되었습니다!`);
+    }
+
+    function loadPreset() {
+      const selectName = document.getElementById('preset-select').value;
+      if (!selectName) {
+        showToast('불러올 항목을 선택해주세요.');
+        return;
+      }
+
+      const presets = getSavedPresets();
+      const presetData = presets[selectName];
+
+      if (presetData) {
+        document.getElementById('prov-select').value = presetData.prov;
+        updateDistricts();
+        document.getElementById('dist-select').value = presetData.dist;
+        updateThemePreview();
+
+        categoryTemplates.length = 0; 
+        presetData.categories.forEach(cat => categoryTemplates.push(cat));
+        
+        initCategories();
+        generateOutput();
+        showToast(`'${selectName}'(을)를 성공적으로 불러왔습니다!`);
+      }
+    }
+
+    function deletePreset() {
+      const selectName = document.getElementById('preset-select').value;
+      if (!selectName) {
+        showToast('삭제할 항목을 선택해주세요.');
+        return;
+      }
+
+      const presets = getSavedPresets();
+      delete presets[selectName];
+      localStorage.setItem(PRESET_KEY, JSON.stringify(presets));
       
-      syncCategoriesState(); // 추가하기 전 기존에 작성된 텍스트 보존
+      updatePresetDropdown();
+      showToast(`'${selectName}' 데이터가 삭제되었습니다.`);
+    }
+
+    /* 초기화 및 UI 업데이트 */
+    function initSelects() {
+      const provSelect = document.getElementById('prov-select');
+      const provs = [...new Set(regionData.map(item => item.prov))];
       
-      const newId = 'cat-custom-' + Date.now();
-      categoryTemplates.push({
-        id: newId,
-        name: nameInput,
-        checked: true,
-        type: typeInput,
-        content: ""
+      provs.forEach(prov => {
+        const option = document.createElement('option');
+        option.value = prov;
+        option.textContent = prov;
+        provSelect.appendChild(option);
       });
       
-      initCategories(); // 화면 다시 그리기
-      closeAddCategoryModal();
-      showToast(nameInput + ' 분류가 성공적으로 추가되었습니다!');
+      updateDistricts();
+      updateThemePreview();
+      initCategories();
+    }
+
+    function updateDistricts() {
+      const provSelect = document.getElementById('prov-select');
+      const distSelect = document.getElementById('dist-select');
+      const selectedProv = provSelect.value;
+      
+      distSelect.innerHTML = '';
+      
+      const dists = regionData.filter(item => item.prov === selectedProv);
+      dists.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.dist;
+        option.textContent = item.dist;
+        distSelect.appendChild(option);
+      });
+      
+      distSelect.value = dists[0].dist;
+    }
+
+    function updateThemePreview() {
+      const dist = document.getElementById('dist-select').value;
+      const data = regionData.find(item => item.dist === dist);
+      
+      if (data) {
+        document.getElementById('theme-color-preview').style.backgroundColor = data.color;
+        document.getElementById('theme-color-hex').textContent = data.color;
+        document.getElementById('theme-logo-preview').src = data.logo;
+      }
+    }
+
+    function initCategories() {
+      const container = document.getElementById('category-container');
+      container.innerHTML = '';
+      
+      categoryTemplates.forEach((cat, index) => {
+        const div = document.createElement('div');
+        div.className = 'bg-white p-3 rounded border border-gray-200 shadow-sm';
+        
+        div.innerHTML = `
+          <div class="flex items-center justify-between mb-2">
+            <label class="flex items-center font-bold text-gray-700 cursor-pointer">
+              <input type="checkbox" id="${cat.id}" class="mr-2 w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" ${cat.checked ? 'checked' : ''} onchange="generateOutput()">
+              ${cat.name}
+            </label>
+            <div class="flex items-center gap-2">
+              ${cat.id === 'cat-metro' ? `<span class="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">로고 그룹 지원</span>` : ''}
+              <div class="flex bg-gray-100 rounded border border-gray-300 overflow-hidden text-xs">
+                <button type="button" onclick="moveCategoryUp(${index})" class="px-2 py-1 hover:bg-gray-200 text-gray-700 transition-colors ${index === 0 ? 'opacity-30 cursor-not-allowed' : ''}" ${index === 0 ? 'disabled' : ''} title="위로 이동">▲</button>
+                <button type="button" onclick="moveCategoryDown(${index})" class="px-2 py-1 hover:bg-gray-200 text-gray-700 border-l border-gray-300 transition-colors ${index === categoryTemplates.length - 1 ? 'opacity-30 cursor-not-allowed' : ''}" ${index === categoryTemplates.length - 1 ? 'disabled' : ''} title="아래로 이동">▼</button>
+              </div>
+            </div>
+          </div>
+          <textarea id="${cat.id}-content" class="w-full border-gray-300 rounded border p-2 text-sm focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="시설 이름을 쉼표(,)로 구분하여 입력하세요.\n그룹을 지으려면 [그룹명] 시설1, 시설2 형태로 줄바꿈하여 입력하세요." oninput="generateOutput()">${cat.content}</textarea>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function moveCategoryUp(index) {
+      if (index <= 0) return;
+      syncCategoriesState(); // 이동 전 작성 중이던 텍스트 유지
+      
+      const temp = categoryTemplates[index - 1];
+      categoryTemplates[index - 1] = categoryTemplates[index];
+      categoryTemplates[index] = temp;
+      
+      initCategories();
+      generateOutput();
+    }
+
+    function moveCategoryDown(index) {
+      if (index >= categoryTemplates.length - 1) return;
+      syncCategoriesState(); // 이동 전 작성 중이던 텍스트 유지
+      
+      const temp = categoryTemplates[index + 1];
+      categoryTemplates[index + 1] = categoryTemplates[index];
+      categoryTemplates[index] = temp;
+      
+      initCategories();
+      generateOutput();
+    }
+
+    function addNewCategory() {
+      const input = document.getElementById('new-cat-name');
+      const name = input.value.trim();
+      
+      if (!name) {
+        showToast("추가할 종류의 이름을 입력하세요.");
+        return;
+      }
+
+      const newId = `cat-custom-${Date.now()}`;
+      
+      syncCategoriesState();
+      
+      categoryTemplates.push({
+        id: newId,
+        name: name,
+        checked: true,
+        content: "",
+        isLogoGroup: false
+      });
+      
+      initCategories();
+      input.value = '';
+      
+      // 스크롤 맨 아래로 이동
+      const container = document.getElementById('category-container');
+      container.scrollTop = container.scrollHeight;
+      
+      generateOutput();
+      showToast(`'${name}'(이)가 추가되었습니다.`);
+    }
+
+    /* 텍스트(문자열)를 HTML 링크 형식 파싱 */
+    function parseLinks(text) {
+      if(!text) return "";
+      
+      const items = text.split(',').map(s => s.trim()).filter(s => s.length > 0);
+      
+      const linkedItems = items.map(item => {
+        let mainName = item;
+        let suffix = "";
+        
+        const bracketMatch = item.match(/^(.*?)(\(.*?\))$/);
+        if(bracketMatch) {
+            mainName = bracketMatch[1].trim();
+            const inBracketText = bracketMatch[2].replace(/[()]/g, ''); 
+            suffix = `(<a href="${inBracketText.trim()}.html">${inBracketText.trim()}</a>)`;
+        }
+        
+        if (suffix) {
+          return `<a href="${mainName}.html">${mainName}</a>${suffix}`;
+        }
+        return `<a href="${item}.html">${item}</a>`;
+      });
+      
+      return linkedItems.join(' · ');
+    }
+
+    /* 표 HTML 생성 핵심 로직 */
+    function generateTableHTML() {
+      const provStr = document.getElementById('prov-select').value;
+      const distStr = document.getElementById('dist-select').value;
+      const region = regionData.find(item => item.dist === distStr && item.prov === provStr);
+      
+      const mainColor = region.color;
+      const logoPath = region.logo;
+      const titleSubtitle = provStr === distStr ? "" : provStr; 
+      const titleMain = provStr === distStr ? distStr + "의 시설" : distStr + "의 시설";
+      const regionPrefix = provStr.substring(0, 2); 
+
+      let html = `  <style>
+    .hyobin-table { width: 100%; max-width: 1000px; border-collapse: collapse; border: 2px solid ${mainColor}; font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; font-size: 13px; margin: 0 auto; }
+    .hyobin-table th, .hyobin-table td { border: 1px solid #e0e0e0; padding: 8px; }
+    .hyobin-header { background-color: ${mainColor}; text-align: center; padding: 15px !important; border-bottom: none; }
+    .hyobin-header-box { display: inline-flex; align-items: center; border: 1px solid white; padding: 8px 15px; color: white; }
+    .hyobin-header-logo { padding-right: 15px; border-right: 1px solid white; margin-right: 15px; }
+    .hyobin-header-logo img { height: 35px; display: block; }
+    .hyobin-header-text { text-align: left; }
+    .hyobin-header-text .subtitle { font-size: 12px; display: block; line-height: 1.2; font-weight: normal; }
+    .hyobin-header-text .title { font-size: 18px; font-weight: bold; display: block; line-height: 1.2; margin-top: 2px; }
+    .hyobin-toggle { background-color: #ffffff; text-align: center; font-weight: bold; color: #333; border-bottom: 2px solid ${mainColor} !important; }
+    .hyobin-cat { background-color: ${mainColor}; color: white; font-weight: bold; text-align: center; white-space: nowrap; width: 15%; }
+    .hyobin-subcat { background-color: #f8f9fa; text-align: center; font-weight: bold; width: 12%; color: #333; }
+    .hyobin-metro-cell { background-color: #f8f9fa; text-align: center !important; vertical-align: middle !important; width: 12%; }
+    .hyobin-metro-logo { width: 25px; height: 25px; display: inline-block; vertical-align: middle; }
+    .hyobin-content { background-color: #ffffff; text-align: left; line-height: 1.8; word-break: keep-all; }
+    .hyobin-content a { color: #0055aa; text-decoration: none; }
+    .hyobin-content a:hover { text-decoration: underline; }
+  </style>
+
+  <table class="hyobin-table">
+    <tr>
+      <td colspan="3" class="hyobin-header">
+        <div class="hyobin-header-box">
+          <div class="hyobin-header-logo">
+            <img src="${logoPath}" alt="${distStr} 로고">
+          </div>
+          <div class="hyobin-header-text">
+            ${titleSubtitle ? `<span class="subtitle">${titleSubtitle}</span>` : ''}
+            <span class="title">${titleMain}</span>
+          </div>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3" class="hyobin-toggle">[ 펼치기 · 접기 ]</td>
+    </tr>
+`;
+
+      categoryTemplates.forEach(cat => {
+        const isChecked = document.getElementById(cat.id)?.checked ?? cat.checked;
+        const textContent = document.getElementById(`${cat.id}-content`)?.value ?? cat.content;
+
+        if (isChecked && textContent.trim() !== '') {
+          const lines = textContent.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+          const rowspan = lines.length;
+          
+          lines.forEach((line, index) => {
+            let groupName = "";
+            let itemsText = line;
+            
+            const groupMatch = line.match(/^\[(.*?)\](.*)$/);
+            if (groupMatch) {
+              groupName = groupMatch[1].trim();
+              itemsText = groupMatch[2].trim();
+            }
+
+            const parsedContent = parseLinks(itemsText);
+            html += `    <tr>\n`;
+            
+            if (index === 0) {
+              html += `      <td ${rowspan > 1 ? `rowspan="${rowspan}" ` : ''}class="hyobin-cat">${cat.name}</td>\n`;
+            }
+            
+            if (groupName) {
+              if (cat.isLogoGroup || cat.id === 'cat-metro') {
+                let svgName = `${regionPrefix}${groupName}.svg`; 
+                const cleanName = groupName.replace(/호선/g, "").trim();
+                
+                if (["1", "2", "3", "4", "5", "6", "7", "8"].includes(cleanName)) {
+                  svgName = `${regionPrefix}${cleanName}호선.svg`;
+                } else if (groupName.includes("빈효")) {
+                  svgName = "빈효광역선.svg";
+                } else if (groupName.includes("빈주1")) {
+                  svgName = "빈주1.svg";
+                } else if (groupName.includes("빈주2")) {
+                  svgName = "빈주2.svg";
+                } else if (groupName.includes("빈주광역")) {
+                  svgName = "빈주광역선.svg";
+                } else if (groupName.includes("덕주1")) {
+                  svgName = "덕주1.svg";
+                } else if (groupName.includes("서해")) {
+                  svgName = "서해경전철.svg";
+                } else if (groupName.includes("천주1")) {
+                  svgName = "천주1.svg";
+                } else if (groupName.includes("HDTX")) {
+                  svgName = "HDTXA.svg";
+                } else {
+                  svgName = `${groupName}.svg`;
+                }
+
+                html += `      <td class="hyobin-metro-cell"><img src="이미지/svg/${svgName}" alt="${groupName}" class="hyobin-metro-logo" onerror="var p=this.parentNode; p.className='hyobin-subcat'; p.innerText='${groupName}';"></td>\n`;
+              } else {
+                html += `      <td class="hyobin-subcat">${groupName}</td>\n`;
+              }
+            } else {
+              html += `      <td colspan="2" class="hyobin-content">\n        ${parsedContent}\n      </td>\n`;
+            }
+            
+            if (groupName) {
+              html += `      <td class="hyobin-content">\n        ${parsedContent}\n      </td>\n`;
+            }
+            
+            html += `    </tr>\n`;
+          });
+        }
+      });
+
+      html += `  </table>`;
+      return html;
+    }
+
+    function generateOutput() {
+      syncCategoriesState();
+      const tableHtml = generateTableHTML();
+      
+      // 1. 미리보기에 반영
+      document.getElementById('preview-box').innerHTML = tableHtml;
+
+      // 2. JS 코드 생성 및 텍스트 영역에 반영
+      const distStr = document.getElementById('dist-select').value;
+      const containerId = `district-nav-${distStr}`;
+
+      const finalJS = `(function() {
+  const facilityTableHTML = \`
+${tableHtml}
+  \`;
+
+  const container = document.getElementById('${containerId}');
+  if (container) {
+    container.innerHTML = facilityTableHTML;
+  } else {
+    console.error("오류: '${containerId}' 요소를 찾을 수 없어 표를 렌더링하지 못했습니다.");
+  }
+})();`;
+
+      document.getElementById('code-output').value = finalJS;
+      
+      // 3. 삽입 안내 문구 동적 업데이트
+      const htmlSnippet = `<div id="${containerId}"></div>\n<script src="js/${distStr}시설.js"><\\/script>`;
+      
+      document.getElementById('instruction-box').innerHTML = `
+        <div class="mb-3">
+          <strong>💡 1. 파일 저장하기</strong><br>
+          위 JS 코드를 <code><strong class="text-red-600">${distStr}시설.js</strong></code>로 저장하여 <code><strong>js/</strong></code> 폴더에 넣으세요.
+        </div>
+        <div class="mb-3">
+          <strong>💡 2. 일반 문서에 삽입하기 (수동)</strong><br>
+          일반 HTML 문서에 표를 넣으려면 아래 코드를 복사해서 문서의 원하는 위치에 붙여넣으세요.
+          <div class="relative mt-2">
+            <textarea id="html-snippet" class="w-full border border-gray-300 rounded p-2 bg-white font-mono text-sm shadow-inner resize-none focus:outline-none focus:ring-1 focus:ring-blue-500" rows="2" readonly>${htmlSnippet}</textarea>
+            <button onclick="copyHtmlSnippet()" class="absolute top-1.5 right-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold py-1 px-2 rounded shadow-sm transition-colors">HTML 복사</button>
+          </div>
+        </div>
+        <div>
+          <span class="text-gray-500 text-xs leading-tight block">※ 단, 맥도날드 매장 템플릿 등 자동화된 문서에는 1번(파일 저장) 과정만 수행하면 자동으로 적용됩니다.</span>
+        </div>
+      `;
+    }
+
+    function copyHtmlSnippet() {
+      const snippetOutput = document.getElementById('html-snippet');
+      snippetOutput.select();
+      snippetOutput.setSelectionRange(0, 99999);
+      try {
+        document.execCommand('copy');
+        showToast("HTML 삽입 코드가 복사되었습니다!");
+      } catch(err) {
+        showToast("복사에 실패했습니다.");
+      }
+    }
+
+    function copyCode() {
+      const codeOutput = document.getElementById('code-output');
+      codeOutput.select();
+      codeOutput.setSelectionRange(0, 99999);
+      
+      try {
+        document.execCommand('copy');
+        showToast("코드가 클립보드에 복사되었습니다!");
+      } catch(err) {
+        showToast("복사에 실패했습니다. 직접 선택하여 복사해주세요.");
+      }
+    }
+
+    function downloadCode() {
+      const code = document.getElementById('code-output').value;
+      const distStr = document.getElementById('dist-select').value;
+      const fileName = `${distStr}시설.js`;
+
+      const blob = new Blob([code], { type: 'text/javascript;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showToast(`'${fileName}' 파일이 성공적으로 다운로드 되었습니다!`);
     }
 
     window.onload = () => {
       initSelects();
+      updatePresetDropdown();
       generateOutput();
     };
   </script>

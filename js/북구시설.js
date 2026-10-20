@@ -1,7 +1,7 @@
 (function() {
   const facilityTableHTML = `
   <style>
-    .hyobin-table {
+    #district-nav-북구 .hyobin-table {
       width: 100%;
       max-width: 1000px;
       border-collapse: collapse;
@@ -10,57 +10,57 @@
       font-size: 13px;
       margin: 0 auto;
     }
-    .hyobin-table th, .hyobin-table td {
+    #district-nav-북구 .hyobin-table th, #district-nav-북구 .hyobin-table td {
       border: 1px solid #e0e0e0;
       padding: 8px;
     }
-    .hyobin-header {
+    #district-nav-북구 .hyobin-header {
       background-color: #7799CC;
       text-align: center;
       padding: 15px !important;
       border-bottom: none;
     }
     /* 고양시 스타일 헤더 박스 */
-    .hyobin-header-box {
+    #district-nav-북구 .hyobin-header-box {
       display: inline-flex;
       align-items: center;
       border: 1px solid white;
       padding: 8px 15px;
       color: white;
     }
-    .hyobin-header-logo {
+    #district-nav-북구 .hyobin-header-logo {
       padding-right: 15px;
       border-right: 1px solid white;
       margin-right: 15px;
     }
-    .hyobin-header-logo img {
+    #district-nav-북구 .hyobin-header-logo img {
       height: 35px;
       display: block;
     }
-    .hyobin-header-text {
+    #district-nav-북구 .hyobin-header-text {
       text-align: left;
     }
-    .hyobin-header-text .subtitle {
+    #district-nav-북구 .hyobin-header-text .subtitle {
       font-size: 12px;
       display: block;
       line-height: 1.2;
       font-weight: normal;
     }
-    .hyobin-header-text .title {
+    #district-nav-북구 .hyobin-header-text .title {
       font-size: 18px;
       font-weight: bold;
       display: block;
       line-height: 1.2;
       margin-top: 2px;
     }
-    .hyobin-toggle {
+    #district-nav-북구 .hyobin-toggle {
       background-color: #ffffff;
       text-align: center;
       font-weight: bold;
       color: #333;
       border-bottom: 2px solid #7799CC !important;
     }
-    .hyobin-cat {
+    #district-nav-북구 .hyobin-cat {
       background-color: #7799CC;
       color: white;
       font-weight: bold;
@@ -68,7 +68,7 @@
       white-space: nowrap;
       width: 15%;
     }
-    .hyobin-subcat {
+    #district-nav-북구 .hyobin-subcat {
       background-color: #f8f9fa;
       text-align: center;
       font-weight: bold;
@@ -76,29 +76,29 @@
       color: #333;
     }
     /* 도시철도 로고 전용 칸 (중앙 정렬) */
-    .hyobin-metro-cell {
+    #district-nav-북구 .hyobin-metro-cell {
       background-color: #f8f9fa;
       text-align: center !important;
       vertical-align: middle !important;
       width: 12%;
     }
-    .hyobin-metro-logo {
+    #district-nav-북구 .hyobin-metro-logo {
       width: 25px;
       height: 25px;
       display: inline-block;
       vertical-align: middle;
     }
-    .hyobin-content {
+    #district-nav-북구 .hyobin-content {
       background-color: #ffffff;
       text-align: left;
       line-height: 1.8;
       word-break: keep-all;
     }
-    .hyobin-content a {
+    #district-nav-북구 .hyobin-content a {
       color: #0055aa;
       text-decoration: none;
     }
-    .hyobin-content a:hover {
+    #district-nav-북구 .hyobin-content a:hover {
       text-decoration: underline;
     }
   </style>
@@ -348,10 +348,10 @@
   </table>
   `;
 
-  const container = document.getElementById('district-nav-container');
+  const container = document.getElementById('district-nav-북구');
   if (container) {
     container.innerHTML = facilityTableHTML;
   } else {
-    console.error("오류: 'district-nav-container' 요소를 찾을 수 없어 표를 렌더링하지 못했습니다.");
+    console.error("오류: 'district-nav-북구' 요소를 찾을 수 없어 표를 렌더링하지 못했습니다.");
   }
 })();

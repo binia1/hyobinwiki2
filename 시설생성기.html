@@ -490,33 +490,20 @@
       showToast(`'${name}'(이)가 추가되었습니다.`);
     }
 
-    /* 텍스트(문자열)를 HTML 링크 형식으로 파싱 */
-    // "시설명" -> "<a href="시설명.html">시설명</a>"
-    // 괄호 안에 있는 건 제외 등 복잡한 처리를 간단화
+    /* 텍스트(문자열)를 HTML 링크 형식 파싱 */
     function parseLinks(text) {
       if(!text) return "";
       
-      // 1. 쉼표로 분리
       const items = text.split(',').map(s => s.trim()).filter(s => s.length > 0);
       
-      // 2. 각각을 <a> 태그로 변환 후 ' · ' 로 결합
       const linkedItems = items.map(item => {
-        // 이름에 괄호가 포함되어 있다면 괄호 안의 내용은 링크에서 제외 (선택적)
-        // 여기서는 전체를 묶어주는 방식을 취합니다. 
-        // 예: 효빈외곽순환고속도로(평전공단IC) -> 효빈외곽순환고속도로(평전공단IC) 전체를 href에 쓰면 이상할 수 있으나, 
-        // 기본적으로 사용자가 적은 문자열 그대로 .html을 붙입니다.
-        
-        // 정규식으로 괄호 앞까지를 주요 이름으로 보고 링크 처리 (요청에 기반한 휴리스틱)
         let mainName = item;
         let suffix = "";
         
         const bracketMatch = item.match(/^(.*?)(\(.*?\))$/);
         if(bracketMatch) {
             mainName = bracketMatch[1].trim();
-            
-            // 괄호 안 내용도 링크로 만들고 싶다면 분리
-            const inBracketText = bracketMatch[2].replace(/[()]/g, ''); // (평전공단IC) -> 평전공단IC
-            // 괄호 안이 또 쉼표나 띄어쓰기로 여러 개일 경우도 있으나, 복잡도 방지를 위해 통으로 처리
+            const inBracketText = bracketMatch[2].replace(/[()]/g, ''); 
             suffix = `(<a href="${inBracketText.trim()}.html">${inBracketText.trim()}</a>)`;
         }
         
@@ -537,9 +524,9 @@
       
       const mainColor = region.color;
       const logoPath = region.logo;
-      const titleSubtitle = provStr === distStr ? "" : provStr; // 도/광역시와 시/구가 같으면 서브타이틀 비움
+      const titleSubtitle = provStr === distStr ? "" : provStr; 
       const titleMain = provStr === distStr ? distStr + "의 시설" : distStr + "의 시설";
-      const regionPrefix = provStr.substring(0, 2); // "효빈광역시" -> "효빈"
+      const regionPrefix = provStr.substring(0, 2); 
 
       let html = `  <style>
     .hyobin-table { width: 100%; max-width: 1000px; border-collapse: collapse; border: 2px solid ${mainColor}; font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; font-size: 13px; margin: 0 auto; }
@@ -585,7 +572,6 @@
         const textContent = document.getElementById(`${cat.id}-content`)?.value ?? cat.content;
 
         if (isChecked && textContent.trim() !== '') {
-          // 줄바꿈으로 그룹(행) 구분
           const lines = textContent.split('\n').map(l => l.trim()).filter(l => l.length > 0);
           const rowspan = lines.length;
           
@@ -593,7 +579,6 @@
             let groupName = "";
             let itemsText = line;
             
-            // [그룹명] 추출
             const groupMatch = line.match(/^\[(.*?)\](.*)$/);
             if (groupMatch) {
               groupName = groupMatch[1].trim();
@@ -603,16 +588,13 @@
             const parsedContent = parseLinks(itemsText);
             html += `    <tr>\n`;
             
-            // 첫 줄에만 대분류(카테고리명) TD 추가 (rowspan 적용)
             if (index === 0) {
               html += `      <td ${rowspan > 1 ? `rowspan="${rowspan}" ` : ''}class="hyobin-cat">${cat.name}</td>\n`;
             }
             
-            // 그룹(소분류) 처리
             if (groupName) {
               if (cat.isLogoGroup || cat.id === 'cat-metro') {
-                // 특수 노선 로고 예외 처리 (지역명 접두사 강제 부착 방지)
-                let svgName = `${regionPrefix}${groupName}.svg`; // 기본값
+                let svgName = `${regionPrefix}${groupName}.svg`; 
                 const cleanName = groupName.replace(/호선/g, "").trim();
                 
                 if (["1", "2", "3", "4", "5", "6", "7", "8"].includes(cleanName)) {
@@ -634,26 +616,17 @@
                 } else if (groupName.includes("HDTX")) {
                   svgName = "HDTXA.svg";
                 } else {
-                  // 위 조건에 안 맞는 기타 노선은 그룹명 그대로 적용
                   svgName = `${groupName}.svg`;
                 }
 
-                // 도시철도처럼 로고가 들어가는 특별 셀
-                // onerror 활용하여 이미지 없으면 부모 텍스트를 대체
                 html += `      <td class="hyobin-metro-cell"><img src="이미지/svg/${svgName}" alt="${groupName}" class="hyobin-metro-logo" onerror="var p=this.parentNode; p.className='hyobin-subcat'; p.innerText='${groupName}';"></td>\n`;
               } else {
-                // 일반 소분류 셀
                 html += `      <td class="hyobin-subcat">${groupName}</td>\n`;
               }
             } else {
-              // 소분류가 없으면 colspan="2" 처리 (첫 줄이고 rowspan이 안 꼬이려면)
-              // 여기서는 로직상 그룹이 없는 줄은 바로 옆에 content가 붙도록 처리
-              // 단, 디자인상 cat(1) + subcat(1) + content(1) = 3칸 구조이므로
-              // subcat이 없으면 content를 colspan 2로 늘려줌
               html += `      <td colspan="2" class="hyobin-content">\n        ${parsedContent}\n      </td>\n`;
             }
             
-            // 소분류가 있었을 경우에만 content 셀을 독립적으로 출력
             if (groupName) {
               html += `      <td class="hyobin-content">\n        ${parsedContent}\n      </td>\n`;
             }
@@ -675,24 +648,26 @@
       document.getElementById('preview-box').innerHTML = tableHtml;
 
       // 2. JS 코드 생성 및 텍스트 영역에 반영
+      const distStr = document.getElementById('dist-select').value;
+      const containerId = `district-nav-${distStr}`;
+
       const finalJS = `(function() {
   const facilityTableHTML = \`
 ${tableHtml}
   \`;
 
-  const container = document.getElementById('district-nav-container');
+  const container = document.getElementById('${containerId}');
   if (container) {
     container.innerHTML = facilityTableHTML;
   } else {
-    console.error("오류: 'district-nav-container' 요소를 찾을 수 없어 표를 렌더링하지 못했습니다.");
+    console.error("오류: '${containerId}' 요소를 찾을 수 없어 표를 렌더링하지 못했습니다.");
   }
 })();`;
 
       document.getElementById('code-output').value = finalJS;
       
       // 3. 삽입 안내 문구 동적 업데이트
-      const distStr = document.getElementById('dist-select').value;
-      const htmlSnippet = `<div id="district-nav-container"></div>\n<script src="js/${distStr}시설.js"><\\/script>`;
+      const htmlSnippet = `<div id="${containerId}"></div>\n<script src="js/${distStr}시설.js"><\\/script>`;
       
       document.getElementById('instruction-box').innerHTML = `
         <div class="mb-3">

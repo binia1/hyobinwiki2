@@ -174,7 +174,7 @@
   </table>
   `;
 
-  const container = document.getElementById('district-nav-container');
+  const container = document.getElementById('district-nav-중구');
   if (container) {
     container.innerHTML = facilityTableHTML;
   } else {
