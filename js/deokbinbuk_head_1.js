@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                             <td class="district-cell" style="width: 20%; background-color: #0095DA; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="서진시.html" style="color: #ffffff; text-decoration: none;">서진시</a></td>
                                         </tr>
                                         <tr>
-                                            <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="공석훈.html" style="color: #0095DA; text-decoration: none;">공석훈</a></td>
+                                            <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="유식현.html" style="color: #0095DA; text-decoration: none;">유식현</a></td>
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="유진태.html" style="color: #0095DA; text-decoration: none;">유진태</a></td>
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="서기철.html" style="color: #009A44; text-decoration: none;">서기철</a></td>
                                             <td class="member-cell" style="background-color: #ffffff; padding: 8px 4px; border: 1px solid #aaa; font-weight: bold;"><a href="유현덕.html" style="color: #009A44; text-decoration: none;">유현덕</a></td>

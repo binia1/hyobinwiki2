@@ -11571,6 +11571,18 @@ const imageFiles = [
         "category": "person"
     },
     {
+        "file": "리엘라_포토이즘 (2).webp",
+        "category": "etc"
+    },
+    {
+        "file": "리엘라_포토이즘 (3).webp",
+        "category": "etc"
+    },
+    {
+        "file": "리엘라_포토이즘.webp",
+        "category": "etc"
+    },
+    {
         "file": "리엘라스테이.webp",
         "category": "etc"
     },
@@ -11748,6 +11760,30 @@ const imageFiles = [
     },
     {
         "file": "마에다_카오리.webp",
+        "category": "etc"
+    },
+    {
+        "file": "마유치 단체사진.webp",
+        "category": "illustration"
+    },
+    {
+        "file": "마유치 쌀화환1.webp",
+        "category": "etc"
+    },
+    {
+        "file": "마유치 화환2.webp",
+        "category": "etc"
+    },
+    {
+        "file": "마유치_포스터.webp",
+        "category": "logo"
+    },
+    {
+        "file": "마유치화환3.webp",
+        "category": "etc"
+    },
+    {
+        "file": "마유치화환4.webp",
         "category": "etc"
     },
     {
@@ -12980,6 +13016,10 @@ const imageFiles = [
     },
     {
         "file": "박아상.webp",
+        "category": "person"
+    },
+    {
+        "file": "박유영.webp",
         "category": "person"
     },
     {
@@ -20815,6 +20855,18 @@ const imageFiles = [
         "category": "etc"
     },
     {
+        "file": "제미나이_할당량도둑새끼1.webp",
+        "category": "etc"
+    },
+    {
+        "file": "제미나이_할당량도둑새끼2.webp",
+        "category": "etc"
+    },
+    {
+        "file": "제미나이_할당량도둑새끼3.webp",
+        "category": "etc"
+    },
+    {
         "file": "제미나이오류화면.webp",
         "category": "document"
     },
@@ -22579,6 +22631,18 @@ const imageFiles = [
         "category": "facility_com"
     },
     {
+        "file": "카스밍제단1(카스1개).webp",
+        "category": "etc"
+    },
+    {
+        "file": "카스밍제단2(카스카스).webp",
+        "category": "etc"
+    },
+    {
+        "file": "카스카스.webp",
+        "category": "etc"
+    },
+    {
         "file": "카스카스_도플갱어.webp",
         "category": "etc"
     },
@@ -23628,6 +23692,10 @@ const imageFiles = [
     },
     {
         "file": "팩트체크_봇.webp",
+        "category": "etc"
+    },
+    {
+        "file": "팬미팅_자리.webp",
         "category": "etc"
     },
     {

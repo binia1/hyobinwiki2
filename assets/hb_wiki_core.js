@@ -507,14 +507,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!hasData) return false;
 
         // ★ 대참사 방어선: 각주 전용 클래스가 아닌데, 내용도 각주 형태가 아니면 버림! ★
+// ★ 대참사 방어선: 각주 전용 클래스가 아닌데, 내용도 각주 형태가 아니면 버림! ★
         const isOfficialFnClass = fn.matches('.wiki-fn, .wiki-tooltip, .wiki-tooltip-trigger, .fn-ref, .wiki-fn-link, .wiki-fn-trigger, .fn-link, .sup-ref, .custom-fn-link, .footnote-link, .footnote-ref, [data-note], sup[onclick*="wiki-footnote-tooltip"], span[onclick*="wiki-footnote-tooltip"]');
         const textStr = fn.textContent.trim();
         
-        // 텍스트가 대괄호로 감싸져 있거나('[1]'), 별표('*')거나, 비어있는 경우만 진짜 각주로 인정
-        const looksLikeFnText = (textStr.startsWith('[') && textStr.endsWith(']')) || textStr === '*' || textStr === '';
+        // 🚨 [새로운 절대 방어막] 내부에 SVG 아이콘이나 이미지 태그가 있다면 일반 UI 버튼이므로 무조건 각주 납치 대상에서 제외!
+        if (fn.querySelector('svg') || fn.querySelector('img') || fn.tagName.toLowerCase() === 'svg') {
+            return false;
+        }
         
+        // 텍스트가 대괄호로 감싸져 있거나('[1]'), 별표('*')인 경우만 진짜 각주 텍스트로 인정
+        // (주의: textStr === '' 조건은 title 속성이 있는 껍데기 UI 요소를 모두 각주로 납치하므로 제거)
+        const looksLikeFnText = (textStr.startsWith('[') && textStr.endsWith(']')) || textStr === '*';
+        
+        // 공식 각주 클래스도 없고, 각주 텍스트 모양도 아닐 때
         if (!isOfficialFnClass && !looksLikeFnText) {
-            return false; // 일반 버튼(급행, 간선 등)이 title 속성을 가졌다고 해서 각주로 납치되는 것을 완벽 차단!
+            // 공식 각주가 아닌데 텍스트마저 비어있다면, 일반 UI 버튼(즐겨찾기, 더보기 등)이므로 완벽 차단
+            if (textStr === '') return false; 
+            return false; // 일반 버튼이 title 속성을 가졌다고 해서 각주로 납치되는 것을 방어
         }
 
         return true;
@@ -1524,5 +1534,39 @@ document.addEventListener("DOMContentLoaded", function() {
     tooltips.forEach(tooltip => {
         // 툴팁 내부 텍스트 중 맨 앞에 나오는 [숫자] 형태만 깔끔하게 제거
         tooltip.innerHTML = tooltip.innerHTML.replace(/^\[\d+\]\s*/, '');
+    });
+});
+// =====================================================================
+// 🚧 [창전선 미개통] 로고 & 텍스트 취소선 전역 자동 래핑기
+// =====================================================================
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. 창전선 SVG 로고 이미지 찾아서 래핑하기
+    const changjeonLogos = document.querySelectorAll('img[src*="창전선.svg"]');
+    
+    changjeonLogos.forEach(img => {
+        // 이미 래퍼가 씌워져 있으면 패스
+        if (!img.closest('.svg-strike-wrap')) {
+            const wrapper = document.createElement('span');
+            wrapper.className = 'svg-strike-wrap';
+            
+            // 작은 아이콘(svg-logo-sm)이면 얇은 취소선(strike-sm) 클래스 추가
+            if (img.classList.contains('svg-logo-sm')) {
+                wrapper.classList.add('strike-sm');
+            }
+            
+            // 이미지 부모 노드에서 교체치기 (감싸기)
+            img.parentNode.insertBefore(wrapper, img);
+            wrapper.appendChild(img);
+        }
+    });
+
+    // 2. 순수 텍스트 '창전선' 텍스트 링크도 알아서 취소선 긋기 (선택 사항)
+    const allLinks = document.querySelectorAll('a.wiki-link, a.nav-item');
+    allLinks.forEach(link => {
+        const text = link.textContent.trim();
+        // 이미지가 안 들어있고, 글자가 '창전선'인 경우에만 텍스트 취소선 추가
+        if (text === '창전선' && !link.querySelector('img') && !link.classList.contains('strike-line-text')) {
+            link.classList.add('strike-line-text');
+        }
     });
 });

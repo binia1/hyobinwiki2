@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 10. 20. 오전 11:56:50
+ * 업데이트: 2026. 10. 21. 오후 5:44:54
  */
 
 window.HB_WIKI_PAGES = [
@@ -13423,6 +13423,42 @@ window.HB_WIKI_PAGES = [
   {
     "title": "효기대교",
     "href": "효기대교.html"
+  },
+  {
+    "title": "희산그룹",
+    "href": "희산그룹.html"
+  },
+  {
+    "title": "서천혁",
+    "href": "서천혁.html"
+  },
+  {
+    "title": "서성직",
+    "href": "서성직.html"
+  },
+  {
+    "title": "서형연",
+    "href": "서형연.html"
+  },
+  {
+    "title": "서윤직",
+    "href": "서윤직.html"
+  },
+  {
+    "title": "서주형",
+    "href": "서주형.html"
+  },
+  {
+    "title": "서전희",
+    "href": "서전희.html"
+  },
+  {
+    "title": "서석연",
+    "href": "서석연.html"
+  },
+  {
+    "title": "희산공업",
+    "href": "희산공업.html"
   }
 ];
 
@@ -21063,5 +21099,25 @@ window.HB_WIKI_ALIASES = {
   "청덕 레인보우 브릿지": "청덕 레인보우 브릿지.html",
   "임은혜_주요일화및사건사고": "임은혜_주요일화및사건사고.html",
   "효빈대교": "효빈대교.html",
-  "효기대교": "효기대교.html"
+  "효기대교": "효기대교.html",
+  "희산그룹": "희산그룹.html",
+  "서천혁": "서천혁.html",
+  "서성직": "서성직.html",
+  "서형연": "서형연.html",
+  "서윤직": "서윤직.html",
+  "서주형": "서주형.html",
+  "서전희": "서전희.html",
+  "서석연": "서석연.html",
+  "희산공업": "희산공업.html",
+      "family_nav": "틀_뷰어_SPA.html#family_nav",
+    "gemini-code-1792071370508": "틀_뷰어_SPA.html#gemini-code-1792071370508",
+    "tpl_kcg_nav": "틀_뷰어_SPA.html#tpl_kcg_nav",
+    "tpl_platform_types": "틀_뷰어_SPA.html#tpl_platform_types",
+    "리에라몰일가": "틀_뷰어_SPA.html#리에라몰일가",
+    "성덕정치인": "틀_뷰어_SPA.html#성덕정치인",
+    "중구시설": "틀_뷰어_SPA.html#중구시설",
+    "탄성군시설": "틀_뷰어_SPA.html#탄성군시설",
+    "효빈주요집단": "틀_뷰어_SPA.html#효빈주요집단",
+    "희산그룹_계열사": "틀_뷰어_SPA.html#희산그룹_계열사",
+    "희산그룹_역대회장": "틀_뷰어_SPA.html#희산그룹_역대회장",
 };

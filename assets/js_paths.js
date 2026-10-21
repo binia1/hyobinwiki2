@@ -1,6 +1,6 @@
 /**
  * HyobinWiki JS Master Index (Auto-Generated & Fixed Aliases)
- * 업데이트: 2026. 10. 11. 오전 11:16:41
+ * 업데이트: 2026. 10. 21. 오후 08:59:19
  */
 
 window.filePaths = {
@@ -121,8 +121,10 @@ window.filePaths = {
     "ecommerce-univ-nav": "js/",
     "educollab-univ-nav": "js/",
     "eupseong_template": "assets/",
+    "family_nav": "",
     "find-missing": "",
     "gangju-univ-nav": "js/",
+    "gemini-code-1792071370508": "",
     "gifted-sci-nav": "js/",
     "gyeseong-univ-nav": "js/",
     "hb03_nav": "assets/",
@@ -223,6 +225,8 @@ window.filePaths = {
     "template_media_mix": "assets/",
     "tooltip": "assets/",
     "tooltip2": "assets/",
+    "tpl_kcg_nav": "assets/",
+    "tpl_platform_types": "assets/",
     "univ-press-nav": "js/",
     "unjin-univ-nav": "js/",
     "update-archive": "",
@@ -444,6 +448,7 @@ window.filePaths = {
     "롯데마트맥스_지점_둘러보기": "js/",
     "롯데백화점_점포_목록": "js/",
     "롯데시네마네비": "js/",
+    "리에라몰일가": "js/",
     "리에하스연합": "js/",
     "마진시_pop": "js/",
     "마진시_시내버스_노선틀": "js/",
@@ -575,6 +580,7 @@ window.filePaths = {
     "선빈대학교_인포박스": "js/",
     "선자대학교": "js/",
     "선자대학교_인포박스": "js/",
+    "성덕정치인": "js/",
     "성택대학교": "js/",
     "성택대학교_인포박스": "js/",
     "세계의_섬들_둘러보기": "js/",
@@ -704,6 +710,7 @@ window.filePaths = {
     "중구(효빈)학교": "js/",
     "중구고등학교": "js/",
     "중구관공서": "js/",
+    "중구시설": "js/",
     "중구중학교": "js/",
     "중구초등학교": "js/",
     "중구행정": "js/",
@@ -744,6 +751,7 @@ window.filePaths = {
     "탄성군_pop": "js/",
     "탄성군고등학교": "js/",
     "탄성군관공서": "js/",
+    "탄성군시설": "js/",
     "탄성군중학교": "js/",
     "탄성군초등학교": "js/",
     "탄성군학교": "js/",
@@ -925,6 +933,7 @@ window.filePaths = {
     "효빈장애인종합복지관": "js/",
     "효빈전문대": "js/",
     "효빈전문대학교": "js/",
+    "효빈주요집단": "js/",
     "효빈지구": "js/",
     "효빈철도캐릭터유니버스": "js/",
     "효빈터미널목록": "js/",
@@ -932,7 +941,9 @@ window.filePaths = {
     "효빈행정": "js/",
     "효빈행정구역변천": "js/",
     "효빈행정구역전체": "js/",
-    "효빈회주학원_역대이사장": "js/"
+    "효빈회주학원_역대이사장": "js/",
+    "희산그룹_계열사": "js/",
+    "희산그룹_역대회장": "js/"
 };
 window.aliasMap = {
     "럽라": "lovelive_nav",
