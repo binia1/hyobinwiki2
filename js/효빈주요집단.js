@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td>
                             <div class="flex-group-faction">
                                 <a href="동구대 쓰레기 5인방.html" class="nw-link-villain">
-                                    <img src="이미지/김재욱.webp" class="nw-img-faction" onerror="this.style.display='none'">
+                                    <img src="이미지/김재욱_머그샷.webp" class="nw-img-faction" onerror="this.style.display='none'">
                                     동구대 쓰레기 5인방
                                     <span class="nw-subtext-faction" style="color:#B71C1C;">(영구퇴학·구속 / 폐기물 카르텔)</span>
                                 </a>

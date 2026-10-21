@@ -1635,7 +1635,7 @@ const imageFiles = [
         "category": "etc"
     },
     {
-        "file": "GTX-A 19편성.webp",
+        "file": "GTX-A_19편성.webp",
         "category": "train"
     },
     {
@@ -7935,7 +7935,7 @@ const imageFiles = [
         "category": "station"
     },
     {
-        "file": "광역급행철도 수혜 범위.webp",
+        "file": "광역급행철도_수혜_범위.webp",
         "category": "etc"
     },
     {
@@ -11571,11 +11571,11 @@ const imageFiles = [
         "category": "person"
     },
     {
-        "file": "리엘라_포토이즘 (2).webp",
+        "file": "리엘라_포토이즘_(2).webp",
         "category": "etc"
     },
     {
-        "file": "리엘라_포토이즘 (3).webp",
+        "file": "리엘라_포토이즘_(3).webp",
         "category": "etc"
     },
     {
@@ -11763,15 +11763,15 @@ const imageFiles = [
         "category": "etc"
     },
     {
-        "file": "마유치 단체사진.webp",
+        "file": "마유치_단체사진.webp",
         "category": "illustration"
     },
     {
-        "file": "마유치 쌀화환1.webp",
+        "file": "마유치_쌀화환1.webp",
         "category": "etc"
     },
     {
-        "file": "마유치 화환2.webp",
+        "file": "마유치_화환2.webp",
         "category": "etc"
     },
     {
