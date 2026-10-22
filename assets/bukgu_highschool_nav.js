@@ -59,21 +59,21 @@ function renderBukguHighSchoolTable(targetId) {
     // 가나다 순 정렬
     schools.sort((a, b) => a.name.localeCompare(b.name));
 
-    // HTML 구조 생성
+    // HTML 구조 생성 (범례 부분에 남/여고 배경색 인라인 강제 적용)
     let html = `
-        <div class="nav-box rounded overflow-hidden shadow-sm" style="border: 2px solid var(--wiki-main);">
-            <div class="nav-box-header cursor-default" style="background-color: #373a3c;">
+        <div class="nav-box rounded overflow-hidden shadow-sm" style="border: 2px solid #7799CC; background-color: #ffffff;">
+            <div class="nav-box-header cursor-default" style="background-color: #7799CC; color: #ffffff; padding: 8px; text-align: center; font-weight: bold;">
                 <span>효빈광역시 북구의 고등학교</span>
             </div>
-            <div class="bg-white p-2 text-center text-xs border-b border-[#ccc]">
-                <div class="mb-1">
-                    <span class="bg-boy px-1 border border-gray-200">남자고등학교</span>, 
-                    <span class="bg-girl px-1 border border-gray-200">여자고등학교</span>, 
-                    이외 남녀공학
+            <div class="bg-white p-2 text-center text-xs border-b border-[#ccc] dark:bg-[#2d2f34] dark:border-[#444]">
+                <div class="mb-1" style="line-height: 1.8;">
+                    <span style="background-color: #E7F1FF; color: #333333; padding: 2px 6px; border: 1px solid #ccc; border-radius: 3px;">남자고등학교</span>, 
+                    <span style="background-color: #FFF0F5; color: #333333; padding: 2px 6px; border: 1px solid #ccc; border-radius: 3px;">여자고등학교</span>, 
+                    <span style="background-color: #ffffff; color: #333333; padding: 2px 6px; border: 1px solid #ccc; border-radius: 3px; font-weight: bold;">이외 남녀공학</span>
                 </div>
-                <div class="font-bold text-[#FF9922]">※: 자사고, ⊙: 자공고, ▣: 특목고, ◈: 특성화고, 이외 일반계고</div>
+                <div class="font-bold text-[#FF9922]" style="margin-top: 4px;">※: 자사고, ⊙: 자공고, ▣: 특목고, ◈: 특성화고, 이외 일반계고</div>
             </div>
-            <table class="school-table">
+            <table class="school-table" style="width: 100%; text-align: center; border-collapse: collapse; background-color: #ffffff;">
                 <tbody>
     `;
 
@@ -87,32 +87,34 @@ function renderBukguHighSchoolTable(targetId) {
             let index = i * columns + j;
             if (index < schools.length) {
                 const s = schools[index];
-                let cellClass = "";
-                if (s.type === "boy") cellClass = 'class="bg-boy"';
-                else if (s.type === "girl") cellClass = 'class="bg-girl"';
+                
+                // 표 셀(td) 부분에 배경색 인라인 강제 적용
+                let cellStyle = 'style="border: 1px solid #ddd; padding: 6px;';
+                if (s.type === "boy") {
+                    cellStyle += ' background-color: #E7F1FF;';
+                } else if (s.type === "girl") {
+                    cellStyle += ' background-color: #FFF0F5;';
+                }
+                cellStyle += '"';
                 
                 // 링크 생성 로직
                 let href = "#";
                 let onclick = "";
                 
                 if (s.link) {
-                    // 개별 문서로 직접 이동
                     href = s.link;
                 } else if (s.key) {
-                    // 템플릿 페이지로 이동 (쿼리 파라미터 포함)
-                    // 현재 페이지가 템플릿 페이지라면, 페이지 이동 없이 함수만 호출
                     if (window.location.pathname.includes("북구_고등학교_템플릿.html") && typeof changeSchool === 'function') {
                         href = "javascript:void(0);";
                         onclick = `onclick="changeSchool('${s.key}')"`;
                     } else {
-                        // 다른 페이지에서는 템플릿 페이지로 이동
                         href = `북구_고등학교_템플릿.html?school=${s.key}`;
                     }
                 }
 
-                html += `<td ${cellClass}>${s.prefix}<a href="${href}" ${onclick} class="wiki-link">${s.name}</a></td>`;
+                html += `<td ${cellStyle}>${s.prefix}<a href="${href}" ${onclick} class="wiki-link" style="color: #333333;">${s.name}</a></td>`;
             } else {
-                html += "<td></td>";
+                html += '<td style="border: 1px solid #ddd; padding: 6px;"></td>';
             }
         }
         html += "</tr>";

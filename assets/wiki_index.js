@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 10. 21. 오후 5:44:54
+ * 업데이트: 2026. 10. 22. 오후 3:45:42
  */
 
 window.HB_WIKI_PAGES = [
@@ -13459,6 +13459,38 @@ window.HB_WIKI_PAGES = [
   {
     "title": "희산공업",
     "href": "희산공업.html"
+  },
+  {
+    "title": "빅분기_실기3",
+    "href": "빅분기_실기3.html"
+  },
+  {
+    "title": "빅분기_실기4",
+    "href": "빅분기_실기4.html"
+  },
+  {
+    "title": "빅분기_실기5",
+    "href": "빅분기_실기5.html"
+  },
+  {
+    "title": "희산벨리_효빈",
+    "href": "희산벨리_효빈.html"
+  },
+  {
+    "title": "개규공업",
+    "href": "개규공업.html"
+  },
+  {
+    "title": "최사근",
+    "href": "최사근.html"
+  },
+  {
+    "title": "민포남",
+    "href": "민포남.html"
+  },
+  {
+    "title": "민현식",
+    "href": "민현식.html"
   }
 ];
 
@@ -21109,15 +21141,23 @@ window.HB_WIKI_ALIASES = {
   "서전희": "서전희.html",
   "서석연": "서석연.html",
   "희산공업": "희산공업.html",
-      "family_nav": "틀_뷰어_SPA.html#family_nav",
-    "gemini-code-1792071370508": "틀_뷰어_SPA.html#gemini-code-1792071370508",
-    "tpl_kcg_nav": "틀_뷰어_SPA.html#tpl_kcg_nav",
-    "tpl_platform_types": "틀_뷰어_SPA.html#tpl_platform_types",
-    "리에라몰일가": "틀_뷰어_SPA.html#리에라몰일가",
-    "성덕정치인": "틀_뷰어_SPA.html#성덕정치인",
-    "중구시설": "틀_뷰어_SPA.html#중구시설",
-    "탄성군시설": "틀_뷰어_SPA.html#탄성군시설",
-    "효빈주요집단": "틀_뷰어_SPA.html#효빈주요집단",
-    "희산그룹_계열사": "틀_뷰어_SPA.html#희산그룹_계열사",
-    "희산그룹_역대회장": "틀_뷰어_SPA.html#희산그룹_역대회장",
+  "family_nav": "틀_뷰어_SPA.html#family_nav",
+  "gemini-code-1792071370508": "틀_뷰어_SPA.html#gemini-code-1792071370508",
+  "tpl_kcg_nav": "틀_뷰어_SPA.html#tpl_kcg_nav",
+  "tpl_platform_types": "틀_뷰어_SPA.html#tpl_platform_types",
+  "리에라몰일가": "틀_뷰어_SPA.html#리에라몰일가",
+  "성덕정치인": "틀_뷰어_SPA.html#성덕정치인",
+  "중구시설": "틀_뷰어_SPA.html#중구시설",
+  "탄성군시설": "틀_뷰어_SPA.html#탄성군시설",
+  "효빈주요집단": "틀_뷰어_SPA.html#효빈주요집단",
+  "희산그룹_계열사": "틀_뷰어_SPA.html#희산그룹_계열사",
+  "희산그룹_역대회장": "틀_뷰어_SPA.html#희산그룹_역대회장",
+  "빅분기_실기3": "빅분기_실기3.html",
+  "빅분기_실기4": "빅분기_실기4.html",
+  "빅분기_실기5": "빅분기_실기5.html",
+  "희산벨리_효빈": "희산벨리_효빈.html",
+  "개규공업": "개규공업.html",
+  "최사근": "최사근.html",
+  "민포남": "민포남.html",
+  "민현식": "민현식.html"
 };
