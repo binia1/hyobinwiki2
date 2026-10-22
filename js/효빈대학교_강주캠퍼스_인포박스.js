@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="text-sm font-normal">Hyobin National University<br/>Gangju Campus</span>
 </div>
 <div class="p-4 bg-white text-center border-b">
-<img alt="효빈대학교 강주캠퍼스" class="w-full rounded" src="이미지/효빈대_강주캠퍼스_전경.webp"/>
+<img alt="효빈대학교 강주캠퍼스" class="w-full rounded" src="이미지/효빈대학교_강주캠퍼스.webp"/>
 <p class="text-sm text-gray-500 mt-2">강주캠퍼스 전경 <del>안개가 낀 날 찍었다면 사일런트 힐이었을 것이다</del></p>
 </div>
 <table>

@@ -863,7 +863,7 @@ const imageFiles = [
         "category": "bus"
     },
     {
-        "file": "502_화환_플럇.webp",
+        "file": "화환역_승강장.webp",
         "category": "etc"
     },
     {
@@ -1095,7 +1095,7 @@ const imageFiles = [
         "category": "bus"
     },
     {
-        "file": "7000원_갈색버스.webp",
+        "file": "6300원_갈색버스.webp",
         "category": "bus"
     },
     {
@@ -1531,11 +1531,11 @@ const imageFiles = [
         "category": "etc"
     },
     {
-        "file": "dangseon_platform_2.webp",
+        "file": "당선역_2호선_승강장.webp",
         "category": "etc"
     },
     {
-        "file": "dangseon_platform_5.webp",
+        "file": "당선역_5호선_승강장.webp",
         "category": "etc"
     },
     {
@@ -1563,7 +1563,7 @@ const imageFiles = [
         "category": "person"
     },
     {
-        "file": "Edel Note.webp",
+        "file": "Edel_Note.webp",
         "category": "etc"
     },
     {
@@ -1579,11 +1579,11 @@ const imageFiles = [
         "category": "facility_com"
     },
     {
-        "file": "express_bus_terminal_platform_3.webp",
+        "file": "고속버스터미널역_3호선_승강장.webp",
         "category": "etc"
     },
     {
-        "file": "express_bus_terminal_platform_5.webp",
+        "file": "고속버스터미널역_5호선_승강장.webp",
         "category": "etc"
     },
     {
@@ -1615,7 +1615,7 @@ const imageFiles = [
         "category": "school"
     },
     {
-        "file": "galleria_hyobin_night.webp",
+        "file": "갤러리아효빈.webp",
         "category": "etc"
     },
     {
@@ -1651,7 +1651,7 @@ const imageFiles = [
         "category": "etc"
     },
     {
-        "file": "gyeseong_station.webp",
+        "file": "계성역.webp",
         "category": "etc"
     },
     {
@@ -3923,7 +3923,7 @@ const imageFiles = [
         "category": "school"
     },
     {
-        "file": "svg/대한민국 국장.svg",
+        "file": "svg/대한민국_국장.svg",
         "category": "logo"
     },
     {
@@ -4439,7 +4439,7 @@ const imageFiles = [
         "category": "school"
     },
     {
-        "file": "svg/버거킹 로고.svg",
+        "file": "svg/버거킹_로고.svg",
         "category": "logo"
     },
     {
@@ -11439,7 +11439,7 @@ const imageFiles = [
         "category": "character"
     },
     {
-        "file": "루리노_한낮 아라모드+.webp",
+        "file": "루리노_한낮_아라모드+.webp",
         "category": "character"
     },
     {
@@ -16743,11 +16743,11 @@ const imageFiles = [
         "category": "character"
     },
     {
-        "file": "안요지 히메 105.webp",
+        "file": "안요지_히메_105.webp",
         "category": "character"
     },
     {
-        "file": "안요지 히메 극장판.webp",
+        "file": "안요지_히메_극장판.webp",
         "category": "character"
     },
     {
@@ -19571,7 +19571,7 @@ const imageFiles = [
         "category": "character"
     },
     {
-        "file": "이즈미_꽃이 피면 꿈이 달린다+.webp",
+        "file": "이즈미_꽃이_피면_꿈이_달린다+.webp",
         "category": "character"
     },
     {
@@ -22683,7 +22683,7 @@ const imageFiles = [
         "category": "character"
     },
     {
-        "file": "카츠라기 이즈미 극장판.webp",
+        "file": "카츠라기_이즈미 극장판.webp",
         "category": "character"
     },
     {
@@ -22887,7 +22887,7 @@ const imageFiles = [
         "category": "etc"
     },
     {
-        "file": "코로나 엑스트라 마에다_카오리.webp",
+        "file": "코로나_엑스트라_마에다_카오리.webp",
         "category": "etc"
     },
     {
@@ -23151,7 +23151,7 @@ const imageFiles = [
         "category": "etc"
     },
     {
-        "file": "큐루마루 하스노소라 츠즈루리메구.webp",
+        "file": "큐루마루_하스노소라_츠즈루리메구.webp",
         "category": "character"
     },
     {
@@ -24123,7 +24123,7 @@ const imageFiles = [
         "category": "illustration"
     },
     {
-        "file": "하스노소라 대삼각.webp",
+        "file": "하스노소라_대삼각.webp",
         "category": "character"
     },
     {
@@ -25331,7 +25331,7 @@ const imageFiles = [
         "category": "logo"
     },
     {
-        "file": "효빈대_강주캠퍼스_전경.webp",
+        "file": "효빈대학교_강주캠퍼스.webp",
         "category": "school"
     },
     {
@@ -25343,7 +25343,7 @@ const imageFiles = [
         "category": "etc"
     },
     {
-        "file": "효빈대_낭원캠퍼스_전경.webp",
+        "file": "효빈대학교_낭원캠퍼스.webp",
         "category": "school"
     },
     {
@@ -25355,7 +25355,7 @@ const imageFiles = [
         "category": "school"
     },
     {
-        "file": "효빈대_이자캠퍼스_전경.webp",
+        "file": "효빈대학교_이자캠퍼스.webp",
         "category": "school"
     },
     {

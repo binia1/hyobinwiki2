@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="text-sm font-normal">Hyobin National University<br/>Ija Campus</span>
 </div>
 <div class="p-4 bg-white text-center border-b">
-<img alt="효빈대학교 이자캠퍼스" class="w-full rounded" src="이미지/효빈대_이자캠퍼스_전경.webp"/>
+<img alt="효빈대학교 이자캠퍼스" class="w-full rounded" src="이미지/효빈대학교_이자캠퍼스.webp"/>
 <p class="text-sm text-gray-500 mt-2">이자캠퍼스 전경</p>
 </div>
 <table>

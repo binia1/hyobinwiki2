@@ -55,7 +55,7 @@
                                     <td class="bg-white border border-gray-200 p-2.5 leading-[2.1] break-keep">
                                         <span class="inline-flex items-center">
                                             <img src="이미지/svg/한국국방과학기술대학.svg" class="w-3.5 h-3.5 mr-1 object-contain inline-block align-[-2px]" onerror="this.style.display='none';"/>
-                                            <a class="text-[#0275d8] hover:underline cursor-pointer" onclick="goToLink('한국국방과학기술대학교.html')">한국국방과학기술대학교</a>
+                                            <a class="text-[#0275d8] hover:underline cursor-pointer" onclick="goToLink('한국국방기술대학교.html')">한국국방기술대학교</a>
                                         </span>
                                     </td>
                                 </tr>
