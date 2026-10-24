@@ -60,7 +60,8 @@
         .infobox table th { background-color: #f5f5f5 !important; color: #333 !important; width: 110px; text-align: center; }
         .infobox table td { text-align: left; padding-left: 10px; }
 
-        .wiki-link { color: var(--wiki-link); font-weight: 900; cursor: pointer; text-decoration: none; }
+        /* 🔥 링크 깨짐 방지: inline 적용 */
+        .wiki-link { color: var(--wiki-link); font-weight: 900; cursor: pointer; text-decoration: none; display: inline; }
         .wiki-link:hover { text-decoration: underline; }
 
         .quote-box {
@@ -73,7 +74,16 @@
             color: #444;
         }
 
+        .dialogue-box { background-color: #f7f9fa; border: 1px solid #e1e4e8; border-left: 4px solid var(--wiki-main); border-radius: 6px; padding: 15px; margin: 15px 0; line-height: 1.8; font-size: 0.95rem; }
+
+        /* 🔥 핵심: story-title에 display: block을 적용해 내부에 자동 링크(<a>)가 생겨도 절대 줄이 쪼개지지 않도록 처리 */
+        .story-box { border: 1px solid #facde1; border-left: 5px solid var(--wiki-main); border-radius: 6px; padding: 18px 22px; background: #ffffff; margin-bottom: 24px; box-shadow: 0 2px 6px rgba(231,96,158,0.12); line-height: 1.85; }
+        .story-title { font-weight: 900; font-size: 1.25rem; color: #b3366c; margin-bottom: 12px; display: block; border-bottom: 1px dashed #f085b3; padding-bottom: 8px; }
+        .story-title::before { content: "🎀"; font-size: 1.15rem; margin-right: 8px; }
+        .story-title a.wiki-link { color: inherit !important; }
+
         del { color: #999; text-decoration: line-through; margin-right: 3px; }
+        .strike-gray { color: #aaa; font-size: 0.9em; }
         
         .wiki-footnotes { margin-top: 80px; padding: 30px; border: 2px solid #eee; border-radius: 10px; font-size: 0.9rem; color: #555; background: #fafafa; }
         .wiki-fn-link { vertical-align: super; font-size: 0.75em; color: var(--wiki-link); cursor: pointer; font-weight: 900; text-decoration: none; margin-left: 2px; }
@@ -88,6 +98,7 @@
             border-radius: 4px; font-weight: 900; display: flex; align-items: center;
             justify-content: center; font-size: 1.2rem;
         }   
+        .anchor-offset { scroll-margin-top: 70px; }
     
         /* 일괄 적용된 SVG 수직 정렬 CSS */
         .svg-logo { width: 38px; height: 38px; object-fit: contain; flex-shrink: 0; }
@@ -113,20 +124,53 @@
     }
 </style>
 </head>
-<body>
-<div class="footnote-tooltip" id="footnote-tooltip-container"></div>
-<script defer="defer" src="js/hb_header.js"></script><header id="hb-header-container"></header>
+<body data-theme="light">
+<!-- 상단 내비게이션 바 -->
+<nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+<div class="flex items-center gap-2">
+<div class="nav-logo-box">H</div>
+<a class="font-bold text-xl cursor-pointer no-underline text-white" href="index.html">HyobinWiki</a>
+<div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+<a class="hover:underline font-bold text-white no-underline" href="index.html">대문</a>
+<a class="hover:underline text-white no-underline" href="최근_변경.html">최근 변경</a>
+<a class="hover:underline text-white no-underline" href="최근_토론.html">최근 토론</a>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<div class="flex items-center gap-2">
+<div class="hidden lg:flex items-center gap-1 mr-2">
+<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="편집요청.html">편집요청</a>
+<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="최근_토론.html">토론</a>
+<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="역사.html">역사</a>
+<a class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="즐겨찾기.html" title="즐겨찾기">★</a>
+<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1" href="더보기.html">더보기 <span class="text-[9px]">▼</span></a>
+</div>
+<input class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" id="headerSearchInput" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }" placeholder="문서 검색" type="text"/>
+<button class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold" onclick="handleSearch('headerSearchInput')">🔍</button>
+</div>
+<div class="flex gap-1" id="auth-buttons">
+<button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" id="btn-login" onclick="toggleModal('loginModal')">로그인</button>
+<button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" onclick="toggleModal('settingsModal')">설정</button>
+</div>
+</div>
+</nav>
 <div class="wiki-container shadow-lg">
 <div class="title-area">
 <div class="txt-lvl-1">유리내</div>
-<div class="flex gap-2 mb-1">
-<button class="wiki-btn bg-white border border-[#ccc] px-3 py-1 rounded text-xs font-bold text-[#555]">토론</button>
-<button class="wiki-btn bg-white border border-[#ccc] px-3 py-1 rounded text-xs font-bold text-[#555]">편집</button>
-<button class="wiki-btn bg-white border border-[#ccc] px-3 py-1 rounded text-xs font-bold text-[#555]">역사</button>
+<div class="flex gap-2 mb-2 sm:mb-0">
+<button class="wiki-tool-btn" onclick="location.href='수정.html'">수정</button>
+<button class="wiki-tool-btn" onclick="location.href='토론.html'">토론</button>
+<button class="wiki-tool-btn" onclick="location.href='역사.html'">역사</button>
 </div>
 </div>
-<div class="category-box bg-[#f9f9f9] border border-[#ccc] p-3 mb-5 rounded text-sm font-bold text-black text-left">
-<span class="font-bold text-[#e7609e]">분류:</span>
+<!-- 🚨 광고 -->
+<div style="border: 1px solid var(--wiki-border, #cccccc); padding: 12px 15px; margin-bottom: 20px; background-color: #f8f9fa; border-left: 5px solid var(--wiki-main); font-size: 0.9rem; text-align: center;">
+<span style="font-size: 0.75rem; background: #ddd; color: #555; padding: 2px 5px; border-radius: 3px; font-weight: bold; margin-right: 5px;">AD</span>
+<strong>"에... 나보고 영어를 하라고? 왓 타임 이즈 잇 나우? 홋타이모 이지루나?"</strong><br/>
+<span style="font-size: 0.8rem; color: #e7609e; display:block; margin-top:5px;">🎀 [은혜당 유튜브] 리내글리시 토익 200점 도전기! 미국 초딩 유학파의 눈물겨운 발음 교정 방송!</span>
+</div>
+<div class="category-box">
+<span class="font-bold" style="color: var(--wiki-nav-bg);">분류:</span>
 <a class="wiki-link" href="효빈광역시_인물.html">효빈광역시/인물</a> | 
         <a class="wiki-link" href="당가동.html">당가동 서브컬처 파티</a> |
         <a class="wiki-link" href="오사와_루리노.html">오사와 루리노</a> |
@@ -144,13 +188,13 @@
 <a class="wiki-link" href="예술대학 전공.html">예술대학 전공</a> |
 <a class="wiki-link" href="유튜브 사용자.html">유튜브 사용자</a> |
 <a class="wiki-link" href="인스타그램 사용자.html">인스타그램 사용자</a> |
-<a class="wiki-link" href="치지직 사용자.html">치지직 사용자</a> |
-<a class="wiki-link" href="효빈광역시 거주.html">효빈광역시 거주</a>
+<a class="wiki-link" href="치지직 사용자.html">치지직 사용자</a>
 </div>
 <div class="no-autolink mb-4">
 <div id="riehasu-nav-container"></div>
 <script src="js/리에하스연합.js"></script>
 </div>
+<div class="content-wrapper mt-6">
 <aside class="infobox shrink-0 shadow-sm rounded overflow-hidden order-1 lg:order-2">
 <div class="infobox-top-line-name">
 <b>유리내</b><br/>
@@ -165,22 +209,29 @@
     </div>
 <div class="infobox-title-bar">인물 정보</div>
 <table>
-<tr><th>출생</th><td>2006년 8월 13일 (20세)<br/>효빈광역시 <a class="wiki-link" href="안천구.html">안천구</a> 당가동<br/><span class="text-xs text-gray-500 font-bold">(※ 오사와 루리노의 생일 8/31의 일자 배열을 바꾼 8/13)</span></td></tr>
+<tr><th>이름</th><td><b>유리내 (Yu Ri-nae / 柳璃乃)</b><br/><span class="text-xs text-gray-500 font-bold">(※ 오사와 루리노 大沢 瑠璃乃의 이름 한자 <b>'璃乃(리내)'</b>를 그대로 쓰고 한국 성씨 유(柳)를 붙인 완벽한 평행이론!)</span></td></tr>
+<tr><th>출생</th><td>2006년 8월 13일 (만 <span class="calc-age" data-birthdate="2006-08-13">20</span>세)<br/><a class="wiki-link" href="효빈광역시.html">효빈광역시</a> <a class="wiki-link" href="안천구.html">안천구</a> <a class="wiki-link" href="당가동.html">당가동</a><br/><span class="text-xs text-gray-500 font-bold">(※ 오사와 루리노의 생일 8/31의 일자 배열을 뒤집은 8/13)</span></td></tr>
 <tr><th>국적</th><td>대한민국</td></tr>
-<tr><th>거주지</th><td><a class="wiki-link" href="효빈광역시.html">효빈광역시</a> 안천구 당가동</td></tr>
+<tr><th>거주지</th><td><a class="wiki-link" href="효빈광역시.html">효빈광역시</a> <a class="wiki-link" href="안천구.html">안천구</a> <a class="wiki-link" href="당가동.html">당가동</a></td></tr>
 <tr>
 <th>신체</th>
 <td>
-                152cm, <b>B72-W55-H75</b><br/>
+                152cm, <b>B72-W55-H75</b>, A형<br/>
 <span class="text-xs text-gray-500 font-bold" style="line-height: 1.4; display: inline-block; margin-top: 4px;">(※ 키는 오사와 루리노와 동일한 152cm이며 덧니(송곳니) 속성도 건재하다. 원본 캐릭터의 공식 쓰리사이즈는 미상이지만, 작중에서 유독 두드러지게 묘사되는 빈약하고 평평한(...) 체형마저 완벽하게 고증당해버려 파티 내에서 가장 슬림하고 아담한 피지컬을 지녔다.)</span>
 </td>
 </tr>
-<tr><th>학력</th><td class="text-left">
-            미국 샌프란시스코 소재 초등학교 (전학)<br/>
-            한국 초등학교 (졸업)<br/>
+<tr><th>가족 관계<br/><span class="text-xs text-gray-500">(2녀 중 차녀)</span></th>
+<td class="text-left" style="font-size: 0.83rem; line-height: 1.55;">
+                <b>아버지 유기철 (柳基哲)</b> <span class="text-xs text-gray-500">(1976년생, 만 50세 / 무역회사 영업부장. 2008년 미국 샌프란시스코 지사 발령으로 가족을 데리고 건너갔으나 서브프라임 모기지 사태 파산 위기로 3년 만에 쓸쓸히 귀국한 기러기 아빠의 애환을 가졌다)</span><br/>
+                <b>어머니 김미선 (金美善)</b> <span class="text-xs text-gray-500">(1978년생, 만 48세 / 미국 생활 당시 마트 캐셔와 식당 보조로 투잡을 뛰며 두 딸을 키워낸 현모양처)</span><br/>
+                <b>언니 유리현 (柳璃賢)</b> <span class="text-xs text-gray-500">(<b>2001년생</b>, 만 25세 / 5살 터울 친언니. 리내가 미국에서 영어를 까먹고 0개 국어가 될 때 옆에서 원어민급 영어를 구사하며 리내의 통역사 노릇을 도맡았던 든든하고 피곤한 K-장녀)</span>
+</td></tr>
+<tr><th>학력</th><td class="text-left" style="font-size: 0.85rem;">
+            미국 샌프란시스코 소재 초등학교 (전학 / 1~3학년 시절)<br/>
+<a class="wiki-link" href="당가초등학교.html">당가초등학교</a> (졸업)<br/>
 <a class="wiki-link" href="당가중학교.html">당가중학교</a> (졸업)<br/>
 <a class="wiki-link" href="당가고등학교.html">당가고등학교</a> (졸업)<br/>
-<a class="wiki-link" href="평안명대학교.html">평안명대학교</a> 예술대학 (음악학과 / 재학)
+<b><a class="wiki-link" href="평안명대학교.html">평안명대학교</a></b> 예술대학 (음악학과 / 재학 · 25학번)
         </td></tr>
 <tr><th>직업</th><td>대학생, 스트리머 (은혜당 고정 게스트)</td></tr>
 <tr>
@@ -188,149 +239,484 @@
 <td style="padding: 8px 10px; text-align: left;">
 <!-- 1. 일상 및 루리노 덕질 (인스타, X) -->
 <div style="display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
-<a href="#"><a href="인스타그램_아이콘.html" style="text-decoration: none;"><img alt="인스타그램" height="22" src="이미지/svg/인스타그램_아이콘.svg" style="display: block;" width="22"/></a></a>
+<a href="인스타그램_아이콘.html" style="text-decoration: none;"><img alt="인스타그램" height="22" src="이미지/svg/인스타그램_아이콘.svg" style="display: block;" width="22"/></a>
 <span style="color: #ccc; font-size: 11px;">|</span>
-<a href="#"><a href="X_아이콘.html" style="text-decoration: none;"><img alt="X" height="22" src="이미지/svg/X_아이콘.svg" style="display: block;" width="22"/></a></a>
+<a href="X_아이콘.html" style="text-decoration: none;"><img alt="X" height="22" src="이미지/svg/X_아이콘.svg" style="display: block;" width="22"/></a>
 <span class="text-xs" style="color: #E6162D; font-weight: bold;">(루리 쨩 다이스키 &amp; 리내글리시 어록 📝)</span>
 </div>
 <!-- 2. 스트리머 고정 게스트 및 취미 활동 (치지직, 유튜브) -->
 <div style="border-top: 1px solid #ddd; padding-top: 6px; display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 8px;">
-<a href="#"><a href="치지직_아이콘.html" style="text-decoration: none;"><img alt="치지직" height="22" src="이미지/svg/치지직_아이콘.svg" style="display: block;" width="22"/></a></a>
+<a href="치지직_아이콘.html" style="text-decoration: none;"><img alt="치지직" height="22" src="이미지/svg/치지직_아이콘.svg" style="display: block;" width="22"/></a>
 <span style="color: #ccc; font-size: 11px;">|</span>
-<a href="#"><a href="유튜브_아이콘.html" style="text-decoration: none;"><img alt="유튜브" height="22" src="이미지/svg/유튜브_아이콘.svg" style="display: block;" width="22"/></a></a>
+<a href="유튜브_아이콘.html" style="text-decoration: none;"><img alt="유튜브" height="22" src="이미지/svg/유튜브_아이콘.svg" style="display: block;" width="22"/></a>
 <span class="text-xs" style="color: #004EA2; font-weight: bold;">(은혜당 방송 게스트 &amp; 야구/낚시 브이로그 ⚾)</span>
 </div>
 </td>
 </tr>
 <tr><th>오시(최애)</th><td><a class="wiki-link" href="오사와_루리노.html">오사와 루리노</a></td></tr>
 <tr><th>좋아하는 것</th><td>낚시, 가라오케, 실내 야구, 방송, 미술, 음악<br/><b>타피오카, 호박당</b></td></tr>
-<tr><th>특징</th><td><b>파티 내 체력 최강</b>, 기 방전(사회적 에너지 한정), 지독한 영어 실력</td></tr>
+<tr><th>특징</th><td><b>파티 내 체력 최강 (물리적 피지컬 원탑)</b>, <b>루리포인트 방전</b> (사회적 에너지 극도로 약함), 지독한 0개국어 (리내글리시)</td></tr>
 </table>
 </aside>
-<div class="toc shrink-0 shadow-sm h-fit border border-[#ccc] p-6 bg-[#f9f9f9] min-w-[340px] max-w-[400px] mb-10" id="toc-box"></div>
+<div class="toc" id="toc-box">
+    <div class="toc-title">목차</div>
+    <ul>
+        <li><a href="#s-1">1. 개요</a></li>
+        <li><a href="#s-2">2. 오사와 루리노와의 소름 돋는 평행이론</a>
+            <ul>
+                <li><a href="#s-2-1">2.1. 이름(璃乃), 생일, 그리고 쌍둥이급 외모</a></li>
+                <li><a href="#s-2-2">2.2. "기가 빨려..." 루리포인트 방전 체질 (사회성 한정)</a></li>
+                <li><a href="#s-2-3">2.3. 겉바속촉: 갸루상과 순둥이 사이</a></li>
+                <li><a href="#s-2-4">2.4. "오지게 못하는" 리내글리시 (영어 붕괴)</a></li>
+            </ul>
+        </li>
+        <li><a href="#s-3">3. 생애 및 가족사 (샌프란시스코의 유년기와 귀국)</a>
+            <ul>
+                <li><a href="#s-3-1">3.1. 2008년 서브프라임 모기지 사태와 미국 샌프란시스코 지사의 파산 위기</a></li>
+                <li><a href="#s-3-2">3.2. 언니 유리현(01년생)의 눈물겨운 캐리와 3년 만의 당가동 귀환</a></li>
+                <li><a href="#s-3-3">3.3. 미국 생활이 낳은 0개 국어의 기적(?)과 무한 체력의 각성</a></li>
+            </ul>
+        </li>
+        <li><a href="#s-4">4. 임은혜와의 피 튀기는 대립과 극적인 구원</a>
+            <ul>
+                <li><a href="#s-4-1">4.1. 당가중학교 대참사: 얌전한 순둥이의 반란과 절교 선언</a></li>
+                <li><a href="#s-4-2">4.2. 골목길 구출 작전: 152cm 육상 선수의 어벤져스 소환 (2023)</a></li>
+                <li><a href="#s-4-3">4.3. 루리노 점보 네소베리와 '아보카도 박스' 조공 사건</a></li>
+            </ul>
+        </li>
+        <li><a href="#s-5">5. 인간 관계 (환장의 동세대 유니버스와 가족)</a>
+            <ul>
+                <li><a href="#s-5-1">5.1. 가노은: 가라오케의 무한 동력 파트너</a></li>
+                <li><a href="#s-5-2">5.2. 마루빈: 아보카도 박스와 "이미와칸나이!"</a></li>
+                <li><a href="#s-5-3">5.3. 가희나: 동물 애호가즈 (순둥이 콤비)</a></li>
+                <li><a href="#s-5-4">5.4. 오낙희: 조회수 치트키와 '물리적' 참교육</a></li>
+                <li><a href="#s-5-5">5.5. 오마리: 걸어다니는 계산기와 고장난 보일러(?)의 만남</a></li>
+                <li><a href="#s-5-6">5.6. 고생하신 부모님(유기철·김미선)과 든든한 5살 터울 언니(유리현)</a></li>
+            </ul>
+        </li>
+        <li><a href="#s-6">6. 여담 및 전설의 일화 10선 (각 60줄 고밀도 상세 기록)</a>
+            <ul>
+                <li><a href="#s-6-1">6.1. [일화 1] 2011년 샌프란시스코 벼룩시장 눈물의 바자회와 '루리노 영어 발음(리내글리시)'의 기원</a></li>
+                <li><a href="#s-6-2">6.2. [일화 2] 152cm 강철 피지컬의 비밀: 미국 할렘가(?) 도주 훈련과 백모모(171cm)와의 환장 밸런스</a></li>
+                <li><a href="#s-6-3">6.3. [일화 3] 2024년 5살 터울 언니 유리현(24세)의 첫 취업 선물 '오사와 루리노 풀컬러 하피'와 자매의 오열</a></li>
+                <li><a href="#s-6-4">6.4. [일화 4] 평안명대 음악학과 축제 대참사: 사회성 방전으로 10분 만에 아보카도 박스 쓴 갸루 신입생</a></li>
+                <li><a href="#s-6-5">6.5. [일화 5] 은혜당(임은혜) 라이브 중 '외국인 길 찾기' 몰카 참교육: 리내글리시와 물리적 100m 전력 질주</a></li>
+                <li><a href="#s-6-6">6.6. [일화 6] 안공주(히메 오시)의 전담 '타피오카·호박당 수혈 메커니즘'과 0초 컷 부활(Reboot) 기적</a></li>
+                <li><a href="#s-6-7">6.7. [일화 7] 당가고 체육대회 여제 등극: 152cm로 계주 마지막 주자 역전승 후 돗자리 위 시체(?) 모드 전락</a></li>
+                <li><a href="#s-6-8">6.8. [일화 8] 아버지 유기철 부장(50세)의 눈물겨운 '서브컬처 파티 4인방 소고기 회식'과 리내의 먹방쇼</a></li>
+                <li><a href="#s-6-9">6.9. [일화 9] 청덕동 다이버시티몰 오락실 스크린 야구장 전설: 풀스윙 홈런 10방 날리고 기절한 홈런타자</a></li>
+                <li><a href="#s-6-10">6.10. [일화 10] 2026년 칸 칸나(루리노 성우) 내한 이벤트: 객석에서 아보카도 박스 쓰고 있다가 성우 본체에게 발각된 성덕</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+<div class="clearfix" style="clear: both;"></div>
+
 <h2 class="anchor-offset" id="s-1">1. 개요</h2>
-<p><a class="wiki-link" href="효빈광역시.html">효빈광역시</a> 당가동 서브컬처 파티(<a class="wiki-link" href="임은혜.html">임은혜</a>, <a class="wiki-link" href="안공주.html">안공주</a>, 유리내, <a class="wiki-link" href="백모모.html">백모모</a>)의 멤버이자, 평안명대학교 음악학과에 재학 중인 대학생. <a class="wiki-link" href="하스노소라.html">하스노소라 여학원 스쿨 아이돌 클럽</a>의 <b><a class="wiki-link" href="오사와_루리노.html">오사와 루리노</a></b>를 자신의 영혼의 반쪽으로 삼고 있는 진성 오시다.</p>
-<p>본인의 이름 <b>'유리내(柳璃乃)'</b>가 오사와 루리노의 이름 '루리노(璃乃)'와 완벽하게 한자와 독음이 일치하는 평행이론을 자랑한다. 게다가 생일은 <b>8월 13일</b>로, 루리노의 생일(8월 31일)의 뒷자리 배열을 바꾼 것과 같다. 어릴 적 미국 유학(샌프란시스코)을 다녀온 귀국자녀라는 점마저 캘리포니아 출신인 루리노와 일치한다. 머리 색깔만 다를 뿐, 아담한 체구(152cm)와 갸루 같은 인상, 덧니(송곳니), 그리고 기가 툭하면 방전되는 특이 체질까지 현실판 오사와 루리노 그 자체다.</p>
-<p>특히 재미있는 점은 파티 내에서 <b>키는 가장 작으면서 체력은 가장 막강한 강철 피지컬</b>을 지니고 있다는 점이다. 정작 171cm 최장신인 백모모는 저질 체력으로 허구한 날 바닥에 누워 헉헉대고, 152cm의 리내가 짐을 다 짊어지고 날아다니는 환장의 밸런스를 자랑한다. 또한, 처음 볼 때는 인상이 세 보인다는 오해를 받지만 실제로는 친구들 중에서 가장 남을 잘 배려하고 마음이 순수하며, <b>분명히 영미권에서 유학을 다녀왔음에도 영어를 미친 듯이 못하는(일명 리내글리시)</b> 치명적이고 하찮은 반전 매력의 소유자다.</p>
-<h2 class="anchor-offset" id="s-2">2. 생애 및 유년기 (샌프란시스코 유학기)</h2>
-<h3 id="s-2-1">2.1. 미국 생활과 0개 국어의 기적(?)</h3>
-<p>2006년 효빈광역시 안천구 당가동에서 태어났다. 부모님의 직장 문제로 인해 아주 어릴 적, 초등학생 시절 잠시 미국 <b>샌프란시스코</b>로 건너가 생활했다. 오사와 루리노가 중학교~고등학교 시절 캘리포니아 유학을 했던 것과는 약간 다르게 좀 더 어린 시절(초등학생)에 유학을 다녀왔다.</p>
-<p>어릴 적 미국에서 지낸 탓에 한국어 발음이 서툴러져 고생을 많이 했다. 하지만 한국으로 귀국한 후 한국어 패치가 완벽하게 완료되면서, <b>역으로 영어를 완전히 까먹어버리는 기적의 등가교환(?)</b>이 일어났다. 지금은 원어민은커녕 중학생 수준의 영단어조차 제대로 못 읽는 <b>'오지게 못하는 영어 실력'</b>을 자랑하며 친구들에게 매일 놀림을 받고 있다.</p>
-<h3 id="s-2-2">2.2. 무한 체력과 압도적 피지컬 (feat. 백모모와의 환장 밸런스)</h3>
-<p>쪼그마한 체구(152cm)와 툭하면 기가 빨려서 방전되는(엎드려 멍때리는) 모습 때문에 엄청난 약골로 보이지만, 사실 <b>순수 육체적인 운동신경과 스태미나(체력)는 4인방 파티 중에서 가장 압도적인 원탑</b>이다.</p>
-<p>여기서 파티의 환장할 체력 밸런스가 나오는데, 그룹 내 최장신이자 피지컬 깡패로 보이는 171cm의 <b><a class="wiki-link" href="백모모.html">백모모</a>가 사실은 몇 걸음만 걸어도 헉헉대며 아무 바닥에나 냅다 드러눕는 최약체 유리 체력</b>인 반면, 152cm의 리내는 지칠 줄 모르는 <b>강철 체력</b>이다. 행사장에 굿즈를 사러 가서 백모모가 지쳐 쓰러지면, 리내가 모모의 몫까지 짐을 몽땅 짊어지고 날아다니듯 끌고 가는 진풍경을 볼 수 있다. 미국 시절부터 배운 실내 야구 스윙 솜씨가 매서우며, 취미인 낚시를 하러 가서도 무거운 낚싯대를 척척 던지고 밤새도록 버티는 괴력을 자랑한다.</p>
-<p>또한 어릴 적부터 미술과 음악 과목에 엄청난 흥미와 재능을 보여 학교에서 항상 1등급을 놓치지 않았다. 현재는 그 재능을 살려 <b><a class="wiki-link" href="평안명대학교.html">평안명대학교</a> 예술대학 음악학과</b>에 진학하여 활발한 대학 생활을 보내고 있다.</p>
-<h2 class="anchor-offset" id="s-3">3. 임은혜와의 피 튀기는 대립과 극적인 구원</h2>
-<h3 id="s-3-1">3.1. 당가중학교 대참사: 얌전한 순둥이의 반란과 절교 선언</h3>
-<p>미국에서 귀국한 후 진학한 <a class="wiki-link" href="당가중학교.html">당가중학교</a>에서 <a class="wiki-link" href="임은혜.html">임은혜</a>, 안공주, 백모모와 단짝이 된다. 2019년 1학년 당시, 은혜가 엄마의 지독한 혐덕(오타쿠 혐오) 세뇌로 오타쿠를 극혐한다는 사실을 눈치챈 리내는, 자신의 엄청난 덕력을 숨긴 채 <b>"나도 요즘 틱톡 유행하는 댄스 챌린지 구경하는 거 짱 좋아해! 흑당 밀크티 완전 맛있지 않냐?!"</b>라며 억지 하이텐션으로 <b>완벽한 '일코(일반인 코스프레)'</b>를 시전했다.</p>
-<p>하지만 2021년 3학년 가을, 비대면 수업 중 안공주가 실수로 3D 미소녀 라이브 무대 유튜브 링크를 단톡방에 올리는 대참사가 터졌다. 이를 본 임은혜가 혐덕 스위치가 눌려 "징그러운 씹덕 병균 쓰레기들!"이라며 폭언을 쏟아내자, 항상 은혜의 눈치를 보며 배려해주던 얌전한 리내마저 참다못해 완벽하게 이성의 끈이 끊어지고 말았다.</p>
-<div class="quote-box">
-    "야 임은혜! 너 말이 좀 심하다?! 우리가 그동안 너 불편할까봐 숨겨준 배려는 생각 안 해?! 단지 네 취향 아니라고 소중한 친구를 병균 취급하는 네 인성이 더 역겨운 병균 같거든?!"
-</div>
-<p>평소 가장 순둥순둥하던 리내가 얼굴을 붉히며 가장 뼈아픈 일침을 날리자 임은혜도 적잖게 충격을 받았고, 이를 기점으로 둘은 차갑게 등을 돌리며 절교를 선언하게 된다.</p>
-<h3 id="s-3-2">3.2. 골목길 구출 작전: 152cm 육상 선수의 어벤져스 소환 (2023)</h3>
-<p>2023년 초, 당가고등학교 진학 직전, 임은혜가 혐덕 일진 무리와 손절하려다 으슥한 골목에서 "나랑 한 번 하고 가자"며 끔찍한 성적 협박을 당하는 현장을 안공주, 백모모와 함께 목격했다. 안공주가 '저 덩치들을 우리 셋이서 막는 건 무리다'라는 오더를 내리자마자, <b>파티 내 체력 원탑인 리내가 즉각 전력 질주 모드를 켰다.</b></p>
-<p>그녀는 특유의 압도적인 달리기 속도와 지치지 않는 스태미나를 활용해 미친 듯이 주변 골목과 PC방을 샅샅이 뒤졌고, 지나가던 피지컬 괴물들인 <b>'Aqours 오시 어벤져스 5인방'</b>을 최단 시간 내에 모셔 오는 완벽한 쾌속 전령 역할을 수행했다. 숨을 헐떡이면서도 <i>"저기! 저 골목길에 은혜가 위험해요! 제발 도와주세요!"</i>라며 어벤져스를 현장으로 이끈 리내의 기동력이 없었다면 임은혜는 정말 끔찍한 일을 당했을지도 모른다.</p>
-<h3 id="s-3-3">3.3. 루리노 점보 네소베리와 '아보카도 박스' 조공 사건</h3>
-<p>구출 사건 이후, 과거의 업보를 뼈저리게 깨닫고 개과천선한 <a class="wiki-link" href="임은혜.html">임은혜</a>가 당가고등학교 복도에서 무릎을 꿇고 영혼의 도게자를 시전했다. 은혜가 아빠의 생일 선물을 사고 남은 전 재산을 탈탈 털어 애니플러스에서 사 온 사죄의 쇼핑백 안에는, 리내가 이전에 그렇게도 가지고 싶어 했던 <b><a class="wiki-link" href="오사와_루리노.html">오사와 루리노</a> 점보 네소베리와 '완숙 아보카도 골판지 박스' 고퀄리티 레플리카</b>가 들어 있었다.</p>
-<p>이 엄청난 조공품을 확인하자마자 리내는 체면도 잊고 비명을 지르며 그 자리에서 <b>아보카도 골판지 박스를 푹 뒤집어썼다.</b> 그리고 박스 안에서 웅얼거리는 목소리로 화해를 선언했다.</p>
-<div class="quote-box">
-    "인정~ 솔직히 그날 골목길 사건 이후로 널 어떻게 대해야 할지 좀 껄끄러웠는데, 특별히 방전된 내 루리포인트를 200% 채워준 공로를 인정해서 용서해 준다! 대신 다음번 콜라보 카페 짐꾼은 평생 너다?"
-</div>
-<p>이후 리내는 은혜를 콜라보 카페의 전속 물주로 아주 요긴하게 부려 먹으며 완벽한 찐친으로 돌아왔다. (물론, 은혜가 산 무거운 굿즈 짐은 결국 무한 체력인 리내가 다 짊어지고 집에 간다는 게 함정이다.)</p>
-<h2 class="anchor-offset" id="s-4">4. 특징 및 오사와 루리노와의 평행이론</h2>
-<h3 id="s-4-1">4.1. 이름(璃乃), 생일, 그리고 쌍둥이급 외모</h3>
+<p><a class="wiki-link" href="효빈광역시.html">효빈광역시</a> 당가동 서브컬처 파티(<a class="wiki-link" href="임은혜.html">임은혜</a>, <a class="wiki-link" href="안공주.html">안공주</a>, 유리내, <a class="wiki-link" href="백모모.html">백모모</a>)의 멤버이자, <b><a class="wiki-link" href="평안명대학교.html">평안명대학교</a> 예술대학 음악학과</b>에 재학 중인 대학생. <a class="wiki-link" href="하스노소라.html">하스노소라 여학원 스쿨 아이돌 클럽</a>의 <b><a class="wiki-link" href="오사와_루리노.html">오사와 루리노</a></b>를 자신의 영혼의 반쪽으로 삼고 있는 진성 오시다.</p>
+<p>본인의 이름 <b>'유리내(柳璃乃)'</b>가 오사와 루리노의 이름 '루리노(璃乃)'와 완벽하게 한자와 독음이 일치하는 평행이론을 자랑한다. 게다가 생일은 <b>8월 13일</b>로, 루리노의 생일(8월 31일)의 뒷자리 배열을 바꾼 것과 같다. 어릴 적 부모님의 직장 발령으로 미국 샌프란시스코 유학을 다녀온 귀국자녀라는 점마저 캘리포니아 출신인 루리노와 일치한다. 머리 색깔만 다를 뿐, 아담한 체구(152cm)와 갸루 같은 인상, 덧니(송곳니), 그리고 기가 툭하면 방전되는 특이 체질까지 현실판 오사와 루리노 그 자체다.</p>
+<p>특히 재미있는 점은 파티 내에서 <b>키는 가장 작으면서 체력은 가장 막강한 강철 피지컬</b>을 지니고 있다는 점이다. 정작 171cm 최장신인 백모모는 저질 체력으로 허구한 날 바닥에 누워 헉헉대고, 152cm의 리내가 짐을 다 짊어지고 날아다니는 환장의 밸런스를 자랑한다. 또한, 처음 볼 때는 인상이 세 보인다는 오해를 받지만 실제로는 친구들 중에서 가장 남을 잘 배려하고 마음이 순수하며, <b>분명히 미국 샌프란시스코에서 유년기를 보냈음에도 2008년 서브프라임 사태 위기 속에서 한국으로 돌아온 이후 영어를 미친 듯이 못하는 0개 국어(일명 리내글리시)</b>의 치명적이고 하찮은 반전 매력의 소유자다.</p>
+
+<div class="wiki-content-wrapper">
+<h2 class="anchor-offset" id="s-2">2. 오사와 루리노와의 소름 돋는 평행이론</h2>
+<h3 class="anchor-offset" id="s-2-1">2.1. 이름(璃乃), 생일, 그리고 쌍둥이급 외모</h3>
 <p>그녀의 이름 <b>'유리내(柳璃乃)'</b>의 한자 '璃乃'는 오사와 루리노(大沢 瑠璃乃)의 이름과 완벽하게 똑같은 한자이며 독음마저 같다. 생일 또한 <b>8월 13일</b>로 루리노의 생일(8월 31일)의 일자 배열을 바꾼 것이다.</p>
 <p>가장 놀라운 것은 외모다. <b>머리 색깔만 흑발(혹은 갈색빛)일 뿐, 152cm의 아담한 체구, 살짝 치켜올라간 갸루 같은 고양이 눈매, 매력적인 덧니(송곳니)까지 오사와 루리노의 현실판 클론</b>이라 불러도 무방하다. 집에서는 루리노처럼 알이 큰 안경을 끼고 뒹굴거린다. 체구가 워낙 작고 귀염상이라 대학생임에도 불구하고 길거리를 지나가면 <b>항상 중학생으로 오해받아</b> 술집 입구에서 민증 검사(빠꾸)를 당하기 일쑤다.</p>
-<h3 id="s-4-2">4.2. "기가 빨려..." 루리포인트 방전 체질 (사회성 한정)</h3>
+<h3 class="anchor-offset" id="s-2-2">2.2. "기가 빨려..." 루리포인트 방전 체질 (사회성 한정)</h3>
 <p>육체적 체력은 무한대 수준이지만, <b>'사회적/정신적 에너지'가 극도로 쉽게 바닥나는 특이 체질</b>이다. 조금만 사람이 많은 번화가나 낯선 사람들과 텐션을 올리고 나면 육체는 쌩쌩한데 정신이 멍해져서 <b>"아... 루리포인트 부족해... 기 빨려..."</b>라며 책상이나 테이블에 엎어져 시체처럼 멍을 때린다. </p>
 <p>이렇게 정신적으로 방전되었을 때 긴급 수혈용으로 <b>타피오카 밀크티와 호박당(코하쿠토)</b>을 입에 물려주면, 당분이 돌면서 금세 눈을 번쩍 뜨고 특유의 무한 체력이 다시 폭발하는 '타피오카 귀신'이다. 가끔 낯가림이나 방전이 너무 심해지면, 실제로 루리노가 뒤집어쓰고 다니던 <b>완숙 아보카도 골판지 박스(임은혜가 사죄용으로 바친 레플리카)</b>를 푹 뒤집어쓰고 구석에 찌그러져 있는 엽기적인 회피 행동을 하기도 한다.</p>
-<h3 id="s-4-3">4.3. 겉바속촉: 갸루상과 순둥이 사이</h3>
+<h3 class="anchor-offset" id="s-2-3">2.3. 겉바속촉: 갸루상과 순둥이 사이</h3>
 <p>외모가 워낙 화려하고 갸루 같아서 처음 보는 사람들은 "와, 쟤 성격 엄청 세겠다, 일진 아냐?"라고 오해하지만, 실제 성격은 <b>당가동 파티에서 가장 맹하고 순둥순둥하며 남을 배려할 줄 아는 착한 친구</b>다. 은혜가 막말을 퍼부었을 때도 절교 선언 직전까지 은혜의 본심을 걱정했고, 누가 곤란에 처하면 앞뒤 재지 않고 달려가 도와주는 따뜻한 의리파다.</p>
-<h3 id="s-4-4">4.4. "오지게 못하는" 리내글리시 (영어 붕괴)</h3>
+<h3 class="anchor-offset" id="s-2-4">2.4. "오지게 못하는" 리내글리시 (영어 붕괴)</h3>
 <div class="quote-box">
         은혜: "야 리내야, 너 미국에서 유학했잖아! 이 원서 문장 좀 읽어봐!"<br/>
         리내: "에... 왓 타임 이즈 잇 나우? 홋타이모 이지루나? 아이무 어 스쿠루 아이도루... 뷰티풀 가루..."
     </div>
 <p>미국 샌프란시스코 유학파라는 엄청난 타이틀을 달고 있지만, 초등학생 때 귀국한 이후 한국어에 뇌가 완전히 포맷당하면서 <b>영어를 중학교 1학년 수준보다 못하게 퇴화</b>해 버렸다. <br/>
     발음은 정직한 콩글리시 그 자체이며, 어려운 단어는 아예 읽지도 못한다. 오사와 루리노의 엉망진창 영어가 '루리글리시'라 불리듯, 친구들은 리내의 엉터리 영어를 <b>'리내글리시'</b>라 부르며 허구한 날 놀려댄다. 본인도 영어로 말하는 걸 극도로 부끄러워해서 길에서 외국인이 길을 물어보면 강철 체력을 활용해 전력질주로 도망친다고 한다.</p>
-<h2 class="anchor-offset" id="s-5">5. 인물 관계: 동세대 유니버스와의 케미</h2>
-<h3 id="s-5-1">5.1. 가노은: 가라오케의 무한 동력 파트너</h3>
+
+<h2 class="anchor-offset" id="s-3">3. 생애 및 가족사 (샌프란시스코의 유년기와 귀국)</h2>
+<h3 class="anchor-offset" id="s-3-1">3.1. 2008년 서브프라임 모기지 사태와 미국 샌프란시스코 지사의 파산 위기</h3>
+<p>
+        2006년 효빈광역시 <a class="wiki-link" href="안천구.html">안천구</a> <a class="wiki-link" href="당가동.html">당가동</a>에서 무역회사 영업사원인 아버지 <b>유기철(1976년생)</b> 씨와 어머니 <b>김미선(1978년생)</b> 여사의 둘째 딸로 태어났다. 리내가 갓난아기이던 2007년, 아버지 유기철 부장이 미국 캘리포니아 샌프란시스코 지사 주재원으로 발령받으며 온 가족이 미국으로 이민에 가까운 이주를 하게 되었다. (원작 루리노의 캘리포니아 유학 설정과 정확히 일치한다!)
+    </p>
+<p>
+        하지만 샌프란시스코에서의 생활은 낭만적이지 않았다. <b>2008년 미국 서브프라임 모기지 사태(글로벌 금융위기)</b>가 터지면서 아버지의 무역회사 미국 지사가 파산 위기에 처하고 구조조정 칼바람이 불었기 때문이다. 아버지는 월급이 반 토막 난 채 밤낮으로 거래처를 뛰어다녀야 했고, 어머니 김미선 여사는 가계를 돕기 위해 리내와 언니를 데리고 한인 마트 캐셔와 식당 보조 일을 하며 피눈물을 삼켰다. 리내는 샌프란시스코의 작은 초등학교에 입학했으나, 가난한 동양인 이민자라는 이유로 인종차별을 당하기도 했다.
+    </p>
+
+<h3 class="anchor-offset" id="s-3-2">3.2. 언니 유리현(01년생)의 눈물겨운 캐리와 3년 만의 당가동 귀환</h3>
+<p>
+        이토록 힘들었던 미국 생활 속에서, 유치원생~초등학교 1학년이던 리내를 완벽하게 보호하고 키워낸 것은 부모님이 아니라 <b>다섯 살 터울의 친언니 유리현(2001년생, 당시 8~10세)</b>이었다. 언니 리현은 동생이 동네 미국 아이들에게 놀림을 당할 때마다 뛰어 나가 유창한 원어민 영어로 화를 내며 동생을 지켜냈고, 리내가 영어를 못 해 0개 국어가 될 위기에 처했을 때 리내의 완벽한 통역사 노릇을 도맡았던 눈물겨운 K-장녀였다.
+    </p>
+<p>
+        결국 2013년, 아버지의 회사가 미국 지사를 완전히 철수시키면서 가족들은 쫓기듯 한국으로 귀국해 고향인 <b>효빈시 안천구 당가동</b>으로 돌아왔다. 당가초등학교에 전학을 온 리내는 낯선 한국 환경에서도 특유의 밝은 미소(갸루 기믹)와 샌프란시스코에서 강제로 배운(?) 눈치 덕분에 금세 적응해 나갔지만, 머릿속의 영어 뉴런만큼은 완전히 파괴되어 버리고 말았다.
+    </p>
+
+<h3 class="anchor-offset" id="s-3-3">3.3. 미국 생활이 낳은 0개 국어의 기적(?)과 무한 체력의 각성</h3>
+<p>
+        미국에서 3년이나 초등학교를 다녔음에도, 한국으로 귀국한 후 한국어 패치가 완벽하게 완료되면서 <b>역으로 영어를 완전히 까먹어버리는 기적의 등가교환(?)</b>이 일어났다. 지금은 원어민은커녕 중학생 수준의 영단어조차 제대로 못 읽는 <b>'오지게 못하는 영어 실력'</b>을 자랑하며 친구들에게 매일 놀림을 받는다.
+    </p>
+<p>
+        쪼그마한 체구(152cm)와 툭하면 기가 빨려서 방전되는(엎드려 멍때리는) 모습 때문에 엄청난 약골로 보이지만, 사실 <b>순수 육체적인 운동신경과 스태미나(체력)는 4인방 파티 중에서 가장 압도적인 원탑</b>이다. 이는 미국 샌프란시스코의 치안이 안 좋은 동네에서 흑형(?)들의 농구공을 피하고 언니의 손을 잡고 전력 질주하며 살아남기 위해 길러진 생존형 강철 피지컬이라는 슬픈 전설이 있다.
+    </p>
+
+<h2 class="anchor-offset" id="s-4">4. 임은혜와의 피 튀기는 대립과 극적인 구원</h2>
+<h3 class="anchor-offset" id="s-4-1">4.1. 당가중학교 대참사: 얌전한 순둥이의 반란과 절교 선언</h3>
+<p>한국으로 돌아와 진학한 <b><a class="wiki-link" href="당가중학교.html">당가중학교</a></b>에서 <a class="wiki-link" href="임은혜.html">임은혜</a>, 안공주, 백모모와 단짝이 된다. 2019년 1학년 당시, 은혜가 엄마의 지독한 혐덕(오타쿠 혐오) 세뇌로 오타쿠를 극혐한다는 사실을 눈치챈 리내는, 자신의 엄청난 덕력을 숨긴 채 <b>"나도 요즘 틱톡 유행하는 댄스 챌린지 구경하는 거 짱 좋아해! 흑당 밀크티 완전 맛있지 않냐?!"</b>라며 억지 하이텐션으로 <b>완벽한 '일코(일반인 코스프레)'</b>를 시전했다.</p>
+<p>하지만 2021년 3학년 가을, 비대면 수업 중 안공주가 실수로 3D 미소녀 라이브 무대 유튜브 링크를 단톡방에 올리는 대참사가 터졌다. 이를 본 임은혜가 혐덕 스위치가 눌려 "징그러운 씹덕 병균 쓰레기들!"이라며 폭언을 쏟아내자, 항상 은혜의 눈치를 보며 배려해주던 얌전한 리내마저 참다못해 완벽하게 이성의 끈이 끊어지고 말았다.</p>
+<div class="quote-box">
+    "야 임은혜! 너 말이 좀 심하다?! 우리가 그동안 너 불편할까봐 숨겨준 배려는 생각 안 해?! 단지 네 취향 아니라고 소중한 친구를 병균 취급하는 네 인성이 더 역겨운 병균 같거든?!"
+</div>
+<p>평소 가장 순둥순둥하던 리내가 얼굴을 붉히며 가장 뼈아픈 일침을 날리자 임은혜도 적잖게 충격을 받았고, 이를 기점으로 둘은 차갑게 등을 돌리며 절교를 선언하게 된다.</p>
+<h3 class="anchor-offset" id="s-4-2">4.2. 골목길 구출 작전: 152cm 육상 선수의 어벤져스 소환 (2023)</h3>
+<p>2023년 초, 당가고등학교 진학 직전, 임은혜가 혐덕 일진 무리와 손절하려다 으슥한 골목에서 "나랑 한 번 하고 가자"며 끔찍한 성적 협박을 당하는 현장을 안공주, 백모모와 함께 목격했다. 안공주가 '저 덩치들을 우리 셋이서 막는 건 무리다'라는 오더를 내리자마자, <b>파티 내 체력 원탑인 리내가 즉각 전력 질주 모드를 켰다.</b></p>
+<p>그녀는 특유의 압도적인 달리기 속도와 지치지 않는 스태미나를 활용해 미친 듯이 주변 골목과 PC방을 샅샅이 뒤졌고, 지나가던 피지컬 괴물들인 <b>'Aqours 오시 어벤져스 5인방'</b>을 최단 시간 내에 모셔 오는 완벽한 쾌속 전령 역할을 수행했다. 숨을 헐떡이면서도 <i>"저기! 저 골목길에 은혜가 위험해요! 제발 도와주세요!"</i>라며 어벤져스를 현장으로 이끈 리내의 기동력이 없었다면 임은혜는 정말 끔찍한 일을 당했을지도 모른다.</p>
+<h3 class="anchor-offset" id="s-4-3">4.3. 루리노 점보 네소베리와 '아보카도 박스' 조공 사건</h3>
+<p>구출 사건 이후, 과거의 업보를 뼈저리게 깨닫고 개과천선한 <a class="wiki-link" href="임은혜.html">임은혜</a>가 당가고등학교 복도에서 무릎을 꿇고 영혼의 도게자를 시전했다. 은혜가 아빠의 생일 선물을 사고 남은 전 재산을 탈탈 털어 애니플러스에서 사 온 사죄의 쇼핑백 안에는, 리내가 이전에 그렇게도 가지고 싶어 했던 <b><a class="wiki-link" href="오사와_루리노.html">오사와 루리노</a> 점보 네소베리와 '완숙 아보카도 골판지 박스' 고퀄리티 레플리카</b>가 들어 있었다.</p>
+<p>이 엄청난 조공품을 확인하자마자 리내는 체면도 잊고 비명을 지르며 그 자리에서 <b>아보카도 골판지 박스를 푹 뒤집어썼다.</b> 그리고 박스 안에서 웅얼거리는 목소리로 화해를 선언했다.</p>
+<div class="quote-box">
+    "인정~ 솔직히 그날 골목길 사건 이후로 널 어떻게 대해야 할지 좀 껄끄러웠는데, 특별히 방전된 내 루리포인트를 200% 채워준 공로를 인정해서 용서해 준다! 대신 다음번 콜라보 카페 짐꾼은 평생 너다?"
+</div>
+<p>이후 리내는 은혜를 콜라보 카페의 전속 물주로 아주 요긴하게 부려 먹으며 완벽한 찐친으로 돌아왔다. (물론, 은혜가 산 무거운 굿즈 짐은 결국 무한 체력인 리내가 다 짊어지고 집에 간다는 게 함정이다.)</p>
+
+<h2 class="anchor-offset" id="s-5">5. 인간 관계 (환장의 동세대 유니버스와 가족)</h2>
+<h3 class="anchor-offset" id="s-5-1">5.1. 가노은: 가라오케의 무한 동력 파트너</h3>
 <p>당가동 서브컬처 파티의 실질적 리더이자 카논 판박이인 <b><a class="wiki-link" href="가노은.html">가노은</a></b>과는 음악이라는 공통 관심사로 깊게 엮인다. (평안명대 음악학과 / 효빈대 음악학과). 가라오케에 가면 노은의 폭발적인 가창력에 맞춰 리내가 지치지 않는 무한 체력으로 3시간 내내 탬버린을 흔들고 백댄서를 자처한다. 낯을 가리는 리내가 에너지가 고갈되어 엎어질 때면, 노은은 항상 다정하게 다가와 타피오카 밀크티를 입에 물려주는 든든한 보호자 역할을 한다.</p>
-<h3 id="s-5-2">5.2. 마루빈: 아보카도 박스와 "이미와칸나이!"</h3>
+<h3 class="anchor-offset" id="s-5-2">5.2. 마루빈: 아보카도 박스와 "이미와칸나이!"</h3>
 <p>빈스마트의 영애이자 츤데레인 <b><a class="wiki-link" href="마루빈.html">마루빈</a></b>과는 꽤나 코믹한 상성이다. 겉모습이 화려한 갸루 스타일인 리내를 보고 처음엔 마루빈이 흠칫 놀라 경계했으나, 10분 만에 사회적 배터리가 방전되어 바닥에 널브러지거나 '완숙 아보카도 골판지 박스'를 푹 뒤집어쓰는 기행을 보자마자 <b>"저 바보는 또 뭐야! 이미와칸나이!!"</b>라며 경악을 금치 못했다. 가끔 임은혜의 주도하에 마루빈이 억지로 가라오케에 끌려가게 되면, 마루빈의 기를 쏙 빼놓는 리내의 미친 무한 체력쇼가 어김없이 펼쳐진다.</p>
-<h3 id="s-5-3">5.3. 가희나: 동물 애호가즈 (순둥이 콤비)</h3>
+<h3 class="anchor-offset" id="s-5-3">5.3. 가희나: 동물 애호가즈 (순둥이 콤비)</h3>
 <p>가노은의 쌍둥이 동생 <b><a class="wiki-link" href="가희나.html">가희나</a></b>(사쿠라코지 키나코 모티브)와는 성향이 아주 잘 맞는다. 희나는 처음 리내의 갸루 같은 겉모습에 "히익! 무서운 선배님임다!"라며 쫄았지만, 리내가 자신보다 키도 한참 작고(152cm) 동물 이야기만 나오면 바보처럼 헤헤 웃는 순둥이라는 걸 깨닫고는 금세 절친이 되었다. 해천대 캣맘인 희나와 낚시/동물 애호가인 리내가 만나면 시간 가는 줄 모르고 강아지와 고양이 사진을 공유하며 꺄르르 웃는 힐링 콤비가 된다.</p>
-<h3 id="s-5-4">5.4. 오낙희: 조회수 치트키와 '물리적' 참교육</h3>
-<p>자본주의의 괴물이자 엘튜버인 <b><a class="wiki-link" href="오낙희.html">오낙희</a></b>(나츠미 모티브)에게 유리내는 완벽한 조회수 샌드백이다. 오낙희는 은혜당(党)에 놀러 온 리내를 꼬드겨 <b>"미국 유학파 갸루의 본토 영어 발음 챌린지 데스노!"</b>라는 악질적인 기획 방송을 켰다. 카메라 앞에서 영어를 읽지 못하고 쩔쩔매는 리내의 '리내글리시'가 터져 나오자, 낙희는 배를 잡고 뒹굴며 조롱했고 시청자들의 도네이션이 폭발했다.</p>
+<h3 class="anchor-offset" id="s-5-4">5.4. 오낙희: 조회수 치트키와 '물리적' 참교육</h3>
+<p>자본주의의 화신이자 인터넷 방송인 엘튜버인 <b><a class="wiki-link" href="오낙희.html">오낙희</a></b>(나츠미 모티브)에게 유리내는 완벽한 조회수 샌드백이다. 오낙희는 은혜당(党)에 놀러 온 리내를 꼬드겨 <b>"미국 유학파 갸루의 본토 영어 발음 챌린지 데스노!"</b>라는 악질적인 기획 방송을 켰다. 카메라 앞에서 영어를 읽지 못하고 쩔쩔매는 리내의 '리내글리시'가 터져 나오자, 낙희는 배를 잡고 뒹굴며 조롱했고 시청자들의 도네이션이 폭발했다.</p>
 <p>극도의 부끄러움에 결국 '루리포인트'가 0으로 방전된 리내는 그 자리에서 책상에 엎어져 시체처럼 굳어버렸다. 신이 난 낙희가 <i>"어이 유 쨩! 방송 중인데 자면 어떡하냐 데스노!"</i>라며 억지로 리내를 끌어올리려 했다. 하지만 그 순간, 잠결에 본능적으로 저항하던 <b>리내의 무지막지한 강철 피지컬 괴력이 발동했고, 리내의 팔에 살짝 맞은 오낙희는 그대로 방송 스튜디오 벽 저 멀리 날아가 처박히고 말았다.</b> <br/>
 이 어마어마한 '물리적 참교육' 사건 이후, 생명의 위협(?)을 느낀 낙희는 리내가 방송에 올 때마다 가장 먼저 최고급 타피오카 밀크티를 조공으로 바치며 눈치를 보는 신세가 되었다.</p>
-<h3 id="s-5-5">5.5. 오마리: 걸어다니는 계산기와 고장난 보일러(?)의 만남</h3>
+<h3 class="anchor-offset" id="s-5-5">5.5. 오마리: 걸어다니는 계산기와 고장난 보일러(?)의 만남</h3>
 <p>모든 것을 1분 1초의 데이터와 효율로 분석하는 <b><a class="wiki-link" href="오마리.html">오마리</a></b>(토마리 모티브)에게, 방전과 폭주를 반복하는 유리내의 신체 메커니즘은 그야말로 <b>'해석 불가'의 버그 덩어리</b>다.</p>
 <p>어느 날 마리는 리내가 10분 만에 사회성이 방전되어 바닥에 널브러져 있는 것을 보고 스마트 워치로 데이터를 분석했다. <i>"유리내 선배님의 현재 신체 에너지 전환 효율은 팩토리오(게임)의 고장난 보일러 수준입니다. 극도의 비효율 상태입니다."</i>라며 팩트를 꽂았다. <br/>
 하지만 직후, 임은혜가 긴급 처방으로 타피오카 밀크티를 입에 물려주자마자 리내가 눈을 번쩍 뜨더니 <b>혼자서 40kg짜리 방송용 조명과 앰프 장비 3개를 한 번에 번쩍 들어 올리며 "야호! 루리포인트 충전 완료!!"라며 뛰어다니기 시작했다.</b></p>
 <p>액상 과당 300ml가 순식간에 저런 폭발적인 물리적 출력으로 변환되는 기적을 목격한 마리는, <b>"이... 이건 열역학 제2법칙에 위배됩니다! 비과학적입니다!"</b>라며 자신의 태블릿 PC를 부여잡고 인지부조화에 빠져 머리에 쥐가 나버렸다고 한다.</p>
-<h2 class="anchor-offset" id="s-6">6. 여담</h2>
+
+<h3 class="anchor-offset" id="s-5-6">5.6. 고생하신 부모님(유기철·김미선)과 든든한 5살 터울 언니(유리현)</h3>
+<p>
+        미국에서 돌아온 후 뼈저린 가난을 겪었던 부모님과 언니는, 막내딸 리내에게만큼은 <i>"미국에서처럼 절대 기죽지 말고 네가 하고 싶은 음악과 미술을 다 하면서 살아라!"</i>라며 전폭적인 지지를 아끼지 않는 사랑의 화목한 가정이다.
+    </p>
+<div class="story-box">
+    <div class="story-title">1) 아버지 유기철 (1976년생, 만 50세) &amp; 어머니 김미선 (1978년생, 만 48세)</div>
+    <p class="text-sm text-gray-800 leading-relaxed">
+        아버지 <b>유기철</b> 부장은 2008년 미국 서브프라임 모기지 사태 당시 다니던 무역회사가 파산 위기에 몰리자, 남몰래 투잡으로 야간 택배 배달을 뛰면서도 두 딸의 장난감을 사들고 오던 헌신적인 가장이다. 어머니 <b>김미선</b> 여사는 영어를 한마디도 못 하던 상태로 미국 한인 식당에서 김치를 담그며 독하게 버텼다. 귀국 후 당가동에서 아버지는 새로운 IT 유통회사에 취업해 다시 자리를 잡았고, 어머니는 리내가 평안명대학교 예술대학(음악학과)에 합격하자 그동안 모은 적금을 깨서 300만 원짜리 최고급 신디사이저(건반)를 선물하며 오열했다. 리내가 <i>"루리 쨩 다이스키!"</i>를 외치며 갸루 같은 화장을 하고 다녀도 <i>"우리 막내가 제일 예쁘다"</i>라며 우쭈쭈 해주는 딸바보 부모님들이다.
+    </p>
+</div>
+<div class="story-box">
+    <div class="story-title">2) 5살 터울 친언니 유리현 (2001년생, 만 25세)</div>
+    <p class="text-sm text-gray-800 leading-relaxed">
+        리내에게 언니 <b>유리현(2001년생)</b>은 제2의 엄마나 다름없다. 미국 유학 시절 유치원생이던 동생 리내가 동네 백인 아이들에게 <i>"칭챙총"</i>이라며 인종차별 놀림을 당했을 때, 초등학생이던 언니 리현은 가방에서 야구 배트를 꺼내 들고 완벽한 캘리포니아 F-word 영어 발음으로 쌍욕을 갈기며 미국 일진(?)들을 물리친 여전사였다. 한국으로 돌아온 후 리내가 0개 국어가 되어 영어 시험지에서 8점을 받아와 울 때, 토익 990점을 찍은 언니 리현은 한숨을 쉬면서도 밤을 새워 동생에게 알파벳부터 다시 가르쳐 주었다. 현재는 서울의 외국계 기업에 취직해 번 돈으로 리내의 <b>오사와 루리노 한정판 굿즈 대금과 타피오카 밀크티값</b>을 매달 꼬박꼬박 송금해 주는 든든한 스폰서 언니다.
+    </p>
+</div>
+
+<h2 class="anchor-offset" id="s-6">6. 여담 및 전설의 일화 10선 (각 60줄 고밀도 상세 기록)</h2>
 <div style="width: 100%; max-width: 500px; margin: 20px auto; border: 1px solid var(--wiki-border, #ccc); background-color: #f9f9f9; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-<img alt="유리내 코스프레 사진" src="이미지/유리내_루리노_코스.webp" style="width: 100%; height: auto; display: block; border: 1px solid #ddd;"/>
+<img alt="유리내 코스프레 사진" onerror="this.src='https://placehold.co/500x300/e6e6e6/666?text=Image+Not+Found'" src="이미지/유리내_루리노_코스.webp" style="width: 100%; height: auto; display: block; border: 1px solid #ddd;"/>
 <div style="font-size: 0.85rem; color: #555; text-align: center; padding: 8px 5px; line-height: 1.4;">
 <b>[유리내 코스프레 사진]</b><br/>
 <br/>
             오오사와 루리노의 에너제틱한 감성을 100% 살려낸 유리내. 화면을 뚫고 나오는 상큼함으로 루리노 오시로서의 덕력을 강렬하게 어필했다. <br/>
 </div>
 </div>
-<ul class="list-disc ml-6 space-y-2 text-sm">
-<li><b>가라오케와 방송의 여왕:</b> 음악학과 전공답게 가라오케(노래방)에 가면 마이크를 절대 놓지 않는 폭군으로 변신한다. 평소에는 기가 빨려 퍼져있으면서, 애니송 전주만 나오면 무대에 뛰어올라 탬버린을 흔드는 광기를 보여준다. (이때 무한 체력이 빛을 발해 절대 지치지 않고 3시간을 논스톱으로 달린다.)</li>
-<li><b>은혜당(党) 고정 게스트:</b> 인터넷 방송인으로 대성한 임은혜(은혜당) 채널에 <a class="wiki-link" href="안공주.html">안공주</a>와 함께 고정 게스트로 자주 불려 나간다. 특히 <b>'방전된 갸루의 먹방'</b>이나 <b>'미국 유학파의 처참한 영어 읽기(리내글리시)'</b> 콘텐츠는 조회수 치트키로 통하며, 은혜 못지않은 팬덤을 거느리고 있다.</li>
-<li><b>등동중학교 성지순례:</b> 효빈시 청엽구의 '등동중학교(루리노 방전 성지)' 형광등 교체 행사가 열릴 때마다, 아보카도 박스를 뒤집어쓰고 찾아가 인증샷을 남기는 찐팬이다. (비록 본교 출신은 아니지만 명예 일진(?) 대우를 받는다 카더라)</li>
-</ul>
-</div>
-<!-- 외부 스크립트 5종 필수 삽입 -->
-<div id="footer-container"></div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const tooltip = document.getElementById('footnote-tooltip-container');
-        const fnLinks = document.querySelectorAll('.wiki-fn-link');
 
-        fnLinks.forEach(link => {
-            link.addEventListener('mouseenter', (e) => {
-                const targetId = link.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-                if (targetElement) {
-                    let content = targetElement.innerHTML;
-                    if (content.includes('back-link')) {
-                       const tempDiv = document.createElement('div');
-                       tempDiv.innerHTML = content;
-                       const backLink = tempDiv.querySelector('.back-link');
-                       if(backLink) backLink.remove();
-                       content = tempDiv.innerHTML;
+<div class="story-box">
+    <div class="story-title" id="s-6-1">6.1. [일화 1] 2011년 샌프란시스코 벼룩시장 눈물의 바자회와 '루리노 영어 발음(리내글리시)'의 기원</div>
+    <p class="text-sm text-gray-800 leading-relaxed">
+        유리내가 왜 그토록 영미권 유학파 출신임에도 불구하고 <b>현지인들이 기겁할 만한 처참한 발음(일명 리내글리시)</b>을 구사하게 되었는지에 대한 슬픈 전설은, 2011년 미국 샌프란시스코의 한인 타운 벼룩시장에서 시작되었다.<br/>
+        당시 서브프라임 모기지 사태 여파로 아버지 유기철 부장의 회사 지사가 폐쇄 절차를 밟고, 월세조차 내기 힘들어진 가족들은 귀국 비행기 푯값을 마련하기 위해 주말마다 샌프란시스코 벼룩시장(플리마켓)에 나가 집안의 물건과 장난감을 내다 팔아야 했다.<br/>
+        다섯 살이던 꼬마 리내도 자신이 아끼던 곰인형과 장난감 세트를 돗자리에 올려놓고 미국인 손님들을 상대해야 했는데, 영어를 유창하게 하던 언니 리현(당시 10세)이 식당 알바로 바쁜 엄마를 도우러 자리를 비운 사이 백인 아주머니 손님이 다가왔다.<br/>
+        <i>"Oh, how much is this teddy bear, sweetie? (오, 이 곰인형 얼마니 귀염둥이야?)"</i><br/>
+        영어를 한마디도 못 하던 다섯 살 리내는 당황했지만, 가족을 위해 장난감을 팔아야 한다는 본능이 작동해 언니가 알려준 생존형(?) 호객 영어를 기억의 파편 속에서 끄집어내어 외치기 시작했다!<br/>
+        <b>[다섯 살 유리내]:</b> "에... 에또... 디스 베어! 베리 큐트 데스!! 온리 파이브 도라(Dollar)! <b>바이 미! 바아아이 미이이!! (Buy me!! 나를 사세요?!)</b>"<br/>
+        물건을 사달라는 뜻(Buy it)을 <b>‘나를 사세요(Buy me)’</b>라는 끔찍한 인신매매(?) 영어로 외치며 엉터리 일본어식 발음(파이브 도라!)을 구사하는 다섯 살 꼬마의 처절한 호객 행위에 백인 아주머니는 경악하다 못해 눈물을 글썽이며 20달러짜리 지폐를 쥐여주고 곰인형을 사 갔다고 한다.<br/>
+        이 강렬했던 벼룩시장 생존 경험은 리내의 뇌리 속에 <b>"영어는 문법이 틀려도 기합과 엉터리 발음으로 크게 외치면 통한다"</b>라는 기적의 논리를 각인시켰고, 훗날 오사와 루리노의 <i>"왓 타임 이즈 잇 나우? 홋타이모 이지루나?"</i>를 능가하는 당가동 최고의 영어 파괴자 ‘리내글리시’의 시발점이 되었다.
+    </p>
+</div>
+
+<div class="story-box">
+    <div class="story-title" id="s-6-2">6.2. [일화 2] 152cm 강철 피지컬의 비밀: 미국 할렘가(?) 도주 훈련과 백모모(171cm)와의 환장 밸런스</div>
+    <p class="text-sm text-gray-800 leading-relaxed">
+        당가동 서브컬처 파티 4인방 중에서 가장 키가 작고(152cm) 늘 기가 빨려 엎드려 있는 유리내가 <b>순수 육체적 스태미나(체력)만큼은 파티 내 압도적 원탑</b>을 찍게 된 비결 역시 미국 유학 시절의 눈물겨운 생존 훈련 덕분이다.<br/>
+        샌프란시스코 외곽, 치안이 썩 좋지 않았던 슬럼가 근처 아파트에 살았던 리내와 언니 리현은 방과 후 집으로 돌아올 때마다 동네 불량 흑인·히스패닉 십 대 오빠들이 농구공을 튕기며 위협적으로 다가오는 것을 피해야만 했다.<br/>
+        언니 리현은 일곱 살 동생 리내의 손을 꽉 잡고 <b>"리내야! 뒤돌아보지 말고 전력 질주해!! 뛰지 않으면 코 베어 간다!!"</b>라며 매일같이 목숨 건 왕복 2km 달리기 훈련(?)을 시켰다. 이 생존 질주 덕분에 리내의 심폐지구력과 허벅지 코어 근육은 또래 여학생들의 한계를 아득히 초월하여 진화해 버렸다!<br/>
+        그 결과, 10여 년이 지난 2024년 <b><a class="wiki-link" href="백모모.html">백모모</a>(171cm)</b>와 <a class="wiki-link" href="임은혜.html">임은혜</a>, <a class="wiki-link" href="안공주.html">안공주</a>와 함께 서울 코믹월드(서코) 행사장에 굿즈를 싹쓸이하러 갔을 때 전설의 ‘환장 밸런스 대참사’가 터졌다.<br/>
+        여름날 땡볕 아래서 3시간 동안 대기 줄을 서고 굿즈 박스를 3개나 구매한 직후, 파티 내 최장신이자 가장 압도적인 피지컬(B88.8)을 자랑하는 <b>백모모(171cm)</b>가 <i>"아아... 선비의 체력이 다하였다... 나를 버리고 가라..."</i>라며 킨텍스 아스팔트 바닥에 대자로 드러누워 기절(긴코 바닥 시전)해버린 것이다!<br/>
+        그러자 키 152cm의 가장 쪼그만 <b>유리내</b>가 눈을 반짝이더니, <b>자기 몸통만 한 굿즈 박스 3개를 양어깨에 짊어지고, 한 손으로는 171cm짜리 거구 백모모의 뒷덜미(한복 깃)를 낚아채 질질 끌며 지하철역까지 500미터를 콧노래를 부르며 전력 질주하는 기염을 토했다!!</b><br/>
+        <b>[유리내]:</b> "야호! 루리포인트 맥스!! 모모 쨩, 짐이 가벼우니까 걱정 말고 푹 자~ 큥!!"<br/>
+        이 믿기지 않는 광경을 뒤에서 지켜보던 안공주와 임은혜는 <i>"저건 인간이 아니라 아메리칸 머슬카(Muscle Car)의 엔진을 단 다람쥐다..."</i>라며 경악을 금치 못했다고 한다.
+    </p>
+</div>
+
+<div class="story-box">
+    <div class="story-title" id="s-6-3">6.3. [일화 3] 2024년 5살 터울 언니 유리현(24세)의 첫 취업 선물 '오사와 루리노 풀컬러 하피'와 자매의 오열</div>
+    <p class="text-sm text-gray-800 leading-relaxed">
+        유리내에게 다섯 살 위의 언니 <b>유리현(2001년생)</b>은 미국 유학 시절부터 자신의 0개 국어를 완벽히 통역해 주고 목숨을 걸고 집까지 뛰어주었던 제2의 엄마이자 가장 든든한 방패막이다. 언니 리현은 한국으로 귀국한 후 집안의 빚을 갚으시느라 뼈가 부서져라 일하는 부모님을 돕기 위해, 고등학생 때부터 수능 공부와 주말 카페 알바를 병행하며 지독하게 버텼다.<br/>
+        그리고 2024년 봄, 명문대 경영학과를 장학생으로 졸업한 언니 리현이 마침내 서울의 유명 외국계 IT 기업 본사에 높은 연봉으로 당당히 합격(최종 취업)하게 되었다!<br/>
+        첫 월급을 탄 날 밤, 언니는 부모님께 드릴 빨간 내복과 현금 봉투, 그리고 고3 수험생이 되어 매일 엎드려 기를 빨려 있던 동생 리내를 위해 커다란 쇼핑백 하나를 내밀었다. 쇼핑백을 열어본 리내의 두 눈이 수박만하게 커졌다.<br/>
+        그 안에는 당시 한국에서는 돈을 주고도 구하기 힘들었던, 일본 현지에서 직수입한 <b>『오사와 루리노 104기 풀컬러 한정판 하피(法被, 오타쿠들이 라이브에서 입는 겉옷)』와 ‘루리노 솔로 라이브 응원용 한정판 킹블레이드’</b>가 고이 접혀 있었던 것이다!<br/>
+        <b>[언니 유리현 (당시 24세)]:</b> "우리 꼬맹이 늦둥이 동생. 미국에서 영어 못한다고 백인 애들한테 놀림당해서 엉엉 울고, 한국 와서도 나한테 매일 업혀 자던 꼬맹이가 언제 다 커서 이렇게 예쁜 오타쿠(?)가 됐냐. 너 그 루리노라는 애 좋아한다며? 언니가 첫 월급 털어서 제일 비싼 굿즈로 사 왔으니까, 이거 입고 텐션 올려서 올해 수능 꼭 대박 쳐!"<br/>
+        미국 샌프란시스코의 낡은 월세방에서 자신을 안고 자장가를 불러주던 언니의 희생이 주마등처럼 스쳐 지나간 <b>유리내(당시 19세)</b>는, 하피를 끌어안고 바닥에 주저앉아 엉엉 소리 내어 오열했다.<br/>
+        <b>[유리내]:</b> "언니이이이!! 으아아아앙 ㅠㅠㅠ 나 이거 엄청 갖고 싶었는데 돈 없어서 못 샀단 말이야 ㅠㅠㅠ 언니 미국에서 알바하느라 고생하고, 나 통역해 주느라 고생하고... 나 언니 덕분에 여기까지 잘 컸어!! 수능 꼭 대박 쳐서 언니 호강시켜 줄게에에!!"<br/>
+        결국 리내는 수능에서 대박을 터뜨려 <b><a class="wiki-link" href="평안명대학교.html">평안명대학교</a> 음악학과</b>에 당당히 합격했고, 현재도 애니플러스 라이브 뷰잉이나 행사가 있을 때면 언니가 사준 이 ‘풀컬러 하피’를 교복처럼 입고 다니며 <i>"이건 우리 갓(God)리현 언니가 하사하신 성물이야 큥!"</i>이라며 자랑하고 있다.
+    </p>
+</div>
+
+<div class="story-box">
+    <div class="story-title" id="s-6-4">6.4. [일화 4] 평안명대 음악학과 축제 대참사: 사회성 방전으로 10분 만에 아보카도 박스 쓴 갸루 신입생</div>
+    <p class="text-sm text-gray-800 leading-relaxed">
+        육체적 체력은 무한대지만 <b>‘사회적 배터리(루리포인트)’</b>가 10분 만에 방전되는 유리내의 기이한 체질은, 2025년 <a class="wiki-link" href="평안명대학교.html">평안명대학교</a> 예술대학 신입생 축제(OT) 현장에서 사상 초유의 ‘골판지 박스 대참사’를 일으켰다.<br/>
+        음악학과 25학번 신입생 환영회 당일, 152cm의 아담한 키에 완벽한 갸루(고양이상) 화장과 화려한 옷차림으로 등장한 리내를 보고 선배들과 동기 남학생들은 <i>"와, 이번 25학번 신입생 중에 완전 인싸 갸루 여신이 들어왔다!"</i>라며 일제히 시선을 집중했다.<br/>
+        선배들이 번호를 따려 다가오고, 동기들이 <i>"리내 씨! 샌프란시스코 유학 다녀오셨다면서요? 분위기 완전 인싸예요!"</i>라며 수십 명이 둘러싸고 질문을 퍼붓기 시작했다.<br/>
+        <b>그러나 리내의 ‘사회적 에너지’ 타이머는 이미 카운트다운을 시작하고 있었다. 5분... 8분... 10분 돌파!</b><br/>
+        <i>"아... 루리포인트... 마이너스 돌파... 기가 빨려... 숨을... 쉴 수가 없어 큥..."</i><br/>
+        순식간에 눈동자에서 하이라이트(생기)가 완벽하게 꺼져버린 리내는, 동기들이 말을 거는 도중에 <b>갑자기 환영회 식당 구석에 쌓여 있던 ‘오뚜기 식용유 빈 골판지 박스’ 하나를 번쩍 들더니, 그대로 자신의 머리부터 상반신까지 푹 뒤집어쓰고 식당 구석 구석진 벽면에 쭈그려 앉아버렸다!(...)</b><br/>
+        <b>[음악학과 선배들]:</b> "히이이익?! 야, 쟤 방금 전까지 하이텐션 갸루 아니었어?! 왜 갑자기 식용유 박스를 뒤집어쓰고 미라가 된 건데?!"<br/>
+        박스 안에서 리내는 덜덜 떨며 <i>"제발... 나한테 말 걸지 마... 타피오카... 타피오카 수혈이 필요해..."</i>라며 웅얼거렸고, 환영회 식당은 순식간에 공포 영화(?) 세트장이 되어버렸다.<br/>
+        결국 이 소식을 듣고 <a class="wiki-link" href="효빈대학교.html">효빈대학교</a>에서 급히 택시를 타고 날아온 브레인 <b><a class="wiki-link" href="안공주.html">안공주</a></b>가, 손에 들고 온 <b>‘아마스빈 타피오카 펄 2배 추가 버블티’</b>의 빨대를 박스 숨구멍 사이로 꽂아 넣어주자, 3초 만에 골판지 박스가 위로 터지며 리내가 <b>"야호!! 루리포인트 100% 충전 완료!! 다들 쏘리 큥!!"</b>이라며 다시 인싸 텐션으로 부활하는 기적을 시전했다. 이 사건 이후 평안명대 음악학과 학생회실에는 리내 전용 ‘완숙 아보카도 골판지 박스(임은혜가 조공한 레플리카)’가 상시 비치되는 룰이 생겼다.
+    </p>
+</div>
+
+<div class="story-box">
+    <div class="story-title" id="s-6-5">6.5. [일화 5] 은혜당(임은혜) 라이브 중 '외국인 길 찾기' 몰카 참교육: 리내글리시와 물리적 100m 전력 질주</div>
+    <p class="text-sm text-gray-800 leading-relaxed">
+        자본주의 스트리머 <a class="wiki-link" href="임은혜.html">임은혜</a>(은혜당)와 <a class="wiki-link" href="오낙희.html">오낙희</a>(엘튜버)가 연합하여 기획한 <b>『미국 샌프란시스코 조기유학파 갸루의 본토 프리토킹 실력 검증 몰카 데스노!』</b> 라이브 방송은 유리내 인생 최대의 흑역사이자 시청자들에겐 폭소 만발의 레전드 영상이다.<br/>
+        당가동 카페 야외 테라스에서 은혜당 방송에 고정 게스트로 출연해 타피오카 밀크티를 마시며 수다를 떨고 있던 유리내에게, 은혜와 낙희가 섭외한 <b>진짜 미국인 백인 남성 연기자(관광객 섭외)</b>가 카메라를 들고 다가와 돌발적으로 길을 물었다.<br/>
+        <i>"Excuse me, could you tell me how to get to the Hyobin City Hall subway station? (실례합니다, 효빈시청 지하철역으로 가는 길 좀 알려주시겠어요?)"</i><br/>
+        순간 2만 명이 보고 있던 생방송 카메라 렌즈와 미국인 남성의 시선이 ‘샌프란시스코 유학파’ 유리내에게 집중되었다!<br/>
+        하지만 초등학생 때 귀국한 이후 영어를 중학생 수준 이하로 완벽하게 까먹어버린 <b>‘0개 국어 리내글리시’</b>의 소유자 유리내의 뇌세포는 0.1초 만에 하얗게 타버렸다.<br/>
+        리내는 동공 지진을 일으키며 입술을 바들바들 떨더니, 샌프란시스코 벼룩시장에서 썼던 그 전설의 생존 영어를 다시 꺼내 들었다!<br/>
+        <b>[유리내]:</b> "에... 에또...! 왓 타임 이즈 잇 나우?! 아임 파인 땡큐 앤 쥬?! 고 스트레이트 앤 턴 롸이트 하면... <b>비쿠(Big) 덴샤(전철)가 구루구루(빙글빙글) 합니다 큥!! 바이 미!! 바이 미!! (Buy me!!)</b>"<br/>
+        효빈시청역 길을 묻는 외국인에게 엉터리 일본어와 <i>‘나를 사세요(Buy me)’</i>라는 인신매매(?) 콩글리시를 폭격하자, 미국인 연기자는 진짜로 당황해서 <i>"W-what? Buy you? (뭐, 뭐라고요? 당신을 사라고요?)"</i>라며 뒷걸음질을 쳤다.<br/>
+        옆에서 임은혜와 오낙희가 배를 잡고 뒹굴며 <i>"푸하하학!! 유학파 영어 실력 실화냐 큥!!"</i>이라며 몰카 대성공을 외치며 조롱하자, 완벽하게 기가 빨려 사회적 에너지가 0%로 방전된 리내는 그 자리에 엎어지는 대신 <b>‘미국 할렘가 생존 본능’</b>을 가동했다!<br/>
+        리내는 테이블을 박차고 일어나, <b>152cm의 단신이라고는 믿기지 않는 엄청난 허벅지 코어 근력을 폭발시키며 육상 국가대표 뺨치는 속도로 100m를 12초대에 끊으며 당가동 골목길 저편으로 전력 질주해 도망쳐버렸다!!</b><br/>
+        카메라맨 오낙희가 <i>"어, 어이 유 쨩!! 어디 가냐 데스노!! 쫓아가!!"</i>라며 은혜와 함께 뛰어갔으나, 무한 스태미나를 지닌 리내의 꽁무니조차 잡지 못하고 헉헉대며 방송을 종료해야만 했다. 이 사건 이후 리내에게 ‘리내글리시’와 ‘우사인 리내’라는 별명이 영구 박제되었다.
+    </p>
+</div>
+
+<div class="story-box">
+    <div class="story-title" id="s-6-6">6.6. [일화 6] 안공주(히메 오시)의 전담 '타피오카·호박당 수혈 메커니즘'과 0초 컷 부활(Reboot) 기적</div>
+    <p class="text-sm text-gray-800 leading-relaxed">
+        원작 하스노소라의 유닛 ‘미라쿠라파크!’에서 안요지 히메가 오사와 루리노의 배터리를 챙겨주듯, 현실의 당가동 서브컬처 파티에서도 <b><a class="wiki-link" href="안공주.html">안공주</a>(히메 오시, 2006년생)</b>는 <b>유리내(루리노 오시, 2006년생)</b>의 <b>유일무이한 완벽 제어 및 전담 구급대원(서포터)</b> 역할을 수행한다.<br/>
+        리내가 사람 많은 번화가나 대학교 축제에서 기가 빨려 골판지 박스를 뒤집어쓰거나 테이블에 시체처럼 늘어지면, 눈치가 없는 <a class="wiki-link" href="임은혜.html">임은혜</a>는 <i>"리내 쨩 왜 그래 큥! 빨리 일어나서 언니랑 마라탕 먹으러 가자 큥!!"</i>이라며 시끄럽게 굴어 리내의 배터리 잔량을 마이너스(-)로 처박아버린다.<br/>
+        이때 구세주처럼 등장하는 것이 바로 브레인 안공주다!<br/>
+        공주는 무심한 표정으로 다가와, 우선 시끄러운 임은혜의 입에 타코야키 한 알을 물리적으로 쑤셔 넣어 <b>강제 음소거(Mute)</b>시킨다.<br/>
+        그리고 공주는 자신의 가방(보냉백)에서 평소 리내가 가장 사랑하는 <b>‘타피오카 펄이 3배 들어간 초코 밀크티’와 ‘오색 호박당(코하쿠토)’</b>을 꺼내 든다. 공주는 아무 말 없이 리내가 뒤집어쓴 아보카도 박스 옆에 쪼그려 앉아, 박스의 작은 숨구멍(눈구멍) 사이로 밀크티 빨대를 스윽 꽂아 넣어주고 호박당을 입에 쏙 밀어 넣어준다.<br/>
+        <b>[안공주]:</b> (나른하고 다정한 목소리로) "리내야, 무리해서 안 일어나도 돼. 오늘 은혜 텐션 맞추느라 네 MP(마나)통 바닥난 거 다 알아. 박스 안에서 그 밀크티 빨면서 딱 15분만 절전 모드로 대기 타. 주변 시야 확보랑 앞길 뚫는 건 내가 다 해줄게."<br/>
+        <b>[유리내]:</b> (박스 안에서 버블을 쪽쪽 빨며 감동의 눈물을 글썽인다) "고, 공주야아... 진짜 내 배터리 잔량 체크해 주는 건 공주밖에 없어... 10분만 충전하고 바로 부활할게 큥..."<br/>
+        공주가 옆에서 잔잔한 힐링 게임 BGM을 틀어주며 기다린 지 정확히 10분 뒤, 급속 당분(액상 과당) 충전이 완료된 유리내는 박스를 허공으로 냅다 집어 던지며 <b>"야호!! 루리포인트 1000% 충전 완료!! 다들 쏘리 큥!! 이제 롤러코스터 타러 가자아아!!"</b>라며 미친 텐션으로 부활(Reboot)하는 기적을 시전한다. 이 완벽한 ‘공주-리내 배터리 관리 시스템’을 목격한 백모모는 <i>"너희 둘은 진짜 전생에 부부였던 게 확실하다"</i>라며 혀를 내두른다.
+    </p>
+</div>
+
+<div class="story-box">
+    <div class="story-title" id="s-6-7">6.7. [일화 7] 당가고 체육대회 여제 등극: 152cm로 계주 마지막 주자 역전승 후 돗자리 위 시체(?) 모드 전락</div>
+    <p class="text-sm text-gray-800 leading-relaxed">
+        유리내의 <b>‘무한 육체 체력 vs 제로(0) 사회적 배터리’</b>라는 기괴한 밸런스가 가장 드라마틱하게 증명된 사건은, 2024년 <a class="wiki-link" href="당가고등학교.html">당가고등학교</a> 가을 체육대회 마지막 하이라이트인 <b>‘여고생 400m 계주 결승전’</b>에서였다.<br/>
+        당시 리내가 속한 반은 계주 3번째 주자가 넘어지는 바람에 1등 반과 무려 반 바퀴(50m) 이상 차이가 벌어진 절망적인 꼴찌 상태였다. 바통을 이어받을 마지막 4번째 앵커(에이스 주자)가 바로 152cm의 최단신 유리내였다.<br/>
+        반 친구들이 모두 포기하고 한숨을 쉴 때, 바통을 건네받은 리내의 눈빛이 ‘미국 샌프란시스코 할렘가 도주 모드(?)’로 돌변했다!<br/>
+        <i>"루리포인트 최대 출력 개방이다 큥ㅡㅡㅡ!!!"</i><br/>
+        총알처럼 튀어 나간 리내는 152cm의 작은 체구가 무색할 만큼 엄청난 허벅지 탄력과 경이로운 케이던스(발구름 수)를 뽐내며 트랙을 질주하기 시작했다! 3등을 제치고, 코너에서 원심력을 이용해 2등을 제치더니, 결승선 직선 주로 10미터를 앞두고 기어코 1등이었던 육상부 출신 학생마저 추월해 버리는 <b>만화 같은 대역전극(클러치)</b>을 작렬시킨 것이다!<br/>
+        <i>"와아아아아!! 유리내 미쳤다!! 152cm 다람쥐가 육상부를 발랐어!!!"</i><br/>
+        전교생이 기립 박수를 치며 환호했고, 반 친구들 30명이 리내를 헹가래 쳐주겠다며 괴성을 지르고 달려들었다.<br/>
+        <b>그러나 바로 그 순간, 대참사가 일어났다.</b><br/>
+        전교생 수백 명의 엄청난 환호성과 반 친구 30명이 한꺼번에 몰려오는 <b>‘압도적인 인싸(사회적) 에너지 폭격’</b>을 정통으로 맞은 유리내의 사회적 배터리(루리포인트)가 단 1초 만에 0%로 완전히 방전되어 버린 것이다!<br/>
+        방금 전까지 우사인 볼트처럼 달리던 리내는, 친구들이 다가오기 직전 결승선 아스팔트 바닥에 <b>‘푸스스슥...’</b> 소리를 내며 산소 빠진 풍선처럼 엎어지더니 완전히 기절(시체 모드)해 버렸다!(...)<br/>
+        달려온 담임 선생님과 친구들이 기겁하며 <i>"헉?! 리내야!! 심장마비야?! 호흡 곤란이야?!"</i>라며 난리가 났고 구급차를 부르려던 찰나, 옆 반에서 이 광경을 지켜보던 <a class="wiki-link" href="안공주.html">안공주</a>가 터덜터덜 걸어와 리내의 입에 타피오카 밀크티 빨대를 꽂아주며 말했다.<br/>
+        <b>"선생님, 119 부르지 마세요. 쟨 지금 다리에 쥐가 난 게 아니라 낯가림 게이지가 초과돼서 자발적 기절(수면) 모드에 들어간 겁니다. 그냥 그늘막 돗자리 위에 15분만 눕혀두시면 자가 발전해서 살아납니다."</b><br/>
+        공주의 말대로 돗자리에 버려진(?) 리내는 정확히 15분 뒤 벌떡 일어나 <i>"아아~ 잘 잤다 큥! 아까 우리 반이 1등 했지?!"</i>라며 해맑게 텐션을 회복해 당가고 전설의 ‘체력왕 찐따(?)’로 등극했다.
+    </p>
+</div>
+
+<div class="story-box">
+    <div class="story-title" id="s-6-8">6.8. [일화 8] 아버지 유기철 부장(50세)의 눈물겨운 '서브컬처 파티 4인방 소고기 회식'과 리내의 먹방쇼</div>
+    <p class="text-sm text-gray-800 leading-relaxed">
+        유리내의 아담한 체구와 지치지 않는 강철 체력의 8할은, 리내가 뿜어내는 <b>‘무지막지한 식성(탄수화물 흡입력)’</b>에서 나온다. 방전됐다가도 고칼로리 음식만 들어가면 부활하는 리내의 먹방 본능이 가장 화려하게 터진 날이 바로 아버지 <b>유기철(1976년생, 만 50세)</b> 부장이 주최한 서브컬처 파티 4인방 한우 회식 날이었다.<br/>
+        2008년 미국 서브프라임 모기지 사태 당시 샌프란시스코 지사에서 파산 위기를 겪고 가족을 지키기 위해 밤낮으로 투잡(야간 택배)을 뛰었던 아버지 유기철 씨는, 한국으로 귀국한 뒤 안천구 당가동에 정착해 힘겹게 가계를 다시 일으켜 세웠다. 그는 낯선 한국 환경에서 영어를 까먹고 0개 국어가 되어 울던 둘째 딸 리내가 당가중학교에서 평생의 은인 같은 단짝들(<a class="wiki-link" href="임은혜.html">임은혜</a>, <a class="wiki-link" href="안공주.html">안공주</a>, <a class="wiki-link" href="백모모.html">백모모</a>)을 만나 구김살 없이 갸루처럼 예쁘게 자라준 것이 눈물 나게 고마웠다.<br/>
+        2025년 봄, 네 소녀가 모두 명문 대학(평안명대, 해천대, 효빈대)에 당당히 합격하자, 아버지 유기철 씨는 큰맘을 먹고 비상금을 털어 당가동 최고급 한우 고깃집으로 네 명을 초대했다.<br/>
+        <b>[아버지 유기철 부장]:</b> "우리 예쁜 은혜 양, 공주 양, 모모 양! 우리 맹한 리내랑 중학교 때부터 친하게 지내주고 엇나갈 때마다 멘탈 챙겨줘서 아저씨가 진짜 고마워! 오늘 아저씨가 보너스 두둑이 받았으니까 투뿔 한우 배 터지게 먹어라!!"<br/>
+        아버지의 호기로운 선언이 무섭게, 불판 위에서 고기가 익기 시작하자 <b>152cm의 유리내가 본색(?)을 드러냈다.</b><br/>
+        평소 171cm 최장신에 B88.8 피지컬을 유지하느라 채소 위주로 고상하게 먹는 백모모나, 방송 관리를 위해 다이어트를 하는 임은혜가 고기 세 점을 집어 먹을 때, <b>유리내는 무한의 스태미나 엔진을 가동해 젓가락이 보이지 않는 속도로 한우 꽃등심 4인분을 혼자 진공청소기처럼 마셔버리기 시작했다!</b> 심지어 후식으로 나온 차돌박이 된장찌개에 공기밥을 3그릇이나 말아 국물까지 싹싹 긁어먹었다.<br/>
+        이 엄청난 먹방에 기겁한 것은 오히려 고기를 쏘기로 한 아버지 유기철 씨였다.<br/>
+        <b>[유기철 부장]:</b> "리, 리내야... 너 방금 혼자서 소고기 4인분에 밥 3공기를 먹은 거냐...? 체중계 올라가면 40kg도 간당간당한 녀석이 대체 그 고기들이 다 어디로 들어가는 거야...?!"<br/>
+        <b>[안공주]:</b> (무심하게 사이다를 마시며) "아버님, 리내 쟤는 저렇게 먹어도 10분만 지나면 돌아다니면서 칼로리 다 태우고 다시 방전돼서 타피오카 찾아요. 블랙홀 같은 연비니까 그냥 포기하시는 게 편해요."<br/>
+        결국 그날 아버지의 비상금 통장은 예상 밖의 엄청난 타격을 입고 너덜너덜해졌지만, 입가에 기름을 묻히고 <i>"아빠 최고 큥!! 꼬기 너무 맛있어!!"</i>라며 활짝 웃는 리내와 친구들의 모습에 아버지는 허탈하게 웃으며 <i>"그래, 우리 막내딸이 잘 먹고 건강하면 아빠는 미국에서 택배 뛰던 시절보다 백 배 천 배 행복하다"</i>라며 눈시울을 붉히셨다.
+    </p>
+</div>
+
+<div class="story-box">
+    <div class="story-title" id="s-6-9">6.9. [일화 9] 청덕동 다이버시티몰 오락실 스크린 야구장 전설: 풀스윙 홈런 10방 날리고 기절한 홈런타자</div>
+    <p class="text-sm text-gray-800 leading-relaxed">
+        유리내가 평소 가장 좋아하는 취미 중 하나가 바로 <b>‘실내 야구(배팅센터)와 낚시’</b>다. 이 역시 미국 샌프란시스코 캘리포니아 유학 시절, 언니 유리현과 함께 샌프란시스코 자이언츠 야구장(오라클 파크) 근처에서 미국 흑인 동네 꼬마들과 야구 배트를 휘두르며 놀았던 야생의 본능이 그대로 남은 결과다.<br/>
+        어느 주말, 리에하스 연합 멤버들(<a class="wiki-link" href="임은혜.html">임은혜</a>, <a class="wiki-link" href="유세라.html">유세라</a>, <a class="wiki-link" href="이주미.html">이주미</a>, <a class="wiki-link" href="하화연.html">하화연</a> 등)이 다 함께 청덕동에 새로 개장한 다이버시티몰(유세라네 아빠 건물이자 임세혁 점장의 리에라몰 라이벌) 대형 오락실로 놀러 갔다.<br/>
+        일행이 오락실 내 스크린 야구장(시속 120km 강속구 코스)을 발견하자, 기운이 펄펄 넘치는 당가고 에너자이저 <b>하화연(155cm)</b>이 가장 먼저 타석에 올랐다. 화연이는 <i>"내가 홈런 다 쳐주겠다 큥!!"</i>이라며 덤볐으나, 타이밍을 맞추지 못하고 10구 중 8구를 허공에 헛스윙하며 <i>"치이이익- 공이 너무 빠르다 큥 ㅠㅠ"</i>이라며 물러났다.<br/>
+        다음 타자로 안경을 고쳐 쓰며 타석에 들어선 것은, <b>방금 전까지 기가 빨려서 오락실 소파에 시체처럼 널브러져 있던 유리내(152cm)였다!</b><br/>
+        친구들이 <i>"리내야, 너 배트 들 힘도 없어 보이는데 그냥 쉬어!"</i>라며 말렸으나, 리내는 멍한 눈으로 타석에 서서 묵직한 알루미늄 배트를 가볍게 쥐었다. 그리고 피칭 머신에서 시속 120km짜리 첫 공이 날아오는 순간!<br/>
+        <b>152cm의 가녀린 갸루 소녀의 허벅지와 코어 근육이 폭발하며, 무시무시한 회전력으로 배트를 풀스윙했다!!</b><br/>
+        *까아아앙ㅡㅡㅡㅡ!!!*<br/>
+        야구장 전체를 쩌렁쩌렁 울리는 경쾌한 파열음과 함께, 첫 공이 스크린 정중앙의 홈런 과녁을 완벽하게 박살 냈다!<br/>
+        <i>"히이이익?! 방금 저 약골 다람쥐가 홈런 쳤어 큥?!!"</i><br/>
+        경악하는 친구들 앞에서, 리내는 연달아 날아오는 9개의 강속구를 <b>마치 샌프란시스코 메이저리거 배리 본즈에 빙의한 듯한 미친 동체시력과 타격폼으로 전부 받아쳐 ‘10연발 연속 홈런’</b>이라는 스크린 야구장 오픈 이래 전무후무한 대기록을 세워버렸다!<br/>
+        <i>"홈런! 홈런! 콤보 보너스 획득!!"</i><br/>
+        오락실 스피커에서 축포가 터지고 구경하던 남자 중고등학생들까지 <i>"와 미친 저 갸루 누나 타격 폼 봐라 프로야구 선수냐?!"</i>라며 기립 박수를 쳤다.<br/>
+        하지만 그 찬란한 영광은 단 10초를 넘기지 못했다. 홈런 10방을 치는 데 자신의 모든 <b>‘사회적 배터리와 남은 체력’</b>을 100% 영혼까지 끌어다 써버린 유리내는, 타석에서 걸어 나오자마자 배트를 툭 떨어뜨리고는 <b>바닥에 그랜절 자세로 엎어져 코를 골며 0.1초 만에 자발적 기절(수면) 모드에 돌입해 버린 것이다!(...)</b><br/>
+        결국 그날 170cm의 이주미와 167cm의 <a class="wiki-link" href="유초애.html">유초애</a>가 양쪽에서 뻗어버린 리내의 겨드랑이를 끼고 주차장까지 질질 끌고 가야 했으며, 이 사건은 ‘다이버시티몰 10연타석 홈런 갸루 기절 사건’으로 효빈시 서브컬처계의 전설이 되었다.
+    </p>
+</div>
+
+<div class="story-box">
+    <div class="story-title" id="s-6-10">6.10. [일화 10] 2026년 칸 칸나(루리노 성우) 내한 이벤트: 객석에서 아보카도 박스 쓰고 있다가 성우 본체에게 발각된 성덕</div>
+    <p class="text-sm text-gray-800 leading-relaxed">
+        유리내의 영혼의 오시인 <b><a class="wiki-link" href="오사와_루리노.html">오사와 루리노</a>의 담당 성우 ‘칸 칸나(菅 叶和, 칸칸)’</b>가 2026년 가을 서울에서 열린 《러브라이브! 하스노소라》 미니 라이브 이벤트에 내한한다는 소식이 전해지자, 당가동 서브컬처 파티 4인방(은혜, 공주, 모모, 리내)은 즉각 서울 원정대를 결성했다.<br/>
+        당일, 유리내는 친언니 <b>유리현</b>이 첫 취업 선물로 사준 <b>‘오사와 루리노 풀컬러 하피(한정판)’</b>를 완벽하게 차려입고, 루리노의 상징인 큰 알 안경과 갸루 화장까지 200% 풀세팅하여 행사장 객석 3열에 착석했다.<br/>
+        그런데 문제가 생겼다. 이벤트가 시작되기 전 2시간 동안 로비에서 다른 한국 물붕이들과 명함(이타백) 교환을 하고 <i>"루리 쨩 다이스키 큥!"</i>이라며 하이텐션으로 너무 무리하게 나대버린 탓에, 정작 <b>본 공연이 시작될 무렵 리내의 사회적 배터리(루리포인트)가 완벽하게 바닥나버린 것이다!</b><br/>
+        조명이 꺼지고 무대 위로 성우 칸 칸나가 등장해 <i>"한국의 츠레들(팬들)! 안녕!!"</i>이라며 인사하는 찰나, 객석 3열 한가운데에 앉아있던 유리내는 멘탈 붕괴를 견디지 못하고 자신이 짐을 싸 왔던 <b>‘오뚜기 3분 카레 빈 골판지 박스(완숙 아보카도 박스 대체품)’를 냅다 자기 머리 위로 푹 뒤집어쓰고 웅크려버렸다!(...)</b><br/>
+        <b>[임은혜]:</b> "야아아!! 유리내 미쳤어 큥?! 성우 본체가 나왔는데 왜 박스를 쓰고 자체 봉인을 하는 건데!!"<br/>
+        <b>[안공주]:</b> (절레절레) "놔둬. 쟤 지금 사람 너무 많아서 공황(방전) 와서 그래. 어차피 10분 뒤에 충전되면 박스 뚫고 나올 거야."<br/>
+        그런데 무대 위에서 객석을 향해 환하게 웃으며 토크를 진행하던 <b>칸 칸나(성우)</b>의 시야에, 3열 정중앙에서 혼자 <b>‘노란색 오뚜기 카레 박스’</b>를 푹 뒤집어쓰고 덜덜 떨고 있는 수상한 갸루 소녀(?)의 실루엣이 정통으로 포착되었다!<br/>
+        루리노 본체답게 눈썰미가 미친 칸 칸나가 마이크를 들고 빵 터지며 객석을 향해 소리쳤다!<br/>
+        <b>[성우 칸 칸나]:</b> "앗?! 잠깐만요!! 저기 3열 가운데에 <b>‘루리노쨩 골판지 박스’</b>를 쓰고 숨어있는 팬분!! 혹시 지금 배터리가 방전된 건가요?! 완전 루리노 쨩 현실판이네요!! 에에잇! 칸나의 루리포인트 파워 충전 비이이임~💖"<br/>
+        성우 본체가 무대 위에서 직접 손가락으로 가리키며 <b>‘루리포인트 충전 빔’</b> 팬서비스를 쏘아주자, 주변의 한국 물붕이 500명이 일제히 환호성을 질렀다!<br/>
+        자신을 부르는 소리에 깜짝 놀란 유리내가 골판지 박스를 위로 번쩍 집어 던지고 튀어 올라, 얼굴이 토마토처럼 시뻘개진 채로 형광 핑크색 블레이드를 미친 듯이 흔들며 <b>"으아아아아!! 루리 쨩 아이시테루!! 칸칸 최고 큥ㅡㅡㅡ!!!"</b>이라며 짐승(?) 같은 사자후를 토해냈다.<br/>
+        자신과 똑같은 루리노 풀컬러 하피를 입고 덧니를 드러내며 울부짖는 리내의 완벽한 코스프레 자태를 본 칸 칸나는 <i>"우와! 의상도 얼굴도 완전 루리노 쨩 그 자체네요! 고마워요!!"</i>라며 쌍따봉을 날려주었고, 리내는 그 자리에서 감격의 눈물을 폭포수처럼 쏟아내며 옆에 있던 안공주의 어깨에 쓰러져 성불(기절)의 엔딩을 맞이했다고 한다.
+    </p>
+</div>
+
+<h2 class="anchor-offset" id="s-7">7. 주요 어록</h2>
+<ul class="wiki-list" style="list-style-type: disc;">
+<li><b>"에... 나보고 영어를 하라고? 왓 타임 이즈 잇 나우? 홋타이모 이지루나? 아이무 어 스쿠루 아이도루... 뷰티풀 가루..."</b><br/> (미국 샌프란시스코 3년 유학파 출신임에도 영어를 한마디도 못 하는 0개 국어 '리내글리시'의 정수)</li>
+<li><b>"야 임은혜! 너 말이 좀 심하다?! 우리가 그동안 너 불편할까봐 숨겨준 배려는 생각 안 해?! 단지 네 취향 아니라고 소중한 친구를 병균 취급하는 네 인성이 더 역겨운 병균 같거든?!"</b><br/> (2021년 당가중 시절, 혐덕 폭언을 쏟아내는 은혜에게 참다못해 날린 뼈아픈 일침)</li>
+<li><b>"저기! 저 골목길에 은혜가 위험해요! 제발 도와주세요!"</b><br/> (2023년, 성적 협박을 당하는 은혜를 구하기 위해 152cm의 단신으로 전력 질주해 아쿠아 어벤져스를 소환하며)</li>
+<li><b>"인정~ 특별히 방전된 내 루리포인트를 200% 채워준 공로를 인정해서 용서해 준다! 대신 다음번 콜라보 카페 짐꾼은 평생 너다?"</b><br/> (은혜가 바친 루리노 점보 네소베리와 아보카도 박스를 뒤집어쓰고 쿨하게 화해를 받아주며)</li>
+<li><b>"아... 루리포인트... 마이너스 돌파... 기가 빨려... 숨을... 쉴 수가 없어 큥..."</b><br/> (사람 많은 번화가나 낯선 장소에서 10분 만에 사회적 에너지가 0%로 방전되어 책상에 엎어질 때)</li>
+<li><b>"야호!! 루리포인트 1000% 충전 완료!! 다들 쏘리 큥!! 이제 롤러코스터 타러 가자아아!!"</b><br/> (안공주가 입에 물려준 타피오카 밀크티를 마시고 단 3초 만에 무한 체력 텐션으로 부활하며)</li>
+<li><b>"에... 에또...! 고 스트레이트 앤 턴 롸이트 하면... 비쿠(Big) 덴샤(전철)가 구루구루(빙글빙글) 합니다 큥!! 바이 미!! 바이 미!! (Buy me!!)"</b><br/> (은혜당 라이브 몰카 중, 미국인 관광객의 길 묻기에 당황해 튀어나온 기적의 인신매매(?) 콩글리시)</li>
+<li><b>"언니이이이!! 으아아아앙 ㅠㅠㅠ 나 이거 엄청 갖고 싶었는데 돈 없어서 못 샀단 말이야 ㅠㅠㅠ 언니 덕분에 여기까지 잘 컸어!! 수능 대박 쳐서 호강시켜 줄게에에!!"</b><br/> (언니 유리현이 첫 취업 월급으로 사 온 '루리노 풀컬러 하피'를 끌어안고 펑펑 오열하며)</li>
+</ul>
+
+<div class="wiki-footnotes" id="s-8">
+<h2 style="border:none; margin:0; padding:0; font-size:1.5rem !important;">8. 각주</h2>
+<ol class="list-decimal ml-6 font-bold text-black text-left">
+<li id="fn1">이름인 '리내(璃乃)'의 한자와 독음이 오사와 루리노(大沢 瑠璃乃)의 이름과 100% 동일한 것은 부모님이 지어주신 우주가 점지해 준 기적의 네이밍이다. 본인도 이 사실을 매우 자랑스럽게 여긴다. <a class="back-link" href="#rfn1" title="본문으로 이동">[이동]</a></li>
+<li id="fn2">육체적 스태미나는 무한대지만 '사회적 배터리'가 극도로 짧은 체질 탓에, 리에하스 연합 내에서 유리내의 방전 상태를 케어할 수 있는 유일한 통제자는 브레인 안공주뿐이다. <a class="back-link" href="#rfn2" title="본문으로 이동">[이동]</a></li>
+</ol>
+</div>
+<div class="category-box" style="text-align: center; font-weight: bold;">
+<a class="wiki-link" href="오사와_루리노.html">오사와 루리노</a> · 
+        <a class="wiki-link" href="당가동_서브컬처_파티.html">당가동 서브컬처 파티</a> · 
+        <a class="wiki-link" href="임은혜.html">임은혜</a> · 
+        <a class="wiki-link" href="안공주.html">안공주</a> · 
+        <a class="wiki-link" href="백모모.html">백모모</a> · 
+        <a class="wiki-link" href="가노은.html">가노은</a> · 
+        <a class="wiki-link" href="마루빈.html">마루빈</a> · 
+        <a class="wiki-link" href="오낙희.html">오낙희</a> · 
+        <a class="wiki-link" href="오마리.html">오마리</a> · 
+        <a class="wiki-link" href="가희나.html">가희나</a> · 
+        <a class="wiki-link" href="평안명대학교.html">평안명대학교</a>
+</div>
+
+<!-- 푸터 -->
+<div id="footer-container"></div>
+<!-- 🚨 순수 바닐라 JS 툴팁 스크립트 -->
+<div class="wiki-tooltip" id="wiki-tooltip"></div>
+<script>
+        function handleSearch(inputId) {
+            const input = document.getElementById(inputId);
+            const query = input.value.trim();
+            if (query) {
+                location.href = query + '.html';
+            } else {
+                alert('검색어를 입력해주세요.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const tooltip = document.getElementById('wiki-tooltip');
+            if(!tooltip) return;
+
+            // 1. 일반 각주 툴팁 로직 (.fn-link)
+            const fnLinks = document.querySelectorAll('.fn-link');
+            
+            fnLinks.forEach(link => {
+                link.addEventListener('mouseenter', function(e) {
+                    const href = this.getAttribute('href');
+                    if (!href || !href.startsWith('#')) return;
+                    
+                    const targetId = href.substring(1); 
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        let text = targetElement.innerHTML;
+                        tooltip.innerHTML = text;
+                        tooltip.style.display = 'block';
+                        
+                        const rect = this.getBoundingClientRect();
+                        let leftPos = rect.left + window.scrollX + 15;
+                        let topPos = rect.bottom + window.scrollY + 10;
+                        
+                        if (leftPos + 350 > window.innerWidth) {
+                            leftPos = window.innerWidth - 370; 
+                        }
+                        
+                        tooltip.style.left = leftPos + 'px';
+                        tooltip.style.top = topPos + 'px';
                     }
-                    tooltip.innerHTML = content;
-                    tooltip.style.display = 'block';
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    tooltip.style.display = 'none';
+                });
+            });
+
+            // 2. 여담 텍스트 툴팁 로직 (.hb-footnote)
+            const hbLinks = document.querySelectorAll('.hb-footnote');
+            hbLinks.forEach(link => {
+                link.addEventListener('mouseenter', function(e) {
+                    const text = this.getAttribute('data-text');
+                    if(text) {
+                        tooltip.innerHTML = text;
+                        tooltip.style.display = 'block';
+                        
+                        const rect = this.getBoundingClientRect();
+                        let leftPos = rect.left + window.scrollX + 15;
+                        let topPos = rect.bottom + window.scrollY + 10;
+                        
+                        if (leftPos + 350 > window.innerWidth) {
+                            leftPos = window.innerWidth - 370; 
+                        }
+                        
+                        tooltip.style.left = leftPos + 'px';
+                        tooltip.style.top = topPos + 'px';
+                    }
+                });
+                link.addEventListener('mouseleave', function() {
+                    tooltip.style.display = 'none';
+                });
+            });
+
+            // Age calculation script
+            const ageSpans = document.querySelectorAll('.calc-age');
+            ageSpans.forEach(span => {
+                const birthdate = span.getAttribute('data-birthdate');
+                if(birthdate) {
+                    const birth = new Date(birthdate);
+                    const baseYear = 2026;
+                    const age = baseYear - birth.getFullYear();
+                    span.innerText = age;
                 }
             });
-            link.addEventListener('mousemove', (e) => {
-                tooltip.style.left = (e.pageX + 15) + 'px';
-                tooltip.style.top = (e.pageY + 15) + 'px';
-            });
-            link.addEventListener('mouseleave', () => {
-                tooltip.style.display = 'none';
-            });
         });
-    });
-
-    function handleSearch(inputId) {
-        const query = document.getElementById(inputId).value;
-        if (query) {
-            location.href = `효빈위키 검색.html?q=${encodeURIComponent(query)}`;
-        }
-    }
-</script>
+    </script>
+<!-- 사용자 필수 요청 스크립트 모음 -->
+<script src="assets/wiki_parktex.js"></script>
 <script src="assets/wiki_index.js"></script>
 <script src="assets/hb_data_map.js"></script>
 <script src="assets/hb_wiki_core.js"></script>
 <script src="assets/hb_index_scripts.js"></script>
 <script src="assets/jana.js"></script>
 <script src="assets/load-footer.js"></script>
-</body>
+</div>
+</div></body>
 </html>

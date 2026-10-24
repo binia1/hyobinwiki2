@@ -20,18 +20,17 @@ document.addEventListener("DOMContentLoaded", () => {
         .nw-link:hover { text-decoration: underline; color: #C084FC; }
         .nw-subtext { font-size: 0.7rem; color: #777; font-weight: normal; margin-top: 2px; }
         
-        /* 창건고 동창 그룹을 위한 플렉스 래퍼 */
+        /* 다수 인원 배치를 위한 플렉스 래퍼 */
         .alumni-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
         .alumni-group .nw-link { flex: 0 1 12%; min-width: 65px; }
     </style>
     `;
 
-    // 2. 방대한 HTML 구조 주입
+    // 2. HTML 구조 주입
     const navHtml = `
         <div class="nw-frame shadow-sm">
             <div class="nw-title">
                 <a href="리에하스_연합.html" class="font-black text-xl hover:underline" style="color: #C084FC; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;">
-                    <!-- 리에하스 전용 내장 SVG 로고 (Liella 별 + Hasunosora 연꽃 융합) -->
                     <svg viewBox="0 0 120 120" class="h-8 w-8 drop-shadow-md" xmlns="http://www.w3.org/2000/svg">
                         <defs>
                             <linearGradient id="riehasuGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -43,11 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <stop offset="100%" stop-color="#84C36E" />
                             </linearGradient>
                         </defs>
-                        <!-- Hasunosora Lotus Base -->
                         <path d="M60,10 C80,30 110,40 110,70 C110,95 85,110 60,110 C35,110 10,95 10,70 C10,40 40,30 60,10 Z" fill="url(#riehasuGrad2)" opacity="0.9"/>
-                        <!-- Liella Star Overlay -->
                         <polygon points="60,20 72,46 100,50 78,68 84,96 60,82 36,96 42,68 20,50 48,46" fill="url(#riehasuGrad1)"/>
-                        <!-- Center Sparkle -->
                         <path d="M60,45 Q60,60 45,60 Q60,60 60,75 Q60,60 75,60 Q60,60 60,45 Z" fill="#ffffff"/>
                     </svg>
                     리에하스 연합 (Liella-Hasu Alliance)
@@ -80,7 +76,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 </table>
             </details>
 
-            <!-- 2. 리에라 분파 -->
+            <!-- 2. 하스노소라 학부모 및 가족 (신규 추가) -->
+            <details id="nw-parents-box" class="nw-box" style="border-color:#FCD34D;">
+                <summary style="background-color:#FCD34D; color:#451A03;" class="outline-none">👨‍👩‍👧 하스노소라 학부모 및 가족 ▼</summary>
+                <table class="nw-tbl" style="border-color:#FCD34D;">
+                    <tr>
+                        <th class="w-[12%] bg-[#FEF3C7] text-[#78350F]">세라<br>가족</th>
+                        <td class="w-[38%] py-3">
+                            <div class="alumni-group">
+                                <a href="유건우.html" class="nw-link"><img src="이미지/유건우.webp" class="nw-img" onerror="this.style.display='none'">유건우<span class="nw-subtext">(아빠)</span></a>
+                                <a href="안나 폰 릴리엔펠트.html" class="nw-link"><img src="이미지/안나_폰_릴리엔펠트.webp" class="nw-img" onerror="this.style.display='none'">안나 폰 릴리엔펠트<span class="nw-subtext">(엄마)</span></a>
+                            </div>
+                        </td>
+                        <th class="w-[12%] bg-[#FEF3C7] text-[#78350F]">주미<br>가족</th>
+                        <td class="w-[38%] py-3">
+                            <div class="alumni-group">
+                                <a href="이석준.html" class="nw-link"><img src="이미지/이석준.webp" class="nw-img" onerror="this.style.display='none'">이석준<span class="nw-subtext">(아빠)</span></a>
+                                <a href="다나카 미키.html" class="nw-link"><img src="이미지/다나카_미키.webp" class="nw-img" onerror="this.style.display='none'">다나카 미키<span class="nw-subtext">(엄마)</span></a>
+                                <a href="이주아.html" class="nw-link"><img src="이미지/이주아.webp" class="nw-img" onerror="this.style.display='none'">이주아<span class="nw-subtext">(여동생)</span></a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </details>
+
+            <!-- 3. 리에라 분파 -->
             <details id="nw-liella-box" class="nw-box" style="border-color:#DA57D8;">
                 <summary style="background-color:#DA57D8; color:white;" class="outline-none">💫 리에라 분파 (캠퍼스 및 창건고 동창) ▼</summary>
                 <table class="nw-tbl" style="border-color:#DA57D8;">
@@ -109,9 +129,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 </table>
             </details>
 
-            <!-- 3. 연합 전체 및 조력자 (전체 박스) -->
-            <details id="nw-all-box" class="nw-box mb-1" style="border-color:#888888;">
-                <summary style="background-color:#888888; color:white;" class="outline-none">🏢 전체 연합 관련자 (리에라몰 일가) ▼</summary>
+            <!-- 4. 연합 전체 및 조력자 (리에라몰 일가) -->
+            <details id="nw-all-box" class="nw-box" style="border-color:#888888;">
+                <summary style="background-color:#888888; color:white;" class="outline-none">🏢 리에라몰 일가 ▼</summary>
                 <table class="nw-tbl" style="border-color:#888888;">
                     <tr>
                         <th class="w-[12%] bg-[#dddddd] text-black">리에라몰<br>일가</th>
@@ -120,6 +140,21 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td class="w-[17.6%]"><a href="임승민.html" class="nw-link"><img src="이미지/임승민.webp" class="nw-img" onerror="this.style.display='none'">임승민<span class="nw-subtext">(남동생)</span></a></td>
                         <td class="w-[17.6%]"><a href="임은연.html" class="nw-link"><img src="이미지/임은연.webp" class="nw-img" onerror="this.style.display='none'">임은연<span class="nw-subtext">(여동생)</span></a></td>
                         <td class="w-[17.6%]"><a href="임시연.html" class="nw-link"><img src="이미지/임시연.webp" class="nw-img" onerror="this.style.display='none'">임시연<span class="nw-subtext">(막내)</span></a></td>
+                    </tr>
+                </table>
+            </details>
+            
+            <!-- 5. 주요 조력자 및 관련 인물 (신규 추가) -->
+            <details id="nw-helper-box" class="nw-box mb-1" style="border-color:#6EE7B7;">
+                <summary style="background-color:#6EE7B7; color:#064E3B;" class="outline-none">🤝 주요 조력자 및 관련 인물 ▼</summary>
+                <table class="nw-tbl" style="border-color:#6EE7B7;">
+                    <tr>
+                        <td class="py-3">
+                            <div class="alumni-group">
+                                <a href="박효빈.html" class="nw-link"><img src="이미지/박효빈.webp" class="nw-img" onerror="this.style.display='none'">박효빈<span class="nw-subtext">(효빈시장)</span></a>
+                                <a href="김유영.html" class="nw-link"><img src="이미지/김유영.webp" class="nw-img" onerror="this.style.display='none'">김유영<span class="nw-subtext">(다이닝 셰프)</span></a>
+                            </div>
+                        </td>
                     </tr>
                 </table>
             </details>
@@ -134,10 +169,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const hasuMembers = ["임은혜", "안공주", "유리내", "백모모", "유초애", "도소영", "사양화", "하화연", "유세라", "이주미", "추주리"];
     const liellaMembers = ["가노은", "마루빈", "오낙희", "가희나", "오마리", "연월엽", "당가영", "시화음", "명안유", "천사도", "완시윤", "이미녀"];
     const familyMembers = ["임세혁", "연월엽", "임승민", "임은연", "임시연"];
+    const parentsMembers = ["유건우", "안나 폰 릴리엔펠트", "이석준", "다나카 미키", "이주아"];
+    const helperMembers = ["박효빈", "김유영"];
 
     let isMatched = false;
 
-    // 현재 페이지 멤버가 속한 분파 박스 열기 (연월엽처럼 교집합인 경우 둘 다 열림)
     if (hasuMembers.includes(pageTitle)) {
         const box = document.getElementById('nw-hasu-box');
         if(box) { box.open = true; isMatched = true; }
@@ -146,14 +182,26 @@ document.addEventListener("DOMContentLoaded", () => {
         const box = document.getElementById('nw-liella-box');
         if(box) { box.open = true; isMatched = true; }
     }
-    if (familyMembers.includes(pageTitle) || pageTitle === "리에하스 연합") {
+    if (familyMembers.includes(pageTitle)) {
         const box = document.getElementById('nw-all-box');
         if(box) { box.open = true; isMatched = true; }
     }
+    if (parentsMembers.includes(pageTitle)) {
+        const box = document.getElementById('nw-parents-box');
+        if(box) { box.open = true; isMatched = true; }
+    }
+    if (helperMembers.includes(pageTitle)) {
+        const box = document.getElementById('nw-helper-box');
+        if(box) { box.open = true; isMatched = true; }
+    }
+    if (pageTitle === "리에하스 연합") {
+        document.querySelectorAll('.nw-box').forEach(box => box.open = true);
+        isMatched = true;
+    }
     
-    // 만약 그 외 문서에서 이 틀을 불러온다면 기본으로 전체 관련자 박스만 열어둠
+    // 그 외 문서에서 이 틀을 불러온다면 기본으로 조력자 또는 전체 박스를 엽니다.
     if (!isMatched) {
-        const box = document.getElementById('nw-all-box');
+        const box = document.getElementById('nw-hasu-box');
         if(box) box.open = true;
     }
 });

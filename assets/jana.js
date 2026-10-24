@@ -62,6 +62,7 @@ const forbiddenSelectors = [
 
 // 💡 3. 카멜레온 스텔스 구역 (기존 색상/스타일 유지)
 const preserveStyleSelectors = [
+    '.story-title', '.story-title a', // 🔥 여기에 추가!
     '.infobox', '.nav-line-name', 'th', '.infobox-top-label', '.nav-box-body td',
     'span[style*="color"]', 'span[style*="background"]', 
     '.opacity-80', '.text-sm', '.leading-none', 
@@ -72,9 +73,8 @@ const preserveStyleSelectors = [
     'nav', '.wiki-navbox-header', '.wiki-navbox-footer', '.wiki-navbox', '.red-link', '.blue-link',
     '.transport-card', '.card-title', '.card-subtitle', '.card-footer', '.logo-box',
     '.hb-med-header', '.hb-med-table th',
-    '.nw-frame-otaku', '.nw-title-otaku' // 🔥 추가: 성덕 정치인 틀 및 타이틀 영역 스텔스 보호
-].join(', ');
-    
+    '.nw-frame-otaku', '.nw-title-otaku'
+].join(', ');    
     while (walker.nextNode()) {
         const node = walker.currentNode;
         const parent = node.parentElement;
