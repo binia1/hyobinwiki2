@@ -386,7 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <td><a href="시부야 카논.html" class="nw-link"><img src="이미지/시부야_카논.webp" class="nw-img" onerror="this.style.display='none'">시부야 카논</a></td>
                             <td><a href="탕 쿠쿠.html" class="nw-link"><img src="이미지/탕_쿠쿠.webp" class="nw-img" onerror="this.style.display='none'">탕 쿠쿠</a></td>
                             <td><a href="아라시 치사토.html" class="nw-link"><img src="이미지/아라시_치사토.webp" class="nw-img" onerror="this.style.display='none'">아라시 치사토</a></td>
-                            <td rowspan="2"><a href="오니츠 나츠미.html" class="nw-link"><img src="이미지/오니츠카_나츠미.webp" class="nw-img" onerror="this.style.display='none'">오니츠카 나츠미</a></td>
+                            <td rowspan="2"><a href="오니츠카 나츠미.html" class="nw-link"><img src="이미지/오니츠카_나츠미.webp" class="nw-img" onerror="this.style.display='none'">오니츠카 나츠미</a></td>
                             <td rowspan="2"><a href="히이라기 마오.html" class="nw-link"><img src="이미지/히이라기_마오.webp" class="nw-img" onerror="this.style.display='none'">히이라기 마오</a></td>
                         </tr>
                         <tr>
