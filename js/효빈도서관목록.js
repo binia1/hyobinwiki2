@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         <th class="bg-[#7799CC] text-white py-2 font-bold border-r border-white border-b border-white shadow-inner">북구</th>
                         <td class="text-center py-2 px-3 leading-loose">
                             <a class="text-[#0275d8] hover:underline break-keep" href="중수도서관.html">중수도서관</a> <span class="text-gray-300 mx-1">·</span>
-                            <strong class="text-gray-800 break-keep">고송도서관</strong> <span class="text-gray-300 mx-1">·</span>
+                            <a class="text-[#0275d8] hover:underline break-keep" href="고송도서관.html">고송도서관</a> <span class="text-gray-300 mx-1">·</span>
                             <a class="text-[#0275d8] hover:underline break-keep" href="만화애니메이션도서관.html">만화애니메이션도서관</a> <span class="text-gray-300 mx-1">·</span>
                             <a class="text-[#0275d8] hover:underline break-keep" href="북구청도서관.html">북구청도서관</a><span class="text-[10px] text-gray-500 font-bold ml-0.5">(예정)</span>
                         </td>
