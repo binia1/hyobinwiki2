@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<link href="이미지/효빈위키아이콘.webp" rel="icon"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>빅분기 실기 6. 세계관 커스텀 문제 생성기 &amp; CSV 자동 출제 샌드박스 - 효빈위키</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet"/>
+<script src="assets/ad_logic.js"></script>
+<link href="wiki_font_standard.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+
+<!-- 파이썬 웹 컴파일러(Pyodide) 로드 -->
+<script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+
+<style>
+        :root { 
+            --wiki-line-color: #0077DD;
+            --wiki-table-header-bg: #0077DD; 
+            --wiki-main: #7777AA; 
+            --wiki-border: #ccc; 
+            --wiki-bg: #ffffff; 
+            --wiki-text: #373a3c; 
+            --wiki-gray-bg: #F9F9FA; 
+            --wiki-link: #0022AA;
+        }
+
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.65; word-break: keep-all; margin: 0; }
+        
+        .nav-logo-box { width: 30px; height: 30px; background-color: #ffffff; color: var(--wiki-main); border-radius: 4px; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+
+        .namu-infobox { width: 100%; max-width: 360px; border: 1px solid #b0b0b0 !important; background-color: #ffffff; font-size: 0.85rem; border-collapse: collapse !important; margin: 0; }
+        .namu-infobox th, .namu-infobox td { border: 1px solid #b0b0b0 !important; padding: 6px 10px; }
+        .namu-infobox .title-cell { padding: 20px 0 !important; text-align: center !important; background-color: #ffffff !important; }
+        .inner-title-box { display: inline-table !important; margin: 0 auto !important; border: 1px solid #b0b0b0 !important; border-collapse: collapse !important; background-color: #ffffff !important; width: max-content !important; }
+        .inner-title-box td { padding: 12px 18px !important; vertical-align: middle !important; border: none !important; }
+        .inner-title-box td:first-child { border-right: 1px solid #b0b0b0 !important; }
+        .namu-infobox .section-title { background-color: var(--wiki-table-header-bg); color: #ffffff !important; font-weight: bold; text-align: center; padding: 5px 0; border: 1px solid #b0b0b0 !important; }
+        .namu-infobox .row-title { background-color: #f4f4f4; color: #444444; font-weight: bold; text-align: center; width: 35%; }
+
+        .wiki-container { max-width: 1400px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+        .txt-lvl-1 { font-size: 2.2rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
+        .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 2px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.8rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
+        h3 { font-size: 1.38rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 5px solid var(--wiki-table-header-bg); padding-left: 12px; color: var(--wiki-text); }
+        
+        .wiki-btn { border: 1px solid #ccc; background: white; padding: 4px 12px; border-radius: 4px; font-size: 0.9rem; font-weight: bold; color: #555; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none !important; line-height: 1.2; }
+        .wiki-btn:hover { background: #f0f0f0; color: #000; border-color: #999; }
+
+        .toc { display: inline-block; min-width: 340px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
+        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.93rem; }
+        .toc ul li { margin-bottom: 4px; }
+        .toc ul ul { margin-top: 4px; margin-left: 18px; }
+        
+        blockquote { border-left: 5px solid var(--wiki-table-header-bg); background-color: #f7f7f7; padding: 15px; margin: 15px 0; font-style: normal; color: #333; line-height: 1.65; }
+        
+        .wiki-link { color: var(--wiki-link); cursor: pointer; text-decoration: none; font-weight: bold; }
+        .wiki-link:hover { text-decoration: underline; }
+        .strike { text-decoration: line-through; color: #888; font-size: 0.9em; font-weight: normal; }
+        .highlight { background-color: #fff8e1; border: 1px solid #ffc107; padding: 2px 4px; border-radius: 4px; font-weight: bold; }
+        .category-box { background: #f9f9f9; border: 1px solid var(--wiki-border); padding: 8px 12px; font-size: 0.9rem; margin: 15px 0; border-radius: 4px; }
+
+        .python-editor-container { background: #1e1e1e; border-radius: 8px; overflow: hidden; margin: 18px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.2); border: 1px solid #444; }
+        .editor-header { background: #2d2d2d; color: #d4d4d4; padding: 8px 15px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; font-family: monospace; border-bottom: 1px solid #444; font-weight: bold; flex-wrap: wrap; gap: 8px; }
+        .run-btn { background: #0077DD; color: white; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: background 0.2s; display: inline-flex; align-items: center; gap: 5px; }
+        .run-btn:hover { background: #005bb5; }
+        .run-btn:disabled { background: #555; cursor: not-allowed; }
+        
+        .grade-btn { background: #00CCAA; color: #00332a; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-weight: 900; font-size: 0.85rem; transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px; }
+        .grade-btn:hover { background: #00a88c; color: white; }
+
+        .code-area { width: 100%; background: #1e1e1e; color: #9CDCFE; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.95rem; padding: 15px; border: none; resize: vertical; min-height: 210px; outline: none; line-height: 1.5; }
+        .output-area { background: #000; color: #BBFF64; font-family: 'Consolas', 'Monaco', monospace; padding: 15px; font-size: 0.93rem; min-height: 80px; white-space: pre-wrap; border-top: 1px solid #333; max-height: 360px; overflow-y: auto; }
+
+        .dialogue-box { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 8px; padding: 14px 18px; margin: 14px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .speaker-kasumi { color: #b45309; font-weight: 800; }
+        .speaker-saaya { color: #d97706; font-weight: 800; }
+        .speaker-gonami { color: #0077DD; font-weight: 800; }
+        .speaker-harubin { color: #00a88c; font-weight: 800; }
+
+        details.wiki-details { border: 1px solid #94a3b8; border-radius: 6px; background-color: #f8fafc; margin: 10px 0 20px 0; padding: 12px 16px; }
+        details.wiki-details summary { font-weight: 800; color: #0077DD; cursor: pointer; user-select: none; font-size: 0.95rem; }
+        details.wiki-details summary:hover { color: #005bb5; text-decoration: underline; }
+
+        .wiki-table { width: 100%; border-collapse: collapse; margin: 15px 0 30px 0; font-size: 0.9rem; }
+        .wiki-table th { background-color: var(--wiki-table-header-bg); color: white; border: 1px solid #b0b0b0; padding: 10px; text-align: center; font-weight: bold; }
+        .wiki-table td { border: 1px solid #ccc; padding: 9px 12px; vertical-align: middle; }
+        .wiki-table tr:nth-child(even) { background-color: #f9fafb; }
+
+        .line-badge { display: inline-block; padding: 2px 8px; border-radius: 9999px; font-weight: 800; font-size: 0.78rem; color: white; margin-right: 4px; }
+        
+        .snippet-btn { background: #334155; color: #f8fafc; border: 1px solid #475569; padding: 4px 10px; border-radius: 4px; font-size: 0.78rem; font-family: monospace; cursor: pointer; transition: all 0.15s; }
+        .snippet-btn:hover { background: #0077DD; border-color: #38bdf8; color: white; }
+
+        #pyodide-status-pill { position: fixed; bottom: 20px; left: 20px; z-index: 9999; background: #1e293b; color: #38bdf8; border: 2px solid #0077DD; padding: 10px 18px; border-radius: 9999px; font-weight: 800; font-size: 0.85rem; box-shadow: 0 4px 12px rgba(0,0,0,0.25); display: flex; align-items: center; gap: 10px; transition: all 0.4s; }
+        .mini-spinner { border: 3px solid #475569; border-top: 3px solid #38bdf8; border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div id="pyodide-status-pill" class="no-autolink">
+    <div class="mini-spinner" id="status-spinner"></div>
+    <span id="status-text">파이썬 엔진 &amp; 세계관 데이터 로딩 중... (약 5~10초)</span>
+</div>
+
+<nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+<div class="flex items-center gap-2">
+<div class="nav-logo-box">H</div>
+<a class="font-bold text-xl cursor-pointer no-underline text-white" href="index.html">HyobinWiki</a>
+<div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
+<a class="hover:underline font-bold text-white no-underline" href="index.html">대문</a>
+<a class="hover:underline text-white no-underline" href="최근_변경.html">최근 변경</a>
+<a class="hover:underline text-white no-underline" href="최근_토론.html">최근 토론</a>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<div class="flex items-center gap-2">
+<div class="hidden lg:flex items-center gap-1 mr-2">
+<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="편집요청.html">편집요청</a>
+<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="최근_토론.html">토론</a>
+<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="역사.html">역사</a>
+<a class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="즐겨찾기.html" title="즐겨찾기">★</a>
+<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1" href="더보기.html">더보기 <span class="text-[9px]">▼</span></a>
+</div>
+<input class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" id="headerSearchInput" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }" placeholder="문서 검색" type="text"/>
+<button class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold" onclick="handleSearch('headerSearchInput')">🔍</button>
+</div>
+<div class="flex gap-1" id="auth-buttons">
+<button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" id="btn-login" onclick="toggleModal('loginModal')">로그인</button>
+<button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" onclick="toggleModal('settingsModal')">설정</button>
+</div>
+</div>
+</nav>
+
+<div class="wiki-container shadow-lg">
+    <div class="title-area">
+        <h1 class="txt-lvl-1">빅분기 실기 6. 세계관 커스텀 문제 생성기 &amp; CSV 자동 출제 샌드박스</h1>
+        <div class="flex gap-2 mb-1">
+            <button class="wiki-btn">토론</button>
+            <button class="wiki-btn">수정</button>
+            <button class="wiki-btn">역사</button>
+        </div>
+    </div>
+
+    <div class="category-box">
+        <span class="font-bold text-[#0077DD]">분류:</span>
+        <a class="wiki-link" href="빅데이터분석기사.html">빅데이터분석기사</a> | 
+        <a class="wiki-link" href="효빈교통공사.html">효빈교통공사</a> | 
+        <a class="wiki-link" href="BanG Dream!.html">BanG Dream!</a> | 
+        <a class="wiki-link" href="러브라이브! 시리즈.html">러브라이브! 시리즈</a> | 
+        <a class="wiki-link" href="효빈위키_학습서.html">효빈위키 학습서</a>
+    </div>
+
+    <div class="no-autolink" style="display:none;">
+        <script src="assets/틀_미개통.js"></script>
+        <script src="assets/틀_미개통노선도.js"></script>
+    </div>
+
+    <blockquote class="bg-blue-50 border-l-4 border-[#0077DD]">
+        <strong>"남들이 다 푸는 뻔한 타이타닉·붓꽃 데이터는 질렸다! 내가 직접 만든 효빈광역시 철도·버스·맛집 데이터와 최애 캐릭터 데이터, 그리고 내가 직접 올린 CSV로 문제를 무한 생성해서 풀고 싶다고!"</strong><br>
+        환영합니다! 본 문서는 브라우저 안에서 <strong>① 내 컴퓨터의 CSV 파일(예: <code>hyobin_restaurants.csv</code> 등)을 직접 업로드하면 파이썬이 열 구조를 자동 분석하여 1·2·3유형 문제를 즉석에서 출제해 주는 『자동 문제 생성기』</strong>와 <strong>② 효빈교통공사(만년 흑자 공기업!)·스타더스트 작전 시내버스·야마부키 베이커리·스쿨 아이돌 세계관 데이터셋 5종을 내장한 『실전 코딩 &amp; 자동 채점 샌드박스』</strong>가 결합된 최종 병기입니다! <span class="strike">(※ 본 실습장의 모든 식음료 데이터에서 토마토와 커피는 시장님과 모티브 본인의 엄명에 따라 영구 퇴출되었습니다)</span>
+    </blockquote>
+
+    <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4">
+        <div class="toc shrink-0 shadow-sm h-fit order-2 md:order-1">
+            <div class="toc-title">목차</div>
+            <ul class="text-[#555555]">
+                <li><a class="hover:underline font-bold text-[#0077DD]" href="#s-1">1. 📂 [핵심 기능 1] 내 CSV 파일 업로드 &amp; 1·2·3유형 자동 문제 생성기</a></li>
+                <li><a class="hover:underline font-bold text-[#00CCAA]" href="#s-2">2. 🌍 [핵심 기능 2] 세계관 내장 데이터셋 5종 일람 및 미리보기</a></li>
+                <li><a class="hover:underline font-bold text-[#EE0022]" href="#s-3">3. 🎲 [핵심 기능 3] 세계관 × 유형별 랜덤 문제 무한 생성 &amp; 자동 채점기</a></li>
+                <li><a class="hover:underline font-bold text-[#881188]" href="#s-4">4. 🏆 [엄선 실전 모의고사] 효빈광역시 × 걸즈밴드 × 스쿨아이돌 1·2·3유형</a>
+                    <ul>
+                        <li><a class="hover:underline" href="#s-4-1">4.1. [제1유형] 효빈도시철도 노선별 흑자 수익금 IQR 이상치 &amp; 파생변수</a></li>
+                        <li><a class="hover:underline" href="#s-4-2">4.2. [제1유형] 야마부키 베이커리 × 걸즈밴드 콜라보 매출 시계열·집계</a></li>
+                        <li><a class="hover:underline" href="#s-4-3">4.3. [제2유형] 스쿨 아이돌 합동 오디션 최종 합격 확률 예측 (ROC AUC)</a></li>
+                        <li><a class="hover:underline" href="#s-4-4">4.4. [제3유형] 스타더스트 3세대 버스 vs 두청운수(흑역사) 만족도 Welch t-검정</a></li>
+                    </ul>
+                </li>
+                <li><a class="hover:underline font-bold" href="#s-5">5. 💻 [핵심 기능 4] 만능 자유 코딩 샌드박스 (원클릭 스니펫 탑재)</a></li>
+            </ul>
+        </div>
+        
+        <table class="namu-infobox shrink-0 shadow-sm order-1 md:order-2">
+            <tbody>
+                <tr>
+                    <td class="title-cell" colspan="2">
+                        <table class="inner-title-box">
+                            <tr>
+                                <td>
+                                    <div style="width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; background-color: #0077DD; color: white; border-radius: 8px; font-weight: 900; font-size: 20px;">LAB</div>
+                                </td>
+                                <td style="text-align: left !important; line-height: 1.3 !important;">
+                                    <div style="font-weight: 900; font-size: 1.15rem; color: #0077DD; letter-spacing: -0.5px;">효빈×서브컬처 실기 생성기</div>
+                                    <div style="font-size: 0.8rem; color: #555555; font-weight: 500;">Zero-Deadlock Fast Engine</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr><th class="section-title" colspan="2">탑재된 세계관 데이터셋 (총 5종)</th></tr>
+                <tr><th class="row-title">효빈도시철도</th><td><code>hyobin_metro.csv</code> (1~8호선·빈효선·창전선)</td></tr>
+                <tr><th class="row-title">효빈시내버스</th><td><code>hyobin_bus.csv</code> (3세대 스타더스트 vs 두청운수)</td></tr>
+                <tr><th class="row-title">걸즈밴드 빵집</th><td><code>band_bakery.csv</code> (<a class="wiki-link" href="야마부키 사아야.html">야마부키 사아야</a>×6대 밴드)</td></tr>
+                <tr><th class="row-title">오디션(2유형)</th><td><code>idol_audition_train.csv</code> / <code>test.csv</code></td></tr>
+                <tr><th class="row-title">특별 감독관</th><td><a class="wiki-link" href="고나미.html">고나미</a>(1호선), <a class="wiki-link" href="하루빈.html">하루빈</a>(2호선), <a class="wiki-link" href="나카스 카스미.html">나카스 카스미</a>, <a class="wiki-link" href="야마부키 사아야.html">야마부키 사아야</a>, <a class="wiki-link" href="이세리 니나.html">이세리 니나</a>, <a class="wiki-link" href="키타 이쿠요.html">키타 이쿠요</a></td></tr>
+                <tr><th class="row-title">금칙 사항</th><td>효빈교통공사 적자 왜곡 엄금(무조건 흑자!), <strong>토마토·커피 반입 절대 금지</strong></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- =========================================================================
+         1. 내 CSV 파일 업로드 & 자동 문제 생성기
+    ========================================================================== -->
+    <h2 id="s-1"><b>1. 📂 [핵심 기능 1] 내 CSV 파일 업로드 &amp; 1·2·3유형 자동 문제 생성기</b></h2>
+    <div class="dialogue-box">
+        <p><span class="speaker-gonami">💙 고나미 (효빈도시철도 1호선 마스코트):</span> "승객 여러분, 안내 말씀 드립니다. 내 컴퓨터에 있는 아무 CSV 파일(<code>hyobin_restaurants.csv</code> 등)이나 아래 업로드 창에 올려주시면, 열차 중앙통제실(Pyodide)이 즉시 <strong>수치형 열과 범주형 열을 스캔하여 제1유형·제2유형·제3유형 맞춤형 문제와 정답 코드까지 자동으로 생성</strong>해 드립니다!"</p>
+        <p class="mt-2"><span class="speaker-saaya">🥖 야마부키 사아야 (야마부키 베이커리):</span> "우와, 대단해! 파일을 선택하고 <strong>[⚡ 업로드 &amp; 자동 문제 출제!]</strong> 버튼만 누르면 바로 문제가 만들어지고, 아래의 모든 코드 실행기에서 <code>pd.read_csv('내파일.csv')</code>로 즉시 불러올 수 있대!"</p>
+    </div>
+
+    <div class="bg-slate-50 border-2 border-[#0077DD] rounded-xl p-6 my-4 shadow-sm no-autolink">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4 pb-4 border-b border-slate-200">
+            <div>
+                <div class="text-lg font-black text-[#0077DD]">📥 내 컴퓨터에서 CSV 파일 올리기 (자동 분석 &amp; 문제 생성)</div>
+                <p class="text-sm text-gray-600 mt-1 mb-0">UTF-8 또는 CP949(EUC-KR) 인코딩의 <code>.csv</code> 파일을 선택하면 가상 파일시스템에 즉시 마운트됩니다.</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0 flex-wrap">
+                <input type="file" id="csv-file-input" accept=".csv" class="block text-sm text-gray-700 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-[#0077DD] file:text-white hover:file:bg-blue-700 cursor-pointer bg-white border border-gray-300 rounded-lg p-1" />
+                <button onclick="handleCSVUpload()" class="bg-[#00CCAA] hover:bg-[#00a88c] text-gray-900 font-black px-4 py-2.5 rounded-lg text-sm shadow transition-all cursor-pointer">
+                    ⚡ 업로드 &amp; 자동 문제 출제!
+                </button>
+            </div>
+        </div>
+
+        <div id="upload-status-box" class="mt-4 bg-white border border-slate-200 rounded-lg p-4 text-sm text-gray-700">
+            💡 <strong>현재 상태:</strong> 직접 CSV 파일을 올리시거나, 바로 아래의 <strong>[세계관 내장 CSV로 자동 문제 생성 테스트]</strong> 버튼을 눌러 성능을 즉시 체험해 보세요!
+            <div class="mt-3 flex flex-wrap gap-2">
+                <button onclick="analyzeAndGenerateQuiz('hyobin_metro.csv')" class="wiki-btn text-xs !border-[#0077DD] !text-[#0077DD]">🚇 hyobin_metro.csv 로 자동 문제 뽑기</button>
+                <button onclick="analyzeAndGenerateQuiz('hyobin_bus.csv')" class="wiki-btn text-xs !border-[#01B7ED] !text-[#0284c7]">🚌 hyobin_bus.csv 로 자동 문제 뽑기</button>
+                <button onclick="analyzeAndGenerateQuiz('band_bakery.csv')" class="wiki-btn text-xs !border-[#FF5522] !text-[#D84315]">🎸 band_bakery.csv 로 자동 문제 뽑기</button>
+                <button onclick="analyzeAndGenerateQuiz('idol_audition_train.csv')" class="wiki-btn text-xs !border-[#FF8899] !text-[#be185d]">👑 idol_audition_train.csv 로 자동 문제 뽑기</button>
+            </div>
+        </div>
+
+        <div id="auto-quiz-container" class="hidden mt-5 space-y-4">
+            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+                <div class="flex justify-between items-center flex-wrap gap-2">
+                    <span class="bg-amber-500 text-white text-xs font-black px-2.5 py-1 rounded">AUTO-GENERATED QUIZ</span>
+                    <button onclick="regenerateCurrentFileQuiz()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-1.5 rounded cursor-pointer">🔄 다른 열·다른 조건으로 문제 다시 뽑기!</button>
+                </div>
+                <div id="auto-quiz-prompt" class="mt-3 text-gray-800 text-sm space-y-2"></div>
+            </div>
+
+            <div class="python-editor-container">
+                <div class="editor-header">
+                    <span id="auto-editor-title">[내 CSV 맞춤형 실습장] 생성된 문제를 직접 코딩해서 풀어보세요!</span>
+                    <div class="flex gap-2">
+                        <button class="run-btn" id="btn-run-auto" onclick="runPythonCode('code-auto', 'out-auto', 'btn-run-auto')">▶ 코드 실행 (Run)</button>
+                    </div>
+                </div>
+                <textarea id="code-auto" class="code-area" spellcheck="false"></textarea>
+                <div id="out-auto" class="output-area">여기에 내 CSV 분석 결과가 출력됩니다.</div>
+            </div>
+
+            <details class="wiki-details">
+                <summary>💡 [자동 생성된 정답 수치 &amp; 1·2·3유형 표준 정답 코드 펼쳐보기]</summary>
+                <div id="auto-quiz-solution" class="mt-3 p-3 bg-slate-900 text-green-300 font-mono text-xs rounded whitespace-pre-wrap overflow-x-auto"></div>
+            </details>
+        </div>
+    </div>
+
+
+    <!-- =========================================================================
+         2. 세계관 내장 데이터셋 5종 일람 및 미리보기
+    ========================================================================== -->
+    <h2 id="s-2"><b>2. 🌍 [핵심 기능 2] 세계관 내장 데이터셋 5종 일람 및 미리보기</b></h2>
+    <p>
+        본 페이지의 메모리에 기본으로 올라가 있는 <strong>효빈광역시 &amp; 애니메이션 세계관 CSV 파일 5종</strong>입니다. 어느 에디터에서든 <code>pd.read_csv("파일명")</code>으로 즉시 불러와 요리할 수 있습니다.
+    </p>
+
+    <table class="wiki-table no-autolink">
+        <thead>
+            <tr>
+                <th style="width: 18%;">파일명 (행×열)</th>
+                <th style="width: 22%;">세계관 테마 및 상징 컬러</th>
+                <th style="width: 38%;">포함된 주요 컬럼(열) 구조</th>
+                <th style="width: 22%;">미리보기 실행</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="font-mono font-bold text-[#0077DD]">hyobin_metro.csv<br><span class="text-xs text-gray-500">(30행 × 9열)</span></td>
+                <td>
+                    <strong>효빈교통공사 도시철도</strong><br>
+                    <span class="line-badge" style="background:#0077DD;">1호선</span>
+                    <span class="line-badge" style="background:#00CCAA;">2호선</span>
+                    <span class="line-badge" style="background:#FFCC11;color:#222;">3호선</span>
+                    <span class="line-badge" style="background:#FF5522;">4호선</span>
+                    <span class="line-badge" style="background:#EE0022;">5호선</span>
+                    <span class="line-badge" style="background:#881188;">6호선</span>
+                    <span class="line-badge" style="background:#FF8899;color:#222;">7호선</span>
+                    <span class="line-badge" style="background:#9856FF;">8호선</span>
+                    <span class="line-badge" style="background:#6677CC;">빈효선</span>
+                    <span class="line-badge" style="background:#33AAFF;">창전선</span>
+                </td>
+                <td class="text-xs font-mono">역번호, 역명, 노선, 마스코트, 자치구, 일평균승하차, 환승역여부, 월간흑자액_백만원, 만족도(결측포함)</td>
+                <td class="text-center">
+                    <button onclick="previewDataset('hyobin_metro.csv')" class="wiki-btn text-xs">🔍 표 구조 &amp; 상위 5행 보기</button>
+                </td>
+            </tr>
+            <tr>
+                <td class="font-mono font-bold text-[#01B7ED]">hyobin_bus.csv<br><span class="text-xs text-gray-500">(30행 × 8열)</span></td>
+                <td>
+                    <strong>효빈광역시 시내버스</strong><br>
+                    <span class="line-badge" style="background:#01B7ED;">간선(시즈쿠)</span>
+                    <span class="line-badge" style="background:#37B484;">지선(시오리코)</span>
+                    <span class="line-badge" style="background:#E7D600;color:#222;">순환(카스미)</span>
+                    <span class="line-badge" style="background:#D81C2F;">급행(세츠나)</span>
+                    <span class="line-badge" style="background:#795548;">2세대 두청운수(흑역사)</span>
+                </td>
+                <td class="text-xs font-mono">노선번호, 세대, 종별, 담당캐릭터, 배차간격_분, 일일수송량, 시민만족도, 정시성점수</td>
+                <td class="text-center">
+                    <button onclick="previewDataset('hyobin_bus.csv')" class="wiki-btn text-xs">🔍 표 구조 &amp; 상위 5행 보기</button>
+                </td>
+            </tr>
+            <tr>
+                <td class="font-mono font-bold text-[#FF5522]">band_bakery.csv<br><span class="text-xs text-gray-500">(28행 × 9열)</span></td>
+                <td>
+                    <strong>야마부키 베이커리 × 걸즈밴드</strong><br>
+                    <span class="text-xs text-gray-600">(포피파, 앱글, 로젤리아, 마이고, 토게토게, 결속밴드, 방과후 티타임)</span>
+                </td>
+                <td class="text-xs font-mono">판매일, 밴드명, 최애멤버, 대표메뉴(초코소라빵/제로콜라/초코프로틴 등), 단가, 판매수량, 총매출액, 앙코르성사여부, 리뷰점수(결측포함)</td>
+                <td class="text-center">
+                    <button onclick="previewDataset('band_bakery.csv')" class="wiki-btn text-xs">🔍 표 구조 &amp; 상위 5행 보기</button>
+                </td>
+            </tr>
+            <tr>
+                <td class="font-mono font-bold text-[#FF8899]">idol_audition_train.csv<br>idol_audition_test.csv<br><span class="text-xs text-gray-500">(40행 / 15행)</span></td>
+                <td>
+                    <strong>스쿨 아이돌 합동 오디션 (2유형 전용)</strong><br>
+                    <span class="text-xs text-gray-600">(니지가사키·리엘라·하스노소라·뮤즈·아쿠아·이키즈라이브)</span>
+                </td>
+                <td class="text-xs font-mono">참가자ID, 소속그룹, 포지션, 보컬점수, 댄스점수, 매력지수, 주간웨이트횟수, 합격여부(train만 존재, 0/1)</td>
+                <td class="text-center">
+                    <button onclick="previewDataset('idol_audition_train.csv')" class="wiki-btn text-xs">🔍 표 구조 &amp; 상위 5행 보기</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div id="dataset-preview-box" class="hidden my-4 bg-slate-900 text-green-300 font-mono text-xs p-4 rounded-lg border border-slate-700 whitespace-pre-wrap overflow-x-auto no-autolink"></div>
+
+
+    <!-- =========================================================================
+         3. 세계관 × 유형별 랜덤 문제 무한 생성 & 자동 채점기
+    ========================================================================== -->
+    <h2 id="s-3"><b>3. 🎲 [핵심 기능 3] 세계관 × 유형별 랜덤 문제 무한 생성 &amp; 자동 채점기</b></h2>
+    <div class="dialogue-box">
+        <p><span class="speaker-kasumi">👑 나카스 카스미 (니지가사키 부장):</span> "선배님! 똑같은 문제만 계속 풀면 카스밍처럼 천재적인 두뇌는 답을 외워버린단 말이에요! 누를 때마다 <strong>노선이나 밴드 조건, 사분위수, t-검정 집단이 실시간으로 바뀌는 무한 문제 뽑기 기계</strong>를 만들어 주세요!"</p>
+        <p class="mt-2"><span class="speaker-harubin">💚 하루빈 (효빈도시철도 2호선 마스코트):</span> "문제없어! 아래에서 원하는 세계관과 유형(1유형 / 2유형 / 3유형)을 고르고 <strong>[🎲 새 문제 랜덤 출제!]</strong>를 누르면 매번 다른 숫자와 조건의 문제가 튀어나오고, <strong>[✅ 내 출력값 자동 채점하기]</strong>를 누르면 파이썬이 실시간으로 정답 여부를 판정해 줄 거야!"</p>
+    </div>
+
+    <div class="bg-indigo-50 border-2 border-indigo-400 rounded-xl p-5 my-4 shadow-sm no-autolink">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-indigo-200">
+            <div class="flex flex-wrap items-center gap-3">
+                <label class="font-bold text-sm text-indigo-950">데이터셋 선택:</label>
+                <select id="rng-dataset" class="border border-indigo-300 rounded px-3 py-1.5 text-sm font-bold bg-white text-gray-800">
+                    <option value="hyobin_metro.csv">🚇 hyobin_metro.csv (효빈도시철도)</option>
+                    <option value="hyobin_bus.csv">🚌 hyobin_bus.csv (효빈시내버스 스타더스트)</option>
+                    <option value="band_bakery.csv">🎸 band_bakery.csv (야마부키 빵집 × 걸즈밴드)</option>
+                    <option value="idol_audition_train.csv">👑 idol_audition_train.csv (스쿨아이돌 오디션)</option>
+                </select>
+
+                <label class="font-bold text-sm text-indigo-950 ml-2">출제 유형:</label>
+                <select id="rng-type" class="border border-indigo-300 rounded px-3 py-1.5 text-sm font-bold bg-white text-gray-800">
+                    <option value="type1_iqr">제1유형: 조건 필터링 &amp; IQR 이상치 제거</option>
+                    <option value="type1_group">제1유형: 결측치 대체 &amp; 그룹별 집계 순위</option>
+                    <option value="type1_scale">제1유형: MinMaxScaler 정규화 임계값 카운트</option>
+                    <option value="type2_ml">제2유형: 예측 결과 CSV 저장 및 규격 검산</option>
+                    <option value="type3_ttest">제3유형: 일표본 t-검정 (ttest_1samp)</option>
+                    <option value="type3_anova">제3유형: 다집단 일원배치 분산분석 (ANOVA)</option>
+                    <option value="type3_ols">제3유형: 단순 선형회귀 회귀계수(기울기)</option>
+                </select>
+            </div>
+            <button onclick="generateRandomWorldQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-5 py-2 rounded-lg text-sm shadow cursor-pointer transition-all">
+                🎲 새 문제 랜덤 출제!
+            </button>
+        </div>
+
+        <div id="rng-question-box" class="mt-4 bg-white border-l-4 border-indigo-600 p-4 rounded shadow-sm text-gray-800 text-sm">
+            위의 <strong>[🎲 새 문제 랜덤 출제!]</strong> 버튼을 누르면 즉시 새로운 문제가 생성됩니다!
+        </div>
+
+        <div class="python-editor-container">
+            <div class="editor-header">
+                <span>[랜덤 문제 풀이 &amp; 실시간 자동 채점기] 마지막 줄에 정답을 print() 하세요!</span>
+                <div class="flex gap-2">
+                    <button class="run-btn" id="btn-run-rng" onclick="runPythonCode('code-rng', 'out-rng', 'btn-run-rng')">▶ 실행 (Run)</button>
+                    <button class="grade-btn" onclick="gradeRandomWorldQuiz()">✅ 내 출력값 자동 채점하기</button>
+                </div>
+            </div>
+            <textarea id="code-rng" class="code-area" spellcheck="false">
+import pandas as pd
+import numpy as np
+
+# [🎲 새 문제 랜덤 출제!] 버튼을 누르면 여기에 기본 시작 코드가 세팅됩니다.
+</textarea>
+            <div id="out-rng" class="output-area">코드를 실행한 뒤 [✅ 내 출력값 자동 채점하기]를 눌러보세요!</div>
+        </div>
+
+        <div id="rng-grade-result" class="hidden mt-3 p-3 rounded-lg font-bold text-sm"></div>
+
+        <details class="wiki-details">
+            <summary>💡 [현재 랜덤 문제의 정답 수치 &amp; 해설 코드 보기 (막혔을 때만 클릭!)]</summary>
+            <div id="rng-answer-box" class="mt-2 p-3 bg-slate-900 text-amber-300 font-mono text-xs rounded whitespace-pre-wrap">아직 출제된 문제가 없습니다.</div>
+        </details>
+    </div>
+
+
+    <!-- =========================================================================
+         4. 엄선 실전 모의고사 (효빈광역시 × 걸즈밴드 × 스쿨아이돌 1·2·3유형)
+    ========================================================================== -->
+    <h2 id="s-4"><b>4. 🏆 [엄선 실전 모의고사] 효빈광역시 × 걸즈밴드 × 스쿨아이돌 1·2·3유형</b></h2>
+    <p>
+        빅분기 실기에서 가장 자주 나오는 핵심 함정들을 효빈광역시와 서브컬처 세계관 스토리로 완벽하게 녹여낸 4대 대표 모의고사입니다. 각 에디터 우측의 <strong>[✅ 채점하기]</strong> 버튼으로 만점 여부를 직접 확인해 보세요!
+    </p>
+
+    <h3 id="s-4-1"><b>4.1. [제1유형] 효빈도시철도 노선별 흑자 수익금 IQR 이상치 &amp; 파생변수 (hyobin_metro.csv)</b></h3>
+    <div class="bg-blue-50 border-l-4 border-[#0077DD] p-4 my-3 text-gray-800 text-sm">
+        <strong>🎯 [실전 문제 1]</strong> 만년 흑자 공기업인 <strong>효빈교통공사</strong>의 역별 운영 데이터(<code>hyobin_metro.csv</code>, 30행)를 분석하시오.<br>
+        1) 먼저 <code>만족도</code> 열의 결측치(NaN)를 해당 열의 <strong>중앙값(median)</strong>으로 채우시오.<br>
+        2) <code>월간흑자액_백만원</code> 열에서 IQR 방식($Q_1 - 1.5 \times \text{IQR}$ 미만 또는 $Q_3 + 1.5 \times \text{IQR}$ 초과)으로 <strong>이상치(Outlier) 역들을 제거하고 정상 데이터만 남기시오.</strong><br>
+        3) 이상치가 제거된 정상 역들 중에서 <code>환승역여부 == "환승"</code>인 역들의 <strong>(<code>일평균승하차</code> 평균 + <code>만족도</code> 평균)</strong>을 구하여 <strong>소수 둘째 자리까지 반올림(<code>round(값, 2)</code>)한 숫자 1개</strong>만 출력하시오.
+    </div>
+
+    <div class="python-editor-container no-autolink">
+        <div class="editor-header">
+            <span>[모의고사 1] hyobin_metro.csv (고나미 &amp; 하루빈의 1유형 테스트)</span>
+            <div class="flex gap-2">
+                <button class="run-btn" id="btn-run-m1" onclick="runPythonCode('code-m1', 'out-m1', 'btn-run-m1')">▶ 실행 (Run)</button>
+                <button class="grade-btn" onclick="checkFixedQuiz('out-m1', 'm1')">✅ 채점하기</button>
+            </div>
+        </div>
+        <textarea id="code-m1" class="code-area" spellcheck="false">
+import pandas as pd
+
+df = pd.read_csv("hyobin_metro.csv")
+
+# 1. 만족도 결측치를 중앙값으로 대체하시오.
+
+
+# 2. 월간흑자액_백만원 열의 IQR 이상치를 제거하고 정상 행만 남기시오.
+
+
+# 3. 정상 행 중 환승역여부 == "환승" 인 역들의 (일평균승하차 평균 + 만족도 평균)을 소수 2자리 반올림 출력!
+</textarea>
+        <div id="out-m1" class="output-area">코드를 작성하고 실행 버튼을 눌러 보세요!</div>
+    </div>
+    <details class="wiki-details no-autolink">
+        <summary>💡 [모의고사 1] 표준 정답 코드 및 해설 펼치기</summary>
+        <pre class="mt-2 p-3 bg-slate-900 text-green-300 font-mono text-xs rounded overflow-x-auto">import pandas as pd
+
+df = pd.read_csv("hyobin_metro.csv")
+df["만족도"] = df["만족도"].fillna(df["만족도"].median())
+
+s = df["월간흑자액_백만원"]
+q1, q3 = s.quantile(0.25), s.quantile(0.75)
+iqr = q3 - q1
+kept = df[(s >= q1 - 1.5 * iqr) & (s <= q3 + 1.5 * iqr)]
+
+sub = kept[kept["환승역여부"] == "환승"]
+ans = round(float(sub["일평균승하차"].mean() + sub["만족도"].mean()), 2)
+print(ans)  # 정답: 31507.29</pre>
+    </details>
+
+    <h3 id="s-4-2"><b>4.2. [제1유형] 야마부키 베이커리 × 걸즈밴드 콜라보 매출 시계열·집계 (band_bakery.csv)</b></h3>
+    <div class="bg-orange-50 border-l-4 border-[#FF5522] p-4 my-3 text-gray-800 text-sm">
+        <strong>🎯 [실전 문제 2]</strong> 야마부키 사아야네 빵집과 6대 걸즈밴드의 콜라보 판매 데이터(<code>band_bakery.csv</code>, 28행)를 분석하시오.<br>
+        1) <code>판매일</code> 열을 날짜형(<code>pd.to_datetime</code>)으로 변환한 뒤, <strong>2026년 8월 또는 9월(<code>dt.month.isin([8, 9])</code>)</strong>에 판매된 데이터만 필터링하시오.<br>
+        2) 필터링된 데이터에서 <code>밴드명</code>별로 <code>총매출액</code>의 합계(<code>sum</code>)를 구해 내림차순 정렬했을 때, <strong>매출 1위 밴드와 2위 밴드의 총매출액 차이(1위 금액 - 2위 금액)</strong>를 정수로 출력하시오.
+    </div>
+
+    <div class="python-editor-container no-autolink">
+        <div class="editor-header">
+            <span>[모의고사 2] band_bakery.csv (사아야·모카·유키나·니나·키타의 1유형 테스트)</span>
+            <div class="flex gap-2">
+                <button class="run-btn" id="btn-run-m2" onclick="runPythonCode('code-m2', 'out-m2', 'btn-run-m2')">▶ 실행 (Run)</button>
+                <button class="grade-btn" onclick="checkFixedQuiz('out-m2', 'm2')">✅ 채점하기</button>
+            </div>
+        </div>
+        <textarea id="code-m2" class="code-area" spellcheck="false">
+import pandas as pd
+
+df = pd.read_csv("band_bakery.csv")
+
+# 1. 판매일을 datetime으로 바꾸고 8월, 9월 데이터만 남기시오.
+
+
+# 2. 밴드명별 총매출액 합계를 내림차순 정렬하여 (1위 매출 - 2위 매출)을 정수로 출력하시오.
+</textarea>
+        <div id="out-m2" class="output-area">코드를 작성하고 실행 버튼을 눌러 보세요!</div>
+    </div>
+    <details class="wiki-details no-autolink">
+        <summary>💡 [모의고사 2] 표준 정답 코드 및 해설 펼치기</summary>
+        <pre class="mt-2 p-3 bg-slate-900 text-green-300 font-mono text-xs rounded overflow-x-auto">import pandas as pd
+
+df = pd.read_csv("band_bakery.csv")
+df["판매일"] = pd.to_datetime(df["판매일"])
+sub = df[df["판매일"].dt.month.isin([8, 9])]
+
+g = sub.groupby("밴드명")["총매출액"].sum().sort_values(ascending=False)
+print(int(g.iloc[0] - g.iloc[1]))  # 정답: 147000</pre>
+    </details>
+
+    <h3 id="s-4-3"><b>4.3. [제2유형] 스쿨 아이돌 합동 오디션 최종 합격 확률 예측 (idol_audition_train/test.csv)</b></h3>
+    <div class="bg-pink-50 border-l-4 border-[#FF8899] p-4 my-3 text-gray-800 text-sm">
+        <strong>🎯 [실전 문제 3]</strong> 스쿨 아이돌 합동 오디션 학습 데이터(<code>idol_audition_train.csv</code>, 40행)로 모델을 학습시켜, 평가 데이터(<code>idol_audition_test.csv</code>, 15행) 참가자들의 <strong><code>합격여부</code>가 1일 확률(Probability)</strong>을 예측하시오.<br>
+        • <strong>주의사항:</strong> <code>test</code> 데이터의 <code>소속그룹</code> 열에는 <code>train</code>에 없던 신규 그룹(<code>"Ikizurailive"</code>)이 포함되어 있으니 반드시 <code>OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)</code> 방어막을 사용하시오!<br>
+        • <strong>제출 규격:</strong> 파일명은 <code>audition_result.csv</code>, 칼럼명은 <code>pred</code> 1개만 포함(<code>index=False</code> 필수!).
+    </div>
+
+    <div class="python-editor-container no-autolink">
+        <div class="editor-header">
+            <span>[모의고사 3] idol_audition_train/test.csv (나카스 카스미 &amp; 고토 아키라의 2유형 테스트)</span>
+            <div class="flex gap-2">
+                <button class="run-btn" id="btn-run-m3" onclick="runPythonCode('code-m3', 'out-m3', 'btn-run-m3')">▶ 실행 (Run)</button>
+                <button class="grade-btn" onclick="checkFixedQuiz('out-m3', 'm3')">✅ 제출 파일 규격 &amp; 성능 채점하기</button>
+            </div>
+        </div>
+        <textarea id="code-m3" class="code-area" spellcheck="false">
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OrdinalEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import roc_auc_score
+
+train = pd.read_csv("idol_audition_train.csv")
+test = pd.read_csv("idol_audition_test.csv")
+
+# 여기에 전처리, 모델 학습, audition_result.csv 저장 코드를 작성하세요!
+</textarea>
+        <div id="out-m3" class="output-area">코드를 작성하고 실행 버튼을 눌러 보세요!</div>
+    </div>
+    <details class="wiki-details no-autolink">
+        <summary>💡 [모의고사 3] 40점 만점 무적 템플릿 정답 코드 펼치기</summary>
+        <pre class="mt-2 p-3 bg-slate-900 text-green-300 font-mono text-xs rounded overflow-x-auto">import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OrdinalEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import roc_auc_score
+
+train = pd.read_csv("idol_audition_train.csv")
+test = pd.read_csv("idol_audition_test.csv")
+
+X = train.drop(columns=["참가자ID", "합격여부"])
+y = train["합격여부"]
+X_test = test.drop(columns=["참가자ID"])
+
+cat_cols = X.select_dtypes(include="object").columns
+enc = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
+X[cat_cols] = enc.fit_transform(X[cat_cols])
+X_test[cat_cols] = enc.transform(X_test[cat_cols])
+
+x_tr, x_va, y_tr, y_va = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+model = RandomForestClassifier(n_estimators=100, random_state=42).fit(x_tr, y_tr)
+val_auc = roc_auc_score(y_va, model.predict_proba(x_va)[:, 1])
+
+final_model = RandomForestClassifier(n_estimators=100, random_state=42).fit(X, y)
+pred_proba = final_model.predict_proba(X_test)[:, 1]
+
+pd.DataFrame({"pred": pred_proba}).to_csv("audition_result.csv", index=False)
+check = pd.read_csv("audition_result.csv")
+print("검증 AUC:", round(float(val_auc), 4))
+print("제출 파일 shape:", check.shape, "/ 컬럼:", check.columns.tolist())</pre>
+    </details>
+
+    <h3 id="s-4-4"><b>4.4. [제3유형] 스타더스트 3세대 버스 vs 두청운수(흑역사) 만족도 Welch t-검정 (hyobin_bus.csv)</b></h3>
+    <div class="bg-purple-50 border-l-4 border-[#881188] p-4 my-3 text-gray-800 text-sm">
+        <strong>🎯 [실전 문제 4]</strong> 효빈광역시 시내버스 운영 데이터(<code>hyobin_bus.csv</code>, 30행)에서 <strong>3세대 스타더스트 도색 버스(<code>세대 == "3세대_스타더스트"</code>)</strong>와 시민들의 트라우마인 <strong>2세대 구형 두청운수 갈색 버스(<code>세대 == "2세대_두청운수"</code>)</strong>의 <code>시민만족도</code> 평균에 차이가 있는지 <strong>등분산을 가정하지 않는(Welch) 양측 독립표본 t-검정(<code>equal_var=False</code>)</strong>을 수행하시오.<br>
+        • <strong>출력:</strong> 3세대 버스를 앞자리, 2세대 두청운수를 뒷자리에 넣었을 때의 <strong>검정통계량(statistic)을 소수 둘째 자리까지 반올림한 값</strong>과, 유의수준 0.05에서 <strong><code>"기각"</code> 또는 <code>"기각불가"</code></strong>를 한 줄에 공백으로 구분해 출력하시오.
+    </div>
+
+    <div class="python-editor-container no-autolink">
+        <div class="editor-header">
+            <span>[모의고사 4] hyobin_bus.csv (오사카 시즈쿠 &amp; 시이나 타키의 3유형 테스트)</span>
+            <div class="flex gap-2">
+                <button class="run-btn" id="btn-run-m4" onclick="runPythonCode('code-m4', 'out-m4', 'btn-run-m4')">▶ 실행 (Run)</button>
+                <button class="grade-btn" onclick="checkFixedQuiz('out-m4', 'm4')">✅ 채점하기</button>
+            </div>
+        </div>
+        <textarea id="code-m4" class="code-area" spellcheck="false">
+import pandas as pd
+from scipy import stats
+
+df = pd.read_csv("hyobin_bus.csv")
+
+# 3세대_스타더스트 vs 2세대_두청운수 시민만족도 Welch t-검정 (equal_var=False) 수행 후 결과 출력!
+</textarea>
+        <div id="out-m4" class="output-area">코드를 작성하고 실행 버튼을 눌러 보세요!</div>
+    </div>
+    <details class="wiki-details no-autolink">
+        <summary>💡 [모의고사 4] 표준 정답 코드 및 해설 펼치기</summary>
+        <pre class="mt-2 p-3 bg-slate-900 text-green-300 font-mono text-xs rounded overflow-x-auto">import pandas as pd
+from scipy import stats
+
+df = pd.read_csv("hyobin_bus.csv")
+g3 = df[df["세대"] == "3세대_스타더스트"]["시민만족도"]
+g2 = df[df["세대"] == "2세대_두청운수"]["시민만족도"]
+
+res = stats.ttest_ind(g3, g2, equal_var=False)
+stat_val = round(float(res.statistic), 2)
+decision = "기각" if res.pvalue < 0.05 else "기각불가"
+print(stat_val, decision)  # 정답: 25.43 기각</pre>
+    </details>
+
+
+    <!-- =========================================================================
+         5. 만능 자유 코딩 샌드박스 (원클릭 스니펫 탑재)
+    ========================================================================== -->
+    <h2 id="s-5"><b>5. 💻 [핵심 기능 4] 만능 자유 코딩 샌드박스 (원클릭 스니펫 탑재)</b></h2>
+    <p>
+        내가 직접 업로드한 CSV나 세계관 데이터셋 5종을 마음껏 주무르고 실험해 볼 수 있는 <strong>자유 코딩 연습장</strong>입니다. 아래 스니펫 버튼을 누르면 자주 쓰는 코드가 에디터에 즉시 입력됩니다!
+    </p>
+
+    <div class="flex flex-wrap gap-1.5 my-3 bg-slate-100 p-3 rounded-lg border border-slate-300 no-autolink">
+        <span class="text-xs font-black text-slate-700 self-center mr-2">⚡ 원클릭 코드 스니펫 삽입:</span>
+        <button onclick="insertSnippet('files')" class="snippet-btn">📂 전체 CSV 파일 목록 확인</button>
+        <button onclick="insertSnippet('dir_search')" class="snippet-btn">🔍 dir() 함수 철자 검색기</button>
+        <button onclick="insertSnippet('metro_eda')" class="snippet-btn">🚇 효빈도시철도 노선별 흑자 집계</button>
+        <button onclick="insertSnippet('bus_anova')" class="snippet-btn">🚌 시내버스 종별 ANOVA 검정</button>
+        <button onclick="insertSnippet('bakery_chi2')" class="snippet-btn">🎸 걸즈밴드 앙코르 카이제곱 검정</button>
+        <button onclick="insertSnippet('clear')" class="snippet-btn !bg-red-700 !border-red-900">🗑️ 에디터 비우기</button>
+    </div>
+
+    <div class="python-editor-container no-autolink">
+        <div class="editor-header">
+            <span>[자유 코딩 샌드박스] 어떤 파이썬 코드든 마음껏 작성하고 돌려보세요!</span>
+            <button class="run-btn" id="btn-run-sandbox" onclick="runPythonCode('code-sandbox', 'out-sandbox', 'btn-run-sandbox')">▶ 샌드박스 코드 실행 (Run)</button>
+        </div>
+        <textarea id="code-sandbox" class="code-area" style="min-height: 260px;" spellcheck="false">
+import os
+import pandas as pd
+import numpy as np
+from scipy import stats
+
+print("=== 현재 가상 파일시스템에 탑재된 CSV 목록 ===")
+print([f for f in sorted(os.listdir()) if f.endswith(".csv")])
+
+print("\n=== 효빈교통공사 노선별 담당 마스코트 & 월간흑자액 합계(백만원) ===")
+metro = pd.read_csv("hyobin_metro.csv")
+summary = metro.groupby(["노선", "마스코트"])["월간흑자액_백만원"].agg(["count", "sum", "mean"]).round(2)
+print(summary)
+</textarea>
+        <div id="out-sandbox" class="output-area">준비 완료! 위 실행 버튼을 누르거나 원클릭 스니펫을 클릭해 보세요.</div>
+    </div>
+
+
+<!-- 빅분기 실기 시리즈 하단 네비게이션 인젝션 컨테이너 -->
+<div id="nav-bigdata-container" class="my-10"></div>
+<script src="assets/nav_bigdata.js"></script>
+<div id="footer-container"></div>
+<script src="assets/load-footer.js"></script>
+
+<script>
+    let pyodideReadyPromise;
+    let currentUploadedFileName = "hyobin_metro.csv";
+    let currentRngExpectedAnswer = null;
+    const fixedExpectedAnswers = {
+        m1: "31507.29",
+        m2: "147000",
+        m4: "25.43 기각"
+    };
+
+    const statusPill = document.getElementById('pyodide-status-pill');
+    const statusText = document.getElementById('status-text');
+    const statusSpinner = document.getElementById('status-spinner');
+
+    // [5편과 100% 동일한 방식!] 파이썬 실행 없이 FS.writeFile로 즉각 CSV 생성 & 데드락 함수 호출 제거!
+    async function initPyodide() {
+        try {
+            let pyodide = await loadPyodide();
+            await pyodide.loadPackage(['pandas', 'scipy', 'scikit-learn', 'numpy']);
+
+            // 1. hyobin_metro.csv (30행, 효빈교통공사 도시철도)
+            const hyobin_metro_csv = `역번호,역명,노선,마스코트,자치구,일평균승하차,환승역여부,월간흑자액_백만원,만족도
+HB101,창전구청,1호선,고나미,창전구,34200,환승,980.5,4.82
+HB102,효빈역,1호선,고나미,중앙구,41500,환승,920.0,4.91
+HB103,중앙로,1호선,고나미,중앙구,18400,일반,15.2,4.35
+HB104,서신,1호선,고나미,창전구,15200,일반,215.4,
+HB105,칠심,2호선,하루빈,창전구,29800,환승,410.2,4.65
+HB106,시청,2호선,하루빈,중앙구,33100,환승,445.0,4.78
+HB107,효빈대,2호선,하루빈,고송구,21400,일반,260.8,4.52
+HB108,고송,2호선,하루빈,고송구,14800,일반,195.0,
+HB109,팔조,3호선,박라미,팔조구,27600,환승,380.5,4.41
+HB110,사능,3호선,박라미,중앙구,26900,환승,365.2,4.55
+HB111,청능,3호선,박라미,고송구,25400,환승,350.0,4.38
+HB112,토모리해수욕장,3호선,박라미,고송구,19200,환승,290.4,4.88
+HB113,우택,4호선,다로나,우택구,28900,환승,395.1,
+HB114,산업단지,4호선,다로나,우택구,16500,일반,230.0,4.12
+HB115,대찬대,4호선,다로나,우택구,17800,일반,240.5,4.25
+HB116,남우택,5호선,미소하,우택구,30100,환승,415.8,4.60
+HB117,소조,5호선,미소하,중앙구,26200,환승,360.0,4.48
+HB118,덕현중앙,5호선,미소하,덕현구,31200,환승,430.2,4.71
+HB119,전덕,6호선,라세나,덕현구,28400,환승,390.0,4.59
+HB120,별빛광장,6호선,라세나,중앙구,15900,일반,220.4,
+HB121,쌍둥이빌딩,7호선,임세정·임세하,중앙구,17200,일반,245.0,4.66
+HB122,캠퍼스타운,7호선,임세정·임세하,고송구,16800,일반,238.2,4.50
+HB123,라벤더힐,8호선,유리아,고송구,13900,일반,188.5,4.72
+HB124,북고송,8호선,유리아,고송구,14500,일반,192.0,4.40
+HB125,하성천,빈효선,전노아,덕현구,32400,환승,450.6,4.80
+HB126,빈주경계,빈효선,전노아,덕현구,14100,일반,190.2,4.18
+HB127,신팔조,창전선,심세이,팔조구,18900,일반,270.0,
+HB128,신창전,창전선,심세이,창전구,20500,일반,285.5,4.62
+HB129,효빈대병원,창전선,심세이,중앙구,22800,일반,310.0,4.75
+HB130,고송강변,창전선,심세이,고송구,17600,일반,250.4,4.58`;
+            pyodide.FS.writeFile("hyobin_metro.csv", hyobin_metro_csv);
+
+            // 2. hyobin_bus.csv (30행, 3세대 스타더스트 vs 2세대 두청운수)
+            const hyobin_bus_csv = `노선번호,세대,종별,담당캐릭터,배차간격_분,일일수송량,시민만족도,정시성점수
+B101,3세대_스타더스트,간선,오사카 시즈쿠,7,5400,88.5,94.2
+B102,3세대_스타더스트,간선,오사카 시즈쿠,8,5100,87.2,93.0
+B103,3세대_스타더스트,지선,미후네 시오리코,10,3800,86.0,91.5
+B104,3세대_스타더스트,지선,미후네 시오리코,11,3600,85.4,90.8
+B105,3세대_스타더스트,순환,나카스 카스미,9,4200,91.0,95.1
+B106,3세대_스타더스트,순환,나카스 카스미,8,4400,90.2,94.6
+B107,3세대_스타더스트,급행,유키 세츠나,12,5800,89.5,96.0
+B108,3세대_스타더스트,급행,유키 세츠나,10,6100,88.8,95.4
+B109,3세대_스타더스트,좌석,미야시타 아이,14,3900,87.0,92.2
+B110,3세대_스타더스트,좌석,미야시타 아이,15,3750,86.5,91.8
+B111,3세대_스타더스트,광역,아사카 카린,16,4900,88.0,93.5
+B112,3세대_스타더스트,광역,아사카 카린,15,4700,87.6,92.9
+B113,3세대_스타더스트,마을,코노에 카나타,18,2400,84.5,89.5
+B114,3세대_스타더스트,마을,코노에 카나타,17,2550,85.0,90.1
+B115,3세대_스타더스트,공항,엠마 베르데,20,3100,90.5,96.5
+B116,3세대_스타더스트,공항,엠마 베르데,18,3250,89.8,95.8
+B117,3세대_스타더스트,투어,시이나 타키,25,2800,88.2,94.0
+B118,3세대_스타더스트,투어,시이나 타키,22,2950,87.9,93.7
+B119,3세대_스타더스트,간선,오사카 시즈쿠,6,5600,89.1,94.8
+B120,3세대_스타더스트,순환,나카스 카스미,7,4650,91.5,95.9
+OLD_01,2세대_두청운수,구형일반,두청운수(흑역사),32,5900,42.5,58.0
+OLD_02,2세대_두청운수,구형일반,두청운수(흑역사),38,6200,38.0,52.4
+OLD_03,2세대_두청운수,구형일반,두청운수(흑역사),29,5500,45.2,61.0
+OLD_04,2세대_두청운수,구형일반,두청운수(흑역사),41,6400,36.5,49.5
+OLD_05,2세대_두청운수,구형일반,두청운수(흑역사),35,5800,41.0,55.2
+OLD_06,2세대_두청운수,구형일반,두청운수(흑역사),44,6500,35.0,48.0
+OLD_07,2세대_두청운수,구형일반,두청운수(흑역사),30,5300,46.8,63.5
+OLD_08,2세대_두청운수,구형일반,두청운수(흑역사),36,6000,39.5,54.0
+OLD_09,2세대_두청운수,구형일반,두청운수(흑역사),40,6150,37.8,51.2
+OLD_10,2세대_두청운수,구형일반,두청운수(흑역사),33,5700,43.2,59.1`;
+            pyodide.FS.writeFile("hyobin_bus.csv", hyobin_bus_csv);
+
+            // 3. band_bakery.csv (28행, 야마부키 베이커리 × 걸즈밴드)
+            const band_bakery_csv = `판매일,밴드명,최애멤버,대표메뉴,단가,판매수량,총매출액,앙코르성사여부,리뷰점수
+2026-07-05,Poppin'Party,야마부키 사아야,초코소라빵 세트,4500,150,675000,1,4.92
+2026-07-12,Afterglow,아오바 모카,초코프로틴 특제번,5200,120,624000,1,4.85
+2026-07-19,Roselia,미나토 유키나,제로콜라 & 크루아상,6000,110,660000,1,4.88
+2026-07-26,MyGO!!!!!,타카마츠 토모리,별조각 슈크림빵,4800,95,456000,0,4.65
+2026-07-28,토게나시 토게아리,이세리 니나,가시돋친 메론빵 & 제로콜라,5500,105,577500,1,4.79
+2026-07-30,결속밴드,키타 이쿠요,키타아우라 딸기데니쉬,5000,115,575000,1,
+2026-07-31,방과후 티타임,히라사와 유이,푹신푹신 케이크롤,5800,100,580000,0,4.81
+2026-08-02,Poppin'Party,야마부키 사아야,초코소라빵 세트,4500,180,810000,1,4.95
+2026-08-05,Afterglow,아오바 모카,초코프로틴 특제번,5200,135,702000,1,4.89
+2026-08-09,Roselia,미나토 유키나,제로콜라 & 크루아상,6000,125,750000,1,4.91
+2026-08-12,MyGO!!!!!,타카마츠 토모리,별조각 슈크림빵,4800,110,528000,1,
+2026-08-15,토게나시 토게아리,이세리 니나,가시돋친 메론빵 & 제로콜라,5500,130,715000,1,4.84
+2026-08-19,결속밴드,키타 이쿠요,키타아우라 딸기데니쉬,5000,125,625000,1,4.87
+2026-08-23,방과후 티타임,히라사와 유이,푹신푹신 케이크롤,5800,115,667000,1,4.83
+2026-08-26,Poppin'Party,야마부키 사아야,초코소라빵 세트,4500,190,855000,1,4.96
+2026-08-29,Afterglow,아오바 모카,초코프로틴 특제번,5200,140,728000,1,4.86
+2026-09-02,Roselia,미나토 유키나,제로콜라 & 크루아상,6000,130,780000,1,4.90
+2026-09-05,MyGO!!!!!,타카마츠 토모리,별조각 슈크림빵,4800,100,480000,0,4.70
+2026-09-09,토게나시 토게아리,이세리 니나,가시돋친 메론빵 & 제로콜라,5500,120,660000,1,
+2026-09-12,결속밴드,키타 이쿠요,키타아우라 딸기데니쉬,5000,130,650000,1,4.88
+2026-09-15,방과후 티타임,히라사와 유이,푹신푹신 케이크롤,5800,110,638000,1,4.82
+2026-09-18,Poppin'Party,야마부키 사아야,초코소라빵 세트,4500,170,765000,1,4.94
+2026-09-20,Afterglow,아오바 모카,초코프로틴 특제번,5200,125,650000,1,4.84
+2026-09-22,Roselia,미나토 유키나,제로콜라 & 크루아상,6000,125,750000,1,4.89
+2026-09-24,MyGO!!!!!,타카마츠 토모리,별조각 슈크림빵,4800,90,432000,0,4.68
+2026-09-26,토게나시 토게아리,이세리 니나,가시돋친 메론빵 & 제로콜라,5500,115,632500,1,4.80
+2026-09-28,결속밴드,키타 이쿠요,키타아우라 딸기데니쉬,5000,120,600000,1,4.85
+2026-09-30,방과후 티타임,히라사와 유이,푹신푹신 케이크롤,5800,105,609000,0,4.79`;
+            pyodide.FS.writeFile("band_bakery.csv", band_bakery_csv);
+
+            // 4. idol_audition_train.csv (40행) & idol_audition_test.csv (15행)
+            const idol_train_csv = `참가자ID,소속그룹,포지션,보컬점수,댄스점수,매력지수,주간웨이트횟수,합격여부
+IDOL_1001,Nijigasaki,보컬,88.5,82.0,91.0,4,1
+IDOL_1002,Liella,댄스,79.0,89.5,84.0,5,1
+IDOL_1003,Hasunosora,올라운더,85.0,84.0,86.5,3,1
+IDOL_1004,Muse,비주얼,72.0,68.5,79.0,2,0
+IDOL_1005,Aqours,보컬,91.0,78.0,88.0,4,1
+IDOL_1006,Nijigasaki,비주얼,68.5,71.0,75.0,2,0
+IDOL_1007,Liella,올라운더,84.0,86.0,85.0,4,1
+IDOL_1008,Hasunosora,보컬,74.5,69.0,72.0,2,0
+IDOL_1009,Muse,댄스,81.0,88.0,83.5,4,1
+IDOL_1010,Aqours,비주얼,69.0,65.0,74.0,2,0
+IDOL_1011,Nijigasaki,올라운더,92.0,85.0,94.0,5,1
+IDOL_1012,Liella,보컬,73.0,70.5,71.0,2,0
+IDOL_1013,Hasunosora,댄스,80.5,87.0,82.0,4,1
+IDOL_1014,Muse,보컬,89.0,81.5,87.0,3,1
+IDOL_1015,Aqours,댄스,71.0,74.0,69.5,2,0
+IDOL_1016,Nijigasaki,보컬,86.0,80.0,89.0,4,1
+IDOL_1017,Liella,비주얼,67.0,66.0,73.0,2,0
+IDOL_1018,Hasunosora,올라운더,87.5,83.0,88.5,4,1
+IDOL_1019,Muse,비주얼,75.0,72.0,76.0,3,0
+IDOL_1020,Aqours,올라운더,83.0,84.5,85.0,4,1
+IDOL_1021,Nijigasaki,댄스,70.0,73.5,71.5,2,0
+IDOL_1022,Liella,보컬,90.5,82.5,89.5,5,1
+IDOL_1023,Hasunosora,비주얼,66.5,68.0,70.0,2,0
+IDOL_1024,Muse,올라운더,88.0,86.0,90.0,4,1
+IDOL_1025,Aqours,보컬,74.0,71.0,73.5,3,0
+IDOL_1026,Nijigasaki,올라운더,85.5,83.5,87.5,4,1
+IDOL_1027,Liella,댄스,72.5,75.0,72.0,2,0
+IDOL_1028,Hasunosora,보컬,89.5,80.5,86.0,4,1
+IDOL_1029,Muse,댄스,69.5,72.5,68.0,2,0
+IDOL_1030,Aqours,비주얼,82.0,79.5,88.0,3,1
+IDOL_1031,Nijigasaki,보컬,71.5,69.5,74.5,2,0
+IDOL_1032,Liella,올라운더,86.5,85.0,87.0,4,1
+IDOL_1033,Hasunosora,댄스,73.5,76.0,71.0,3,0
+IDOL_1034,Muse,보컬,91.5,83.0,90.5,5,1
+IDOL_1035,Aqours,올라운더,68.0,67.5,70.5,2,0
+IDOL_1036,Nijigasaki,비주얼,84.5,81.0,92.0,4,1
+IDOL_1037,Liella,보컬,75.5,72.0,74.0,3,0
+IDOL_1038,Hasunosora,올라운더,88.0,84.5,89.0,4,1
+IDOL_1039,Muse,비주얼,70.5,68.0,72.5,2,0
+IDOL_1040,Aqours,댄스,85.0,88.5,84.0,4,1`;
+            pyodide.FS.writeFile("idol_audition_train.csv", idol_train_csv);
+
+            const idol_test_csv = `참가자ID,소속그룹,포지션,보컬점수,댄스점수,매력지수,주간웨이트횟수
+TEST_2001,Nijigasaki,보컬,89.0,83.0,90.0,4
+TEST_2002,Ikizurailive,올라운더,87.0,85.0,88.0,5
+TEST_2003,Liella,댄스,71.0,73.0,70.0,2
+TEST_2004,Hasunosora,비주얼,84.0,80.0,87.0,4
+TEST_2005,Ikizurailive,보컬,69.0,67.0,71.0,2
+TEST_2006,Nijigasaki,올라운더,91.0,86.0,93.0,5
+TEST_2007,Liella,보컬,73.0,71.0,72.0,2
+TEST_2008,Hasunosora,댄스,85.0,88.0,84.0,4
+TEST_2009,Ikizurailive,비주얼,82.0,79.0,86.0,3
+TEST_2010,Nijigasaki,댄스,68.0,70.0,69.0,2
+TEST_2011,Liella,올라운더,88.0,84.0,89.0,4
+TEST_2012,Hasunosora,보컬,74.0,72.0,73.0,3
+TEST_2013,Ikizurailive,올라운더,90.0,87.0,91.0,5
+TEST_2014,Nijigasaki,비주얼,72.0,69.0,75.0,2
+TEST_2015,Liella,보컬,86.0,82.0,87.0,4`;
+            pyodide.FS.writeFile("idol_audition_test.csv", idol_test_csv);
+
+            // 모든 버튼 즉시 활성화!
+            document.querySelectorAll('.run-btn').forEach(btn => {
+                btn.innerText = "▶ 실행 (Run)";
+                btn.disabled = false;
+            });
+
+            statusSpinner.style.display = "none";
+            statusPill.style.background = "#065f46";
+            statusPill.style.borderColor = "#10b981";
+            statusPill.style.color = "#ffffff";
+            statusText.textContent = "✅ 파이썬 & 세계관 CSV 5종 세팅 완료! 바로 실행 가능!";
+            setTimeout(() => { statusPill.style.opacity = "0"; setTimeout(() => statusPill.style.display = "none", 400); }, 2000);
+
+            return pyodide;
+        } catch (err) {
+            console.error("Pyodide 로딩 실패:", err);
+            statusSpinner.style.display = "none";
+            statusPill.style.background = "#991b1b";
+            statusText.textContent = "❌ 엔진 로딩 실패: " + err;
+        }
+    }
+
+    // ★ 데드락 해결 핵심: initPyodide가 완전히 끝난 뒤(.then)에 초기 랜덤 문제를 생성합니다!
+    pyodideReadyPromise = initPyodide();
+    pyodideReadyPromise.then(() => {
+        generateRandomWorldQuiz();
+    });
+
+    async function runPythonCode(editorId, outputId, btnId) {
+        const btn = document.getElementById(btnId);
+        const outputEl = document.getElementById(outputId);
+        const code = document.getElementById(editorId).value;
+        
+        btn.disabled = true;
+        btn.innerText = "연산 중...";
+        outputEl.style.color = "#BBFF64";
+        outputEl.textContent = "작업 수행 중... ⏳";
+
+        try {
+            let pyodide = await pyodideReadyPromise;
+            if (code.includes("statsmodels")) {
+                outputEl.textContent = "statsmodels 추가 로딩 중 (약 3초)... ⏳";
+                await pyodide.loadPackage(['statsmodels']);
+            }
+            pyodide.runPython(`
+import sys, io
+sys.stdout = io.StringIO()
+            `);
+            await pyodide.runPythonAsync(code);
+            let stdout = pyodide.runPython("sys.stdout.getvalue()");
+            if (stdout === "") {
+                stdout = "(출력값이 없습니다. print() 함수를 사용했는지 확인하세요.)";
+                outputEl.style.color = "#aaa";
+            }
+            outputEl.textContent = stdout;
+        } catch (err) {
+            outputEl.style.color = "#ff5555";
+            let splitErr = err.toString().split('\n');
+            outputEl.textContent = "에러 발생!\n" + splitErr.slice(-8).join('\n');
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "▶ 실행 (Run)";
+        }
+    }
+
+    async function handleCSVUpload() {
+        const fileInput = document.getElementById('csv-file-input');
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert("먼저 업로드할 .csv 파일을 선택해 주세요!");
+            return;
+        }
+        const file = fileInput.files[0];
+        const fileName = file.name.replace(/\s+/g, '_');
+        const buffer = await file.arrayBuffer();
+        const uint8View = new Uint8Array(buffer);
+
+        let py = await pyodideReadyPromise;
+        py.FS.writeFile(fileName, uint8View);
+
+        await py.runPythonAsync(`
+import pandas as pd
+try:
+    _df_up = pd.read_csv("${fileName}", encoding="utf-8")
+except UnicodeDecodeError:
+    _df_up = pd.read_csv("${fileName}", encoding="cp949")
+_df_up.to_csv("${fileName}", index=False, encoding="utf-8")
+        `);
+
+        const sel = document.getElementById('rng-dataset');
+        if (![...sel.options].some(o => o.value === fileName)) {
+            const opt = document.createElement('option');
+            opt.value = fileName;
+            opt.text = `📂 ${fileName} (내 업로드 CSV)`;
+            sel.prepend(opt);
+            sel.value = fileName;
+        }
+
+        await analyzeAndGenerateQuiz(fileName);
+    }
+
+    async function regenerateCurrentFileQuiz() {
+        await analyzeAndGenerateQuiz(currentUploadedFileName);
+    }
+
+    async function analyzeAndGenerateQuiz(fileName) {
+        currentUploadedFileName = fileName;
+        let py = await pyodideReadyPromise;
+
+        const statusBox = document.getElementById('upload-status-box');
+        const quizContainer = document.getElementById('auto-quiz-container');
+        const promptBox = document.getElementById('auto-quiz-prompt');
+        const solBox = document.getElementById('auto-quiz-solution');
+        const codeAuto = document.getElementById('code-auto');
+
+        let jsonStr = await py.runPythonAsync(`
+import json, random
+import pandas as pd
+import numpy as np
+from scipy import stats
+
+df = pd.read_csv("${fileName}")
+num_cols = df.select_dtypes(include=[np.number]).columns.tolist()
+cat_cols = df.select_dtypes(exclude=[np.number]).columns.tolist()
+
+info_summary = {
+    "file": "${fileName}",
+    "shape": list(df.shape),
+    "num_cols": num_cols,
+    "cat_cols": cat_cols
+}
+
+c1 = random.choice(num_cols) if num_cols else None
+if c1:
+    s = df[c1].dropna()
+    q1, q3 = s.quantile(0.25), s.quantile(0.75)
+    iqr = q3 - q1
+    kept = s[(s >= q1 - 1.5 * iqr) & (s <= q3 + 1.5 * iqr)]
+    ans1 = round(float(kept.mean()), 4)
+    q1_text = f"[자동 출제 제1유형] '{fileName}'의 '{c1}' 열에서 결측치를 제외하고 IQR 방식(Q1 - 1.5*IQR ~ Q3 + 1.5*IQR)으로 이상치를 제거한 뒤, 남은 정상 데이터의 평균을 소수 넷째 자리까지 반올림(round)하여 구하시오."
+else:
+    ans1 = len(df)
+    q1_text = f"[자동 출제 제1유형] '{fileName}'의 전체 행 개수를 구하시오."
+
+if len(num_cols) >= 2:
+    y_col, x_col = random.sample(num_cols, 2)
+    sub = df[[y_col, x_col]].dropna()
+    slope, intercept, r_val, p_val, std_err = stats.linregress(sub[x_col], sub[y_col])
+    ans3 = round(float(r_val**2), 4)
+    p3 = round(float(p_val), 4)
+    q3_text = f"[자동 출제 제3유형] '{fileName}'에서 독립변수 '{x_col}'로 종속변수 '{y_col}'을 예측하는 단순선형회귀분석을 수행할 때, 모형의 결정계수(R²)와 p-value를 소수 넷째 자리까지 반올림하여 구하시오."
+else:
+    ans3, p3 = 0.0, 1.0
+    q3_text = "수치형 변수가 2개 미만이어서 회귀 문제를 생략합니다."
+
+json.dumps({
+    "summary": info_summary,
+    "q1_text": q1_text,
+    "c1": c1,
+    "ans1": ans1,
+    "q3_text": q3_text,
+    "x_col": x_col if len(num_cols)>=2 else "",
+    "y_col": y_col if len(num_cols)>=2 else "",
+    "ans3": ans3,
+    "p3": p3
+}, ensure_ascii=False)
+        `);
+
+        const data = JSON.parse(jsonStr);
+        statusBox.innerHTML = `
+            <div class="font-bold text-[#0077DD] text-base mb-1">✅ <code>${data.summary.file}</code> 분석 완료! (크기: ${data.summary.shape[0]}행 × ${data.summary.shape[1]}열)</div>
+            <div class="text-xs text-gray-700 space-y-1">
+                <div>• <strong>수치형 컬럼(${data.summary.num_cols.length}개):</strong> <code>${data.summary.num_cols.join(", ") || "없음"}</code></div>
+                <div>• <strong>범주형/문자열 컬럼(${data.summary.cat_cols.length}개):</strong> <code>${data.summary.cat_cols.join(", ") || "없음"}</code></div>
+            </div>
+        `;
+
+        promptBox.innerHTML = `
+            <div class="font-bold text-gray-900">1️⃣ ${data.q1_text}</div>
+            <div class="font-bold text-gray-900 mt-2">2️⃣ ${data.q3_text}</div>
+        `;
+
+        codeAuto.value = `import pandas as pd
+from scipy import stats
+
+df = pd.read_csv("${data.summary.file}")
+print("=== 데이터 상위 3행 미리보기 ===")
+print(df.head(3))
+
+# [여기에 위 자동 출제 문제 1번과 2번을 푸는 코드를 직접 작성해 보세요!]
+`;
+
+        solBox.textContent = `# === [${data.summary.file}] 자동 생성 문제 표준 정답 코드 ===
+import pandas as pd
+from scipy import stats
+
+df = pd.read_csv("${data.summary.file}")
+
+# 1. 제1유형 정답 (${data.c1} IQR 이상치 제거 후 평균) -> 정답: ${data.ans1}
+s = df["${data.c1}"].dropna()
+q1, q3 = s.quantile(0.25), s.quantile(0.75)
+iqr = q3 - q1
+kept = s[(s >= q1 - 1.5 * iqr) & (s <= q3 + 1.5 * iqr)]
+print("1유형 정답:", round(float(kept.mean()), 4))
+
+# 2. 제3유형 정답 (${data.x_col} -> ${data.y_col} 선형회귀) -> R² 정답: ${data.ans3} / p-value: ${data.p3}
+sub = df[["${data.y_col}", "${data.x_col}"]].dropna()
+res = stats.linregress(sub["${data.x_col}"], sub["${data.y_col}"])
+print("3유형 결정계수(R²):", round(float(res.rvalue ** 2), 4), "/ p-value:", round(float(res.pvalue), 4))`;
+
+        quizContainer.classList.remove('hidden');
+    }
+
+    async function previewDataset(fileName) {
+        let py = await pyodideReadyPromise;
+        const box = document.getElementById('dataset-preview-box');
+        box.classList.remove('hidden');
+        box.textContent = `${fileName} 불러오는 중...`;
+
+        let out = await py.runPythonAsync(`
+import pandas as pd
+_p_df = pd.read_csv("${fileName}")
+f"📂 파일명: ${fileName} | shape: {_p_df.shape}\\n" + \\
+f"📌 컬럼 및 결측치 수: {_p_df.isna().sum().to_dict()}\\n\\n" + \\
+_p_df.head(5).to_string()
+        `);
+        box.textContent = out;
+    }
+
+    async function generateRandomWorldQuiz() {
+        let py = await pyodideReadyPromise;
+        const ds = document.getElementById('rng-dataset').value;
+        const qtype = document.getElementById('rng-type').value;
+
+        let resJson = await py.runPythonAsync(`
+import json, random
+import pandas as pd
+import numpy as np
+from scipy import stats
+from sklearn.preprocessing import MinMaxScaler
+
+df = pd.read_csv("${ds}")
+num_cols = df.select_dtypes(include=[np.number]).columns.tolist()
+cat_cols = df.select_dtypes(exclude=[np.number]).columns.tolist()
+qtype = "${qtype}"
+
+question = ""
+starter = f'import pandas as pd\\nimport numpy as np\\nfrom scipy import stats\\n\\ndf = pd.read_csv("${ds}")\\n# 여기에 풀이를 작성하고 마지막에 정답만 print() 하세요!\\n'
+solution_code = ""
+expected = ""
+
+if qtype == "type1_iqr":
+    col = random.choice(num_cols)
+    mult = random.choice([1.5, 2.0])
+    s = df[col].dropna()
+    q1, q3 = s.quantile(0.25), s.quantile(0.75)
+    iqr = q3 - q1
+    out_cnt = int(((s < q1 - mult * iqr) | (s > q3 + mult * iqr)).sum())
+    kept_mean = round(float(s[(s >= q1 - mult * iqr) & (s <= q3 + mult * iqr)].mean()), 2)
+    expected = f"{out_cnt} {kept_mean}"
+    question = f"<b>[제1유형 랜덤 - IQR 이상치]</b> <code>${ds}</code>의 <code>{col}</code> 열(결측 제외)에서 IQR에 <b>{mult}</b>를 곱한 경계선(Q1 - {mult}×IQR ~ Q3 + {mult}×IQR) 기준으로 <b>① 이상치 개수(정수)</b>와 <b>② 이상치를 제거한 정상 데이터의 평균(소수 2자리 반올림)</b>을 공백으로 구분해 한 줄에 출력하시오."
+    solution_code = f'''df = pd.read_csv("${ds}")
+s = df["{col}"].dropna()
+q1, q3 = s.quantile(0.25), s.quantile(0.75)
+iqr = q3 - q1
+low, high = q1 - {mult} * iqr, q3 + {mult} * iqr
+out_cnt = int(((s < low) | (s > high)).sum())
+kept_mean = round(float(s[(s >= low) & (s <= high)].mean()), 2)
+print(out_cnt, kept_mean)  # 정답: {expected}'''
+
+elif qtype == "type1_group":
+    col = random.choice(num_cols)
+    cat = random.choice(cat_cols) if cat_cols else num_cols[0]
+    rank_n = random.choice([1, 2])
+    s_df = df.copy()
+    s_df[col] = s_df[col].fillna(s_df[col].mean())
+    g = s_df.groupby(cat)[col].mean().sort_values(ascending=False)
+    idx_val = rank_n - 1 if len(g) >= rank_n else 0
+    ans_val = round(float(g.iloc[idx_val]), 2)
+    expected = str(ans_val)
+    question = f"<b>[제1유형 랜덤 - 그룹 집계]</b> <code>${ds}</code>의 <code>{col}</code> 열 결측치를 <b>평균(mean)</b>으로 먼저 채운 뒤, <code>{cat}</code>별 <code>{col}</code>의 평균을 구해 큰 순서대로 정렬했을 때 <b>{idx_val+1}번째로 큰 그룹의 평균값(소수 2자리 반올림)</b>을 출력하시오."
+    solution_code = f'''df = pd.read_csv("${ds}")
+df["{col}"] = df["{col}"].fillna(df["{col}"].mean())
+g = df.groupby("{cat}")["{col}"].mean().sort_values(ascending=False)
+print(round(float(g.iloc[{idx_val}]), 2))  # 정답: {expected}'''
+
+elif qtype == "type1_scale":
+    col = random.choice(num_cols)
+    thr = random.choice([0.5, 0.6, 0.7])
+    sub = df[[col]].dropna()
+    mm = MinMaxScaler().fit_transform(sub)
+    cnt = int((mm > thr).sum())
+    expected = str(cnt)
+    question = f"<b>[제1유형 랜덤 - 스케일링]</b> <code>${ds}</code>의 <code>{col}</code> 열(결측 제거 후)을 <code>MinMaxScaler</code>로 최소최대 정규화했을 때, 변환된 값이 <b>{thr}보다 큰(초과) 행의 개수</b>를 정수로 출력하시오."
+    solution_code = f'''from sklearn.preprocessing import MinMaxScaler
+df = pd.read_csv("${ds}").dropna(subset=["{col}"])
+mm = MinMaxScaler().fit_transform(df[["{col}"]])
+print(int((mm > {thr}).sum()))  # 정답: {expected}'''
+
+elif qtype == "type2_ml":
+    col = random.choice(num_cols)
+    expected = f"({len(df)}, 1)"
+    question = f"<b>[제2유형 랜덤 - 제출 파일 규격 검산]</b> <code>${ds}</code>의 행 개수({len(df)}개)만큼 <code>{col}</code> 열의 값을 예측값이라 가정하고, 칼럼명 <code>pred</code> 1개만 가진 <code>rng_sub.csv</code> 파일로 저장(<code>index=False</code> 필수!)한 뒤, 다시 <code>pd.read_csv('rng_sub.csv').shape</code>를 출력하시오."
+    solution_code = f'''df = pd.read_csv("${ds}")
+pd.DataFrame({{"pred": df["{col}"]}}).to_csv("rng_sub.csv", index=False)
+print(pd.read_csv("rng_sub.csv").shape)  # 정답: {expected}'''
+
+elif qtype == "type3_ttest":
+    col = random.choice(num_cols)
+    med = float(df[col].median())
+    res = stats.ttest_1samp(df[col].dropna(), round(med, 1))
+    ans = round(float(res.statistic), 3)
+    expected = str(ans)
+    question = f"<b>[제3유형 랜덤 - 일표본 t-검정]</b> <code>${ds}</code>의 <code>{col}</code> 열(결측 제외) 모평균이 기준값 <b>{round(med, 1)}</b>과 다른지 양측 일표본 t-검정(<code>stats.ttest_1samp</code>)을 수행하고, <b>검정통계량(statistic)을 소수 셋째 자리까지 반올림</b>하여 출력하시오."
+    solution_code = f'''from scipy import stats
+df = pd.read_csv("${ds}")
+res = stats.ttest_1samp(df["{col}"].dropna(), {round(med, 1)})
+print(round(float(res.statistic), 3))  # 정답: {expected}'''
+
+elif qtype == "type3_anova":
+    col = random.choice(num_cols)
+    cat = random.choice(cat_cols) if cat_cols else num_cols[0]
+    sub = df[[cat, col]].dropna()
+    groups = [g[col].values for _, g in sub.groupby(cat) if len(g) >= 2]
+    res = stats.f_oneway(*groups)
+    ans = round(float(res.statistic), 3)
+    expected = str(ans)
+    question = f"<b>[제3유형 랜덤 - 일원배치 분산분석(ANOVA)]</b> <code>${ds}</code>(결측 제거)에서 <code>{cat}</code> 집단별로 <code>{col}</code>의 평균에 차이가 있는지 <code>stats.f_oneway(*groups)</code> 검정을 수행하고, <b>F-검정통계량을 소수 셋째 자리까지 반올림</b>하여 출력하시오."
+    solution_code = f'''from scipy import stats
+df = pd.read_csv("${ds}")[["{cat}", "{col}"]].dropna()
+groups = [g["{col}"].values for _, g in df.groupby("{cat}") if len(g) >= 2]
+res = stats.f_oneway(*groups)
+print(round(float(res.statistic), 3))  # 정답: {expected}'''
+
+else:
+    if len(num_cols) >= 2:
+        y_c, x_c = random.sample(num_cols, 2)
+    else:
+        y_c = x_c = num_cols[0]
+    sub = df[[y_c, x_c]].dropna()
+    res = stats.linregress(sub[x_c], sub[y_c])
+    ans = round(float(res.slope), 4)
+    expected = str(ans)
+    question = f"<b>[제3유형 랜덤 - 선형회귀 계수]</b> <code>${ds}</code>(결측 제거)에서 독립변수 <code>{x_c}</code>로 종속변수 <code>{y_c}</code>를 단순선형회귀할 때, <code>{x_c}</code>의 <b>회귀계수(기울기, slope)를 소수 넷째 자리까지 반올림</b>하여 출력하시오."
+    solution_code = f'''from scipy import stats
+df = pd.read_csv("${ds}")[["{y_c}", "{x_c}"]].dropna()
+res = stats.linregress(df["{x_c}"], df["{y_c}"])
+print(round(float(res.slope), 4))  # 정답: {expected}'''
+
+json.dumps({
+    "question": question,
+    "starter": starter,
+    "solution": solution_code,
+    "expected": expected
+}, ensure_ascii=False)
+        `);
+
+        const data = JSON.parse(resJson);
+        currentRngExpectedAnswer = data.expected.trim();
+        document.getElementById('rng-question-box').innerHTML = data.question;
+        document.getElementById('code-rng').value = data.starter;
+        document.getElementById('rng-answer-box').textContent = `# 정답 출력값: ${data.expected}\n\n${data.solution}`;
+        document.getElementById('rng-grade-result').classList.add('hidden');
+    }
+
+    function gradeRandomWorldQuiz() {
+        const outText = document.getElementById('out-rng').textContent.trim();
+        const lines = outText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        const lastLine = lines.length > 0 ? lines[lines.length - 1] : "";
+        const resBox = document.getElementById('rng-grade-result');
+        resBox.classList.remove('hidden');
+
+        if (!currentRngExpectedAnswer) {
+            resBox.className = "mt-3 p-3 rounded-lg font-bold text-sm bg-yellow-100 text-yellow-800";
+            resBox.textContent = "⚠️ 먼저 [🎲 새 문제 랜덤 출제!] 버튼을 눌러 문제를 생성해 주세요.";
+            return;
+        }
+
+        if (lastLine === currentRngExpectedAnswer) {
+            resBox.className = "mt-3 p-3 rounded-lg font-bold text-sm bg-green-100 text-green-800 border border-green-400";
+            resBox.innerHTML = `🎉 <strong>정답입니다! (만점 통과!)</strong> 내 출력값(<code>${lastLine}</code>)이 정답(<code>${currentRngExpectedAnswer}</code>)과 완벽히 일치합니다!`;
+        } else {
+            resBox.className = "mt-3 p-3 rounded-lg font-bold text-sm bg-red-100 text-red-800 border border-red-400";
+            resBox.innerHTML = `❌ <strong>아쉽습니다!</strong> 내 마지막 출력줄은 <code>${lastLine || "(없음)"}</code> 입니다. (기대 정답: <code>${currentRngExpectedAnswer}</code>). 아래 정답 코드 펼치기를 참고해 보세요!`;
+        }
+    }
+
+    async function checkFixedQuiz(outputId, quizKey) {
+        const outEl = document.getElementById(outputId);
+        const lines = outEl.textContent.trim().split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        const lastLine = lines.length > 0 ? lines[lines.length - 1] : "";
+
+        if (quizKey === 'm3') {
+            let py = await pyodideReadyPromise;
+            let checkM3 = await py.runPythonAsync(`
+import os, pandas as pd
+if not os.path.exists("audition_result.csv"):
+    "NO_FILE"
+else:
+    sub = pd.read_csv("audition_result.csv")
+    if list(sub.columns) != ["pred"]:
+        f"BAD_COL:{list(sub.columns)}"
+    elif sub.shape != (15, 1):
+        f"BAD_SHAPE:{sub.shape}"
+    elif sub["pred"].isna().sum() > 0 or ((sub["pred"] < 0) | (sub["pred"] > 1)).any():
+        "BAD_VAL"
+    else:
+        "PASS"
+            `);
+            if (checkM3 === "PASS") {
+                alert("🎉 [제2유형 40점 만점 합격!] audition_result.csv가 (15, 1) 크기, ['pred'] 단독 컬럼, 0~1 사이 확률값으로 완벽하게 생성되었습니다!");
+            } else {
+                alert(`❌ [제2유형 규격 오류] 상태 코드: ${checkM3}\nindex=False 여부와 파일명(audition_result.csv), 컬럼명(['pred'])을 다시 확인하세요!`);
+            }
+            return;
+        }
+
+        const expected = fixedExpectedAnswers[quizKey];
+        if (lastLine === expected) {
+            alert(`🎉 정답입니다! 출력값 [${lastLine}] 이(가) 정확히 일치합니다!`);
+        } else {
+            alert(`❌ 오답입니다!\n내 마지막 줄 출력: ${lastLine || "(출력 없음)"}\n기대 정답: ${expected}`);
+        }
+    }
+
+    function insertSnippet(type) {
+        const box = document.getElementById('code-sandbox');
+        if (type === 'clear') {
+            box.value = "# 자유롭게 파이썬 코드를 작성해 보세요!\nimport pandas as pd\n";
+            return;
+        }
+        const snippets = {
+            files: `import os, pandas as pd\nprint("현재 폴더 파일:", sorted(os.listdir()))\n`,
+            dir_search: `import pandas as pd, scipy.stats, sklearn.ensemble\nprint("DataFrame 함수 검색:", [n for n in dir(pd.DataFrame) if "pivot" in n or "group" in n])\nprint("scipy t검정 검색:", [n for n in dir(scipy.stats) if "ttest" in n])\n`,
+            metro_eda: `import pandas as pd\ndf = pd.read_csv("hyobin_metro.csv")\nprint(df.groupby(["노선", "마스코트"])[["일평균승하차", "월간흑자액_백만원"]].mean().round(1))\n`,
+            bus_anova: `import pandas as pd\nfrom scipy import stats\ndf = pd.read_csv("hyobin_bus.csv")\nsub = df[df["세대"] == "3세대_스타더스트"]\ngroups = [g["시민만족도"].values for _, g in sub.groupby("종별")]\nprint("스타더스트 버스 종별 만족도 ANOVA:", stats.f_oneway(*groups))\n`,
+            bakery_chi2: `import pandas as pd\nfrom scipy import stats\ndf = pd.read_csv("band_bakery.csv")\ntable = pd.crosstab(df["밴드명"], df["앙코르성사여부"])\nchi2, p, dof, ex = stats.chi2_contingency(table)\nprint("교차표:\\n", table)\nprint("카이제곱 통계량:", round(float(chi2), 4), "/ p-value:", round(float(p), 4))\n`
+        };
+        box.value = snippets[type];
+    }
+</script>
+
+<script src="assets/wiki_main.js"></script>
+<script src="assets/wiki_index.js"></script>
+<script src="assets/hb_data_map.js"></script>
+<script src="assets/hb_wiki_core.js"></script>
+<script src="assets/hb_index_scripts.js"></script>
+<script src="assets/jana.js"></script>
+</body>
+</html>

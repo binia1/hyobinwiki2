@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 10. 24. 오전 9:56:54
+ * 업데이트: 2026. 10. 27. 오후 4:07:03
  */
 
 window.HB_WIKI_PAGES = [
@@ -13527,6 +13527,10 @@ window.HB_WIKI_PAGES = [
   {
     "title": "이주아",
     "href": "이주아.html"
+  },
+  {
+    "title": "빅분기_실기6",
+    "href": "빅분기_실기6.html"
   }
 ];
 
@@ -21202,5 +21206,6 @@ window.HB_WIKI_ALIASES = {
   "유건우": "유건우.html",
   "다나카 미키": "다나카 미키.html",
   "이석준": "이석준.html",
-  "이주아": "이주아.html"
+  "이주아": "이주아.html",
+  "빅분기_실기6": "빅분기_실기6.html"
 };
