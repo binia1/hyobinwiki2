@@ -97,13 +97,13 @@ document.addEventListener("DOMContentLoaded", function() {
                         <tr style="color: white; font-weight: bold;">
                             <td style="background-color: #009933; padding: 6px; border: 1px solid #ddd;">효빈</td>
                             <td style="background-color: #009933; padding: 6px; border: 1px solid #ddd;">덕북</td>
-                            <td style="background-color: #009933; padding: 6px; border: 1px solid #ddd;">덕남</td>
+                            <td style="background-color: #0088CC; padding: 6px; border: 1px solid #ddd;">덕남</td>
                             <td style="background-color: #f8f9fa; border: 1px solid #ddd;"></td>
                         </tr>
                         <tr style="background-color: #fff;">
                             <td style="padding: 10px 5px; border: 1px solid #ddd; ;"><a href="박현만.html" style="color: #009933; text-decoration: none; font-weight: bold;">박현만</a></td>
                             <td style="padding: 10px 5px; border: 1px solid #ddd; ;"><a href="한광호.html" style="color: #009933; text-decoration: none; font-weight: bold;">한광호</a></td>
-                            <td style="padding: 10px 5px; border: 1px solid #ddd; ;"><a href="강응현.html" style="color: #009933; text-decoration: none; font-weight: bold;">강응현</a></td>
+                            <td style="padding: 10px 5px; border: 1px solid #ddd; ;"><a href="강응현.html" style="color: #0088CC; text-decoration: none; font-weight: bold;">강응현</a></td>
                             <td style="padding: 10px 5px; border: 1px solid #ddd; background-color: #f8f9fa;"></td>
                         </tr>
 
