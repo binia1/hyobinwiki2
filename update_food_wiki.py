@@ -11,68 +11,45 @@ def make_line_svg_logo(line_code):
     """노선 코드를 받아 요청하신 SVG 이미지 로고 + 링크 태그를 반환합니다."""
     line_code = str(line_code).strip()
     if line_code in ['빈', '빈효']:
-        return '<a href="빈효광역선.html" style="text-decoration: none;"><img src="이미지/svg/빈효광역선.svg" alt="bin호선" class="svg-logo" /></a>'
+        return '<a href="빈효광역선.html" style="text-decoration: none;"><img src="이미지/svg/빈효광역선.svg" alt="빈효선" class="svg-logo" /></a>'
     elif line_code in ['1', '2', '3', '4', '5', '6', '7', '8']:
         return f'<a href="{line_code}호선.html" style="text-decoration: none;"><img src="이미지/svg/효빈{line_code}호선.svg" alt="{line_code}호선" class="svg-logo" /></a>'
     else:
         return ''
 
 def parse_subway_info(val):
-    """엑셀의 '인접 지하철역' 데이터를 파싱하여 [SVG 노선로고 + 역이름 링크]로 변환합니다."""
+    """새로운 엑셀 포맷(예: '1호선·빈효선 광역전철 안천')을 파싱하여 로고와 링크를 생성합니다."""
     if pd.isna(val) or '없음' in str(val):
         return '<span class="text-gray-400 text-xs">(인접 지하철역 없음)</span>'
     
     val = str(val).strip()
 
-    # 케이스 1: "7 개항지역", "1,7,빈 효빈항역", "2,6 시청역" 형태
-    m1 = re.match(r'^([1-8빈,]+)\s+(.+)$', val)
-    if m1:
-        lines = [l.strip() for l in m1.group(1).split(',') if l.strip()]
-        st_name = m1.group(2).strip()
-        st_disp = st_name if st_name.endswith('역') else st_name + '역'
-        st_link = f"{st_disp}.html"
-        logos = ''.join([make_line_svg_logo(l) for l in lines])
-        return (
-            f'<span class="flex-center-inline mr-2 mb-1">'
-            f'{logos}<a class="wiki-link" href="{st_link}">{st_disp}</a>'
-            f'</span>'
-        )
+    # 1. 역 이름 추출 (띄어쓰기 기준 무조건 맨 마지막 단어가 역 이름임)
+    parts = val.split()
+    if not parts:
+        return ''
+    
+    st_name = parts[-1]
+    st_disp = st_name if st_name.endswith('역') else st_name + '역'
+    st_link = f"{st_disp}.html"
 
-    # 케이스 2: "중구청(효빈 7호선 중보지선), 중구청(효빈1호선)..." 형태 (동일 역 환승 노선 병합)
-    items = [x.strip() for x in val.split(',')]
-    station_dict = {}
-    for item in items:
-        m2 = re.match(r'^(.+?)\((.+?)\)$', item)
-        if m2:
-            st_raw = m2.group(1).strip()
-            line_raw = m2.group(2).strip()
-            l_code = None
-            for k in ['1', '2', '3', '4', '5', '6', '7', '8']:
-                if k in line_raw:
-                    l_code = k
-                    break
-            if not l_code and '빈효' in line_raw:
-                l_code = '빈효'
+    # 2. 노선 추출 (복잡한 정규식 대신 전체 문자열에서 호선 키워드를 직관적으로 검색)
+    found_lines = []
+    for l_code in ['1', '2', '3', '4', '5', '6', '7', '8']:
+        if f"{l_code}호선" in val:
+            found_lines.append(l_code)
             
-            if st_raw not in station_dict:
-                station_dict[st_raw] = []
-            if l_code and l_code not in station_dict[st_raw]:
-                station_dict[st_raw].append(l_code)
-        else:
-            if item not in station_dict:
-                station_dict[item] = []
+    if "빈효선" in val or "빈효" in val:
+        found_lines.append("빈효")
 
-    out_parts = []
-    for st_raw, l_codes in station_dict.items():
-        st_disp = st_raw if st_raw.endswith('역') else st_raw + '역'
-        st_link = f"{st_disp}.html"
-        logos = ''.join([make_line_svg_logo(l) for l in l_codes])
-        out_parts.append(
-            f'<span class="flex-center-inline mr-2 mb-1">'
-            f'{logos}<a class="wiki-link" href="{st_link}">{st_disp}</a>'
-            f'</span>'
-        )
-    return '<div class="flex flex-wrap items-center justify-center gap-1">' + ''.join(out_parts) + '</div>'
+    # 3. HTML 로고 뱃지 생성
+    logos = ''.join([make_line_svg_logo(l) for l in found_lines])
+
+    return (
+        f'<span class="flex-center-inline mr-2 mb-1">'
+        f'{logos}<a class="wiki-link" href="{st_link}">{st_disp}</a>'
+        f'</span>'
+    )
 
 def format_multiline_list(text):
     """줄바꿈(- ...)으로 된 특징/메뉴 텍스트를 HTML 리스트(ul/li)로 변환합니다."""
@@ -248,7 +225,6 @@ def main():
             flags=re.DOTALL
         )
     else:
-        # 기존 문서의 1~9번은 그대로 두고, 10번 '교통 연계 및 주의사항' 바로 앞에 삽입 후 번호만 11번으로 변경
         target_str = '<h2 id="s-10">10. 교통 연계 및 주의사항</h2>'
         replacement_str = new_section_html + '\n<h2 id="s-11">11. 교통 연계 및 주의사항</h2>'
         
