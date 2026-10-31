@@ -191,7 +191,7 @@
             { dist: '남구', hospitals: [mkLink('엽월대학교병원'), mkLink('효빈의료원'), mkLink('토장병원')] },
             { dist: '서구', hospitals: [mkLink('효빈대학교병원'), mkLink('오상병원'), mkLink('사야병원'), mkLink('재천병원'), mkLink('사복병원'), mkLink('서효빈병원'), mkLink('효빈복지재단 사랑병원'), mkLink('오간병원'), mkLink('토선병원')] },
             { dist: '북구', hospitals: [mkLink('삼선대학교병원'), mkLink('고송병원'), mkLink('호빈병원'), mkLink('입희병원'), mkLink('상원병원'), mkLink('청능병원')] },
-            { dist: '안천구', hospitals: [mkLink('이자병원'), mkLink('안천병원'), mkLink('대령병원')] },
+            { dist: '안천구', hospitals: [mkLink('이자병원'), mkLink('안천병원'), mkLink('대령병원'), mkLink('성천병원')] },
             { dist: '동구', hospitals: [mkLink('서홍병원'), mkLink('사가당병원'), mkLink('덕현병원')] },
             { dist: '청엽구', hospitals: [mkLink('청엽병원'), mkLink('우전병원'), mkLink('배선병원')] },
             { dist: '창전구', hospitals: [mkLink('창전병원'), mkLink('쌍엽병원')] },

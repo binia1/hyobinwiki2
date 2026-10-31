@@ -311,7 +311,7 @@
     <tr>
       <td class="hyobin-cat">선착장</td>
       <td colspan="2" class="hyobin-content">
-        <a href="효빈유람선_중수포산선착장.html">효빈유람선 중수포산선착장</a> · <a href="고송선착장.html">고송선착장</a>
+        <a href="효빈유람선_효빈유람선 중수포산 선착장.html">효빈유람선 효빈유람선 중수포산 선착장</a> · <a href="고송선착장.html">고송선착장</a>
       </td>
     </tr>
 
