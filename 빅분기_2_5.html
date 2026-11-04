@@ -4,12 +4,11 @@
 <link href="이미지/효빈위키아이콘.webp" rel="icon"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>빅분기 실기 2.5. 전처리와 스케일링 심화 - 효빈위키</title>
+<title>빅분기 실기 3. 작업형 제2유형 4대 만능 템플릿 - 효빈위키</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
 <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Apple+SD+Gothic+Neo:wght@400;700&display=swap');
         
         :root { 
             --wiki-line-color: #6677CC;
@@ -19,423 +18,377 @@
             --wiki-bg: #ffffff; 
             --wiki-text: #373a3c; 
             --wiki-gray-bg: #F9F9FA; 
-            --wiki-link: #0022AA;
         }
 
-        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; word-break: keep-all; margin: 0; }
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--wiki-bg); color: var(--wiki-text); line-height: 1.6; margin: 0; }
         
-        .namu-infobox { width: 100%; max-width: 350px; border: 1px solid #b0b0b0 !important; background-color: #ffffff; font-size: 0.85rem; border-collapse: collapse !important; margin: 0; }
-        .namu-infobox th, .namu-infobox td { border: 1px solid #b0b0b0 !important; padding: 6px 10px; }
-        .namu-infobox .title-cell { padding: 20px 0 !important; text-align: center !important; background-color: #ffffff !important; }
-        .inner-title-box { display: inline-table !important; margin: 0 auto !important; border: 1px solid #b0b0b0 !important; border-collapse: collapse !important; background-color: #ffffff !important; width: max-content !important; }
-        .inner-title-box td { padding: 12px 18px !important; vertical-align: middle !important; border: none !important; }
-        .inner-title-box td:first-child { border-right: 1px solid #b0b0b0 !important; }
-        .namu-infobox .section-title { background-color: var(--wiki-table-header-bg); color: #ffffff !important; font-weight: bold; text-align: center; padding: 5px 0; border: 1px solid #b0b0b0 !important; }
-        .namu-infobox .row-title { background-color: #f4f4f4; color: #444444; font-weight: bold; text-align: center; width: 35%; }
-
-        .wiki-container { max-width: 1400px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
+        .wiki-container { max-width: 1600px; margin: 0 auto; padding: 20px 40px; border-left: 1px solid var(--wiki-border); border-right: 1px solid var(--wiki-border); min-height: 100vh; background-color: var(--wiki-bg); }
         .txt-lvl-1 { font-size: 2.2rem !important; font-weight: 900 !important; color: #000000; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 0; } 
         .title-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
-        h2 { font-size: 1.8rem !important; font-weight: 700; border-bottom: 1px solid var(--wiki-border); padding-bottom: 5px; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; color: var(--wiki-text); clear: both; }
-        h3 { font-size: 1.4rem !important; font-weight: 700; margin-top: 1.8rem; border-left: 5px solid var(--wiki-table-header-bg); padding-left: 12px; color: var(--wiki-text); }
         
-        .toc { display: inline-block; min-width: 300px; border: 1px solid var(--wiki-border); background: var(--wiki-gray-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px; }
-        .toc-title { text-align: center; font-weight: bold; border-bottom: 1px solid var(--wiki-border); margin-bottom: 10px; padding-bottom: 5px; }
-        .toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
-        .toc ul li { margin-bottom: 4px; }
-        .toc ul ul { margin-top: 4px; margin-left: 20px; }
+        /* Split View for Template vs Editor */
+        .template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; align-items: stretch; }
+        @media (max-width: 1024px) { .template-grid { grid-template-columns: 1fr; } }
         
-        blockquote { border-left: 5px solid var(--wiki-table-header-bg); background-color: #f7f7f7; padding: 15px; margin: 15px 0; font-style: italic; color: #555; }
-        .wiki-link { color: var(--wiki-link); cursor: pointer; text-decoration: none; }
-        .wiki-link:hover { text-decoration: underline; }
+        .reference-box { background: #f4f4f4; border: 1px solid #ddd; border-radius: 8px; padding: 15px; overflow-x: auto; font-family: 'Consolas', monospace; font-size: 0.9rem; line-height: 1.4; color: #333; }
+        .reference-title { font-weight: bold; font-family: 'Noto Sans KR', sans-serif; margin-bottom: 10px; color: #0056b3; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
         
-        /* Interactive Editor Styles */
-        .python-editor-container { background: #1e1e1e; border-radius: 8px; overflow: hidden; margin: 20px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.2); border: 1px solid #444; }
-        .editor-header { background: #2d2d2d; color: #d4d4d4; padding: 8px 15px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; font-family: monospace; border-bottom: 1px solid #444; }
-        .run-btn { background: #4CAF50; color: white; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: background 0.2s; display: flex; align-items: center; gap: 5px; }
+        .python-editor-container { background: #1e1e1e; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.2); border: 1px solid #444; display: flex; flex-direction: column; }
+        .editor-header { background: #2d2d2d; color: #d4d4d4; padding: 8px 15px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #444; }
+        .run-btn { background: #4CAF50; color: white; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: background 0.2s; }
         .run-btn:hover { background: #45a049; }
         .run-btn:disabled { background: #555; cursor: not-allowed; }
-        .code-area { width: 100%; background: #1e1e1e; color: #9CDCFE; font-family: 'Consolas', 'Monaco', monospace; font-size: 1rem; padding: 15px; border: none; resize: vertical; min-height: 200px; outline: none; line-height: 1.5; }
-        .output-area { background: #000; color: #BBFF64; font-family: 'Consolas', 'Monaco', monospace; padding: 15px; font-size: 0.95rem; min-height: 60px; white-space: pre-wrap; border-top: 1px solid #333; max-height: 300px; overflow-y: auto; }
+        
+        .code-area { width: 100%; flex-grow: 1; background: #1e1e1e; color: #9CDCFE; font-family: 'Consolas', 'Monaco', monospace; font-size: 1rem; padding: 15px; border: none; resize: vertical; min-height: 350px; outline: none; }
+        .output-area { background: #000; color: #BBFF64; font-family: 'Consolas', 'Monaco', monospace; padding: 15px; font-size: 0.95rem; min-height: 80px; white-space: pre-wrap; border-top: 1px solid #333; max-height: 200px; overflow-y: auto; }
         
         #pyodide-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s; }
         .spinner { border: 5px solid #f3f3f3; border-top: 5px solid #6677CC; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 1rem; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .tip-box { background-color: #e8f4f8; border-left: 4px solid #0275d8; padding: 12px; margin: 15px 0; font-weight: 500; color: #333; }
-        .warning-box { background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin: 15px 0; font-weight: 500; color: #856404; }
-
-        /* 일괄 적용된 SVG 수직 정렬 CSS */
-        .svg-logo { width: 38px; height: 38px; object-fit: contain; flex-shrink: 0; }
-        .svg-logo-sm { width: 24px; height: 24px; object-fit: contain; flex-shrink: 0; }
-        .svg-logo-inline { height: 1.5rem; vertical-align: middle; margin-right: 5px; }
-        .flex-center-inline { display: inline-flex; align-items: center; gap: 6px; vertical-align: middle; }
-        .flex-center { display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .flex-start { display: flex; align-items: center; justify-content: flex-start; gap: 6px; }
+        
+        /* Celebration Overlay */
+        .celebration-box { display: none; margin-top: 15px; padding: 15px; background: #fffde7; border: 2px dashed #fbc02d; border-radius: 10px; text-align: center; animation: popIn 0.5s ease-out forwards; }
+        .celebration-box img { max-width: 150px; border-radius: 50%; border: 3px solid #fbc02d; margin: 10px auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .celebration-text { font-size: 1.2rem; font-weight: bold; color: #d32f2f; }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div id="pyodide-loader">
     <div class="spinner"></div>
-    <h2 class="font-bold text-xl text-gray-800">Pandas 심화 과정 로딩 중... 🐼</h2>
-    <p class="text-gray-500 mt-2 font-bold text-blue-600">※ Scikit-learn까지 불러오므로 약간의 인내심이 필요합니다!</p>
+    <h2 class="font-bold text-xl text-gray-800">Scikit-learn 실전 환경 로딩 중... 🚀</h2>
+    <p class="text-gray-500 mt-2 font-bold text-blue-600">※ 머신러닝 라이브러리를 불러오므로 약 10~20초 소요됩니다.</p>
 </div>
 
 <nav class="font-sans bg-[#7777AA] text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
-<div class="flex items-center gap-2">
-<div class="nav-logo-box">H</div>
-<a class="font-bold text-xl cursor-pointer no-underline text-white" href="index.html">HyobinWiki</a>
-<div class="hidden md:flex gap-3 text-sm opacity-90 ml-4">
-<a class="hover:underline font-bold text-white no-underline" href="index.html">대문</a>
-<a class="hover:underline text-white no-underline" href="최근_변경.html">최근 변경</a>
-<a class="hover:underline text-white no-underline" href="최근_토론.html">최근 토론</a>
-</div>
-</div>
-<div class="flex flex-col items-end gap-1">
-<div class="flex items-center gap-2">
-<div class="hidden lg:flex items-center gap-1 mr-2">
-<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="편집요청.html">편집요청</a>
-<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="최근_토론.html">토론</a>
-<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="역사.html">역사</a>
-<a class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="즐겨찾기.html" title="즐겨찾기">★</a>
-<a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1" href="더보기.html">더보기 <span class="text-[9px]">▼</span></a>
-</div>
-<!-- 검색창 (Enter 작동 유지) -->
-<input class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" id="headerSearchInput" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }" placeholder="문서 검색" type="text"/>
-<button class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold" onclick="handleSearch('headerSearchInput')">🔍</button>
-</div>
-<div class="flex gap-1" id="auth-buttons">
-<button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" id="btn-login" onclick="toggleModal('loginModal')">로그인</button>
-<button class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-0.5 rounded transition-colors" onclick="toggleModal('settingsModal')">설정</button>
-</div>
-</div>
+    <div class="flex items-center gap-2">
+        <div class="nav-logo-box bg-white text-[#7777AA] px-2 py-0.5 font-bold rounded">H</div>
+        <a class="font-bold text-xl cursor-pointer no-underline text-white" href="index.html">HyobinWiki</a>
+    </div>
 </nav>
 
 <div class="wiki-container shadow-lg">
     <div class="title-area">
-        <h1 class="txt-lvl-1">빅분기 실기 2.5. 전처리와 스케일링 (이상치, 결측치)</h1>
+        <h1 class="txt-lvl-1">【PART 2】 시험장 10분 컷! 상황별 만능 템플릿 4종 (애니메이션 에디션)</h1>
     </div>
 
     <blockquote class="tip-box">
-        <strong>"도대체 평균은 언제 변하고, 괄호는 왜 두 겹인가요?"</strong><br>
-        통계학 기초는 아는데 코드로 옮기려니 헷갈리는 분들을 위한 집중 심화 코스입니다.<br>
-        러브라이브와 뱅드림 아이돌들의 연습 시간, 팬 투표 데이터 등을 활용해 까다로운 전처리와 이상치 제거를 완벽하게 마스터해 봅시다!
+        질문자님이 요청하신 "외우는 템플릿 4종류 모두"입니다! 시험장에서 제2유형 문제를 보자마자 <strong>① 분류(확률)인지 ② 분류(라벨)인지 ③ 일반 회귀인지 ④ 비대칭 회귀인지</strong>만 파악하고 아래 4개 중 하나를 그대로 타이핑하면 10분 만에 만점을 받을 수 있습니다.<br>
+        <em>💡 왼쪽의 템플릿을 보면서 오른쪽 에디터에 직접 따라 쳐보세요! 생략 없이 1~4번 모두 완벽한 풀버전으로 작성되어 있습니다!</em>
     </blockquote>
 
-    <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-12 mt-4">
-        <div class="toc shrink-0 shadow-sm h-fit order-2 md:order-1">
-            <div class="toc-title">목차</div>
-            <ul class="text-[#555555]">
-                <li><a class="hover:underline" href="#s-1">1. 결측치(빈칸) 처리의 나비효과</a></li>
-                <li><a class="hover:underline" href="#s-2">2. 이상치(Outlier)와 IQR의 마법</a></li>
-                <li><a class="hover:underline" href="#s-3">3. 정규화 (MinMaxScaler): 0과 1 사이로 찌부시키기</a></li>
-                <li><a class="hover:underline" href="#s-4">4. 표준화 (StandardScaler)와 자유도의 함정</a></li>
-                <li><a class="hover:underline" href="#s-5">5. [실전 1유형] 조각내어 한 줄씩 정복하기</a></li>
-            </ul>
+    <!-- 템플릿 1: 이진 분류 (확률 제출형) -->
+    <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mt-10 mb-4">템플릿 ① [이진 분류 - 확률 제출형] (ROC AUC / 나카스 카스미)</h2>
+    <p class="mb-4 text-blue-700 font-bold">👑 카스밍의 암기 포인트: "카스밍 팬클럽에서 누가 탈퇴할지 확률(0.0~1.0)로 줄 세우는 문제야! stratify=y 랑 predict_proba(X_test)[:, 1] 이 핵심이야!"</p>
+    
+    <div class="template-grid">
+        <div class="reference-box">
+            <div class="reference-title">👁️ 정답 템플릿 보기 (눈으로 보며 타이핑!)</div>
+<pre>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import roc_auc_score
+
+train = pd.read_csv("train.csv")
+test = pd.read_csv("test.csv")
+
+target_col = "이탈"
+id_col = "고객ID"
+X = train.drop(columns=[id_col, target_col])
+y = train[target_col]
+X_test = test.drop(columns=[id_col])
+
+num_cols = X.select_dtypes(include="number").columns
+cat_cols = X.select_dtypes(exclude="number").columns
+
+medians = X[num_cols].median()
+X[num_cols] = X[num_cols].fillna(medians)
+X_test[num_cols] = X_test[num_cols].fillna(medians)
+
+X[cat_cols] = X[cat_cols].fillna("unknown")
+X_test[cat_cols] = X_test[cat_cols].fillna("unknown")
+
+X = pd.get_dummies(X)
+X_test = pd.get_dummies(X_test).reindex(columns=X.columns, fill_value=0)
+
+x_tr, x_va, y_tr, y_va = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+model = RandomForestClassifier(n_estimators=200, random_state=42)
+model.fit(x_tr, y_tr)
+val_proba = model.predict_proba(x_va)[:, 1]
+print("자체 검증 ROC AUC:", round(roc_auc_score(y_va, val_proba), 4))
+
+pred_proba = model.predict_proba(X_test)[:, 1]
+pd.DataFrame({"pred": pred_proba}).to_csv("result.csv", index=False)
+print("성공! 파일 저장 완료")</pre>
         </div>
         
-        <table class="namu-infobox shrink-0 shadow-sm order-1 md:order-2">
-            <tbody>
-                <tr>
-                    <td class="title-cell" colspan="2">
-                        <table class="inner-title-box">
-                            <tr>
-                                <td style="text-align: left !important;">
-                                    <div style="font-weight: 900; font-size: 1.25rem; color: #6677CC; letter-spacing: -0.5px;">판다스 전처리 심화</div>
-                                    <div style="font-size: 0.85rem; color: #555555; font-weight: 500;">Pandas Preprocessing</div>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr><th class="section-title" colspan="2">핵심 개념</th></tr>
-                <tr><th class="row-title">결측치</th><td>fillna, dropna, median</td></tr>
-                <tr><th class="row-title">이상치</th><td>Q1, Q3, 1.5 * IQR</td></tr>
-                <tr><th class="row-title">스케일링</th><td>MinMaxScaler, StandardScaler</td></tr>
-                <tr><th class="row-title">난이도</th><td>★★★★☆</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <h2 id="s-1"><b>1. 결측치(빈칸) 처리의 나비효과</b></h2>
-    <p>
-        데이터에 구멍(결측치, NaN)이 나 있을 때 이를 어떻게 메꾸느냐에 따라 전체 데이터의 성격이 확확 바뀝니다. 정해진 정답은 없으며, <strong>문제(발문)에서 시키는 대로 정확히 하는 것</strong>이 중요합니다.
-    </p>
-    <ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
-        <li><strong>평균으로 채우기 (<code>.fillna(평균)</code>):</strong> 빈자리에 전체 평균값을 끼워 넣기 때문에, 채운 후에도 <strong>전체 평균값 자체는 변하지 않습니다.</strong> 하지만 빈자리가 평균 근처로 빽빽하게 모여들게 되므로, 데이터가 퍼져있는 정도(표준편차)는 줄어들게 됩니다.</li>
-        <li><strong>0으로 채우기 (<code>.fillna(0)</code>):</strong> 빈자리를 무조건 0으로 만듭니다. 만약 '연습 시간'처럼 원래 값들이 모두 양수였다면, 갑자기 0이라는 작은 값들이 들어오면서 <strong>전체 평균을 왕창 깎아먹게 됩니다.</strong></li>
-        <li><strong>중앙값으로 채우기 (<code>.fillna(중앙값)</code>):</strong> 극단적으로 크거나 작은 값(예: 코코로의 압도적인 재산)에 휘둘리지 않고 줄을 세웠을 때 딱 정중앙에 있는 값으로 채웁니다. 이상치가 많은 데이터에서 평균보다 안전하게 쓰입니다.</li>
-        <li><strong>버리기 (<code>.dropna()</code>):</strong> 행 전체를 통째로 날려버립니다. 주의할 점은, A열이 비어있어서 그 행을 지우면 <strong>멀쩡하게 데이터가 있던 B열, C열의 그 사람 데이터도 같이 증발</strong>해버린다는 것입니다. 버린 후에는 <code>.shape[0]</code>으로 행이 얼마나 날아갔는지 꼭 확인해야 합니다.</li>
-    </ul>
-
-    <div class="python-editor-container">
-        <div class="editor-header">
-            <span>[실습 1] 결측치 채우기의 결과 비교</span>
-            <button class="run-btn" id="btn-run-1" onclick="runPythonCode('code-1', 'out-1', 'btn-run-1')">▶ 실행 (Run)</button>
-        </div>
-        <textarea id="code-1" class="code-area" spellcheck="false">
+        <div class="python-editor-container">
+            <div class="editor-header">
+                <span>💻 직접 쳐보면서 외우기 (템플릿 ①)</span>
+                <button class="run-btn" id="btn-run-1" onclick="runPythonCode('code-1', 'out-1', 'btn-run-1', 'celeb-1')">▶ 실행 (Run)</button>
+            </div>
+            <textarea id="code-1" class="code-area" spellcheck="false">
+# 여기에 왼쪽 코드를 직접 따라 쳐보세요!
 import pandas as pd
-df = pd.read_csv("idol_data.csv")
-# '팬투표수' 열에 결측치(NaN)가 섞여 있습니다!
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import roc_auc_score
 
-votes = df["팬투표수"]
+# 아래부터 완성해보세요!
 
-print(f"1. 원래 평균 (NaN 무시하고 계산됨): {votes.mean():.4f}")
-
-# 평균으로 채우면 평균이 유지된다!
-mean_filled = votes.fillna(votes.mean())
-print(f"2. 평균으로 채운 뒤 평균: {mean_filled.mean():.4f}")
-
-# 0으로 채우면 평균이 깎인다! (투표수가 다 0보다 크니까)
-zero_filled = votes.fillna(0)
-print(f"3. 0으로 채운 뒤 평균: {zero_filled.mean():.4f}")
-
-# 결측치가 있는 행을 날려버리고 계산
-dropped = votes.dropna()
-print(f"4. 빈칸 행을 버린 뒤 평균: {dropped.mean():.4f}")
-print(f"   (버리기 전 행 수: {len(votes)} -> 버린 후 행 수: {len(dropped)})")
-
-# [도전 과제] '팬투표수'를 중앙값(median)으로 채운 뒤의 평균을 소수 4자리로 구해보세요!
 </textarea>
-        <div id="out-1" class="output-area"></div>
-    </div>
-
-
-    <h2 id="s-2"><b>2. 이상치(Outlier)와 IQR의 마법</b></h2>
-    <p>
-        데이터를 작은 것부터 큰 것 순으로 일렬로 세웠을 때, 25% 지점(하위 1/4)을 <strong>1사분위수(Q1)</strong>, 75% 지점(상위 1/4)을 <strong>3사분위수(Q3)</strong>라고 합니다. 정중앙 50% 지점은 중앙값(Median)입니다.
-    </p>
-    <ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
-        <li><strong>IQR (사분위 범위):</strong> <code>Q3 - Q1</code>. 즉, 상위 25%와 하위 25%를 잘라내고 남은 <strong>'진짜배기 가운데 절반'이 퍼져있는 찐 폭</strong>입니다. 평균이나 표준편차처럼 튀는 값 하나에 요동치지 않고 묵묵히 중심을 잡아줍니다.</li>
-        <li><strong>이상치 판정 기준 (관행):</strong> 
-            <br>정상적인 울타리의 <strong>아랫벽은 <code>Q1 - 1.5 * IQR</code></strong>
-            <br>정상적인 울타리의 <strong>윗벽은 <code>Q3 + 1.5 * IQR</code></strong> 입니다.
-            <br>이 벽을 벗어나는 값들을 '이상치(돌연변이)'라고 부릅니다. 발문에서 1.5 대신 2를 주면 그것을 따르면 됩니다.
-        </li>
-        <li class="text-blue-600"><strong>치명적 주의사항 (부등호 방향):</strong> 
-            <br>이상치(버릴 놈들)를 찾을 때: <code>(값 < 아랫벽) | (값 > 윗벽)</code> (작거나, 크거나)
-            <br>정상치(남길 놈들)를 찾을 때: <code>(값 >= 아랫벽) & (값 <= 윗벽)</code> (크거나 같으면서 작거나 같아야 함)
-            <br>부등호와 `| (or)`, `& (and)`를 반대로 쓰면 정상인을 다 내쫓고 돌연변이만 남기는 대참사가 발생합니다!
-        </li>
-        <li><strong>제거 vs 자르기(Clip):</strong> 발문이 "제거하고"라고 하면 아예 그 사람 명단(행)을 찢어버려야 합니다(shape가 줄어듦). 하지만 "자르기(clip)"라면 명단은 놔두고 벽을 넘은 숫자만 벽 숫자(최대/최솟값)로 강제로 깎아내리는 것입니다(shape 그대로). 동사를 똑바로 읽어야 합니다.</li>
-    </ul>
-
-    <div class="python-editor-container">
-        <div class="editor-header">
-            <span>[실습 2] IQR을 이용한 이상치 색출</span>
-            <button class="run-btn" id="btn-run-2" onclick="runPythonCode('code-2', 'out-2', 'btn-run-2')">▶ 실행 (Run)</button>
+            <div id="out-1" class="output-area">대기 중...</div>
         </div>
-        <textarea id="code-2" class="code-area" spellcheck="false">
-import pandas as pd
-df = pd.read_csv("idol_data.csv")
-
-# '연습시간' 데이터를 기준으로 분석해보자!
-prac = df["연습시간"]
-
-# 1. Q1, Q3, IQR 구하기
-q1 = prac.quantile(0.25)
-q3 = prac.quantile(0.75)
-iqr = q3 - q1
-
-# 2. 정상 울타리 (아랫벽, 윗벽) 세우기
-low_fence = q1 - 1.5 * iqr
-high_fence = q3 + 1.5 * iqr
-
-# 3. 이상치(돌연변이) 조건식 만들기 (아랫벽보다 작거나 | 윗벽보다 크거나)
-outlier_mask = (prac < low_fence) | (prac > high_fence)
-
-print(f"Q1: {q1}, Q3: {q3}, IQR: {iqr}")
-print(f"울타리: {low_fence} ~ {high_fence}")
-print(f"이상치(돌연변이)를 가진 사람 수: {outlier_mask.sum()}명")
-
-# 4. [제거하고 다음 계산] 돌연변이를 제외한 '정상인'들의 연습시간 평균 구하기
-# 정상인 조건: (prac >= low_fence) & (prac <= high_fence) 또는 ~outlier_mask
-normal_prac = prac[~outlier_mask] 
-print(f"\n제거 전 평균: {prac.mean():.2f} -> 이상치 제거 후 찐 평균: {normal_prac.mean():.2f}")
-</textarea>
-        <div id="out-2" class="output-area"></div>
+    </div>
+    
+    <div id="celeb-1" class="celebration-box">
+        <div class="celebration-text">🎉 템플릿 ① 완벽 마스터! 카스밍이 인정해줄게! 🎉</div>
+        <img src="이미지/나카스_카스미.webp" alt="나카스 카스미" onerror="this.src='https://via.placeholder.com/150?text=Kasumi'">
     </div>
 
 
-    <h2 id="s-3"><b>3. 정규화 (MinMaxScaler): 0과 1 사이로 찌부시키기</b></h2>
-    <p>
-        서로 단위가 다른 데이터(예: 키는 160cm대, 투표수는 50,000표대)를 공평하게 비교하기 위해 모든 숫자를 <strong>가장 작은 놈은 0, 가장 큰 놈은 1</strong>이 되도록 비율을 맞춰버리는 마법입니다. <br>
-        수식으로는 <code>(현재값 - 최솟값) / (최댓값 - 최솟값)</code> 입니다.
-    </p>
-    <ul class="list-disc pl-5 font-bold text-gray-800 space-y-2 mb-4">
-        <li><strong>사이킷런 도구 불러오기:</strong> <code>from sklearn.preprocessing import MinMaxScaler</code></li>
-        <li><strong>대괄호 두 겹의 저주:</strong> 스케일러 도구는 기본적으로 표(DataFrame, 2차원)를 통째로 집어넣도록 설계되어 있습니다. 열 하나만 달랑 집어넣으려고 <code>df["키"]</code>(1차원)라고 쓰면 에러가 폭발합니다. 반드시 <strong><code>df[["키"]]</code>처럼 대괄호를 두 겹 쳐서 표 모양(2차원)을 유지한 채로 넣어줘야 합니다.</strong></li>
-        <li><code>.fit_transform()</code>: "너네 반 최댓값, 최솟값을 스캔하고(fit), 그 기준에 맞춰서 전부 0~1로 바꿔라(transform)!"라는 강력한 콤보 기술입니다.</li>
-    </ul>
+    <!-- 템플릿 2: 다중 분류 (라벨 제출형) -->
+    <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-green-500 pb-2 mt-16 mb-4">템플릿 ② [이진/다중 분류 - 라벨 제출형] (F1-score / 아야세 에리)</h2>
+    <p class="mb-4 text-green-700 font-bold">👩‍🏫 에리의 암기 포인트: "macro F1이나 Accuracy일 땐 전처리는 템플릿 ①과 같고, 오직 예측 함수만 model.predict()로 바뀐단다! 단호박 정수 라벨 풀버전이야!"</p>
+    
+    <div class="template-grid">
+        <div class="reference-box">
+            <div class="reference-title">👁️ 정답 템플릿 보기 (눈으로 보며 타이핑!)</div>
+<pre>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import f1_score
 
-    <div class="python-editor-container">
-        <div class="editor-header">
-            <span>[실습 3] MinMaxScaler 사용법과 대괄호 두 겹</span>
-            <button class="run-btn" id="btn-run-3" onclick="runPythonCode('code-3', 'out-3', 'btn-run-3')">▶ 실행 (Run)</button>
+train = pd.read_csv("train.csv")
+test = pd.read_csv("test.csv")
+
+target_col = "이탈"
+id_col = "고객ID"
+X = train.drop(columns=[id_col, target_col])
+y = train[target_col]
+X_test = test.drop(columns=[id_col])
+
+num_cols = X.select_dtypes(include="number").columns
+cat_cols = X.select_dtypes(exclude="number").columns
+
+medians = X[num_cols].median()
+X[num_cols] = X[num_cols].fillna(medians)
+X_test[num_cols] = X_test[num_cols].fillna(medians)
+
+X[cat_cols] = X[cat_cols].fillna("unknown")
+X_test[cat_cols] = X_test[cat_cols].fillna("unknown")
+
+X = pd.get_dummies(X)
+X_test = pd.get_dummies(X_test).reindex(columns=X.columns, fill_value=0)
+
+x_tr, x_va, y_tr, y_va = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+model = RandomForestClassifier(n_estimators=200, random_state=42)
+model.fit(x_tr, y_tr)
+val_pred = model.predict(x_va)
+print("자체 검증 Macro F1:", round(f1_score(y_va, val_pred, average="macro"), 4))
+
+pred_label = model.predict(X_test)
+pd.DataFrame({"pred": pred_label}).to_csv("result.csv", index=False)
+print("성공! 파일 저장 완료")</pre>
         </div>
-        <textarea id="code-3" class="code-area" spellcheck="false">
+        
+        <div class="python-editor-container">
+            <div class="editor-header">
+                <span>💻 직접 쳐보면서 외우기 (템플릿 ②)</span>
+                <button class="run-btn" id="btn-run-2" onclick="runPythonCode('code-2', 'out-2', 'btn-run-2', 'celeb-2')">▶ 실행 (Run)</button>
+            </div>
+            <textarea id="code-2" class="code-area" spellcheck="false">
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import f1_score
 
-df = pd.read_csv("idol_data.csv")
-
-# 1. 도구(기계) 생성
-mm = MinMaxScaler()
-
-# 2. 변환 실행 (대괄호 두 겹 필수!!)
-# '키' 데이터를 0~1 사이로 압축해서 '키_mm'이라는 새 열에 저장
-df["키_mm"] = mm.fit_transform(df[["키"]])
-
-# 3. 결과 확인
-# 가장 키가 작은 사람은 0.0, 가장 큰 사람은 1.0이 된 것을 볼 수 있다.
-print(df[["이름", "키", "키_mm"]].sort_values("키").head(3))
-print("...")
-print(df[["이름", "키", "키_mm"]].sort_values("키").tail(3))
-
-# [도전 과제] '키_mm' 값이 0.5 보다 큰 (즉, 키가 상위 50% 구간에 속하는) 사람의 수를 구해보세요!
 </textarea>
-        <div id="out-3" class="output-area"></div>
-    </div>
-
-
-    <h2 id="s-4"><b>4. 표준화 (StandardScaler)와 자유도의 함정</b></h2>
-    <p>
-        정규화가 0~1 사이로 우겨넣는 거라면, 표준화(Z-score)는 데이터가 <strong>평균(0)을 중심으로 표준편차(1)만큼 얼마나 흩어져 있는지</strong> 모양을 예쁘게 종 모양(정규분포)으로 빚어주는 작업입니다. 수식은 <code>(값 - 평균) / 표준편차</code> 입니다.
-    </p>
-    <blockquote class="warning-box">
-        <strong>🚨 빅분기 실기 단골 함정: "왜 내가 수식으로 계산한 거랑 사이킷런 값이 미세하게 다르지?"</strong><br><br>
-        바로 <strong>표준편차를 계산하는 '정의(자유도)'</strong>가 다르기 때문입니다!<br>
-        - <code>StandardScaler</code> 도구 기계는 기본적으로 <strong>모표준편차(ddof=0, 전체 개수 n으로 나눔)</strong>를 사용합니다.<br>
-        - 반면 우리가 흔히 쓰는 판다스의 <code>df.std()</code>는 기본적으로 <strong>표본표준편차(ddof=1, n-1로 나눔)</strong>를 사용합니다.<br><br>
-        따라서 발문에서 "StandardScaler 라이브러리를 쓰시오"라고 했으면 기계를 돌리면 되고, "주어진 데이터의 평균과 표준편차를 직접 이용해 표준화하시오"라고 했으면 판다스 기능으로 수식을 직접 만들어야 합니다! (이 차이 때문에 소수점 둘째 자리에서 답이 갈려 오답 처리될 수 있습니다.)
-    </blockquote>
-
-    <div class="python-editor-container">
-        <div class="editor-header">
-            <span>[실습 4] 사이킷런 vs 수식 직접 계산의 미세한 차이</span>
-            <button class="run-btn" id="btn-run-4" onclick="runPythonCode('code-4', 'out-4', 'btn-run-4')">▶ 실행 (Run)</button>
+            <div id="out-2" class="output-area">대기 중...</div>
         </div>
-        <textarea id="code-4" class="code-area" spellcheck="false">
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
-
-df = pd.read_csv("idol_data.csv")
-prac = df["연습시간"]
-
-# 1. 사이킷런 기계(StandardScaler)를 돌린 결과
-ss = StandardScaler()
-df["연습_z_기계"] = ss.fit_transform(df[["연습시간"]])
-
-# 2. 판다스(Pandas) 수식으로 직접 계산한 결과 (ddof=1 기본값)
-df["연습_z_수식"] = (prac - prac.mean()) / prac.std()
-
-print("최댓값을 비교해보자 (서로 미세하게 다름!):")
-print(f"기계가 뽑은 최댓값: {df['연습_z_기계'].max():.4f}")
-print(f"수식(ddof=1) 최댓값: {df['연습_z_수식'].max():.4f}")
-
-# 3. 어떻게 하면 둘을 똑같이 맞출 수 있을까?
-# 판다스 수식에 (ddof=0)을 주어 모표준편차로 강제 지정하면 똑같아진다!
-df["연습_z_수식(수정)"] = (prac - prac.mean()) / prac.std(ddof=0)
-print(f"수식(ddof=0) 최댓값: {df['연습_z_수식(수정)'].max():.4f}")
-
-# [도전 과제] 기계(StandardScaler)가 뽑은 결과(연습_z_기계)를 기준으로, 
-# 절댓값(.abs())이 2보다 큰 행의 개수를 세어보세요! (이상치를 의미함)
-</textarea>
-        <div id="out-4" class="output-area"></div>
+    </div>
+    
+    <div id="celeb-2" class="celebration-box" style="border-color:#388e3c; background:#e8f5e9;">
+        <div class="celebration-text" style="color:#2e7d32;">🎉 하라쇼! 템플릿 ② 완벽하게 해냈구나! 🎉</div>
+        <img src="이미지/아야세_에리.webp" alt="아야세 에리" onerror="this.src='https://via.placeholder.com/150?text=Eli'">
     </div>
 
 
-    <h2 id="s-5"><b>5. [실전 1유형] 조각내어 한 줄씩 정복하기</b></h2>
-    <p>
-        실기 1유형은 대개 <strong>"A조건의 이상치를 제거한 뒤, B조건을 만족하는 사람들만 남기고, C그룹별 평균 중 가장 큰 값을 구하시오."</strong> 처럼 호흡이 긴 한 문장으로 출제됩니다. <br>
-        핵심은 <strong>국어 지문 읽듯이 발문의 순서 그대로 코드를 한 줄씩 옮겨 적는 것</strong>입니다. 순서를 뒤집으면(예: 필터링을 먼저 하고 이상치를 나중에 빼면) 기준이 되는 통계값이 휙휙 바뀌어서 완벽한 오답이 됩니다.
-    </p>
-    <ul class="list-disc pl-5 font-bold text-gray-800 space-y-1">
-        <li><code>groupby(묶을열)["계산할열"].mean().sort_values(ascending=False)</code>: 이 흐름을 눈에 익히세요.</li>
-        <li>"가장 큰 그룹의 이름과 값": 내림차순 정렬했으니 첫 번째인 <code>.index[0]</code>과 <code>.iloc[0]</code>을 꺼내면 됩니다. 두 번째면 <code>[1]</code>입니다. 파이썬은 0부터 세니까요!</li>
-    </ul>
+    <!-- 템플릿 3: 일반 회귀 -->
+    <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-yellow-500 pb-2 mt-16 mb-4">템플릿 ③ [일반 회귀 - 연속값 제출형] (RMSE / 야마부키 사아야)</h2>
+    <p class="mb-4 text-yellow-700 font-bold">🥖 사아야의 암기 포인트: "연속된 숫자를 맞출 땐 Regressor를 쓰고, stratify=y는 절대 빼야 해! 평가는 root_mean_squared_error!"</p>
+    
+    <div class="template-grid">
+        <div class="reference-box">
+            <div class="reference-title">👁️ 정답 템플릿 보기 (눈으로 보며 타이핑!)</div>
+<pre>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error
 
-    <div class="python-editor-container">
-        <div class="editor-header">
-            <span>[실습 5] 실전 1유형 종합 문제</span>
-            <button class="run-btn" id="btn-run-5" onclick="runPythonCode('code-5', 'out-5', 'btn-run-5')">▶ 실행 (Run)</button>
+train = pd.read_csv("train.csv")
+test = pd.read_csv("test.csv")
+
+X = train.drop(columns=["총구매액", "고객ID", "이탈"])
+y = train["총구매액"]
+X_full = pd.concat([X, test.drop(columns=["고객ID"])], axis=0)
+
+num_cols = X_full.select_dtypes(include="number").columns
+X_full[num_cols] = X_full[num_cols].fillna(0)
+X_full = pd.get_dummies(X_full)
+
+X_train_full = X_full[:len(train)]
+X_test = X_full[len(train):]
+
+# 분리 (🚨 회귀이므로 stratify 절대 금지!)
+x_tr, x_va, y_tr, y_va = train_test_split(X_train_full, y, test_size=0.2, random_state=42)
+
+model = RandomForestRegressor(n_estimators=200, random_state=42)
+model.fit(x_tr, y_tr)
+val_pred = model.predict(x_va)
+
+rmse = mean_squared_error(y_va, val_pred, squared=False)
+print("검증 RMSE:", round(rmse, 4))
+
+pred = model.predict(X_test)
+pd.DataFrame({"pred": pred}).to_csv("result.csv", index=False)
+print("성공! 파일 저장 완료")</pre>
         </div>
-        <textarea id="code-5" class="code-area" spellcheck="false">
+        
+        <div class="python-editor-container">
+            <div class="editor-header">
+                <span>💻 직접 쳐보면서 외우기 (템플릿 ③)</span>
+                <button class="run-btn" id="btn-run-3" onclick="runPythonCode('code-3', 'out-3', 'btn-run-3', 'celeb-3')">▶ 실행 (Run)</button>
+            </div>
+            <textarea id="code-3" class="code-area" spellcheck="false">
 import pandas as pd
-df = pd.read_csv("idol_data.csv")
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error
 
-# [문제] 
-# 1. '팬투표수'가 1,000을 넘는 사람만 남긴 뒤,
-# 2. '학년'별로 묶어서 '연습시간'의 평균을 구하고,
-# 3. 평균 연습시간이 두 번째로 많은 '학년'의 숫자와 그 '평균 연습시간(소수점 1자리)'을 출력하시오.
-
-# 1단계: 투표수 1000 초과 필터링 (순서가 제일 중요!)
-sub = df[df["팬투표수"] > 1000]
-
-# 2단계: 학년별 연습시간 평균 구하고, 내림차순(큰 순서대로) 정렬하기
-g = sub.groupby("학년")["연습시간"].mean().sort_values(ascending=False)
-
-# 3단계: 두 번째로 많은 값 꺼내기 (0부터 세니까 1번 인덱스!)
-second_grade = g.index[1]
-second_mean = round(g.iloc[1], 1)
-
-print("학년별 평균 연습시간 순위:")
-print(g)
-print(f"\n[정답] 두 번째로 많은 학년: {second_grade}학년, 연습시간: {second_mean}")
 </textarea>
-        <div id="out-5" class="output-area"></div>
+            <div id="out-3" class="output-area">대기 중...</div>
+        </div>
+    </div>
+    
+    <div id="celeb-3" class="celebration-box" style="border-color:#fbc02d; background:#fff9c4;">
+        <div class="celebration-text" style="color:#f57f17;">🎉 빵끗! 템플릿 ③ 통과! 맛있는 초코소라빵 먹고 가~ 🎉</div>
+        <img src="이미지/야마부키_사아야.webp" alt="야마부키 사아야" onerror="this.src='https://via.placeholder.com/150?text=Saaya'">
     </div>
 
 
-    <div id="wiki-footer-area" class="mt-12 text-sm text-gray-500 text-center border-t border-gray-200 pt-4">
-        효빈위키 - 빅분기 실기 마스터를 위한 특별판
+    <!-- 템플릿 4: 비대칭 회귀 -->
+    <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-purple-500 pb-2 mt-16 mb-4">템플릿 ④ [비대칭 회귀 - 로그 변환형] (RMSLE / 미나토 유키나)</h2>
+    <p class="mb-4 text-purple-700 font-bold">🌹 유키나의 암기 포인트: "RMSLE이고 타깃의 격차가 크다면, 학습 시 np.log1p(y)를 먹이고 예측을 꺼낼 때 np.clip(np.expm1(pred), 0, None)으로 되돌려라. 정점에 서는 지름길이다."</p>
+    
+    <div class="template-grid">
+        <div class="reference-box">
+            <div class="reference-title">👁️ 정답 템플릿 보기 (눈으로 보며 타이핑!)</div>
+<pre>import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_log_error
+
+train = pd.read_csv("train.csv")
+test = pd.read_csv("test.csv")
+
+X = train.drop(columns=["총구매액", "고객ID", "이탈"])
+y = train["총구매액"]
+X_full = pd.concat([X, test.drop(columns=["고객ID"])], axis=0)
+
+num_cols = X_full.select_dtypes(include="number").columns
+X_full[num_cols] = X_full[num_cols].fillna(0)
+X_full = pd.get_dummies(X_full)
+
+X_train_full = X_full[:len(train)]
+X_test = X_full[len(train):]
+
+x_tr, x_va, y_tr, y_va = train_test_split(X_train_full, y, test_size=0.2, random_state=42)
+
+# ★ 핵심: 타깃 y에 np.log1p() 를 씌워 로그 눈금에서 학습!
+model = RandomForestRegressor(n_estimators=200, random_state=42)
+model.fit(x_tr, np.log1p(y_tr))
+
+# ★ 핵심: 예측값에 np.expm1() 을 씌워 복원 + np.clip으로 음수 방지!
+val_pred = np.clip(np.expm1(model.predict(x_va)), 0, None)
+
+# np.sqrt 로 Root를 씌워 RMSLE 계산
+rmsle = np.sqrt(mean_squared_log_error(y_va, val_pred))
+print("검증 RMSLE:", round(rmsle, 4))
+
+# 실전 제출
+pred = np.clip(np.expm1(model.predict(X_test)), 0, None)
+pd.DataFrame({"pred": pred}).to_csv("result.csv", index=False)
+print("성공! 파일 저장 완료")</pre>
+        </div>
+        
+        <div class="python-editor-container">
+            <div class="editor-header">
+                <span>💻 직접 쳐보면서 외우기 (템플릿 ④)</span>
+                <button class="run-btn" id="btn-run-4" onclick="runPythonCode('code-4', 'out-4', 'btn-run-4', 'celeb-4')">▶ 실행 (Run)</button>
+            </div>
+            <textarea id="code-4" class="code-area" spellcheck="false">
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_log_error
+
+# 유키나의 np.log1p 와 np.expm1 복원을 꼭 외워두세요!
+</textarea>
+            <div id="out-4" class="output-area">대기 중...</div>
+        </div>
+    </div>
+    
+    <div id="celeb-4" class="celebration-box" style="border-color:#7b1fa2; background:#f3e5f5;">
+        <div class="celebration-text" style="color:#6a1b9a;">🎉 후훗, 템플릿 ④ 완벽해. 이 정도면 정점에 설 수 있겠어. 🎉</div>
+        <img src="이미지/미나토_유키나.webp" alt="미나토 유키나" onerror="this.src='https://via.placeholder.com/150?text=Yukina'">
     </div>
 
+    <div id="wiki-footer-area" class="mt-12 text-sm text-gray-500 text-center border-t border-gray-200 pt-4 pb-10">
+        효빈위키 - 빅분기 실기 마스터를 위한 애니메이션 템플릿 에디션
+    </div>
 </div>
 
 <script>
-    // Pyodide Environment Setup for Preprocessing & Scikit-learn
     let pyodideReadyPromise;
     const loaderUI = document.getElementById('pyodide-loader');
 
     async function initPyodide() {
         try {
             let pyodide = await loadPyodide();
-            // Load necessary packages (pandas, scikit-learn)
-            await pyodide.loadPackage(['pandas', 'scikit-learn']);
+            await pyodide.loadPackage(['pandas', 'scikit-learn', 'numpy']);
             
-            // Create a mock dataset fitting the anime theme (Love Live / BanG Dream)
-            const idol_csv = `사번,이름,소속,포지션,학년,팬투표수,키,연습시간
-1001,코사카 호노카,뮤즈,보컬,2,2500,157,40
-1002,미나미 코토리,뮤즈,댄서,2,,159,35
-1003,소노다 우미,뮤즈,보컬,2,2400,159,55
-1004,타카미 치카,아쿠아,보컬,2,2100,157,42
-1005,토야마 카스미,포핀파,보컬,2,1800,156,38
-1006,미나토 유키나,로젤리아,보컬,3,3200,155,60
-1007,우에하라 아유무,니지가사키,보컬,2,1500,159,45
-1008,나카스 카스미,니지가사키,댄서,1,,155,50
-1009,시부야 카논,리에라,보컬,2,1900,159,30
-1010,탕 쿠쿠,리에라,댄서,2,1700,159,35
-1011,마루야마 아야,파스팔레,보컬,3,2800,156,48
-1012,츠루마키 코코로,하로해피,보컬,2,9999,155,20
-1013,미타케 란,앱글,보컬,2,2100,157,33
-1014,아야세 에리,뮤즈,댄서,3,2900,162,45
-1015,쿠로사와 다이아,아쿠아,댄서,3,2700,162,50
-1016,쿠로사와 루비,아쿠아,보컬,1,2200,154,42
-1017,텐노지 리나,니지가사키,보컬,1,1600,149,55
-1018,이치가야 아리사,포핀파,키보드,1,,152,25
-1019,시라사기 치사토,파스팔레,베이스,3,2600,152,40
-1020,야자와 니코,뮤즈,보컬,3,3100,154,58
-1021,츠시마 요시코,아쿠아,댄서,1,2300,156,35
-1022,와타나베 요우,아쿠아,댄서,2,2500,157,45
-1023,오사카 시즈쿠,니지가사키,댄서,1,1800,157,48
-1024,미야시타 아이,니지가사키,댄서,2,2000,163,30
-1025,호시조라 린,뮤즈,댄서,1,2100,155,42`;
-            
-            pyodide.FS.writeFile("idol_data.csv", idol_csv);
+            // 모의고사용 더미 CSV 데이터 생성 (분류용 '이탈', 회귀용 '총구매액' 모두 포함)
+            const dummy_train = `고객ID,성별,나이,가입기간,이탈,총구매액
+1,M,25,12,0,150000
+2,F,32,24,1,50000
+3,M,45,6,1,20000
+4,F,22,36,0,320000
+5,M,38,18,0,210000
+6,F,28,4,1,15000
+7,M,50,48,0,500000
+8,F,33,12,1,40000
+9,M,29,20,0,180000
+10,F,41,8,1,30000`;
 
-            // Enable buttons
+            const dummy_test = `고객ID,성별,나이,가입기간
+11,M,27,10
+12,F,30,22
+13,M,42,8
+14,F,25,30
+15,M,35,16`;
+            
+            pyodide.FS.writeFile("train.csv", dummy_train);
+            pyodide.FS.writeFile("test.csv", dummy_test);
+
+            // 실행 버튼 활성화
             document.querySelectorAll('.run-btn').forEach(btn => {
                 btn.innerText = "▶ 실행 (Run)";
                 btn.disabled = false;
@@ -453,24 +406,25 @@ print(f"\n[정답] 두 번째로 많은 학년: {second_grade}학년, 연습시�
     pyodideReadyPromise = initPyodide();
 
     document.querySelectorAll('.run-btn').forEach(btn => {
-        btn.innerText = "라이브러리 로딩중... (시간 소요)";
+        btn.innerText = "라이브러리 로딩중...";
         btn.disabled = true;
     });
 
-    async function runPythonCode(editorId, outputId, btnId) {
+    async function runPythonCode(editorId, outputId, btnId, celebId) {
         const btn = document.getElementById(btnId);
         const outputEl = document.getElementById(outputId);
         const code = document.getElementById(editorId).value;
+        const celebBox = document.getElementById(celebId);
         
         btn.disabled = true;
-        btn.innerText = "계산 중...";
+        btn.innerText = "채점 중...";
         outputEl.style.color = "#BBFF64";
-        outputEl.textContent = "Pandas 실행 중... ⏳";
+        outputEl.textContent = "코드를 실행합니다... ⏳";
+        celebBox.style.display = 'none';
 
         try {
             let pyodide = await pyodideReadyPromise;
             
-            // Catch stdout
             pyodide.runPython(`
 import sys
 import io
@@ -486,19 +440,19 @@ sys.stdout = io.StringIO()
             }
             outputEl.textContent = stdout;
             
+            celebBox.style.display = 'block';
+            
         } catch (err) {
             outputEl.style.color = "#ff5555";
             let errStr = err.toString();
-            // Simplify error output
-            let splitErr = errStr.split('\n');
-            let shortErr = splitErr.slice(-8).join('\n'); 
-            outputEl.textContent = "에러 발생!\n" + (shortErr || errStr);
+            let splitErr = errStr.split('\\n');
+            let shortErr = splitErr.slice(-8).join('\\n'); 
+            outputEl.textContent = "에러 발생! 오타가 없는지 확인하세요.\\n" + (shortErr || errStr);
         } finally {
             btn.disabled = false;
-            btn.innerText = "▶ 실행 (Run)";
+            btn.innerText = "▶ 다시 실행";
         }
     }
-    
 </script>
 <script src="assets/wiki_main.js"></script>
 <script src="assets/wiki_index.js"></script>
