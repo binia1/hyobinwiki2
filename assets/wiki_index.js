@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 11. 5. 오전 1:50:12
+ * 업데이트: 2026. 11. 5. 오전 11:54:08
  */
 
 window.HB_WIKI_PAGES = [
@@ -13579,6 +13579,18 @@ window.HB_WIKI_PAGES = [
   {
     "title": "나소연",
     "href": "나소연.html"
+  },
+  {
+    "title": "감라나",
+    "href": "감라나.html"
+  },
+  {
+    "title": "강숙미",
+    "href": "강숙미.html"
+  },
+  {
+    "title": "양사야",
+    "href": "양사야.html"
   }
 ];
 
@@ -21267,5 +21279,8 @@ window.HB_WIKI_ALIASES = {
   "천애음": "천애음.html",
   "고다솔": "고다솔.html",
   "시인하": "시인하.html",
-  "나소연": "나소연.html"
+  "나소연": "나소연.html",
+  "감라나": "감라나.html",
+  "강숙미": "강숙미.html",
+  "양사야": "양사야.html"
 };
