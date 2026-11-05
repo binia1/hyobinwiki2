@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 11. 5. 오전 11:54:08
+ * 업데이트: 2026. 11. 5. 오후 2:36:12
  */
 
 window.HB_WIKI_PAGES = [
@@ -13591,6 +13591,42 @@ window.HB_WIKI_PAGES = [
   {
     "title": "양사야",
     "href": "양사야.html"
+  },
+  {
+    "title": "이아리",
+    "href": "이아리.html"
+  },
+  {
+    "title": "우서림",
+    "href": "우서림.html"
+  },
+  {
+    "title": "천모카",
+    "href": "천모카.html"
+  },
+  {
+    "title": "마서령",
+    "href": "마서령.html"
+  },
+  {
+    "title": "심나나",
+    "href": "심나나.html"
+  },
+  {
+    "title": "기유호",
+    "href": "기유호.html"
+  },
+  {
+    "title": "이주시",
+    "href": "이주시.html"
+  },
+  {
+    "title": "조류희",
+    "href": "조류희.html"
+  },
+  {
+    "title": "김인자",
+    "href": "김인자.html"
   }
 ];
 
@@ -21282,5 +21318,14 @@ window.HB_WIKI_ALIASES = {
   "나소연": "나소연.html",
   "감라나": "감라나.html",
   "강숙미": "강숙미.html",
-  "양사야": "양사야.html"
+  "양사야": "양사야.html",
+  "이아리": "이아리.html",
+  "우서림": "우서림.html",
+  "천모카": "천모카.html",
+  "마서령": "마서령.html",
+  "심나나": "심나나.html",
+  "기유호": "기유호.html",
+  "이주시": "이주시.html",
+  "조류희": "조류희.html",
+  "김인자": "김인자.html"
 };
