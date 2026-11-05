@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 11. 5. 오후 2:36:12
+ * 업데이트: 2026. 11. 6. 오전 12:33:25
  */
 
 window.HB_WIKI_PAGES = [
@@ -13627,6 +13627,58 @@ window.HB_WIKI_PAGES = [
   {
     "title": "김인자",
     "href": "김인자.html"
+  },
+  {
+    "title": "허사영",
+    "href": "허사영.html"
+  },
+  {
+    "title": "우희나",
+    "href": "우희나.html"
+  },
+  {
+    "title": "이리사",
+    "href": "이리사.html"
+  },
+  {
+    "title": "태아연",
+    "href": "태아연.html"
+  },
+  {
+    "title": "태미연",
+    "href": "태미연.html"
+  },
+  {
+    "title": "문주란",
+    "href": "문주란.html"
+  },
+  {
+    "title": "허마리",
+    "href": "허마리.html"
+  },
+  {
+    "title": "하규미",
+    "href": "하규미.html"
+  },
+  {
+    "title": "미아밴드",
+    "href": "미아밴드.html"
+  },
+  {
+    "title": "포핀스타",
+    "href": "포핀스타.html"
+  },
+  {
+    "title": "애프터글로우_효빈",
+    "href": "애프터글로우_효빈.html"
+  },
+  {
+    "title": "모르포니카_효빈",
+    "href": "모르포니카_효빈.html"
+  },
+  {
+    "title": "효빈대학교_로젤리아",
+    "href": "효빈대학교_로젤리아.html"
   }
 ];
 
@@ -21327,5 +21379,18 @@ window.HB_WIKI_ALIASES = {
   "기유호": "기유호.html",
   "이주시": "이주시.html",
   "조류희": "조류희.html",
-  "김인자": "김인자.html"
+  "김인자": "김인자.html",
+  "허사영": "허사영.html",
+  "우희나": "우희나.html",
+  "이리사": "이리사.html",
+  "태아연": "태아연.html",
+  "태미연": "태미연.html",
+  "문주란": "문주란.html",
+  "허마리": "허마리.html",
+  "하규미": "하규미.html",
+  "미아밴드": "미아밴드.html",
+  "포핀스타": "포핀스타.html",
+  "애프터글로우_효빈": "애프터글로우_효빈.html",
+  "모르포니카_효빈": "모르포니카_효빈.html",
+  "효빈대학교_로젤리아": "효빈대학교_로젤리아.html"
 };

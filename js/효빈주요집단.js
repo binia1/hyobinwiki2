@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const navHtml = `
         <div class="nw-frame-faction">
             <div class="nw-title-faction">
-                🌐 효빈광역시 주요 세력 및 집단 (카르텔 & 자경단)
+                🌐 효빈광역시 주요 세력 및 집단 (카르텔 & 자경단 & 밴드)
             </div>
             
             <details id="nw-faction-box" class="nw-box-faction" open>
@@ -61,24 +61,53 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td>
                             <div class="flex-group-faction">
                                 <a href="효빈 뮤즈 연합.html" class="nw-link-faction">
-                                    <img src="이미지/노정미.webp" class="nw-img-faction" onerror="this.style.display='none'">
+                                    <img src="이미지/안예리.webp" class="nw-img-faction" onerror="this.style.display='none'">
                                     효빈 뮤즈 연합
                                     <span class="nw-subtext-faction">(행정·정치 장악 / 96·98즈)</span>
                                 </a>
                                 <a href="Aqours 오시 어벤져스.html" class="nw-link-faction">
-                                    <img src="이미지/고해영.webp" class="nw-img-faction" onerror="this.style.display='none'">
+                                    <img src="이미지/이리자.webp" class="nw-img-faction" onerror="this.style.display='none'">
                                     Aqours 어벤져스
                                     <span class="nw-subtext-faction">(물리·법적 자경단 / 당가동)</span>
                                 </a>
-                                <a href="무지개 동호회.html" class="nw-link-faction">
-                                    <img src="이미지/김시연.webp" class="nw-img-faction" onerror="this.style.display='none'">
+                                <a href="무지개_동호회.html" class="nw-link-faction">
+                                    <img src="이미지/나수미.webp" class="nw-img-faction" onerror="this.style.display='none'">
                                     무지개 동호회
                                     <span class="nw-subtext-faction">(캠퍼스 지배 / 사이버·무력)</span>
                                 </a>
-                                <a href="리에하스 연합.html" class="nw-link-faction">
-                                    <img src="이미지/임은혜.webp" class="nw-img-faction" onerror="this.style.display='none'">
+                                <a href="리에하스_연합.html" class="nw-link-faction">
+                                    <img src="이미지/안공주.webp" class="nw-img-faction" onerror="this.style.display='none'">
                                     리에하스 연합
                                     <span class="nw-subtext-faction">(자본주의 스폰서 / 방송 크루)</span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- 4대 주요 록 밴드 카르텔 (현재 오픈 탭 반영) -->
+                    <tr>
+                        <th>🎸 록 밴드 카르텔<br><span style="font-size: 0.75em; font-weight: normal;">(음악·문화·전투)</span></th>
+                        <td>
+                            <div class="flex-group-faction">
+                                <a href="포핀스타.html" class="nw-link-faction">
+                                    <img src="이미지/양사야.webp" class="nw-img-faction" onerror="this.style.display='none'">
+                                    포핀☆스타
+                                    <span class="nw-subtext-faction">(1세대 큰언니 어벤져스 / 유성당)</span>
+                                </a>
+                                <a href="애프터글로우_효빈.html" class="nw-link-faction">
+                                    <img src="이미지/천모카.webp" class="nw-img-faction" onerror="this.style.display='none'">
+                                    애프터글로우
+                                    <span class="nw-subtext-faction">(청엽구 소꿉친구 / 5호선 수호)</span>
+                                </a>
+                                <a href="효빈대학교_로젤리아.html" class="nw-link-faction">
+                                    <img src="이미지/우희나.webp" class="nw-img-faction" onerror="this.style.display='none'">
+                                    로젤리아
+                                    <span class="nw-subtext-faction">(정점의 푸른 장미 / 고딕 록)</span>
+                                </a>
+                                <a href="모르포니카_효빈.html" class="nw-link-faction">
+                                    <img src="이미지/마서령.webp" class="nw-img-faction" onerror="this.style.display='none'">
+                                    모르포니카
+                                    <span class="nw-subtext-faction">(창전구 푸른 나비 / 심포닉 록)</span>
                                 </a>
                             </div>
                         </td>
@@ -89,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <th>🏫 지역·특수 연합<br><span style="font-size: 0.75em; font-weight: normal;">(끈끈한 유대)</span></th>
                         <td>
                             <div class="flex-group-faction">
-                                <a href="팔망성고 3인방.html" class="nw-link-faction">
+                                <a href="팔망성고_3인방.html" class="nw-link-faction">
                                     <img src="이미지/최후영.webp" class="nw-img-faction" onerror="this.style.display='none'">
                                     팔망성고 3인방
                                     <span class="nw-subtext-faction">(이키즈라이브 현실 현신)</span>
