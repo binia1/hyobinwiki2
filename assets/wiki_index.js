@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 11. 7. 오전 12:47:30
+ * 업데이트: 2026. 11. 7. 오전 1:42:36
  */
 
 window.HB_WIKI_PAGES = [
@@ -13695,6 +13695,30 @@ window.HB_WIKI_PAGES = [
   {
     "title": "우미정",
     "href": "우미정.html"
+  },
+  {
+    "title": "허아영",
+    "href": "허아영.html"
+  },
+  {
+    "title": "천성로",
+    "href": "천성로.html"
+  },
+  {
+    "title": "송화음",
+    "href": "송화음.html"
+  },
+  {
+    "title": "양이브",
+    "href": "양이브.html"
+  },
+  {
+    "title": "현마음",
+    "href": "현마음.html"
+  },
+  {
+    "title": "오미사",
+    "href": "오미사.html"
   }
 ];
 
@@ -21412,5 +21436,11 @@ window.HB_WIKI_ALIASES = {
   "이사희": "이사희.html",
   "문주미": "문주미.html",
   "우이화": "우이화.html",
-  "우미정": "우미정.html"
+  "우미정": "우미정.html",
+  "허아영": "허아영.html",
+  "천성로": "천성로.html",
+  "송화음": "송화음.html",
+  "양이브": "양이브.html",
+  "현마음": "현마음.html",
+  "오미사": "오미사.html"
 };
