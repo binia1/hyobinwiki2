@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 11. 6. 오전 12:33:25
+ * 업데이트: 2026. 11. 7. 오전 12:47:30
  */
 
 window.HB_WIKI_PAGES = [
@@ -13679,6 +13679,22 @@ window.HB_WIKI_PAGES = [
   {
     "title": "효빈대학교_로젤리아",
     "href": "효빈대학교_로젤리아.html"
+  },
+  {
+    "title": "이사희",
+    "href": "이사희.html"
+  },
+  {
+    "title": "문주미",
+    "href": "문주미.html"
+  },
+  {
+    "title": "우이화",
+    "href": "우이화.html"
+  },
+  {
+    "title": "우미정",
+    "href": "우미정.html"
   }
 ];
 
@@ -21392,5 +21408,9 @@ window.HB_WIKI_ALIASES = {
   "포핀스타": "포핀스타.html",
   "애프터글로우_효빈": "애프터글로우_효빈.html",
   "모르포니카_효빈": "모르포니카_효빈.html",
-  "효빈대학교_로젤리아": "효빈대학교_로젤리아.html"
+  "효빈대학교_로젤리아": "효빈대학교_로젤리아.html",
+  "이사희": "이사희.html",
+  "문주미": "문주미.html",
+  "우이화": "우이화.html",
+  "우미정": "우미정.html"
 };
