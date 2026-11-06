@@ -109,6 +109,11 @@ document.addEventListener("DOMContentLoaded", () => {
                                     모르포니카
                                     <span class="nw-subtext-faction">(창전구 푸른 나비 / 심포닉 록)</span>
                                 </a>
+                                <a href="미아밴드.html" class="nw-link-faction">
+                                    <img src="이미지/고다솔.webp" class="nw-img-faction" onerror="this.style.display='none'">
+                                    미아 밴드 MyGO!!!!!
+                                    <span class="nw-subtext-faction">(하드코어 순애·대환장 파티)</span>
+                                </a>
                             </div>
                         </td>
                     </tr>
