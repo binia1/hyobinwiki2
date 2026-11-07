@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 11. 7. 오후 7:42:56
+ * 업데이트: 2026. 11. 8. 오전 12:18:32
  */
 
 window.HB_WIKI_PAGES = [
@@ -13739,6 +13739,10 @@ window.HB_WIKI_PAGES = [
   {
     "title": "빌런새끼들",
     "href": "빌런새끼들.html"
+  },
+  {
+    "title": "추한석",
+    "href": "추한석.html"
   }
 ];
 
@@ -21467,5 +21471,6 @@ window.HB_WIKI_ALIASES = {
   "해피파스텔월드": "해피파스텔월드.html",
   "교수벤져스": "교수벤져스.html",
   "효빈광역시_대학_총장_협의회": "효빈광역시_대학_총장_협의회.html",
-  "빌런새끼들": "빌런새끼들.html"
+  "빌런새끼들": "빌런새끼들.html",
+  "추한석": "추한석.html"
 };

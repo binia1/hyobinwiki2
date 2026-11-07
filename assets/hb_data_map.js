@@ -10472,7 +10472,7 @@ window.wikiLinkMap = {
 "nav_bigdata": "틀_뷰어_SPA.html#nav_bigdata",
 "poppin_nav": "틀_뷰어_SPA.html#poppin_nav",
 "roselia_nav": "틀_뷰어_SPA.html#roselia_nav",
-
+"추한석": "추한석.html",
 
 
 
