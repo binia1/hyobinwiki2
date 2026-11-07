@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 11. 7. 오전 1:42:36
+ * 업데이트: 2026. 11. 7. 오전 2:08:32
  */
 
 window.HB_WIKI_PAGES = [
@@ -13719,6 +13719,10 @@ window.HB_WIKI_PAGES = [
   {
     "title": "오미사",
     "href": "오미사.html"
+  },
+  {
+    "title": "효빈무지카",
+    "href": "효빈무지카.html"
   }
 ];
 
@@ -21442,5 +21446,6 @@ window.HB_WIKI_ALIASES = {
   "송화음": "송화음.html",
   "양이브": "양이브.html",
   "현마음": "현마음.html",
-  "오미사": "오미사.html"
+  "오미사": "오미사.html",
+  "효빈무지카": "효빈무지카.html"
 };
