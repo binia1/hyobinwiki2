@@ -1,6 +1,6 @@
 /**
  * HyobinWiki Chronological Index (Incrementally Updated)
- * 업데이트: 2026. 11. 7. 오전 2:08:32
+ * 업데이트: 2026. 11. 7. 오후 1:24:46
  */
 
 window.HB_WIKI_PAGES = [
@@ -13723,6 +13723,22 @@ window.HB_WIKI_PAGES = [
   {
     "title": "효빈무지카",
     "href": "효빈무지카.html"
+  },
+  {
+    "title": "해피파스텔월드",
+    "href": "해피파스텔월드.html"
+  },
+  {
+    "title": "교수벤져스",
+    "href": "교수벤져스.html"
+  },
+  {
+    "title": "효빈광역시_대학_총장_협의회",
+    "href": "효빈광역시_대학_총장_협의회.html"
+  },
+  {
+    "title": "빌런새끼들",
+    "href": "빌런새끼들.html"
   }
 ];
 
@@ -21447,5 +21463,9 @@ window.HB_WIKI_ALIASES = {
   "양이브": "양이브.html",
   "현마음": "현마음.html",
   "오미사": "오미사.html",
-  "효빈무지카": "효빈무지카.html"
+  "효빈무지카": "효빈무지카.html",
+  "해피파스텔월드": "해피파스텔월드.html",
+  "교수벤져스": "교수벤져스.html",
+  "효빈광역시_대학_총장_협의회": "효빈광역시_대학_총장_협의회.html",
+  "빌런새끼들": "빌런새끼들.html"
 };

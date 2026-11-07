@@ -40,16 +40,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 </a>
             </div>
             
-            <!-- 1. 네임드 참교수 (효빈대 & 동구대 학문적 지주) -->
+            <!-- 1. 네임드 참교수 (효빈대 & 동구대 학문적 지주 + 태상훈 추가) -->
             <details id="nw-named-box" class="nw-box" style="border-color:#145A32;">
                 <summary style="background-color:#145A32; color:white;" class="outline-none">🎓 네임드 참스승 연대 (행동하는 지성인) ▼</summary>
                 <table class="nw-tbl" style="border-color:#145A32;">
                     <tr>
-                        <th class="w-[12%] bg-[#EAFAF1] text-[#145A32]">교<br>수</th>
-                        <td class="w-[22%]"><a href="은권규.html" class="nw-link"><img src="이미지/은권규.webp" class="nw-img" onerror="this.src='이미지/효빈위키아이콘.webp'">은권규<span class="nw-subtext">(심리학 / 프로파일러·노조미 오시)</span></a></td>
-                        <td class="w-[22%]"><a href="최형석.html" class="nw-link"><img src="이미지/최형석.webp" class="nw-img" onerror="this.src='이미지/효빈위키아이콘.webp'">최형석<span class="nw-subtext">(부동산학 / 두청 슬레이어)</span></a></td>
-                        <td class="w-[22%]"><a href="권기준.html" class="nw-link"><img src="이미지/권기준.webp" class="nw-img" onerror="this.src='이미지/효빈위키아이콘.webp'">권기준 (K)<span class="nw-subtext">(철도운영학 / 데이터 스나이퍼)</span></a></td>
-                        <td class="w-[22%]"><a href="황세철.html" class="nw-link"><img src="이미지/황세철.webp" class="nw-img" onerror="this.src='이미지/효빈위키아이콘.webp'">황세철<span class="nw-subtext">(동구대 경영학 / 빛세철)</span></a></td>
+                        <th class="w-[15%] bg-[#EAFAF1] text-[#145A32]">교<br>수</th>
+                        <td class="w-[17%]"><a href="은권규.html" class="nw-link"><img src="이미지/은권규.webp" class="nw-img" onerror="this.src='이미지/효빈위키아이콘.webp'">은권규<span class="nw-subtext">(심리학 / 프로파일러·노조미 오시)</span></a></td>
+                        <td class="w-[17%]"><a href="최형석.html" class="nw-link"><img src="이미지/최형석.webp" class="nw-img" onerror="this.src='이미지/효빈위키아이콘.webp'">최형석<span class="nw-subtext">(부동산학 / 두청 슬레이어)</span></a></td>
+                        <td class="w-[17%]"><a href="권기준.html" class="nw-link"><img src="이미지/권기준.webp" class="nw-img" onerror="this.src='이미지/효빈위키아이콘.webp'">권기준 (K)<span class="nw-subtext">(철도운영학 / 데이터 스나이퍼)</span></a></td>
+                        <td class="w-[17%]"><a href="황세철.html" class="nw-link"><img src="이미지/황세철.webp" class="nw-img" onerror="this.src='이미지/효빈위키아이콘.webp'">황세철<span class="nw-subtext">(동구대 경영학 / 빛세철)</span></a></td>
+                        <td class="w-[17%]"><a href="태상훈.html" class="nw-link"><img src="이미지/태상훈.webp" class="nw-img" onerror="this.src='이미지/효빈위키아이콘.webp'">태상훈<span class="nw-subtext">(경제학)</span></a></td>
                     </tr>
                 </table>
             </details>
@@ -101,8 +102,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // 3. 현재 페이지 타이틀 감지 및 박스 자동 열기 로직
     const pageTitle = document.title.split(" - ")[0].trim();
     
-    // 분류 배열
-    const namedProfs = ["은권규", "최형석", "황세철", "권기준", "K 교수"];
+    // 분류 배열 (태상훈 추가)
+    const namedProfs = ["은권규", "최형석", "황세철", "권기준", "K 교수", "태상훈"];
     const initialProfs = ["박 교수", "P 교수", "S 교수", "J 교수", "F 교수", "H 교수", "M 교수", "교수벤져스"];
     const medicalProfs = ["간호학과 교수", "정형외과 교수"];
     const honoraryProfs = ["오다구", "정민재"];

@@ -1,4 +1,4 @@
-/* 파일 경로: js/효빈주요집단.js */
+/* 파일 경로: js/효빈주요집단.js (또는 assets/효빈주요집단.js) */
 
 document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("hyobin-factions-nav-container");
@@ -26,9 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
         .nw-link-faction:hover { text-decoration: underline; color: #263238; }
         .nw-subtext-faction { font-size: 0.75rem; color: #666; font-weight: normal; margin-top: 4px; line-height: 1.2; }
         
-        /* 플렉스 그룹 배치 */
+        /* 플렉스 그룹 배치 (밴드 인원이 늘어 폭을 살짝 조정) */
         .flex-group-faction { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; padding: 5px 0; }
-        .flex-group-faction .nw-link-faction { flex: 0 1 20%; min-width: 105px; }
+        .flex-group-faction .nw-link-faction { flex: 0 1 18%; min-width: 100px; }
 
         /* 쓰레기 범죄 집단 전용 경고 스타일 */
         .nw-villain-row th { background-color: #FFEBEE !important; border-color: #B71C1C !important; color: #B71C1C !important; }
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     </style>
     `;
 
-    // 2. HTML 구조 주입
+    // 2. HTML 구조 주입 (해피파스텔월드 & 효빈무지카 추가 반영)
     const navHtml = `
         <div class="nw-frame-faction">
             <div class="nw-title-faction">
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         </td>
                     </tr>
 
-                    <!-- 4대 주요 록 밴드 카르텔 (현재 오픈 탭 반영) -->
+                    <!-- 7대 주요 록 밴드 카르텔 (해피파스텔월드 & 효빈무지카 추가) -->
                     <tr>
                         <th>🎸 록 밴드 카르텔<br><span style="font-size: 0.75em; font-weight: normal;">(음악·문화·전투)</span></th>
                         <td>
@@ -113,6 +113,16 @@ document.addEventListener("DOMContentLoaded", () => {
                                     <img src="이미지/고다솔.webp" class="nw-img-faction" onerror="this.style.display='none'">
                                     미아 밴드 MyGO!!!!!
                                     <span class="nw-subtext-faction">(하드코어 순애·대환장 파티)</span>
+                                </a>
+                                <a href="해피파스텔월드.html" class="nw-link-faction">
+                                    <img src="이미지/현마음.webp" class="nw-img-faction" onerror="this.style.display='none'">
+                                    해피파스텔월드
+                                    <span class="nw-subtext-faction">(초월적 재력과 혼돈의 6인조)</span>
+                                </a>
+                                <a href="효빈무지카.html" class="nw-link-faction">
+                                    <img src="이미지/이사희.webp" class="nw-img-faction" onerror="this.style.display='none'">
+                                    효빈무지카
+                                    <span class="nw-subtext-faction">(다크 심포닉 / 가면무도회 4인방)</span>
                                 </a>
                             </div>
                         </td>
