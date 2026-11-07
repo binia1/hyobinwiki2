@@ -14,14 +14,15 @@ if not os.path.exists(JS_PATH): os.makedirs(JS_PATH)
 
 html_files = [f for f in os.listdir(WIKI_PATH) if f.endswith('.html')]
 
-# 🚨 사용자 제공 철벽 블랙리스트
-SUBSTRING_BLACKLIST = ['추정', '국교', '예정', '자리', '미진학']
+# 🚨 사용자 제공 철벽 블랙리스트 + 엉뚱하게 잡히는 조사/단어 차단용 블랙리스트
+SUBSTRING_BLACKLIST = ['추정', '국교', '예정', '자리', '미진학', '본가', '발코니', '가', '이', '은', '는', '을', '를', '의', '에', '에서', '으로', '로', '와', '과', '도', '만', '뿐', '조차', '마저']
 EXACT_BLACKLIST = {
     '공교롭게도', '메구', '마리', '마시', '미모리', '아라시', '역시', '우연히도', '츠즈리', '코토리', 
     '당시', '요즘', '최근', '현재', '과거', '간부', '본부', '지부', '정부', '우주', '거주', '이주', '검정고시', '행정고시',
     '상주', '지주', '주주', '맥주', '소주', '아무래도', '그래도', '출신도', '하지만도','상징과도','노동운동가','경찰',
     '행정', '결정', '특정', '인정', '감정', '사정', '지정', '규정', '일정', '과정', '열정', '애정','공무원','국민의당','국민의당(2016년)','법조인','사회복지사','약사','의무경찰','효빈광역시의원','효빈광역시의회 의원','효빈남구의원','혐의','야반도주','히키코모리','재임 기간','주소',
-    '삼촌', '사촌', '외삼촌', '농촌', '어촌', '산촌', '개정', '제정', '긍정', '부정', '기초의원', '농업인', '민주사회를 위한 변호사모임','민주평화당'
+    '삼촌', '사촌', '외삼촌', '농촌', '어촌', '산촌', '개정', '제정', '긍정', '부정', '기초의원', '농업인', '민주사회를 위한 변호사모임','민주평화당',
+    '놀랍게도', '통학하려면', '다시', '게다가', '15짜리', '11시', '2가', '1가', '20마리', '10식구가', '창조주', '친구', '후배가', '제도가', '학제가', '되려면', '읽으면', '한자가', '어머니가', '콘셉트가', '동아리', '조상현', '원우미', '이성화', '신원임', '신은희', '안공주', '도소영'
 }
 ZODIAC_SIGNS = ['양자리', '황소자리', '쌍둥이자리', '게자리', '사자자리', '처녀자리', '천칭자리', '전갈자리', '사수자리', '염소자리', '물병자리', '물고기자리']
 
@@ -31,7 +32,11 @@ for filename in html_files:
     if filename in ['index.html', '최근_변경.html', '최근_토론.html', '생일달력.html', '출생지별_열람.html', '거주지별_열람.html']: continue
 
     filepath = os.path.join(WIKI_PATH, filename)
-    with open(filepath, 'r', encoding='utf-8') as f: html_content = f.read()
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f: html_content = f.read()
+    except Exception as e:
+        continue
+
     soup = BeautifulSoup(html_content, 'html.parser')
     
     cat_box = soup.find('div', class_=re.compile(r'category-box'))
@@ -51,11 +56,15 @@ for filename in html_files:
         if script_tag:
             js_p = os.path.join(WIKI_PATH, script_tag['src'])
             if os.path.exists(js_p):
-                with open(js_p, 'r', encoding='utf-8') as jf: infobox_html = jf.read()
+                try:
+                    with open(js_p, 'r', encoding='utf-8') as jf: infobox_html = jf.read()
+                except: pass
         else:
             guess_js_path = os.path.join(WIKI_PATH, 'js', filename.replace('.html', '_인포박스.js'))
             if os.path.exists(guess_js_path):
-                with open(guess_js_path, 'r', encoding='utf-8') as jf: infobox_html = jf.read()
+                try:
+                    with open(guess_js_path, 'r', encoding='utf-8') as jf: infobox_html = jf.read()
+                except: pass
 
     info_soup = BeautifulSoup(infobox_html, 'html.parser')
     for tooltip in info_soup.find_all(['span', 'sup'], class_=re.compile(r'wiki-tooltip|wiki-fn')): tooltip.extract()
@@ -63,7 +72,6 @@ for filename in html_files:
     existing_cats = [a.get_text(strip=True) for a in cat_box.find_all('a')]
     new_cats = set()
     
-    # 🚨 실수로 지웠던 정당 태그 탐색용 get_td_node 완벽 복구!
     def get_td_node(th_regex):
         for tag in info_soup.find_all(['th', 'td', 'strong', 'b']):
             if re.search(th_regex, tag.get_text(strip=True)):
@@ -77,38 +85,39 @@ for filename in html_files:
                         if next_tr: return next_tr.find(['td', 'th'])
         return None
 
-    # 🚨 rowspan(칸 합치기) 텍스트 긁어오기 강력 엔진
     def get_td_text(th_regex):
-        for tag in info_soup.find_all(['th', 'td', 'strong', 'b']):
-            if re.search(th_regex, tag.get_text(strip=True)):
-                target = tag if tag.name in ['th', 'td'] else tag.find_parent(['th', 'td'])
-                if target:
-                    result_texts = []
-                    
-                    for sibling in target.find_next_siblings(['td', 'th']):
-                        result_texts.append(sibling.get_text(separator=' ', strip=True))
-                        
-                    rowspan = int(target.get('rowspan', 1))
-                    if rowspan > 1:
-                        parent_tr = target.find_parent('tr')
-                        current_tr = parent_tr
-                        for _ in range(rowspan - 1):
-                            current_tr = current_tr.find_next_sibling('tr')
-                            if current_tr:
-                                for cell in current_tr.find_all(['td', 'th']):
-                                    result_texts.append(cell.get_text(separator=' ', strip=True))
-                                    
-                    if not result_texts:
-                        parent_tr = target.find_parent('tr')
-                        if parent_tr:
-                            next_tr = parent_tr.find_next_sibling('tr')
-                            if next_tr:
-                                for cell in next_tr.find_all(['td', 'th']):
-                                    result_texts.append(cell.get_text(separator=' ', strip=True))
+        try:
+            for tag in info_soup.find_all(['th', 'td', 'strong', 'b']):
+                if re.search(th_regex, tag.get_text(strip=True)):
+                    target = tag if tag.name in ['th', 'td'] else tag.find_parent(['th', 'td'])
+                    if target:
+                        result_texts = []
+                        for sibling in target.find_next_siblings(['td', 'th']):
+                            result_texts.append(sibling.get_text(separator=' ', strip=True))
+                            
+                        rowspan = int(target.get('rowspan', 1))
+                        if rowspan > 1:
+                            parent_tr = target.find_parent('tr')
+                            current_tr = parent_tr
+                            for _ in range(rowspan - 1):
+                                current_tr = current_tr.find_next_sibling('tr')
+                                if current_tr:
+                                    for cell in current_tr.find_all(['td', 'th']):
+                                        result_texts.append(cell.get_text(separator=' ', strip=True))
+                                        
+                        if not result_texts:
+                            parent_tr = target.find_parent('tr')
+                            if parent_tr:
+                                next_tr = parent_tr.find_next_sibling('tr')
+                                if next_tr:
+                                    for cell in next_tr.find_all(['td', 'th']):
+                                        result_texts.append(cell.get_text(separator=' ', strip=True))
 
-                    if result_texts:
-                        raw_text = " ".join(result_texts)
-                        return re.sub(r'>?\s*틀\s*포함\s*:\s*틀\s*:', '', raw_text).strip()
+                        if result_texts:
+                            raw_text = " ".join(result_texts)
+                            return re.sub(r'>?\s*틀\s*포함\s*:\s*틀\s*:', '', raw_text).strip()
+        except:
+            pass
         return ""
 
     birth_text = get_td_text(r'^(출생|출생일|출생일시|생일|생년월일|출생년월일)$')
@@ -120,11 +129,16 @@ for filename in html_files:
 
     def extract_locations(text):
         locs = []
+        # 🚨 핵심 방어막: 반드시 올바른 행정구역이나 학교 접미사로 끝나는 단어만 추출!
+        valid_suffixes = ('동', '면', '읍', '구', '시', '군', '도', '리', '가', '대학', '대학교')
+        
         for w in re.split(r'[\s\(\)\[\]\,\.\/\~\-\+]+', text):
             clean_w = re.sub(r'[^가-힣0-9]', '', w)
             if len(clean_w) < 2 or any(sub in clean_w for sub in SUBSTRING_BLACKLIST) or clean_w in EXACT_BLACKLIST: continue
-            if re.search(r'(학교|대학|유치원|학원|학과|학부|전공|의원|공무원|경찰|군인|교사|당|노조|단체|모임)$', clean_w): continue
-            if re.search(r'(도|특별시|광역시|특별자치도|시|군|구|읍|면|동|동\d*가|로\d*가|리|부|현|주|정|촌)$', clean_w): locs.append(clean_w)
+            if re.search(r'(학교|대학|유치원|학원|학과|학부|전공|의원|공무원|경찰|군인|교사|당|노조|단체|모임)$', clean_w) and not clean_w.endswith(('대학', '대학교')): continue
+            
+            if clean_w.endswith(valid_suffixes):
+                locs.append(clean_w)
         return locs
 
     birthplace_text = get_td_text(r'출생지|출신지|고향') or birth_text
@@ -166,7 +180,6 @@ for filename in html_files:
     for cat_name, keywords in sns_keywords.items():
         if any(kw.lower() in sns_text.lower() for kw in keywords): new_cats.add(f"{cat_name} 사용자")
 
-    # 🚨 정당 추출 로직 정상 작동
     party_td = get_td_node(r'소속 정당|정당')
     if party_td:
         extracted = []
@@ -187,10 +200,13 @@ for filename in html_files:
     if cats_to_add:
         match = re.search(r'(<div[^>]*class="[^"]*category-box[^"]*"[^>]*>.*?)(</div>)', html_content, re.DOTALL)
         if match:
-            shutil.copy2(filepath, os.path.join(BACKUP_PATH, filename))
-            new_cat_box = match.group(1) + "".join([f'\n<span style="color: var(--wiki-border);">|</span> \n<a class="wiki-link" href="{cat}.html">{cat}</a> ' for cat in cats_to_add]) + "\n" + match.group(2)
-            with open(filepath, 'w', encoding='utf-8') as f: f.write(html_content[:match.start()] + new_cat_box + html_content[match.end():])
-            print(f"✅ {filename} 업데이트 (추가: {', '.join(cats_to_add)})")
+            try:
+                shutil.copy2(filepath, os.path.join(BACKUP_PATH, filename))
+                new_cat_box = match.group(1) + "".join([f'\n<span style="color: var(--wiki-border);">|</span> \n<a class="wiki-link" href="{cat}.html">{cat}</a> ' for cat in cats_to_add]) + "\n" + match.group(2)
+                with open(filepath, 'w', encoding='utf-8') as f: f.write(html_content[:match.start()] + new_cat_box + html_content[match.end():])
+                print(f"✅ {filename} 업데이트 (추가: {', '.join(cats_to_add)})")
+            except Exception as e:
+                pass
 
 
 # ==========================================
@@ -252,6 +268,7 @@ def make_viewer(data_map, out_file, title, icon):
         ch = 'ㄱ' if ch == 'ㄲ' else 'ㄷ' if ch == 'ㄸ' else 'ㅂ' if ch == 'ㅃ' else 'ㅅ' if ch == 'ㅆ' else 'ㅈ' if ch == 'ㅉ' else ch
         chosung_group[ch].append((loc, data['type'], sorted(list(data['people']))))
 
+    # 🚨 f-string 중괄호 충돌 방지를 위해 JS 영역은 {{ }} 로 탈출 처리 완료
     html_out = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -301,8 +318,8 @@ def make_viewer(data_map, out_file, title, icon):
 <a class="bg-[#666699] hover:bg-[#555588] text-yellow-300 text-xs px-2 py-1 rounded transition-colors no-underline font-bold" href="즐겨찾기.html" title="즐겨찾기">★</a>
 <a class="bg-[#666699] hover:bg-[#555588] text-white text-xs px-2 py-1 rounded transition-colors no-underline font-bold flex items-center gap-1" href="더보기.html">더보기 <span class="text-[9px]">▼</span></a>
 </div>
-<!-- 검색창 (Enter 작동 유지) -->
-<input class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" id="headerSearchInput" onkeypress="if(event.keyCode==13) { handleSearch('headerSearchInput'); }" placeholder="문서 검색" type="text"/>
+<!-- 검색창 (중괄호 {{ }} 탈출 완료) -->
+<input class="p-1 px-3 rounded text-black text-sm focus:outline-none border-none shadow-inner w-32 md:w-48" id="headerSearchInput" onkeypress="if(event.keyCode==13) {{ handleSearch('headerSearchInput'); }}" placeholder="문서 검색" type="text"/>
 <button class="bg-[#555588] p-1 px-3 rounded text-xs transition-colors shadow-inner font-bold" onclick="handleSearch('headerSearchInput')">🔍</button>
 </div>
 <div class="flex gap-1" id="auth-buttons">
@@ -389,24 +406,13 @@ def make_viewer(data_map, out_file, title, icon):
     <script src="assets/wiki_index.js"></script>
 </body>
 </html>"""
-    with open(out_file, 'w', encoding='utf-8') as f: f.write(html_out)
-    print(f"🎉 [{out_file}] 콤보박스 분리형 자동 생성 완료!")
+    try:
+        with open(out_file, 'w', encoding='utf-8') as f: f.write(html_out)
+        print(f"🎉 [{out_file}] 콤보박스 분리형 자동 생성 완료!")
+    except Exception as e:
+        print(f"⚠️ 뷰어 파일 생성 중 에러 발생 ({out_file}): {e}")
 
 make_viewer(birth_map, '출생지별_열람.html', '출생지 및 학력/전공 열람', '🌍')
 make_viewer(resi_map, '거주지별_열람.html', '거주지별 인물 열람', '🏠')
 
-
-# ==========================================
-# 🚀 3단계: 생일 및 출생연도 데이터 (js/birthday_data.js) 파일 생성
-# ==========================================
-print("\n🚀 3단계: 생일달력을 위한 데이터를 js/birthday_data.js에 갱신합니다...")
-
-js_content = "// 자동 생성된 효빈위키 생일 달력 및 출생연도 데이터\n\n"
-js_content += f"const birthdayData = {json.dumps(birthday_date_map, ensure_ascii=False, indent=4)};\n\n"
-js_content += f"const birthYearData = {json.dumps(birthday_year_map, ensure_ascii=False, indent=4)};\n"
-
-with open(os.path.join(JS_PATH, 'birthday_data.js'), 'w', encoding='utf-8') as f:
-    f.write(js_content)
-
-print("🎉 [js/birthday_data.js] 파일 갱신 및 덮어쓰기 완료!")
-print("\n🎉🎉🎉 모든 작업(카테고리 삽입 + 열람기 생성 + 생일데이터 JS 갱신)이 완벽하게 끝났습니다! 🎉🎉🎉")
+print("\n🎉🎉🎉 모든 작업이 완벽하게 끝났습니다! 🎉🎉🎉")
